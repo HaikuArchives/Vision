@@ -222,7 +222,7 @@ FontPrefsView::AllAttached (void)
   BMenuItem *it (menu->ItemAt (0));
 
   if (it)
-  	it->Invoke();
+  	dynamic_cast<BInvoker *>(it)->Invoke();
 
   
   BRect frame (fontElementField->Frame());
@@ -241,7 +241,7 @@ FontPrefsView::AllAttached (void)
   it = menu->FindItem (family);
 
   if (it)
-  	it->Invoke();
+  	dynamic_cast<BInvoker *>(it)->Invoke();
 }
 
 void
