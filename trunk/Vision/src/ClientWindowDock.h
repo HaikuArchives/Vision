@@ -76,6 +76,8 @@ class AgentDockNotifyList : public BView
     virtual               ~AgentDockNotifyList (void);
     
     NotifyList            *pNotifyList (void);
+    
+    virtual void          AllAttached(void);
 
   private:
     

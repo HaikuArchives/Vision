@@ -202,7 +202,8 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   headerFrame.right = headerFrame.right;
   fAHeader = new AgentDockHeader (headerFrame, S_CWD_NOTIFY_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
   headerFrame.top = headerFrame.top + headerFrame.Height() + 4;
-  headerFrame.bottom = headerFrame.top;
+  // BScrollView in R5 has an odd bug where if you initialize it too small, it never draws its scrollbar arrows correctly
+  headerFrame.bottom = headerFrame.top + 30.0;
   headerFrame.right -= B_V_SCROLL_BAR_WIDTH;
   fNotifyList = new NotifyList (headerFrame);
   fNotifyScroll = new BScrollView ("fNotifyListScroll",
@@ -225,6 +226,14 @@ NotifyList *
 AgentDockNotifyList::pNotifyList (void)
 {
   return fNotifyList;
+}
+
+void
+AgentDockNotifyList::AllAttached (void)
+{
+  // hack to deal with some R5 scrollbar drawing bugs
+  fNotifyScroll->ResizeBy (0.0, Bounds().Height() - fNotifyScroll->Bounds().Height() - 15.0);
+  BView::AllAttached ();
 }
 
 //////////////////////////////////////////////////////////////////////////////
