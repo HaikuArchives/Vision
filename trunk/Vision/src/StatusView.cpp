@@ -124,7 +124,8 @@ StatusView::SetItemValue (int32 which, const char *value, bool redraw)
       item = nextitem;
     }
     if (redraw)
-      Invalidate();
+      Invalidate(BRect (ItemAt (which)->frame.left, item->frame.top, item->frame.right, item->frame.bottom));
+
   }
 }
 
