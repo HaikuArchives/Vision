@@ -3,6 +3,7 @@ http://vision.sourceforge.net
 
 [0.8.2-0209]
          * fixed bug where parameters to /list would get ignored
+         * added support for numerics 325, 609, 610, 611, 614
 
 [0.8.1-0208]
          * fixed a few crash bugs in event parser

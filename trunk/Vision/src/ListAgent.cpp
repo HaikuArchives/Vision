@@ -237,7 +237,10 @@ ListAgent::MessageReceived (BMessage *msg)
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTCOUNT, ""), true);
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTSTAT, ""), true);
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTFILTER, "", STATUS_ALIGN_LEFT), true);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (0, "0", false);
+ 
+        BString cString;
+        cString << listView->CountRows();
+        vision_app->pClientWin()->pStatusView()->SetItemValue (0, cString.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (2, filter.String(), true);
       }
@@ -249,9 +252,14 @@ ListAgent::MessageReceived (BMessage *msg)
         {
           BMessage sMsg (M_SERVER_SEND);
           
-          BString command ("LIST ");
+          BString command ("LIST");
           
-          command.Append (msg->FindString ("cmd"));
+          BString params (msg->FindString ("cmd"));
+          if (params != "-9z99")
+          {
+            command.Append (" ");
+            command.Append (params);
+          }
 
           sMsg.AddString ("data", command.String());
 
@@ -317,9 +325,11 @@ ListAgent::MessageReceived (BMessage *msg)
         row->SetField (userField, usersColumn->LogicalFieldNum());
         row->SetField (topicField, topicColumn->LogicalFieldNum());
         listView->AddRow (row);
-		
+        
+        BString cString;
+        cString << listView->CountRows();
         if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (0, 0, true);
+          vision_app->pClientWin()->pStatusView()->SetItemValue (0, cString.String(), true);
       }
       
       break;
