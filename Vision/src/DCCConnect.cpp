@@ -546,7 +546,7 @@ DCCSend::Transfer (void *arg)
 	}
 	UpdateStatus (msgr, "Waiting for acceptance.");
 	
-	sendaddr.s_addr = inet_addr (ipdata.FindBool ("private") ? ipdata.FindString ("privateip") : ipdata.FindString ("ip"));
+	sendaddr.s_addr = inet_addr (ipdata.FindString ("ip"));
 
 	if (msgr.IsValid())
 	{
