@@ -24,17 +24,14 @@
  *                 John Robinson
  */
 
-#ifdef GNOME_BUILD
-#  include "gnome/NetEndpoint.h"
-#  include "gnome/UTF8.h"
-#  include "gnome/Autolock.h"
-#elif BEOS_BUILD
-#  include <NetEndpoint.h>
-#  include <UTF8.h>
-#  include <Autolock.h>
-#  include <netdb.h>
-#  include <MessageRunner.h>
-#endif
+#include <NetworkKit.h>
+#include <UTF8.h>
+#include <Autolock.h>
+#include <MessageRunner.h>
+
+//#ifdef BONE_BUILD
+//#  include <bone/arpa/inet.h>
+//#endif
 
 #include <ctype.h>
 #include <stdio.h>
@@ -97,7 +94,8 @@ ServerAgent::ServerAgent (
     serverHostName (id_),
     initialMotd (true),
     identd (identd_),
-    cmds (cmds_)
+    cmds (cmds_),
+    pListAgent (NULL)
 {
 
 }
@@ -305,6 +303,7 @@ ServerAgent::Establish (void *arg)
       struct sockaddr_in sockin;
 
 
+#ifdef NETSERVER_BUILD
       // store local ip address for future use (dcc, etc)
       int addrlength (sizeof (struct sockaddr_in));
       if (getsockname (endPoint->Socket(),(struct sockaddr *)&sockin,&addrlength)) {
@@ -334,6 +333,8 @@ ServerAgent::Establish (void *arg)
         ClientAgent::PackDisplay (&statMsg, "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)\n", &errorcolor);
         sMsgrE->SendMessage (&statMsg);  
       }
+
+#endif
 
       // resume normal business matters.
 
@@ -1206,12 +1207,21 @@ ServerAgent::MessageReceived (BMessage *msg)
         vision_app->pClientWin()->pWindowList()->AddAgent (
           new ListAgent (
             *vision_app->pClientWin()->AgentRect(),
-            serverHostName.String()),
+            serverHostName.String(), new BMessenger(this)),
           sid,
           "Channels",
           WIN_LIST_TYPE,
           true);
+        // kind of a hack since Agent() returns a pointer of type ClientAgent, of which
+        // ListAgent is not a subclass...
+        pListAgent = reinterpret_cast<ListAgent *>(vision_app->pClientWin()->pWindowList()->Agent(sid, "Channels"));
+        BMessenger listMsgr(pListAgent);
+        listMsgr.SendMessage(M_LIST_COMMAND);
       }
+      break;
+    
+    case M_LIST_SHUTDOWN:
+      pListAgent = NULL;
       break;
 
     default:

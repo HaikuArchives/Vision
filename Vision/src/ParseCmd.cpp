@@ -23,23 +23,23 @@
  *                 Jamie Wilkinson
  */
 
-#ifdef GNOME_BUILD
-#  include "gnome/FilePanel.h"
-#  include "gnome/Path.h"
-#  include "gnome/Roster.h"
-#  include "gnome/FindDirectory.h"
-#elif BEOS_BUILD
-#  include <FilePanel.h>
-#  include <Path.h>
-#  include <Roster.h>
-#  include <FindDirectory.h>
-#endif
+
+#include <FilePanel.h>
+#include <Path.h>
+#include <Roster.h>
+#include <FindDirectory.h>
+#include <NetworkKit.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <map.h>
-#include <netdb.h>
 #include <ctype.h>
+
+// <bone/netdb.h> complains...
+#ifdef NETSERVER_BUILD
+#  include <netdb.h>
+#endif
+
 
 #include "Vision.h"
 #include "VisionBase.h"
@@ -1214,6 +1214,8 @@ ClientAgent::ExecPipe (void *arg)
 int32
 ClientAgent::DNSLookup (void *arg)
 {
+
+#ifdef NETSERVER_BUILD
   BMessage *msg (reinterpret_cast<BMessage *>(arg));
   const char *lookup;
   ClientAgent *agent;
@@ -1276,6 +1278,8 @@ ClientAgent::DNSLookup (void *arg)
   BMessage dnsMsg (M_DISPLAY);
   agent->PackDisplay (&dnsMsg, output.String(), &(agent->whoisColor));
   agent->msgr.SendMessage (&dnsMsg);
+
+#endif
 
   return B_OK;
 }
