@@ -244,6 +244,20 @@ ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
 }
 
 void
+ClientWindow::AddMenu (BMenu *menu)
+{
+  if (menu != NULL)
+    menubar->AddItem (menu);
+}
+
+void
+ClientWindow::RemoveMenu (BMenu *menu)
+{
+  if (menu != NULL)
+    menubar->RemoveItem (menu);
+}
+
+void
 ClientWindow::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
@@ -595,4 +609,3 @@ ClientWindow::Init (void)
 //////////////////////////////////////////////////////////////////////////////
 /// End Private Functions
 //////////////////////////////////////////////////////////////////////////////
-

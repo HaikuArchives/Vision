@@ -86,19 +86,40 @@ WindowList::MessageReceived (BMessage *msg)
     
     case M_THEME_FONT_CHANGE:
       {
-        activeTheme->ReadLock();
-        SetFont (&activeTheme->FontAt (F_WINLIST));
-        activeTheme->ReadUnlock();
-        Invalidate();
+        int16 which (msg->FindInt16 ("which"));
+        if (which == F_WINLIST)
+        {
+          activeTheme->ReadLock();
+          SetFont (&activeTheme->FontAt (F_WINLIST));
+          activeTheme->ReadUnlock();
+          Invalidate();
+        }
       }
       break;
       
     case M_THEME_FOREGROUND_CHANGE:
       {
+        int16 which (msg->FindInt16 ("which"));
+        bool refresh (false);
         activeTheme->ReadLock();
-        SetViewColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+        switch (which)
+        {
+          case C_WINLIST_BACKGROUND:
+            SetViewColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+            refresh = true;
+            break;
+          
+          case C_WINLIST_SELECTION:
+          case C_WINLIST_NORMAL:
+          case C_WINLIST_NEWS:
+          case C_WINLIST_NICK:
+          case C_WINLIST_PAGESIX:
+            refresh = true;
+            break;
+        }
         activeTheme->ReadUnlock();
-        Invalidate();
+        if (refresh)
+          Invalidate();
       }
       break;   
     

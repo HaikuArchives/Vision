@@ -26,6 +26,7 @@
 #ifndef _LISTAGENT_H_
 #define _LISTAGENT_H_
 
+#include <List.h>
 #include <View.h>
 #include <String.h>
 #include <Messenger.h>
@@ -37,6 +38,7 @@ class BScrollView;
 class BMenuItem;
 class StatusView;
 class WindowListItem;
+class Theme;
 
 class ListAgent : public BView
 {
@@ -46,16 +48,17 @@ class ListAgent : public BView
     virtual                 ~ListAgent (void);
     virtual void            MessageReceived (BMessage *);
     virtual void            AttachedToWindow (void);
-	virtual void			AllAttached (void);
-    virtual void			Show(void);
+    virtual void			Show (void);
+    virtual void            Hide (void);
 
     WindowListItem          *agentWinItem;
     BMessenger              msgr;
     
   private:
+    Theme                   *activeTheme;
     BMessenger              *sMsgr;
     BMessageRunner          *listUpdateTrigger;
-	BMenuBar				*mBar;
+    BMenu                   *listMenu;
     BColumnListView               *listView;
     StatusView              *status;
 
@@ -66,6 +69,8 @@ class ListAgent : public BView
                               fre;
                               
     bool                    processing;
+    
+    BList                   hiddenItems;
 
     BMenuItem               *mFilter,
                               *mFind,

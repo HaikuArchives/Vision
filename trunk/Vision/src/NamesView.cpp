@@ -340,19 +340,42 @@ NamesView::MessageReceived (BMessage *msg)
   {
     case M_THEME_FOREGROUND_CHANGE:
     {
+      int16 which (msg->FindInt16 ("which"));
+      bool refresh (false);
       activeTheme->ReadLock();
-      SetViewColor (activeTheme->ForegroundAt (C_NAMES_BACKGROUND));
+      switch (which)
+      {
+        case C_NAMES_BACKGROUND:
+          SetViewColor (activeTheme->ForegroundAt (C_NAMES_BACKGROUND));
+          refresh = true;
+          break;
+        
+        case C_OP:
+        case C_VOICE:
+        case C_HELPER:
+        case C_NAMES_SELECTION:
+          refresh = true;
+          break;
+          
+        default:
+          break;
+      }
       activeTheme->ReadUnlock();
-      Invalidate();
+      if (refresh)
+        Invalidate();
     }
     break;
     
     case M_THEME_FONT_CHANGE:
     {
-      activeTheme->ReadLock();
-      SetFont (&activeTheme->FontAt (F_NAMES));
-      activeTheme->ReadUnlock();
-      Invalidate();
+      int16 which (msg->FindInt16 ("which"));
+      if (which == F_NAMES)
+      {
+        activeTheme->ReadLock();
+        SetFont (&activeTheme->FontAt (F_NAMES));
+        activeTheme->ReadUnlock();
+        Invalidate();
+      }
     }
     break;
     
