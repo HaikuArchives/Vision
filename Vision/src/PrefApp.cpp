@@ -149,106 +149,57 @@ AppWindowPrefsView::AllAttached (void)
   BView::AllAttached();
 }
 
+void
+AppWindowPrefsView::SetEncodingItem(int32 encoding)
+{
+	BMenuItem *item (NULL);
+	for (int32 i = 0; i < fEncodings->Menu()->CountItems(); i++)
+	{
+		item = fEncodings->Menu()->ItemAt(i);
+		if (item->Message()->FindInt32("encoding") == encoding)
+		{
+			item->SetMarked(true);
+			break;
+		}
+	}
+}
+
 BMenu *
 AppWindowPrefsView::CreateEncodingMenu(void)
 {
   BMessage msg(M_APPWINDOWPREFS_ENCODING_CHANGED);
   BMenu *encMenu (new BMenu("Encodings"));
   msg.AddInt32("encoding", B_ISO1_CONVERSION);
-  encMenu->AddItem (fEnc1 = new BMenuItem("Western (ISO 8859-1)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Western (ISO 8859-1)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_ISO2_CONVERSION);
-  encMenu->AddItem (fEnc2 = new BMenuItem("Central European (ISO 8859-2)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Central European (ISO 8859-2)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_ISO5_CONVERSION);
-  encMenu->AddItem (fEnc3 = new BMenuItem("Cyrillic (ISO 8859-5)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Cyrillic (ISO 8859-5)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_KOI8R_CONVERSION);
-  encMenu->AddItem (fEnc4 = new BMenuItem("Cyrillic (KOI8-R)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Cyrillic (KOI8-R)", new BMessage(msg)));
+  msg.ReplaceInt32("encoding", B_ISO13_CONVERSION);
+  encMenu->AddItem (new BMenuItem("Baltic (ISO 8859-13)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_MS_DOS_866_CONVERSION);
-  encMenu->AddItem (fEnc5 = new BMenuItem("Cyrillic (MS-DOS 866)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Cyrillic (MS-DOS 866)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_MS_WINDOWS_1251_CONVERSION);
-  encMenu->AddItem (fEnc6 = new BMenuItem("Cyrillic (Windows 1251)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Cyrillic (Windows 1251)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_ISO7_CONVERSION);
-  encMenu->AddItem (fEnc7 = new BMenuItem("Greek (ISO 8859-7)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Greek (ISO 8859-7)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_SJIS_CONVERSION);
-  encMenu->AddItem (fEnc8 = new BMenuItem("Japanese (Shift-JIS)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Japanese (Shift-JIS)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_EUC_CONVERSION);
-  encMenu->AddItem (fEnc9 = new BMenuItem("Japanese (EUC)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Japanese (EUC)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_JIS_CONVERSION);
-  encMenu->AddItem (fEnc10 = new BMenuItem("Japanese (JIS)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Japanese (JIS)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_EUC_KR_CONVERSION);
-  encMenu->AddItem (fEnc11 = new BMenuItem("Korean (EUC)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Korean (EUC)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_UNICODE_CONVERSION);
-  encMenu->AddItem (fEnc12 = new BMenuItem("Unicode", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Unicode", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_MAC_ROMAN_CONVERSION);
-  encMenu->AddItem (fEnc13 = new BMenuItem("Western (Mac Roman)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Western (Mac Roman)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_MS_WINDOWS_CONVERSION);
-  encMenu->AddItem (fEnc14 = new BMenuItem("Western (Windows)", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Western (Windows)", new BMessage(msg)));
   return encMenu;
-}
-
-void
-AppWindowPrefsView::SetEncodingItem(int32 encoding)
-{
-  switch (encoding)
-  {
-    case B_ISO1_CONVERSION:
-      fEnc1->SetMarked (true);
-      break;
-       
-    case B_ISO2_CONVERSION:
-      fEnc2->SetMarked (true);
-      break;
-       
-    case B_ISO5_CONVERSION:
-      fEnc3->SetMarked (true);
-      break;
-       
-    case B_KOI8R_CONVERSION:
-      fEnc4->SetMarked (true);
-      break;
-       
-    case B_MS_DOS_866_CONVERSION:
-      fEnc5->SetMarked (true);
-      break;
-       
-    case B_MS_WINDOWS_1251_CONVERSION:
-      fEnc6->SetMarked (true);
-      break;
-       
-    case B_ISO7_CONVERSION:
-      fEnc7->SetMarked (true);
-      break;
-       
-    case B_SJIS_CONVERSION:
-      fEnc8->SetMarked (true);
-      break;
-       
-    case B_EUC_CONVERSION:
-      fEnc9->SetMarked (true);
-      break;
-       
-    case B_JIS_CONVERSION:
-      fEnc10->SetMarked (true);
-      break;
-
-    case B_EUC_KR_CONVERSION:
-      fEnc11->SetMarked (true);
-      break;
-       
-    case B_UNICODE_CONVERSION:
-      fEnc12->SetMarked (true);
-      break;
-       
-    case B_MAC_ROMAN_CONVERSION:
-      fEnc13->SetMarked (true);
-      break;
-       
-    case B_MS_WINDOWS_CONVERSION:
-      fEnc14->SetMarked (true);
-      break;
-       
-    default:
-      break;
-  }
 }
 
 void
@@ -262,9 +213,7 @@ AppWindowPrefsView::MessageReceived (BMessage *msg)
         msg->FindPointer ("source", reinterpret_cast<void **>(&source));
         source->SetMarked(true);
         int32 encoding (msg->FindInt32("encoding"));
-        SetEncodingItem(encoding);
         vision_app->SetInt32("encoding", encoding);
-        
       }
       break;
       
