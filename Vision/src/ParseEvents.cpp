@@ -101,7 +101,7 @@ ServerAgent::ParseEvents (const char *data)
 					*vision_app->pClientWin()->AgentRect(),
 					theNick.String(),
 					sid,
-					serverName.String(),
+					serverHostName.String(),
 					sMsgr,
 					myNick.String(),
 					addyString.String()),
@@ -128,64 +128,65 @@ ServerAgent::ParseEvents (const char *data)
 		return true;
 	}
 
-	if (firstWord == "NOTICE") // _server_ notice
+	if (secondWord == "NOTICE")
 	{
-		BString theNotice (RestOfString(data, 3));
-		const char *expansions[1];
-
+		BString theNotice (RestOfString(data, 4));
 		theNotice.RemoveFirst(":");
-
-		expansions[0] = theNotice.String();
-		theNotice = ExpandKeyed (events[E_SNOTICE].String(), "R", expansions);
-		Display (theNotice.String(), 0, 0, true);
-
-		return true;
-	}
-
-	if (secondWord == "NOTICE") // _user_ notice
-	{
-		BString theNick (GetNick (data)),
-			ident (GetIdent (data)),
-			address (GetAddress (data)),
-			addy;
-
-		addy << theNick << "@" << address;
-
-//		BMessage aMsg (M_IS_IGNORED), reply;
-//		bool ignored;
-//
-//		aMsg.AddString ("server", serverName.String());
-//		aMsg.AddString ("nick", theNick.String());
-//		aMsg.AddString ("address", addy.String());
-//
-//		be_app_messenger.SendMessage (&aMsg, &reply);
-//		reply.FindBool ("ignored", &ignored);
-//
-//		if (ignored) return true;
-
-		BString theNotice = RestOfString(data, 4);
-
-		theNotice.RemoveFirst(":");
-
-		if (theNotice[0] == '\1')
+		
+		BString tempString;
+		
+		firstWord.RemoveFirst (":");
+		
+		if (firstWord.ICompare (serverHostName) == 0)
 		{
-			ParseCTCPResponse (theNick, theNotice);
+			const char *expansions[2];
+			expansions[0] = serverHostName.String();
+			expansions[1] = theNotice.String();
+			tempString = ExpandKeyed (events[E_SNOTICE].String(), "NR", expansions);
+			Display (tempString.String(), &noticeColor, 0, true);
+
 			return true;
 		}
+		else
+		{
+			BString theNick (GetNick (data)),
+				ident (GetIdent (data)),
+				address (GetAddress (data)),
+				addy;
+	
+			addy << theNick << "@" << address;
 
-		const char *expansions[4];
-		BString tempString;
+	//		BMessage aMsg (M_IS_IGNORED), reply;
+	//		bool ignored;
+	//
+	//		aMsg.AddString ("server", serverName.String());
+	//		aMsg.AddString ("nick", theNick.String());
+	//		aMsg.AddString ("address", addy.String());
+	//
+	//		be_app_messenger.SendMessage (&aMsg, &reply);
+	//		reply.FindBool ("ignored", &ignored);
+	//
+	//		if (ignored) return true;
 
-		expansions[0] = theNick.String();
-		expansions[1] = theNotice.String();
-		expansions[2] = ident.String();
-		expansions[3] = address.String();
-
-		tempString = ExpandKeyed (events[E_UNOTICE].String(), "NRIA", expansions);
-		BMessage display (M_DISPLAY);
-		PackDisplay (&display, tempString.String(), &noticeColor, 0, true);
-		PostActive (&display);
-		return true;
+			if (theNotice[0] == '\1')
+			{
+				ParseCTCPResponse (theNick, theNotice);
+				return true;
+			}
+	
+			const char *expansions[4];
+	
+			expansions[0] = theNick.String();
+			expansions[1] = theNotice.String();
+			expansions[2] = ident.String();
+			expansions[3] = address.String();
+	
+			tempString = ExpandKeyed (events[E_UNOTICE].String(), "NRIA", expansions);
+			BMessage display (M_DISPLAY);
+			PackDisplay (&display, tempString.String(), &noticeColor, 0, true);
+			PostActive (&display);
+			return true;
+		}
 	}
 
 	if (secondWord == "JOIN")
@@ -205,7 +206,7 @@ ServerAgent::ParseEvents (const char *data)
       					channel.String(),
       					//const_cast<long int>(sid),
       					sid,
-      					serverName.String(),
+      					serverHostName.String(),
       					myNick.String(),
       					sMsgr,
       					*vision_app->pClientWin()->AgentRect()),

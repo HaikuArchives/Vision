@@ -126,6 +126,8 @@ class ServerAgent : public ClientAgent
 									noticeColor,
 									wallColor;
 	BString						*events;
+	
+	BString                     serverHostName;
 //	uint32						localAddress;
 	
 	

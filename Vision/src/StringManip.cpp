@@ -249,7 +249,35 @@ RelToAbsPath (const char *append_)
   path.GetParent (&path);
   path.Append (append_);
   
-  printf (":: %s\n", path.Path());
-  
   return path.Path();  
+}
+
+BString
+GetWordColon (const char *cData, int32 wordNeeded)
+{
+  BString data (cData);
+  BString buffer ("-9z99");
+  int32 wordAt (1), place (0);
+
+  while (wordAt != wordNeeded && place != B_ERROR)
+  {
+    if ((place = data.FindFirst (':', place)) != B_ERROR)
+      if (++place < data.Length()
+      &&  data[place] != ':')
+        ++wordAt;
+  }
+
+  if (wordAt == wordNeeded
+  &&  place != B_ERROR
+  &&  place < data.Length())
+  {
+    int32 end (data.FindFirst (':', place));
+
+    if (end == B_ERROR)
+      end = data.Length();
+
+    data.CopyInto (buffer, place, end - place);
+  }
+
+  return buffer;
 }

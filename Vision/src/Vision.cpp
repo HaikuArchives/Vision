@@ -139,7 +139,7 @@ VisionApp::VisionApp (void)
 	events[E_QUIT]							= "*** $N ($I@$A) has quit IRC ($R)";
 	events[E_KICK]							= "*** $N has been kicked from $C by $n ($R)";
 	events[E_TOPIC]							= "*** $C Topic changed by $N: $T";
-	events[E_SNOTICE]						= "$R";
+	events[E_SNOTICE]						= "-$N- $R";
 	events[E_UNOTICE]						= "-$N- $R";
 	events[E_NOTIFY_ON]						= "*** $N has joined IRC.";
 	events[E_NOTIFY_OFF]					= "*** $N has left IRC.";
