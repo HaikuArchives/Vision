@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.2-0714]
+[0.9.2-0715]
          * fixed name item color drawing
          * fixed logging bug (if a user changed nicks, subsequent log lines sent by that user in a query would get lost)
          * fixed sweep selection in names list (was broken in some cases)
@@ -9,6 +9,7 @@ http://vision.sourceforge.net
          * added option to disable private ip/firewall check (prefs, DCC) to deal with broken NATs that manually mangle the dcc send string
          * added parsing for numeric 320
          * drag-and-dropping a file onto a nickname in a channel's nick list now initiates a dcc send
+         * notify blinkers now stay lit until user clicks server agent
 
 [0.9.1-0711]
          * added dcc chat option to notify context menu

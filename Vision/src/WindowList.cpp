@@ -281,6 +281,9 @@ WindowList::SelectionChanged (void)
       if (myItem->OutlineLevel() > 0)
         myItem = dynamic_cast<WindowListItem *>(Superitem(myItem));
       Activate (currentIndex);
+      
+      // reset blink state box
+      myItem->SetBlinkState(-1);
 
       if (fLastSelected != NULL)
       {
@@ -931,24 +934,34 @@ WindowListItem::SetNotifyBlinker(int32 state)
   fBlinkStateCount = 0;
   fBlinkState = 0;
   fBlinker = new BMessageRunner (BMessenger(vision_app->pClientWin()->pWindowList()),
-                                         msg, 300000, 6);
+                                         msg, 300000, 5);
 }
 
 void
 WindowListItem::SetBlinkState(int32 state)
 {
-  fBlinkStateCount++;
+  if (state < 0)
+  {
+    // reset item
+    fBlinkStateCount = 0;
+    fBlinkState = 0;
+  }
+  else
+  {
+    fBlinkStateCount++;
+    fBlinkState = state;
+  }
   vision_app->pClientWin()->Lock();
-  fBlinkState = state;
   int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
   vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
   vision_app->pClientWin()->Unlock();
-  if (fBlinkStateCount == 6)
+  if (fBlinkStateCount == 5)
   {
     fBlinkStateCount = 0;
     delete fBlinker;
     fBlinker = NULL;
   }
+  
 }
 
 //////////////////////////////////////////////////////////////////////////////

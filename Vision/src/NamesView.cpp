@@ -24,6 +24,7 @@
  *                 Seth Flaxman
  */
 
+#include <Directory.h>
 #include <Entry.h>
 #include <PopUpMenu.h>
 #include <MenuItem.h>
@@ -292,9 +293,16 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *dragM
 {
  if ((dragMessage != NULL) && (dragMessage->HasRef("refs")))
  {
-   int32 nameIndex (IndexOf(myPoint));
-   if (nameIndex >= 0)
-     Select(nameIndex);
+   // make sure the ref isn't a dir
+   entry_ref ref;
+   dragMessage->FindRef("refs", &ref);
+   BDirectory dir (&ref);
+   if (dir.InitCheck() != B_OK)
+   {
+     int32 nameIndex (IndexOf(myPoint));
+     if (nameIndex >= 0)
+       Select(nameIndex);
+   }
  }
  else if (fTracking)
  {
@@ -414,6 +422,10 @@ NamesView::MessageReceived (BMessage *msg)
         // TODO: maybe implement queueing of multiple sends next time
         entry_ref ref;
         msg->FindRef("refs", &ref);
+        BDirectory dir (&ref);
+        // don't try to dcc send a dir
+        if (dir.InitCheck() == B_OK)
+          break;
         int32 idx (CurrentSelection());
         if (idx >= 0)
         {
