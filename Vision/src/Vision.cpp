@@ -299,6 +299,13 @@ VisionApp::LoadDefaults (int32 section)
 
         if (!visionSettings->HasBool ("timestamp"))
           visionSettings->AddBool ("timestamp", false);
+        
+        if (!visionSettings->HasBool ("log_enabled"))
+          visionSettings->AddBool ("log_enabled", false);
+
+        if (!visionSettings->HasBool ("log_filetimestamp"))
+          visionSettings->AddBool ("log_filetimestamp", false);
+          
       }
       break;
     
