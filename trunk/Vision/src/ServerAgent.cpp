@@ -1118,7 +1118,6 @@ ServerAgent::MessageReceived (BMessage *msg)
       
     case M_NOT_CONNECTING:
       fIsConnecting = false;
-      fIsConnected = false;
       break;
      
     case M_CONNECTED:
@@ -1360,6 +1359,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         // let the user know
         if (fIsConnected)
         {
+          fIsConnected = false;
           BString sAnnounce;
           sAnnounce += S_SERVER_DISCONNECT;
           sAnnounce += fServerName;
@@ -1369,8 +1369,6 @@ ServerAgent::MessageReceived (BMessage *msg)
           if (agent && (agent != this))
             agent->Display (sAnnounce.String(), C_ERROR, C_BACKGROUND, F_SERVER);
         }
-			
-        fIsConnected = false;
        
         fMyLag = S_SERVER_DISCON_STATUS;
         fMsgr.SendMessage (M_LAG_CHANGED);

@@ -264,6 +264,8 @@ WindowList::KeyDown (const char *, int32)
 void
 WindowList::SelectionChanged (void)
 {
+  // TODO: find bug with switching up and down repeatedly
+  
   int32 currentIndex (CurrentSelection());
   if (currentIndex >= 0) // dont bother casting unless somethings selected
   {
@@ -822,6 +824,12 @@ WindowListItem::WindowListItem (
 
 }
 
+WindowListItem::~WindowListItem (void)
+{
+  if (fBlinker)
+    delete fBlinker;
+}
+
 BString
 WindowListItem::Name (void) const
 {
@@ -980,6 +988,10 @@ WindowListItem::SetNotifyBlinker(int32 state)
   BMessage *msg (new BMessage (M_WINLIST_NOTIFY_BLINKER));
   msg->AddPointer ("source", this);
   msg->AddInt32 ("state", state);
+  if (fBlinker)
+    delete fBlinker;
+  fBlinkStateCount = 0;
+  fBlinkState = 0;
   fBlinker = new BMessageRunner (BMessenger(vision_app->pClientWin()->pWindowList()),
                                          msg, 300000, 6);
 }

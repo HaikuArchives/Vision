@@ -46,6 +46,7 @@ class WindowListItem : public BListItem
                                                     int32,
                                                     int32,
                                                     BView *);
+    virtual                         ~WindowListItem (void);
     BString                         Name (void) const;
     int32                           Type (void) const;
     int32                           Status (void) const;
