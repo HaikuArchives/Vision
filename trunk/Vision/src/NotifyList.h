@@ -60,7 +60,7 @@ class NotifyListItem : public BStringItem
     NotifyListItem (const NotifyListItem &);
     virtual ~NotifyListItem (void);
     void SetState (bool);
-    bool GetState (void);
+    bool GetState (void) const;
     
     virtual void DrawItem (BView *, BRect, bool);
   
