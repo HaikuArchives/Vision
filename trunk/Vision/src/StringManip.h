@@ -16,7 +16,7 @@
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
  * 
- * Contributor(s): Wade Majors <guru@startrek.com>
+ * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Todd Lair
  *                 Andrew Bazan
  */
