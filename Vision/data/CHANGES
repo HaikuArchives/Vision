@@ -18,6 +18,9 @@ http://vision.sourceforge.net
          * added Connect... submenu to main window
          * fixed some major resize-related bugs...should be much faster at resizing the
            window and names list now
+         * added nick reordering buttons (thanks to Alan Ellis for the TSpeedButton
+           class and bitmaps) -- currently incomplete, buttons do not actually do
+           anything yet 
 
 [0.5-1103]
          * added option to disable the spam flood dialog (thanks to Alan Ellis)

@@ -1,3 +1,4 @@
+#include <Bitmap.h>
 #include <Box.h>
 #include <Button.h>
 #include <CheckBox.h>
@@ -11,12 +12,14 @@
 #include <SupportDefs.h>
 #include <TextControl.h>
 #include <TextView.h>
+#include <TranslationUtils.h>
 
 #include <stdio.h>
 
 #include "NetworkPrefsView.h"
 #include "NetworkWindow.h"
 #include "Prompt.h"
+#include "SpeedButton.h"
 #include "Vision.h"
 
 const uint32 M_NETWORK_DEFAULTS = 'mnnd';
@@ -30,6 +33,9 @@ const uint32 M_CONNECT_ON_STARTUP = 'mncs';
 const uint32 M_REMOVE_NICK = 'mnrn';
 const uint32 M_ADD_NICK = 'mnai';
 const uint32 M_NICK_ADDED = 'mnna';
+const uint32 M_NICK_UP = 'mnup';
+const uint32 M_NICK_DOWN = 'mndn';
+const uint32 M_NICK_SELECTED = 'mnns';
 const uint32 M_USE_NICK_DEFAULTS = 'mnun';
 
 NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
@@ -125,6 +131,7 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	stringView5->MoveTo (alternates->Frame().left, alternates->Frame().top);
 	personalBox->AddChild (stringView5);
 	listView = new BListView (scrollView->Frame(), NULL);
+	listView->SetSelectionMessage (new BMessage (M_NICK_SELECTED));
 	listView->ResizeBy (-B_V_SCROLL_BAR_WIDTH, -10.0);
 	listView->MoveTo (listView->Frame().left, stringView5->Frame().bottom + 5);
 	BScrollView *listScroll (new BScrollView (NULL, listView, B_FOLLOW_LEFT | B_FOLLOW_TOP,
@@ -140,6 +147,18 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	nickAddButton->MoveTo (nickRemoveButton->Frame().left - (nickAddButton->Frame().Width() + 5),
 		nickRemoveButton->Frame().top);
 	personalBox->AddChild (nickAddButton);
+	BBitmap *bmp (BTranslationUtils::GetBitmap ('bits', "UpArrow"));
+    boundsRect = bmp->Bounds();
+    nickUpButton = new TSpeedButton (boundsRect, NULL, NULL, new BMessage (M_NICK_UP), bmp);
+	nickUpButton->MoveTo (listScroll->Frame().left, nickAddButton->Frame().top);
+	personalBox->AddChild (nickUpButton);
+	delete bmp;
+    bmp = BTranslationUtils::GetBitmap ('bits', "DownArrow");
+    boundsRect = bmp->Bounds();
+    nickDnButton = new TSpeedButton (boundsRect, NULL, NULL, new BMessage (M_NICK_DOWN), bmp);
+	nickDnButton->MoveTo (nickUpButton->Frame().left, nickUpButton->Frame().bottom);
+	personalBox->AddChild (nickDnButton);
+	delete bmp;          		
 	ident = new BTextControl (listScroll->Frame(), NULL, "Ident: ", NULL, NULL);
 	realName = new BTextControl (listScroll->Frame(), NULL, "Real name: ", NULL, NULL);
 	realName->ResizeTo (listScroll->Frame().Width(), realName->Frame().Height());
@@ -175,6 +194,13 @@ NetworkPrefsView::AttachedToWindow (void)
 	nickAddButton->SetTarget (this);
 	nickRemoveButton->SetTarget (this);
 	realName->SetTarget (this);
+	listView->SetTarget (this);
+	nickUpButton->SetTarget (this);
+	nickDnButton->SetTarget (this);
+	nickUpButton->SetEnabled (false);
+	nickDnButton->SetEnabled (false);
+	nickRemoveButton->SetEnabled (false);
+	execButton->SetEnabled (false);
 	ident->SetTarget (this);
 	dynamic_cast<BInvoker *>(networkMenu->Menu()->ItemAt(0))->Invoke();
 	BuildNetworkList();
@@ -296,7 +322,6 @@ NetworkPrefsView::UpdatePersonalData (BMessage &msg)
 		ident->SetEnabled (true);
 		realName->SetEnabled (true);
 		nickAddButton->SetEnabled (true);
-		nickRemoveButton->SetEnabled (true);
 		nickDefaultsBox->SetValue (B_CONTROL_OFF);
 	}
 
@@ -556,8 +581,6 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 				}
 				activeNetwork.AddString ("nick", nick.String());
 				listView->AddItem (new BStringItem (nick.String()));
-				if (!nickRemoveButton->IsEnabled())
-					nickRemoveButton->SetEnabled (true);
 			}
 			else
 			{
@@ -576,9 +599,33 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 					activeNetwork.RemoveData ("nick", current);
 				}
 			}
-			if (listView->CountItems() == 0)
-				nickRemoveButton->SetEnabled (false);
-			break;
+ 			break;
+		
+		case M_NICK_UP:
+		    printf("Nick up!\n");
+		    break;
+
+		case M_NICK_DOWN:
+		    printf("Nick down!\n");
+		    break;
+		
+		case M_NICK_SELECTED:
+		    {
+		      int32 index (msg->FindInt32 ("index"));
+		      if (index >= 0)
+		      {
+                nickUpButton->SetEnabled (index > 0);
+                nickDnButton->SetEnabled (index != (listView->CountItems() - 1));
+                nickRemoveButton->SetEnabled (true);
+              }
+              else
+              {
+                nickUpButton->SetEnabled (false);
+                nickDnButton->SetEnabled (false);
+                nickRemoveButton->SetEnabled (false);
+              }
+		    }
+		    break;
 		
 		default:
 			BView::MessageReceived (msg);

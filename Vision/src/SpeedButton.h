@@ -22,7 +22,7 @@ class BBitmap;
 #include <be/interface/Rect.h>
 
 // How many pixels around the edge we need for comfort.
-#define EDGE_SPACE 1
+#define EDGE_SPACE 0
 
 
 enum TSBStyle
