@@ -218,7 +218,7 @@ DCCFileFilter::Filter (BMessage *msg, BHandler **)
 
 		case B_QUIT_REQUESTED:
 		{
-			printf ("Panel Quit Requested\n");
+			//printf ("Panel Quit Requested\n");
 			break;
 		}
 	}
@@ -230,10 +230,10 @@ filter_result
 DCCFileFilter::HandleButton (BMessage *)
 {
 	filter_result result (B_DISPATCH_MESSAGE);
-	VTextControl *text (dynamic_cast<VTextControl *>(
+	BTextControl *paneltext (dynamic_cast<BTextControl *>(
 		panel->Window()->FindView ("text view")));
-
-	if (text)
+    
+	if (paneltext)
 	{
 		BDirectory dir;
 		struct stat s;
@@ -244,7 +244,7 @@ DCCFileFilter::HandleButton (BMessage *)
 
 		dir.SetTo (&ref);
 		
-		if (entry.SetTo (&dir, text->Text()) == B_NO_ERROR
+		if (entry.SetTo (&dir, paneltext->Text()) == B_NO_ERROR
 		&&  entry.GetStat (&s)               == B_NO_ERROR
 		&&  S_ISREG (s.st_mode))
 		{
@@ -279,7 +279,7 @@ DCCFileFilter::HandleButton (BMessage *)
 filter_result
 DCCFileFilter::HandleAlert (BMessage *msg)
 {
-	VTextControl *text (dynamic_cast<VTextControl *>(
+	BTextControl *text (dynamic_cast<BTextControl *>(
 		panel->Window()->FindView ("text view")));
 	int32 which;
 
