@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.6.2-1125]
+         * fixed bug where messages would get directed incorrectly if the nickname
+           was identical to the network name
+
 [0.6.1-1123]
          * fixed a few network prefs interface bugs
          * fixed a bug where the lag meter would go haywire

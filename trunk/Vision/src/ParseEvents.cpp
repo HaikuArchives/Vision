@@ -76,22 +76,22 @@ ServerAgent::ParseEvents (const char *data)
     {
       BString msgident (GetIdent (data)),
               msgaddress (GetAddress (data));
+      
+      client = new MessageAgent (
+        *vision_app->pClientWin()->AgentRect(),
+        theNick.String(),
+        sid,
+        id.String(),
+        sMsgr,
+        myNick.String(),
+        addy.String()),
 
-      vision_app->pClientWin()->pWindowList()->AddAgent (
-        new MessageAgent (
-          *vision_app->pClientWin()->AgentRect(),
-          theNick.String(),
-          sid,
-          id.String(),
-          sMsgr,
-          myNick.String(),
-          addy.String()),
+      vision_app->pClientWin()->pWindowList()->AddAgent (client,
         sid,
         theNick.String(),
         WIN_MESSAGE_TYPE,
         false);
 
-      client = (vision_app->pClientWin()->pWindowList()->Agent (sid, theNick.String()));
       clients.AddItem (client);
     }
 
