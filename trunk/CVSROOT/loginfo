@@ -24,5 +24,4 @@
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
-
-vlc $CVSROOT/CVSROOT/loginfo.pl vision-list@lists.sourceforge.net vision-list@lists.sourceforge.net "CVS Commit" %{}
+Vision $CVSROOT/CVSROOT/loginfo.pl vision-list@lists.sourceforge.net vision-list@lists.sourceforge.net "CVS Commit: Vision" %{}
