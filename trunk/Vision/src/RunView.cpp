@@ -699,12 +699,16 @@ RunView::MouseDown (BPoint point)
 			
 		if (WasDoubleClick (point))
 		{
-			// select word
-			lines[s.line]->SelectWord (&start.offset, &end.offset);
-		
-			Select (start, end);
+			if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
+			&& (point.y <= lines[s.line]->bottom))
+			{
+				// select word
+				lines[s.line]->SelectWord (&start.offset, &end.offset);
+			
+				Select (start, end);
+			}
 		}
-		else if (clicks == 3)
+		else if ((clicks % 3) == 0)
 		{
 			start.offset = 0;
 			end.offset = lines[s.line]->length;
@@ -714,10 +718,11 @@ RunView::MouseDown (BPoint point)
 		{
 			SetMouseEventMask (B_POINTER_EVENTS);
 			tracking = 1;
-			if ((s.line < sp_start.line)
-				|| (s.line == sp_start.line && s.offset < sp_start.offset)
-			  	|| (s.line > sp_end.line)
-			  	|| (s.line == sp_end.line && s.offset > sp_end.offset))
+			if ((point.y < lines[sp_start.line]->top)
+				|| (s.line == sp_start.line && point.x < lines[sp_start.line]->edges[sp_start.offset])
+			  	|| (point.y > lines[sp_end.line]->bottom)
+			  	|| (s.line == sp_end.line && point.x > lines[sp_end.line]->edges[sp_end.offset])
+			  	|| (point.x > lines[s.line]->edges[s.offset]))
 			  	Select (s,s);
 			track_offset = s;
 		}
