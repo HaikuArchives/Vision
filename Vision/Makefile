@@ -95,7 +95,9 @@ else
 LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(BONE_LIBS) -nodefaultlibs
 endif
 
-DEP := g++ -MM -DBEOS_BUILD
+DEP := gcc -MM -DBEOS_BUILD
+# create the dep dir.
+MAKEDEP := $(shell mkdir -p $(DEPDIR))
 
 ZIP := zip -r -9 -y
 
@@ -161,7 +163,6 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 
 $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
 	@echo generating dependencies for $<
-	@mkdir -p $(DEPDIR)
 	@echo $@ $(shell $(DEP) $<) > $(TEMPDEPFILE)
 	@echo $(basename $(@F))".o : $(MAKEFILE)" | cat - $(TEMPDEPFILE) > $@
 
@@ -197,7 +198,7 @@ endif
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),depend)
 ifneq ($(MAKECMDGOALS),sourcearchive)
-include $(DEPENDS)
+-include $(DEPENDS)
 endif
 endif
 endif
