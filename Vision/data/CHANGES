@@ -7,6 +7,7 @@ http://vision.sourceforge.net
          * servers also no longer grab focus
          * properly parses numerics 367 and 368
          * fixed multline paste when not using warning dialog
+         * cleaned up some visual artifacts
 
 [0.8.5-0418]
          * fixed incorrect behavior with spam paste dialog 
