@@ -63,7 +63,8 @@ ServerAgent::ServerAgent (
     id_,
     vision_app->GetString ("nickname1"),
     frame_),
-    
+    localip (""),
+    localip_private (false),
     lnick1 (vision_app->GetString ("nickname1")),
     lnick2 (vision_app->GetString ("nickname2")),
     lport (port),
@@ -309,7 +310,7 @@ ServerAgent::Establish (void *arg)
     }
 
     server->PrivateIPCheck();
-    if (server->localip_private)
+    if (server->localip_private == true)
     {
       server->PackDisplay (&statMsg, "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)\n", &(server->errorColor));
       sMsgrE->SendMessage (&statMsg);  
@@ -803,6 +804,8 @@ ServerAgent::PrivateIPCheck (void)
      }
      return;
    }
+
+  // if we got this far, its a public IP address
    
 }
 
