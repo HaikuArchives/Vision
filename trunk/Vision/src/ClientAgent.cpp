@@ -154,7 +154,15 @@ ClientAgent::Show (void)
   statusMsg.AddInt32 ("status", WIN_NORMAL_BIT);
   statusMsg.AddBool ("hidden", false);
   Window()->PostMessage (&statusMsg);
-
+  
+  const BRect *agentRect (((ClientWindow *)Window())->AgentRect());
+  
+  if (*agentRect != Frame())
+  {
+    ResizeTo (agentRect->Width(), agentRect->Height());
+    MoveTo (agentRect->left, agentRect->top);
+  }
+  
   BView::Show();
 }
 

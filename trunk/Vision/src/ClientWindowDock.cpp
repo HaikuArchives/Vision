@@ -38,7 +38,7 @@ ClientWindowDock::ClientWindowDock (BRect frame)
   : BView (
     frame,
     "agentDock",
-    B_FOLLOW_ALL,
+    B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM,
     B_WILL_DRAW | B_FRAME_EVENTS)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
@@ -105,7 +105,7 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   headerFrame.top = 1;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
-  aHeader = new AgentDockHeader (headerFrame, "Window List", B_FOLLOW_LEFT_RIGHT);
+  aHeader = new AgentDockHeader (headerFrame, "Window List", B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
   AddChild (aHeader);
    
   frame.top = frame.top + headerFrame.Height() + 4;  // make room for header
@@ -161,7 +161,7 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   headerFrame.top = 0;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
-  aHeader = new AgentDockHeader (headerFrame, "Notify List", B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
+  aHeader = new AgentDockHeader (headerFrame, "Notify List", B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
   AddChild (aHeader);
 }
 
