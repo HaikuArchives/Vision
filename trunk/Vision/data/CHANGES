@@ -2,6 +2,12 @@ Vision
 http://vision.sourceforge.net
 
 [0.1.0409]
+ 2001-04-10
+   * Fix an issue where joining multiple channels quickly would cause NickList sorting
+     issues (/join #chan1,#chan2 for example). This a couple other theoretical cases,
+     too.
+   * Change the default action color to purple. Who picked red variations for just
+     about every event anyway!? This makes it easier to see actions among quits
  2001-04-09
    * Shift+Enter won't select the input controls text anymore, it will function
      like a normal Enter keypress.
