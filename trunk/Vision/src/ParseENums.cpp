@@ -672,6 +672,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           const char *sNick (nick.String());
           bool op (false),
                voice (false),
+               helper (false),
 	           ignored;
 
           if (nick[0] == '@')
@@ -683,6 +684,11 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           {
             ++sNick;
             voice = true;
+          }
+          else if (nick[0] == '%')
+          {
+            ++sNick;
+            helper = true;
           }
 
           ignored = false;
@@ -696,6 +702,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           msg.AddString ("nick", nick.String());
           msg.AddBool ("op", op);
           msg.AddBool ("voice", voice);
+          msg.AddBool ("helper", helper);
           msg.AddBool ("ignored", ignored);
           ++place;
         }

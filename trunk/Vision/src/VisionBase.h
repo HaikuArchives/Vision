@@ -44,20 +44,21 @@
 #define C_KICK											13
 #define C_WHOIS											14
 #define C_OP											15
-#define C_VOICE											16
-#define C_CTCP_REQ										17
-#define C_CTCP_RPY										18
-#define C_IGNORE										19
-#define C_INPUT_BACKGROUND								20
-#define C_INPUT											21
-#define C_WINLIST_BACKGROUND                            22
-#define C_WINLIST_TEXT                                  23
-#define C_WINLIST_NEWS                                  24
-#define C_WINLIST_NICK                                  25
-#define C_WINLIST_SELECTION                             26
-#define C_NAMES_SELECTION                               27
+#define C_HELPER										16
+#define C_VOICE											17
+#define C_CTCP_REQ										18
+#define C_CTCP_RPY										19
+#define C_IGNORE										20
+#define C_INPUT_BACKGROUND								21
+#define C_INPUT											22
+#define C_WINLIST_BACKGROUND                            23
+#define C_WINLIST_TEXT                                  24
+#define C_WINLIST_NEWS                                  25
+#define C_WINLIST_NICK                                  26
+#define C_WINLIST_SELECTION                             27
+#define C_NAMES_SELECTION                               28
 
-#define MAX_COLORS										28
+#define MAX_COLORS										29
 
 
 #define F_TEXT												0
@@ -94,11 +95,11 @@
 
 
 // tells the NamesView how to color the nicks
-#define STATUS_NORMAL_BIT                               0x0001
+#define STATUS_OP_BIT                                   0x0001
 #define STATUS_VOICE_BIT                                0x0002
 #define STATUS_HELPER_BIT                               0x0004
-#define STATUS_OP_BIT                                   0x0008
-#define STATUS_IGNORE_BIT                               0x0100
+#define STATUS_NORMAL_BIT                               0x0008
+#define STATUS_IGNORE_BIT                               0x0010
 
 
 // tells the WindowList how to color the WindowListItem

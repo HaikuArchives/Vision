@@ -125,11 +125,11 @@ ChannelAgent::FindPosition (const char *data)
 		NameItem *item ((NameItem *)(namesList->ItemAt (i)));
 		BString nick (item->Name());
 
-		if ((nick[0] == '@' || nick[0] == '+')
+		if ((nick[0] == '@' || nick[0] == '+' || nick[0] == '%')
 		&&  *data != nick[0])
 			nick.Remove (0, 1);
 
-		if ((*data == '@' || *data == '+')
+		if ((*data == '@' || *data == '+' || *data == '%')
 		&&   nick[0] != *data)
 			++data;
 
@@ -367,11 +367,12 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			for (i = 0; msg->HasString ("nick", i); ++i)
 			{
 				const char *nick;
-				bool op, voice, ignored;
+				bool op, voice, helper, ignored;
 
 				msg->FindString ("nick", i, &nick);
 				msg->FindBool ("op", i, &op);
 				msg->FindBool ("voice", i, &voice);
+				msg->FindBool ("helper", i, &helper);
 				msg->FindBool ("ignored", i, &ignored);
 
 				if (FindPosition (nick) < 0)
@@ -389,6 +390,11 @@ ChannelAgent::MessageReceived (BMessage *msg)
 					{
 						++nick;
 						iStatus |= STATUS_VOICE_BIT;
+					}
+					else if (helper)
+					{
+						++nick;
+						iStatus |= STATUS_HELPER_BIT;
 					}
 					else
 						iStatus |= STATUS_NORMAL_BIT;
@@ -936,7 +942,8 @@ ChannelAgent::ModeEvent (BMessage *msg)
 		char theModifier (mode[modPos]);
 
 		if (theModifier == 'o'
-		||  theModifier == 'v')
+		||  theModifier == 'v'
+		||  theModifier == 'h')
 		{
 			BString myTarget (GetWord (target, targetPos++));
 			NameItem *item;
@@ -1000,6 +1007,22 @@ ChannelAgent::ModeEvent (BMessage *msg)
 				if ((iStatus & STATUS_OP_BIT) == 0)
 					iStatus |= STATUS_NORMAL_BIT;
 				item->SetStatus (iStatus);
+			}
+			
+			if (theOperator == '+' && theModifier == 'h')
+			{
+			   hit = true;
+			   
+			   item->SetStatus ((iStatus & ~STATUS_NORMAL_BIT) | STATUS_HELPER_BIT);
+			}
+			else if (theModifier == 'h')
+			{
+			   hit = true;
+			   
+			   iStatus &= ~STATUS_HELPER_BIT;
+			   if ((iStatus & STATUS_HELPER_BIT) == 0)
+			       iStatus |= STATUS_NORMAL_BIT;
+			   item->SetStatus (iStatus);
 			}
 		}
 

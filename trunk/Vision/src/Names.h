@@ -86,6 +86,7 @@ class NamesView : public BListView
 
 	rgb_color						opColor,
 										voiceColor,
+										helperColor,
 										textColor,
 										ignoreColor,
 										bgColor;

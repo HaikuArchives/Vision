@@ -111,6 +111,7 @@ VisionApp::VisionApp (void)
 	colors[C_KICK]                      = KICK_COLOR;
 	colors[C_WHOIS]                     = WHOIS_COLOR;
 	colors[C_OP]                        = OP_COLOR;
+	colors[C_HELPER]					 = OP_COLOR;
 	colors[C_VOICE]                     = VOICE_COLOR;
 	colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
 	colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;

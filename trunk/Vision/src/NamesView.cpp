@@ -44,6 +44,7 @@ NamesView::NamesView(BRect frame)
   textColor   = vision_app->GetColor (C_NAMES);
   opColor     = vision_app->GetColor (C_OP);
   voiceColor  = vision_app->GetColor (C_VOICE);
+  helperColor = vision_app->GetColor (C_HELPER);
   bgColor     = vision_app->GetColor (C_NAMES_BACKGROUND);
   ignoreColor = vision_app->GetColor (C_IGNORE);
 
@@ -356,6 +357,20 @@ NamesView::SetColor (int32 which, rgb_color color)
       }
       break;
     }
+    
+    case C_HELPER:
+    {
+     helperColor = color;
+     
+     for (i = 0; i < CountItems(); ++i)
+     {
+       NameItem *item((NameItem *)ItemAt (i));
+       
+       if ((item->Status() & STATUS_HELPER_BIT) != 0)
+         InvalidateItem (i);
+     }
+     break;
+    }
 
     case C_NAMES:
     {
@@ -365,7 +380,7 @@ NamesView::SetColor (int32 which, rgb_color color)
       {
         NameItem *item ((NameItem *)ItemAt (i));
 
-        if ((item->Status() & (STATUS_VOICE_BIT | STATUS_OP_BIT)) == 0)
+        if ((item->Status() & (STATUS_VOICE_BIT | STATUS_HELPER_BIT | STATUS_OP_BIT)) == 0)
           InvalidateItem (i);
       }
       break;
@@ -405,6 +420,9 @@ NamesView::GetColor (int32 which) const
   if (which == C_VOICE)
     color = voiceColor;
 
+  if (which == C_HELPER)
+    color = helperColor;
+    
   if (which == C_NAMES_BACKGROUND)
     color = bgColor;
 
