@@ -84,7 +84,7 @@ VisionApp::VisionApp (void)
   const rgb_color myBlack             = {0,0,0, 255};
   const rgb_color myWhite             = {255, 255, 255, 255};
   const rgb_color NOTICE_COLOR        = {10,90,170, 255};
-  const rgb_color ACTION_COLOR        = {111,0,111, 255};
+  const rgb_color ACTION_COLOR        = {128,0,128, 255};
   const rgb_color QUIT_COLOR          = {180,10,10, 255};
   const rgb_color ERROR_COLOR         = {210,5,5, 255};
   const rgb_color URL_COLOR	          = {5,5,150, 255};
