@@ -59,7 +59,7 @@ class NameItem : public BListItem
 
 class NamesView : public BListView
 {
-	public:
+  public:
 
 										NamesView (BRect frame);
 	virtual							~NamesView (void);
@@ -74,6 +74,7 @@ class NamesView : public BListView
 	
 	private:
 
+    bool                            _tracking;
 
 	BPopUpMenu						*myPopUp;
 	BMenu 							*CTCPPopUp;
