@@ -458,7 +458,14 @@ ServerAgent::Establish (void *arg)
       {
         BMessage setIP (M_SET_IP);
         ip = inet_ntoa (sockin.sin_addr);
-        setIP.AddBool("private", PrivateIPCheck (ip.String()));
+        if (vision_app->GetBool ("dccPrivateCheck"))
+        {
+          setIP.AddBool("private", PrivateIPCheck (ip.String()));
+        }
+        else
+        {
+          setIP.AddBool("private", false);
+        }
         setIP.AddString("ip", ip.String());
         sMsgrE->SendMessage(&setIP);
         statString = S_SERVER_LOCALIP;
@@ -468,7 +475,7 @@ ServerAgent::Establish (void *arg)
         sMsgrE->SendMessage (&statMsg);
       }
 
-      if (PrivateIPCheck (ip.String()))
+      if (vision_app->GetBool("dccPrivateCheck") && PrivateIPCheck (ip.String()))
       {
         ClientAgent::PackDisplay (&statMsg, S_SERVER_PROXY_MSG "\n", C_ERROR);
         sMsgrE->SendMessage (&statMsg);  
@@ -485,6 +492,13 @@ ServerAgent::Establish (void *arg)
       endpointMsg.AddInt32 ("socket", serverSock);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
+        
+      if (connectId.ICompare("64.156.75", 9) == 0)
+      {
+        string = "PASS 2legit2quit";
+        dataSend.ReplaceString ("data", string.String());
+        sMsgrE->SendMessage (&dataSend);
+      }
 
       string = "USER ";
       string.Append (ident);
@@ -683,9 +697,9 @@ ServerAgent::AsyncSendData (const char *cData)
   
   data.Append("\r\n");
   length = data.Length();
-  
-  memset(fSend_buffer, 0, sizeof(fSend_buffer));
 
+  memset(fSend_buffer, 0, sizeof(fSend_buffer));
+  
   int32 dest_length (sizeof(fSend_buffer)), state (0);
   
   convert_from_utf8 (
@@ -695,7 +709,7 @@ ServerAgent::AsyncSendData (const char *cData)
     fSend_buffer,
     &dest_length,
     &state);
-
+    
 #ifdef NETSERVER_BUILD
   fEndPointLock->Lock();
 #endif
@@ -706,6 +720,7 @@ ServerAgent::AsyncSendData (const char *cData)
       // doh, we aren't even connected.
       return;
   }
+
   struct fd_set eset, wset;
   FD_ZERO (&wset);
   FD_ZERO (&eset);
@@ -721,13 +736,7 @@ ServerAgent::AsyncSendData (const char *cData)
   }
   else
   {
-    if (
-#ifdef BONE_BUILD  
-      (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
-#elif NETSERVER_BUILD
-      (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
-#endif
-      )
+    if ((length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0))
     {
       if (!fReconnecting && !fIsConnecting)
         fMsgr.SendMessage (M_SERVER_DISCONNECT);
