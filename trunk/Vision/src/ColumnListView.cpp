@@ -489,14 +489,24 @@ BRow::ValidateFields() const
 void 
 BRow::ValidateField(const BField *field, int32 logicalFieldIndex) const
 {
-	BColumn* col = fList->ColumnAt(logicalFieldIndex);
+	// The Fields may be moved by the user, but the logicalFieldIndexes
+	// do not change, so we need to map them over when checking the
+	// Field types.
+	BColumn* col = NULL;
+	int32 items = fList->CountColumns();
+	for( int32 i = 0 ; i < items; ++i )
+	{
+		col = fList->ColumnAt(i);
+		if( col->LogicalFieldNum() == logicalFieldIndex )
+			break;
+	}
 	
 	if( NULL == col )
 	{
 		BString dbmessage("\n\n\tThe parent BColumnListView does not have "
 		                  "\n\ta BColumn at the logical field index ");
 		dbmessage << logicalFieldIndex << ".\n\n";
-		debugger(dbmessage.String());
+		printf(dbmessage.String());
 	}
 	else
 	{
@@ -1727,13 +1737,8 @@ void TitleView::DragSelectedColumn(BPoint position)
 	float leftEdge;
 	int32 columnIndex = FindColumn(position, &leftEdge);
 	fSelectedColumnRect.OffsetTo(leftEdge, 0);
-	if (columnIndex == -1) {
-		// User dropped on open space to right of regular titles
-		fColumns->RemoveItem((void*) fSelectedColumn);
-		fColumns->AddItem((void*) fSelectedColumn);
-	} else {
-		MoveColumn(fSelectedColumn, columnIndex);
-	}
+
+	MoveColumn(fSelectedColumn, columnIndex);
 
 	fSelectedColumn->fVisible = true;
 	ComputeDragBoundries(fSelectedColumn, position);
@@ -1753,9 +1758,16 @@ void TitleView::DragSelectedColumn(BPoint position)
 void TitleView::MoveColumn(BColumn *column, int32 index)
 {
 	fColumns->RemoveItem((void*) column);
-	fColumns->AddItem((void*) column, index);
 	
-	//column->fFieldID = index;
+	if (-1 == index)
+	{
+		// Re-add the column at the end of the list.
+		fColumns->AddItem((void*) column);
+	}
+	else
+	{ 
+		fColumns->AddItem((void*) column, index);
+	}
 }
 
 void TitleView::SetColumnFlags(column_flags flags)
