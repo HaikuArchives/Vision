@@ -715,7 +715,7 @@ ChannelItem::DrawItem (BView *owner, BRect frame, bool)
 	}
 
 	float channelWidth (listAgent->ChannelWidth());
-	BFont font;
+	BFont font (vision_app->GetClientFont (F_LISTAGENT));
 	font_height fh;
 
 	owner->SetHighColor (vision_app->GetColor(C_TEXT));
