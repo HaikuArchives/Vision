@@ -174,7 +174,8 @@ VTextControlFilter::Filter (BMessage *msg, BHandler **)
           parent->myPopUp->Go (
             parent->Parent()->ConvertToScreen (myPoint),
             true,
-            false);
+            false,
+            true);
           handled = true;
         }
       }

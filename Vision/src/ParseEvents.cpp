@@ -66,7 +66,10 @@ ServerAgent::ParseEvents (const char *data)
       return true;
     }
 
-    if (theTarget[0] == '#' || theTarget[0] == '!' || theTarget[0] == '&')
+    if (theTarget[0] == '#'
+    ||  theTarget[0] == '!'
+    ||  theTarget[0] == '&'
+    ||  theTarget[0] == '+')
       client = Client (theTarget.String());
     else if (!(client = Client (theNick.String())))
     {

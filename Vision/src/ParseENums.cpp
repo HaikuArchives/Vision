@@ -49,6 +49,8 @@ bool
 ServerAgent::ParseENums (const char *data, const char *sWord)
 {
   int num (atoi (sWord));
+  
+  printf ("num: %d\n", num);
 	
   
   switch (num)
@@ -138,8 +140,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             ircdtype = IRCD_ULTIMATE;
           else if (theMsg.FindFirst("comstud") > 0)
             ircdtype = IRCD_COMSTUD;
-          else if (theMsg.FindFirst("Fuckoff") > 0)
-            ircdtype = IRCD_FUCKOFF;
           else if (theMsg.FindFirst("u2.") > 0)
             ircdtype = IRCD_UNDERNET;
           else if (theMsg.FindFirst("PTlink") > 0)
@@ -165,12 +165,14 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         {
           case IRCD_NEWNET:
             {
+              // RPL_NNMAP
               Display (theMsg.String(), 0);          
             }
             break;
         
           default:
             {
+              // RPL_PROTOCTL              
               theMsg.Prepend ("* ");
               Display (theMsg.String(), 0);
             }

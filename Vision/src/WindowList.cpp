@@ -143,7 +143,8 @@ WindowList::MouseDown (BPoint myPoint)
         ConvertToScreen (myPoint),
         true,
         false,
-        ConvertToScreen (ItemFrame (selected)));
+        ConvertToScreen (ItemFrame (selected)),
+        true);
     }
     handled = true;
   }
@@ -205,6 +206,8 @@ WindowList::SelectionChanged (void)
 void
 WindowList::SetColor (int32 which, rgb_color color)
 {
+  // TODO: should we maybe be locking first on these invalidates?
+  
   switch (which)
   {
     case C_WINLIST_NEWS:
@@ -397,8 +400,14 @@ WindowList::Activate (int32 index)
   }
  
   // activate the input box (if it has one)
-  if ((newagent = dynamic_cast<ClientAgent *>(newagent)))
+  if ( (newagent = dynamic_cast<ClientAgent *>(newagent)) )
     reinterpret_cast<ClientAgent *>(newagent)->msgr.SendMessage (M_INPUT_FOCUS);
+
+  // set ClientWindow's title
+  BString agentid;
+  agentid += newagentitem->Name().String();
+  agentid.Append (" - Vision");
+  vision_app->pClientWin()->SetTitle (agentid.String());
   
   Select (index);
 }
@@ -547,6 +556,15 @@ WindowListItem::SetName (const char *name)
   myName = name;
   int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
   vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
+  
+  // if the agent is active, update ClientWindow's titlebar
+  if (IsSelected())
+  {
+    BString agentid (name);
+    agentid.Append (" - Vision");
+    vision_app->pClientWin()->SetTitle (agentid.String());
+  }
+    
   vision_app->pClientWin()->Unlock();
 }
 
