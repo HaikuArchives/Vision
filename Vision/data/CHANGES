@@ -1,7 +1,11 @@
 Vision
 http://vision.sourceforge.net
+
+[0.9.1-0701]
+         * added dcc chat option to notify context menu
+         * adjusted default prefs sizing logic
          
-[0.9-0629]
+[0.9-0630]
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
          * changed the PrefGeneral keyboard nav to be more standard. (Alan Ellis)
          * added file: and mailto: URL support (Alan Ellis)

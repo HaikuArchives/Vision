@@ -183,6 +183,10 @@ NotifyList::BuildPopUp(void)
     data.Append(name);
     msg.ReplaceString("input", data.String());
     fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_WHOIS_ITEM, new BMessage (msg)));
+    data = "/DCC CHAT ";
+    data.Append(name);
+    msg.ReplaceString("input", data.String());
+    fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_DCC_ITEM, new BMessage (msg)));
     fMyPopUp->AddSeparatorItem();
     data = "/UNNOTIFY ";
     data.Append(name);
@@ -197,9 +201,10 @@ NotifyList::BuildPopUp(void)
 
     if (!item->GetState())
     {
-      // user is offline, do not allow whois and query
+      // user is offline, do not allow whois, query or dcc chat
       fMyPopUp->ItemAt(0)->SetEnabled(false);
       fMyPopUp->ItemAt(1)->SetEnabled(false);
+      fMyPopUp->ItemAt(2)->SetEnabled(false);
     }
     fMyPopUp->SetFont(be_plain_font);
   }
