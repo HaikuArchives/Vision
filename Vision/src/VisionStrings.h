@@ -449,4 +449,6 @@
 
 #define S_WINLIST_CLOSE_ITEM        "Close"	
 
+#define S_INFOPOPPER_TITLE			"Vision"
+
 #endif _VISIONSTRINGS_H_

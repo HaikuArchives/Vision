@@ -119,6 +119,10 @@ VisionApp::VisionApp (void)
   fDebugShutdown = false;
   fDisableAutostart = false;
   fStartupTime = system_time();
+
+  app_info info;
+  if (GetAppInfo(&info) == B_OK) fAppRef = info.ref; 
+
 }
 
 VisionApp::~VisionApp (void)
@@ -1025,6 +1029,12 @@ VisionApp::pClientWin() const
 {
   return fClientWin;
 }
+
+entry_ref
+VisionApp::AppRef(void) const
+{
+	return fAppRef;
+};
 
 void
 VisionApp::VisionVersion (int typebit, BString &result)

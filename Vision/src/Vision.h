@@ -28,6 +28,7 @@
 #include <map>
 
 #include <Application.h>
+#include <Entry.h>
 #include <String.h>
 #include <Locker.h>
 
@@ -151,6 +152,8 @@ class VisionApp : public BApplication
     
     ClientWindow            *pClientWin (void) const;
 
+	entry_ref				AppRef(void) const;
+
   private:
 	void					InitSettings (void);
     int32                   ThreadStates (void);
@@ -181,6 +184,7 @@ class VisionApp : public BApplication
 
 	Theme                   *fActiveTheme;
 	bigtime_t               fStartupTime;
+	entry_ref				fAppRef;
 };
 
 const uint32 VIS_NETWORK_DATA        = 'vndc';
