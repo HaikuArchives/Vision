@@ -228,6 +228,7 @@ VisionApp::InitDefaults (void)
   fColors[C_BACKGROUND]                = myWhite;
   fColors[C_NAMES]                     = myBlack;
   fColors[C_NAMES_BACKGROUND]          = myWhite;
+  fColors[C_NAMES_SELECTION]           = WINLIST_SEL_COLOR;
   fColors[C_URL]                       = URL_COLOR;
   fColors[C_SERVER]                    = myBlack;
   fColors[C_NOTICE]                    = NOTICE_COLOR;
