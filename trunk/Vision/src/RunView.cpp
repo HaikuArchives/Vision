@@ -2481,7 +2481,7 @@ RunView::FindText(const char *text)
     for (int32 i = 0; i < fLine_count; i++)
     {
       char *offset (NULL);
-      if ((offset = strstr(fLines[i], text)) != NULL)
+      if ((offset = strstr(fLines[i]->fText, text)) != NULL)
       {
         SelectPos start (i, offset - text),
           end (i, (offset - text) + strlen(text));
