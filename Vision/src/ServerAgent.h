@@ -181,7 +181,7 @@ class ServerAgent : public ClientAgent
     ClientAgentLogger           *fLogger;
     
     sem_id                      fSendSyncSem; // synchronization semaphore for data sends
-    ServerData                  currentServer;
+    ServerData                  fCurrentServer;
 };
 
 #endif

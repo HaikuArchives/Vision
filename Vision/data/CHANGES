@@ -1,5 +1,9 @@
 Vision
 http://vision.sourceforge.net
+
+[0.9.4-0831]
+         * fix stupid crash bug
+
 [0.9.4-0830]
          * fixed deadlock in DCC Transfers window
          * fixed memleak in logger
