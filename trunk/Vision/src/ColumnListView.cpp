@@ -3597,12 +3597,9 @@ void OutlineView::FixScrollBar(bool scrollToFit)
 {
 	BScrollBar *vScrollBar = ScrollBar(B_VERTICAL);
 	if (vScrollBar) {
-	    float min, max;
-	    vScrollBar->GetRange (&min, &max);
 		if (fItemsHeight > fVisibleRect.Height()) {
 			float maxScrollBarValue = (fItemsHeight + kBottomMargin) - fVisibleRect.Height();
 			vScrollBar->SetProportion(fVisibleRect.Height() / (fItemsHeight + kBottomMargin));
-			fVisibleRect.PrintToStream();
 
 			// If the user is scrolled down too far when makes the range smaller, the list
 			// will jump suddenly, which is undesirable.  In this case, don't fix the scroll
