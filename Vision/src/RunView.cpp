@@ -13,6 +13,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <assert.h>
+#include <slist>
 
 #include <Message.h>
 #include <Messenger.h>
@@ -27,6 +28,8 @@
 
 #include "Theme.h"
 #include "RunView.h"
+#include "URLCrunch.h"
+#include "Vision.h"
 
 struct SoftBreak
 {
@@ -34,6 +37,20 @@ struct SoftBreak
 	float					height;
 	float					ascent;
 };
+
+struct URL
+{
+	int32					offset;
+	int32					length;
+	BString					url;
+
+							URL (const char *address, int32 off, int32 len) :
+								offset (off),
+								length (len),
+								url (address)
+								{ }
+};
+
 
 struct SoftBreakEnd
 {
@@ -57,12 +74,12 @@ struct FontColor
 struct Line
 {
 	char					*text;
-	time_t				stamp;
-
+	time_t					stamp;
+	slist<URL *>			urls;
 	int16					*spaces;
 	int16					*edges;
-	FontColor			*fcs;
-	SoftBreak			*softies;
+	FontColor				*fcs;
+	SoftBreak				*softies;
 	float					top;
 	float					bottom;
 
@@ -427,6 +444,14 @@ void
 RunView::MouseDown (BPoint point)
 {
 	sp_start = PositionAt (point);
+	slist<URL *>::const_iterator it;
+	for (it = lines[sp_start.line]->urls.begin(); it != lines[sp_start.line]->urls.end(); ++it)
+		if ((sp_start.offset >= (*it)->offset)
+		 && (sp_start.offset < (*it)->offset + (*it)->length))
+		 {
+		 	vision_app->LoadURL ((*it)->url.String());
+		 	break;
+		 }
 }
 
 void
@@ -648,6 +673,7 @@ RunView::Append (
 	assert (back != Theme::SelectionBack);
 
 	theme->ReadLock();
+	
 	while (place < len)
 	{
 		int32 end (place);
@@ -738,6 +764,7 @@ RunView::Append (
 
 		place = end;
 	}
+
 	theme->ReadUnlock();
 }
 
@@ -853,7 +880,7 @@ RunView::PositionAt (BPoint point) const
 		lindex = i;
 	}
 
-	printf ("Line: %hd\n", lindex);
+//	printf ("Line: %hd\n", lindex);
 
 	float height (lines[lindex]->top);
 	int16 sindex (0);
@@ -871,7 +898,7 @@ RunView::PositionAt (BPoint point) const
 	int16 width (0);
 	int16 start (0);
 
-	printf ("Softie: %hd\n", sindex);
+//	printf ("Softie: %hd\n", sindex);
 
 	if (sindex)
 	{
@@ -888,7 +915,7 @@ RunView::PositionAt (BPoint point) const
 	pos.line = lindex;
 	pos.offset = min_c (i, lines[lindex]->softies[sindex].offset);
 
-	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
+//	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
 
 	return pos;
 }
@@ -965,6 +992,10 @@ Line::~Line (void)
 	delete [] edges;
 	delete [] fcs;
 	delete [] text;
+	
+	slist<URL *>::const_iterator it = urls.begin();
+	for (; it != urls.end(); ++it)
+		delete (*it);
 }
 
 void
@@ -990,7 +1021,15 @@ Line::Append (
 
 	delete [] text;
 	text = new_text;
-
+	
+	BString urlsearch;
+	URLCrunch crunch (text, strlen(text));
+	int32 offset (0);
+	
+	while ((offset = crunch.Crunch(&urlsearch)) != B_ERROR)
+		urls.push_front (new URL (urlsearch.String(), offset, urlsearch.Length()));
+	urls.sort();
+	
 	FigureFontColors (save, fore, back, font);
 
 	if (text[length - 1] == '\n')
@@ -1434,6 +1473,10 @@ Line::SetStamp (const char *format, bool was_on)
 	if (was_on)
 	{
 		int16 offset (fcs[4].offset + 1);
+		
+		slist<URL *>::const_iterator it = urls.begin();
+		for (; it != urls.end(); ++it)
+			(*it)->offset -= offset;
 
 		memmove (text, text + offset, length - offset);
 		text[length -= offset] = '\0';
@@ -1454,6 +1497,10 @@ Line::SetStamp (const char *format, bool was_on)
 
 		localtime_r (&stamp, &tm);
 		size = strftime (buffer, 1023, format, &tm);
+
+		slist<URL *>::const_iterator it = urls.begin();
+		for (; it != urls.end(); ++it)
+			(*it)->offset += size;
 
 		char *new_text;
 

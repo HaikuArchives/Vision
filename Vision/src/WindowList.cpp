@@ -124,7 +124,7 @@ WindowList::MouseDown (BPoint myPoint)
     
     // slight kludge to make sure the expand/collapse triangles behave how they should
     // -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
-    if ((myPoint.x < 10.0) || (message->FindInt32 ("clicks") == 2))
+    if ((myPoint.x < 10.0) || ((message->FindInt32 ("clicks") % 2) == 0))
     {
       // since Expand/Collapse are not virtual, override them by taking over processing
       // the collapse triangle logic manually
