@@ -28,14 +28,14 @@
 #include <String.h>
 #include <Window.h>
 
-#include <ObjectList.h>
-#include <ColumnListView.h>
-#include <experimental/ColorTools.h>
-
+#include "ObjectList.h"
+#include "ColumnListView.h"
+#include "ColorTools.h"
+/*
 #ifndef _ARCHIVE_DEFS_H
 #include <archive_defs.h>
 #endif
-
+*/
 #define DOUBLE_BUFFERED_COLUMN_RESIZE 1
 #define SMART_REDRAW 1
 #define DRAG_TITLE_OUTLINE 1
