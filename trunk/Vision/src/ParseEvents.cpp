@@ -253,7 +253,11 @@ ServerAgent::ParseEvents (const char *data)
       BMessage msg (M_USER_ADD);
       msg.AddString ("nick",  nick.String());
       msg.AddBool ("ignore", ignored);
-      msg.AddMessage ("display", &display);
+      // don't bother displaying if the user puts an empty string
+      if (tempString.Length() > 1)
+      {
+        msg.AddMessage ("display", &display);
+      }
       client->fMsgr.SendMessage (&msg);
     }
 
@@ -288,7 +292,10 @@ ServerAgent::ParseEvents (const char *data)
 
       BMessage msg (M_USER_QUIT);
       msg.AddString ("nick", nick.String());
-      msg.AddMessage ("display", &display);
+      if (buffer.Length() > 1)
+      {
+        msg.AddMessage ("display", &display);
+      }
       client->fMsgr.SendMessage (&msg);
     }
 
@@ -361,7 +368,11 @@ ServerAgent::ParseEvents (const char *data)
     PackDisplay (&display, theMsg.String(), C_QUIT);
 
     BMessage msg (M_USER_QUIT);
-    msg.AddMessage ("display", &display);
+
+    if (theMsg.Length() > 1)
+    {
+      msg.AddMessage ("display", &display);
+    }
     msg.AddString ("nick", theNick.String());
 
     Broadcast (&msg);
