@@ -95,7 +95,17 @@ ServerAgent::ServerAgent (
 
 ServerAgent::~ServerAgent (void)
 {
-  //
+  kill_thread (loginThread);
+  
+  if (send_buffer)  delete [] send_buffer;
+  if (parse_buffer) delete [] parse_buffer;
+
+  char *nick;
+  while ((nick = (char *)lnicks->RemoveItem (0L)) != 0)
+    delete [] nick;
+  delete lnicks;
+  
+
 }
 
 void
@@ -739,9 +749,18 @@ ServerAgent::MessageReceived (BMessage *msg)
 				SendData (quitMsg.String());
 			}
 			
-			BMessage aMsg (M_SERVER_SHUTDOWN);
-			aMsg.AddString ("server", serverName.String());
-			Window()->PostMessage (&aMsg);
+			//BMessage abortchildren (M_CLIENT_QUIT);
+			Broadcast (new BMessage (M_CLIENT_QUIT));
+
+		  	ClientWindow *window ((ClientWindow *)Window());
+		  	BMessage deathchant (M_OBITUARY);
+		  	deathchant.AddPointer ("agent", this);
+		  	deathchant.AddPointer ("item", agentWinItem);
+		  	window->PostMessage (&deathchant);						
+						
+//			BMessage aMsg (M_SERVER_SHUTDOWN);
+//			aMsg.AddString ("server", serverName.String());
+//			Window()->PostMessage (&aMsg);
 			
 			break;
 		}

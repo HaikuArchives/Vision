@@ -178,7 +178,10 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_CW_ALTW:
     {
-      winList->CloseActive();    
+      if (vision_app->GetBool("catchAltW"))
+        winList->CloseActive();
+      else
+        PostMessage (B_QUIT_REQUESTED);    
     }
         
     default:
