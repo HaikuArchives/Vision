@@ -259,6 +259,38 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 	   			break;
 			}
 
+		}
+	}
+
+	else if ((keymodifiers & B_OPTION_KEY)  == 0
+	&&  (keymodifiers & B_COMMAND_KEY) == 0
+	&&  (keymodifiers & B_CONTROL_KEY) == 0
+	&&  (keymodifiers & B_SHIFT_KEY) != 0)
+	{
+		switch (keyStroke)
+		{
+			case B_UP_ARROW:
+			{
+				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != 0)
+				{
+					window->text->ScrollBy (0.0, window->text->LineHeight() * -1);
+					result = B_SKIP_MESSAGE;
+				}
+				break;
+			}
+			
+			case B_DOWN_ARROW:
+			{
+				float min, max;
+				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
+				{ 
+					window->text->ScrollBy (0.0, window->text->LineHeight());
+					result = B_SKIP_MESSAGE;
+				}
+				break;
+			}
+
 			case B_HOME:
 			{
 				window->text->ScrollTo (0.0, 0.0);
@@ -272,26 +304,6 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
 				window->text->ScrollTo (0.0, max);
 				result = B_SKIP_MESSAGE;
-				break;
-			}
-			
-			case B_UP_ARROW:
-				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != 0)
-				{
-					window->text->ScrollBy (0.0, window->text->LineHeight() * -1);
-					result = B_SKIP_MESSAGE;
-				}
-				break;
-			
-			case B_DOWN_ARROW:
-			{
-				float min, max;
-				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
-				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
-				{ 
-					window->text->ScrollBy (0.0, window->text->LineHeight());
-					result = B_SKIP_MESSAGE;
-				}
 				break;
 			}
 
@@ -322,10 +334,9 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 				result = B_SKIP_MESSAGE;
 				break;
 			}
-
 		}
+			
 	}
-
 	return result;
 }
 	
