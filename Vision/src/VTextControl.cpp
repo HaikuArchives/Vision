@@ -163,6 +163,7 @@ VTextControlFilter::Filter (BMessage *msg, BHandler **)
         && (keymodifiers & B_COMMAND_KEY) == 0
         && (keymodifiers & B_CONTROL_KEY) == 0)
         {
+          parent->TextView()->MakeFocus(true);
           parent->BuildPopUp();
           parent->myPopUp->Go (
             parent->Parent()->ConvertToScreen (myPoint),
