@@ -175,7 +175,7 @@ ClientAgent::Show (void)
       agent->namesScroll->MoveBy (difference, 0.0);
       Sync();
     }
-  }
+  } 
   
   BView::Show();
 }
@@ -916,14 +916,18 @@ ClientAgent::MessageReceived (BMessage *msg)
         ChannelAgent *currentAgent (dynamic_cast<ChannelAgent *>(this));
         if (currentAgent)
         {
-          int32 offset (msg->FindInt32 ("delta"));
+          BPoint point;
+          msg->FindPoint ("loc", &point);
+          ConvertFromScreen (&point);
+          int32 offset ((int32)(point.x - ((BView *)currentAgent->namesScroll)->Frame().left));
           currentAgent->resize->MoveBy (offset, 0.0);
           textScroll->ResizeBy (offset, 0.0);
           currentAgent->namesScroll->ResizeBy (-offset, 0.0);
           currentAgent->namesScroll->MoveBy (offset, 0.0);
           BRect namesRect (0, 0, currentAgent->namesScroll->Bounds().Width(), 0);
           vision_app->SetRect ("namesListRect", namesRect);
-        }
+
+        } 
       }
       break;
 
