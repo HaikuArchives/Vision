@@ -1207,7 +1207,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         reply.AddString  ("nick", fMyNick.String());
 #ifdef NETSERVER_BUILD
         reply.AddPointer ("lock", fEndPointLock);
-        fEndPointLock = NULL;
+        // fEndPointLock = NULL;
 #endif
         msg->SendReply (&reply); 
         fEstablishHasLock = true;
