@@ -285,6 +285,8 @@ NetworkPrefsView::UpdateNetworkData (BMessage &msg)
 	const char *autoexec (NULL);
 	if ((autoexec = msg.FindString ("autoexec")) != NULL)
 	  textView->SetText (autoexec);
+	else
+	  textView->SetText ("");
 	uint32 altCount (0);
 	int32 size;
 	const ServerData *data (NULL);
