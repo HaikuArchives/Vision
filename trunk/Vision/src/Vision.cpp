@@ -694,7 +694,7 @@ bool
 VisionApp::CheckStartupNetworks (void)
 {
   bool autoStarted (false);
-#if 0
+#if 1
   BMessage netData;
   for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
   {
