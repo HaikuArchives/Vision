@@ -73,5 +73,4 @@ class MessageAgent : public ClientAgent
 
 };
 
-
 #endif
