@@ -414,6 +414,9 @@ VisionApp::LoadDefaults (int32 section)
         
         if (!visionSettings->HasRect ("namesListRect"))
           visionSettings->AddRect ("namesListRect", BRect (0, 0, 100, 0));
+        
+        if (!visionSettings->HasRect ("GenPrefWinRect"))
+          visionSettings->AddRect ("GenPrefWinRect", BRect (0,0,0,0));
       }
       break;
 
