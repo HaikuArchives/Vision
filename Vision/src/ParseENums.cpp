@@ -254,8 +254,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_YOUREOPER:         // 381
     case RPL_REHASHING:         // 382
     case RPL_TIME:              // 391
-    case ERR_TOOMANYTARGETS:    // 407
-    case ERR_NOCOLORSONCHAN:    // 408
     case ERR_NOORIGIN:          // 409
     case ERR_NOTEXTTOSEND:      // 412
     case ERR_TOOMANYAWAY:       // 429
@@ -271,7 +269,21 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_NOPRIVILEGES:      // 481
     case ERR_NOOPERHOST:        // 491
     case ERR_USERSDONTMATCH:    // 502
-    case RPL_DCCALLOWLIST:      // 618;
+    case ERR_SILELISTFULL:      // 511
+    case ERR_TOOMANYWATCH:      // 512
+    case ERR_TOOMANYDCC:        // 514
+    case ERR_LISTSYNTAX:        // 521
+    case ERR_WHOSYNTAX:         // 522
+    case ERR_WHOLIMEXCEED:      // 523
+    case RPL_LOGON:             // 600
+    case RPL_LOGOFF:            // 601
+    case RPL_WATCHOFF:          // 602
+    case RPL_WATCHSTAT:         // 603
+    case RPL_NOWON:             // 604
+    case RPL_NOWOFF:            // 605
+    case RPL_WATCHLIST:         // 606
+    case RPL_ENDOFWATCHLIST:    // 607
+    case RPL_DCCALLOWLIST:      // 618
     case RPL_DCCALLOWEND:       // 619
     case RPL_DCCALLOW:          // 620
     {
@@ -305,6 +317,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_CANNOTSENDTOCHAN:  // 404
     case ERR_TOOMANYCHANNELS:   // 405
     case ERR_WASNOSUCHNICK:     // 406
+    case ERR_TOOMANYTARGETS:    // 407
+    case ERR_NOCOLORSONCHAN:    // 408
     case ERR_YOUCANTDOTHAT:     // 460
     case ERR_CHANOPRIVSNEEDED:  // 482
     {

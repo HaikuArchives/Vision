@@ -182,7 +182,6 @@ const int ERR_TOOMANYAWAY             = 429;
 const int ERR_NONICKNAMEGIVEN         = 431;
 const int ERR_ERRONEOUSNICKNAME       = 432;
 const int ERR_NICKNAMEINUSE           = 433;
-
 const int ERR_NICKCOLLISION           = 436;
 const int ERR_RESOURCEUNAVAILABLE     = 437;
 const int ERR_NICKCHANGETOOFAST       = 438;
@@ -216,7 +215,21 @@ const int ERR_NOSERVICEHOST           = 492;
 
 const int ERR_UMODEUNKNOWNFLAG        = 501;
 const int ERR_USERSDONTMATCH          = 502;
+const int ERR_SILELISTFULL            = 511;
+const int ERR_TOOMANYWATCH            = 512;
+const int ERR_TOOMANYDCC              = 514;
+const int ERR_LISTSYNTAX              = 521;
+const int ERR_WHOSYNTAX               = 522;
+const int ERR_WHOLIMEXCEED            = 523;
 
+const int RPL_LOGON                   = 600;
+const int RPL_LOGOFF                  = 601;
+const int RPL_WATCHOFF                = 602;
+const int RPL_WATCHSTAT               = 603;
+const int RPL_NOWON                   = 604;
+const int RPL_NOWOFF                  = 605;
+const int RPL_WATCHLIST               = 606;
+const int RPL_ENDOFWATCHLIST          = 607;
 const int RPL_WHOISUSERMODES          = 615;
 const int RPL_WHOISREALHOSTNAME       = 616;
 const int RPL_WHOISREGISTEREDBOT      = 617; // conflict (ultimate)

@@ -127,6 +127,19 @@ ServerAgent::ParseEvents (const char *data)
 
 		return true;
 	}
+	
+	if (firstWord == "NOTICE")
+	{
+		BString theNotice (RestOfString(data, 4));
+		theNotice.RemoveFirst(":");
+		BString tempString;
+		const char *expansions[2];
+		expansions[0] = serverHostName.String();
+		expansions[1] = theNotice.String();
+		tempString = ExpandKeyed (events[E_SNOTICE].String(), "NR", expansions);
+		Display (tempString.String(), &noticeColor, 0, true);
+		return true;
+	}		
 
 	if (secondWord == "NOTICE")
 	{
