@@ -679,12 +679,14 @@ VisionApp::GetThreadName (void)
 void
 VisionApp::Broadcast (BMessage *msg)
 {
+
   Lock();
 
   for (int32 i = 0; i < CountWindows(); ++i)
     WindowAt (i)->PostMessage (msg);
 
   Unlock();
+  
 }
 
 void
@@ -711,3 +713,4 @@ VisionApp::Broadcast (BMessage *msg, const char *serverName, bool active)
 //////////////////////////////////////////////////////////////////////////////
 /// End Public Functions
 //////////////////////////////////////////////////////////////////////////////
+
