@@ -724,6 +724,7 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       printf ("\t-s\t\tPrint data sent across the network\n");
       printf ("\t-S\t\tPrint settings debug information\n");
       printf ("\t-u\t\tPrint state debug information on shutdown\n");
+      printf ("\t-a\t\tDisable auto-connect\n");
       printf ("\n");
       if (IsLaunching())
         Quit();
