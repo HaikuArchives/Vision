@@ -256,10 +256,16 @@ ClientAgent::SetServerName (const char *name)
 }
 
 void
-ClientAgent::SetEditStates (BMenu *menu)
+ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
 {
   if (menu != NULL)
   {
+    if (targetonly)
+    {
+      menu->SetTargetForItems(fInput->TextView());
+      return;
+    }
+
     BMenuItem *menuItem (menu->FindItem(S_CW_EDIT_CUT));
     int32 start (0), finish (0);
     fInput->TextView()->GetSelection(&start, &finish);

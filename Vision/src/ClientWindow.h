@@ -81,7 +81,7 @@ class ClientWindow : public BWindow
     
     bool                  ServerBroadcast (BMessage *) const;
     
-    void                  SetEditStates(void);
+    void                  SetEditStates(bool);
 
     BView                 *bgView;
       

@@ -71,6 +71,7 @@ class DynamicEditMenu : public BMenu
     virtual ~DynamicEditMenu (void);
 
     virtual void AllAttached (void);
+    virtual void DetachedFromWindow (void);
 };
 
 DynamicEditMenu::DynamicEditMenu(void)
@@ -86,7 +87,15 @@ void
 DynamicEditMenu::AllAttached(void)
 {
   BMenu::AllAttached();
-  vision_app->pClientWin()->SetEditStates();
+  vision_app->pClientWin()->SetEditStates(false);
+}
+
+void
+DynamicEditMenu::DetachedFromWindow(void)
+{
+  BMenu::DetachedFromWindow();
+  for (int32 i = 0; i < CountItems(); i++)
+    ItemAt(i)->SetEnabled(true);
 }
 
 
@@ -282,6 +291,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_STATUS_CLEAR:
       {
         fStatus->Clear();
+        SetEditStates(true);
       }
       break;
     
@@ -462,9 +472,8 @@ ClientWindow::GetTopServer (WindowListItem *request) const
   return target;
 }
 
-// TODO: move this to ClientAgent and pass it the menu to update as a parameter
 void
-ClientWindow::SetEditStates (void)
+ClientWindow::SetEditStates (bool retargetonly)
 {
   WindowListItem *item (dynamic_cast<WindowListItem *>(pWindowList()->ItemAt(pWindowList()->CurrentSelection())));
   
@@ -472,7 +481,7 @@ ClientWindow::SetEditStates (void)
   {
     ClientAgent *agent (dynamic_cast<ClientAgent *>(item->pAgent()));
     if (agent != NULL)
-      agent->SetEditStates(fEdit);
+      agent->SetEditStates(fEdit, retargetonly);
   }
 }
 

@@ -80,7 +80,6 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 
 	case B_MOUSE_UP:
 		{
-	   		vision_app->pClientWin()->SetEditStates();
 			if (fHandledDrop)
 			{
 				fHandledDrop = false;
@@ -214,7 +213,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 	filter_result result (B_DISPATCH_MESSAGE);
 	const char *keyStroke;
 	int32 keymodifiers;
-
+	
 	BMessenger msgr (fWindow);
 
     WindowList *winList (vision_app->pClientWin()->pWindowList());
