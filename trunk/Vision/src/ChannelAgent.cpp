@@ -497,6 +497,18 @@ ChannelAgent::TabExpansion (void)
 
     if (insertion.Length())
     {
+      // check if we are at the beginning of a line
+      // (ignoring whitespace). if we are, prepend a colon to the nick being
+      // inserted
+      while (start > 0)
+      {
+        --start;
+        if (fInput->TextView()->ByteAt(start) != 0x20)
+          break;
+      }
+      if (start == 0)
+	insertion += ":";
+
       fInput->TextView()->Delete (
         place - fInput->TextView()->Text(),
         fInput->TextView()->TextLength());

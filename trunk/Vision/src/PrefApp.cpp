@@ -172,14 +172,16 @@ AppWindowPrefsView::CreateEncodingMenu(void)
   encMenu->AddItem (fEnc8 = new BMenuItem("Japanese (Shift-JIS)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_EUC_CONVERSION);
   encMenu->AddItem (fEnc9 = new BMenuItem("Japanese (EUC)", new BMessage(msg)));
+  msg.ReplaceInt32("encoding", B_JIS_CONVERSION);
+  encMenu->AddItem (fEnc10 = new BMenuItem("Japanese (JIS)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_EUC_KR_CONVERSION);
-  encMenu->AddItem (fEnc10 = new BMenuItem("Korean (EUC)", new BMessage(msg)));
+  encMenu->AddItem (fEnc11 = new BMenuItem("Korean (EUC)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_UNICODE_CONVERSION);
-  encMenu->AddItem (fEnc11 = new BMenuItem("Unicode", new BMessage(msg)));
+  encMenu->AddItem (fEnc12 = new BMenuItem("Unicode", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_MAC_ROMAN_CONVERSION);
-  encMenu->AddItem (fEnc12 = new BMenuItem("Western (Mac Roman)", new BMessage(msg)));
+  encMenu->AddItem (fEnc13 = new BMenuItem("Western (Mac Roman)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_MS_WINDOWS_CONVERSION);
-  encMenu->AddItem (fEnc13 = new BMenuItem("Western (Windows)", new BMessage(msg)));
+  encMenu->AddItem (fEnc14 = new BMenuItem("Western (Windows)", new BMessage(msg)));
   return encMenu;
 }
 
@@ -224,20 +226,24 @@ AppWindowPrefsView::SetEncodingItem(int32 encoding)
       fEnc9->SetMarked (true);
       break;
        
-    case B_EUC_KR_CONVERSION:
+    case B_JIS_CONVERSION:
       fEnc10->SetMarked (true);
       break;
-       
-    case B_UNICODE_CONVERSION:
+
+    case B_EUC_KR_CONVERSION:
       fEnc11->SetMarked (true);
       break;
        
-    case B_MAC_ROMAN_CONVERSION:
+    case B_UNICODE_CONVERSION:
       fEnc12->SetMarked (true);
       break;
        
-    case B_MS_WINDOWS_CONVERSION:
+    case B_MAC_ROMAN_CONVERSION:
       fEnc13->SetMarked (true);
+      break;
+       
+    case B_MS_WINDOWS_CONVERSION:
+      fEnc14->SetMarked (true);
       break;
        
     default:
