@@ -175,8 +175,9 @@ ClientAgent::Show (void)
       agent->namesScroll->MoveBy (difference, 0.0);
       Sync();
     }
-  } 
-  
+  }
+  // make RunView recalculate itself
+  text->Show();
   BView::Show();
 }
 
@@ -222,9 +223,10 @@ ClientAgent::Init (void)
     id.String(),
     activeTheme,
     B_FOLLOW_ALL);
-    
+  
   if (vision_app->GetBool ("timestamp"))
     text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
+ 
  
   activeTheme->AddView (text);
   
@@ -238,8 +240,6 @@ ClientAgent::Init (void)
     B_PLAIN_BORDER);
   
   AddChild (textScroll);
-  
-  
 
   if (isLogging)
     logger = new ClientAgentLogger (id, serverName);
@@ -594,6 +594,7 @@ ClientAgent::MessageReceived (BMessage *msg)
           logger->isQuitting = shuttingdown;
       }
       break;
+      
     case M_STATE_CHANGE:
       {
         int32 which (msg->FindInt32 ("which"));
