@@ -78,6 +78,7 @@ class ServerAgent : public ClientAgent
     void                        DCCChatDialog (BString, BString, BString);
     void                        DCCGetDialog (BString, BString, BString, BString, BString);
     void                        SendData (const char *);
+    void                        AsyncSendData (const char *);
     void                        ParseLine (const char *);
     bool                        ParseEvents (const char *);
     bool                        ParseENums (const char *, const char *);
@@ -99,7 +100,8 @@ class ServerAgent : public ClientAgent
     void                        RemoveAutoexecChan (const BString &);
     void                        ParseAutoexecChans (const BString &);
 
-    BLocker                     *fEndPointLock;
+    BLocker                     *fEndPointLock,
+                                 fSendLock;
 
     static int32                fServerSeed;
 
@@ -144,7 +146,8 @@ class ServerAgent : public ClientAgent
 
     char                        fParse_buffer[2048];	// buffer for parsing
 
-    thread_id                   fLoginThread;		// thread that receives
+    volatile thread_id          fLoginThread,
+                                  fSenderThread;		// thread that receives
 
     BList                       fClients;			// agents this server "owns"
     
@@ -157,9 +160,11 @@ class ServerAgent : public ClientAgent
     int32                       fSocket;  // socket
 	
     BList                       fTimers,
-                                  fStartupChannels;
+                                  fStartupChannels,
+                                  fPendingSends;
     
     static int32                Establish (void *);
+    static int32                Sender (void *);
     static int32                Timer (void *);
     
     ListAgent                   *fListAgent;
@@ -168,6 +173,9 @@ class ServerAgent : public ClientAgent
     int32                       fServerIndex,
                                   fNickIndex;
     ClientAgentLogger           *fLogger;
+    
+    sem_id                      fSendSyncSem; // synchronization semaphore for data sends
+    
 };
 
 #endif

@@ -1,5 +1,12 @@
 Vision
 http://vision.sourceforge.net
+
+[0.8.7-0427]
+         * changed list agent to not sort channels until done receiving for improved performance
+         * experimental rewrite that moves server data sending into its own thread in an attempt
+           to resolve dial-up locking issues (NOTE: this code has not been tested thoroughly yet. I make          
+           absolutely no guarantees of correct behavior with this at the moment.)
+
 [0.8.7-0424]
          * fixed another crash bug in tab completion
          * fixed DCC chat to properly convert to ISO-8559 format prior to send/recv.
