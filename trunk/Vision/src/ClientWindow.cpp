@@ -204,7 +204,9 @@ ClientWindow::MessageReceived (BMessage *msg)
         printf (":ERROR: recieved incomplete data to M_MAKE_NEW_SERVER -- bailing\n");
         return;
       }
-           
+      
+      UpdateAgentRect();
+                 
       winList->AddAgent (
         new ServerAgent (
           const_cast<const char *>(hostname),
@@ -348,67 +350,6 @@ ClientWindow::Init (void)
     Bounds().top + 1,
     Bounds().Width() - 1,
     winListScroll->Frame().Height());
-    
-#if 0
-  // :TODO: wade 020201: make dynamic
-  // most of this stuff is temporary, to get us going.
-  // eventually we will have setupwindow which will pass all
-  // this stuff.
-  BList *nicklist (new BList);
-  BString nick ("vision");
-  nicklist->AddItem (strcpy (new char [nick.Length() + 1], nick.String()));
-  
-  BString *serverhost (new BString ("irc.inetking.com")),
-          *serverport (new BString ("6667")),
-          *username (new BString ("Vision User")),
-          *userident (new BString ("vision")),
-          *servercmds (new BString ("")),
-          *events (vision_app->events);
-          
-  
-  winList->AddAgent (
-    new ServerAgent (
-      serverhost->String(),
-      nicklist,
-      serverport->String(),
-      username->String(),
-      userident->String(),
-      events,
-      true,  // show motd
-      true, // enable identd
-      servercmds->String(),
-      *agentrect),
-    ID_SERVER,
-    serverhost->String(),
-    WIN_SERVER_TYPE,
-    true); // activate
-
-#endif
-    
-    
-  
-//  int32 x (0);
-//  serverhost = new BString ("irc.inetking.com");
-//
-//  while (x <= 1)
-//  {
-//    winList->AddAgent (
-//    new ServerAgent (
-//      serverhost->String(),
-//      nicklist,
-//      serverport->String(),
-//      username->String(),
-//      userident->String(),
-//      const_cast<const char **>(events),
-//      true,  // show motd
-//      false, // enable identd,
-//      servercmds->String(),
-//      *agentrect),
-//    serverhost->String(),
-//    false); // activate
-//    x++;
-//  }    
-    
  
 }
 
