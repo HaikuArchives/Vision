@@ -125,6 +125,7 @@ class VisionApp : public BApplication
 
   private:
 	void					InitSettings (void);
+	bool                    SaveSettings (void);
     void                    ThreadStates (void);
     bool                    CheckStartupNetworks (void);
     
