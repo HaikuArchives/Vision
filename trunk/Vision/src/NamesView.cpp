@@ -164,107 +164,110 @@ NamesView::MouseDown (BPoint myPoint)
 {
   int32 selected (IndexOf (myPoint));
   bool handled (false);
-
-  if (selected >= 0)
+  
+  if (selected < 0)
   {
-    BMessage *inputMsg (Window()->CurrentMessage());
-    int32 mousebuttons (0),
-          keymodifiers (0),
-          mouseclicks (0);
-
-    inputMsg->FindInt32 ("buttons", &mousebuttons);
-    inputMsg->FindInt32 ("modifiers", &keymodifiers);
-    inputMsg->FindInt32 ("clicks",  &mouseclicks);
-
-    if (mouseclicks > 1
-    && CurrentSelection(1) <= 0
-    &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
-    && (keymodifiers & B_SHIFT_KEY)   == 0
-    && (keymodifiers & B_OPTION_KEY)  == 0
-    && (keymodifiers & B_COMMAND_KEY) == 0
-    && (keymodifiers & B_CONTROL_KEY) == 0)
-    {
-      // user double clicked
-      
-      BListItem *item (ItemAt (IndexOf(myPoint)));
-      if (item && !item->IsSelected())
-      {
-        // "double" clicked away from another selection
-        Select (IndexOf (myPoint), false);
-        fCurrentindex = IndexOf (myPoint);
-        fTracking = true;
-      }
-      else if (item && item->IsSelected())
-      {
-        // double clicking on a single item
-        NameItem *myItem (reinterpret_cast<NameItem *>(item));
-        BString theNick (myItem->Name());
-        BMessage msg (M_OPEN_MSGAGENT);
-
-        msg.AddString ("nick", theNick.String());
-        reinterpret_cast<ChannelAgent *>(Parent()->Parent())->fMsgr.SendMessage (&msg);
-      }
-      
-      handled = true;
-    }
-    
-    if (mouseclicks == 1
-    &&  CurrentSelection(1) <= 0
-    &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
-    && (keymodifiers & B_SHIFT_KEY)   == 0
-    && (keymodifiers & B_OPTION_KEY)  == 0
-    && (keymodifiers & B_COMMAND_KEY) == 0
-    && (keymodifiers & B_CONTROL_KEY) == 0)
-    {
-      // user single clicks
-      BListItem *item (ItemAt (IndexOf(myPoint)));
-      if (item && !item->IsSelected())
-        Select (IndexOf (myPoint), false);
-      
-      fTracking = true;
-      fCurrentindex = IndexOf (myPoint);
-      handled = true;
-    }
-    
-    if (mouseclicks >= 1
-    &&  CurrentSelection(1) >= 0
-    &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
-    && (keymodifiers & B_SHIFT_KEY)   == 0
-    && (keymodifiers & B_OPTION_KEY)  == 0
-    && (keymodifiers & B_COMMAND_KEY) == 0
-    && (keymodifiers & B_CONTROL_KEY) == 0)
-    {
-      // user clicks on something in the middle of a sweep selection
-      BListItem *item (ItemAt (IndexOf(myPoint)));
-      if (item)
-        Select (IndexOf (myPoint), false);
-      
-      fTracking = true;
-      fCurrentindex = IndexOf (myPoint);
-      handled = true;
-    }
-
-    if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
-    && (keymodifiers & B_SHIFT_KEY)   == 0
-    && (keymodifiers & B_OPTION_KEY)  == 0
-    && (keymodifiers & B_COMMAND_KEY) == 0
-    && (keymodifiers & B_CONTROL_KEY) == 0)
-    {
-      // user right clicks - display popup menu
-      BListItem *item (ItemAt (IndexOf(myPoint)));
-      if (item && !item->IsSelected())
-        Select (IndexOf (myPoint), false);
-
-      fMyPopUp->Go (
-        ConvertToScreen (myPoint),
-        true,
-        false,
-        ConvertToScreen (ItemFrame (selected)));
-      handled = true;
-    }
-    if (mousebuttons == B_TERTIARY_MOUSE_BUTTON)
-      BListView::MouseDown (myPoint);
+    DeselectAll();
+    return;
   }
+  
+  BMessage *inputMsg (Window()->CurrentMessage());
+  int32 mousebuttons (0),
+        keymodifiers (0),
+        mouseclicks (0);
+
+  inputMsg->FindInt32 ("buttons", &mousebuttons);
+  inputMsg->FindInt32 ("modifiers", &keymodifiers);
+  inputMsg->FindInt32 ("clicks",  &mouseclicks);
+
+  if (mouseclicks > 1
+  && CurrentSelection(1) <= 0
+  &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
+  && (keymodifiers & B_SHIFT_KEY)   == 0
+  && (keymodifiers & B_OPTION_KEY)  == 0
+  && (keymodifiers & B_COMMAND_KEY) == 0
+  && (keymodifiers & B_CONTROL_KEY) == 0)
+  {
+    // user double clicked
+    
+    BListItem *item (ItemAt (IndexOf(myPoint)));
+    if (item && !item->IsSelected())
+    {
+      // "double" clicked away from another selection
+      Select (IndexOf (myPoint), false);
+      fCurrentindex = IndexOf (myPoint);
+      fTracking = true;
+    }
+    else if (item && item->IsSelected())
+    {
+      // double clicking on a single item
+      NameItem *myItem (reinterpret_cast<NameItem *>(item));
+      BString theNick (myItem->Name());
+      BMessage msg (M_OPEN_MSGAGENT);
+
+      msg.AddString ("nick", theNick.String());
+      reinterpret_cast<ChannelAgent *>(Parent()->Parent())->fMsgr.SendMessage (&msg);
+    }
+    
+    handled = true;
+  }
+    
+  if (mouseclicks == 1
+  &&  CurrentSelection(1) <= 0
+  &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
+  && (keymodifiers & B_SHIFT_KEY)   == 0
+  && (keymodifiers & B_OPTION_KEY)  == 0
+  && (keymodifiers & B_COMMAND_KEY) == 0
+  && (keymodifiers & B_CONTROL_KEY) == 0)
+  {
+    // user single clicks
+    BListItem *item (ItemAt (IndexOf(myPoint)));
+    if (item && !item->IsSelected())
+      Select (IndexOf (myPoint), false);
+      
+    fTracking = true;
+    fCurrentindex = IndexOf (myPoint);
+    handled = true;
+  }
+    
+  if (mouseclicks >= 1
+  &&  CurrentSelection(1) >= 0
+  &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
+  && (keymodifiers & B_SHIFT_KEY)   == 0
+  && (keymodifiers & B_OPTION_KEY)  == 0
+  && (keymodifiers & B_COMMAND_KEY) == 0
+  && (keymodifiers & B_CONTROL_KEY) == 0)
+  {
+    // user clicks on something in the middle of a sweep selection
+    BListItem *item (ItemAt (IndexOf(myPoint)));
+    if (item)
+      Select (IndexOf (myPoint), false);
+    
+    fTracking = true;
+    fCurrentindex = IndexOf (myPoint);
+    handled = true;
+  }
+
+  if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
+  && (keymodifiers & B_SHIFT_KEY)   == 0
+  && (keymodifiers & B_OPTION_KEY)  == 0
+  && (keymodifiers & B_COMMAND_KEY) == 0
+  && (keymodifiers & B_CONTROL_KEY) == 0)
+  {
+    // user right clicks - display popup menu
+    BListItem *item (ItemAt (IndexOf(myPoint)));
+    if (item && !item->IsSelected())
+      Select (IndexOf (myPoint), false);
+
+    fMyPopUp->Go (
+      ConvertToScreen (myPoint),
+      true,
+      false,
+      ConvertToScreen (ItemFrame (selected)));
+    handled = true;
+  }
+  if (mousebuttons == B_TERTIARY_MOUSE_BUTTON)
+    BListView::MouseDown (myPoint);
 
   fLastSelected = selected; 
   if (!handled)
