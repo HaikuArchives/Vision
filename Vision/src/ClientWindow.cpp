@@ -386,18 +386,17 @@ ClientWindow::MessageReceived (BMessage *msg)
         {
           BPoint point;
           msg->FindPoint ("loc", &point);
-          ConvertFromScreen (&point);
-          int32 offset ((int32)(point.x - cwDock->Frame().right));
-          resize->MoveBy (offset, 0.0);
-          cwDock->ResizeBy (offset, 0.0);
+          resize->MoveTo (point.x, resize->Frame().top);
+          cwDock->ResizeTo (point.x, cwDock->Frame().Height());
+          BRect *agRect (AgentRect());
           for (int32 i = 0; i < agentCount; i++)
           {
             WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
             BView *agent (item->pAgent());
             if (!agent->IsHidden())
             {
-              agent->ResizeBy (-offset, 0.0);
-              agent->MoveBy (offset, 0.0);
+              agent->ResizeTo (agRect->Width(), agRect->Height());
+              agent->MoveTo (agRect->left, agRect->top);
               break;
             }
           } 

@@ -919,7 +919,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         {
           BPoint point;
           msg->FindPoint ("loc", &point);
-          ConvertFromScreen (&point);
+          point.x -= currentAgent->Frame().left;
           int32 offset ((int32)(point.x - ((BView *)currentAgent->namesScroll)->Frame().left));
           currentAgent->resize->MoveBy (offset, 0.0);
           textScroll->ResizeBy (offset, 0.0);
