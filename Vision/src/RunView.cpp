@@ -1093,6 +1093,8 @@ RunView::ShiftTrackingSelect (BPoint point, bool move, bigtime_t timer)
     point.y = Bounds().bottom;
     ExtendTrackingSelect (point);
   }
+  else
+    ExtendTrackingSelect (point);
 }
 
 void
