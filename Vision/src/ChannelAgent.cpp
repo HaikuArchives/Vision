@@ -444,10 +444,11 @@ ChannelAgent::MessageReceived (BMessage *msg)
           hit = true;
         }
       }
+      
+      namesList->SortItems (SortNames);
 
       if (hit && !IsHidden())
       {
-        namesList->SortItems (SortNames);
         BString buffer;
         buffer << opsCount;
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
