@@ -372,13 +372,13 @@ WindowList::Collapse (BListItem *collapseItem)
 {
       WindowListItem *citem ((WindowListItem *)collapseItem),
                        *item (NULL);
-      int32 substatus (0);
+      int32 substatus (-1);
       int32 itemcount (CountItemsUnder (citem, true));
+
       for (int32 i = 0; i < itemcount; i++)
-      {
         if (substatus < (item = (WindowListItem *)ItemUnderAt(citem, true, i))->Status())
           substatus = item->Status();
-      }
+
       citem->SetSubStatus (substatus);
       BOutlineListView::Collapse (collapseItem);
 }
@@ -629,6 +629,7 @@ WindowList::Agent (int32 serverId, const char *aName)
 void
 WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winType, bool activate)
 {
+  LockLooper();
   int32 itemindex (-1);
   WindowListItem *currentitem ((WindowListItem *)ItemAt (CurrentSelection()));
   
@@ -656,7 +657,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     serverId = newsid;
   }
   
-  itemindex = FullListIndexOf (newagentitem);
+  itemindex = IndexOf (newagentitem);
 
   // give the agent its own pointer to its WinListItem,
   // so it can quickly update it's status entry
@@ -703,14 +704,16 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
 
   newagent->Hide(); // get it out of the way
   newagent->Sync(); // clear artifacts
+  
 
-  if (activate)  // if activate is true, show the new view now.
+  if (activate && itemindex >= 0)  // if activate is true, show the new view now.
     if (CurrentSelection() == -1)
       Select (itemindex); // first item, let SelectionChanged() activate it
     else
       Activate (itemindex);
   else
     Select (FullListIndexOf (currentitem));
+  UnlockLooper();
 }
 
 void
@@ -982,7 +985,7 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
       color = father->GetColor (C_WINLIST_NICK);
     
     father->SetHighColor (color);
-    father->StrokeRect (BRect (0.0, 0.0, 10.0, frame.Height()));
+    father->StrokeRect (BRect (0.0, frame.top, 10.0, frame.top + 10.0));
   }
   if (IsSelected())
   {
