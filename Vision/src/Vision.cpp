@@ -70,28 +70,27 @@ VisionApp::VisionApp (void)
   debugsettings = false;
   
   // :TODO: wade 013101 move colors to settings class
-  	const rgb_color myBlack				= {0,0,0, 255};
-	const rgb_color myWhite				= {255, 255, 255, 255};
-	const rgb_color NOTICE_COLOR		= {10,90,170, 255};
-	const rgb_color ACTION_COLOR		= {225,10,10, 255};
-	const rgb_color QUIT_COLOR			= {180,10,10, 255};
-	const rgb_color ERROR_COLOR         = {210,5,5, 255};
-	const rgb_color URL_COLOR			= {5,5,150, 255};
-	const rgb_color NICK_COLOR			= {10,10,190, 255};
-	const rgb_color MYNICK_COLOR		= {200,10,20, 255};
-	const rgb_color JOIN_COLOR			= {10,130,10, 255};
-	const rgb_color KICK_COLOR			= {250,130,10, 255};
-	const rgb_color WHOIS_COLOR         = {10,30,170, 255};
-	const rgb_color OP_COLOR            = {140,10,40, 255};
-	const rgb_color VOICE_COLOR         = {160, 20, 20, 255};
-	const rgb_color CTCP_REQ_COLOR      = {10,10,180, 255};
-	const rgb_color CTCP_RPY_COLOR      = {10,40,180, 255};
-	const rgb_color IGNORE_COLOR        = {100, 100, 100, 255};
-	const rgb_color INPUT_COLOR         = {0, 0, 0, 255};
-	const rgb_color	INPUT_BG_COLOR      = {255, 255, 255, 255};
-	const rgb_color WINLIST_BG_COLOR    = {238, 242, 242, 255};
-	const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
-	//const rgb_color WINLIST_BG_COLOR    = {255, 255, 247, 255};
+  const rgb_color myBlack             = {0,0,0, 255};
+  const rgb_color myWhite             = {255, 255, 255, 255};
+  const rgb_color NOTICE_COLOR        = {10,90,170, 255};
+  const rgb_color ACTION_COLOR        = {225,10,10, 255};
+  const rgb_color QUIT_COLOR          = {180,10,10, 255};
+  const rgb_color ERROR_COLOR         = {210,5,5, 255};
+  const rgb_color URL_COLOR	          = {5,5,150, 255};
+  const rgb_color NICK_COLOR          = {10,10,190, 255};
+  const rgb_color MYNICK_COLOR        = {200,10,20, 255};
+  const rgb_color JOIN_COLOR          = {10,130,10, 255};
+  const rgb_color KICK_COLOR          = {250,130,10, 255};
+  const rgb_color WHOIS_COLOR         = {10,30,170, 255};
+  const rgb_color OP_COLOR            = {140,10,40, 255};
+  const rgb_color VOICE_COLOR         = {160, 20, 20, 255};
+  const rgb_color CTCP_REQ_COLOR      = {10,10,180, 255};
+  const rgb_color CTCP_RPY_COLOR      = {10,40,180, 255};
+  const rgb_color IGNORE_COLOR        = {100, 100, 100, 255};
+  const rgb_color INPUT_COLOR         = {0, 0, 0, 255};
+  const rgb_color INPUT_BG_COLOR      = {255, 255, 255, 255};
+  const rgb_color WINLIST_BG_COLOR    = {238, 242, 242, 255};
+  const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
 	
 
 	colors[C_TEXT]                      = myBlack;
@@ -312,44 +311,43 @@ VisionApp::GetColor (int32 which) const
 void
 VisionApp::SetColor (int32 which, const rgb_color color)
 {
-	if (which < MAX_COLORS &&  which >= 0
-	&& (colors[which].red   != color.red
-	||  colors[which].green != color.green
-	||  colors[which].blue  != color.blue
-	||  colors[which].alpha != color.alpha))
-	{
-		colors[which] = color;
+  if (which < MAX_COLORS &&  which >= 0
+  && (colors[which].red   != color.red
+  ||  colors[which].green != color.green
+  ||  colors[which].blue  != color.blue
+  ||  colors[which].alpha != color.alpha))
+  {
+    colors[which] = color;
 
-		BMessage msg (M_STATE_CHANGE);
+    BMessage msg (M_STATE_CHANGE);
 
-		msg.AddInt32 ("which", which);
-		msg.AddData (
-			"color",
-			B_RGB_COLOR_TYPE,
-			colors + which,
-			sizeof (rgb_color));
-		//Broadcast (&msg);
-	}
+    msg.AddInt32 ("which", which);
+    msg.AddData (
+      "color",
+      B_RGB_COLOR_TYPE,
+      colors + which,
+      sizeof (rgb_color));
+  }
 }
 
 
 /// begin font prefs ///
 void
 VisionApp::ClientFontFamilyAndStyle (
-	int32 which,
-	const char *family,
-	const char *style)
+  int32 which,
+  const char *family,
+  const char *style)
 {
-	if (which < MAX_FONTS && which >= 0)
-	{
-		client_font[which]->SetFamilyAndStyle (family, style);
+  if (which < MAX_FONTS && which >= 0)
+  {
+    client_font[which]->SetFamilyAndStyle (family, style);
 
-		BMessage msg (M_STATE_CHANGE);
+    BMessage msg (M_STATE_CHANGE);
 
-		msg.AddInt32 ("which", which);
-		msg.AddPointer ("font", client_font[which]);
-		//Broadcast (&msg);
-	}
+    msg.AddInt32 ("which", which);
+    msg.AddPointer ("font", client_font[which]);
+    //Broadcast (&msg);
+  }
 }
 
 void
@@ -389,47 +387,39 @@ VisionApp::GetEvent (int32 which) const
 void
 VisionApp::SetEvent (int32 which, const char *event)
 {
-	if (which < MAX_EVENTS && which >= 0
-	&&  events[which].Compare (event))
-	{
-		events[which] = event;
+  if (which < MAX_EVENTS && which >= 0
+  &&  events[which].Compare (event))
+  {
+    events[which] = event;
 
-		BMessage msg (M_STATE_CHANGE);
+    BMessage msg (M_STATE_CHANGE);
 
-		msg.AddInt32 ("which", which);
-		msg.AddString ("event", events[which].String());
-		Broadcast (&msg);
-	}
+    msg.AddInt32 ("which", which);
+    msg.AddString ("event", events[which].String());
+
+    Broadcast (&msg);
+  }
 }
 
 BString
 VisionApp::GetCommand (int32 which)
 {
-	BAutolock GetCommandLock (this);
-	BString buffer;
+  BAutolock GetCommandLock (this);
+  BString buffer;
 
-	if (which < MAX_COMMANDS && which >= 0 && GetCommandLock.IsLocked())
-		buffer = commands[which];
+  if (which < MAX_COMMANDS && which >= 0 && GetCommandLock.IsLocked())
+    buffer = commands[which];
 
-	return buffer;
+  return buffer;
 }
 
 void
 VisionApp::SetCommand (int32 which, const char *command)
 {
-	BAutolock SetCommandLock (this);
+  BAutolock SetCommandLock (this);
 
-	if (which < MAX_EVENTS && which >= 0 && SetCommandLock.IsLocked())
-	{
-		commands[which] = command;
-
-		// No need to broadcast.  It's pretty darn unlikely that
-		// a user can change the pref and in the same instance
-		// issue a part, quit, or kick command
-		// although ignore is more likely -- since it's rare
-		// we'll keep it as is
-	}
-
+  if (which < MAX_EVENTS && which >= 0 && SetCommandLock.IsLocked())
+    commands[which] = command;
 }
 
 bool
