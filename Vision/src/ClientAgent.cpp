@@ -328,12 +328,12 @@ ClientAgent::TimedSubmit (void *arg)
     msg->FindString ("data", i, &data);
 
     // :TODO: wade 020101 move locks to ParseCmd?
-    if (agentMsgr.IsValid() && window->Lock())
+    if (agentMsgr.IsValid() && agent->LockLooper())
     {
       if (!agent->SlashParser (data))
         agent->Parser (data);
 
-      window->Unlock();
+      agent->UnlockLooper();
 
       // A small attempt to appease the
       // kicker gods
@@ -479,7 +479,9 @@ ClientAgent::MessageReceived (BMessage *msg)
         bool shuttingdown (false);
         if (msg->HasBool ("vision:shutdown_in_progress"))
           msg->FindBool ("vision:shutdown_in_progress", &shuttingdown);
-        logger->isQuitting = shuttingdown;
+        
+        if (logger)
+          logger->isQuitting = shuttingdown;
       }
       break;
 
