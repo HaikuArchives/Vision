@@ -285,24 +285,14 @@ ServerAgent::Establish (void *arg)
       server->isConnecting = false;
       server->UnlockLooper();
 
-      if (endPoint)
-      {
-        endPoint->Close();
-        delete endPoint;
-        endPoint = 0;
-      }
       throw failToLock();
     }
 
     // just see if he's still hanging around before
     // we got blocked for a minute
     if (!sMsgrE->IsValid())
-    {
-      endPoint->Close();
-      delete endPoint;
-      endPoint = 0;
       throw failToLock();
-    }
+    
 
     server->PackDisplay (&statMsg, "[@] Connection open, waiting for reply from server\n", &(server->errorColor));
     sMsgrE->SendMessage (&statMsg);
@@ -349,8 +339,6 @@ ServerAgent::Establish (void *arg)
       {
         if (sMsgrE->IsValid() && !server->LockLooper())
         {
-          endPoint->Close();
-          delete endPoint;
           identLock.Unlock();
           throw failToLock();
         }
@@ -412,8 +400,6 @@ ServerAgent::Establish (void *arg)
       if (sMsgrE->IsValid() && !server->LockLooper())
       {
         identLock.Unlock();
-        endPoint->Close();
-        delete endPoint;
         throw failToLock();
       }
       server->lEndpoint = endPoint;
@@ -434,12 +420,15 @@ ServerAgent::Establish (void *arg)
       sMsgrE->SendMessage (&statMsg);
       sMsgrE->SendMessage (M_SERVER_DISCONNECT);
       server->lEndpoint = 0;
-      endPoint->Close();
-      delete endPoint;
       throw failToLock();
     }
   } catch (failToLock)
   {
+    if (endPoint)
+    {
+      endPoint->Close();
+      delete endPoint;
+    }  
     delete sMsgrE;
     return B_ERROR;
   }  

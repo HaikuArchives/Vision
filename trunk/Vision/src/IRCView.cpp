@@ -254,10 +254,15 @@ IRCView::MouseDown (BPoint myPoint)
 void 
 IRCView::KeyDown (const char *bytes, int32 numBytes) 
 {
-  if (settings->parentAgent && settings->parentAgent->msgr.IsValid())
-    settings->parentAgent->msgr.SendMessage (new BMessage(M_INPUT_FOCUS));
-  
-  BMessage *keyMsg (Window()->CurrentMessage());
+  if (!settings->parentInput)
+    return;
+
+  settings->parentInput->MakeFocus (true);
+  // We don't like your silly selecting-on-focus.
+  settings->parentInput->TextView()->Select (
+    settings->parentInput->TextView()->TextLength(),
+    settings->parentInput->TextView()->TextLength()); 
+
   settings->parentInput->TextView()->KeyDown (bytes, numBytes);
 
 }
