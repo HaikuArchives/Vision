@@ -1,13 +1,19 @@
 
-#include <stdio.h>
-
 #include "LuaScript.h"
+#include "TestScript.h"
+
+TestScript::TestScript (void)
+{
+  RunTestScripts();
+}
+
 
 /**
 	Because callbacks are handled in Lua, they still have to look like a Lua
 	callback.  The Script wrapper class can't "rename" them.
 **/
-static int Script_PrintNumber(lua_State* state)
+int
+TestScript::Script_PrintNumber (lua_State* state)
 {
 	// But we can enable Script support using a special constructor.
 	Script script(state);
@@ -28,7 +34,8 @@ static int Script_PrintNumber(lua_State* state)
 	Because callbacks are handled in Lua, they still have to look like a Lua
 	callback.  The Script wrapper class can't "rename" them.
 **/
-static int Script_Add(lua_State* state)
+int
+TestScript::Script_Add(lua_State* state)
 {
 	// But we can enable Script support using a special constructor.
 	Script script(state);
@@ -56,7 +63,8 @@ static int Script_Add(lua_State* state)
 	Demonstrate the use of the simple .ini script-like functions for writing
 	values to a script.
 **/
-void DoScriptIniWriteTest()
+void
+TestScript::DoScriptIniWriteTest()
 {
 	Script script;
 
@@ -72,7 +80,8 @@ void DoScriptIniWriteTest()
 	Demonstrate the use of the simple .ini script-like functions for reading
 	values from a script.
 **/
-void DoScriptIniReadTest()
+void
+TestScript::DoScriptIniReadTest()
 {
 	Script script;
 
@@ -87,7 +96,8 @@ void DoScriptIniReadTest()
 /**
 	Demonstrate registering callback functions for the Lua script.
 **/
-void DoScriptCallbackTest()
+void
+TestScript::DoScriptCallbackTest()
 {
 	Script script;
 
@@ -101,7 +111,8 @@ void DoScriptCallbackTest()
 /**
 	Demonstrate reading and saving a script.
 **/
-void DoScriptSaveTest()
+void
+TestScript::DoScriptSaveTest()
 {
 	Script script;
 
@@ -113,7 +124,8 @@ void DoScriptSaveTest()
 /**
 	Demonstrates walking an array table.
 **/
-void DoScriptArrayTest()
+void
+TestScript::DoScriptArrayTest()
 {
 	Script script;
 	script.DoFile("ScriptArrayTest.scr");
@@ -133,7 +145,8 @@ void DoScriptArrayTest()
 }
 
 
-void RunTestScripts (void)
+void
+TestScript::RunTestScripts (void)
 {
 	DoScriptIniWriteTest();
 	DoScriptIniReadTest();
@@ -141,3 +154,4 @@ void RunTestScripts (void)
 	DoScriptSaveTest();
 	DoScriptArrayTest();
 }
+
