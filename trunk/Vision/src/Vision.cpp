@@ -198,6 +198,9 @@ VisionApp::LoadDefaults (int32 section)
 
       if (!visionSettings->HasString ("realname"))
         visionSettings->AddString ("realname", "Heisenberg may have slept here");
+
+      if (!visionSettings->HasString ("username"))
+        visionSettings->AddString ("username", "vision");
     
       break;
     }
@@ -383,17 +386,17 @@ VisionApp::VisionVersion (void)
   return output;
 }
 
-BString
+const char *
 VisionApp::GetString (const char *stringName) const
 {
   if (debugsettings)
     printf (":SETTINGS: looking up String \"%s\"... ", stringName);
     
-  BString value;
+  const char *value;
   
   if (visionSettings->FindString (stringName, &value) == B_OK)
     if (debugsettings)
-      printf ("found; returning %s\n", value.String());
+      printf ("found; returning %s\n", value);
   else
     if (debugsettings)
       printf (" not found; returning NULL\n");
@@ -401,15 +404,6 @@ VisionApp::GetString (const char *stringName) const
   return value;
 }
 
-
-status_t
-VisionApp::SetString (const char *stringName, BString value)
-{
-  if (visionSettings->ReplaceString (stringName, value) == B_OK)
-    return B_OK;
-  
-  return B_ERROR;
-}
 
 status_t
 VisionApp::SetString (const char *stringName, const char *value)

@@ -643,41 +643,28 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_MOTD:            // 372
     case RPL_MOTDALT:         // 378
     {
-      if (!initialMotd
-      ||  (initialMotd && motd))
-      {
-        BString tempString (RestOfString(data, 4));
-        tempString.RemoveFirst (":");
-        tempString.Append ("\n");
-        Display (tempString.String(), 0);
-      }
-
+      BString tempString (RestOfString(data, 4));
+      tempString.RemoveFirst (":");
+      tempString.Append ("\n");
+      Display (tempString.String(), 0);
       return true;    
     }
     
     case RPL_MOTDSTART:        // 375
     {
-      if (!initialMotd
-      ||  (initialMotd && motd))
-      {
-        BString tempString ("- Server Message Of The Day:\n");
-        Display (tempString.String(), 0);
-      }
+      BString tempString ("- Server Message Of The Day:\n");
+      Display (tempString.String(), 0);
       return true;
     }
     
     case RPL_ENDOFMOTD:        // 376
     case ERR_NOMOTD:           // 422
     {
-      if (!initialMotd
-      ||  (initialMotd && motd))
-      {
-		BString tempString (RestOfString (data, 4));
-		tempString.RemoveFirst (":");
-		tempString.Append ("\n");
-		Display (tempString.String(), 0);
-      }
-		
+      BString tempString (RestOfString (data, 4));
+	  tempString.RemoveFirst (":");
+	  tempString.Append ("\n");
+	  Display (tempString.String(), 0);
+      		
       if (reconnecting)
       {
         BString reString;
@@ -746,29 +733,29 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
     case ERR_NICKNAMEINUSE:    // 433
     {
-      if (isConnecting)
-      {
-        if (++nickAttempt >= lnicks->CountItems())
-        {
-          Display ("* All your pre-selected nicknames are in use.\n", 0);
-          Display ("* Please type /NICK <NEWNICK> to try another.\n", 0);
-          return true;
-        }
-
-        myNick = (const char *)lnicks->ItemAt (nickAttempt);
-        Display ("* Nickname \"", 0);
-        Display ((const char *)lnicks->ItemAt (nickAttempt - 1), 0);
-        Display ("\" in use.. trying \"", 0);
-        Display (myNick.String(), 0);
-        Display ("\"\n", 0);
-
-        BString tempString ("NICK ");
-
-        tempString << myNick;
-        SendData (tempString.String());
-
-        return true;
-      }
+//      if (isConnecting)
+//      {
+//        if (++nickAttempt >= lnicks->CountItems())
+//        {
+//          Display ("* All your pre-selected nicknames are in use.\n", 0);
+//          Display ("* Please type /NICK <NEWNICK> to try another.\n", 0);
+//          return true;
+//        }
+//
+//        myNick = (const char *)lnicks->ItemAt (nickAttempt);
+//        Display ("* Nickname \"", 0);
+//        Display ((const char *)lnicks->ItemAt (nickAttempt - 1), 0);
+//        Display ("\" in use.. trying \"", 0);
+//        Display (myNick.String(), 0);
+//        Display ("\"\n", 0);
+//
+//        BString tempString ("NICK ");
+//
+//        tempString << myNick;
+//        SendData (tempString.String());
+//
+//        return true;
+//      }
 
       BString theNick (GetWord (data, 4)),
               tempString;

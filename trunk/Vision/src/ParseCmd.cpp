@@ -690,6 +690,7 @@ ClientAgent::ParseCmd (const char *data)
 	
 	if (firstWord == "/NEWSERVER")
 	{
+	  #if 0
 	  BString newServer (GetWord (data, 2)),
 	          newPort (GetWord (data, 3));
 	  if (newPort == "-9z99")
@@ -728,6 +729,7 @@ ClientAgent::ParseCmd (const char *data)
 	    true); // activate
 	    
 	    return true;
+	 #endif
 	}
 	
 

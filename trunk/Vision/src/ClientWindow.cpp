@@ -193,7 +193,31 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_MAKE_NEW_SERVER:
     {
-      const char *hostname, *port, *realname, *identname, *autoexec;
+      const char *hostname, *port, *autoexec;
+      bool enidentd;
+      
+      if ((msg->FindString ("hostname", &hostname) != B_OK)
+      ||  (msg->FindString ("port", &port) != B_OK)
+      ||  (msg->FindString ("autoexec", &autoexec) != B_OK)
+      ||  (msg->FindBool   ("enidentd", &enidentd) != B_OK))
+      {
+        printf (":ERROR: recieved incomplete data to M_MAKE_NEW_SERVER -- bailing\n");
+        return;
+      }
+           
+      winList->AddAgent (
+        new ServerAgent (
+          const_cast<const char *>(hostname),
+          const_cast<const char *>(port),
+          const_cast<BString *>(vision_app->events),
+          enidentd,
+          const_cast<const char *>(autoexec),
+          *agentrect),
+        ID_SERVER,
+        hostname,
+        WIN_SERVER_TYPE,
+        true); // bring to front
+      
       break;
     }
         

@@ -40,12 +40,8 @@ class ServerAgent : public ClientAgent
 
                                 ServerAgent (
                                   const char *,  // id_
-                                  BList *,       // nicklist
                                   const char *,  // port
-                                  const char *,  // real name
-                                  const char *,  // ident name
                                   BString *,     // events
-                                  bool,          // show motd?
                                   bool identd_,  // enable identd?
                                   const char *,  // connect commands
                                   BRect);        // frame
@@ -81,8 +77,9 @@ class ServerAgent : public ClientAgent
 
 	static int32				ServerSeed;
 	
-	BList							*lnicks;				// Passed from setup
-	const BString				lport,		
+	const BString				lnick1,
+									lnick2,
+									lport,		
 									lname,
 									lident;
 
@@ -129,8 +126,7 @@ class ServerAgent : public ClientAgent
 	
 	
 	
-	bool							motd,
-									initialMotd,
+	bool						initialMotd,
 									identd,
 									hostnameLookup;
 	BString						cmds;
