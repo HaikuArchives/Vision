@@ -83,7 +83,7 @@ NameItem::DrawItem (BView *father, BRect frame, bool complete)
   activeTheme->ReadLock();
   if (IsSelected())
   {
-    father->SetLowColor (180, 180, 180);
+    father->SetLowColor (activeTheme->ForegroundAt (C_NAMES_SELECTION));
     father->FillRect (frame, B_SOLID_LOW);
   }
   else if (complete)
@@ -122,13 +122,6 @@ NameItem::DrawItem (BView *father, BRect frame, bool complete)
     color = activeTheme->ForegroundAt (C_IGNORE);
 
   activeTheme->ReadUnlock();
-
-  if (IsSelected())
-  {
-    color.red   = 0;
-    color.green = 0;
-    color.blue  = 0;
-  }
 
   father->SetHighColor (color);
 
