@@ -252,7 +252,7 @@ DCCFileFilter::HandleButton (BMessage *)
 			BAlert *alert;
 
 			buffer << "The file \""
-				<< text->Text()
+				<< paneltext->Text()
 				<< "\" already exists in the specified folder.  "
 					"Do you want to continue the transfer?";
 
