@@ -170,6 +170,7 @@
 #define S_PCMD_DNS1                 "Resolved "
 #define S_PCMD_DNS2                 " to "
 #define S_PCMD_DNS_ERROR            "Unable to resolve "
+#define S_PCMD_PEXEC_ERROR          "/pexec: command failed"
 
 // ctcp parser
 
