@@ -31,6 +31,7 @@
 #include <FilePanel.h>
 #include <MessageRunner.h>
 #include <Path.h>
+#include <String.h>
 
 #ifdef NETSERVER_BUILD 
 #  include <netdb.h>
@@ -148,7 +149,7 @@ void
 ServerAgent::Init (void)
 {
 #ifdef NETSERVER_BUILD
-  endPointLock = new BLocker();
+  fEndPointLock = new BLocker();
 #endif
   Display ("Vision ");
   Display (vision_app->VisionVersion(VERSION_VERSION).String(), C_MYNICK);
@@ -572,7 +573,7 @@ ServerAgent::SendData (const char *cData)
     &dest_length,
     &state);
 #ifdef NETSERVER_BUILD
-  endPointLock->Lock();
+  fEndPointLock->Lock();
 #endif
   if (fServerSocket > 0 &&
 #ifdef BONE_BUILD  
@@ -587,7 +588,7 @@ ServerAgent::SendData (const char *cData)
       fMsgr.SendMessage (M_SERVER_DISCONNECT);
   }
 #ifdef NETSERVER_BUILD
-  endPointLock->Unlock();
+  fEndPointLock->Unlock();
 #endif
   if (vision_app->debugsend)
   {
@@ -732,7 +733,7 @@ ServerAgent::DisplayAll (
 void
 ServerAgent::PostActive (BMessage *msg)
 {
-  BAutolock lock (Window());
+  BAutolock activeLock (Window());
   ClientAgent *client (ActiveClient());
 
   if (client)
@@ -766,7 +767,7 @@ ServerAgent::HandleReconnect (void)
     fNickAttempt = 0;
     fEstablishHasLock = false;
 #ifdef NETSERVER_BUILD
-    endPointLock = new BLocker();
+    fEndPointLock = new BLocker();
 #endif
     fLoginThread = spawn_thread (
       Establish,

@@ -67,11 +67,6 @@ class VisionApp * vision_app;
 
 #include "TestScript.h"
 
-#if B_BEOS_VERSION_DANO
-#define _IMPEXP_ROOT
-extern "C" _IMPEXP_ROOT int _kset_fd_limit_ (int num);
-#endif
-
 // sound event name definitions
 const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
 
@@ -717,8 +712,6 @@ VisionApp::ReadyToRun (void)
   shutdownSem = create_sem(0, "ShutdownSem");
   if(shutdownSem < B_OK) //that's an error
   	vision_app->Quit();
-  
-  _kset_fd_limit_ (256);
   
   if (!CheckStartupNetworks())
   {  
