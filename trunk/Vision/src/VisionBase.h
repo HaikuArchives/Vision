@@ -96,8 +96,8 @@
 
 // tells the NamesView how to color the nicks
 #define STATUS_OP_BIT                                   0x0001
-#define STATUS_VOICE_BIT                                0x0002
-#define STATUS_HELPER_BIT                               0x0004
+#define STATUS_HELPER_BIT                               0x0002
+#define STATUS_VOICE_BIT                                0x0004
 #define STATUS_NORMAL_BIT                               0x0008
 #define STATUS_IGNORE_BIT                               0x0010
 

@@ -577,7 +577,7 @@ VisionApp::GetBool (const char *settingName)
 status_t
 VisionApp::SetBool (const char *settingName, bool value)
 {
- if (visionSettings->ReplaceBool (settingName, &value) == B_OK)
+ if (visionSettings->ReplaceBool (settingName, value) == B_OK)
    return B_OK;
  
  return B_ERROR;
