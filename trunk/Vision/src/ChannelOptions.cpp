@@ -25,12 +25,14 @@
 
 #include <stdio.h>
 
-ChannelOptions::ChannelOptions (const char *chan_name)
+ChannelOptions::ChannelOptions (BString chan_name_, ChannelAgent *parent_)
   : BWindow (
-      BRect (188.0, 88.0, 485.0, 390.0),
-      "Channel Options",
+      BRect (188.0, 88.0, 600.0, 390.0),
+      "",
       B_TITLED_WINDOW,
-      B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
+      B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE),
+  parent (parent_),
+  chan_name (chan_name_)
 {
   Init();
 }
@@ -44,12 +46,23 @@ ChannelOptions::~ChannelOptions (void)
 bool
 ChannelOptions::QuitRequested (void)
 {
+  parent->msgr.SendMessage (M_CHANNEL_OPTIONS_CLOSE);
   return true;  
 }
 
 void
 ChannelOptions::Init (void)
 {
- //
+  BString temp (" Options");
+  temp.Prepend (chan_name);
+  SetTitle (temp.String());
+  
+  bgView = new BView (Bounds(),
+                      "Background",
+                      B_FOLLOW_ALL_SIDES,
+                      B_WILL_DRAW);
+
+  bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+  AddChild (bgView);
 }
 

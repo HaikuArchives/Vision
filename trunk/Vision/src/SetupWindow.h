@@ -26,6 +26,8 @@
 
 #include <Window.h>
 
+class BView;
+
 class SetupWindow : public BWindow
 {
   public:
@@ -36,6 +38,7 @@ class SetupWindow : public BWindow
   private:  
     void                      Init (void);
     void                      InitServerStartup (void);
+    BView                     *bgView;
     
     
 };

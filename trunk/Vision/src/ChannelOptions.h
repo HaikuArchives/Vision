@@ -23,17 +23,25 @@
 #ifndef _CHANNELOPTIONS_H_
 #define _CHANNELOPTIONS_H_
 
+#include <String.h>
 #include <Window.h>
+
+class ChannelAgent;
+class BView;
 
 class ChannelOptions : public BWindow
 {
   public:
-                              ChannelOptions (const char *);
+                              ChannelOptions (BString, ChannelAgent *);
     virtual                   ~ChannelOptions (void);
     virtual bool              QuitRequested (void);
-  
+      
   private:  
     void                      Init (void);
+    ChannelAgent              *parent;
+    BString                   chan_name;
+    
+    BView                     *bgView;
     
     
 };

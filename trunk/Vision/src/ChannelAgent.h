@@ -31,6 +31,7 @@
 
 #include "ClientAgent.h"
 
+class ChannelOptions;
 class BScrollView;
 class ServerWindow;
 class NamesView;
@@ -87,8 +88,11 @@ class ChannelAgent : public ClientAgent
     friend class            ClientAgent;
     NamesView               *namesList;
     BScrollView             *namesScroll;
+    ChannelOptions          *chanOpt;
 
 };
 
+const uint32 M_CHANNEL_OPTIONS_SHOW    = 'caos';
+const uint32 M_CHANNEL_OPTIONS_CLOSE   = 'caoc';
 
 #endif

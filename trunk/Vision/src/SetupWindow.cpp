@@ -21,6 +21,8 @@
  *                 Rene Gollent
  */
 
+#include <View.h>
+
 #include "ClientWindow.h"
 #include "SetupWindow.h"
 #include "Vision.h"
@@ -56,7 +58,13 @@ SetupWindow::QuitRequested (void)
 void
 SetupWindow::Init (void)
 {
- //
+  bgView = new BView (Bounds(),
+                      "Background",
+                      B_FOLLOW_ALL_SIDES,
+                      B_WILL_DRAW);
+
+  bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+  AddChild (bgView);
 }
 
 void
