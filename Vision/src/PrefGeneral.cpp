@@ -51,8 +51,7 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_APP_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_COLOR_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_FONT_ITEM));
-  fPrefsList->AddItem (new BS
-  tringItem (S_PREFGEN_COMMAND_ITEM));
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_COMMAND_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_EVENT_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_DCC_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_LOG_ITEM));
