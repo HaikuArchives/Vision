@@ -36,14 +36,14 @@ class ServerEntryWindow : public BWindow
 {
   public:
     ServerEntryWindow (BHandler *, BMessage *, const ServerData*);
-    ~ServerEntryWindow (void);
+    virtual ~ServerEntryWindow (void);
 };
 
 class ServerEntryView : public BView
 {
   public:
                               ServerEntryView (BRect, BHandler *, BMessage *, const ServerData *);
-                              ~ServerEntryView (void);
+    virtual                   ~ServerEntryView (void);
     virtual void              AttachedToWindow (void);
     virtual void              AllAttached (void);
     virtual void              MessageReceived (BMessage *);

@@ -595,6 +595,10 @@ VisionApp::QuitRequested (void)
     closesocket (fIdentSocket);
 #endif
   
+  BMessenger msgr(fClientWin);
+  if (msgr.IsValid())
+    msgr.SendMessage(B_QUIT_REQUESTED);
+  
   status_t result;
   wait_for_thread (fWinThread, &result);
 

@@ -43,7 +43,7 @@ class ResizeView : public BView
 {
   public:
     ResizeView (BView *, BRect, const char * = "resizeView", uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, uint32 = 0);
-    ~ResizeView (void);
+    virtual ~ResizeView (void);
     virtual void MouseDown(BPoint);
     virtual void MouseMoved (BPoint, uint32, const BMessage *);
     virtual void MouseUp (BPoint);
