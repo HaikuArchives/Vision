@@ -1657,6 +1657,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         BString cmd (msg->FindString("cmd"));
         BString curNick;
         int32 idx (-1);
+        int32 i (0);
 
         // TODO: print notification message to user
         while ((idx = cmd.IFindFirst(" ")) > 0)
@@ -1664,17 +1665,31 @@ ServerAgent::MessageReceived (BMessage *msg)
           cmd.MoveInto(curNick, 0, cmd.IFindFirst(" "));
           // remove leading space
           cmd.Remove(0, 1);
-          vision_app->AddNotifyNick(fNetworkData.FindString("name"), curNick.String());
-          NotifyListItem *item (new NotifyListItem (curNick.String(), false));
-          fNotifyNicks.AddItem (item);
+          for (i = 0; i < fNotifyNicks.CountItems(); i++)
+            if (curNick == ((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text())
+              break;
+          // no dupes found, add it
+          if (i == fNotifyNicks.CountItems())
+          {
+            vision_app->AddNotifyNick(fNetworkData.FindString("name"), curNick.String());
+            NotifyListItem *item (new NotifyListItem (curNick.String(), false));
+            fNotifyNicks.AddItem (item);
+          }
           curNick = "";
         }
         // catch last one
         if (cmd.Length() > 0)
         {
-          NotifyListItem *item (new NotifyListItem (cmd.String(), false));
-          vision_app->AddNotifyNick(fNetworkData.FindString("name"), cmd.String());
-          fNotifyNicks.AddItem (item);
+          for (i = 0; i < fNotifyNicks.CountItems(); i++)
+            if (cmd == ((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text())
+              break;
+          // no dupes found, add it
+          if (i == fNotifyNicks.CountItems())
+          {
+            NotifyListItem *item (new NotifyListItem (cmd.String(), false));
+            vision_app->AddNotifyNick(fNetworkData.FindString("name"), cmd.String());
+            fNotifyNicks.AddItem (item);
+          }
         }
         BMessage updMsg (M_NOTIFYLIST_UPDATE);
         updMsg.AddPointer ("list", &fNotifyNicks);
