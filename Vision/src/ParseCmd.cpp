@@ -690,13 +690,17 @@ ClientAgent::ParseCmd (const char *data)
 	
 	if (firstWord == "/NEWSERVER")
 	{
-	  BString newServer (GetWord (data, 2));
+	  BString newServer (GetWord (data, 2)),
+	          newPort (GetWord (data, 3));
+	  if (newPort == "-9z99")
+	    newPort = "6667";	  	  
+	  
 	  BList *nicklist (new BList);
 	  BString nick ("vision");
 	  nicklist->AddItem (strcpy (new char [nick.Length() + 1], nick.String()));
   
 	  BString *serverhost (new BString (newServer)),
-	          *serverport (new BString ("6667")),
+	          *serverport (new BString (newPort)),
 	          *username (new BString ("Vision User")),
 	          *userident (new BString ("vision")),
 	          *servercmds (new BString ("")),
