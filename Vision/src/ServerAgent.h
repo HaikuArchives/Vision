@@ -94,6 +94,7 @@ class ServerAgent : public ClientAgent
 
 	void						DisplayAll (const char *, const uint32 = 0, const uint32 = 0, const uint32 = 0);
 	
+	void                        AddResumeData (BMessage *);
 	BLocker						*endPointLock,
 								loginLock;
 

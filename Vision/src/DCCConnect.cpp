@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "PlayButton.h"
 #include "Vision.h"
 #include "DCCConnect.h"
+#include "PlayButton.h"
 
 const uint32 M_STOP_BUTTON				= 'stop';
 const uint32 M_UPDATE_STATUS			= 'stat';
@@ -277,7 +277,7 @@ DCCReceive::Transfer (void *arg)
 	DCCReceive *view ((DCCReceive *)arg);
 	struct sockaddr_in sin;
 	//unsigned long ip;
-
+	
 	if ((view->s = socket (AF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		view->UpdateStatus ("Unable to establish connection.");

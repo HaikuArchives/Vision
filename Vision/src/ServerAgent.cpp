@@ -860,6 +860,41 @@ ServerAgent::PrivateIPCheck (const char *ip)
    
 }
 
+void
+ServerAgent::AddResumeData (BMessage *msg)
+{
+  ResumeData *data;
+
+  data = new ResumeData;
+
+  data->expire = system_time() + 50000000LL;
+  data->nick   = msg->FindString ("vision:nick");
+  data->file   = msg->FindString ("vision:file");
+  data->size   = msg->FindString ("vision:size");
+  data->ip     = msg->FindString ("vision:ip");
+  data->port   = msg->FindString ("vision:port");
+  data->path   = msg->FindString ("path");
+  data->pos    = msg->FindInt64  ("pos");
+	
+  //PRINT(("%s %s %s %s %s", data->nick.String(), data->file.String(), 
+  //	data->size.String(), data->ip.String(), data->port.String()));
+  resumes.AddItem (data);
+
+  BString buffer;
+
+  buffer << "PRIVMSG "
+    << data->nick
+    << " :\1DCC RESUME "
+    << data->file
+    << " "
+    << data->port
+    << " "
+    << data->pos
+    << "\1";
+
+  SendData (buffer.String());
+}
+
 
 void
 ServerAgent::MessageReceived (BMessage *msg)
@@ -1065,6 +1100,13 @@ ServerAgent::MessageReceived (BMessage *msg)
             be_app->PostMessage (&msg);
       }
       break;
+
+    case M_ADD_RESUME_DATA:
+      {
+        AddResumeData (msg);
+      }
+      break;
+
 
     case B_CANCEL:
       if (msg->HasPointer ("source"))
