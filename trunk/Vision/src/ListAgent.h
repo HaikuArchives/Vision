@@ -43,6 +43,7 @@ class StatusView;
 class WindowListItem;
 class Theme;
 class BRow;
+class WindowList;
 
 class ListAgent : public BView
 {
@@ -87,6 +88,7 @@ class ListAgent : public BView
     BMenuItem               *mFilter,
                               *mFind,
                               *mFindAgain;
+    friend class            WindowList;
 };
 
 #endif
