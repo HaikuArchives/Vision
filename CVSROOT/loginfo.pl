@@ -1,11 +1,11 @@
-#! /usr/bin/perl
+#! /usr/bin/perl -w
 # to call this script, add in you CVSROOT/loginfo
 # module_to_match THE_GOOD_PATH/loginfo.pl sender_mail recipient_mail subject %{}
 
 # (c)1999  Robert CHERAMY <tibob@via.ecp.fr>
 # you are free to reuse this script
 
-system("echo running");
+system("echo running loginfo.pl");
 
 $last_dir_file = "/tmp/#visioncvs.files.lastdir";
 $summary_file  = "/tmp/#visioncvs.files.summary";
@@ -44,6 +44,7 @@ Subject: $subject
     open(MAIL, "| $MAILER -t");
     print MAIL $mail;
     close(MAIL);
+    system("echo mail sent");
 	
     exit 0;
 }
@@ -98,6 +99,7 @@ Subject: $subject
   open(MAIL, "| $MAILER -t");
   print MAIL $mail;
   close(MAIL);
+  system("echo mail sent");
 
 # make a bit cleanup here.
   unlink("$summary_file.$my_pgrp_id");
