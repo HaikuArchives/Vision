@@ -253,7 +253,9 @@ NetPrefsServerView::AddServer (const ServerData *data)
 	server << data->port;
 	BStringField *portField (new BStringField (server.String()));
 	row->SetField (portField, 2);
+	LockLooper();
 	serverList->AddRow (row);
+	UnlockLooper();
 }
 
 void
@@ -280,8 +282,9 @@ NetPrefsServerView::RemoveServer ()
 				break;
 			}
 		}
-		
+		LockLooper();
 		serverList->RemoveRow (row);
+		UnlockLooper();
 		delete row;
 	}
 }
@@ -323,8 +326,10 @@ NetPrefsServerView::SetNetworkData (BMessage *msg)
 		AddServer (data);
 	}
 	activeNetwork = msg;
+	LockLooper();
 	selectTitleString->SetText (netString.String());
 	selectTitleString->ResizeToPreferred();
+	UnlockLooper();
 }
 
 void
