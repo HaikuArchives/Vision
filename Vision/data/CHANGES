@@ -6,6 +6,7 @@ http://vision.sourceforge.net
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
          * changed the PrefGeneral keyboard nav to be more standard. (Alan Ellis)
          * added file: and mailto: URL support (Alan Ellis)
+         * added error checking on /pexec (Alan Ellis, Rene Gollent)
          * added keyboard shortcuts for reordering networks in the window list, shift+alt+u moves the current network up one, shift+alt+d moves the current network down one
          * fixed bug where reordering by above shortcut would get undone
          * code cleanups

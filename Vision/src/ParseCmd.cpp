@@ -457,7 +457,7 @@ ClientAgent::ParseCmd (const char *data)
 
       if (rest != "-9z99" && rest != "-9z99")
       {
-        BMessage msg (M_EXCLUDE_COMMAND);
+        BMessage msg (M_EXCLUDE_ADD);
         msg.AddString ("second", second.String());
         msg.AddString ("cmd", rest.String());
         msg.AddString ("server", fServerName.String());
@@ -485,7 +485,7 @@ ClientAgent::ParseCmd (const char *data)
 
       if (rest != "-9z99")
       {
-        BMessage msg (M_IGNORE_COMMAND);
+        BMessage msg (M_IGNORE_ADD);
         msg.AddString ("cmd", rest.String());
         msg.AddString ("server", fServerName.String());
         msg.AddRect ("frame", Frame());
@@ -974,7 +974,7 @@ ClientAgent::ParseCmd (const char *data)
 
       if (rest != "-9z99")
       {
-        BMessage msg (M_UNIGNORE_COMMAND);
+        BMessage msg (M_IGNORE_REMOVE);
         msg.AddString ("cmd", rest.String());
         msg.AddString ("server", fServerName.String());
         msg.AddRect ("frame", Frame());
@@ -1144,11 +1144,11 @@ ClientAgent::ExecPipe (void *arg)
 
   FILE *fp = popen (exec->String(), "r");
   
-  if( (0 == (int)fp) || (-1 == (int)fp) )
+  if( ((int)fp) <= 0)
   {
-      // l43m error handling
-//      msg->ReplaceString("input", "Error from 'popen'" );
-//      self_destruct_in_15_seconds.SendMessage(msg);
+    msg->what = M_DISPLAY;
+    PackDisplay(msg, "/pexec: command failed\n", C_ERROR);
+    self_destruct_in_15_seconds.SendMessage(msg);
   }
   else
   {
