@@ -620,7 +620,8 @@ void
 WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winType, bool activate)
 {
   LockLooper();
-  int32 itemindex (-1);
+  int32 itemindex (0);
+  printf("Selected: %d\n", CurrentSelection());
   WindowListItem *currentitem ((WindowListItem *)ItemAt (CurrentSelection()));
   
   WindowListItem *newagentitem (new WindowListItem (name, serverId, winType, WIN_NORMAL_BIT, agent));
@@ -646,8 +647,13 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     newagentitem->SetSid (newsid);
     serverId = newsid;
   }
+
+  printf("Selected: %d\n", CurrentSelection());
   
   itemindex = IndexOf (newagentitem);
+
+
+  printf("Selected: %d\n", CurrentSelection());
 
   // give the agent its own pointer to its WinListItem,
   // so it can quickly update it's status entry
@@ -664,6 +670,8 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       }
     }
   }
+
+  printf("Selected: %d\n", CurrentSelection());
   
   // reset newagent
   newagent = newagentitem->pAgent();
@@ -681,6 +689,9 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
      }
   }
   
+
+  printf("Selected: %d\n", CurrentSelection());
+
   // reset newagent again
   newagent = newagentitem->pAgent();
   
@@ -696,13 +707,18 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
   newagent->Sync(); // clear artifacts
   
 
+  printf("Selected: %d\n", CurrentSelection());
+
   if (activate && itemindex >= 0)  // if activate is true, show the new view now.
     if (CurrentSelection() == -1)
       Select (itemindex); // first item, let SelectionChanged() activate it
     else
       Activate (itemindex);
   else
-    Select (FullListIndexOf (currentitem));
+    Select (IndexOf (currentitem));
+
+  printf("Selected: %d\n", CurrentSelection());
+
   UnlockLooper();
 }
 
