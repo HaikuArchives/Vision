@@ -627,17 +627,14 @@ RunView::WasDoubleClick(BPoint point)
 	bigtime_t doubleClickSpeed;
 	get_click_speed(&doubleClickSpeed);
 
+	lastClick = point;
+	lastClickTime = sysTime;
+
 	if (timeDelta < doubleClickSpeed
 		&& fabs(delta.x) < doubleClickThresh
 		&& fabs(delta.y) < doubleClickThresh)
-		{
-		  lastClick.Set(LONG_MAX, LONG_MAX);
-  		  lastClickTime = 0;
 		  return true;
-	    }
 
-	lastClick = point;
-	lastClickTime = sysTime;
 	return false;
 }
 
@@ -658,7 +655,7 @@ RunView::MouseDown (BPoint point)
 
 	SelectPos s (PositionAt (point));
 	
-	clicks %= 3;
+	clicks = clicks % 3;
 	
 	if (buttons == B_SECONDARY_MOUSE_BUTTON
 	&&		(modifiers & B_SHIFT_KEY) == 0
@@ -698,37 +695,32 @@ RunView::MouseDown (BPoint point)
 	{
 		SelectPos start (s),
 					end (s);
-			
+		
 		if (WasDoubleClick (point))
 		{
-			if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
-			&& (point.y <= lines[s.line]->bottom))
+			if (clicks == 2)
 			{
-				// select word
-				lines[s.line]->SelectWord (&start.offset, &end.offset);
-			
+				if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
+				&& (point.y <= lines[s.line]->bottom))
+				{
+					// select word
+					lines[s.line]->SelectWord (&start.offset, &end.offset);
+				
+					Select (start, end);
+					return;
+				}
+			}
+			else if (clicks == 0)
+			{
+				start.offset = 0;
+				end.offset = lines[s.line]->length - 1;
 				Select (start, end);
+				return;
 			}
 		}
-		else if (clicks == 0)
-		{
-			start.offset = 0;
-			end.offset = lines[s.line]->length;
-			Select (start, end);
-		}
-		else
-		{
-			SetMouseEventMask (B_POINTER_EVENTS);
-			tracking = 1;
-/*
-			if ((point.y < lines[sp_start.line]->top)
-				|| (s.line == sp_start.line && point.x < lines[sp_start.line]->edges[sp_start.offset])
-			  	|| (point.y > lines[sp_end.line]->bottom)
-			  	|| (s.line == sp_end.line && point.x > lines[sp_end.line]->edges[sp_end.offset]))
-
-			  	Select (s,s); */
-			track_offset = s;
-		}
+		SetMouseEventMask (B_POINTER_EVENTS);
+		tracking = 1;
+		track_offset = s;
 	}
 	else if (buttons					== B_PRIMARY_MOUSE_BUTTON
 	&&      (modifiers & B_SHIFT_KEY)   != 0
@@ -860,8 +852,7 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 
 				if (frame.Height() > Bounds().Height())
 					frame = Bounds();
-
-
+					
 				DragMessage (&msg, frame);
 
 				tracking = 3;
