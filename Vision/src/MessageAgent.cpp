@@ -373,7 +373,12 @@ MessageAgent::MessageReceived (BMessage *msg)
         const char *nick;
 
         if (msg->HasString ("nick"))
+        {
           msg->FindString ("nick", &nick);
+          BString outNick (nick);
+          outNick.RemoveFirst (" [DCC]");
+          msg->ReplaceString ("nick", outNick.String());
+        }
         else
         {
           BString outNick (chatee.String());
