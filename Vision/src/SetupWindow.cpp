@@ -41,7 +41,7 @@ const uint32 M_CHOOSE_NETWORK = 'swcn';
 SetupWindow::SetupWindow (void)
   : BWindow (
       BRect (188.0, 88.0, 535.0, 290.0),
-      "SetupWindow",
+      "Setup Window",
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
