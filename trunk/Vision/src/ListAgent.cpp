@@ -56,6 +56,8 @@
   <regurg> But your .
 */
 
+const int32 LIST_BATCH_SIZE = 30;
+
 ListAgent::ListAgent (
   BRect frame,
   const char *title,
@@ -181,6 +183,22 @@ ListAgent::Hide (void)
 {
   vision_app->pClientWin()->RemoveMenu (listMenu);
   BView::Hide();
+}
+
+void
+ListAgent::AddBatch (void)
+{
+  // make sure you call this from a locked looper
+  BRow *row (NULL);
+  Window()->DisableUpdates();
+  while ((row = (BRow *)fBuildList.RemoveItem (0L)) != NULL)
+    listView->AddRow (row);
+  Window()->EnableUpdates();
+        
+  BString cString;
+  cString << listView->CountRows();
+  if (!IsHidden())
+    vision_app->pClientWin()->pStatusView()->SetItemValue (0, cString.String(), true);
 }
 
 void
@@ -317,6 +335,7 @@ ListAgent::MessageReceived (BMessage *msg)
         
         BRow *row (new BRow ());
         
+        
         BStringField *channelField (new BStringField (channel));
         BIntegerField *userField (new BIntegerField (atoi(users)));
         BStringField *topicField (new BStringField (topic));
@@ -324,12 +343,11 @@ ListAgent::MessageReceived (BMessage *msg)
         row->SetField (channelField, channelColumn->LogicalFieldNum());
         row->SetField (userField, usersColumn->LogicalFieldNum());
         row->SetField (topicField, topicColumn->LogicalFieldNum());
-        listView->AddRow (row);
+
+        fBuildList.AddItem (row);
         
-        BString cString;
-        cString << listView->CountRows();
-        if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (0, cString.String(), true);
+        if (fBuildList.CountItems() == LIST_BATCH_SIZE)
+          AddBatch();
       }
       
       break;
