@@ -27,7 +27,6 @@
 
 const int ZERO                        = 0;
 
-/// Misc ///
 const int RPL_WELCOME                 = 001;
 const int RPL_WELCOME2                = 002;
 const int RPL_WELCOME3                = 003;
@@ -35,7 +34,6 @@ const int RPL_WELCOME4                = 004;
 const int RPL_WELCOME5                = 005;
 
 
-/// Command Replies ///
 const int RPL_TRACELINK               = 200;
 const int RPL_TRACECONNECTING         = 201;
 const int RPL_TRACEHANDSHAKE          = 202;
@@ -138,7 +136,6 @@ const int RPL_ENDOFUSERS              = 394;
 const int RPL_NOUSERS                 = 395;           
 
 
-/// Error Replies ///
 const int ERR_NOSUCHNICK              = 401;
 const int ERR_NOSUCHSERVER            = 402;
 const int ERR_NOSUCHCHANNEL           = 403;
