@@ -102,9 +102,11 @@ class ServerAgent : public ClientAgent
 
     BMessageRunner              *lagRunner;
 	
-	const char                  *localip;           // our local ip
+	BString                     localip;           // our local ip
+
 	bool                        localip_private;    // if localip is private
 	                                                // (set by PrivateIPCheck)
+	bool                        getLocalIP;
 	
 	const BString					lname,
 									lident;

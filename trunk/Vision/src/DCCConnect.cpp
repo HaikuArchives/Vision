@@ -31,6 +31,7 @@
 #include <stdio.h>
 
 #include "Vision.h"
+#include "ServerAgent.h"
 #include "DCCConnect.h"
 #include "PlayButton.h"
 
@@ -174,10 +175,7 @@ DCCConnect::MessageReceived (BMessage *msg)
 		    reply.AddBool ("resume", recview->resume);
 		  DCCSend *sendview (dynamic_cast<DCCSend *>(this));
 		  if (sendview != NULL)
-		  {
-		    reply.AddData ("addr", B_RAW_TYPE, &sendview->addr, sizeof(in_addr));
 		    reply.AddMessenger ("caller", sendview->caller);
-		  }
 		  msg->SendReply(&reply);
 		}
 		break;
@@ -425,7 +423,7 @@ DCCReceive::Transfer (void *arg)
 			{
 				cps = (int)ceil ((bytes_received - file_size) / ((now - start) / 1000000.0));
 				BMessage msg (M_UPDATE_AVERAGE);
-				msg.AddInt32 ("transferred", cps);
+				msg.AddInt32 ("average", cps);
 				msgr.SendMessage (&msg);
 				last = now;
 				period = 0;
@@ -461,12 +459,10 @@ DCCSend::DCCSend (
 	const char *n,
 	const char *fn,
 	const char *sz,
-	const BMessenger &c,
-	struct in_addr a)
+	const BMessenger &c)
 
 	: DCCConnect (n, fn, sz, "", "", c),
-	  pos (0LL),
-	  addr (a)
+	  pos (0LL)
 {
     int32 dccPort (atoi (vision_app->GetString ("dccMinPort")));
     int32 diff (atoi (vision_app->GetString ("dccMaxPort")) - dccPort);
@@ -497,16 +493,21 @@ int32
 DCCSend::Transfer (void *arg)
 {
 	BMessenger msgr (reinterpret_cast<DCCSend *>(arg));
-	BMessage reply;
+	BMessage reply, ipdata;
 	BLooper *looper (NULL);
 
 	if (msgr.IsValid())
 	  msgr.SendMessage (M_GET_CONNECT_DATA, &reply);
-	
+
+	BMessenger callmsgr;
+	reply.FindMessenger ("caller", &callmsgr);
+    
+    callmsgr.SendMessage (M_GET_IP, &ipdata);    
+    	
 	BPath path (reply.FindString ("name"));
 	BString file_name, status;
 	struct sockaddr_in sin;
-	const struct in_addr *sendaddr;
+	struct in_addr sendaddr;
 	memset (&sendaddr, 0, sizeof (struct in_addr));
 	int sd, dccSock (-1);
 
@@ -525,7 +526,6 @@ DCCSend::Transfer (void *arg)
 	sin.sin_port        = htons (atoi (reply.FindString("port")));
 
 	int sin_size;
-	reply.FindData ("addr", B_RAW_TYPE, reinterpret_cast<const void **>(&sendaddr), (ssize_t *)&sin_size);
 	sin_size = (sizeof (struct sockaddr_in));
 		
 	UpdateStatus (msgr, "Acquiring DCC lock...");
@@ -545,6 +545,8 @@ DCCSend::Transfer (void *arg)
 		return 0;
 	}
 	UpdateStatus (msgr, "Waiting for acceptance.");
+	
+	sendaddr.s_addr = inet_addr (ipdata.FindBool ("private") ? ipdata.FindString ("privateip") : ipdata.FindString ("ip"));
 
 	if (msgr.IsValid())
 	{
@@ -553,7 +555,7 @@ DCCSend::Transfer (void *arg)
 			<< " :\1DCC SEND "
 			<< file_name
 			<< " "
-			<< htonl (sendaddr->s_addr)
+			<< htonl (sendaddr.s_addr)
 			<< " "
 			<< reply.FindString ("port")
 			<< " "
@@ -562,8 +564,6 @@ DCCSend::Transfer (void *arg)
 
 		BMessage msg (M_SERVER_SEND);
 		msg.AddString ("data", status.String());
-		BMessenger callmsgr;
-		reply.FindMessenger ("caller", &callmsgr);
 		if (callmsgr.IsValid())
 		  callmsgr.SendMessage (&msg);
 		UpdateStatus (msgr, "Doing listen call.");
@@ -705,7 +705,7 @@ DCCSend::Transfer (void *arg)
 			{
 				cps = (int) ceil ((bytes_sent - seekpos) / ((now - start) / 1000000.0));
 				BMessage msg (M_UPDATE_AVERAGE);
-				msg.AddInt32 ("transferred", cps);
+				msg.AddInt32 ("average", cps);
 				msgr.SendMessage (&msg);
 				last = now;
 				period = 0;
