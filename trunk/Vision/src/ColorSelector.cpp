@@ -277,8 +277,11 @@ void ColorSelector::AttachedToWindow()
 	fColorPalette->SetTarget(me);
 	fColorMenu->SetTargetForItems(me);
 	BMenuItem* it = fColorMenu->ItemAt(0);
-	if (it) 
+	if (it)
+	{
 		it->SetMarked(true);
+		dynamic_cast<BInvoker *>(it)->Invoke();
+	}
 #if B_BEOS_VERSION_DANO
 	LayoutViews(true);
 #endif
