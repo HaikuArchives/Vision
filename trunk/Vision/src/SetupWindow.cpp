@@ -74,11 +74,11 @@ SetupWindow::InitServerStartup (void)
   // and adds them to ClientWindow
   
 	BMessage newserver (M_MAKE_NEW_SERVER);
-	newserver.AddBool   ("enidentd", true);
-	
 	newserver.AddString ("hostname", "irc.sorcery.net");
 	newserver.AddString ("port", "6667");
-	newserver.AddString ("autoexec", "/join #BeDev,#Vision");
+	newserver.AddString ("autoexec", "");
+	newserver.AddBool   ("enidentd", true);
+	
 	
 	vision_app->pClientWin()->PostMessage (&newserver);
 

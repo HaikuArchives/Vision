@@ -412,8 +412,6 @@ ServerAgent::Establish (void *arg)
     return B_ERROR;
   }
   
-  sMsgrE->SendMessage (M_CONNECTED);
-  
   struct fd_set eset, rset, wset;
 #ifdef NETSERVER_BUILD
   struct timeval tv = {0, 0};

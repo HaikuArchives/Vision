@@ -88,6 +88,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_MYINFO:           // 004
       {
         isConnecting = false;
+        sMsgr.SendMessage (M_CONNECTED);
         initialMotd = true;
         retry = 0;
         
