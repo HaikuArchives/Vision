@@ -294,18 +294,29 @@ RunView::Draw (BRect frame)
 {
 	Window()->DisableUpdates();
 	//BStopWatch watch ("draw");
-	rgb_color low_color, hi_color, view_color;
+	rgb_color low_color, hi_color, view_color, sel_color, sel_text;
 	float height (frame.bottom);
 	BRect bounds (Bounds());
 	BRegion clipper;
 	bool drawSelection (false);
+	bool checkSelection (sp_start != sp_end);
 	
 	clipper.Set (frame);
 	ConstrainClippingRegion (&clipper);
 
 	theme->ReadLock();
 	view_color = theme->BackgroundAt (Theme::NormalBack);
-
+	
+	sel_color = theme->BackgroundAt (Theme::SelectionBack);
+	if (((sel_color.red + sel_color.blue + sel_color.green) / 3) >= 127)
+	{
+		sel_text.red = sel_text.green = sel_text.blue = 0;
+		sel_text.alpha = 255;
+	}
+	else
+	{
+		sel_text.red = sel_text.green = sel_text.blue = sel_text.alpha = 255;
+	}
 	BRect remains;
 	if (line_count == 0)
 		remains = frame;
@@ -416,7 +427,7 @@ RunView::Draw (BRect frame)
 				if (fore < line->fc_count
 				&&  line->fcs[fore].offset - place < length)
 					length = line->fcs[fore].offset - place;
-
+				
 				if (back < line->fc_count
 				&&  line->fcs[back].offset - place < length)
 					length = line->fcs[back].offset - place;
@@ -424,6 +435,44 @@ RunView::Draw (BRect frame)
 				if (font < line->fc_count
 				&&  line->fcs[font].offset - place < length)
 					length = line->fcs[font].offset - place;
+				
+				if (checkSelection)
+				{
+					// case 1: current line contains selection, selection is constrained
+					// to one line
+					if (i == sp_start.line)
+					{
+						if (place + length >= sp_start.offset && place < sp_start.offset)
+						{
+							length = sp_start.offset - place;
+							drawSelection = false;
+						}
+						else if (place == sp_start.offset)
+						{
+							if (sp_start.line == sp_end.line)
+								length = sp_end.offset - sp_start.offset;
+							else
+								length = line->length - sp_start.offset;
+							drawSelection = true;
+						}
+						else
+							drawSelection = false;
+					}
+					else if (i > sp_start.line && i < sp_end.line)
+						drawSelection = true;
+					else if (i == sp_end.line && i != sp_start.line)
+					{
+						if (place < sp_end.offset)
+						{
+							length = sp_end.offset;
+							drawSelection = true;
+						}
+						else
+							drawSelection = false;
+					}
+					else
+						drawSelection = false;
+				}
 				
 				if (place + length == line->length)
 					--length;
@@ -440,16 +489,16 @@ RunView::Draw (BRect frame)
 
 				SetDrawingMode (B_OP_COPY);
 				if (drawSelection)
-					SetLowColor (theme->BackgroundAt (Theme::SelectionBack));
+					SetLowColor (sel_color);
 				else
 					SetLowColor (low_color);
 				SetHighColor (hi_color);
 				FillRect (r, B_SOLID_LOW);
 				
 				if (drawSelection)
-					SetDrawingMode (B_OP_INVERT);
-				else
-					SetDrawingMode (B_OP_COPY);
+					SetHighColor (sel_text);
+	
+				SetDrawingMode (B_OP_COPY);
 
 				DrawString (
 					line->text + place,

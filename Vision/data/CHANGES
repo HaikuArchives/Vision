@@ -28,6 +28,7 @@ http://vision.sourceforge.net
          * fixed broken /me in DCC chat
          * collapsed servers show indicator of status of collapsed items
          * URL clicking in RunView now works
+         * text selection implemented in RunView
          
 [0.3.0828]
 2001-08-28
