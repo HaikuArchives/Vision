@@ -104,7 +104,6 @@ VTextControl::BuildPopUp (void)
           enablepaste = true; // has text on clipboard
     }
     clipboard.Unlock();
-    delete clip;
   }
   
   myPopUp = new BPopUpMenu ("Context Menu", false, false); 
