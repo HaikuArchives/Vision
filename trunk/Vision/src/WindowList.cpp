@@ -352,7 +352,6 @@ WindowList::SelectLast (void)
     Select (lastInt);
   else
     Select (0);
-    
   ScrollToSelection();
   UnlockLooper();
   
@@ -780,8 +779,8 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   FullListSortItems (SortListItems);
   delete agent;
   SelectLast();
+  lastSelected = NULL;
   Window()->EnableUpdates();
-  
   UnlockLooper();
 }
 
