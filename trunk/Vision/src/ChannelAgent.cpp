@@ -39,30 +39,30 @@
 
 
 ChannelAgent::ChannelAgent (
-	const char *id_,
-	int32 sid_,
-	const char *serverName_,
-	const char *nick,
-	BMessenger &sMsgr_,
-	BRect &frame_)
+  const char *id_,
+  int32 sid_,
+  const char *serverName_,
+  const char *nick,
+  BMessenger &sMsgr_,
+  BRect &frame_)
 
-	: ClientAgent (
-		id_,
-		sid_,
-		serverName_,
-	    nick,
-		sMsgr_,
-		frame_),
+  : ClientAgent (
+    id_,
+    sid_,
+    serverName_,
+    nick,
+    sMsgr_,
+    frame_),
 
-    chanMode (""),
-	chanLimit (""),
-	chanLimitOld (""),
-	chanKey (""),
-	chanKeyOld (""),
-	lastExpansion (""),
-	userCount (0),
-	opsCount (0),
-	chanOpt (0)
+  chanMode (""),
+  chanLimit (""),
+  chanLimitOld (""),
+  chanKey (""),
+  chanKeyOld (""),
+  lastExpansion (""),
+  userCount (0),
+  opsCount (0),
+  chanOpt (0)
 
 {
   //Init();
