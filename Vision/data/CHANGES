@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.6-exp-1109]
+[0.6-exp-1115]
          * added Network Preferences
             -- ability to organize networks as groups of servers that will
                automatically be cycled through on dis/reconnect
@@ -12,6 +12,9 @@ http://vision.sourceforge.net
                and Bob Maple for the Vision logo
             -- NOTE: still work in progress, stability is not guaranteed at the moment,
                and some aspects of the GUI are not done yet.
+         * sped up RunView's line wrapping function
+         * fixed some stack corruption bugs, hopefully this will fix the
+         bizarre disappearing window thread bug that was cropping up now and again.
             
 
 [0.5-1103]
