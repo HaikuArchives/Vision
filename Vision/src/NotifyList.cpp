@@ -44,6 +44,7 @@ NotifyList::NotifyList (BRect _frame)
       fMyPopUp (NULL)
 {
   fActiveTheme->ReadLock();
+  SetFont (&fActiveTheme->FontAt (F_WINLIST));
   SetViewColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_BACKGROUND));
   fActiveTheme->ReadUnlock();
 }
@@ -243,6 +244,19 @@ NotifyList::MessageReceived (BMessage *msg)
         }
         if (refresh)
           Invalidate();
+      }
+      break;
+
+    case M_THEME_FONT_CHANGE:
+      {
+        int16 which (msg->FindInt16 ("which"));
+        if (which == F_WINLIST)
+        {
+          fActiveTheme->ReadLock();
+          SetFont (&fActiveTheme->FontAt (F_WINLIST));
+          fActiveTheme->ReadUnlock();
+          Invalidate();
+        }
       }
       break;
       

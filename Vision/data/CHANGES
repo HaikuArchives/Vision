@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.3-0724]
+[0.9.3-0728]
          * unbroke auto-rejoin on disconnect
          * fixed bug where channel name list would be incorrect
          * fixed typo in rejoin on kick string
@@ -11,6 +11,7 @@ http://vision.sourceforge.net
          * added message indicating timeout for server retry
          * added missing const qualifier to various class functions
          * code audit time!
+         * fixed bug in notify list (fonts data was not getting correctly updated/used)
 
 [0.9.2-0719]
          * fixed name item color drawing
