@@ -135,7 +135,7 @@ FontMenuItem::DrawContent (void)
 {
   BMenu *menu (Menu());
   if (menu)
-    menu->SetFont (&myFont);
+    menu->SetFont (&myFont, B_FONT_FAMILY_AND_STYLE);
 
   BMenuItem::DrawContent();
 }
