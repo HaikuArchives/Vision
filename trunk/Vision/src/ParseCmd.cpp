@@ -676,12 +676,11 @@ ClientAgent::ParseCmd (const char *data)
 				tempString << "[M]-> " << theNick << " > " << theRest << "\n";
 				Display (tempString.String(), 0);
 	
-				BMessage sendMsgCmd (M_SERVER_SEND);
-				AddSend (&sendMsgCmd, "PRIVMSG ");
-				AddSend (&sendMsgCmd, theNick);
-				AddSend (&sendMsgCmd, " :");
-				AddSend (&sendMsgCmd, theRest);
-				AddSend (&sendMsgCmd, endl);
+				AddSend (&sendMsg, "PRIVMSG ");
+				AddSend (&sendMsg, theNick);
+				AddSend (&sendMsg, " :");
+				AddSend (&sendMsg, theRest);
+				AddSend (&sendMsg, endl);
 			}
 
 		}
