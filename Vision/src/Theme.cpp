@@ -28,6 +28,7 @@
 #include <Font.h>
 
 #include "Theme.h"
+#include "VisionBase.h"
 
 int16 Theme::TimestampFore			= 0;
 int16 Theme::TimestampBack			= 0;
@@ -169,7 +170,7 @@ Theme::SetForeground (int16 which, const rgb_color color)
 	int32 count (list.CountItems());
 	fores[which] = color;
 
-	BMessage msg (M_FOREGROUND_CHANGE);
+	BMessage msg (M_THEME_FOREGROUND_CHANGE);
 	msg.AddInt16 ("which", which);
 
 	for (int32 i = 0; i < count; ++i)
@@ -192,7 +193,7 @@ Theme::SetBackground (int16 which, const rgb_color color)
 	int32 count (list.CountItems());
 	backs[which] = color;
 
-	BMessage msg (M_BACKGROUND_CHANGE);
+	BMessage msg (M_THEME_BACKGROUND_CHANGE);
 	msg.AddInt16 ("which", which);
 
 	for (int32 i = 0; i < count; ++i)
@@ -215,7 +216,7 @@ Theme::SetFont (int16 which, const BFont &font)
 	int32 count (list.CountItems());
 	fonts[which] = font;
 
-	BMessage msg (M_FONT_CHANGE);
+	BMessage msg (M_THEME_FONT_CHANGE);
 	msg.AddInt16 ("which", which);
 
 	for (int32 i = 0; i < count; ++i)

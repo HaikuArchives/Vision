@@ -1109,13 +1109,13 @@ RunView::MessageReceived (BMessage *msg)
 {
 	switch (msg->what)
 	{
-		case M_FOREGROUND_CHANGE:
-		case M_BACKGROUND_CHANGE:
+		case M_THEME_FOREGROUND_CHANGE:
+		case M_THEME_BACKGROUND_CHANGE:
 		    if (!IsHidden())
 				Invalidate (Bounds());
 			break;
 
-		case M_FONT_CHANGE:
+		case M_THEME_FONT_CHANGE:
 		{
 			Theme *save (theme);
 
@@ -1332,6 +1332,8 @@ RunView::Append (
 	int16 back,
 	int16 font)
 {
+    if (buffer == NULL)
+      return;
 	float width (Bounds().Width() - 10);
 	int32 place (0);
 
@@ -1344,7 +1346,7 @@ RunView::Append (
 	assert (back != Theme::SelectionBack);
 
 	theme->ReadLock();
-
+    
 
 	while (place < len)
 	{
@@ -1458,7 +1460,7 @@ RunView::Append (
 
 			if (Window()) Window()->DisableUpdates();
 
-			if ((chopped = line_count == LINE_COUNT))
+			if ((chopped = (line_count == LINE_COUNT)))
 			{
 				Line *first (lines[0]);
 				float shift (first->bottom + 1);

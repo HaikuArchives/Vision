@@ -65,8 +65,8 @@ ClientAgent::ClientAgent (
     id_,
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW | B_FRAME_EVENTS),
-
   fCancelMLPaste(false),
+  activeTheme (vision_app->ActiveTheme()),
   id (id_),
   sid (sid_),
   serverName (serverName_),
@@ -92,7 +92,7 @@ ClientAgent::ClientAgent (
     id_,
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW),
-
+  activeTheme (vision_app->ActiveTheme()),
   id (id_),
   sid (sid_),
   serverName (serverName_),
@@ -133,11 +133,13 @@ ClientAgent::AllAttached (void)
 
   // we initialize the color constants for the input control here
   // because BTextControl ignores them prior to being attached for some reason
-  rgb_color inputColor (vision_app->GetColor (C_INPUT));
-  input->TextView()->SetFontAndColor (vision_app->GetClientFont (F_INPUT), B_FONT_ALL,
+  activeTheme->ReadLock();
+  rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
+  input->TextView()->SetFontAndColor (&activeTheme->FontAt (F_INPUT), B_FONT_ALL,
     &inputColor);
-  input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
+  input->TextView()->SetViewColor (activeTheme->ForegroundAt (C_INPUT_BACKGROUND));
   input->TextView()->SetColorSpace (B_RGB32);
+  activeTheme->ReadUnlock();
 }
 
 void
@@ -200,7 +202,8 @@ ClientAgent::Init (void)
   AddChild (input);
   input->TextView()->AddFilter (new ClientAgentInputFilter (this));
   input->Invalidate();
-  
+
+  activeTheme->AddView (this);  
 
   history = new HistoryMenu (BRect (
     frame.right - 11,
@@ -214,7 +217,6 @@ ClientAgent::Init (void)
     frame.right - frame.left - 1 - B_V_SCROLL_BAR_WIDTH,
     frame.bottom - input->Frame().Height() - 1);
   
-  Theme *activeTheme (vision_app->ActiveTheme());
   text = new RunView (
     textrect,
     id.String(),
@@ -225,7 +227,6 @@ ClientAgent::Init (void)
   
   if (vision_app->GetBool ("timestamp"))
     text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
- 
  
   activeTheme->AddView (text);
   
@@ -594,46 +595,34 @@ ClientAgent::MessageReceived (BMessage *msg)
           logger->isQuitting = shuttingdown;
       }
       break;
-      
+
+    case M_THEME_FOREGROUND_CHANGE:
+      {
+        activeTheme->ReadLock();
+        rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
+        input->TextView()->SetFontAndColor (&activeTheme->FontAt(F_INPUT), B_FONT_ALL,
+           &inputColor);
+        input->TextView()->SetViewColor (activeTheme->ForegroundAt (C_INPUT_BACKGROUND));
+        input->TextView()->Invalidate();
+        activeTheme->ReadUnlock();
+      }
+      break;
+     
+    case M_THEME_FONT_CHANGE:
+      {
+        activeTheme->ReadLock();
+        rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
+        input->TextView()->SetFontAndColor (&activeTheme->FontAt (F_INPUT), B_FONT_ALL,
+          &inputColor);
+        activeTheme->ReadUnlock();
+        Invalidate();
+
+      }
+      break; 
+
     case M_STATE_CHANGE:
       {
-        int32 which (msg->FindInt32 ("which"));
-        if (msg->HasBool ("color"))
-        {
-          switch (which)
-          {
-            case C_INPUT:
-              rgb_color inputColor (vision_app->GetColor (C_INPUT));
-              input->TextView()->SetFontAndColor (vision_app->GetClientFont(F_INPUT), B_FONT_ALL,
-                &inputColor);
-              input->TextView()->Invalidate();
-              break;
-            
-            case C_INPUT_BACKGROUND:
-              input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
-              input->TextView()->Invalidate();
-              break;
-                
-            default:
-              break;
-          }
-          Invalidate();
-        }
-        else if (msg->HasBool ("font"))
-        {
-          switch (which)
-          {
-            case F_INPUT:
-              rgb_color inputColor (vision_app->GetColor (C_INPUT));
-              input->TextView()->SetFontAndColor (vision_app->GetClientFont (F_INPUT), B_FONT_ALL,
-                &inputColor);
-              break;
-            
-            default:
-              break;
-          }
-        }
-        else if (msg->HasBool ("bool"))
+        if (msg->HasBool ("bool"))
         {
           if (timeStampState = vision_app->GetBool ("timestamp"))
             text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));

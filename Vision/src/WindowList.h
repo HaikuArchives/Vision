@@ -37,7 +37,7 @@ class ServerAgent;
 class ClientAgent;
 class ClientWindow;
 class BScrollView;
-
+class Theme;
 
 class WindowListItem : public BListItem
 {
@@ -85,9 +85,6 @@ class WindowList : public BOutlineListView
     virtual void 					SelectionChanged (void);
     virtual void                    KeyDown (const char *, int32);
 	
-    void                            SetColor (int32, rgb_color);
-    rgb_color                       GetColor (int32) const;
-    void                            SetFont (int32, const BFont *);
     void                            ClearList (void);
     void                            Activate (int32);
     void                            CloseActive (void);
@@ -113,17 +110,12 @@ class WindowList : public BOutlineListView
     BPopUpMenu                      *myPopUp;
     WindowListItem                  *lastSelected;
     
+    Theme                           *activeTheme;
+    
     void                            BuildPopUp (void);
     
     int32                           lastButton;
 
-    rgb_color                       textColor,
-                                    newsColor,
-                                    nickColor,
-                                    sixColor,
-                                    selColor,
-                                    bgColor;
-                                    
     static int                      SortListItems (const BListItem *, const BListItem *);
     
 };

@@ -30,6 +30,7 @@
 #include <MenuItem.h>
 #include <List.h>
 
+#include "Theme.h"
 #include "Vision.h"
 #include "WindowList.h"
 #include "ClientWindow.h"
@@ -47,18 +48,16 @@ WindowList::WindowList (BRect frame)
     frame,
     "windowList",
     B_SINGLE_SELECTION_LIST,
-    B_FOLLOW_ALL)
+    B_FOLLOW_ALL),
+      activeTheme (vision_app->ActiveTheme())
 {
-  textColor   = vision_app->GetColor (C_WINLIST_NORMAL);
-  newsColor   = vision_app->GetColor (C_WINLIST_NEWS);
-  nickColor   = vision_app->GetColor (C_WINLIST_NICK);
-  sixColor    = vision_app->GetColor (C_WINLIST_PAGESIX);
-  selColor    = vision_app->GetColor (C_WINLIST_SELECTION);
-  bgColor     = vision_app->GetColor (C_WINLIST_BACKGROUND);
+  activeTheme->ReadLock();
   
-  BOutlineListView::SetFont (vision_app->GetClientFont (F_WINLIST));
+  SetFont (&activeTheme->FontAt (F_WINLIST));
 
-  SetViewColor (bgColor);
+  SetViewColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+  
+  activeTheme->ReadUnlock();
   
   SetTarget (this);
 }
@@ -84,6 +83,24 @@ WindowList::MessageReceived (BMessage *msg)
         CloseActive();
       }
       break;
+    
+    case M_THEME_FONT_CHANGE:
+      {
+        activeTheme->ReadLock();
+        SetFont (&activeTheme->FontAt (F_WINLIST));
+        activeTheme->ReadUnlock();
+        Invalidate();
+      }
+      break;
+      
+    case M_THEME_FOREGROUND_CHANGE:
+      {
+        activeTheme->ReadLock();
+        SetViewColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+        activeTheme->ReadUnlock();
+        Invalidate();
+      }
+      break;   
     
     default:
       BOutlineListView::MessageReceived (msg);
@@ -206,128 +223,6 @@ WindowList::SelectionChanged (void)
 }
 
 void
-WindowList::SetColor (int32 which, rgb_color color)
-{
-  // TODO: should we maybe be locking first on these invalidates?
-  BLooper *looper (Looper());
-  bool hasLock (false);
-  if (looper && !looper->IsLocked())
-  {
-    LockLooper();
-    hasLock = true;
-  }
-  
-  switch (which)
-  {
-    case C_WINLIST_NEWS:
-      {
-         newsColor = color;
-
-         for (int32 i = 0; i < CountItems(); ++i)
-         {
-           WindowListItem *item ((WindowListItem *)ItemAt (i));
-
-           if ((item->Status() & WIN_NEWS_BIT) != 0)
-             InvalidateItem (i);
-         }
-       }
-       break;
-
-    case C_WINLIST_NICK:
-      {
-         nickColor = color;
-
-         for (int32 i = 0; i < CountItems(); ++i)
-         {
-           WindowListItem *item ((WindowListItem *)ItemAt (i));
-
-           if ((item->Status() & WIN_NICK_BIT) != 0)
-             InvalidateItem (i);
-         }
-       }
-       break;
-
-    case C_WINLIST_NORMAL:
-      {
-         textColor = color;
-
-         for (int32 i = 0; i < CountItems(); ++i)
-         {
-           WindowListItem *item ((WindowListItem *)ItemAt (i));
-           int32 mask (WIN_NICK_BIT | WIN_PAGESIX_BIT | WIN_NEWS_BIT);
-           if ((item->Status() & mask) == 0)
-             InvalidateItem (i);
-         }
-       }
-       break;
-       
-    case C_WINLIST_PAGESIX:
-      {
-         sixColor = color;
-
-         for (int32 i = 0; i < CountItems(); ++i)
-         {
-           WindowListItem *item ((WindowListItem *)ItemAt (i));
-
-           if ((item->Status() & WIN_PAGESIX_BIT) != 0)
-             InvalidateItem (i);
-         }
-       }
-       break;
-
-    case C_WINLIST_SELECTION:
-      {
-         selColor = color;
-         InvalidateItem (CurrentSelection());
-      }
-      break;
-
-    case C_WINLIST_BACKGROUND:
-      {
-         bgColor = color;
-         SetViewColor (bgColor);
-         Invalidate();
-      }
-      break;    
-  }
-  if (hasLock)
-    UnlockLooper();
-}
-
-rgb_color
-WindowList::GetColor (int32 which) const
-{
-  rgb_color color (textColor);
-
-  if (which == C_WINLIST_NEWS)
-    color = newsColor;
-
-  else if (which == C_WINLIST_NICK)
-    color = nickColor;
-    
-  else if (which == C_WINLIST_PAGESIX)
-    color = sixColor;
-
-  else if (which == C_WINLIST_BACKGROUND)
-    color = bgColor;
-  
-  else if (which == C_WINLIST_SELECTION)
-    color = selColor;
-
-  return color;
-}
-
-void
-WindowList::SetFont (int32 which, const BFont *font)
-{
-  if (which == F_WINLIST)
-  {
-    BOutlineListView::SetFont (font);
-    Invalidate();
-  }
-}
-
-void
 WindowList::ClearList (void)
 {
   // never ever call this function unless you understand
@@ -335,8 +230,8 @@ WindowList::ClearList (void)
   int32 i,
         all (CountItems());
 
-  for (i = 0; i <= all; i++)
-    RemoveItem (0L);
+  for (i = 0; i < all; i++)
+    delete RemoveItem (0L);
 }
 
 void
@@ -962,31 +857,34 @@ WindowListItem::ActivateItem (void)
 }
 
 void
-WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
+WindowListItem::DrawItem (BView *father, BRect frame, bool complete)
 {
-  WindowList *father (static_cast<WindowList *>(passedFather));
+  Theme *activeTheme (vision_app->ActiveTheme());
+  
+  activeTheme->ReadLock();
+
   if (subStatus > WIN_NORMAL_BIT)
   {
     rgb_color color;
     if ((subStatus & WIN_NEWS_BIT) != 0)
-      color = father->GetColor (C_WINLIST_NEWS);
+      color = activeTheme->ForegroundAt (C_WINLIST_NEWS);
     else if ((subStatus & WIN_PAGESIX_BIT) != 0)
-      color = father->GetColor (C_WINLIST_PAGESIX);
+      color = activeTheme->ForegroundAt (C_WINLIST_PAGESIX);
     else if ((subStatus & WIN_NICK_BIT) != 0)
-      color = father->GetColor (C_WINLIST_NICK);
+      color = activeTheme->ForegroundAt (C_WINLIST_NICK);
     
     father->SetHighColor (color);
     father->StrokeRect (BRect (0.0, frame.top, 10.0, frame.top + 10.0));
   }
   if (IsSelected())
   {
-    father->SetHighColor (father->GetColor (C_WINLIST_SELECTION));
-    father->SetLowColor (father->GetColor (C_WINLIST_BACKGROUND));    
+    father->SetHighColor (activeTheme->ForegroundAt (C_WINLIST_SELECTION));
+    father->SetLowColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));    
     father->FillRect (frame);
   }
   else if (complete)
   {
-    father->SetLowColor (father->GetColor (C_WINLIST_BACKGROUND));
+    father->SetLowColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));
     father->FillRect (frame, B_SOLID_LOW);
   }
 
@@ -998,19 +896,21 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
     frame.bottom - fh.descent);
 
   BString drawString (myName);
-  rgb_color color = father->GetColor (C_WINLIST_NORMAL);
+  rgb_color color = activeTheme->ForegroundAt (C_WINLIST_NORMAL);
 
   if ((myStatus & WIN_NEWS_BIT) != 0)
-    color = father->GetColor (C_WINLIST_NEWS);
+    color = activeTheme->ForegroundAt (C_WINLIST_NEWS);
 
   else if ((myStatus & WIN_PAGESIX_BIT) != 0)
-    color = father->GetColor (C_WINLIST_PAGESIX);
+    color = activeTheme->ForegroundAt (C_WINLIST_PAGESIX);
 
   else if ((myStatus & WIN_NICK_BIT) != 0)
-    color = father->GetColor (C_WINLIST_NICK);
+    color = activeTheme->ForegroundAt (C_WINLIST_NICK);
 
   if (IsSelected())
-    color = father->GetColor (C_WINLIST_NORMAL);
+    color = activeTheme->ForegroundAt (C_WINLIST_NORMAL);
+  
+  activeTheme->ReadUnlock();
   
   father->SetHighColor (color);
 

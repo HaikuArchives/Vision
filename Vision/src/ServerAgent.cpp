@@ -1421,16 +1421,15 @@ ServerAgent::MessageReceived (BMessage *msg)
         if (pListAgent)
           break;
         vision_app->pClientWin()->pWindowList()->AddAgent (
-          new ListAgent (
+          (pListAgent = new ListAgent (
             *vision_app->pClientWin()->AgentRect(),
-            serverHostName.String(), new BMessenger(this)),
+            serverHostName.String(), new BMessenger(this))),
           sid,
           "Channels",
           WIN_LIST_TYPE,
           true);
         // kind of a hack since Agent() returns a pointer of type ClientAgent, of which
         // ListAgent is not a subclass...
-        pListAgent = reinterpret_cast<ListAgent *>(vision_app->pClientWin()->pWindowList()->Agent(sid, "Channels"));
         BMessenger listMsgr(pListAgent);
         listMsgr.SendMessage(M_LIST_COMMAND);
       }

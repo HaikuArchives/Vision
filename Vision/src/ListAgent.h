@@ -32,11 +32,10 @@
 #include <MessageRunner.h>
 #include <regex.h>
 
-class BListView;
+class BColumnListView;
 class BScrollView;
 class BMenuItem;
 class StatusView;
-class WindowSettings;
 class WindowListItem;
 
 class ListAgent : public BView
@@ -46,14 +45,10 @@ class ListAgent : public BView
                             ListAgent (BRect, const char *, BMessenger *);
     virtual                 ~ListAgent (void);
     virtual void            MessageReceived (BMessage *);
-    virtual void            FrameResized (float, float);
     virtual void            AttachedToWindow (void);
 	virtual void			AllAttached (void);
-    static int              SortChannels (const void *, const void *);
-    static int              SortUsers (const void *, const void *);
     virtual void			Show(void);
 
-    float                   ChannelWidth (void) const;
     WindowListItem          *agentWinItem;
     BMessenger              msgr;
     
@@ -61,12 +56,9 @@ class ListAgent : public BView
     BMessenger              *sMsgr;
     BMessageRunner          *listUpdateTrigger;
 	BMenuBar				*mBar;
-    BListView               *listView;
-    BScrollView             *scroller;
+    BColumnListView               *listView;
     StatusView              *status;
-    BList                   list,
-                              showing,
-                              nextbatch;
+
     BString                 filter,
                               find,
                               statusStr;
@@ -74,26 +66,16 @@ class ListAgent : public BView
                               fre;
                               
     bool                    processing;
-    float                   channelWidth,
-                              topicWidth,
-                              sChannelWidth,
-                              sTopicWidth,
-                              sLineWidth;
 
-    BMenuItem               *mChannelSort,
-                              *mUserSort,
-                              *mFilter,
+    BMenuItem               *mFilter,
                               *mFind,
                               *mFindAgain;
 
-    WindowSettings          *settings;
     friend class WindowList;
 };
 
 const uint32 M_LIST_FIND               = 'lalf';
 const uint32 M_LIST_FAGAIN             = 'lafa';
-const uint32 M_LIST_SORT_CHANNEL       = 'lasc';
-const uint32 M_LIST_SORT_USERS         = 'lasu';
 const uint32 M_LIST_FILTER             = 'lafr';
 const uint32 M_LIST_INVOKE             = 'lali';
 const uint32 M_LIST_UPDATE             = 'lalu';

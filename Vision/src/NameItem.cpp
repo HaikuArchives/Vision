@@ -25,8 +25,9 @@
  
 #include <stdio.h>
 
-#include "VisionBase.h"
+#include "Vision.h"
 #include "Names.h"
+#include "Theme.h"
 
 NameItem::NameItem (
   const char *name,
@@ -76,10 +77,10 @@ NameItem::SetStatus (int32 userStatus)
 }
 
 void
-NameItem::DrawItem (BView *passedFather, BRect frame, bool complete)
+NameItem::DrawItem (BView *father, BRect frame, bool complete)
 {
-  NamesView *father (static_cast<NamesView *>(passedFather));
-
+  Theme *activeTheme (vision_app->ActiveTheme());
+  activeTheme->ReadLock();
   if (IsSelected())
   {
     father->SetLowColor (180, 180, 180);
@@ -87,7 +88,7 @@ NameItem::DrawItem (BView *passedFather, BRect frame, bool complete)
   }
   else if (complete)
   {
-    father->SetLowColor (father->GetColor (C_NAMES_BACKGROUND));
+    father->SetLowColor (activeTheme->ForegroundAt (C_NAMES_BACKGROUND));
     father->FillRect (frame, B_SOLID_LOW);
   }
 
@@ -99,26 +100,28 @@ NameItem::DrawItem (BView *passedFather, BRect frame, bool complete)
   frame.bottom - fh.descent);
 
   BString drawString (myName);
-  rgb_color color = father->GetColor (C_NAMES);
+  rgb_color color = activeTheme->ForegroundAt (C_NAMES);
 
   if ((myStatus & STATUS_OP_BIT) != 0)
   {
     drawString.Prepend ("@");
-    color = father->GetColor (C_OP);
+    color = activeTheme->ForegroundAt (C_OP);
   }
   else if ((myStatus & STATUS_HELPER_BIT) != 0)
   {
     drawString.Prepend ("%");
-    color = father->GetColor (C_HELPER);
+    color = activeTheme->ForegroundAt (C_HELPER);
   }
   else if ((myStatus & STATUS_VOICE_BIT) != 0)
   {
     drawString.Prepend("+");
-    color = father->GetColor (C_VOICE);
+    color = activeTheme->ForegroundAt (C_VOICE);
   }
 
   if ((myStatus & STATUS_IGNORE_BIT) != 0)
-    color = father->GetColor (C_IGNORE);
+    color = activeTheme->ForegroundAt (C_IGNORE);
+
+  activeTheme->ReadUnlock();
 
   if (IsSelected())
   {

@@ -29,6 +29,7 @@
 #include <stdio.h>
 
 #include "Names.h"
+#include "Theme.h"
 #include "ChannelAgent.h"
 #include "Vision.h"
 #include "StatusView.h"
@@ -114,6 +115,8 @@ ChannelAgent::Init (void)
   frame.bottom = textScroll->Frame().bottom - 1;
   
   namesList = new NamesView (frame);
+  
+  activeTheme->AddView (namesList);
   
   namesScroll = new BScrollView(
     "scroll_names",
@@ -386,37 +389,6 @@ ChannelAgent::MessageReceived (BMessage *msg)
         BMessage display;
         if (msg->FindMessage ("display", &display) == B_NO_ERROR)
           ClientAgent::MessageReceived (&display);
-      }
-      break;
-      
-    case M_STATE_CHANGE:
-      {
-        int32 which (msg->FindInt32 ("which"));
-        if (msg->HasBool ("color"))
-        {
-          switch (which)
-          {
-            // all of these color consts belong to NamesView 
-            case C_OP:
-            case C_VOICE:
-            case C_HELPER:
-            case C_NAMES:
-            case C_NAMES_BACKGROUND:
-            case C_IGNORE:
-             namesList->SetColor (which, vision_app->GetColor (which));
-             break;
-          }
-        }
-        if (msg->HasBool ("font"))
-        {
-          switch (which)
-          {
-            case F_NAMES:
-             namesList->SetFont (which, vision_app->GetClientFont (which));
-             break;
-          }
-        }
-        ClientAgent::MessageReceived (msg);
       }
       break;
 
