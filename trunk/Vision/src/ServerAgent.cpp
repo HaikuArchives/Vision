@@ -486,14 +486,6 @@ ServerAgent::Establish (void *arg)
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
 
-      // temporary hack
-      if (connectId.ICompare("64.156.75", 9) == 0)
-      {
-        string = "PASS 2legit2quit";
-        dataSend.ReplaceString ("data", string.String());
-        sMsgrE->SendMessage (&dataSend);
-      }
-      
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
@@ -553,7 +545,7 @@ ServerAgent::Establish (void *arg)
   FD_SET (serverSock, &rset);
   FD_SET (serverSock, &wset);
   ServerAgent *agent (dynamic_cast<ServerAgent *>(sMsgrE->Target(NULL)));
-  while (sMsgrE->LockTarget())
+  while ((agent != NULL) && (sMsgrE->LockTarget() == true))
   {
     if (!agent->ServerThreadValid (currentThread))
       break;
