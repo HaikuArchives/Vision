@@ -34,6 +34,8 @@ DEPDIR := dep
 SRCDIR := src
 DATADIR := data
 
+LIBLUA_PATH := ./src/lua/lib/liblua.a
+
 # compiler, linker, ...
 
 #CC := g++ -c -pipe
@@ -94,7 +96,16 @@ sourcearchive : $(FULLNAME)-src.zip
 
 binarchive : $(FULLNAME).zip
 
+cvsup:
+	@echo CVS up
+	@cvs up
+
 $(BINARY) : $(OBJECTS)
+ifeq ($(wildcard ./src/lua/lib/liblua.a),)
+	@echo Lua lib not found
+	@echo Building...
+	@cd $(SRCDIR)/lua && make >/dev/null && cd $(SRCDIR)/..
+endif
 	@echo linking $@
 	@$(LD) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo merging resources
