@@ -377,7 +377,8 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
       
-      case 'u':
+      // ctrl+u = special control char - ascii 21
+      case 21:
         {
           if (window->input->TextView()->TextLength())
           {
