@@ -1107,7 +1107,7 @@ ClientAgent::ExecPipe (void *arg)
 		
 	while (fgets(read, 768, fp))
 	{
-		read[strlen(read)-1] = '\0'; // strip newline		
+		read[strlen(read)-1] = '\0'; // strip termination		
 		
 		BMessage echoMsg (M_SUBMIT_RAW);
 		echoMsg.AddBool ("lines", 1);
