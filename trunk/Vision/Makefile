@@ -17,7 +17,7 @@
 # the file name, ...
 
 BINARY := Vision
-VERSION := 0.1.0322
+VERSION := 0.1.0324
 
 # system libs
 LIBS := -lbe -lnet -lnetapi -ltextencoding -ltranslation -ltracker
@@ -39,7 +39,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 # compiler, linker, ...
 
 #CC := g++ -c -pipe
-CC := g++ -c -pipe -g3
+CC := g++ -c -pipe
 CFLAGS :=
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 CFLAGS += -O3
