@@ -59,7 +59,7 @@ class ServerAgent : public ClientAgent
 	status_t                    NewTimer (const char *, int32, int32);
 	
 	int                         IRCDType (void);
-    
+	
   private:
     virtual void                Init (void);
     void                        DCCChatDialog (BString, BString, BString);
@@ -78,7 +78,6 @@ class ServerAgent : public ClientAgent
 	ClientAgent					*ActiveClient (void);
 
 	void						DisplayAll (const char *, const uint32 = 0, const uint32 = 0, const uint32 = 0);
-	BString						FilterCrap (const char *);
 	
 	BLocker						*endPointLock,
 								loginLock;
@@ -156,7 +155,7 @@ class ServerAgent : public ClientAgent
     static int32                Timer (void *);
     
     ListAgent                   *pListAgent;
-
+    
 };
 
 const uint32 M_GET_ESTABLISH_DATA           = 'saed'; // used by Establish()

@@ -731,56 +731,6 @@ ServerAgent::PostActive (BMessage *msg)
     msgr.SendMessage (msg);
 }
 
-BString
-ServerAgent::FilterCrap (const char *data)
-{
-  BString outData ("");
-  int32 theChars (strlen (data));
-  bool ViewCodes (false);
-
-  for (int32 i = 0; i < theChars; ++i)
-  {
-    if (data[i] == 3 && !vision_app->GetBool ("stripcolors"))
-      outData << data[i];
-    else if (data[i] > 1 && data[i] < 32)
-    {
-      // TODO Get these codes working
-      if (data[i] == 3)
-      {
-        if (ViewCodes)
-          outData << "[0x03]{";
-
-        ++i;
-        while (i < theChars
-        &&   ((data[i] >= '0'
-        &&     data[i] <= '9')
-        ||     data[i] == ','))
-        {
-          if (ViewCodes)
-          outData << data[i];
-
-          ++i;
-        }
-        
-        --i;
-        
-        if (ViewCodes)
-          outData << "}";
-      }
-      else if (ViewCodes)
-      {
-        char buffer[16];
-        sprintf (buffer, "[0x%02x]", data[i]);
-        outData << buffer;
-      }
-    }
-    else
-      outData << data[i];
-  }
-
-  return outData;
-}
-
 void
 ServerAgent::HandleReconnect (void)
 {

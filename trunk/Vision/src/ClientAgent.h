@@ -133,6 +133,9 @@ class ClientAgent : public BView
                                       uint32 = 0,
                                       uint32 = 0,
                                       uint32 = 0);
+
+   	BString                         FilterCrap (const char *, bool = false);
+
                                       
     virtual void                    Submit (const char *, bool = true, bool = true);
 

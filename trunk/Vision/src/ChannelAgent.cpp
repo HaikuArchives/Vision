@@ -37,6 +37,7 @@
 #include "ChannelAgent.h"
 #include "Vision.h"
 #include "StatusView.h"
+#include "ServerAgent.h"
 #include "ClientWindow.h"
 #include "StringManip.h"
 #include "VTextControl.h"
@@ -549,7 +550,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         topic = theTopic;
       
         if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, theTopic);
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, FilterCrap(theTopic, true).String());
 
         BMessage display;
        
@@ -881,7 +882,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), false);
          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), false);
          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String(), false);
-         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, topic.String(), false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, FilterCrap(topic.String(), true).String());
 
          BString buffer;
          buffer << userCount;
