@@ -157,10 +157,10 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     SendData (tempString.String());
   }
 
-  #if 0
   else if(theCTCP == "DCC")
   {
     BString theType = GetWord(theMsg.String(), 2);
+#if 0
     if (theType == "SEND")
     {
       BString theFile (GetWord(theMsg.String(), 3)),
@@ -169,14 +169,15 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
               theSize (GetWord(theMsg.String(), 6));
       theSize.RemoveLast ("\1"); // strip CTCP char
       DCCGetDialog (theNick, theFile, theSize, theIP, thePort);
-    }
-    else if (theType == "CHAT")
+#endif    }
+    if (theType == "CHAT")
     {
       BString theIP   (GetWord(theMsg.String(), 4)),
               thePort (GetWord(theMsg.String(), 5));
       thePort.RemoveLast ("\1");
       DCCChatDialog(theNick, theIP, thePort);
     }
+#if 0
     else if (theType == "ACCEPT")
     {
       BString file (GetWord (theMsg.String(), 3)),
@@ -268,8 +269,8 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
         SendData (buffer.String());
       }
     }
-  }
   #endif
+  }
 
   BMessage display (M_DISPLAY);
   BString buffer;
