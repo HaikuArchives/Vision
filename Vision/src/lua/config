@@ -93,7 +93,7 @@ LIB= $(LUA)/lib
 INCS= -I$(INC) $(EXTRA_INCS)
 DEFS= $(COMPAT) $(NUMBER) $(OLD_ANSI) $(EXTRA_DEFS)
 
-CFLAGS= -O2 $(WARN) $(INCS) $(DEFS)
+CFLAGS= -O2 -march=pentium -mcpu=pentium $(WARN) $(INCS) $(DEFS)
 
 V=4.0
 
