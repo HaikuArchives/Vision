@@ -1,3 +1,0 @@
-Fix clipped bitmap blitting
-Split Menu.cpp into Menu.cpp, MenuItem.cpp, MenuBar.cpp
-
