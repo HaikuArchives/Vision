@@ -209,7 +209,6 @@ ClientWindow::MessageReceived (BMessage *msg)
         new ServerAgent (
           const_cast<const char *>(hostname),
           const_cast<const char *>(port),
-          const_cast<BString *>(vision_app->events),
           enidentd,
           const_cast<const char *>(autoexec),
           *agentrect),

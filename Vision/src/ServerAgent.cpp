@@ -43,7 +43,6 @@ BLocker ServerAgent::identLock;
 ServerAgent::ServerAgent (
   const char *id_,
   const char *port,
-  BString *events_,
   bool identd_,
   const char *cmds_,
   BRect frame_)
@@ -77,7 +76,7 @@ ServerAgent::ServerAgent (
 		send_size (0),
 		parse_buffer (0),
 		parse_size (0),
-		events (events_),
+		events (vision_app->events),
 		initialMotd (true),
 		identd (identd_),
 		hostnameLookup (false),
