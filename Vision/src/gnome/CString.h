@@ -11,11 +11,14 @@
 #include "PlatformDefines.h"
 
 #ifndef GTK_BRINGUP
+#ifndef OSX_BRINGUP
 #include <SupportDefs.h>
 #endif
+#endif
 
-#include "Debug.h"
-
+#ifndef OSX_BRINGUP
+#include <Debug.h>
+#endif
 #include <string.h>
 
 class BFont;
@@ -115,6 +118,7 @@ public:
 	String &AssignEscapingHTML(const char *);
 	String &EscapeHTML();
 	
+#ifndef OSX_BRINGUP
 	String &TruncToWidth(const BFont *, float maxWidth, uint32 mode,
 		bool *changed = 0);
 	String &TruncToWidth(const BView *, float maxWidth, uint32 mode,
@@ -122,6 +126,7 @@ public:
 
 	float Width(BView *) const;
 	float Width(BFont *) const;
+#endif
 	
 	// simple sprintf replacement calls
 	String &operator<<(const char *);
@@ -144,15 +149,19 @@ protected:
 
 	char *data;
 	ulong length;
+#ifndef OSX_BRINGUP
 #if DEBUG
 	bool usingAsCString;
+#endif
 #endif
 };
 
 inline int32 
 String::Length() const
 {
+#ifndef OSX_BRINGUP
 	ASSERT(!usingAsCString);
+#endif
 	return length;
 }
 
@@ -206,7 +215,9 @@ String::operator+=(const String &string)
 inline bool 
 String::operator==(const String &string) const
 {
+#ifndef OSX_BRINGUP
 	ASSERT(!usingAsCString);
+#endif
 	return strcmp(CStr(), string.CStr()) == 0;
 }
 

@@ -49,6 +49,7 @@
 #include "StringManip.h"
 #include "ServerAgent.h"
 #include "WindowList.h"
+#include "ClientAgentLogger.h"
 
 
 const char *ClientAgent::endl               ("\1\1\1\1\1");
@@ -220,7 +221,7 @@ ClientAgent::Init (void)
   AddChild (textScroll);
 
   if (isLogging)
-    logger = new Logger (id, serverName);
+    logger = new ClientAgentLogger (id, serverName);
   else
     logger = NULL;
 }
@@ -413,7 +414,7 @@ ClientAgent::Display (
   {
     BMessage statusMsg (M_UPDATE_STATUS);
     statusMsg.AddPointer ("item", agentWinItem);
-    statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
+    statusMsg.AddInt32 ("status", WIN_PAGESIX_BIT);
     Window()->PostMessage (&statusMsg);
   }
 }
@@ -485,9 +486,7 @@ ClientAgent::MessageReceived (BMessage *msg)
       }
       break;
 
-    // This could probably be used for some scripting
-    // capability -- oooh, neato!
-    case M_SUBMIT_RAW:
+    case M_SUBMIT_INPUT:
       {
         bool lines (false);
         int32 which (0);
@@ -698,13 +697,15 @@ ClientAgent::MessageReceived (BMessage *msg)
 
         if (IsHidden())
         {
+          BMessage statusMsg (M_UPDATE_STATUS);
+          statusMsg.AddPointer ("item", agentWinItem);
+          
           if (hasNick)
-          { 
-            BMessage statusMsg (M_UPDATE_STATUS);
-            statusMsg.AddPointer ("item", agentWinItem);
             statusMsg.AddInt32 ("status", WIN_NICK_BIT);
-            Window()->PostMessage (&statusMsg);
-          }
+          else
+            statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
+            
+          Window()->PostMessage (&statusMsg);
         }
       }
       break;

@@ -208,6 +208,21 @@ ClientWindow::MessageReceived (BMessage *msg)
         
         if (foundone)
           break;
+
+        // try to find a WIN_PAGESIX_BIT item
+        for (iloop = currentsel; iloop > -1; --iloop)
+        {
+          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
+          if ((aitem->Status() == WIN_PAGESIX_BIT))
+          {
+            pWindowList()->Select (pWindowList()->IndexOf (aitem));
+            foundone = true;
+            break; 
+          }
+        }
+        
+        if (foundone)
+          break;
           
         // just select the previous item then.
         pWindowList()->Select (currentsel - 1);
@@ -245,6 +260,21 @@ ClientWindow::MessageReceived (BMessage *msg)
         {
           aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
           if ((aitem->Status() == WIN_NEWS_BIT))
+          {
+            pWindowList()->Select (pWindowList()->IndexOf (aitem));
+            foundone = true;
+            break; 
+          }
+        }
+        
+        if (foundone)
+          break;
+
+        // try to find a WIN_PAGESIX_BIT item
+        for (iloop = currentsel; iloop < pWindowList()->CountItems(); ++iloop)
+        {
+          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
+          if ((aitem->Status() == WIN_PAGESIX_BIT))
           {
             pWindowList()->Select (pWindowList()->IndexOf (aitem));
             foundone = true;
@@ -301,18 +331,18 @@ ClientWindow::MessageReceived (BMessage *msg)
          }
        
          if (!pWindowList()->HasItem (item))
-           break;
+           return;
        
          if (msg->HasBool("hidden"))
          {
            item->SetStatus (newstatus);
-           break;
+           return;
          }
-           
-         if (item->Status() != WIN_NICK_BIT)
-         {
+         
+         if (item->Status() >= newstatus)
+           return;
+         else
            item->SetStatus (newstatus);
-         }
        } 
        break;
     

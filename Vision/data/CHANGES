@@ -1,6 +1,14 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0506]
+ 2001-05-06
+   * Revised WindowList notification colors:
+     - black : nothing new
+     - gray  : new text, but not someone talking (join, quit, etc)
+     - green : someone talking (msg, action)
+     - red   : someone talking and has said your nickname
+
 [0.2.0504]
  2001-05-04
    * Fixed a bug in MessageAgent where it would not update myNick properly

@@ -407,7 +407,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 void
 ClientAgentInputFilter::HandleDrop (const char *buffer)
 {
-  BMessage msg (M_SUBMIT_RAW);
+  BMessage msg (M_SUBMIT_INPUT);
   const char *place;
   int32 lines (0);
   

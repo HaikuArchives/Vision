@@ -49,7 +49,7 @@ class AboutWindow : public BWindow
   private:
     BView                 *background;
     bool                  EasterEggOn;
-    BView                 *graphic;
+    BView                 *logo;
     void                  AboutImage (const char *, bool);
 };
 

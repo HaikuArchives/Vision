@@ -57,6 +57,7 @@ WindowList::WindowList (BRect frame)
   textColor   = vision_app->GetColor (C_WINLIST_TEXT);
   newsColor   = vision_app->GetColor (C_WINLIST_NEWS);
   nickColor   = vision_app->GetColor (C_WINLIST_NICK);
+  sixColor    = vision_app->GetColor (C_WINLIST_PAGESIX);
   selColor    = vision_app->GetColor (C_WINLIST_SELECTION);
   bgColor     = vision_app->GetColor (C_WINLIST_BACKGROUND);
   
@@ -176,6 +177,11 @@ WindowList::MouseDown (BPoint myPoint)
 void 
 WindowList::KeyDown (const char * bytes, int32 numBytes) 
 {
+  // WindowList never gets keyboard focus (?)
+  // if you have to uncomment this, either fix WindowList so it
+  // doesn't retain keyboard focus, or update this code to work
+  // like IRCView::KeyDown()  --wade 20010506
+  #if 0
   if (CurrentSelection() == -1)
     return;
     
@@ -189,6 +195,7 @@ WindowList::KeyDown (const char * bytes, int32 numBytes)
   ClientAgent *activeagent (dynamic_cast<ClientAgent *>(activeitem->pAgent()));
   if (activeagent)
     activeagent->msgr.SendMessage (&inputMsg);
+  #endif
 }
 
 void
@@ -248,13 +255,16 @@ WindowList::GetColor (int32 which) const
   if (which == C_WINLIST_NEWS)
     color = newsColor;
 
-  if (which == C_WINLIST_NICK)
+  else if (which == C_WINLIST_NICK)
     color = nickColor;
+    
+  else if (which == C_WINLIST_PAGESIX)
+    color = sixColor;
 
-  if (which == C_WINLIST_BACKGROUND)
+  else if (which == C_WINLIST_BACKGROUND)
     color = bgColor;
   
-  if (which == C_WINLIST_SELECTION)
+  else if (which == C_WINLIST_SELECTION)
     color = selColor;
 
   return color;
@@ -341,6 +351,14 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       }
     }
   }
+  
+  if (!(newagent = dynamic_cast<BView *>(newagent)))
+  {
+    // stop crash
+    printf ("no newagent!?\n");
+    return;
+  }
+  
   LockLooper();
   vision_app->pClientWin()->bgView->AddChild (newagent);
   newagent->Hide(); // get it out of the way
@@ -375,6 +393,13 @@ WindowList::Activate (int32 index)
       lastSelected = aitem;
       break;
     }
+  }
+  
+  if (!(newagent = dynamic_cast<BView *>(newagent)))
+  {
+    // stop crash
+    printf ("no newagent!?\n");
+    return;
   }
   
    
@@ -621,8 +646,8 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
   if ((myStatus & WIN_NEWS_BIT) != 0)
     color = father->GetColor (C_WINLIST_NEWS);
 
-  else if ((myStatus & WIN_VOID_BIT) != 0)
-    color = father->GetColor (C_WINLIST_VOID);
+  else if ((myStatus & WIN_PAGESIX_BIT) != 0)
+    color = father->GetColor (C_WINLIST_PAGESIX);
 
   else if ((myStatus & WIN_NICK_BIT) != 0)
     color = father->GetColor (C_WINLIST_NICK);

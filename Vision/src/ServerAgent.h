@@ -184,5 +184,6 @@ const uint32 M_SERVER_DISCONNECT            = 'sasd'; // we got disconnected
 const uint32 M_PARSE_LINE                   = 'sapl'; // new data from server
 const uint32 M_LAG_CHECK                    = 'salc'; // send lag check to server
 const uint32 M_REJOIN_ALL                   = 'sara';
+const uint32 M_SEND_RAW                     = 'sasr';
 
 #endif

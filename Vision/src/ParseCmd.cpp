@@ -605,19 +605,17 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 0
   if (firstWord == "/LIST")
   {
     {
+      BString theArgs (RestOfString (data, 2));
+      
       BMessage msg (M_LIST_COMMAND);
       msg.AddString ("cmd", data);
-      msg.AddString ("server", serverName.String());
-      msg.AddRect ("frame", Frame());
-      vision_app->PostMessage (&msg);
+      sMsgr.SendMessage (&msg);
     }
     return true;
   }
-  #endif
 
 
   if (firstWord == "/M")
@@ -887,7 +885,7 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
-  if (firstWord == "/QUIT")
+  if (firstWord == "/QUI" || firstWord == "/QUIT")
   {
     {
       BString theRest (RestOfString (data, 2)),

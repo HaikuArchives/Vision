@@ -4,11 +4,15 @@
 
 #include "PlatformDefines.h"
 
+#ifndef OSX_BRINGUP
 #include <Font.h>
 #include <View.h>
+#endif
 
 #ifndef GTK_BRINGUP
+#ifndef OSX_BRINGUP
 #include <InterfaceDefs.h>
+#endif
 #endif
 
 #include <stdio.h>
@@ -67,8 +71,10 @@ String::Init(const char *str, int32 length)
 void 
 String::DoAssign(const char *str, int32 length)
 {
+#ifndef OSX_BRINGUP
 	ASSERT(!usingAsCString);
 	ASSERT((!str && !length) || (uint32)length == strlen(str));
+#endif
 	
 	if (length) {
 		if (length != (int32)this->length) {
@@ -89,8 +95,10 @@ String::DoAssign(const char *str, int32 length)
 String &
 String::Assign(const char *str, int32 length)
 {
+#ifndef OSX_BRINGUP
 	ASSERT(!usingAsCString);
 	ASSERT((!str && !length) || (uint32)length <= strlen(str));
+#endif
 
 	if (!str)
 		length = 0;
@@ -119,8 +127,10 @@ String::Assign(const char *str, int32 length)
 void 
 String::DoAppend(const char *str, int32 length) 
 {
+#ifndef OSX_BRINGUP
 	ASSERT(!usingAsCString);
 	ASSERT((!str && !length) || (uint32)length <= strlen(str));
+#endif
 
 	if (!str || !length)
 		return;
@@ -140,8 +150,10 @@ String::DoAppend(const char *str, int32 length)
 void 
 String::DoPrepend(const char *str, int32 length) 
 {
+#ifndef OSX_BRINGUP
 	ASSERT(!usingAsCString);
 	ASSERT((!str && !length) || (uint32)length <= strlen(str));
+#endif
 
 	if (!str || !length)
 		return;
@@ -322,7 +334,10 @@ String::Prepend(const String &string, int32 length)
 String &
 String::Truncate(int32 newLength)
 {
+#ifndef OSX_BRINGUP
 	ASSERT(!usingAsCString);
+#endif
+
 	if (newLength < Length()) {
 		length = newLength;
 		if (data)
@@ -334,7 +349,10 @@ String::Truncate(int32 newLength)
 bool 
 String::operator==(const char *str) const
 {
+#ifndef OSX_BRINGUP
 	ASSERT(!usingAsCString);
+#endif
+
 	if (!Length() || !str)
 		// can't pass zero pointers to strcmp
 		return (!str || *str == 0) == (Length() == 0);
@@ -351,7 +369,9 @@ String::Compare(const String &string) const
 int 
 String::Compare(const char *str) const
 {
+#ifndef OSX_BRINGUP
 	ASSERT(str);
+#endif
 	return strcmp(CStr(), str);
 }
 
@@ -364,7 +384,9 @@ String::Compare(const String &string, int32 n) const
 int 
 String::Compare(const char *str, int32 n) const
 {
+#ifndef OSX_BRINGUP
 	ASSERT(str);
+#endif
 	return strncmp(CStr(), str, n);
 }
 
@@ -377,7 +399,10 @@ String::CaseCompare(const String &string) const
 int 
 String::CaseCompare(const char *str) const
 {
+#ifndef OSX_BRINGUP
 	ASSERT(str);
+#endif
+
 	return strcasecmp(CStr(), str);
 }
 
@@ -390,7 +415,10 @@ String::CaseCompare(const String &string, int32 n) const
 int 
 String::CaseCompare(const char *str, int32 n) const
 {
+#ifndef OSX_BRINGUP
 	ASSERT(str);
+#endif
+
 	return strncasecmp(CStr(), str, n);
 }
 
@@ -489,8 +517,10 @@ String::ReplaceAll(char ch1, char ch2, int32 fromOffset)
 void 
 String::DoOpenAtBy(int32 index, int32 by)
 {
+#ifndef OSX_BRINGUP
 	ASSERT(by > 0);
 	ASSERT(index < (int32)length);
+#endif
 
 	char *newData = new char[length + by + 1];
 
@@ -508,8 +538,10 @@ String::DoOpenAtBy(int32 index, int32 by)
 void 
 String::DoShrinkAtBy(int32 index, int32 by)
 {
+#ifndef OSX_BRINGUP
 	ASSERT(by > 0);
 	ASSERT(index < (int32)length);
+#endif
 
 	char *newData = new char[length - by + 1];
 
@@ -570,7 +602,9 @@ String::UseAsCString(int32 maxLength)
 String &
 String::DoneUsingAsCString(int32 length)
 {
+#ifndef OSX_BRINGUP
 	ASSERT(usingAsCString);
+#endif
 
 	if (length >=0) {
 		this->length = length;
@@ -803,8 +837,10 @@ String::AssignEscapingHTML(const char *str)
 				(*this)+= "&quot;";
 				break;
 				
+#ifndef OSX_BRINGUP
 			default:
 				TRESPASS();
+#endif
 		}
 
 		from += count + 1;
@@ -819,7 +855,7 @@ String::EscapeHTML()
 	return AssignEscapingHTML(tmp.CStr());
 }
 
-
+#ifndef OSX_BRINGUP
 String &
 String::TruncToWidth(const BFont *font, float maxWidth, uint32 mode, bool *changed)
 {
@@ -868,7 +904,7 @@ String::Width(BFont *font) const
 {
 	return font->StringWidth(CStr());
 }
-
+#endif
 /*
 License
 
