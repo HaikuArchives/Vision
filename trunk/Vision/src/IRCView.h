@@ -30,6 +30,7 @@
 
 class BTextControl;
 class BFont;
+class ClientAgent;
 
 struct IRCViewSettings;
 
@@ -42,7 +43,8 @@ class IRCView : public BTextView
     IRCView (
       BRect,
       BRect,
-      BTextControl *);
+      BTextControl *,
+      ClientAgent *);
 
     ~IRCView (void);
 

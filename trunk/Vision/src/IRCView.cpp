@@ -85,7 +85,8 @@ struct URL
 
 struct IRCViewSettings 
 { 
-  BTextControl  *parentInput; 
+  BTextControl  *parentInput;
+  ClientAgent *parentAgent;
 
   BFont  urlFont; 
   rgb_color  urlColor; 
@@ -96,7 +97,8 @@ struct IRCViewSettings
 IRCView::IRCView ( 
   BRect textframe, 
   BRect textrect, 
-  BTextControl *inputControl) 
+  BTextControl *inputControl,
+  ClientAgent *fatherAgent) 
 
   : BTextView ( 
     textframe, 
@@ -105,8 +107,9 @@ IRCView::IRCView (
     B_FOLLOW_ALL_SIDES, 
     B_WILL_DRAW | B_FRAME_EVENTS) 
 { 
-  settings = new IRCViewSettings; 
-
+  settings = new IRCViewSettings;
+  
+  settings->parentAgent = fatherAgent;
   settings->parentInput = inputControl; 
   settings->urlFont     = *(vision_app->GetClientFont (F_URL)); 
   settings->urlColor    = vision_app->GetColor (C_URL); 
@@ -163,9 +166,8 @@ IRCView::KeyDown (const char * bytes, int32 numBytes)
   buffer.Append (bytes, numBytes); 
   inputMsg.AddString ("text", buffer.String()); 
 
-  ClientAgent *parentagent = dynamic_cast<ClientAgent *>(settings->parentInput->Parent());
-  if (parentagent && parentagent->msgr.IsValid())
-    parentagent->msgr.SendMessage (&inputMsg);
+  if (settings->parentAgent && settings->parentAgent->msgr.IsValid())
+    settings->parentAgent->msgr.SendMessage (&inputMsg);
 
 }
 
@@ -260,16 +262,15 @@ IRCView::DisplayChunk (
      for (it = urls.begin(); it != urls.end(); ++it) 
        it->offset -= bytes; 
                 
-     ClientAgent *parentagent = dynamic_cast<ClientAgent *>(Parent());
      float scrollMin, scrollMax; 
-     parentagent->ScrollRange (&scrollMin, &scrollMax); 
+     settings->parentAgent->ScrollRange (&scrollMin, &scrollMax); 
 
-     float scrollVal = parentagent->ScrollPos(); 
-     int32 curLine = (int32) ((scrollMax/LineHeight()) * (scrollVal/scrollMax)); 
+     float scrollVal = settings->parentAgent->ScrollPos(); 
+     int32 curLine ((int32) ((scrollMax/LineHeight()) * (scrollVal/scrollMax))); 
                 
      Delete (0,bytes); 
      if (!scrolling) 
-       parentagent->SetScrollPos (TextHeight(0, curLine));           
+       settings->parentAgent->SetScrollPos (TextHeight(0, curLine));           
    } 
 
    if (scrolling && !tracking)
@@ -359,7 +360,6 @@ IRCView::FirstMarker (const char *cData)
 void
 IRCView::ClearView (bool all) 
 {
-  ClientAgent *parentagent = dynamic_cast<ClientAgent *>(Parent());
   if (all || TextLength() < 96)
   {
     // clear all data
@@ -377,7 +377,7 @@ IRCView::ClearView (bool all)
       it->offset -= bytes;
 
     float scrollMin, scrollMax; 
-    parentagent->ScrollRange (&scrollMin, &scrollMax); 
+    settings->parentAgent->ScrollRange (&scrollMin, &scrollMax); 
 
     Delete (0, bytes);
     ScrollToOffset (0);
@@ -408,7 +408,7 @@ IRCView::ClearView (bool all)
       it->offset -= bytes; 
 
     float scrollMin, scrollMax; 
-    parentagent->ScrollRange (&scrollMin, &scrollMax); 
+    settings->parentAgent->ScrollRange (&scrollMin, &scrollMax); 
 
     Delete (0,bytes);
     ScrollToOffset (TextLength());

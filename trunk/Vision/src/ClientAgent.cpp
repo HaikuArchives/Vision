@@ -185,7 +185,8 @@ ClientAgent::Init (void)
   text = new IRCView (
     textrect,
     textrect.InsetByCopy (5, 3),
-    input);
+    input,
+    this);
   text->SetViewColor (vision_app->GetColor (C_BACKGROUND));
   
 
