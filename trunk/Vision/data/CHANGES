@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.3-0816]
+[0.9.3-0817]
          * unbroke auto-rejoin on disconnect
          * fixed bug where channel name list would be incorrect
          * fixed typo in rejoin on kick string
@@ -19,6 +19,7 @@ http://vision.sourceforge.net
          * added /vuptime and /vuptime -l  (Vision client uptime / -l == local only)
          * added /gaway and /gback (global away/global back -- broadcasts away/back command to every server to which you're connected)
          * added templated AutoDestructor class for automatic mem management
+         * rewrote most BLists to use templated BObjectList for cleaner code/better mem management
          * fixed hordes of memleaks (*HUGE* thanks to Alan Ellis for helping track these down)
 
 [0.9.2-0719]

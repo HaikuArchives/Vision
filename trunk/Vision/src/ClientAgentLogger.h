@@ -25,10 +25,11 @@
 #define _CLIENTAGENTLOGGER_H_
 
 #include <File.h>
-#include <List.h>
 #include <Locker.h>
 #include <Path.h>
 #include <String.h>
+
+#include "ObjectList.h"
 
 #include <map>
 
@@ -55,7 +56,7 @@ class ClientAgentLogger
    thread_id               fLogThread;
    BString                 fServerName;
    BPath                   fLogPath;
-   BList                   *fLogBuffer;
+   BObjectList<BString>    *fLogBuffer;
    BLocker                 *fLogBufferLock;
    sem_id                  fLogSyncherLock;
    bool                    fNewLine;

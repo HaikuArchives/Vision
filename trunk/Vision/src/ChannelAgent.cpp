@@ -85,11 +85,11 @@ ChannelAgent::~ChannelAgent (void)
   
   // empty recent nick list
   while (fRecentNicks.CountItems() > 0)
-    delete static_cast<BString *>(fRecentNicks.RemoveItem (0L));
+    delete fRecentNicks.RemoveItemAt(0L);
   
   // empty nick completion list
   while (fCompletionNicks.CountItems() > 0)
-    delete static_cast<BString *>(fCompletionNicks.RemoveItem (0L));
+    delete fCompletionNicks.RemoveItemAt(0L);
 }
 
 void
@@ -207,14 +207,14 @@ ChannelAgent::pNamesList(void) const
 }
 
 void
-ChannelAgent::RemoveNickFromList (BList &list, const char *data)
+ChannelAgent::RemoveNickFromList (BObjectList<BString> &list, const char *data)
 {
   int32 count (list.CountItems());
   for (int32 i = 0; i < count; i++)
   {
-    if (static_cast<BString *>(list.ItemAt(i))->ICompare(data) == 0)
+    if (list.ItemAt(i)->ICompare(data) == 0)
     {
-      delete static_cast<BString *>(list.RemoveItem (i));
+      delete list.RemoveItemAt (i);
       break;
     }
   }
@@ -251,7 +251,7 @@ ChannelAgent::AddUser (const char *nick, const int32 status)
     int32 count (fCompletionNicks.CountItems());
     for (i = count - 1; i >= 0; i--)
     {
-      comparator = static_cast<BString *>(fCompletionNicks.ItemAt (i));
+      comparator = fCompletionNicks.ItemAt (i);
       if (comparator && comparator->ICompare (nick) < 0)
       {   
         BString *string (new BString (nick));
@@ -329,7 +329,7 @@ ChannelAgent::ChannelMessage (
      int32 count (fRecentNicks.CountItems());
      if (count > MAX_RECENT_NICKS)
      {
-       delete static_cast<BString *>(fRecentNicks.RemoveItem (0L));
+       delete fRecentNicks.RemoveItemAt (0L);
      }
      // scan for presence of nick in list, and remove duplicate if found
      RemoveNickFromList (fRecentNicks, nick);
@@ -340,7 +340,7 @@ ChannelAgent::ChannelMessage (
 }
 
 int
-ChannelAgent::AlphaSortNames(const void *name1, const void *name2)
+ChannelAgent::AlphaSortNames(const BString *name1, const BString *name2)
 {
   /*
    * Function purpose: Help Tab Completion sort nicknames
@@ -350,18 +350,15 @@ ChannelAgent::AlphaSortNames(const void *name1, const void *name2)
    
    // clunky way to get around C++ warnings re casting from const void * to NameItem *
    
-  const BString *first (*((BString * const *)name1));
-  const BString *second (*((BString * const *)name2));
-
   // Not sure if this can happen, and we
   // are assuming that if one is NULL
   // we return them as equal.  What if one
   // is NULL, and the other isn't?
-  if (!first
-  ||  !second)
+  if (!name1
+  ||  !name2)
     return 0;
 
-  return first->ICompare (*second);
+  return name1->ICompare (*name2);
 }
 
 
@@ -443,14 +440,14 @@ ChannelAgent::TabExpansion (void)
       fLastExpansion = place;
 
       while (!fCompletionNicks.IsEmpty())
-        delete static_cast<BString *>(fCompletionNicks.RemoveItem(0L));
+        delete fCompletionNicks.RemoveItemAt(0L);
       
       int32 count (fNamesList->CountItems()),
             i (0);
       
       for (i = 0; i < count ; i++)
       {
-        BString *name (new BString(((NameItem *)fNamesList->ItemAt(i))->Name()));
+        BString *name (new BString(static_cast<NameItem *>(fNamesList->ItemAt(i))->Name()));
         if (!(name->ICompare(fLastExpansion.String(), strlen(fLastExpansion.String()))))
           fCompletionNicks.AddItem(name);
         else
@@ -464,15 +461,15 @@ ChannelAgent::TabExpansion (void)
       // list in the correct order
       for (i = 0; i < count; i++)
       {
-        BString *name (new BString(*(BString *)fRecentNicks.ItemAt(i)));
+        BString *name (new BString(*fRecentNicks.ItemAt(i)));
         if (!(name->ICompare(fLastExpansion.String(), strlen(fLastExpansion.String()))))
         {
           // parse through list and nuke duplicate if present
           for (int32 j = fCompletionNicks.CountItems() - 1; j >= 0; j--)
           {
-            if (!(name->ICompare(*(BString *)fCompletionNicks.ItemAt (j))))
+            if (!(name->ICompare(*fCompletionNicks.ItemAt (j))))
             {
-              delete static_cast<BString *>(fCompletionNicks.RemoveItem(j));
+              delete fCompletionNicks.RemoveItemAt(j);
               break;
             }
           }
@@ -494,7 +491,7 @@ ChannelAgent::TabExpansion (void)
       int32 count = fCompletionNicks.CountItems();
       if (count > 0)
       {
-        insertion = *((BString *)fCompletionNicks.ItemAt(lastindex++));
+        insertion = *(fCompletionNicks.ItemAt(lastindex++));
     
         if (lastindex == count) lastindex = 0;
           lastNick = insertion;
@@ -601,22 +598,22 @@ ChannelAgent::MessageReceived (BMessage *msg)
             BString *name (NULL);
             
             for (i = 0; i < count ; i++)
-              if ((name = (BString *)fRecentNicks.ItemAt (i))->ICompare (oldNick) == 0)
+              if ((name = fRecentNicks.ItemAt (i))->ICompare (oldNick) == 0)
               {
                 if (fLastExpansion.ICompare (newNick, fLastExpansion.Length()) == 0)
                   name->SetTo (newNick);
                 else
-                  delete static_cast<BString *>(fRecentNicks.RemoveItem (i));
+                  delete fRecentNicks.RemoveItemAt (i);
                 break;
               }
             count = fCompletionNicks.CountItems();
             for (i = 0; i < count; i++)
-              if ((name = (BString *)fCompletionNicks.ItemAt (i))->ICompare (oldNick) == 0)
+              if ((name = fCompletionNicks.ItemAt (i))->ICompare (oldNick) == 0)
               {
                 if (fLastExpansion.ICompare (newNick, fLastExpansion.Length()) == 0)
                   name->SetTo (newNick);
                 else
-                  delete static_cast<BString *>(fCompletionNicks.RemoveItem (i));
+                  delete fCompletionNicks.RemoveItemAt (i);
                 break;
               }
           }
@@ -714,7 +711,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         // over in it after reconnect -- list will quickly be rebuilt anyhow if there
         // is any conversation whatsoever going on
         while (fRecentNicks.CountItems() > 0)
-          delete static_cast<BString *>(fRecentNicks.RemoveItem(0L));
+          delete fRecentNicks.RemoveItemAt(0L);
         
       }
       break;

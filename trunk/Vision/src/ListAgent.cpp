@@ -148,7 +148,7 @@ ListAgent::~ListAgent (void)
   }
   
   while (hiddenItems.CountItems() > 0)
-    delete (BRow *)hiddenItems.RemoveItem (0L);
+    delete hiddenItems.RemoveItemAt (0L);
   
   delete fSMsgr;
   delete fAgentWinItem;
@@ -189,7 +189,7 @@ ListAgent::AddBatch (void)
   // make sure you call this from a locked looper
   BRow *row (NULL);
   Window()->DisableUpdates();
-  while ((row = (BRow *)fBuildList.RemoveItem (0L)) != NULL)
+  while ((row = fBuildList.RemoveItemAt (0L)) != NULL)
     listView->AddRow (row);
   Window()->EnableUpdates();
         
@@ -387,7 +387,7 @@ ListAgent::MessageReceived (BMessage *msg)
 
 					while (hiddenItems.CountItems() != 0)
 					{
-					  currentRow = (BRow *)hiddenItems.RemoveItem (0L);
+					  currentRow = hiddenItems.RemoveItemAt (0L);
 					  listView->AddRow (currentRow);
 					}
 					

@@ -122,7 +122,7 @@ ServerAgent::~ServerAgent (void)
 #endif
 
   while (fStartupChannels.CountItems() != 0)
-    delete static_cast<BString *>(fStartupChannels.RemoveItem (0L));
+    delete fStartupChannels.RemoveItemAt (0L);
 
   delete fLogger;
 
@@ -130,12 +130,12 @@ ServerAgent::~ServerAgent (void)
   
   status_t result;
   wait_for_thread (fSenderThread, &result);
-
+/*
   while (fIgnoreNicks.CountItems() > 0)
     delete fIgnoreNicks.RemoveItem(0L);
-
+*/
   while (fNotifyNicks.CountItems() > 0)
-    delete static_cast<NotifyListItem *>(fNotifyNicks.RemoveItem(0L));
+    delete fNotifyNicks.RemoveItemAt(0L);
 }
 
 void
@@ -183,7 +183,7 @@ ServerAgent::AddMenuItems(BPopUpMenu *)
 void
 ServerAgent::Init (void)
 {
-  fPendingSends = new BList();
+  fPendingSends = new BObjectList<BString>();
   fSendLock = new BLocker();
 #ifdef NETSERVER_BUILD
   fEndPointLock = new BLocker();
@@ -277,7 +277,7 @@ ServerAgent::Sender (void *arg)
   BMessenger msgr (agent);
   sem_id sendSyncLock (-1);
   BLocker *sendDataLock (NULL);
-  BList *pendingSends (NULL);
+  BObjectList<BString> *pendingSends (NULL);
   
   if (msgr.IsValid() && msgr.LockTarget())
   {
@@ -296,7 +296,7 @@ ServerAgent::Sender (void *arg)
     sendDataLock->Lock();
     if (!pendingSends->IsEmpty())
     {
-      data = (BString *)pendingSends->RemoveItem (0L);
+      data = pendingSends->RemoveItemAt (0);
       sendDataLock->Unlock();
       agent->AsyncSendData (data->String());
       delete data;
@@ -310,7 +310,7 @@ ServerAgent::Sender (void *arg)
   // sender takes possession of pending sends and sendDataLock structures
   // allows for self-contained cleanups
   while (pendingSends->CountItems() > 0)
-    delete static_cast<BString *>(pendingSends->RemoveItem (0L));
+    delete pendingSends->RemoveItemAt (0L);
   delete pendingSends;
   delete sendDataLock;
 
@@ -667,22 +667,19 @@ ServerAgent::Establish (void *arg)
 }
 
 int
-ServerAgent::SortNotifyItems (const void *item1, const void *item2)
+ServerAgent::SortNotifyItems (const NotifyListItem *item1, const NotifyListItem *item2)
 {
-  const NotifyListItem *ptr1 (*((NotifyListItem * const *)item1));
-  const NotifyListItem *ptr2 (*((NotifyListItem * const *)item2));
-  
-  if (!ptr1 || !ptr2)
+  if (!item1 || !item2)
     return 0;
   
-  if (ptr1->GetState() && !ptr2->GetState())
+  if (item1->GetState() && !item2->GetState())
     return -1;
-  if (!ptr1->GetState() && ptr2->GetState())
+  if (!item1->GetState() && item2->GetState())
     return 1;
   
-  BString name (ptr1->Text());
+  BString name (item1->Text());
     
-  return name.ICompare(ptr2->Text());
+  return name.ICompare(item2->Text());
 }
 
 void
@@ -918,7 +915,7 @@ ServerAgent::HandleReconnect (void)
   // empty out old send buffer to ensure no erroneous strings get sent
   fSendLock->Lock();
   while (fPendingSends->CountItems() > 0)
-    delete static_cast<BString *>(fPendingSends->RemoveItem (0L));
+    delete fPendingSends->RemoveItemAt (0L);
   fSendLock->Unlock();
   
   if (fRetry < fRetryLimit)
@@ -1129,9 +1126,9 @@ ServerAgent::RemoveAutoexecChan (const BString &chan)
 {
   int32 chanCount (fStartupChannels.CountItems());
   for (int32 i = 0; i < chanCount; i++)
-    if (((BString *)fStartupChannels.ItemAt (i))->ICompare(chan) == 0)
+    if (fStartupChannels.ItemAt (i)->ICompare(chan) == 0)
     {
-      delete static_cast<BString *>(fStartupChannels.RemoveItem (i));
+      delete fStartupChannels.RemoveItemAt (i);
       return;
     }
 }
@@ -1538,7 +1535,7 @@ ServerAgent::MessageReceived (BMessage *msg)
             for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
             {
               cmd += " ";
-              cmd += ((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text();
+              cmd += fNotifyNicks.ItemAt(i)->Text();
             }
             BMessage dataSend (M_SERVER_SEND);
             dataSend.AddString ("data", cmd.String());
@@ -1736,7 +1733,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           // remove leading space
           cmd.Remove(0, 1);
           for (i = 0; i < fNotifyNicks.CountItems(); i++)
-            if (curNick.ICompare(((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text()) == 0)
+            if (curNick.ICompare(fNotifyNicks.ItemAt(i)->Text()) == 0)
               break;
           // no dupes found, add it
           if (i == fNotifyNicks.CountItems())
@@ -1751,7 +1748,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         if (cmd.Length() > 0)
         {
           for (i = 0; i < fNotifyNicks.CountItems(); i++)
-            if (cmd == ((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text())
+            if (cmd == fNotifyNicks.ItemAt(i)->Text())
               break;
           // no dupes found, add it
           if (i == fNotifyNicks.CountItems())
@@ -1784,9 +1781,9 @@ ServerAgent::MessageReceived (BMessage *msg)
           cmd.Remove(0, 1);
           vision_app->RemoveNotifyNick(fNetworkData.FindString("name"), curNick.String());
           for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
-            if (curNick.ICompare(((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text()) == 0)
+            if (curNick.ICompare(fNotifyNicks.ItemAt(i)->Text()) == 0)
             {
-              delete static_cast<NotifyListItem *>(fNotifyNicks.RemoveItem(i));
+              delete fNotifyNicks.RemoveItemAt(i);
             }
           curNick = "";
         }
@@ -1795,9 +1792,9 @@ ServerAgent::MessageReceived (BMessage *msg)
         {
           vision_app->RemoveNotifyNick(fNetworkData.FindString("name"), cmd.String());
           for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
-            if (cmd.ICompare(((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text()) == 0)
+            if (cmd.ICompare(fNotifyNicks.ItemAt(i)->Text()) == 0)
             {
-              delete static_cast<NotifyListItem *>(fNotifyNicks.RemoveItem(i));
+              delete fNotifyNicks.RemoveItemAt(i);
             }
         }
         BMessage updMsg (M_NOTIFYLIST_UPDATE);
@@ -1817,7 +1814,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         Window()->PostMessage(&newMsg);
       }
       break;
-
+#if 0
     case M_IGNORE_ADD:
       {
         BString cmd (msg->FindString("cmd"));
@@ -1829,7 +1826,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         fIgnoreNicks.AddItem (new BString(cmd));
       }
       break;
-    
+#endif    
     default:
       ClientAgent::MessageReceived (msg);
   }

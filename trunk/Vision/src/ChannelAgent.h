@@ -26,10 +26,10 @@
 #ifndef _CHANNELAGENT_H_
 #define _CHANNELAGENT_H_
 
-#include <List.h>
 #include <Rect.h>
 #include <String.h>
 #include "ClientAgent.h"
+#include "ObjectList.h"
 
 class ChannelOptions;
 class BScrollView;
@@ -70,7 +70,7 @@ class ChannelAgent : public ClientAgent
     void                    UpdateMode (char, char);
     void                    ModeEvent (BMessage *);
     
-    static int              AlphaSortNames (const void *, const void *);
+    static int              AlphaSortNames (const BString *, const BString *);
     static int              SortNames (const void *, const void *);
     
     const NamesView         *pNamesList() const;
@@ -78,7 +78,7 @@ class ChannelAgent : public ClientAgent
     
   private:
     void                    Init();
-    void                    RemoveNickFromList (BList &, const char *);
+    void                    RemoveNickFromList (BObjectList<BString> &, const char *);
     
     BString                 fChanMode,
                               fChanLimit,
@@ -88,7 +88,7 @@ class ChannelAgent : public ClientAgent
                               fLastExpansion,
                               fTopic;
     
-    BList                   fRecentNicks,
+    BObjectList<BString>    fRecentNicks,
                               fCompletionNicks;
 
     int32                   fUserCount,
