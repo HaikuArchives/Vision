@@ -77,7 +77,8 @@ URLCrunch::Crunch (BString *url)
 			||     buffer[url_length] == '&'
 			||     buffer[url_length] == '_'
 			||     buffer[url_length] == '?'
-			||     buffer[url_length] == '='))
+			||     buffer[url_length] == '='
+			||     buffer[url_length] == '@'))
 				++url_length;
 
 			int len (strlen (tags[i]));
