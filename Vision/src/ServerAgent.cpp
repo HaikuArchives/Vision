@@ -261,7 +261,10 @@ ServerAgent::Establish (void *arg)
     
       if (sMsgrE->SendMessage (M_INC_RECONNECT) != B_OK)
         throw failToLock();
-      statString = "[@] Attempting to reconnect (Retry ";
+      statString = "[@] Attempting to ";
+      if (retrycount != 0)
+        statString += "re";
+      statString += "connect (attempt ";
       statString << retrycount + 1;
       statString += " of ";
       statString << reply.FindInt32 ("max_retries");
