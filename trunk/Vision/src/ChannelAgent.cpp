@@ -397,7 +397,7 @@ ChannelAgent::SortNames(const void *name1, const void *name2)
   first  += (firstPtr)->Name();
   second += (secondPtr)->Name();
 
-  return ((firstPtr->Status() > secondPtr->Status()) ? 1 : -1);
+  return ((firstPtr->Status() > secondPtr->Status()) ? -1 : 1);
 }
 
 void
