@@ -93,7 +93,10 @@ StatusView::Clear (void)
         all (items.CountItems());
 
   for (i = 0; i <= all; i++)
-    items.RemoveItem (0L);
+  {
+    StatusItem *item ((StatusItem *)items.RemoveItem (0L));
+    delete item;
+  }
   
   Invalidate();
 }

@@ -8,6 +8,7 @@ http://vision.sourceforge.net
    * bugfixes/optimizations to identd
    
    * Status bar for ListAgent working
+   * fixed memleak in StatusView
 
 [0.2.0523]
  2001-05-23
