@@ -124,7 +124,7 @@ AboutWindow::AboutWindow (void)
     "Joshua Jensen\n"
     "Gord McLeod (G_McLeod)\n"
     "John Robinson ([geo])\n"
-    "Bjorn Oksholen (GuinessM)\n"
+    "Bjorn Oksholen (GuinnessM)\n"
     "Jean-Baptiste M. Quéru (jbq)\n"
     "\n\n\n"
 
