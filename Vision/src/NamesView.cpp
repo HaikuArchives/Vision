@@ -349,8 +349,6 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *dragM
        }
      }
    }
-   if (transitcode == B_EXITED_VIEW)
-     fTracking = false;
  }
  else
    BListView::MouseMoved (myPoint, transitcode, dragMessage);
@@ -359,13 +357,8 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *dragM
 void
 NamesView::ClearList (void)
 {
-  BListItem *nameItem;
-
-  while ((nameItem = LastItem()))
-  {
-    RemoveItem (nameItem);
-    delete nameItem;
-  }
+  while (CountItems() > 0)
+    delete RemoveItem (0L);
 }
 
 void

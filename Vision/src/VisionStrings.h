@@ -29,7 +29,7 @@
 // channel agent
 
 #define S_CHANNEL_INIT              "*** Now talking in "
-#define S_CHANNEL_REJOIN            "*** Attempting to rejoin"
+#define S_CHANNEL_REJOIN            "*** Attempting to rejoin "
 #define S_CHANNEL_RECON_REJOIN      "[@] Attempting to rejoin"
 #define S_CHANNEL_GOT_KICKED        "*** You have been kicked from "
 #define S_CHANNEL_GOT_KICKED2       "by"

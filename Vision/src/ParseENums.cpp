@@ -857,15 +857,15 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         ClientAgent *client (Client (channel.String()));
         names.RemoveFirst (":");
 
-        if (client) // in the channel
-        {
           BString tempString (S_PENUM_NAMEREPLY);
           tempString += channel;
           tempString += ": ";
           tempString += names;
           tempString += '\n';
           Display (tempString.String(), C_TEXT);
-			
+
+        if (client) // in the channel
+        {
           BMessage msg (M_CHANNEL_NAMES);
           BString nick;
           int32 place (1);
@@ -912,15 +912,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
           if (client->fMsgr.IsValid())
             client->fMsgr.SendMessage (&msg);
-        }
-        else // not in the channel
-        {
-          BString tempString (S_PENUM_NAMEREPLY);
-          tempString += channel;
-          tempString += ": ";
-          tempString += names;
-          tempString += '\n';
-          Display (tempString.String(), C_TEXT);
         }
       }
       return true;
