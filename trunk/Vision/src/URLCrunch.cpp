@@ -99,7 +99,6 @@ URLCrunch::Crunch (BString *url)
 			*url = "";
 
 			url->Append (buffer.String() + marker, url_length);
-			url->RemoveLast ("\n");
 		}
 
 		current_pos = pos;
