@@ -1067,6 +1067,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_CLIENT_QUIT:
       {
+        ClientAgent::MessageReceived(msg);
         bool shutingdown (false);
 
         if (msg->HasBool ("vision:shutdown"))

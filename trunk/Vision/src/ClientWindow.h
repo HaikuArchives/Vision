@@ -46,6 +46,7 @@ class BMenuBar;
 class BMenuItem;
 class BScrollView;
 class BView;
+class BMessageRunner;
 class ServerAgent;
 class StatusView;
 class WindowList;
@@ -91,6 +92,10 @@ class ClientWindow : public BWindow
     void                  Init (void);
     bool                  shutdown_in_progress;
     bool                  wait_for_quits;
+    
+    bool                  altw_catch;    
+    BMessageRunner        *altwRunner;
+    
     BRect                 *agentrect;
     
     WindowList            *winList;
@@ -103,6 +108,7 @@ class ClientWindow : public BWindow
 const uint32 M_UPDATE_STATUS                = 'cwus';
 const uint32 M_OBITUARY                     = 'cwob';
 const uint32 M_CW_ALTW                      = 'cwaw';
+const uint32 M_CW_ALTW_RESET                = 'cwwr';
 const uint32 M_CW_ALTP                      = 'cwap';
 const uint32 M_MAKE_NEW_SERVER              = 'cwms';
 

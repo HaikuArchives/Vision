@@ -831,6 +831,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
      case M_CLIENT_QUIT:
        {
+         ClientAgent::MessageReceived(msg);
          if ((msg->HasBool ("vision:part") && msg->FindBool ("vision:part"))
          ||  (msg->HasBool ("vision:winlist") && msg->FindBool ("vision:winlist")))
          {

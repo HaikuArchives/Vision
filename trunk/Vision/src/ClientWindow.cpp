@@ -35,6 +35,7 @@
 #  include <MenuItem.h>
 #  include <MenuBar.h>
 #  include <Rect.h>
+#  include <MessageRunner.h>
 #endif
 
 #include <stdio.h>
@@ -70,7 +71,7 @@ ClientWindow::QuitRequested (void)
     shutdown_in_progress = true;
     BMessage killMsg (M_CLIENT_QUIT);
     killMsg.AddBool ("vision:winlist", true);
-    
+    killMsg.AddBool ("vision:shutdown_in_progress", shutdown_in_progress);
     if (ServerBroadcast (&killMsg))
       wait_for_quits = true;
       
@@ -256,10 +257,26 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_CW_ALTW:
       {
-        if (vision_app->GetBool("catchAltW"))
-          printf (":TODO: Alert box baby!\n");
-        else
+        if (!altw_catch)
+        {
+           altw_catch = true;
+           
+           altwRunner = new BMessageRunner (
+             this,
+             new BMessage (M_CW_ALTW_RESET),
+             400000, // 0.4 seconds
+             1);           
+        }
+        else   
           PostMessage (B_QUIT_REQUESTED);
+      }
+      break;
+
+    case M_CW_ALTW_RESET:
+      {
+        altw_catch = false;
+        if (altwRunner)
+          delete altwRunner;
       }
       break;
     
@@ -411,6 +428,7 @@ ClientWindow::Init (void)
    
   shutdown_in_progress = false;
   wait_for_quits = false;
+  altw_catch = false;
   
   BRect frame (Bounds());
   menubar = new BMenuBar (frame, "menu_bar");

@@ -252,16 +252,13 @@ IRCView::MouseDown (BPoint myPoint)
 
 
 void 
-IRCView::KeyDown (const char * bytes, int32 numBytes) 
+IRCView::KeyDown (const char *bytes, int32 numBytes) 
 {
-  BMessage inputMsg (M_INPUT_FOCUS); 
-  BString buffer; 
-
-  buffer.Append (bytes, numBytes); 
-  inputMsg.AddString ("text", buffer.String()); 
-
   if (settings->parentAgent && settings->parentAgent->msgr.IsValid())
-    settings->parentAgent->msgr.SendMessage (&inputMsg);
+    settings->parentAgent->msgr.SendMessage (new BMessage(M_INPUT_FOCUS));
+  
+  BMessage *keyMsg (Window()->CurrentMessage());
+  settings->parentInput->TextView()->KeyDown (bytes, numBytes);
 
 }
 
