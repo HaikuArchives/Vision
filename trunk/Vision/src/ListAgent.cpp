@@ -145,28 +145,21 @@ ListAgent::ListAgent (
 
   memset (&re, 0, sizeof (re));
   memset (&fre, 0, sizeof (fre));
-
-//  settings = new WindowSettings (
-//    this,
-//    title,
-//    BOWSER_SETTINGS);
-//  settings->Restore();
 }
 
 ListAgent::~ListAgent (void)
 {
-	BListItem *item;
+  BListItem *item;
 
-	showing.MakeEmpty();
-	listView->MakeEmpty();
-	while ((item = (BListItem *)list.RemoveItem (0L)) != 0)
-	{
-		delete item;
-	}
+  showing.MakeEmpty();
+  listView->MakeEmpty();
+  while ((item = (BListItem *)list.RemoveItem (0L)) != 0)
+  {
+    delete item;
+  }
 
-	regfree (&re);
-	regfree (&fre);
-	//delete settings;
+  regfree (&re);
+  regfree (&fre);
 }
 
 void
@@ -191,151 +184,137 @@ ListAgent::AttachedToWindow (void)
 void
 ListAgent::MessageReceived (BMessage *msg)
 {
-	switch (msg->what)
-	{
-		case M_LIST_COMMAND:
+  switch (msg->what)
+  {
+    case M_LIST_COMMAND:
+      {
+        if (!processing)
+        {
+          BMessage sMsg (M_SERVER_SEND);
+          BString serverName (GetWord ("FIXME", 2));
 
-			if (!processing)
-			{
-				BMessage sMsg (M_SERVER_SEND);
-				BString serverName (GetWord ("FIXME", 2));
+          sMsg.AddString ("data", "LIST");
+          sMsg.AddString ("server", serverName.String());
 
-				sMsg.AddString ("data", "LIST");
-				sMsg.AddString ("server", serverName.String());
+          vision_app->PostMessage (&sMsg);
+          processing = true;
+          mFind->SetEnabled (false);
+          mFindAgain->SetEnabled (false);
+          mChannelSort->SetEnabled (false);
+          mUserSort->SetEnabled (false);
+          mFilter->SetEnabled (false);
 
-				vision_app->PostMessage (&sMsg);
-				processing = true;
-				mFind->SetEnabled (false);
-				mFindAgain->SetEnabled (false);
-				mChannelSort->SetEnabled (false);
-				mUserSort->SetEnabled (false);
-				mFilter->SetEnabled (false);
+          BListItem *item;
+          showing.MakeEmpty();
+          listView->MakeEmpty();
+          while ((item = (BListItem *)list.RemoveItem (0L)) != 0)
+            delete item;
+          
+          //status->SetItemValue (0, "0");
+        }
+      }
+      break;
 
-				BListItem *item;
-				showing.MakeEmpty();
-				listView->MakeEmpty();
-				while ((item = (BListItem *)list.RemoveItem (0L)) != 0)
-				{
-					delete item;
-				}
-				//status->SetItemValue (0, "0");
-			}
-			break;
+    case M_LIST_BEGIN:
+      //status->SetItemValue (1, "Loading");
+      channelWidth = 0.0;
+      break;
 
-		case M_LIST_BEGIN:
+    case M_LIST_DONE:
+      {
+        //status->SetItemValue (1, "Sorting");
+        //UpdateIfNeeded();
 
-			//status->SetItemValue (1, "Loading");
-			channelWidth = 0.0;
-			break;
+        if (filter.Length())
+        {
+          showing.MakeEmpty();
 
-		case M_LIST_DONE:
-		{
-			//status->SetItemValue (1, "Sorting");
-			//UpdateIfNeeded();
+          sTopicWidth = sChannelWidth = 0.0;
+          for (int32 i = 0; i < list.CountItems(); ++i)
+          {
+            ChannelItem *item ((ChannelItem *)list.ItemAt (i));
 
-			if (filter.Length())
-			{
-				showing.MakeEmpty();
-				
-				sTopicWidth = sChannelWidth = 0.0;
-				for (int32 i = 0; i < list.CountItems(); ++i)
-				{
-					ChannelItem *item ((ChannelItem *)list.ItemAt (i));
+            if (regexec (&re, item->Channel(), 0, 0, 0) != REG_NOMATCH)
+            {
+              float width;
+              showing.AddItem (item);
 
-					if (regexec (&re, item->Channel(), 0, 0, 0) != REG_NOMATCH)
-					{
-						float width;
-
-						showing.AddItem (item);
-
-						width = listView->StringWidth (item->Channel());
-						if (width > sChannelWidth)
-						{
-							sChannelWidth = width;
-						}
+              width = listView->StringWidth (item->Channel());
+              if (width > sChannelWidth)
+                sChannelWidth = width;
 						
-						width = listView->StringWidth (item->Topic());
-						if (width > sTopicWidth)
-						{
-							sTopicWidth = width;
-						}
-					}
-				}
-			}
-			else
-			{
-				showing = list;
+              width = listView->StringWidth (item->Topic());
+              if (width > sTopicWidth)
+                sTopicWidth = width;
+            }
+          }
+        }
+        else
+        {
+          showing = list;
 
-				sChannelWidth = channelWidth;
-				sTopicWidth = topicWidth;
-			}
+          sChannelWidth = channelWidth;
+          sTopicWidth = topicWidth;
+        }
 
-			sLineWidth = ChannelWidth() 
-				+ listView->StringWidth ("@@@@")
-				+ 14.0 + sTopicWidth;
+        sLineWidth = ChannelWidth() 
+          + listView->StringWidth ("@@@@")
+          + 14.0 + sTopicWidth;
 
-			BScrollBar *bar (scroller->ScrollBar (B_HORIZONTAL));
-			bar->SetRange (0.0, sLineWidth - listView->Frame().Width());
+        BScrollBar *bar (scroller->ScrollBar (B_HORIZONTAL));
+        bar->SetRange (0.0, sLineWidth - listView->Frame().Width());
 
-			float low (min_c (Frame().Width() / sLineWidth, 1.0));
+        float low (min_c (Frame().Width() / sLineWidth, 1.0));
 
-			if (low == 1.0)
-			{
-				bar->SetRange (0.0, 0.0);
-			}
-			else
-			{
-				bar->SetProportion (low);
-			}
+        if (low == 1.0)
+          bar->SetRange (0.0, 0.0);
+        else
+          bar->SetProportion (low);
 			
-			showing.SortItems (SortChannels);
-			//status->SetItemValue (1, "Adding");
-			//UpdateIfNeeded();
+        showing.SortItems (SortChannels);
+        //status->SetItemValue (1, "Adding");
+        //UpdateIfNeeded();
 
-			listView->AddList (&showing);
-			//status->SetItemValue (1, "Done");
-			mFind->SetEnabled (true);
-			mFindAgain->SetEnabled (true);
-			mChannelSort->SetEnabled (true);
-			mUserSort->SetEnabled (true);
-			mFilter->SetEnabled (true);
-			processing = false;
+        listView->AddList (&showing);
+        //status->SetItemValue (1, "Done");
+        mFind->SetEnabled (true);
+        mFindAgain->SetEnabled (true);
+        mChannelSort->SetEnabled (true);
+        mUserSort->SetEnabled (true);
+        mFilter->SetEnabled (true);
+        processing = false;
 
-			BString cString;
-			cString << showing.CountItems();
-			//status->SetItemValue (0, cString.String());
-			break;
-		}
+        BString cString;
+        cString << showing.CountItems();
+        //status->SetItemValue (0, cString.String());
+      }
+      break;
 
-		case M_LIST_EVENT:
-		{
-			const char *channel, *users, *topic;
+    case M_LIST_EVENT:
+      {
+        const char *channel, *users, *topic;
 
-			msg->FindString ("channel", &channel);
-			msg->FindString ("users", &users);
-			msg->FindString ("topic", &topic);
+        msg->FindString ("channel", &channel);
+        msg->FindString ("users", &users);
+        msg->FindString ("topic", &topic);
 
-			list.AddItem (new ChannelItem (channel, users, topic));
+        list.AddItem (new ChannelItem (channel, users, topic));
 
-			float width (listView->StringWidth (channel));
+        float width (listView->StringWidth (channel));
 
-			if (width > channelWidth)
-			{
-				channelWidth = width;
-			}
+        if (width > channelWidth)
+          channelWidth = width;
 			
-			width = listView->StringWidth (topic);
-			if (width > topicWidth)
-			{
-				topicWidth = width;
-			}
+        width = listView->StringWidth (topic);
+
+        if (width > topicWidth)
+          topicWidth = width;
 				
-			BString countStr;
-			countStr << list.CountItems();
-			//status->SetItemValue (0, countStr.String());
-
-			break;
-		}
+        BString countStr;
+        countStr << list.CountItems();
+        //status->SetItemValue (0, countStr.String());
+      }
+      break;
 
 		case M_LIST_SORT_CHANNEL:
 		case M_LIST_SORT_USERS:

@@ -2,6 +2,9 @@ Vision
 http://vision.sourceforge.net
 
 [0.2.0511]
+ 2001-05-14
+   * Rearranged ClientAgentLogger init stuff.
+   * Fixed Alt+W catch
  2001-05-11
    * Rewrote ClientAgentInputFilter to switch against the keycode not
      bytecode of the keypress.
