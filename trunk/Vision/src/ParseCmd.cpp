@@ -23,12 +23,10 @@
  *                 Jamie Wilkinson
  */
 
-
 #include <FilePanel.h>
 #include <Path.h>
 #include <Roster.h>
 #include <FindDirectory.h>
-#include <NetworkKit.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,6 +36,7 @@
 #include <netdb.h>
 
 #ifdef BONE_BUILD
+#  include <sys/socket.h>
 #  include <arpa/inet.h>
 #endif
 
@@ -51,7 +50,7 @@
 #include "StringManip.h"
 #include "ClientAgent.h"
 #include "ClientWindow.h"
-#include "IRCView.h"
+#include "RunView.h"
 #include "WindowList.h"
 
 bool
@@ -191,17 +190,9 @@ ClientAgent::ParseCmd (const char *data)
   
   if (firstWord == "/CLEAR")
   {
-    text->ClearView (false);
+    text->Clear ();
     return true;
   }
-
-
-  if (firstWord == "/FCLEAR")
-  {
-    text->ClearView (true);
-    return true;
-  }
-
 
   if (firstWord == "/GOOGLE")
   {
@@ -243,7 +234,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /ctcp: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /ctcp: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -357,7 +348,7 @@ ClientAgent::ParseCmd (const char *data)
         }
       }
       else
-        Display ("[x] /deop: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /deop: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -381,7 +372,7 @@ ClientAgent::ParseCmd (const char *data)
         BString theActionMessage ("[ACTION]-> ");
         theActionMessage << theTarget << " -> " << theAction << "\n";
 
-        Display (theActionMessage.String(), 0);
+        Display (theActionMessage.String());
       }
     }
     return true;
@@ -441,7 +432,7 @@ ClientAgent::ParseCmd (const char *data)
         resume_thread (lookupThread);
       }
       else
-        Display ("[x] /dns: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /dns: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -467,7 +458,7 @@ ClientAgent::ParseCmd (const char *data)
       }
       else
       {
-        Display ("[x] /pexec: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /pexec: Error: Invalid parameters\n", C_ERROR);
         delete theCmd;
       }
     }
@@ -541,7 +532,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /invite: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /invite: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -590,7 +581,7 @@ ClientAgent::ParseCmd (const char *data)
         }
       }
       else
-        Display ("[x] /join: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /join: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -620,7 +611,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /kick: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /kick: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -673,7 +664,7 @@ ClientAgent::ParseCmd (const char *data)
       if (theAction != "-9z99")
         ActionMessage (theAction.String(), myNick.String());
       else
-        Display ("[x] /me: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /me: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -697,7 +688,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /nick: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /nick: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -725,7 +716,7 @@ ClientAgent::ParseCmd (const char *data)
         {
           BString tempString;
           tempString << "[M]-> " << theNick << " > " << theRest << "\n";
-          Display (tempString.String(), 0);
+          Display (tempString.String());
 
           AddSend (&sendMsg, "PRIVMSG ");
           AddSend (&sendMsg, theNick);
@@ -757,7 +748,7 @@ ClientAgent::ParseCmd (const char *data)
         vision_app->pClientWin()->PostMessage (&newserver);
       }
       else
-        Display ("[x] /newserver: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /newserver: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -772,14 +763,14 @@ ClientAgent::ParseCmd (const char *data)
         BString tempString ("*** Trying new nick ");
 
         tempString << newNick << ".\n";
-        Display (tempString.String(), 0);
+        Display (tempString.String());
 
         AddSend (&sendMsg, "NICK ");
         AddSend (&sendMsg, newNick);
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /nick: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /nick: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -803,10 +794,10 @@ ClientAgent::ParseCmd (const char *data)
         tempString += " -> ";
         tempString += theMsg;
         tempString += '\n';
-        Display (tempString.String(), 0);
+        Display (tempString.String());
       }
       else
-        Display ("[x] /notice: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /notice: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -863,7 +854,7 @@ ClientAgent::ParseCmd (const char *data)
         }
       }
       else
-        Display ("[x] /deop: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /deop: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -954,10 +945,10 @@ ClientAgent::ParseCmd (const char *data)
         BString tempString ("[R]-> ");
         tempString << theRaw << '\n';
 
-        Display (tempString.String(), 0);
+        Display (tempString.String());
       }
       else
-        Display ("[x] /raw: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /raw: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
@@ -995,15 +986,15 @@ ClientAgent::ParseCmd (const char *data)
 
       if (!caught || value == "-9z99")
       {
-        Display ("[x] /setbool: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /setbool: Error: Invalid parameters\n", C_ERROR);
       }
       else
       {
         status_t returned (vision_app->SetBool (var.String(), newvalue));
         if (returned == B_OK)
-          Display ("[x] /setbool: Bool has been set\n", &errorColor);
+          Display ("[x] /setbool: Bool has been set\n", C_ERROR);
         else
-          Display ("[x] /setbool: Error setting bool\n", &errorColor);
+          Display ("[x] /setbool: Error setting bool\n", C_ERROR);
       }
     }
     return true;
@@ -1112,7 +1103,7 @@ ClientAgent::ParseCmd (const char *data)
       {
         BString tempString;
         tempString << "Uptime: " << expandedString << "\n";
-        Display (tempString.String(), &whoisColor);
+        Display (tempString.String(), C_WHOIS);
       }
     }
     return true;
@@ -1160,7 +1151,7 @@ ClientAgent::ParseCmd (const char *data)
       if (buffer != "-9z99")
         vision_app->LoadURL (buffer.String());
       else
-        Display ("[x] /visit: Error: Invalid parameters\n", &errorColor);
+        Display ("[x] /visit: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }

@@ -33,7 +33,6 @@
 
 #include "ClientAgent.h"
 
-class BNetEndpoint;
 class BMessageRunner;
 class ListAgent;
 
@@ -78,7 +77,7 @@ class ServerAgent : public ClientAgent
  	ClientAgent					*Client (const char *);
 	ClientAgent					*ActiveClient (void);
 
-	void						DisplayAll (const char *, const int32 = -1, const BFont * = 0);
+	void						DisplayAll (const char *, const uint32 = 1, const uint32 = 1, const uint32 = 1);
 	BString						FilterCrap (const char *);
 	
 	BLocker						*endPointLock,
@@ -129,8 +128,7 @@ class ServerAgent : public ClientAgent
 								lagCheck,			// system_time()
 								lagCount;			// passes made waiting
 
-    BNetEndpoint               *lEndpoint;
-
+    int32                       serverSocket;
 	char							*send_buffer;		// dynamic buffer for sending
 	size_t						send_size;			// size of buffer
 
@@ -141,14 +139,6 @@ class ServerAgent : public ClientAgent
 
 	BList							clients;			// agents this server "owns"
 
-	rgb_color					ctcpReqColor,
-									ctcpRpyColor,
-									whoisColor,
-									errorColor,
-									quitColor,
-									joinColor,
-									noticeColor,
-									wallColor;
 	BString						*events;
 	
 	BString                     serverHostName;

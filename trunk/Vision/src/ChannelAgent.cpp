@@ -127,23 +127,20 @@ ChannelAgent::Init (void)
 
   AddChild (namesScroll);
 
-  joinColor  = vision_app->GetColor (C_JOIN);
-  quitColor  = vision_app->GetColor (C_QUIT);
-  errorColor = vision_app->GetColor (C_ERROR);
-
-  Display ("*** Now talking in ", &joinColor);
-  Display (id.String(), &joinColor);
-  Display ("\n", &joinColor);
+  Display ("*** Now talking in ", C_JOIN);
+  Display (id.String(), C_JOIN);
+  Display ("\n", C_JOIN);
 }
 
 int
 ChannelAgent::FindPosition (const char *data)
 {
+  ASSERT (data != NULL);
   /*
    * Function purpose: Find the index of nickname {data} in the
    *                   ChannelAgent's NamesView
    */
-  
+   
   if (namesList == NULL)
     return -1;
    
@@ -172,6 +169,7 @@ ChannelAgent::FindPosition (const char *data)
 bool
 ChannelAgent::RemoveUser (const char *data)
 {
+  ASSERT (data != NULL);
   /*
    * Function purpose: Remove nickname {data} from the ChannelAgent's
    *                   NamesView and update the status counts
@@ -392,18 +390,6 @@ ChannelAgent::MessageReceived (BMessage *msg)
         {
           switch (which)
           {
-            case C_JOIN:
-              joinColor  = vision_app->GetColor (C_JOIN);
-              break;
-              
-            case C_QUIT:
-              quitColor = vision_app->GetColor (C_QUIT);
-              break;
-              
-            case C_ERROR:
-             errorColor = vision_app->GetColor (C_ERROR);
-             break;
-            
             // all of these color consts belong to NamesView 
             case C_OP:
             case C_VOICE:
@@ -421,12 +407,16 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
     case M_CHANGE_NICK:
       {
-        const char *oldNick, *newNick;
-        NameItem *item;
+        const char *oldNick (NULL), *newNick (NULL);
+        NameItem *item (NULL);
         int32 thePos (-1);
 
-        msg->FindString ("oldnick", &oldNick);
-        msg->FindString ("newnick", &newNick);
+        if ((msg->FindString ("oldnick", &oldNick) != B_OK) ||
+          (msg->FindString ("newnick", &newNick) != B_OK))
+          {
+            printf("Error: invalid pointer, ChannelAgent::MessageReceived, M_CHANGE_NICK");
+            break;
+          }
 
         if (myNick.ICompare (oldNick) == 0 && !IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
@@ -450,8 +440,11 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
         for (i = 0; msg->HasString ("nick", i); ++i)
         {
-          const char *nick;
-          bool op, voice, helper, ignored;
+          const char *nick (NULL);
+          bool op (false),
+            voice (false),
+            helper (false),
+            ignored (false);
 
           msg->FindString ("nick", i, &nick);
           msg->FindBool ("op", i, &op);
@@ -506,11 +499,15 @@ ChannelAgent::MessageReceived (BMessage *msg)
     
     case M_REJOIN:
       {
-        const char *newNick;
-        msg->FindString ("nickname", &newNick);
+        const char *newNick (NULL);
+        if (msg->FindString ("nickname", &newNick) != B_OK)
+        {
+          printf("Error: ChannelAgent::MessageReceived, M_REJOIN: invalid pointer\n");
+          break;
+        }
         myNick = newNick;  // update nickname (might have changed on reconnect)
 			                    
-        Display ("[@] Attempting to rejoin...\n", &errorColor, &serverFont);
+        Display ("[@] Attempting to rejoin...\n", C_ERROR, C_BACKGROUND, F_SERVER);
 		
 		// clean up
         namesList->ClearList();
@@ -532,10 +529,14 @@ ChannelAgent::MessageReceived (BMessage *msg)
       
     case M_CHANNEL_TOPIC:
       {
-        const char *theTopic;
+        const char *theTopic (NULL);
         BString buffer;
 
-        msg->FindString ("topic", &theTopic);
+        if (msg->FindString ("topic", &theTopic) != B_OK)
+        {
+          printf("ChannelAgent::MessageReceived, M_CHANNEL_TOPIC: invalid pointer\n");
+          break;
+        }
         topic = theTopic;
       
         if (!IsHidden())
@@ -550,7 +551,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
     case M_OPEN_MSGAGENT:
       {
-        const char *theNick;
+        const char *theNick (NULL);
         msg->FindString("nick", &theNick);
       
         if (theNick == NULL)
@@ -571,10 +572,15 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
     case M_CHANNEL_GOT_KICKED:
       {
-        const char *theChannel, *kicker, *rest;
-        msg->FindString ("channel", &theChannel);
-        msg->FindString ("kicker", &kicker);
-        msg->FindString ("rest", &rest);    
+        const char *theChannel (NULL),
+          *kicker (NULL), *rest (NULL);
+        if ((msg->FindString ("channel", &theChannel) != B_OK) ||
+          (msg->FindString ("kicker", &kicker) != B_OK) || 
+          (msg->FindString ("rest", &rest) != B_OK))
+          {
+            printf("Error: ClientAgent::MessageReceived, M_CHANNEL_GOT_KICKED, invalid pointer\n");
+            break;
+          }    
 
         BMessage wegotkicked (M_DISPLAY); // "you were kicked"
         BString buffer;
@@ -585,7 +591,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         buffer += " (";
         buffer += rest;
         buffer += ")\n";
-        PackDisplay (&wegotkicked, buffer.String(), C_QUIT, 0, true);
+        PackDisplay (&wegotkicked, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
         // clean up
         namesList->ClearList();
         opsCount = 0;
@@ -597,7 +603,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         buffer = "*** Attempting to rejoin ";
         buffer += theChannel;
         buffer += "...\n";
-        PackDisplay (&attemptrejoin, buffer.String(), C_QUIT, 0, true);
+        PackDisplay (&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
         msgr.SendMessage (&attemptrejoin);
 
         BMessage send (M_SERVER_SEND);
@@ -620,10 +626,16 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
     case M_CHANNEL_MODES:
       {
-        const char *mode, *chan, *msgz;
-        msg->FindString ("mode", &mode);
-        msg->FindString ("chan", &chan);
-        msg->FindString ("msgz", &msgz);
+        const char *mode (NULL),
+          *chan (NULL),
+          *msgz (NULL);
+        if ((msg->FindString ("mode", &mode) != B_OK) ||
+          (msg->FindString ("chan", &chan) != B_OK) ||
+          (msg->FindString ("msgz", &msgz) != B_OK))
+          {
+            printf("Error: ChannelAgent::MessageReceived, M_CHANNEL_MODES: invalid pointer\n");
+            break;
+          }
 
         if (id.ICompare (chan) == 0)
         {
@@ -669,7 +681,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         }
       
         BMessage dispMsg (M_DISPLAY);
-        PackDisplay (&dispMsg, msgz, C_OP, 0, timeStampState);
+        PackDisplay (&dispMsg, msgz, C_OP, C_BACKGROUND, F_TEXT);
         BMessenger display (this);
         display.SendMessage (&dispMsg);
       }
@@ -677,7 +689,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
     case POPUP_MODE:
       {
-        const char *inaction;
+        const char *inaction (NULL);
         msg->FindString ("action", &inaction);
 
         int32 count (0), index (0);
@@ -688,7 +700,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
                 modechar,
                 polarity;
       
-        NameItem *myUser;
+        NameItem *myUser (NULL);
 
         /// action ///
         if (action.FindFirst ("voice") >= 0)
@@ -731,14 +743,14 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
     case POPUP_CTCP:
       {
-        const char *inaction;
+        const char *inaction (NULL);
         msg->FindString ("action", &inaction);
 
         int32 index (0);
         BString victims,
                 targetNick,
                 action (inaction);
-        NameItem *myUser;
+        NameItem *myUser (NULL);
         action.ToUpper();
 
         /// iterate ///
@@ -767,7 +779,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         int32 index (0);
         BString victims,
                 targetNick;
-        NameItem *myUser;
+        NameItem *myUser (NULL);
 
         /// iterate ///
         while ((i = namesList->CurrentSelection (index++)) >= 0)
@@ -792,7 +804,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
       { 
         int32 index (0); 
         BString targetNick; 
-        NameItem *myUser; 
+        NameItem *myUser (NULL); 
 
         /// iterate /// 
         while ((i = namesList->CurrentSelection(index++)) >= 0) 
@@ -813,7 +825,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         int32 index (0);
         BString targetNick,
                 kickMsg (vision_app->GetCommand (CMD_KICK));
-        NameItem *myUser;
+        NameItem *myUser (NULL); 
 
         /// iterate ///
         while ((i = namesList->CurrentSelection(index++)) >= 0)
@@ -932,9 +944,9 @@ ChannelAgent::Parser (const char *buffer)
   AddSend (&send, id);
   AddSend (&send, " :");
 
-  Display ("<", &myNickColor, 0, true);
-  Display (myNick.String(), &nickdisplayColor);
-  Display ("> ", &myNickColor);  
+  Display ("<", C_MYNICK);
+  Display (myNick.String(), C_NICKDISPLAY);
+  Display ("> ", C_MYNICK);  
   
   BString sBuffer (buffer);
   
@@ -949,8 +961,8 @@ ChannelAgent::Parser (const char *buffer)
     AddSend (&send, tempBuffer.String());
     AddSend (&send, endl);
   
-    Display (tempBuffer.String(), 0);
-    Display ("\n", 0);
+    Display (tempBuffer.String());
+    Display ("\n");
     
     Parser (sBuffer.String());
   }
@@ -959,8 +971,8 @@ ChannelAgent::Parser (const char *buffer)
     AddSend (&send, buffer);
     AddSend (&send, endl);
 
-    Display (buffer, 0);
-    Display ("\n", 0);  
+    Display (buffer);
+    Display ("\n");  
   }
 }
 
@@ -968,6 +980,7 @@ void
 ChannelAgent::UpdateMode(char theSign, char theMode)
 {
   char modeString[2]; // necessary C-style string
+  memset(modeString, 0, sizeof(modeString));
   sprintf (modeString, "%c", theMode);
   
   if (theSign == '-')
@@ -1076,7 +1089,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
   BMessenger display (this);
 
   BMessage modeMsg (M_DISPLAY);
-  PackDisplay (&modeMsg, buffer.String(), C_OP, 0, timeStampState);
+  PackDisplay (&modeMsg, buffer.String(), C_OP, C_BACKGROUND, F_TEXT);
   display.SendMessage (&modeMsg);
 
 

@@ -86,14 +86,6 @@ class ChannelAgent : public ClientAgent
                             lastExpansion,
                             topic;
 
-    rgb_color               ctcpReqColor,
-                            ctcpRpyColor,
-                            whoisColor,
-                            errorColor,
-                            quitColor,
-                            joinColor,
-                            noticeColor;
-
     int32                   userCount,
                             opsCount;
     int                     ircdtype;

@@ -298,7 +298,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     buffer += '\n';
   }
 		
-  PackDisplay (&display, buffer.String(), C_CTCP_REQ, &serverFont);
+  PackDisplay (&display, buffer.String(), C_CTCP_REQ, C_BACKGROUND, F_SERVER);
   PostActive (&display);
 }
 
@@ -359,6 +359,6 @@ ServerAgent::ParseCTCPResponse (BString theNick, BString theMsg)
 	BString buffer;
 
 	buffer << tempString.String();
-	PackDisplay (&display, buffer.String(), C_CTCP_RPY, &serverFont);
+	PackDisplay (&display, buffer.String(), C_CTCP_RPY, C_BACKGROUND, F_SERVER);
 	PostActive (&display);
 }
