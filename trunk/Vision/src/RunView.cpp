@@ -27,6 +27,9 @@
 #define MARGIN_WIDTH			10.0
 #define MARGIN_INDENT			10.0
 
+#define M_OFFVIEW_SELECTION		'mros'
+#define OFFVIEW_TIMER					(10000LL)
+#define ABS(x)							(x * ((x<0) ? -1 : 1))
 #define SOFTBREAK_STEP			5
 
 #include <string.h>
@@ -38,6 +41,8 @@
 
 #include <Message.h>
 #include <Messenger.h>
+#include <MessageRunner.h>
+#include <Clipboard.h>
 #include <ScrollView.h>
 #include <ScrollBar.h>
 #include <Region.h>
@@ -52,6 +57,7 @@
 #include "RunView.h"
 #include "URLCrunch.h"
 #include "Vision.h"
+
 
 // cursor data for hovering over URLs
 
@@ -83,6 +89,7 @@ struct URL
 								{ }
 };
 
+typedef slist<URL *> urllist;
 
 struct SoftBreakEnd
 {
@@ -107,7 +114,7 @@ struct Line
 {
 	char					*text;
 	time_t					stamp;
-	slist<URL *>			urls;
+	urllist					*urls;
 	int16					*spaces;
 	int16					*edges;
 	FontColor				*fcs;
@@ -168,6 +175,8 @@ struct Line
 
 	int16					CountChars (int16 pos, int16 len);
 	size_t				SetStamp (const char *, bool);
+	
+	void				SelectWord (int32 *, int32 *);
 };
 
 inline int32
@@ -196,6 +205,10 @@ RunView::RunView (
 		stamp_format (NULL),
 		sp_start (0, 0),
 		sp_end (0, 0),
+		tracking (0),
+		track_offset (0, 0),
+		off_view_runner (NULL),
+		off_view_time (0),
 		resizedirty (false),
 		fontsdirty (false)
 {
@@ -285,7 +298,8 @@ RunView::Draw (BRect frame)
 	float height (frame.bottom);
 	BRect bounds (Bounds());
 	BRegion clipper;
-
+	bool drawSelection (false);
+	
 	clipper.Set (frame);
 	ConstrainClippingRegion (&clipper);
 
@@ -313,7 +327,7 @@ RunView::Draw (BRect frame)
 		Line *line (lines[i]);
 		if (line->bottom < frame.top)
 			break;
-
+			
 		BRect r (bounds.left, line->top, bounds.right, line->bottom);
 
 		if (!frame.Intersects (r))
@@ -325,7 +339,7 @@ RunView::Draw (BRect frame)
 		int16 fore (0);
 		int16 back (0);
 		int16 font (0);
-
+		
 		height = line->top;
 
 		for (int16 sit = 0; sit < line->softie_used; ++sit)
@@ -374,6 +388,7 @@ RunView::Draw (BRect frame)
 						if (line->fcs[back].offset > place)
 							break;
 
+
 						low_color = theme->BackgroundAt (line->fcs[back].index);
 					}
 
@@ -409,7 +424,7 @@ RunView::Draw (BRect frame)
 				if (font < line->fc_count
 				&&  line->fcs[font].offset - place < length)
 					length = line->fcs[font].offset - place;
-
+				
 				if (place + length == line->length)
 					--length;
 
@@ -424,11 +439,17 @@ RunView::Draw (BRect frame)
 					height + line->softies[sit].height - 1.0);
 
 				SetDrawingMode (B_OP_COPY);
-				SetLowColor (low_color);
+				if (drawSelection)
+					SetLowColor (theme->BackgroundAt (Theme::SelectionBack));
+				else
+					SetLowColor (low_color);
 				SetHighColor (hi_color);
 				FillRect (r, B_SOLID_LOW);
-
-				SetDrawingMode (B_OP_OVER);
+				
+				if (drawSelection)
+					SetDrawingMode (B_OP_INVERT);
+				else
+					SetDrawingMode (B_OP_COPY);
 
 				DrawString (
 					line->text + place,
@@ -475,46 +496,297 @@ RunView::SetViewColor (rgb_color color)
 void
 RunView::MouseDown (BPoint point)
 {
-	sp_start = PositionAt (point);
-	slist<URL *>::const_iterator it;
-	for (it = lines[sp_start.line]->urls.begin(); it != lines[sp_start.line]->urls.end(); ++it)
-		if ((sp_start.offset >= (*it)->offset)
-		 && (sp_start.offset < (*it)->offset + (*it)->length))
-		 {
-		 	vision_app->LoadURL ((*it)->url.String());
-		 	break;
-		 }
+	if (!line_count)
+		return;
+	
+	BMessage *msg (Window()->CurrentMessage());
+	uint32 buttons;
+	uint32 modifiers;
+	uint32 clicks;
+
+	msg->FindInt32 ("buttons", reinterpret_cast<int32 *>(&buttons));
+	msg->FindInt32 ("clicks", reinterpret_cast<int32 *>(&clicks));
+	msg->FindInt32 ("modifiers", reinterpret_cast<int32 *>(&modifiers));
+
+	MakeFocus (true);
+	SelectPos s (PositionAt (point));
+
+	if (buttons == B_PRIMARY_MOUSE_BUTTON
+	&&      (modifiers & B_SHIFT_KEY)   == 0
+	&&      (modifiers & B_COMMAND_KEY) == 0
+	&&      (modifiers & B_CONTROL_KEY) == 0
+	&&      (modifiers & B_OPTION_KEY)  == 0
+	&&      (modifiers & B_MENU_KEY)    == 0
+	&&       s.offset >= 0
+    &&       clicks % 2 == 0)
+	{
+		int32 start (s.offset),
+					end (s.offset);
+
+		// select word
+		lines[s.line]->SelectWord (&start, &end);
+		s.offset = start;
+		sp_start = s;
+		
+		s.offset = end;
+		sp_end = s;
+	}
+
+	else if (buttons                    == B_PRIMARY_MOUSE_BUTTON
+	&&      (modifiers & B_SHIFT_KEY)   == 0
+	&&      (modifiers & B_COMMAND_KEY) == 0
+	&&      (modifiers & B_CONTROL_KEY) == 0
+	&&      (modifiers & B_OPTION_KEY)  == 0
+	&&      (modifiers & B_MENU_KEY)    == 0)
+	{
+		SetMouseEventMask (B_POINTER_EVENTS);
+		tracking = 1;
+		track_offset = s;
+	}
+	else if (buttons					== B_PRIMARY_MOUSE_BUTTON
+	&&      (modifiers & B_SHIFT_KEY)   != 0
+	&&      (modifiers & B_COMMAND_KEY) == 0
+	&&      (modifiers & B_CONTROL_KEY) == 0
+	&&      (modifiers & B_OPTION_KEY)  == 0
+	&&      (modifiers & B_MENU_KEY)    == 0)
+	{
+		if (s.line < sp_start.line || s.offset < sp_start.offset)
+		{
+			Select (s, sp_end);
+			track_offset = SelectPos (sp_end.line, (sp_end.offset > 0) ? sp_end.offset - 1 : sp_end.offset);
+		}
+		else
+		{
+			Select (sp_start, s);
+			track_offset = sp_start;
+		}
+
+		SetMouseEventMask (B_POINTER_EVENTS);
+		tracking = 2;
+	}
 }
 
 void
-RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
+RunView::CheckURLCursor (BPoint point)
 {
-	if (line_count == 0)
+	if (!line_count)
 		return;
 		
 	SelectPos s = PositionAt (point);
+	
+	if (!lines[s.line]->urls)
+		return;
 		
-	slist<URL *>::const_iterator it;
-	for (it = lines[s.line]->urls.begin(); it != lines[s.line]->urls.end(); ++it)
+	urllist::const_iterator it;
+	for (it = lines[s.line]->urls->begin(); it != lines[s.line]->urls->end(); ++it)
 		if ((s.offset >= (*it)->offset)
 		 && (s.offset < (*it)->offset + (*it)->length))
 		 {
 		 	SetViewCursor (URLCursor);
 		 	return;
 		 }
+		 
 	SetViewCursor (B_CURSOR_SYSTEM_DEFAULT);
+}
+
+void
+RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
+{
+	if (tracking == 0
+	&&  line_count
+	&& (transit == B_ENTERED_VIEW
+	||  transit == B_INSIDE_VIEW))
+		CheckURLCursor (point);
+
+		
+	if (!line_count || tracking == 0)
+	{
+		BView::MouseMoved (point, transit, msg);
+		return;
+	}
+
+	switch (transit)
+	{
+		case B_ENTERED_VIEW:
+			if (off_view_runner)
+			{
+				delete off_view_runner;
+				off_view_runner = 0;
+			}
+
+			if (tracking == 1 || tracking == 2)
+				ExtendTrackingSelect (point);
+
+			break;
+
+		case B_EXITED_VIEW:
+			if (tracking == 1 || tracking == 2)
+				ShiftTrackingSelect (point, true, OFFVIEW_TIMER);
+			break;
+
+		case B_OUTSIDE_VIEW:
+
+			if (tracking == 1 || tracking == 2)
+			{
+				bigtime_t now (system_time());
+
+				ShiftTrackingSelect (
+					point,
+					false,
+					max_c (0LL, min_c (OFFVIEW_TIMER, OFFVIEW_TIMER - (now - off_view_time))));
+			}
+			break;
+
+
+		case B_INSIDE_VIEW:
+			if (tracking == 1 || tracking == 2)
+				ExtendTrackingSelect (point);
+			break;
+	}
 }
 
 void
 RunView::MouseUp (BPoint point)
 {
-	sp_end = PositionAt (point);
-	if ((sp_end.line < sp_start.line) ||
-	  (sp_end.line == sp_start.line) && (sp_end.offset < sp_start.offset))
+	SelectPos s (PositionAt (point));
+	bool url_handle (false);
+	
+	if (!line_count || !lines[s.line]->urls)
 	{
-		SelectPos temp = sp_end;
-		sp_end = sp_start;
-		sp_start = temp;
+		tracking = 0;
+		return;
+	}
+	
+	if (tracking == 1)
+	{
+		urllist::const_iterator it;
+		for (it = lines[s.line]->urls->begin(); it != lines[s.line]->urls->end(); ++it)
+			if ((s.offset >= (*it)->offset)
+			 && (s.offset < (*it)->offset + (*it)->length))
+			 {
+			 	vision_app->LoadURL ((*it)->url.String());
+			 	url_handle = true;
+			 	break;
+			 }
+			 
+		if (!url_handle)
+			Select (s, s);
+	}
+
+	if (off_view_runner)
+	{
+		delete off_view_runner;
+		off_view_runner = 0;
+	}
+	
+	tracking = 0;
+
+}
+
+void
+RunView::ExtendTrackingSelect (BPoint point)
+{
+	SelectPos s (PositionAt (point));
+
+	if (s.line < track_offset.line || (s.line == track_offset.line && s.offset < track_offset.offset))
+	{
+		Select (s, track_offset);
+		tracking = 2;
+	}
+	else if (s.line > track_offset.line || (s.line == track_offset.line && s.offset > track_offset.offset))
+	{
+		Select (track_offset, s);
+		tracking = 2;
+	}
+}
+
+void
+RunView::ShiftTrackingSelect (BPoint point, bool move, bigtime_t timer)
+{
+	BRect bounds (Bounds());
+
+	if (off_view_runner)
+	{
+		delete off_view_runner;
+		off_view_runner = 0;
+	}
+
+	if (point.y < bounds.top)
+	{
+		if (bounds.top > 0.0)
+		{
+			float delta (bounds.top - point.y);
+
+			if (off_view_runner == 0)
+			{
+				BMessage *msg (new BMessage (M_OFFVIEW_SELECTION));
+
+				msg->AddFloat ("delta", delta);
+				msg->AddBool  ("bottom", false);
+				msg->AddPoint ("point", point);
+
+				off_view_runner = new BMessageRunner (
+					BMessenger (this),
+					msg,
+					timer == 0LL ? OFFVIEW_TIMER : timer);
+			}
+
+			if (move || timer == 0)
+			{
+				delta = max_c (ABS (ceil (delta / 2.0)), 10.0);
+				delta = min_c (delta, Bounds().Height());
+
+				if (bounds.top - delta < 0.0)
+					delta = bounds.top;
+
+				ScrollBy (0.0, -delta);
+				off_view_time = system_time();
+			}
+		}
+
+		point.x = 0.0;
+		point.y = Bounds().top;
+		ExtendTrackingSelect (point);
+	}
+
+	if (point.y > bounds.bottom)
+	{
+		Line *line (lines[line_count-1]);
+		if (line
+		&&  line->bottom > bounds.bottom)
+		{
+			float delta (point.y - bounds.bottom);
+
+			if (off_view_runner == 0)
+			{
+				BMessage *msg (new BMessage (M_OFFVIEW_SELECTION));
+
+				msg->AddFloat ("delta", delta);
+				msg->AddBool  ("bottom", true);
+				msg->AddPoint ("point", point);
+
+				off_view_runner = new BMessageRunner (
+					BMessenger (this),
+					msg,
+					timer == 0LL ? OFFVIEW_TIMER : timer);
+			}
+
+			if (move || timer == 0)
+			{
+				delta = max_c (ABS (ceil (delta / 2.0)), 10.0);
+				delta = min_c (delta, Bounds().Height());
+
+				if (bounds.bottom + delta > line->bottom)
+					delta = line->bottom - bounds.bottom;
+
+				ScrollBy (0.0, delta);
+				off_view_time = system_time();
+			}
+		}
+
+		point.x = Bounds().right;
+		point.y = Bounds().bottom;
+		ExtendTrackingSelect (point);
 	}
 }
 
@@ -535,6 +807,42 @@ RunView::MessageReceived (BMessage *msg)
 
 			theme = NULL;
 			SetTheme (save);
+			break;
+		}
+		
+		case B_COPY:
+			if (sp_start != sp_end
+			&&  be_clipboard->Lock())
+			{
+				BString text;
+				GetSelectionText (text);
+				
+				be_clipboard->Clear();
+
+				BMessage *msg (be_clipboard->Data());
+				msg->AddData ("text/plain", B_MIME_TYPE, text.String(), text.Length());
+
+				be_clipboard->Commit();
+				be_clipboard->Unlock();
+			}
+			break;
+
+		case M_OFFVIEW_SELECTION:
+		{
+			BPoint point;
+			float delta;
+			bool bottom;
+
+			msg->FindPoint ("point", &point);
+			msg->FindBool ("bottom", &bottom);
+			msg->FindFloat ("delta", &delta);
+
+			if (bottom)
+				point.y = Bounds().bottom + delta;
+			else
+				point.y = Bounds().top - delta;
+
+			ShiftTrackingSelect (point, true, OFFVIEW_TIMER);
 			break;
 		}
 
@@ -707,7 +1015,6 @@ RunView::Append (
 	int16 font)
 {
 	float width (Bounds().Width() - 10);
-	unsigned long lcount (0);
 	int32 place (0);
 
 	assert (fore != Theme::TimestampFore);
@@ -1050,18 +1357,56 @@ RunView::PointAt (SelectPos) const
 }
 
 void
+RunView::GetSelectionText (BString &string) const
+{
+	if (sp_start == sp_end)
+		return;
+	
+	if (sp_start.line == sp_end.line)
+	{
+		const char *line (LineAt (sp_start.line));
+		string.Append (line + sp_start.offset, sp_end.offset - sp_start.offset);
+		return;
+	}
+	
+	for (int32 i = sp_start.line; i < sp_end.line; i++)
+	{
+		const char *line (LineAt (i));
+		if (i == sp_start.line)
+		{
+			line += sp_start.offset;
+			string.Append (line);
+		}
+		else if (i == sp_end.line)
+		{
+			string.Append (line, sp_end.offset);
+			break;
+		}
+		else
+			string.Append (line);	
+	}
+}
+
+void
 RunView::GetSelection (SelectPos *, SelectPos *) const
 {
 }
 
 void
-RunView::Select (SelectPos, SelectPos)
+RunView::Select (SelectPos start, SelectPos end)
 {
+	sp_start = start;
+	sp_end = end;
 }
 
 void
 RunView::SelectAll (void)
 {
+	if (line_count)
+	{
+		sp_start = SelectPos (0, 0);
+		sp_end = SelectPos (line_count - 1, lines[line_count-1]->length-1);
+	}
 }
 
 Line::Line (
@@ -1078,6 +1423,7 @@ Line::Line (
 	int16 font)
 	:	text (NULL),
 		stamp (time(NULL)),
+		urls (NULL),
 		spaces (NULL),
 		edges (NULL),
 		fcs (NULL),
@@ -1116,9 +1462,13 @@ Line::~Line (void)
 	delete [] fcs;
 	delete [] text;
 
-	slist<URL *>::const_iterator it = urls.begin();
-	for (; it != urls.end(); ++it)
-		delete (*it);
+	if (urls)
+	{
+		urllist::const_iterator it = urls->begin();
+		for (; it != urls->end(); ++it)
+			delete (*it);
+		delete urls;
+	}
 }
 
 void
@@ -1154,9 +1504,15 @@ Line::Append (
 		BString temp_url;
 		
 		while ((offset = crunch.Crunch (&temp_url)) != B_ERROR)
-			urls.push_front (new URL (temp_url.String(), offset, temp_url.Length()));
+		{
+			if (!urls)
+				urls = new urllist;
+			urls->push_front (new URL (temp_url.String(), offset, temp_url.Length()));
+		}
 		
-		urls.sort();
+		if (urls)
+			urls->sort();
+			
 		FigureSpaces();
 		FigureEdges (boxbuf, boxbuf_size, theme, width);
 	}
@@ -1352,8 +1708,6 @@ Line::FigureEdges (
 		}
 
 		const BFont &f (theme->FontAt (fcs[cur_font].index));
-
-		int16 offset (fcs[cur_fcs].offset);
 
 		f.GetBoundingBoxesAsString (
 			text + fcs[cur_fcs].offset,
@@ -1597,11 +1951,13 @@ Line::SetStamp (const char *format, bool was_on)
 	if (was_on)
 	{
 		int16 offset (fcs[4].offset + 1);
-
-		slist<URL *>::const_iterator it = urls.begin();
-		for (; it != urls.end(); ++it)
-			(*it)->offset -= offset;
-
+		
+		if (urls)
+		{
+			urllist::const_iterator it = urls->begin();
+			for (; it != urls->end(); ++it)
+				(*it)->offset -= offset;
+		}
 		memmove (text, text + offset, length - offset);
 		text[length -= offset] = '\0';
 
@@ -1621,11 +1977,13 @@ Line::SetStamp (const char *format, bool was_on)
 
 		localtime_r (&stamp, &tm);
 		size = strftime (buffer, 1023, format, &tm);
-
-		slist<URL *>::const_iterator it = urls.begin();
-		for (; it != urls.end(); ++it)
-			(*it)->offset += size;
-
+		if (urls)
+		{
+			urllist::const_iterator it = urls->begin();
+			for (; it != urls->end(); ++it)
+				(*it)->offset += size;
+		}
+		
 		char *new_text;
 
 		new_text = new char [length + size + 2];
@@ -1681,5 +2039,20 @@ Line::SetStamp (const char *format, bool was_on)
 	}
 
 	return size;
+}
+
+void
+Line::SelectWord (int32 *start, int32 *end)
+{
+	int32 start_tmp (*start), end_tmp (*end);
+
+	while(start_tmp > 0 && (isdigit (text[start_tmp-1]) || isalpha (text[start_tmp-1])))
+			start_tmp--;
+
+	while (end_tmp < length && (isdigit (text[end_tmp]) || isalpha (text[end_tmp])))
+			end_tmp++;
+	
+	*start = start_tmp;
+	*end = end_tmp;
 }
 
