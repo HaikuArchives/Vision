@@ -172,7 +172,7 @@ AboutWindow::AboutWindow (void)
     frame.Width()/2 - Frame().Width()/2,
     frame.Height()/2 - Frame().Height()/2);
   fScrollRunner = new BMessageRunner (BMessenger (this), new BMessage (M_ABOUT_SCROLL),
-  	100000);
+  	 50000);
 }
 
 

@@ -515,15 +515,24 @@ WindowList::MoveCurrentUp (void)
   WindowListItem *item (dynamic_cast<WindowListItem *>(FullListItemAt(currentsel)));
   if (item == NULL)
     return;
-
-  if ((item->Type() == WIN_SERVER_TYPE) &&
-    currentsel > 0)
+    
+  WindowListItem *selItem(item);
+  
+  if (item->Type() != WIN_SERVER_TYPE)
+  {
+    item = dynamic_cast<WindowListItem *>(Superitem(item));
+    if (item == NULL)
+      return;
+    currentsel = IndexOf(item);
+  }
+  
+  if (currentsel > 0)
   {
     for (int32 i = currentsel - 1; i >= 0; i--)
       if (dynamic_cast<WindowListItem *>(FullListItemAt(i))->Type() == WIN_SERVER_TYPE)
       {
         SwapItems(currentsel, i);
-        Select(IndexOf(item));
+        Select(IndexOf(selItem));
         ScrollToSelection();
         break;
       }
@@ -541,18 +550,27 @@ WindowList::MoveCurrentDown (void)
   WindowListItem *item (dynamic_cast<WindowListItem *>(FullListItemAt(currentsel)));
   if (item == NULL)
     return;
+
+  WindowListItem *selItem(item);
+
+  if (item->Type() != WIN_SERVER_TYPE)
+  {
+    item = dynamic_cast<WindowListItem *>(Superitem(item));
+    if (item == NULL)
+      return;
+    currentsel = IndexOf(item);
+  }
   
   int32 itemCount (FullListCountItems());
   
-  if ((item->Type() == WIN_SERVER_TYPE) &&
-    currentsel < itemCount)
+  if (currentsel < itemCount)
   {
     currentsel = FullListIndexOf (item);
     int32 i (currentsel + CountItemsUnder(item, true) + 1);
     if (i < itemCount && dynamic_cast<WindowListItem *>(FullListItemAt(i))->Type() == WIN_SERVER_TYPE)
     {
       SwapItems(currentsel, i);
-      Select(IndexOf(item));
+      Select(IndexOf(selItem));
       ScrollToSelection();
     }
   }
@@ -819,10 +837,14 @@ WindowListItem::pAgent() const
   return fMyAgent;
 }
 
+// TODO: verify that these Lock/Unlocks are not needed -- in theory they shouldn't be
+// since these functions only get called in response to window messages, and as such
+// the looper *has* to be locked -- needs testing to verify
+
 void
 WindowListItem::SetName (const char *name)
 {
-  vision_app->pClientWin()->Lock();
+//  vision_app->pClientWin()->Lock();
   fMyName = name;
   int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
   vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
@@ -835,27 +857,27 @@ WindowListItem::SetName (const char *name)
     vision_app->pClientWin()->SetTitle (agentid.String());
   }
     
-  vision_app->pClientWin()->Unlock();
+//  vision_app->pClientWin()->Unlock();
 }
 
 void
 WindowListItem::SetSubStatus (int32 winStatus)
 {
-  vision_app->pClientWin()->Lock();
+//  vision_app->pClientWin()->Lock();
   fSubStatus = winStatus;
   int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
   vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
-  vision_app->pClientWin()->Unlock();
+//  vision_app->pClientWin()->Unlock();
 }
 
 void
 WindowListItem::SetStatus (int32 winStatus)
 {
-  vision_app->pClientWin()->Lock();
+//  vision_app->pClientWin()->Lock();
   fMyStatus = winStatus;
   int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
   vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
-  vision_app->pClientWin()->Unlock();
+//  vision_app->pClientWin()->Unlock();
 }
 
 void

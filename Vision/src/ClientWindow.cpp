@@ -64,6 +64,9 @@
 /// Begin BWindow functions
 //////////////////////////////////////////////////////////////////////////////
 
+// small dynamic menu that sets the enabled/disabled states of its items on the fly when the user invokes it
+// needed to correctly show the state of cut/copy/paste/select all
+
 class DynamicEditMenu : public BMenu
 {
   public:
@@ -593,8 +596,6 @@ ClientWindow::Init (void)
   item->SetTarget (vision_app);
 
   menu->AddSeparatorItem();                  
-  menu->AddItem (item = new BMenuItem (S_CW_APP_CHANLIST B_UTF8_ELLIPSIS,
-                    new BMessage (M_LIST_COMMAND), 'L'));
   menu->AddItem (item = new BMenuItem (S_CW_APP_TERMINAL, new BMessage (M_OPEN_TERM),
                     'T', B_OPTION_KEY));
   menu->AddSeparatorItem();
@@ -611,6 +612,9 @@ ClientWindow::Init (void)
   fServer->AddItem (item = new BMenuItem (S_CW_SERVER_SETUP B_UTF8_ELLIPSIS,
                     new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
+  fServer->AddSeparatorItem();
+  fServer->AddItem (item = new BMenuItem (S_CW_APP_CHANLIST B_UTF8_ELLIPSIS,
+                    new BMessage (M_LIST_COMMAND), 'L'));
   fMenuBar->AddItem (fServer);
   
   // Edit menu
