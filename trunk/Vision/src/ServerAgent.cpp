@@ -966,7 +966,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         reply.AddString  ("name", fLname.String());
         reply.AddString  ("nick", fMyNick.String());
 #ifdef NETSERVER_BUILD
-        reply.AddPointer ("lock", endPointLock);
+        reply.AddPointer ("lock", fEndPointLock);
 #endif
         reply.AddInt32   ("sid", fSid);
         msg->SendReply (&reply); 
