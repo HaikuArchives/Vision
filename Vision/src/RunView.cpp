@@ -438,28 +438,35 @@ RunView::Draw (BRect frame)
 				
 				if (checkSelection)
 				{
-					// case 1: current line contains selection, selection is constrained
-					// to one line
+					// case 1: current line marks beginning of selection
 					if (i == sp_start.line)
 					{
+						// if we're just prior to the selection, clip length to only
+						// draw up to the selection start
 						if (place + length >= sp_start.offset && place < sp_start.offset)
 						{
 							length = sp_start.offset - place;
 							drawSelection = false;
 						}
+						// we're at the selection, switch drawing color mode
 						else if (place == sp_start.offset)
 						{
+							// selection's confined to a section of the current line
 							if (sp_start.line == sp_end.line)
 								length = sp_end.offset - sp_start.offset;
 							else
+							// multi-line selection, select to end
 								length = line->length - sp_start.offset;
 							drawSelection = true;
 						}
 						else
 							drawSelection = false;
 					}
+					// case 2: line in between beginning and end of selection,
+					// highlight entire line
 					else if (i > sp_start.line && i < sp_end.line)
 						drawSelection = true;
+					// case 3: last line of selection, with multiple lines in between
 					else if (i == sp_end.line && i != sp_start.line)
 					{
 						if (place < sp_end.offset)
@@ -480,7 +487,7 @@ RunView::Draw (BRect frame)
 				int16 i (place + length - 1);
 				while (line->edges[i] == 0)
 					--i;
-
+				
 				r.Set (
 					left,
 					height,
@@ -557,7 +564,6 @@ RunView::MouseDown (BPoint point)
 	msg->FindInt32 ("clicks", reinterpret_cast<int32 *>(&clicks));
 	msg->FindInt32 ("modifiers", reinterpret_cast<int32 *>(&modifiers));
 
-	MakeFocus (true);
 	SelectPos s (PositionAt (point));
 
 	if (buttons == B_PRIMARY_MOUSE_BUTTON

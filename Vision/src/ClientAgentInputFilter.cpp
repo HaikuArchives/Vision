@@ -53,7 +53,7 @@ ClientAgentInputFilter::ClientAgentInputFilter (ClientAgent *agent)
 }
 
 filter_result
-ClientAgentInputFilter::Filter (BMessage *msg, BHandler **)
+ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 {
   filter_result result (B_DISPATCH_MESSAGE);
   switch (msg->what)
@@ -61,7 +61,17 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **)
     case B_MOUSE_MOVED:
     case B_KEY_UP:
       break;
-
+    
+    case B_COPY:
+    case B_SELECT_ALL:
+      {
+        int32 start, finish;
+        window->input->TextView()->GetSelection (&start, &finish);
+        if (start == finish)
+          *target = window->text;
+      }
+      break;
+      
     case B_KEY_DOWN:
       {
         result = HandleKeys (msg);
