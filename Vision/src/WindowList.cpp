@@ -431,60 +431,32 @@ WindowList::ContextSelectUp (void)
   if (currentsel < 0)
     return;
           
-  WindowListItem *aitem (NULL);
-  bool foundone (false);
-  int iloop;
-        
-  // try to find a WIN_NICK_BIT item first
-  for (iloop = currentsel; iloop > -1; --iloop)
-  {
-    aitem = (WindowListItem *)ItemAt (iloop);
-    if ((aitem->Status() == WIN_NICK_BIT))
-    {
-      Select (IndexOf (aitem));
-      ScrollToSelection();
-      foundone = true;
-      break; 
-    }
-  }
-        
-  if (foundone)
-    return;        
-        
-  // try to find a WIN_NEWS_BIT item first
-  for (iloop = currentsel; iloop > -1; --iloop)
-  {
-    aitem = (WindowListItem *)ItemAt (iloop);
-    if ((aitem->Status() == WIN_NEWS_BIT))
-    {
-      Select (IndexOf (aitem));
-      ScrollToSelection();
-      foundone = true;
-      break; 
-    }
-  }
-        
-  if (foundone)
-    return;
+  WindowListItem *selItem (NULL),
+                 *aItem (NULL);
 
-  // try to find a WIN_PAGESIX_BIT item first
-  for (iloop = currentsel; iloop > -1; --iloop)
+  for (int32 iloop = currentsel - 1; iloop > -1; --iloop)
   {
-    aitem = (WindowListItem *)ItemAt (iloop);
-    if ((aitem->Status() == WIN_PAGESIX_BIT))
+    aItem = dynamic_cast<WindowListItem *>(ItemAt (iloop));
+    if (aItem)
     {
-      Select (IndexOf (aitem));
-      ScrollToSelection();
-      foundone = true;
-      break; 
-    }
+      if (selItem)
+      {
+        if (aItem->Status() > selItem->Status())
+          selItem = aItem;
+      }
+      else
+      {
+        selItem = aItem;
+      }
+      // no point in searching any further
+      if (selItem->Status() == WIN_NICK_BIT)
+        break;
+    }  
   }
-        
-  if (foundone)
-    return;
-          
+
   // just select the previous item then.
-  Select (currentsel - 1);
+  if (selItem)
+    Select (IndexOf(selItem));
   ScrollToSelection();        
 }
 
@@ -495,61 +467,33 @@ WindowList::ContextSelectDown (void)
   if (currentsel < 0)
     return;
           
-  WindowListItem *aitem;
-  bool foundone (false);
-  int iloop;
-        
-  // try to find a WIN_NICK_BIT item first
-  for (iloop = currentsel; iloop < CountItems(); ++iloop)
-  {
-    aitem = (WindowListItem *)ItemAt (iloop);
-    if ((aitem->Status() == WIN_NICK_BIT))
-    {
-      Select (IndexOf (aitem));
-      ScrollToSelection();
-      foundone = true;
-      break; 
-    }
-  }
-        
-  if (foundone)
-    return;        
-        
-  // try to find a WIN_NEWS_BIT item first
-  for (iloop = currentsel; iloop < CountItems(); ++iloop)
-  {
-    aitem = (WindowListItem *)ItemAt (iloop);
-    if ((aitem->Status() == WIN_NEWS_BIT))
-    {
-      Select (IndexOf (aitem));
-      ScrollToSelection();
-      foundone = true;
-      break; 
-    }
-  }
-        
-  if (foundone)
-    return;   
+  WindowListItem *selItem (NULL),
+                 *aItem (NULL);
 
-  // try to find a WIN_PAGESIX_BIT item first
-  for (iloop = currentsel; iloop < CountItems(); ++iloop)
+  for (int32 iloop = currentsel + 1; iloop < CountItems(); ++iloop)
   {
-    aitem = (WindowListItem *)ItemAt (iloop);
-    if ((aitem->Status() == WIN_PAGESIX_BIT))
+    aItem = dynamic_cast<WindowListItem *>(ItemAt (iloop));
+    if (aItem)
     {
-      Select (IndexOf (aitem));
-      ScrollToSelection();
-      foundone = true;
-      break; 
-    }
+      if (selItem)
+      {
+        if (aItem->Status() > selItem->Status())
+          selItem = aItem;
+      }
+      else
+      {
+        selItem = aItem;
+      }
+      // no point in searching any further
+      if (selItem->Status() == WIN_NICK_BIT)
+        break;
+    }  
   }
-        
-  if (foundone)
-    return;   
-          
+
   // just select the previous item then.
-  Select (currentsel + 1);
-  ScrollToSelection();      
+  if (selItem)
+    Select (IndexOf(selItem));
+  ScrollToSelection();        
 }
 
 void
