@@ -47,6 +47,7 @@
 #include "SettingsFile.h"
 #include "ClientWindow.h"
 #include "ClientAgent.h"
+#include "AgentDock.h"
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -80,9 +81,9 @@ ClientWindow::QuitRequested (void)
   }
   else
   {
-    for (int32 o (1); o <= winList->CountItems(); ++o)
+    for (int32 o (1); o <= pWindowList()->CountItems(); ++o)
     { 
-      WindowListItem *aitem ((WindowListItem *)winList->ItemAt (o - 1));
+      WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (o - 1));
       if (aitem->Type() == WIN_SERVER_TYPE)
       {
         // wait some more
@@ -156,21 +157,21 @@ ClientWindow::MessageReceived (BMessage *msg)
   {
     case M_MOVE_DOWN:
       {
-        winList->Select (winList->CurrentSelection() + 1);
-        winList->ScrollToSelection();
+        pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
+        pWindowList()->ScrollToSelection();
       }
       break;
       
     case M_MOVE_UP:
       {
-        winList->Select (winList->CurrentSelection() - 1);
-        winList->ScrollToSelection();
+        pWindowList()->Select (pWindowList()->CurrentSelection() - 1);
+        pWindowList()->ScrollToSelection();
       }
       break;
 
     case M_MOVE_UP_SHIFT:
       {
-        int32 currentsel (winList->CurrentSelection());
+        int32 currentsel (pWindowList()->CurrentSelection());
         if (currentsel < 0)
           break;
           
@@ -181,10 +182,10 @@ ClientWindow::MessageReceived (BMessage *msg)
         // try to find a WIN_NICK_BIT item first
         for (iloop = currentsel; iloop > -1; --iloop)
         {
-          aitem = (WindowListItem *)winList->ItemAt (iloop);
+          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
           if ((aitem->Status() == WIN_NICK_BIT))
           {
-            winList->Select (winList->IndexOf (aitem));
+            pWindowList()->Select (pWindowList()->IndexOf (aitem));
             foundone = true;
             break; 
           }
@@ -196,10 +197,10 @@ ClientWindow::MessageReceived (BMessage *msg)
         // try to find a WIN_NEWS_BIT item
         for (iloop = currentsel; iloop > -1; --iloop)
         {
-          aitem = (WindowListItem *)winList->ItemAt (iloop);
+          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
           if ((aitem->Status() == WIN_NEWS_BIT))
           {
-            winList->Select (winList->IndexOf (aitem));
+            pWindowList()->Select (pWindowList()->IndexOf (aitem));
             foundone = true;
             break; 
           }
@@ -209,14 +210,14 @@ ClientWindow::MessageReceived (BMessage *msg)
           break;
           
         // just select the previous item then.
-        winList->Select (currentsel - 1);
-        winList->ScrollToSelection();        
+        pWindowList()->Select (currentsel - 1);
+        pWindowList()->ScrollToSelection();        
       }
       break;
 
     case M_MOVE_DOWN_SHIFT:
       {
-        int32 currentsel (winList->CurrentSelection());
+        int32 currentsel (pWindowList()->CurrentSelection());
         if (currentsel < 0)
           break;
           
@@ -225,12 +226,12 @@ ClientWindow::MessageReceived (BMessage *msg)
         int iloop;
         
         // try to find a WIN_NICK_BIT item first
-        for (iloop = currentsel; iloop < winList->CountItems(); ++iloop)
+        for (iloop = currentsel; iloop < pWindowList()->CountItems(); ++iloop)
         {
-          aitem = (WindowListItem *)winList->ItemAt (iloop);
+          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
           if ((aitem->Status() == WIN_NICK_BIT))
           {
-            winList->Select (winList->IndexOf (aitem));
+            pWindowList()->Select (pWindowList()->IndexOf (aitem));
             foundone = true;
             break; 
           }
@@ -240,12 +241,12 @@ ClientWindow::MessageReceived (BMessage *msg)
           break;        
         
         // try to find a WIN_NEWS_BIT item
-        for (iloop = currentsel; iloop < winList->CountItems(); ++iloop)
+        for (iloop = currentsel; iloop < pWindowList()->CountItems(); ++iloop)
         {
-          aitem = (WindowListItem *)winList->ItemAt (iloop);
+          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
           if ((aitem->Status() == WIN_NEWS_BIT))
           {
-            winList->Select (winList->IndexOf (aitem));
+            pWindowList()->Select (pWindowList()->IndexOf (aitem));
             foundone = true;
             break; 
           }
@@ -255,32 +256,32 @@ ClientWindow::MessageReceived (BMessage *msg)
           break;
           
         // just select the previous item then.
-        winList->Select (currentsel + 1);
-        winList->ScrollToSelection();        
+        pWindowList()->Select (currentsel + 1);
+        pWindowList()->ScrollToSelection();        
       }
       break;
     
     case M_MOVE_TOP_SERVER:
       {
-        int32 currentsel (winList->CurrentSelection());
+        int32 currentsel (pWindowList()->CurrentSelection());
         if (currentsel < 0)
           break;
       
         int32 currentsid;
       
-        WindowListItem *citem ((WindowListItem *)winList->ItemAt (currentsel));
+        WindowListItem *citem ((WindowListItem *)pWindowList()->ItemAt (currentsel));
       
         if (citem)
           currentsid = citem->Sid();
         else
           break;
       
-        for (int32 i (1); i <= winList->CountItems(); ++i)
+        for (int32 i (1); i <= pWindowList()->CountItems(); ++i)
         { 
-          WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
+          WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i - 1));
           if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
           {
-            winList->Select (winList->IndexOf (aitem));
+            pWindowList()->Select (pWindowList()->IndexOf (aitem));
             break; 
           }
         }
@@ -299,7 +300,7 @@ ClientWindow::MessageReceived (BMessage *msg)
            return;
          }
        
-         if (!winList->HasItem (item))
+         if (!pWindowList()->HasItem (item))
            break;
        
          if (msg->HasBool("hidden"))
@@ -333,7 +334,7 @@ ClientWindow::MessageReceived (BMessage *msg)
         } 
        
         int32 agentType (agentitem->Type());
-        winList->RemoveAgent (agentview, agentitem);
+        pWindowList()->RemoveAgent (agentview, agentitem);
         
         if ((shutdown_in_progress) && (agentType == WIN_SERVER_TYPE))
           PostMessage (B_QUIT_REQUESTED);
@@ -368,7 +369,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_CW_ALTP:
       {
-        winList->CloseActive();
+        pWindowList()->CloseActive();
       }
       break;
     
@@ -386,7 +387,7 @@ ClientWindow::MessageReceived (BMessage *msg)
           return;
         }
        
-        winList->AddAgent (
+        pWindowList()->AddAgent (
           new ServerAgent (
             const_cast<const char *>(hostname),
             const_cast<const char *>(port),
@@ -411,9 +412,9 @@ ClientWindow::GetTopServer (WindowListItem *request)
   int32 requestindex;
   int32 requestsid;
 
-  if (winList->HasItem (request))
+  if (pWindowList()->HasItem (request))
   {
-    requestindex = winList->IndexOf (request);
+    requestindex = pWindowList()->IndexOf (request);
     requestsid = request->Sid();
   }
   else
@@ -423,9 +424,9 @@ ClientWindow::GetTopServer (WindowListItem *request)
     return NULL;
   }
   
-  for (int32 i (1); i <= winList->CountItems(); ++i)
+  for (int32 i (1); i <= pWindowList()->CountItems(); ++i)
   { 
-    WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
+    WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i - 1));
     if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == requestsid))
     {
       return (ServerAgent *)aitem->pAgent();
@@ -436,10 +437,10 @@ ClientWindow::GetTopServer (WindowListItem *request)
 BRect *
 ClientWindow::AgentRect (void)
 {
-  agentrect->left = winListScroll->Frame().right - winListScroll->Frame().left + 1;
+  agentrect->left = aDock->Frame().right - aDock->Frame().left + 2;
   agentrect->top = Bounds().top + 1;
   agentrect->right = Bounds().Width() - 1;
-  agentrect->bottom = winListScroll->Frame().Height();
+  agentrect->bottom = aDock->Frame().Height();
   return agentrect;
 }
 
@@ -447,7 +448,7 @@ ClientWindow::AgentRect (void)
 WindowList *
 ClientWindow::pWindowList (void)
 {
-  return winList;
+  return aDock->pWindowList();
 }
 
 
@@ -463,9 +464,9 @@ ClientWindow::ServerBroadcast (BMessage *outmsg_)
 {
   bool reply (false);
   
-  for (int32 i (1); i <= winList->CountItems(); ++i)
+  for (int32 i (1); i <= pWindowList()->CountItems(); ++i)
     { 
-      WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
+      WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i - 1));
       if (aitem->Type() == WIN_SERVER_TYPE)
       {
         dynamic_cast<ServerAgent *>(aitem->pAgent())->msgr.SendMessage (outmsg_);
@@ -589,24 +590,16 @@ ClientWindow::Init (void)
   status->AddItem (new StatusItem (
     "irc.elric.net", 0),
     true);
-    
-  winList = new WindowList (BRect (0, frame.top, 100, status->Frame().top - 1));
   
-  winListScroll = new BScrollView (
-    "winListScroll",
-    winList,
-    B_FOLLOW_TOP_BOTTOM,
-    0,
-    false,
-    true,
-    B_NO_BORDER);
-  bgView->AddChild (winListScroll);
+  aDock = new AgentDock (BRect (0, frame.top, 130, status->Frame().top - 1));
   
+  bgView->AddChild (aDock);
+
   agentrect = new BRect (
-    winListScroll->Frame().right - winListScroll->Frame().left + 1,
+    aDock->Frame().right - aDock->Frame().left + 2,
     Bounds().top + 1,
     Bounds().Width() - 1,
-    winListScroll->Frame().Height());
+    aDock->Frame().Height());
 }
 
 //////////////////////////////////////////////////////////////////////////////

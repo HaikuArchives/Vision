@@ -758,10 +758,11 @@ VisionApp::GetThreadName (int thread_type)
     /* 48 */ "Doctor Nick M.Ed.",
     /* 49 */ "will_code_for_food",
     /* 50 */ "Dig Me Out",
-    /* 51 */ "Little Babies"
+    /* 51 */ "Little Babies",
+    /* 52 */ "daydreaming"
   };
   
-  int rnd (rand() % 52);
+  int rnd (rand() % 53);
  
   static BString output;
   
