@@ -25,6 +25,9 @@
 #include <View.h>
 
 class BCheckBox;
+class BMenuField;
+class BMenu;
+class BMenuItem;
 
 class AppWindowPrefsView : public BView
 {
@@ -35,6 +38,22 @@ class AppWindowPrefsView : public BView
     virtual void AttachedToWindow (void);
     virtual void AllAttached (void);
   private:
+    BMenu *CreateEncodingMenu(void);
+    void SetEncodingItem(int32);
+    BMenuField *fEncodings;
+    BMenuItem *fEnc1,
+              *fEnc2,
+              *fEnc3,
+              *fEnc4,
+              *fEnc5,
+              *fEnc6,
+              *fEnc7,
+              *fEnc8,
+              *fEnc9,
+              *fEnc10,
+              *fEnc11,
+              *fEnc12,
+              *fEnc13;
     BCheckBox *fVersionParanoid,
               *fCatchAltW,
               *fTimeStamp,

@@ -39,6 +39,7 @@ class VisionApp * vision_app;
 #include <Autolock.h>
 #include <Roster.h>
 #include <Beep.h>
+#include <UTF8.h>
 
 #include <algorithm>
 #include <stdio.h>
@@ -457,6 +458,9 @@ VisionApp::LoadDefaults (int32 section)
         
         if (!fVisionSettings->HasString ("logBaseDir"))
           fVisionSettings->AddString("logBaseDir", "logs");
+        
+        if (!fVisionSettings->HasInt32 ("encoding"))
+          fVisionSettings->AddInt32("encoding", B_ISO1_CONVERSION);
       }
       break;
     
@@ -690,7 +694,7 @@ bool
 VisionApp::CheckStartupNetworks (void)
 {
   bool autoStarted (false);
-#if 1
+#if 0
   BMessage netData;
   for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
   {
@@ -1263,6 +1267,30 @@ VisionApp::SetBool (const char *settingName, bool value)
     Broadcast (&msg);
   }
 
+  return result;
+}
+
+int32
+VisionApp::GetInt32 (const char *settingName)
+{
+  BAutolock intLock (const_cast<BLocker *>(&fSettingsLock));
+  
+  if (!intLock.IsLocked())
+    return B_ERROR;
+  
+  return fVisionSettings->FindInt32(settingName);
+}
+
+status_t
+VisionApp::SetInt32 (const char*settingName, int32 value)
+{
+  BAutolock intLock (const_cast<BLocker *>(&fSettingsLock));
+
+  if (!intLock.IsLocked())
+    return B_ERROR;
+  
+  status_t result = fVisionSettings->ReplaceInt32 (settingName, value);
+  
   return result;
 }
 

@@ -699,7 +699,7 @@ ServerAgent::AsyncSendData (const char *cData)
   int32 dest_length (sizeof(fSend_buffer)), state (0);
   
   convert_from_utf8 (
-    B_ISO1_CONVERSION,
+    vision_app->GetInt32("encoding"),
     data.String(), 
     &length,
     fSend_buffer,
@@ -774,7 +774,7 @@ ServerAgent::ParseLine (const char *cData)
   memset (fParse_buffer, 0, sizeof (fParse_buffer));
   
   convert_to_utf8 (
-    B_ISO1_CONVERSION,
+    vision_app->GetInt32("encoding"),
     data.String(), 
     &length,
     fParse_buffer,
