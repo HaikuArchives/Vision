@@ -163,7 +163,7 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 
 $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
 	@/bin/echo generating dependencies for $<
-	@/bin/echo $@ $(OBJDIR)/$(basename $(@F))".o" $(shell $(DEP) $<) > $(TEMPDEPFILE)
+	@/bin/echo $@ $(OBJDIR)/$(shell $(DEP) $<) > $(TEMPDEPFILE)
 	@/bin/echo $(OBJDIR)/$(basename $(@F))".o : $(MAKEFILE)" | /bin/cat - $(TEMPDEPFILE) > $@
 
 $(FULLNAME).zip : $(BINARY) $(DATA) $(EXTRADATA) $(MAKEFILE)
