@@ -68,7 +68,6 @@ ChannelAgent::ChannelAgent (
   fOpsCount (0),
   fIrcdtype (ircdtype_),
   fChanOpt (0)
-
 {
   /*
    * Function purpose: Consctruct
@@ -698,6 +697,14 @@ ChannelAgent::MessageReceived (BMessage *msg)
       }
       break;
 
+    case M_SERVER_DISCONNECT:
+      {
+        // clear names list on disconnect
+        fNamesList->ClearList();
+        fOpsCount = 0;
+        fUserCount = 0;
+      }
+      break;
     
     case M_REJOIN:
       {
@@ -709,11 +716,6 @@ ChannelAgent::MessageReceived (BMessage *msg)
           break;
         }
 
-        // clear out nick list
-        fNamesList->ClearList();
-        fOpsCount = 0;
-        fUserCount = 0;
-        
         fMyNick = newNick;  // update nickname (might have changed on reconnect)
         
         if (!IsHidden())

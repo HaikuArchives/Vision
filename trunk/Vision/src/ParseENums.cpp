@@ -945,16 +945,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
 	      Display (tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
       		
-        if (fReconnecting)
-        {
-          const char *reString;
-          reString = S_PENUM_RECON_SUCCESS "\n";
-          Display (reString, C_ERROR);
-          DisplayAll (reString, C_ERROR, C_BACKGROUND, F_SERVER);
-          fMsgr.SendMessage (M_REJOIN_ALL);
-          fReconnecting = false;
-        }
-
         if (fInitialMotd && fCmds.Length())
         {
           BMessage msg (M_SUBMIT_INPUT);
@@ -990,6 +980,17 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           IPCommand += fMyNick;
           ParseCmd (IPCommand.String());
         }
+
+        if (fReconnecting)
+        {
+          const char *reString;
+          reString = S_PENUM_RECON_SUCCESS "\n";
+          Display (reString, C_ERROR);
+          DisplayAll (reString, C_ERROR, C_BACKGROUND, F_SERVER);
+          fMsgr.SendMessage (M_REJOIN_ALL);
+          fReconnecting = false;
+        }
+
         fInitialMotd = false;
       }
       return true;
