@@ -17,10 +17,13 @@
 # the file name, ...
 
 BINARY := Vision
-VTOP := 0.1
-VDATE := $(shell date +%Y%m%d)
-VERSION := $(VTOP)-$(VDATE)
-LIBS := -lbe -lnet -lnetapi -ltextencoding -ltranslation -ltracker src/lua/lib/liblua.a
+VERSION := 0.1.0315
+
+# system libs
+LIBS := -lbe -lnet -lnetapi -ltextencoding -ltranslation -ltracker
+
+# lua
+LIBS += -L./src/lua/lib -llua -llualib
 
 ################################################
 
@@ -33,7 +36,8 @@ DATADIR := data
 
 # compiler, linker, ...
 
-CC := g++ -c -pipe
+#CC := g++ -c -pipe
+CC := g++ $(INCLUDE) -c -pipe
 CFLAGS :=
 CFLAGS += -O3
 CFLAGS += -fno-pic
@@ -78,7 +82,7 @@ HEADERS := $(addprefix $(SRCDIR)/,$(BASEHEADERS))
 
 default : build
 
-build : makelua $(BINARY)
+build : $(BINARY)
 
 clean :
 	@echo cleaning
@@ -90,14 +94,9 @@ sourcearchive : $(FULLNAME)-src.zip
 
 binarchive : $(FULLNAME).zip
 
-makelua :
-	@echo updating Lua if nessessary
-	@cd $(SRCDIR)/lua && make >/dev/null && cd $(SRCDIR)/..
-	@echo Lua is \(now\) current
-
 $(BINARY) : $(OBJECTS)
 	@echo linking $@
-	@$(LD) $(LDFLAGS) $(OBJECTS) -o $@
+	@$(LD) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo merging resources
 	@echo resource\(\'CSTR\', 100, \"VERSION\"\) { \"$(VERSION)\" } >version.r
 	@mwbres -merge -o $(SRCDIR)/Vision.rsrc version.r
@@ -108,7 +107,7 @@ $(BINARY) : $(OBJECTS)
 $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	@echo compiling $@
 	@mkdir -p $(OBJDIR)
-	@$(CC) $< $(CFLAGS) $(CFLAGS.default) -o $@
+	@$(CC) $< $(CFLAGS) -o $@
 
 $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
 	@echo generating dependencies for $<

@@ -187,7 +187,7 @@ AboutWindow::AboutWindow (void)
   runhead.runs[0].color = myHeader;
   runhead.runs[0].font  = font;
   
-  credits->Insert ("A Vision Team Production\n\n© 1998, 1999, 2000, 2001\n\n\n\n\n\n", &run);
+  credits->Insert ("A Vision Team Production\n\n© 1999, 2000, 2001\n\n\n\n\n\n", &run);
   
   credits->Insert ("Unit A\n[Vision]\n", &runhead);      
   credits->Insert (unita, &run);
