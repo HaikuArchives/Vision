@@ -438,6 +438,15 @@ ClientWindow::pStatusView (void)
   return status;
 }
 
+/*
+  -- #beos was here --
+  <AnEvilYak> regurg, you don't like my monkey??
+  <regurg> Oh, I don't like your monkey?
+  <AnEvilYak> regurg: no :( *sob*
+  <regurg> Why 'no'?
+  <AnEvilYak> regurg: you tell me
+  <regurg> What makes you think I tell you?
+*/
 
 bool
 ClientWindow::ServerBroadcast (BMessage *outmsg_)

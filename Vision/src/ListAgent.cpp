@@ -3,13 +3,15 @@
 #include <MenuItem.h>
 #include <ListView.h>
 #include <ScrollView.h>
-
+#include <stdio.h>
 //#include "Prompt.h"
 #include "StatusView.h"
 //#include "Settings.h"
 #include "Vision.h"
 #include "StringManip.h"
 #include "ListAgent.h"
+#include "WindowList.h"
+#include "ClientWindow.h"
 
 class ChannelItem : public BListItem
 {
@@ -33,14 +35,34 @@ class ChannelItem : public BListItem
     
 };
 
+/*
+  -- #beos was here --
+  <kurros> regurg, fondle my buttocks
+  <regurg> Your?
+  <kurros> regurg, yes. mine
+  <regurg> I understand.
+  <kurros> regurg, no. i don't think you do
+  <regurg> Does this make you feel unhappy? 
+  <Brazilian> hmm, eliza is just broke
+  <kurros> regurg, i just want my buttocks fondled
+  <regurg> Why do you say your?
+  <Brazilian> the whole string ("fondle by buttocks") is getting passed
+  <kurros> regurg, repair thyself
+  <regurg> Earlier you said your .
+  <kurros> regurg, get off it. don't worry about it anymore
+  <regurg> But your .
+*/
+
 ListAgent::ListAgent (
   BRect frame,
-  const char *title)
+  const char *title,
+  BMessenger *sMsgr_)
   : BView (
       frame,
       title,
       B_FOLLOW_ALL_SIDES,
       B_WILL_DRAW | B_FRAME_EVENTS),
+   sMsgr (sMsgr_),
   filter (""),
   find (""),
   processing (false),
@@ -158,6 +180,9 @@ ListAgent::~ListAgent (void)
     delete item;
   }
 
+  delete sMsgr;
+  delete agentWinItem;
+
   regfree (&re);
   regfree (&fre);
 }
@@ -191,12 +216,10 @@ ListAgent::MessageReceived (BMessage *msg)
         if (!processing)
         {
           BMessage sMsg (M_SERVER_SEND);
-          BString serverName (GetWord ("FIXME", 2));
 
           sMsg.AddString ("data", "LIST");
-          sMsg.AddString ("server", serverName.String());
 
-          vision_app->PostMessage (&sMsg);
+          sMsgr->SendMessage (&sMsg);
           processing = true;
           mFind->SetEnabled (false);
           mFindAgain->SetEnabled (false);
@@ -252,7 +275,6 @@ ListAgent::MessageReceived (BMessage *msg)
         else
         {
           showing = list;
-
           sChannelWidth = channelWidth;
           sTopicWidth = topicWidth;
         }
@@ -287,6 +309,7 @@ ListAgent::MessageReceived (BMessage *msg)
         BString cString;
         cString << showing.CountItems();
         //status->SetItemValue (0, cString.String());
+        scroller->Show();
       }
       break;
 
@@ -491,11 +514,21 @@ ListAgent::MessageReceived (BMessage *msg)
 				msg.AddBool ("clear", false);
 				msg.AddString ("input", buffer.String());
 				msg.AddString ("server", serverName.String());
-				vision_app->PostMessage (&msg);
+				sMsgr->SendMessage (&msg);
 			}
 
 			break;
 		}
+		
+		case M_CLIENT_QUIT:
+		{
+		  sMsgr->SendMessage(M_LIST_SHUTDOWN);
+		  BMessage deathchant (M_OBITUARY);
+          deathchant.AddPointer ("agent", this);
+          deathchant.AddPointer ("item", agentWinItem);
+          vision_app->pClientWin()->PostMessage (&deathchant);
+		}
+		break;
 		
 		default:
 			BView::MessageReceived (msg);

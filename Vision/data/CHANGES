@@ -2,6 +2,9 @@ Vision
 http://vision.sourceforge.net
 
 [0.2.0511]
+ 2001-05-15
+   * Log file lines are now always timestamped regardless if the user has
+     turned on the display of timestamps in the window. 
  2001-05-14
    * Rearranged ClientAgentLogger init stuff.
    * Fixed Alt+W catch

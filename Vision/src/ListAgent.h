@@ -37,12 +37,13 @@ class BScrollView;
 class BMenuItem;
 class StatusView;
 class WindowSettings;
+class WindowListItem;
 
 class ListAgent : public BView
 {
   public:
 
-                            ListAgent (BRect, const char *);
+                            ListAgent (BRect, const char *, BMessenger *);
     virtual                 ~ListAgent (void);
     virtual void            MessageReceived (BMessage *);
     virtual void            FrameResized (float, float);
@@ -52,9 +53,11 @@ class ListAgent : public BView
     static int              SortUsers (const void *, const void *);
 
     float                   ChannelWidth (void) const;
-  
-  private:
+    WindowListItem          *agentWinItem;
     BMessenger              msgr;
+    
+  private:
+    BMessenger              *sMsgr;
 
     BListView               *listView;
     BScrollView             *scroller;

@@ -26,22 +26,16 @@
 #ifndef _SERVERAGENT_H_
 #define _SERVERAGENT_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/Rect.h"
-#  include "gnome/CString.h"
-#  include "gnome/List.h"
-#  include "gnome/Locker.h"
-#elif BEOS_BUILD
-#  include <Rect.h>
-#  include <String.h>
-#  include <List.h>
-#  include <Locker.h>
-#endif
+#include <Rect.h>
+#include <String.h>
+#include <List.h>
+#include <Locker.h>
 
 #include "ClientAgent.h"
 
 class BNetEndpoint;
 class BMessageRunner;
+class ListAgent;
 
 class ServerAgent : public ClientAgent
 {
@@ -131,7 +125,7 @@ class ServerAgent : public ClientAgent
 								lagCheck,			// system_time()
 								lagCount;			// passes made waiting
 
-    BNetEndpoint                *lEndpoint;
+    BNetEndpoint               *lEndpoint;
 
 	static BLocker				identLock;
 
@@ -168,6 +162,8 @@ class ServerAgent : public ClientAgent
     
     static int32				Establish (void *);
     static int32                Timer (void *);
+    
+    ListAgent                   *pListAgent;
 
 };
 
@@ -175,7 +171,6 @@ const uint32 M_GET_ESTABLISH_DATA           = 'saed'; // used by Establish()
 const uint32 M_SET_ENDPOINT                 = 'sase'; // used by Establish()
 const uint32 M_GET_RECONNECT_STATUS         = 'sars'; // used by Establish()
 const uint32 M_NOT_CONNECTING               = 'sanc'; // used by Establish()
-const uint32 M_SERVER_PING                  = 'sasp'; // used by Establish()
 const uint32 M_INC_RECONNECT                = 'sair'; // used by Establish()
 const uint32 M_INIT_LAG                     = 'sail'; // used by Establish()
 const uint32 M_DISPLAY_ALL                  = 'sada'; // display to all clients
