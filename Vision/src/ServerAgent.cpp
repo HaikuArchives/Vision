@@ -1056,11 +1056,6 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_SERVER_DISCONNECT:
       {
-        myLag = "CONNECTION PROBLEM";
-        msgr.SendMessage (M_LAG_CHANGED);
-        checkingLag = false;
-        serverSocket = -1;
-
         // store current nick for reconnect use (might be an away nick, etc)
         if (reacquiredNick)
         {
@@ -1081,6 +1076,11 @@ ServerAgent::MessageReceived (BMessage *msg)
         }
 			
         isConnected = false;
+
+        myLag = "CONNECTION PROBLEM";
+        msgr.SendMessage (M_LAG_CHANGED);
+        checkingLag = false;
+        serverSocket = -1;
       
         // attempt a reconnect
         if (!isConnecting)
@@ -1116,32 +1116,35 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_LAG_CHECK:
       {
-        if (!checkingLag && isConnected)
+        if (isConnected)
         {
-          lagCheck = system_time();
-          lagCount = 1;
-          checkingLag = true;
-          BMessage lagSend (M_SERVER_SEND);
-          AddSend (&lagSend, "VISION_LAG_CHECK");
-          AddSend (&lagSend, endl);
-        }
-        else
-        {
-          if (lagCount > 4)
+          if (!checkingLag)
           {
-            // we've waited 50 seconds
-            // connection problems?
-            myLag = "CONNECTION PROBLEM";
-            msgr.SendMessage (M_LAG_CHANGED);
+            lagCheck = system_time();
+            lagCount = 1;
+            checkingLag = true;
+            BMessage lagSend (M_SERVER_SEND);
+            AddSend (&lagSend, "VISION_LAG_CHECK");
+            AddSend (&lagSend, endl);
           }
           else
           {
-            // wait some more
-            char lag[15] = "";
-            sprintf (lag, "%ld0.000+", lagCount);  // assuming a 10 second runner
-            myLag = lag;
-            ++lagCount;
-            msgr.SendMessage (M_LAG_CHANGED);
+            if (lagCount > 4)
+            {
+              // we've waited 50 seconds
+              // connection problems?
+              myLag = "CONNECTION PROBLEM";
+              msgr.SendMessage (M_LAG_CHANGED);
+            }
+            else
+            {
+              // wait some more
+              char lag[15] = "";
+              sprintf (lag, "%ld0.000+", lagCount);  // assuming a 10 second runner
+              myLag = lag;
+              ++lagCount;
+              msgr.SendMessage (M_LAG_CHANGED);
+            }
           }
         }	
       }
