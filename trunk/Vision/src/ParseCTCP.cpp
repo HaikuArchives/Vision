@@ -200,10 +200,11 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       poss.RemoveLast("\1");
 
       off_t pos (0LL);
-      for (int32 i = 0; i < poss.Length(); ++i)
+      int32 i (0);
+      for (i = 0; i < poss.Length(); ++i)
         pos = pos * 10 + poss[i] - '0';
 
-      for (int32 i = 0; i < fResumes.CountItems(); ++i)
+      for (i = 0; i < fResumes.CountItems(); ++i)
       {
         ResumeData *data ((ResumeData *)fResumes.ItemAt (i));
 
