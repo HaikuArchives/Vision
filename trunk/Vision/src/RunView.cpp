@@ -575,7 +575,11 @@ RunView::CheckURLCursor (BPoint point)
 	SelectPos s = PositionAt (point);
 	
 	if (!lines[s.line]->urls)
+	{
+		// if there aren't any URLs in the current line, go back to default
+		SetViewCursor (B_CURSOR_SYSTEM_DEFAULT);
 		return;
+	}
 		
 	urllist::const_iterator it;
 	for (it = lines[s.line]->urls->begin(); it != lines[s.line]->urls->end(); ++it)
@@ -585,7 +589,8 @@ RunView::CheckURLCursor (BPoint point)
 		 	SetViewCursor (URLCursor);
 		 	return;
 		 }
-		 
+
+	// no URLs found, set back to default
 	SetViewCursor (B_CURSOR_SYSTEM_DEFAULT);
 }
 
