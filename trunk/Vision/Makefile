@@ -20,10 +20,16 @@ VERSION := 0.2.0511
 BUILDDATE := $(shell date +%b_%d_%Y)
 
 # system libs
-LIBS := -lbe -lnet -lnetapi -ltextencoding -ltranslation -ltracker
+REG_LIBS := -lbe -ltextencoding -ltranslation -ltracker
+
+# net_server libs
+NET_LIBS := -lnet -lnetapi
+
+# bone libs
+BONE_LIBS := -lroot -lsocket -lbnetapi -lbind
 
 # lua
-LIBS += -L./src/lua/lib -llua -llualib
+LUA_LIBS := -L./src/lua/lib -llua -llualib
 
 ################################################
 
@@ -42,7 +48,11 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 CC := g++ -c -pipe
 CFLAGS :=
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
+ifeq ($(wildcard /system/lib/libbind.so),)
 CFLAGS += -DNETSERVER_BUILD
+else
+CFLAGS += -DBONE_BUILD
+endif
 CFLAGS += -DBEOS_BUILD
 CFLAGS += -DBUILD_DATE=\"$(BUILDDATE)\"
 CFLAGS += -O2
@@ -56,7 +66,12 @@ CFLAGS += -Wcast-qual
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
 
 LD := g++
-LDFLAGS := $(LIBS)
+
+ifeq ($(wildcard /system/lib/libbind.so),)
+LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(NET_LIBS)
+else
+LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(BONE_LIBS) -nodefaultlibs
+endif
 
 DEP := g++ -MM -DBEOS_BUILD
 
