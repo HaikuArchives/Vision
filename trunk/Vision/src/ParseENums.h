@@ -27,7 +27,6 @@
 
 const int ZERO                        = 0;
 
-
 // NUMERICS
 
 const int RPL_WELCOME                 = 001;
