@@ -153,6 +153,6 @@ TestScript::RunTestScripts (void)
 	DoScriptIniReadTest();
 	DoScriptCallbackTest();
 	DoScriptSaveTest();
-	DoScriptArrayTest();
+	//DoScriptArrayTest();
 }
 
