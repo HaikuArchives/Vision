@@ -91,7 +91,7 @@ class WindowList : public BListView
     ClientAgent                     *Agent (int32, const char *);
     
     void                            AddAgent (BView *, int32, const char *, int32, bool);
-
+    void                            RemoveAgent (BView *, WindowListItem *);
 	
   private:
 

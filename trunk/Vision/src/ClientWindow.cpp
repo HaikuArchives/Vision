@@ -128,41 +128,53 @@ ClientWindow::MessageReceived (BMessage *msg)
   {   
     case M_UPDATE_STATUS:
     {
-      WindowListItem *item;
-      int32 newstatus;
-      bool hidden (true);
+       WindowListItem *item;
+       int32 newstatus;
+       bool hidden (true);
       
-      if (msg->FindPointer ("item", reinterpret_cast<void **>(&item)) != B_OK)
-      {
-        printf (":ERROR: no valid pointer found in M_UPDATE_STATUS, bailing...\n");
-        return;
-      }
-
-      if (msg->FindInt32 ("status", ((int32 *) &newstatus)) != B_OK)
-      {
-        printf (":ERROR: no valid newstatus found in M_UPDATE_STATUS, bailing...\n");
-        return;
-      }
-      
-      msg->FindBool ("hidden", &hidden);
-      
-      if (!winList->HasItem (item))
-        break;
-
-      if (!hidden)
-      {
-        item->SetStatus (newstatus);
-        winList->Invalidate();
-        break;
-      }
-            
-      if (item->Status() != WIN_NICK_BIT)
-      {
-        item->SetStatus (newstatus);
-        winList->Invalidate();
-      }
-      
-      break;
+       if ((msg->FindPointer ("item", reinterpret_cast<void **>(&item)) != B_OK)
+       &&  (msg->FindInt32 ("status", ((int32 *) &newstatus)) != B_OK))
+       {
+         printf (":ERROR: no valid pointer and int found in M_UPDATE_STATUS, bailing...\n");
+         return;
+       }
+       
+       msg->FindBool ("hidden", &hidden);
+       
+       if (!winList->HasItem (item))
+         break;
+ 
+       if (!hidden)
+       {
+         item->SetStatus (newstatus);
+         winList->Invalidate();
+         break;
+       }
+             
+       if (item->Status() != WIN_NICK_BIT)
+       {
+         item->SetStatus (newstatus);
+         winList->Invalidate();
+       }
+       
+       break;
+    }
+    
+    case M_OBITUARY:
+    {
+       printf ("heave!\n");
+       WindowListItem *agentitem;
+       BView *agentview;
+       if ((msg->FindPointer ("agent", reinterpret_cast<void **>(&agentview)) != B_OK)
+       &&  (msg->FindPointer ("item", reinterpret_cast<void **>(&agentview)) != B_OK))
+       {
+         printf (":ERROR: no valid pointers found in M_OBITUARY, bailing...\n");
+         return;
+       } 
+       
+       winList->RemoveAgent (agentview, agentitem);
+       
+       break;
     }
         
     default:
