@@ -376,7 +376,7 @@ VisionApp::LoadDefaults (int32 section)
                   
            visionSettings->FindString ("family", i, &family);
            visionSettings->FindString ("style", i, &style);
-           visionSettings->FindFloat ("size", &size);
+           visionSettings->FindFloat ("size", i, &size);
            ClientFontFamilyAndStyle (i, family.String(), style.String());
            ClientFontSize (i, size); 
          }
