@@ -226,15 +226,15 @@ NetPrefsServerView::AddServer (const ServerData * data)
   BRow *row (new BRow);
   switch (data->state)
     {
-      case 0:
+      case SERVER_PRIMARY:
         row->SetField (new BStringField ("*"), 0);
         break;
 
-      case 1:
+      case SERVER_SECONDARY:
         row->SetField (new BStringField ("+"), 0);
         break;
 
-      case 2:
+      case SERVER_DISABLED:
         row->SetField (new BStringField ("-"), 0);
         break;
     }

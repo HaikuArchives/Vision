@@ -66,8 +66,9 @@ class VisionApp * vision_app;
 #include "PrefsWindow.h"
 #include "Theme.h"
 #include "WindowList.h"
+#ifdef __INTEL__
 #include "TestScript.h"
-
+#endif
 // sound event name definitions
 const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
 
@@ -700,8 +701,10 @@ VisionApp::ArgvReceived (int32 ac, char **av)
     
     else if (strcmp (av[i], "-T") == 0)
     {
+#ifdef __INTEL__
       TestScript *tscript = new TestScript();
       delete tscript;
+#endif
       if (IsLaunching())
         Quit();
     }

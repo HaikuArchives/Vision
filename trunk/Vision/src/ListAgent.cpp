@@ -129,9 +129,10 @@ ListAgent::ListAgent (
   listView->SetColor (B_COLOR_SELECTION, activeTheme->ForegroundAt (C_SELECTION));
   listView->SetFont (B_FONT_ROW, &activeTheme->FontAt (F_LISTAGENT));
   activeTheme->ReadUnlock();
-
+#ifdef __INTEL__
   memset (&re, 0, sizeof (re));
   memset (&fre, 0, sizeof (fre));
+#endif
 }
 
 ListAgent::~ListAgent (void)
@@ -153,8 +154,10 @@ ListAgent::~ListAgent (void)
   delete fSMsgr;
   delete fAgentWinItem;
 
+#ifdef __INTEL__
   regfree (&re);
   regfree (&fre);
+#endif
 }
 
 void
@@ -170,10 +173,10 @@ ListAgent::Show (void)
 {
   Window()->PostMessage (M_STATUS_CLEAR);
   this->fMsgr.SendMessage (M_STATUS_ADDITEMS);
-  
+#ifdef __INTEL__  
   vision_app->pClientWin()->AddMenu (listMenu);
   listMenu->SetTargetForItems (this);
-
+#endif
   const BRect *agentRect (dynamic_cast<ClientWindow *>(Window())->AgentRect());
   
   if (*agentRect != Frame())
@@ -366,8 +369,9 @@ ListAgent::MessageReceived (BMessage *msg)
         if (fBuildList.CountItems() == LIST_BATCH_SIZE)
           AddBatch();
       }
-      
       break;
+
+#ifdef __INTEL__
 
 		case M_LIST_FILTER:
 			if (msg->HasString ("text"))
@@ -375,7 +379,6 @@ ListAgent::MessageReceived (BMessage *msg)
 				const char *buffer;
 
 				msg->FindString ("text", &buffer);
-
 				if (filter != buffer)
 				{
 					filter = buffer;
@@ -399,11 +402,11 @@ ListAgent::MessageReceived (BMessage *msg)
 					  currentRow = hiddenItems.RemoveItemAt (0L);
 					  listView->AddRow (currentRow);
 					}
-					
+
 					if (filter != NULL)
 					{
   					  int32 k (0);
-  					  					
+  					    					  					
 					  while (k < listView->CountRows())
 					  {
 					     currentRow = listView->RowAt (k);
@@ -439,6 +442,7 @@ ListAgent::MessageReceived (BMessage *msg)
 					true));
 				prompt->Show();
 			}
+
 			break;
 
 		case M_LIST_FIND:
@@ -477,7 +481,6 @@ ListAgent::MessageReceived (BMessage *msg)
 
 				BStringField *field;
 				int32 i;
-
 				for (i = selection; i < listView->CountRows(); ++i)
 				{
 					field = (BStringField *)listView->RowAt (i)->GetField (0);
@@ -522,6 +525,7 @@ ListAgent::MessageReceived (BMessage *msg)
 				fMsgr.SendMessage (msg);
 			}
 			break;
+#endif
 
 		case M_LIST_INVOKE:
 		{

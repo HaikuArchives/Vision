@@ -581,14 +581,11 @@ WindowList::AddAgent (BView *agent, const char *name, int32 winType, bool activa
   	AddItem (newagentitem);
   else
   {
-    BLooper *looper (NULL);
-    ServerAgent *agentParent (NULL);
-    if (dynamic_cast<ClientAgent *>(agent) != NULL)
-      agentParent = (ServerAgent *)((ClientAgent *)agent)->fSMsgr.Target(&looper);
-    else
-      agentParent = (ServerAgent *)((ListAgent *)agent)->fSMsgr->Target(&looper);
-    AddUnder (newagentitem, agentParent->fAgentWinItem);
-    SortItemsUnder (agentParent->fAgentWinItem, false, SortListItems);
+    if (dynamic_cast<ServerAgent *>(currentitem->pAgent()) == NULL)
+      currentitem = dynamic_cast<WindowListItem *>(Superitem(currentitem));
+
+    AddUnder (newagentitem, currentitem);
+    SortItemsUnder (currentitem, false, SortListItems);
   }
   
   itemindex = IndexOf (newagentitem);

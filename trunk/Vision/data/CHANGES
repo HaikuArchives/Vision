@@ -1,8 +1,9 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.4-0831]
+[0.9.4-0901]
          * fix stupid crash bug
+         * fix crash bug in PPC rev
 
 [0.9.4-0830]
          * fixed deadlock in DCC Transfers window
