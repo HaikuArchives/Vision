@@ -625,8 +625,20 @@ VisionApp::ReadyToRun (void)
 void
 VisionApp::LoadURL (const char *url)
 {
-  const char *arguments[] = {url, 0};
-  be_roster->Launch ("text/html", 1, const_cast<char **>(arguments));
+  BString argument (url);
+  if (argument.FindFirst ("://") == B_ERROR)
+  {
+
+    if (argument.IFindFirst ("www") == 0)
+      argument.Prepend ("http://");
+    
+    else if (argument.IFindFirst ("ftp") == 0)
+      argument.Prepend ("ftp://");
+  }
+
+  const char *args[] = { argument.String(), 0 };
+  
+  be_roster->Launch ("text/html", 1, const_cast<char **>(args));
 }
 
 
@@ -858,6 +870,7 @@ VisionApp::ClientFontFamilyAndStyle (
     client_font[which]->SetFamilyAndStyle (family, style);
     
     activeTheme->SetFont (which, client_font[which]);
+    
     if (which == F_TEXT)
       activeTheme->SetFont (MAX_FONTS, client_font[which]);
     BMessage msg (M_STATE_CHANGE);
