@@ -1048,12 +1048,11 @@ Line::Line (
 	memcpy (text + stampsize, buffer, length - stampsize);
 	text[length] = '\0';
 
-	ParseURLs();
-
 	FigureFontColors (stampsize, fore, back, font);
 
 	if (text[length - 1] == '\n')
 	{
+		ParseURLs();
 		FigureSpaces();
 		FigureEdges (boxbuf, boxbuf_size, theme, width);
 	}
@@ -1077,14 +1076,6 @@ Line::ParseURLs(void)
 	BString urlsearch;
 	URLCrunch crunch (text, length);
 	int32 offset (0);
-	
-	// clear old urls
-	
-	slist<URL *>::const_iterator it = urls.begin();
-	for (; it != urls.end(); ++it)
-		delete (*it);
-	
-	urls.clear();
 	
 	while ((offset = crunch.Crunch(&urlsearch)) != B_ERROR)
 		urls.push_front (new URL (urlsearch.String(), offset, urlsearch.Length()));
@@ -1115,12 +1106,11 @@ Line::Append (
 	delete [] text;
 	text = new_text;
 
-	ParseURLs();
-	
 	FigureFontColors (save, fore, back, font);
 
 	if (text[length - 1] == '\n')
 	{
+		ParseURLs();
 		FigureSpaces();
 		FigureEdges (boxbuf, boxbuf_size, theme, width);
 	}
