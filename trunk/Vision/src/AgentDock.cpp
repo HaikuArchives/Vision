@@ -112,7 +112,7 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   aHeader = new AgentDockHeader (headerFrame, "Window List", B_FOLLOW_NONE);
   AddChild (aHeader);
    
-  frame.top = frame.top + 15;  // make room for header
+  frame.top = frame.top + headerFrame.Height() + 1;  // make room for header
   frame.right = frame.right - B_V_SCROLL_BAR_WIDTH; // scrollbar
   frame.bottom = frame.bottom - 2; // room for "fancy" border
     
