@@ -28,6 +28,7 @@
 #include <Roster.h>
 
 #include "ClientAgentLogger.h"
+#include "StringManip.h"
 #include "Vision.h"
 
 ClientAgentLogger::ClientAgentLogger (BString currentLog, BString server)
@@ -38,6 +39,7 @@ ClientAgentLogger::ClientAgentLogger (BString currentLog, BString server)
   isLogging = false;
   logThread = -1;
   StartLogging();
+  newLine = false;
 }
 
 ClientAgentLogger::~ClientAgentLogger (void)
@@ -160,9 +162,15 @@ ClientAgentLogger::Log (const char *data)
 {
   if (!isLogging)
     return;
+  
   // add entry to logfile for logThread to write asynchronously
   logBufferLock->Lock();
   BString *logString (new BString (data));
+  if (newLine)
+    logString->Prepend (TimeStamp().String());
+  
+  newLine = (logString->IFindFirst("\n") == B_ERROR) ? false : true;
+  
   logBuffer->AddItem (logString);
   logBufferLock->Unlock();
   // unlock logThread so it can go to work

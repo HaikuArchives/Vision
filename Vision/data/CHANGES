@@ -11,6 +11,7 @@ http://vision.sourceforge.net
          * rewrote network code to fix a bunch of crash/corruption bugs
          * theme support (no GUI yet)
          * miscellaneous other minor rewrites/fixes
+         * fixed stupid logger bug
 
 [0.3.0828]
 2001-08-28
