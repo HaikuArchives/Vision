@@ -205,10 +205,11 @@ MessageAgent::DCCIn (void *arg)
 
   char tempBuffer[2];
   BString inputBuffer;
+  int32 recvReturn (0);
   
   while (agent->dConnected)
   {
-    if (recv(dccAcceptSocket, tempBuffer, 1, 0) == 0)
+    if ((recvReturn = recv(dccAcceptSocket, tempBuffer, 1, 0)) == 0)
     {
       BMessage termMsg (M_DISPLAY);
 
@@ -217,14 +218,16 @@ MessageAgent::DCCIn (void *arg)
       mMsgr.SendMessage (&termMsg);
       goto outta_there; // I hate goto, but this is a good use.
     }
-
-    if (tempBuffer[0] == '\n')
-      {
-        agent->ChannelMessage (inputBuffer.String());
-        inputBuffer = "";
-      }
-      else
-        inputBuffer.Append(tempBuffer[0],1);
+    if (recvReturn > 0)
+    {
+      if (tempBuffer[0] == '\n')
+        {
+          agent->ChannelMessage (inputBuffer.String());
+          inputBuffer = "";
+        }
+        else
+          inputBuffer.Append(tempBuffer[0],1);
+    }
   }
 
 	
@@ -309,10 +312,11 @@ MessageAgent::DCCOut (void *arg)
 
   char tempBuffer[2];
   BString inputBuffer;
-
+  int32 recvReturn (0);
+  
   while (agent->dConnected)
   {
-    if (recv (dccAcceptSocket, tempBuffer, 1, 0) == 0)
+    if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
     {
       BMessage termMsg (M_DISPLAY);
 
@@ -322,13 +326,16 @@ MessageAgent::DCCOut (void *arg)
       goto outta_loop; // I hate goto, but this is a good use.
     }
 
-    if (tempBuffer[0] == '\n')
+    if (recvReturn > 0)
     {
-      agent->ChannelMessage (inputBuffer.String());
-      inputBuffer = "";
+      if (tempBuffer[0] == '\n')
+      {
+        agent->ChannelMessage (inputBuffer.String());
+        inputBuffer = "";
+      }
+      else
+        inputBuffer.Append(tempBuffer[0],1);
     }
-    else
-      inputBuffer.Append(tempBuffer[0],1);
   }
 	
   outta_loop: // GOTO MARKER
