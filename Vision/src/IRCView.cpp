@@ -149,10 +149,10 @@ IRCView::BuildPopUp (void)
   if (!IsSelectable() || (TextLength() == 0))
     enableselectall = false; // not selectable
   
-  if ((enablecopy) && ((selfinish - selstart) <= 32))
+  if ((enablecopy) && ((selfinish - selstart) <= 384))
   {
     enablelookup = true; // has a selection less than 32 chars long
-    char *stringchar (querystring.LockBuffer(32));
+    char *stringchar (querystring.LockBuffer(384));
     GetText (selstart, (selfinish - selstart), stringchar);
     printf (": [%s]\n", stringchar);
     querystring.UnlockBuffer(-1);
@@ -162,6 +162,7 @@ IRCView::BuildPopUp (void)
 
   BMenuItem *item;
   BMessage *lookup;
+  BMenu *translate;
   
   ChannelAgent *channel;
   if ((channel = dynamic_cast<ChannelAgent *>(settings->parentAgent)))
@@ -186,6 +187,75 @@ IRCView::BuildPopUp (void)
   item->SetTarget (settings->parentAgent);
   myPopUp->AddItem (item);
   
+  translate = new BMenu ("Translate");
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "enfr");
+  item = new BMenuItem("English -> French", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item);
+
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "ende");
+  item = new BMenuItem("English -> German", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item);
+
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "enit");
+  item = new BMenuItem("English -> Italian", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item);
+  
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "enpt");
+  item = new BMenuItem("English -> Portuguese", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item);
+
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "enes");
+  item = new BMenuItem("English -> Spanish", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item); 
+  
+  translate->AddSeparatorItem();
+
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "chef");
+  item = new BMenuItem("English -> Swedish Chef", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item);
+  
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "jive");
+  item = new BMenuItem("English -> Jive", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item);
+
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "valley");
+  item = new BMenuItem("English -> Valley Girl", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item);
+
+  lookup = new BMessage (M_LOOKUP_TRANSLATE);
+  lookup->AddString ("string", querystring);
+  lookup->AddString ("type", "piglatin");
+  item = new BMenuItem("English -> Pig Latin", lookup);
+  item->SetTarget (settings->parentAgent);
+  translate->AddItem (item);
+  
+  translate->SetEnabled (enablelookup);
+  myPopUp->AddItem (translate);
+  
   myPopUp->AddSeparatorItem(); 
 
   item = new BMenuItem("Copy", new BMessage (B_COPY));
@@ -198,7 +268,7 @@ IRCView::BuildPopUp (void)
   item->SetTarget (this);
   myPopUp->AddItem (item);  
   
-  
+  translate->SetFont (be_plain_font);  
   myPopUp->SetFont (be_plain_font); 
 }
 
