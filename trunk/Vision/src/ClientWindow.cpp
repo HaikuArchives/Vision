@@ -396,7 +396,7 @@ ClientWindow::MessageReceived (BMessage *msg)
           true); // bring to front
       }
       break;
-    
+/*    
     case M_RESIZE_VIEW:
       {
         float offset (msg->FindFloat ("delta"));
@@ -421,7 +421,7 @@ ClientWindow::MessageReceived (BMessage *msg)
         }
       }
       break;
-        
+*/        
     default:
       BWindow::MessageReceived (msg);
   }
