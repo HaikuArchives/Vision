@@ -28,7 +28,7 @@
 #include <MenuItem.h>
 #include <Window.h>
 
-
+#include "ChannelAgent.h"
 #include "Vision.h"
 #include "Names.h"
 
@@ -53,6 +53,18 @@ NamesView::NamesView(BRect frame)
 NamesView::~NamesView (void)
 {
   delete myPopUp;
+}
+
+void 
+NamesView::KeyDown (const char * bytes, int32 numBytes) 
+{
+  BMessage inputMsg (M_INPUT_FOCUS); 
+  BString buffer; 
+
+  buffer.Append (bytes, numBytes); 
+  inputMsg.AddString ("text", buffer.String()); 
+  
+  reinterpret_cast<ChannelAgent *>(Parent()->Parent())->msgr.SendMessage (&inputMsg);
 }
 
 void NamesView::AttachedToWindow (void)

@@ -65,6 +65,7 @@ class NamesView : public BListView
 	virtual							~NamesView (void);
 	virtual void					AttachedToWindow (void);
 	virtual void					MouseDown(BPoint myPoint);
+	virtual void                    KeyDown (const char *, int32);
 
 	void								SetColor (int32, rgb_color);
 	rgb_color						GetColor (int32) const;
@@ -72,6 +73,7 @@ class NamesView : public BListView
 	void							ClearList (void);
 	
 	private:
+
 
 	BPopUpMenu						*myPopUp;
 	BMenu 							*CTCPPopUp;
