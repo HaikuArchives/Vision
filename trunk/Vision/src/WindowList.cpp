@@ -342,7 +342,6 @@ WindowList::SelectLast (void)
   /*
    * Function purpose: Select the last active agent
    */
-
   LockLooper();
   int32 lastInt (IndexOf (lastSelected));
   if (lastInt >= 0)
@@ -615,12 +614,11 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     printf ("no newagent!?\n");
     return;
   }
-  
   vision_app->pClientWin()->bgView->AddChild (newagent);
 
   newagent->Hide(); // get it out of the way
   newagent->Sync(); // clear artifacts
-  
+
   if (activate)  // if activate is true, show the new view now.
     if (CurrentSelection() == -1)
       Select (itemindex); // first item, let SelectionChanged() activate it
@@ -639,9 +637,9 @@ WindowList::Activate (int32 index)
 
   // find the currently active agent (if there is one)
   BView *activeagent (0);
-  for (int32 i (1); i <= FullListCountItems(); ++i)
+  for (int32 i (0); i < FullListCountItems(); ++i)
   { 
-    WindowListItem *aitem ((WindowListItem *)FullListItemAt (i - 1));
+    WindowListItem *aitem ((WindowListItem *)FullListItemAt (i));
     if (!aitem->pAgent()->IsHidden())
     {
       activeagent = aitem->pAgent();
@@ -696,13 +694,16 @@ void
 WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
 {
   LockLooper();
+  Window()->DisableUpdates();
   agent->Hide();
+  agent->Sync();
   agent->RemoveSelf();
   RemoveItem (agentitem);
   FullListSortItems (SortListItems);
+  SelectLast();
+  Window()->EnableUpdates();
   delete agent;
   
-  SelectLast();
   UnlockLooper();
 }
 

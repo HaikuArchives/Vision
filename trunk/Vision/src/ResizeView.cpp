@@ -50,7 +50,7 @@ ResizeView::~ResizeView()
 void
 ResizeView::MouseDown (BPoint)
 {
-  SetMouseEventMask (B_POINTER_EVENTS, B_NO_POINTER_HISTORY);
+  SetMouseEventMask (B_POINTER_EVENTS, B_LOCK_WINDOW_FOCUS|B_SUSPEND_VIEW_FOCUS|B_NO_POINTER_HISTORY);
   mousePressed = true;
   vision_app->SetCursor (&cursor);
 }
