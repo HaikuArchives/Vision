@@ -84,7 +84,8 @@ class RunView : public BView
 	int16					line_count;
 
 	char					*stamp_format;
-
+	char					*clipping_name;
+	
 	SelectPos			sp_start, sp_end;
 	
 	int32							tracking;
@@ -153,6 +154,7 @@ class RunView : public BView
 	void					GetSelectionText (BString &) const;
 	void					Select (const SelectPos &, const SelectPos &);
 	void					SelectAll (void);
+	void					SetClippingName (const char *);
 };
 
 #endif

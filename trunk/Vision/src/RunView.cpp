@@ -208,7 +208,8 @@ RunView::RunView (
 		fontsdirty (false),
 		myPopUp (NULL),
 		lastClick (0,0),
-		lastClickTime (0)
+		lastClickTime (0),
+		clipping_name (NULL)
 {
 	URLCursor = new BCursor (URLCursorData);
 	theme->ReadLock();
@@ -841,8 +842,15 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 					B_MIME_TYPE,
 					text.String(),
 					text.Length() + 1);
-					
-				msg.AddString ("be:clip_name", "RunView Clipping");
+				
+				BString clip_name (" Clipping");
+				
+				if (clipping_name)
+					clip_name.Prepend (clipping_name);
+				else
+					clip_name.Prepend ("RunView");
+				
+				msg.AddString ("be:clip_name", clip_name.String());
 				msg.AddInt32 ("be:actions", B_COPY_TARGET);
 
 				BRect frame (
@@ -1538,8 +1546,6 @@ RunView::PositionAt (BPoint point) const
 		return pos;
 	}
 
-//	printf ("Line: %hd\n", lindex);
-
 	float height (lines[lindex]->top);
 	int16 sindex (0);
 
@@ -1553,10 +1559,8 @@ RunView::PositionAt (BPoint point) const
 	}
 
 	float margin (MARGIN_WIDTH / 2.0);
-	int16 width (0);
+	float width (0);
 	int16 start (0);
-
-//	printf ("Softie: %hd\n", sindex);
 
 	if (sindex)
 	{
@@ -1573,8 +1577,6 @@ RunView::PositionAt (BPoint point) const
 	pos.line = lindex;
 	pos.offset = min_c (i, lines[lindex]->softies[sindex].offset);
 	if (pos.offset > 0) pos.offset += 1;
-
-//	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
 
 	return pos;
 }
@@ -1721,6 +1723,15 @@ RunView::SelectAll (void)
 		sp_end = SelectPos (line_count-1, lines[line_count-1]->length);
 		Invalidate(Bounds());
 	}
+}
+
+void
+RunView::SetClippingName (const char *name)
+{
+	delete [] clipping_name;
+	clipping_name = new char[strlen(name) + 1];
+	memcpy (clipping_name, name, strlen(name));
+	clipping_name[strlen(name)] = '\0';
 }
 
 Line::Line (
