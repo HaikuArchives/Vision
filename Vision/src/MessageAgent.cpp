@@ -23,8 +23,9 @@
  *                 Jamie Wilkinson
  */
 
-#include <PopUpMenu.h>
 #include <MenuItem.h>
+#include <PopUpMenu.h>
+#include <UTF8.h>
  
 #include "MessageAgent.h"
 #include "WindowList.h"
@@ -295,8 +296,24 @@ MessageAgent::DCCIn (void *arg)
         {
           inputBuffer.RemoveLast ("\r");
           inputBuffer = FilterCrap (inputBuffer.String(), false);
+
+          char convBuffer[2048];
+          memset (convBuffer, 0, sizeof(convBuffer));
+
+          int32 length (inputBuffer.Length()),
+                destLength (sizeof(convBuffer)),
+                state (0);
+
+          convert_to_utf8 (
+            B_ISO1_CONVERSION,
+            inputBuffer.String(), 
+            &length,
+            convBuffer,
+            &destLength,
+            &state);
+
           BMessage dispMsg (M_CHANNEL_MSG);
-          dispMsg.AddString ("msgz", inputBuffer.String());
+          dispMsg.AddString ("msgz", convBuffer);
           mMsgr.SendMessage (&dispMsg);
           inputBuffer = "";
         }
@@ -617,10 +634,27 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
     outTemp += msg;
     outTemp += "\1";
     outTemp += "\n";
+
+    char convBuffer[2048];
+    memset (convBuffer, 0, sizeof(convBuffer));
+
+    int32 length (outTemp.Length()),
+          destLength (sizeof(convBuffer)),
+          state (0);
+
+    convert_from_utf8 (
+      B_ISO1_CONVERSION,
+      outTemp.String(), 
+      &length,
+      convBuffer,
+      &destLength,
+      &state);
+
+
 #ifdef NETSERVER_BUILD
     fLocker->Lock();
 #endif
-    if (send(fAcceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
+    if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
     {
       fDConnected = false;
       Display (S_DCC_CHAT_TERM);
@@ -655,10 +689,27 @@ MessageAgent::Parser (const char *buffer)
     BString outTemp (buffer);
 
     outTemp << "\n";
+
+    char convBuffer[2048];
+    memset (convBuffer, 0, sizeof(convBuffer));
+
+    int32 length (outTemp.Length()),
+          destLength (sizeof(convBuffer)),
+          state (0);
+
+    convert_from_utf8 (
+      B_ISO1_CONVERSION,
+      outTemp.String(), 
+      &length,
+      convBuffer,
+      &destLength,
+      &state);
+    
+    
 #ifdef NETSERVER_BUILD
     fLocker->Lock();
 #endif
-    if (send(fAcceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
+    if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
     {
       fDConnected = false;
       Display (S_DCC_CHAT_TERM);
