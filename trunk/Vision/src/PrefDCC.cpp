@@ -91,7 +91,7 @@ DCCPrefsView::AttachedToWindow (void)
   fBlockSize->ResizeToPreferred ();
   fBlockSize->ResizeTo (Bounds().Width() - 15, fBlockSize->Bounds().Height());
   fBlockSize->SetDivider (fBlockSize->StringWidth (S_PREFDCC_BLOCK_SIZE) + 5);
-  fBlockSize->MoveTo (fPrivateCheck->Frame().left, fAutoAccept->Frame().bottom + 5);
+  fBlockSize->MoveTo (fPrivateCheck->Frame().left, fPrivateCheck->Frame().bottom + 5);
   fBlockSize->Menu()->SetLabelFromMarked (true);
   
   const char *defPath (vision_app->GetString ("dccDefPath"));
