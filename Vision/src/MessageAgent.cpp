@@ -80,6 +80,10 @@ MessageAgent::MessageAgent (
 #endif
 {
   Init();
+#ifdef NETSERVER_BUILD
+  if (dChat)
+    locker = new BLocker();
+#endif
 }
 
 MessageAgent::~MessageAgent (void)
