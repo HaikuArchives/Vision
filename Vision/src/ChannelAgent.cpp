@@ -820,9 +820,12 @@ ChannelAgent::MessageReceived (BMessage *msg)
       {
         bool hasNick (false);
         BString tempString,
+                  theNick,
                   knownAs;
         msg->FindString ("msgz", &tempString);
-        FirstKnownAs (tempString, knownAs, &hasNick);
+        msg->FindString ("nick", &theNick);
+        if (theNick != fMyNick)
+          FirstKnownAs (tempString, knownAs, &hasNick);
         
         if (IsHidden())
           UpdateStatus((hasNick) ? WIN_NICK_BIT : WIN_NEWS_BIT);
