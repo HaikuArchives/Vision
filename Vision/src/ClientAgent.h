@@ -176,6 +176,7 @@ class ClientAgent : public BView
     BRect                            frame;
     BMessenger                       sMsgr;
     ClientAgentLogger                *logger;
+    friend class                     WindowList;
 
 };
 

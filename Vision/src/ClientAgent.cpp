@@ -222,9 +222,9 @@ ClientAgent::Init (void)
     id.String(),
     activeTheme,
     B_FOLLOW_ALL);
-  
-    if (vision_app->GetBool ("timestamp"))
-      text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
+    
+  if (vision_app->GetBool ("timestamp"))
+    text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
  
   activeTheme->AddView (text);
   

@@ -44,7 +44,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 WindowList::WindowList (BRect frame)
-  : BListView (
+  : BOutlineListView (
     frame,
     "windowList",
     B_SINGLE_SELECTION_LIST,
@@ -57,7 +57,7 @@ WindowList::WindowList (BRect frame)
   selColor    = vision_app->GetColor (C_WINLIST_SELECTION);
   bgColor     = vision_app->GetColor (C_WINLIST_BACKGROUND);
   
-  BListView::SetFont (vision_app->GetClientFont (F_WINLIST));
+  BOutlineListView::SetFont (vision_app->GetClientFont (F_WINLIST));
 
   SetViewColor (bgColor);
   
@@ -87,7 +87,7 @@ WindowList::MessageReceived (BMessage *msg)
       break;
     
     default:
-      BListView::MessageReceived (msg);
+      BOutlineListView::MessageReceived (msg);
   }
 }
 
@@ -164,12 +164,9 @@ WindowList::MouseDown (BPoint myPoint)
     
     if (activeagent)
       Select (IndexOf (activeagent));
-      
-    handled = true;
   }    
 
-  if (!handled)
-    BListView::MouseDown (myPoint);
+  BOutlineListView::MouseDown (myPoint);
 }
 
 void 
@@ -326,7 +323,7 @@ WindowList::SetFont (int32 which, const BFont *font)
 {
   if (which == F_WINLIST)
   {
-    BListView::SetFont (font);
+    BOutlineListView::SetFont (font);
     Invalidate();
   }
 }
@@ -557,7 +554,15 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
   WindowListItem *currentitem ((WindowListItem *)ItemAt (CurrentSelection()));
   
   WindowListItem *newagentitem (new WindowListItem (name, serverId, winType, WIN_NORMAL_BIT, agent));
-  AddItem (newagentitem);
+  if (dynamic_cast<ServerAgent *>(agent) != NULL)
+  	AddItem (newagentitem);
+  else
+  {
+    BLooper *looper;
+    ServerAgent *agentParent ((ServerAgent *)((ClientAgent *)agent)->sMsgr.Target(&looper));
+    AddUnder (newagentitem, agentParent->agentWinItem);
+  }
+  
   BView *newagent;
   newagent = newagentitem->pAgent();
   if (serverId == ID_SERVER)
@@ -611,11 +616,9 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     return;
   }
   
-  LockLooper();
   vision_app->pClientWin()->bgView->AddChild (newagent);
   newagent->Hide(); // get it out of the way
   newagent->Sync(); // clear artifacts
-  UnlockLooper();
   
   if (activate)  // if activate is true, show the new view now.
     if (CurrentSelection() == -1)
