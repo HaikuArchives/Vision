@@ -364,6 +364,7 @@ ClientAgent::TimedSubmit (void *arg)
   BMessenger agentMsgr (agent);
   BMessage submitMsg (M_SUBMIT);
   submitMsg.AddBool ("history", addtofHistory);
+  submitMsg.AddBool ("clear", false);
   
   for (i = 0; (msg->HasString ("data", i)) && (agentMsgr.IsValid()) && (false == agent->CancelMultilineTextPaste()); ++i)
   {
