@@ -30,6 +30,7 @@
 #define _VTEXTCONTROL_H_
 
 #include <TextControl.h>
+#include <MessageFilter.h>
 
 class BPopUpMenu;
 class BMenu;
@@ -47,10 +48,21 @@ class VTextControl : public BTextControl
                            VTextControl (BMessage *);
     virtual                ~VTextControl (void);
     virtual void           AllAttached (void);
-    virtual void           MouseDown (BPoint);
+
+    BPopUpMenu                      *myPopUp;
+};
+
+class VTextControlFilter : public BMessageFilter
+{
+
+  public:
+									VTextControlFilter (VTextControl *);
+    virtual							~VTextControlFilter (void);
+    virtual filter_result			Filter (BMessage *, BHandler **);
 
   private:
-    BPopUpMenu                      *myPopUp;
+    VTextControl                    *parent;
+
 };
 
 #endif
