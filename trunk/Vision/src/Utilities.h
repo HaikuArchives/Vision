@@ -26,6 +26,29 @@
 
 #include <String.h>
 
+template<class T> class AutoDestructor {
+  public:
+    AutoDestructor(T *t)
+    {
+      fObject = t;
+    }
+    
+    virtual ~AutoDestructor(void)
+    {
+      delete fObject;
+    }
+    
+    void SetTo(T *t)
+    {
+      delete fObject;
+      fObject = t;
+    }
+    
+  private:
+    T *fObject;  
+};
+
+
 class BMessage;
 class BPoint;
 

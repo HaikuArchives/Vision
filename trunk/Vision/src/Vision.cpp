@@ -117,7 +117,11 @@ VisionApp::~VisionApp (void)
 {
   SaveSettings();
   delete fVisionSettings;
-  // empty d'tor
+  int32 i (0);
+  for (; i < MAX_FONTS; i++)
+    delete fClientFont[i];
+
+  delete fActiveTheme;
 }
 
 void

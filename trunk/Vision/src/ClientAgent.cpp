@@ -104,6 +104,7 @@ ClientAgent::ClientAgent (
 ClientAgent::~ClientAgent (void)
 {
   delete fAgentWinItem;
+  delete fHistory;
 }
 
 

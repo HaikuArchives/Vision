@@ -327,10 +327,12 @@ int32
 ServerAgent::Establish (void *arg)
 {
   BMessenger *sMsgrE (reinterpret_cast<BMessenger *>(arg));
+  AutoDestructor<BMessenger> msgrKiller(sMsgrE);
   BMessage getMsg;
   thread_id currentThread (find_thread(NULL));
 #ifdef NETSERVER_BUILD
   BLocker *endpointLock (NULL);
+  AutoDestructor<BLocker *> lockKiller (NULL);
 #endif
   BString remoteIP;
   int32 serverSid;
@@ -340,7 +342,6 @@ ServerAgent::Establish (void *arg)
   else
   {
     printf (":ERROR: sMsgr not valid in Establish() -- bailing\n");
-    delete sMsgrE;
     return B_ERROR;
   }
 
@@ -364,6 +365,7 @@ ServerAgent::Establish (void *arg)
     getMsg.FindString ("nick", &connectNick);
 #ifdef NETSERVER_BUILD
     getMsg.FindPointer ("lock", reinterpret_cast<void **>(&endpointLock));
+    lockKiller.SetTo(endpointLock);
 #endif
     serverSid = getMsg.FindInt32 ("sid");
     
@@ -548,10 +550,7 @@ ServerAgent::Establish (void *arg)
     close (serverSock);
 #elif NETSERVER_BUILD
     closesocket (serverSock);
-    if (endpointLock)
-      delete endpointLock;
 #endif
-    delete sMsgrE;
     vision_app->RemoveIdent (remoteIP.String());
     return B_ERROR;
   }
@@ -671,10 +670,6 @@ ServerAgent::Establish (void *arg)
     closesocket (serverSock);
 #endif
   }
-#ifdef NETSERVER_BUILD
-  delete endpointLock;
-#endif
-  delete sMsgrE;
   return B_OK;
 }
 
