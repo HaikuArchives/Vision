@@ -22,7 +22,7 @@
  *                 Andrew Bazan
  *                 Jean-Baptiste M. Queru <jbq@be.com>
  *                 Seth Flaxman
- *                 Alan Ellis <void@be.com>
+ *                 Alan Ellis <alan@cgsoftware.org>
  */
  
 
@@ -313,7 +313,7 @@ WindowList::ClearList (void)
         all (CountItems());
 
   for (i = 0; i < all; i++)
-    delete RemoveItem (0L);
+    delete static_cast<WindowListItem *>(RemoveItem (0L));
 }
 
 void

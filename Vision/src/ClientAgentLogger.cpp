@@ -19,6 +19,7 @@
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Rene Gollent
  *                 Todd Lair
+ *                 Alan Ellis <alan@cgsoftware.org>
  */
  
 #include <Path.h>
@@ -164,7 +165,7 @@ ClientAgentLogger::UnregisterLogger (const char *name)
         if (((currentLog = (BString *)fLogBuffer->ItemAt(i)) != NULL)
         && (currentLog->ICompare (name) == 0))
         {
-          delete fLogBuffer->RemoveItem (i);
+          delete static_cast<BString *>(fLogBuffer->RemoveItem (i));
           currentLog = (BString *)fLogBuffer->RemoveItem (i);
           logFile->Write (currentLog->String(), currentLog->Length());
           delete currentLog;

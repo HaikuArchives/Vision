@@ -22,6 +22,7 @@
  *                 Andrew Bazan
  *                 Jamie Wilkinson
  *                 Seth Flaxman
+ *                 Alan Ellis <alan@cgsoftware.org>
  */
 
 #include <Directory.h>
@@ -358,7 +359,7 @@ void
 NamesView::ClearList (void)
 {
   while (CountItems() > 0)
-    delete RemoveItem (0L);
+    delete static_cast<NameItem *>(RemoveItem (0L));
 }
 
 void
