@@ -1914,7 +1914,8 @@ Line::Append (
 		FigureSpaces();
 		FigureEdges (theme, width);
 	}
-
+	
+    
 }
 
 void
@@ -2113,6 +2114,17 @@ Line::FigureEdges (
 		{
 			edges[edge_count + i] = ((edge_count + i > 0) ? edges[edge_count + i - 1] : 0) +
 				(eshift[i] * f.Size());
+			
+			// this little backtracking routine is necessary in the case where an fcs change
+			// comes immediately after a UTF8-char, since all but the first edge will be 0
+			// and thus the new edge's starting position will be thrown off if we don't
+			// backtrack to the beginning of the char
+			if ((edge_count + i > 0) && edges[edge_count + i - 1] == 0)
+			{
+			   int32 temp = edge_count + i - 1;
+			   while (edges[--temp] == 0);
+			   edges[edge_count + i] += edges[temp];
+			}
 		}
 
 		for (i = fcs[cur_fcs].offset; i < fcs[cur_fcs].offset + seglen;)
