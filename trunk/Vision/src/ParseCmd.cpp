@@ -280,16 +280,15 @@ ClientAgent::ParseCmd (const char *data)
           return true;
         }
       }
-      BFilePanel *myPanel (new BFilePanel);
+      BFilePanel *myPanel (new BFilePanel (B_OPEN_PANEL, NULL, NULL, 0, false));
       BString myTitle (S_PCMD_SEND_TITLE);
 
       myTitle.Append (theNick);
       myPanel->Window()->SetTitle (myTitle.String());
-
+      myPanel->SetTarget (fSMsgr);
       myPanel->SetMessage (msg);
 
       myPanel->SetButtonLabel (B_DEFAULT_BUTTON, S_PCMD_SEND_BUTTON);
-      myPanel->SetTarget (fSMsgr);
       myPanel->Show();
     }
 
