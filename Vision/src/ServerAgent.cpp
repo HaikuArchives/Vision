@@ -106,7 +106,6 @@ ServerAgent::AttachedToWindow(void)
 void
 ServerAgent::Init (void)
 {
-
   myFont = *(vision_app->GetClientFont (F_SERVER));
   ctcpReqColor = vision_app->GetColor (C_CTCP_REQ);
   ctcpRpyColor = vision_app->GetColor (C_CTCP_RPY);
@@ -136,6 +135,38 @@ ServerAgent::Init (void)
 	
 	resume_thread (loginThread);
 
+}
+
+status_t
+ServerAgent::NewTimer (const char *cmd, int32 sleep, int32 loops)
+{
+
+  return B_OK;
+}
+
+
+int32
+ServerAgent::Timer (void *arg)
+{
+  BMessage *msg (reinterpret_cast<BMessage *>(arg));
+  ServerAgent *agent;
+  const char *cmd;
+  int32 pass (0),
+        sleep,
+        loops;
+
+  if ((msg->FindString  ("command", &cmd) != B_OK)
+  ||  (msg->FindInt32   ("loops", &loops) != B_OK)
+  ||  (msg->FindInt32   ("sleep", &sleep) != B_OK)
+  ||  (msg->FindPointer ("agent", reinterpret_cast<void **>(&agent)) != B_OK))
+  {  
+    printf (":ERROR: couldn't find valid data in BMsg to Timer() -- bailing\n");
+	return B_ERROR;
+  }
+  
+  
+  return B_OK;
+  
 }
 
 int32
@@ -547,6 +578,7 @@ ServerAgent::ActiveClient (void)
   return client;
 }
 
+
 void
 ServerAgent::Broadcast (BMessage *msg)
 {
@@ -660,6 +692,16 @@ ServerAgent::FilterCrap (const char *data)
 	return outData;
 }
 
+
+void
+ServerAgent::Pulse (void)
+{
+  printf ("Pulse() %s\n", id.String());
+  
+  BView::Pulse();
+}
+
+
 void
 ServerAgent::MessageReceived (BMessage *msg)
 {
@@ -731,6 +773,12 @@ ServerAgent::MessageReceived (BMessage *msg)
 			break;
 		
 		
+		}
+		
+		case M_LAG_CHECK:
+		{
+		  printf ("M_LAG_CHECK %s\n", id.String());
+		  break;
 		}
 		
 		case M_CLIENT_QUIT:

@@ -53,7 +53,7 @@ ClientAgent::ClientAgent (
     frame_,
     id_,
     B_FOLLOW_ALL_SIDES,
-    B_WILL_DRAW | B_FRAME_EVENTS),
+    /*B_PULSE_NEEDED |*/ B_WILL_DRAW | B_FRAME_EVENTS),
     
   id (id_),
   sid (sid_),
@@ -77,7 +77,7 @@ ClientAgent::ClientAgent (
     frame_,
     id_,
     B_FOLLOW_ALL_SIDES,
-    B_WILL_DRAW | B_FRAME_EVENTS),
+    /*B_PULSE_NEEDED |*/ B_WILL_DRAW | B_FRAME_EVENTS),
     
   id (id_),
   sid (sid_),

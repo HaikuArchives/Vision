@@ -49,18 +49,18 @@ class ServerAgent : public ClientAgent
 
 	virtual void				MessageReceived (BMessage *);
 	virtual void				AttachedToWindow (void);
+    virtual void                Pulse (void);
     void						PostActive (BMessage *);
 
 
 	void						Broadcast (BMessage *);
 	void						RepliedBroadcast (BMessage *);
-
+	status_t                    NewTimer (const char *, int32, int32);
     
   private:
     virtual void                Init (void);
 	void						SendData (const char *);
 	void						ParseLine (const char *);
-
 	bool						ParseEvents (const char *);
 	bool						ParseENums (const char *, const char *);
 	void						ParseCTCP (BString theNick, BString theTarget, BString theMsg);
@@ -132,15 +132,18 @@ class ServerAgent : public ClientAgent
 								localIP;
 	uint32						localuIP;
 	int32 s; 				// socket
+	
+	BList                       timers;
     
     static int32				Establish (void *);
+    static int32                Timer (void *);
 
 };
 
 const uint32 M_GET_ESTABLISH_DATA			= 'saed'; // used by Establish()
 const uint32 M_SERVER_DISCONNECT			= 'sasd'; // we got disconnected
 const uint32 M_PARSE_LINE					= 'sapl'; // new data from server
-
+const uint32 M_LAG_CHECK                    = 'salc'; // send lag check to server
 const uint32 M_REJOIN_ALL					= 'sara';
 
 #endif

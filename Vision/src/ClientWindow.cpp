@@ -134,12 +134,11 @@ ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
       target->MessageReceived (msg);
       break;
     }
-
+    
     default:
       BWindow::DispatchMessage (msg, handler);
   }
 }
-
 
 void
 ClientWindow::MessageReceived (BMessage *msg)
@@ -298,6 +297,12 @@ ClientWindow::ServerBroadcast (BMessage *outmsg_)
   return reply;
 }
 
+void
+ClientWindow::Show(void)
+{
+  // nothing yet
+  BWindow::Show();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 /// End BWindow functions
@@ -314,7 +319,7 @@ ClientWindow::Init (void)
   SetSizeLimits (330,2000,150,2000);
 
   AddShortcut('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
-  
+   
   shutdown_in_progress = false;
   wait_for_quits = false;
   
@@ -416,7 +421,6 @@ ClientWindow::Init (void)
     Bounds().top + 1,
     Bounds().Width() - 1,
     winListScroll->Frame().Height());
- 
 }
 
 //////////////////////////////////////////////////////////////////////////////

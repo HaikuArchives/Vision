@@ -66,6 +66,7 @@ class ClientWindow : public BWindow
     virtual void          DispatchMessage (BMessage *, BHandler *);
     virtual bool          QuitRequested (void);
     virtual void          ScreenChanged (BRect, color_space);
+    virtual void          Show (void);
     
     bool                  ServerBroadcast (BMessage *);
       
