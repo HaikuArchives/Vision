@@ -133,6 +133,8 @@ struct Line
 	void					SoftBreaks (
 								Theme * theme,
 								float width);
+	
+	void					ParseURLs ();
 
 	int16					CountChars (int16 pos, int16 len);
 	size_t				SetStamp (const char *, bool);
@@ -977,6 +979,8 @@ Line::Line (
 	memcpy (text + stampsize, buffer, length - stampsize);
 	text[length] = '\0';
 
+	ParseURLs();
+
 	FigureFontColors (stampsize, fore, back, font);
 
 	if (text[length - 1] == '\n')
@@ -996,6 +1000,26 @@ Line::~Line (void)
 	slist<URL *>::const_iterator it = urls.begin();
 	for (; it != urls.end(); ++it)
 		delete (*it);
+}
+
+void
+Line::ParseURLs(void)
+{
+	BString urlsearch;
+	URLCrunch crunch (text, length);
+	int32 offset (0);
+	
+	// clear old urls
+	
+	slist<URL *>::const_iterator it = urls.begin();
+	for (; it != urls.end(); ++it)
+		delete (*it);
+	
+	urls.clear();
+	
+	while ((offset = crunch.Crunch(&urlsearch)) != B_ERROR)
+		urls.push_front (new URL (urlsearch.String(), offset, urlsearch.Length()));
+	urls.sort();
 }
 
 void
@@ -1021,14 +1045,8 @@ Line::Append (
 
 	delete [] text;
 	text = new_text;
-	
-	BString urlsearch;
-	URLCrunch crunch (text, strlen(text));
-	int32 offset (0);
-	
-	while ((offset = crunch.Crunch(&urlsearch)) != B_ERROR)
-		urls.push_front (new URL (urlsearch.String(), offset, urlsearch.Length()));
-	urls.sort();
+
+	ParseURLs();
 	
 	FigureFontColors (save, fore, back, font);
 
@@ -1037,6 +1055,7 @@ Line::Append (
 		FigureSpaces();
 		FigureEdges (boxbuf, boxbuf_size, theme, width);
 	}
+	
 }
 
 void
