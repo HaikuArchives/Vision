@@ -24,8 +24,13 @@
 #ifndef _CLICKVIEW_H
 #define _CLICKVIEW_H
 
-#include <View.h>
-#include <String.h>
+#ifdef GNOME_BUILD
+#  include "gnome/View.h"
+#  include "gnome/CString.h"
+#elif BEOS_BUILD
+#  include <View.h>
+#  include <String.h>
+#elif
 
 class ClickView : public BView
 {

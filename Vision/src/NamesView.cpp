@@ -23,10 +23,16 @@
  *                 Jamie Wilkinson
  *                 Seth Flaxman
  */
- 
-#include <PopUpMenu.h>
-#include <MenuItem.h>
-#include <Window.h>
+
+#ifdef GNOME_BUILD
+#  include "PopUpMenu.h"
+#  include "MenuItem.h"
+#  include "Window.h"
+#elif BEOS_BUILD 
+#  include <PopUpMenu.h>
+#  include <MenuItem.h>
+#  include <Window.h>
+#endif
 
 #include "ChannelAgent.h"
 #include "Vision.h"

@@ -23,9 +23,14 @@
  *                 Jamie Wilkinson
  *                 Bjorn Oksholen
  */
- 
-#include <Menu.h>
-#include <NetEndpoint.h>
+
+#ifdef GNOME_BUILD 
+#  include "gnome/Menu.h"
+#  include "gnome/NetEndpoint.h"
+#elif BEOS_BUILD
+#  include <Menu.h>
+#  include <NetEndpoint.h>
+#endif
 
 #include "ParseENums.h"
 #include "Vision.h"

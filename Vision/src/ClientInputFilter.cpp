@@ -23,11 +23,19 @@
  *                 Jamie Wilkinson
  */
 
-#include <Alert.h>
-#include <NodeInfo.h>
-#include <Clipboard.h>
-#include <ScrollView.h>
-#include <String.h>
+#ifdef GNOME_BUILD
+#  include "gnome/Alert.h"
+#  include "gnome/NodeInfo.h"
+#  include "gnome/Clipboard.h"
+#  include "gnome/ScrollView.h"
+#  include "gnome/CString.h"
+#elif BEOS_BUILD
+#  include <Alert.h>
+#  include <NodeInfo.h>
+#  include <Clipboard.h>
+#  include <ScrollView.h>
+#  include <String.h>
+#endif
 
 #include <stdio.h>
 

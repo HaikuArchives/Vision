@@ -25,8 +25,13 @@
 #ifndef _VISION_H_
 #define _VISION_H_
 
-#include <Application.h>
-#include <String.h>
+#ifdef GNOME_BUILD
+#  include "gnome/Application.h"
+#  include "gnome/CString.h"
+#elif BEOS_BUILD
+#  include <Application.h>
+#  include <String.h>
+#endif
 
 #include "VisionBase.h"
 

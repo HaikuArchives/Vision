@@ -23,10 +23,18 @@
  *                 Jamie Wilkinson
  */
 
-#include <FilePanel.h>
-#include <Path.h>
-#include <Roster.h>
-#include <FindDirectory.h>
+#ifdef GNOME_BUILD
+#  include "gnome/FilePanel.h"
+#  include "gnome/Path.h"
+#  include "gnome/Roster.h"
+#  include "gnome/FindDirectory.h"
+#elif BEOS_BUILD
+#  include <FilePanel.h>
+#  include <Path.h>
+#  include <Roster.h>
+#  include <FindDirectory.h>
+#endif
+
 #include <stdio.h>
 #include <map.h>
 #include <netdb.h>

@@ -1,0 +1,262 @@
+#include "Application.h"
+#include "Box.h"
+#include "Button.h"
+#include "Bitmap.h"
+#include "Region.h"
+#include "TextView.h"
+#include "Window.h"
+
+#include <stdio.h>
+
+class TestWindow : public FWindow {
+public:
+	TestWindow(FRect frame, const char *title)
+		:	FWindow(frame, title, B_DOCUMENT_WINDOW, 0)
+		{ }
+
+	virtual void Quit()
+		{
+			FWindow::Quit();
+			be_app->PostMessage(B_QUIT_REQUESTED, NULL);
+		}
+		
+	virtual void MessageReceived(FMessage *message)
+		{
+			switch (message->what) {
+				default:
+					FWindow::MessageReceived(message);
+					break;
+			}
+		}
+};
+
+
+class ButtonWindow : public TestWindow {
+public:
+	ButtonWindow()
+		:	TestWindow(FRect(20, 20, 200, 200), "button window")
+		{
+			FRect bounds(Bounds());
+			bounds.InsetBy(10, 10);
+			BBox *box = new BBox(bounds, "test background box", B_FOLLOW_ALL);
+			AddChild(box);
+			
+			FRect buttonBounds = box->Bounds();
+			buttonBounds.InsetBy(10, 10);
+			buttonBounds.left = buttonBounds.right - 50;
+			buttonBounds.top = buttonBounds.bottom - 16;
+			FButton *button = new FButton(buttonBounds, "test button", "Grow", new BMessage('grow'),
+				B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
+			box->AddChild(button);
+			button->SetTarget(this);
+
+			buttonBounds = box->Bounds();
+			buttonBounds.InsetBy(10, 10);
+			buttonBounds.left = buttonBounds.right - 50;
+			buttonBounds.bottom = buttonBounds.top + 16;
+			box->AddChild(new FButton(buttonBounds, "test buton 2", "Test", NULL,
+				B_FOLLOW_RIGHT | B_FOLLOW_TOP));
+
+			buttonBounds = box->Bounds();
+			buttonBounds.InsetBy(40, 40);
+			buttonBounds.bottom = buttonBounds.top + 16;
+			box->AddChild(new FButton(buttonBounds, "test button 3", "Test", NULL,
+				B_FOLLOW_ALL));
+
+			buttonBounds = box->Bounds();
+			buttonBounds.InsetBy(10, 10);
+			buttonBounds.bottom = buttonBounds.top + 10;
+			buttonBounds.right = buttonBounds.left + 10;
+			BBox *box2 = new BBox(buttonBounds, "test box", B_FOLLOW_RIGHT | B_FOLLOW_TOP);
+			box->AddChild(box2);
+			box2->SetViewColor(Color(200, 60, 80));
+			box2->SetLowColor(Color(200, 60, 80));
+
+		}
+
+	virtual void MessageReceived(FMessage *message)
+		{
+			switch (message->what) {
+				case 'grow':
+					ResizeTo(Frame().Width() + 10, Frame().Height());
+					break;
+			}
+		}
+};
+
+const unsigned char kTestBitmap1[] = {
+	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x2f,0xea,0x2f,0x1d,
+	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xea,0x2c,0x2c,0x2f,0xea,
+	0xff,0xff,0xff,0xff,0xff,0xff,0x04,0x01,0x2c,0x2c,0x2c,0xeb,
+	0xff,0xff,0xff,0xff,0xff,0x04,0x05,0x00,0xb1,0x2c,0x08,0xea,
+	0xff,0xff,0xff,0xff,0x04,0x02,0xfa,0xfa,0x00,0x02,0x2f,0xff,
+	0xff,0xff,0xff,0x04,0x02,0xfa,0xfb,0xf9,0xdf,0x04,0xff,0xff,
+	0xff,0xff,0x03,0xd7,0xfa,0xfa,0x64,0xd7,0xd7,0xff,0xff,0xff,
+	0xff,0x0b,0xd7,0xfa,0xfa,0x65,0x05,0x04,0x1a,0xff,0xff,0xff,
+	0x18,0x01,0x09,0xfa,0x65,0xd7,0x07,0xff,0xff,0xff,0xff,0xff,
+	0x15,0x01,0x09,0x08,0x02,0xb1,0x61,0xff,0xff,0xff,0xff,0xff,
+	0x16,0x29,0x00,0x00,0x0c,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
+	0x00,0x00,0x08,0x19,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff
+};
+
+const unsigned char kTestBitmap2[] = {
+	0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,
+	0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,
+	0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,
+	0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,
+	0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,
+	0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,
+	0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,
+	0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,
+	0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,
+	0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,
+	0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,
+	0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,
+	0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,
+	0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,
+	0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,
+	0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f,0x65,0x65,0x2f,0x2f
+};
+
+const uint32 kBitmapWidth1 = 12;
+const uint32 kBitmapWidth2 = 16;
+
+class BitmapView : public FView {
+public:
+	BitmapView(FRect frame)
+		:	FView(frame, "bitmap view", B_FOLLOW_NONE, 0)
+		{}
+		
+
+	virtual void Draw(FRect)
+		{
+			FRect fromRect(0, 0, kBitmapWidth1 - 1, kBitmapWidth1 - 1);
+			FRect toRect(fromRect);
+			toRect.OffsetBy(2, 2);
+			FBitmap bitmap1(fromRect, B_COLOR_8_BIT);
+			bitmap1.SetBits(kTestBitmap1, kBitmapWidth1 * kBitmapWidth1, 0, B_COLOR_8_BIT);
+
+			FRegion invalidRegion;
+			FRect invalRect(2, 2, 9, 9);
+			invalRect.OffsetBy(2, 2);
+			invalidRegion.Set(invalRect);
+			ConstrainClippingRegion(&invalidRegion);
+			DrawBitmap(&bitmap1, fromRect, toRect);
+			ConstrainClippingRegion(NULL);
+			
+			toRect.OffsetBy(16, 0);
+			invalRect.OffsetBy(16, 0);
+
+			invalidRegion.Set(invalRect);
+			ConstrainClippingRegion(&invalidRegion);
+			StrokeRect(invalRect);
+			DrawBitmap(&bitmap1, fromRect, toRect);
+			ConstrainClippingRegion(NULL);
+			
+			toRect.OffsetBy(16, 0);
+			invalRect.OffsetBy(16, 0);
+			DrawBitmap(&bitmap1, fromRect, toRect);
+			
+			toRect.OffsetBy(16, 0);
+			invalRect.OffsetBy(16, 0);
+			StrokeRect(invalRect);
+			DrawBitmap(&bitmap1, fromRect, toRect);
+		
+			fromRect = FRect(0, 0, kBitmapWidth2 - 1, kBitmapWidth2 - 1);
+			FBitmap bitmap2(fromRect, B_COLOR_8_BIT);
+			bitmap2.SetBits(kTestBitmap2, kBitmapWidth2 * kBitmapWidth2, 0, B_COLOR_8_BIT);
+
+			const int32 kMax = kBitmapWidth2 + 1;
+			int32 count = 0;
+			for (; count < kMax; count++) {
+				FRect toRect(count * (kMax + 2), 20, 0, 0);
+				
+				toRect.right = toRect.left + count;
+				toRect.bottom = toRect.top + count;
+				DrawBitmap(&bitmap2, fromRect, toRect);
+			}
+		}
+};
+
+class StrokeRectTest : public FView {
+public:
+	StrokeRectTest(BRect frame)
+		:	FView(frame, "stroke rect test", B_FOLLOW_NONE, 0)
+		{}
+		
+	virtual void Draw(FRect)
+		{
+			StrokeRect(BRect(2, 2, 3, 3));	
+			StrokeRect(BRect(6, 2, 8, 4));	
+			StrokeRect(BRect(10, 2, 13, 5));	
+			FillRect(BRect(2, 10, 3, 11));	
+			FillRect(BRect(6, 10, 8, 12));	
+			FillRect(BRect(10, 10, 13, 13));	
+		}
+};
+
+class BitmapWindow : public TestWindow {
+public:
+	BitmapWindow()
+		:	TestWindow(FRect(20, 20, 400, 200), "bitmap window")
+		{
+			FRect bounds(Bounds());
+			bounds.InsetBy(10, 10);
+			FBox *box = new BBox(bounds, "test background box", B_FOLLOW_ALL);
+			AddChild(box);
+			
+			AddChild(new BitmapView(FRect(20, 20, 340, 80)));		
+			AddChild(new StrokeRectTest(FRect(20, 100, 100, 140)));		
+		}
+
+};
+
+class TextViewWindow : public TestWindow {
+public:
+	TextViewWindow()
+		:	TestWindow(FRect(20, 20, 400, 200), "text view window")
+		{
+			FRect bounds(Bounds());
+			bounds.InsetBy(10, 10);
+			FBox *box = new BBox(bounds, "test background box", B_FOLLOW_ALL);
+			AddChild(box);
+			
+			printf("box rect\n");
+			bounds.PrintToStream();
+
+			bounds.InsetBy(10, 10);
+			FTextView *textView = new FTextView(bounds, "test text view",
+				bounds, B_FOLLOW_ALL);
+			
+			printf("text view rect\n");
+			bounds.PrintToStream();
+			
+			AddChild(textView);
+			textView->SetText(
+				"This is nothing but a test\n"
+				"test, test, test...\n"
+				"This is nothing but a test\n"
+				"test, test, test...\n"
+				"This is nothing but a test\n"
+				"test, test, test...\n");
+		}
+};
+
+
+class TestApp : public FApplication {
+public:
+	TestApp(int argc, const char *const *argv)
+		:	FApplication("test", argc, argv)
+		{
+			(new TextViewWindow())->Show();
+		}
+	
+};
+
+int
+main(int argc, char **argv)
+{
+	TestApp test(argc, const_cast<const char *const *>(argv));
+	test.Run();
+	
+}

@@ -26,9 +26,15 @@
 #ifndef _NAMES_H_
 #define _NAMES_H_
 
-#include <ListItem.h>
-#include <ListView.h>
-#include <String.h>
+#ifdef GNOME_BUILD
+#  include "gnome/ListItem.h"
+#  include "gnome/ListView.h"
+#  include "gnome/CString.h"
+#elif BEOS_BUILD
+#  include <ListItem.h>
+#  include <ListView.h>
+#  include <String.h>
+#endif
 
 class BPopUpMenu;
 

@@ -26,7 +26,11 @@
 #ifndef _CLIENTWINDOW_H_
 #define _CLIENTWINDOW_H_
 
-#include <Window.h>
+#ifdef GNOME_BUILD
+#  include "gnome/Window.h"
+#elif BEOS_BUILD
+#  include <Window.h>
+#endif
 
 #define STATUS_SERVER               0
 #define STATUS_LAG                    1

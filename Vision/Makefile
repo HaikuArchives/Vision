@@ -42,6 +42,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 CC := g++ -c -pipe
 CFLAGS :=
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
+CFLAGS += -DBEOS_BUILD
 CFLAGS += -O3
 CFLAGS += -fno-pic
 CFLAGS += -ffast-math
@@ -55,7 +56,7 @@ CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
 LD := g++
 LDFLAGS := $(LIBS)
 
-DEP := g++ -MM
+DEP := g++ -MM -DBEOS_BUILD
 
 ZIP := zip -r -9 -y
 

@@ -24,11 +24,20 @@
 
 class VisionApp * vision_app;
 
-#include <Alert.h>
-#include <Resources.h>
-#include <Font.h>
-#include <Autolock.h>
-#include <Roster.h>
+
+#ifdef GNOME_BUILD
+#  include "gnome/Alert.h"
+#  include "gnome/Resources.h"
+#  include "gnome/Font.h"
+#  include "gnome/Autolock.h"
+#  include "gnome/Roster.h"
+#elif BEOS_BUILD
+#  include <Alert.h>
+#  include <Resources.h>
+#  include <Font.h>
+#  include <Autolock.h>
+#  include <Roster.h>
+#endif
 
 #include <algorithm>
 #include <stdio.h>

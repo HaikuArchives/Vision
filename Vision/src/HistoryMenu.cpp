@@ -22,11 +22,18 @@
  *                 Andrew Bazan
  *                 Jamie Wilkinson
  */
- 
-#include <Window.h>
-#include <PopUpMenu.h>
-#include <MenuItem.h>
-#include <String.h>
+
+#ifdef GNOME_BUILD 
+#  include "gnome/Window.h"
+#  include "gnome/PopUpMenu.h"
+#  include "gnome/MenuItem.h"
+#  include "gnome/CString.h"
+#elif BEOS_BUILD
+#  include <Window.h>
+#  include <PopUpMenu.h>
+#  include <MenuItem.h>
+#  include <String.h>
+#endif
 
 #include <stdio.h>
 

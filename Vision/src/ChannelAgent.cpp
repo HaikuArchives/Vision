@@ -23,8 +23,13 @@
  *                 Jamie Wilkinson
  */
 
-#include <ScrollView.h>
-#include <FilePanel.h>
+#ifdef GNOME_BUILD
+#  include "gnome/ScrollView.h"
+#  include "gnome/FilePanel.h"
+#elif BEOS_BUILD
+#  include <ScrollView.h>
+#  include <FilePanel.h>
+#endif
 
 #include <stdio.h>
 
