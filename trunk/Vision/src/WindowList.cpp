@@ -94,7 +94,7 @@ WindowList::MouseDown (BPoint myPoint)
     inputMsg->FindInt32 ("buttons", &mousebuttons);
     inputMsg->FindInt32 ("modifiers", &keymodifiers);
     
-    Select (selected, false);
+    Select (selected);
 
     if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
     && (keymodifiers & B_SHIFT_KEY)   == 0
@@ -105,7 +105,7 @@ WindowList::MouseDown (BPoint myPoint)
 			
       BListItem *item = ItemAt(IndexOf(myPoint));
       if (item && !item->IsSelected())
-        Select(IndexOf(myPoint), false);
+        Select(IndexOf(myPoint));
 
       myPopUp->Go (
         ConvertToScreen (myPoint),
