@@ -130,6 +130,13 @@ ServerAgent::~ServerAgent (void)
   
   status_t result;
   wait_for_thread (fSenderThread, &result);
+
+#ifdef BONE_BUILD
+  close (fSocket);
+#elif NETSERVER_BUILD
+  closesocket (fSocket);
+#endif
+//  wait_for_thread (fLoginThread, &result);
   
 /*
   while (fIgnoreNicks.CountItems() > 0)
@@ -543,11 +550,6 @@ ServerAgent::Establish (void *arg)
     }
   } catch (failToLock)
   {
-#ifdef BONE_BUILD
-    close (serverSock);
-#elif NETSERVER_BUILD
-    closesocket (serverSock);
-#endif
     vision_app->RemoveIdent (remoteIP.String());
     return B_ERROR;
   }
@@ -651,16 +653,7 @@ ServerAgent::Establish (void *arg)
     snooze(20000);
   }
   vision_app->RemoveIdent (remoteIP.String());
-// if the serverAgent has been destroyed, let Establish destroy the endpoint, otherwise
-// HandleReconnect() will.
-  if (!sMsgrE->IsValid())
-  {
-#ifdef BONE_BUILD
-    close (serverSock);
-#elif NETSERVER_BUILD
-    closesocket (serverSock);
-#endif
-  }
+
   return B_OK;
 }
 
@@ -723,8 +716,8 @@ ServerAgent::AsyncSendData (const char *cData)
   if (select(fServerSocket + 1, NULL, &wset, &eset, &tv) <= 0 || FD_ISSET(fServerSocket, &eset)
     || !FD_ISSET(fServerSocket, &wset))
   {
-    if (!fReconnecting && !fIsConnecting)
-      fMsgr.SendMessage (M_SERVER_DISCONNECT);
+//    if (!fReconnecting && !fIsConnecting)
+//      fMsgr.SendMessage (M_SERVER_DISCONNECT);
   }
   else
   {
@@ -1435,6 +1428,11 @@ ServerAgent::MessageReceived (BMessage *msg)
         // let the user know
         if (fIsConnected)
         {
+#ifdef BONE_BUILD
+          close (fSocket);
+#elif NETSERVER_BUILD
+          closesocket (fSocket);
+#endif
           fIsConnected = false;
           BString sAnnounce;
           sAnnounce += S_SERVER_DISCONNECT;
@@ -1631,17 +1629,14 @@ ServerAgent::MessageReceived (BMessage *msg)
         }
 
         fIsQuitting = true;
-
-        if (fClients.CountItems() != 0)
+        if (fClients.CountItems() > 0)
         {
-          Broadcast (new BMessage (M_CLIENT_QUIT));
+          Broadcast(msg);
   	      BMessenger listMsgr(fListAgent);
-          listMsgr.SendMessage(M_CLIENT_QUIT);
+          listMsgr.SendMessage(M_CLIENT_QUIT); 
         }
         else
-        {
           ClientAgent::MessageReceived(msg);
-        }
       }
       break;
 
@@ -1661,12 +1656,13 @@ ServerAgent::MessageReceived (BMessage *msg)
         deathchant.AddPointer ("agent", deadagent);
         deathchant.AddPointer ("item", deadagent->fAgentWinItem);
         vision_app->pClientWin()->PostMessage (&deathchant);
-        
+
         if (fIsQuitting && (fClients.CountItems() == 0) &&
            (dynamic_cast<ServerAgent *>(deadagent) != this))
         {
           fSMsgr.SendMessage (M_CLIENT_QUIT);
         }
+
       }
       break;
     

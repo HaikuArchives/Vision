@@ -601,13 +601,14 @@ ClientAgent::MessageReceived (BMessage *msg)
 
     case M_CLIENT_QUIT:
       {
-        if (fIsLogging)
+        if (fIsLogging &&
+            !(msg->HasBool("vision:shutdown") && msg->FindBool("vision:shutdown")))
         {
           BMessage logMessage (M_UNREGISTER_LOGGER);
           logMessage.AddString ("name", fId.String());
           fSMsgr.SendMessage(&logMessage);
         }
-
+        
         BMessage deathchant (M_CLIENT_SHUTDOWN);
         deathchant.AddPointer("agent", this);
         fSMsgr.SendMessage (&deathchant);
