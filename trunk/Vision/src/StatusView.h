@@ -54,7 +54,7 @@ class StatusView : public BView
     void                AddItem (StatusItem *, bool);
     StatusItem          *ItemAt (int32) const;
 
-    void                SetItemValue (int32, const char *);
+    void                SetItemValue (int32, const char *, bool = true);
     virtual void        Draw (BRect);
     void                Clear (void);
 

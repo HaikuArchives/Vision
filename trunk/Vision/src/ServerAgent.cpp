@@ -803,10 +803,11 @@ ServerAgent::MessageReceived (BMessage *msg)
 				"",
 				STATUS_ALIGN_LEFT),
 			true);
-			
-			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverHostName.String());
-			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000");
-			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
+			// The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
+			// We send true on the last SetItemValue().			
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverHostName.String(), false);
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
 		
 			break;
 		

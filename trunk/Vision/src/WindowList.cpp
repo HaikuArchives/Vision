@@ -602,6 +602,9 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
   if ((myStatus & WIN_NEWS_BIT) != 0)
     color = father->GetColor (C_WINLIST_NEWS);
 
+  else if ((myStatus & WIN_VOID_BIT) != 0)
+    color = father->GetColor (C_WINLIST_VOID);
+
   else if ((myStatus & WIN_NICK_BIT) != 0)
     color = father->GetColor (C_WINLIST_NICK);
 

@@ -80,7 +80,7 @@ SetupWindow::InitServerStartup (void)
   
   // temp
   BMessage newserver (M_MAKE_NEW_SERVER);
-  newserver.AddString ("hostname", "irc.exodusirc.net");
+  newserver.AddString ("hostname", "irc.elric.net");
   newserver.AddString ("port", "6667");
   newserver.AddString ("autoexec", "");
   newserver.AddBool   ("enidentd", true);
