@@ -109,7 +109,7 @@ ChannelAgent::Init (void)
 
   frame = Bounds();
   frame.left   = textScroll->Frame().right + 1;
-  frame.right -= B_V_SCROLL_BAR_WIDTH;
+  frame.right -= B_V_SCROLL_BAR_WIDTH + 1;
   frame.bottom = textScroll->Frame().bottom - 1;
 
   namesList = new NamesView (frame);

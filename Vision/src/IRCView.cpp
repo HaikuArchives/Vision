@@ -189,12 +189,12 @@ IRCView::BuildPopUp (void)
   
   myPopUp->AddSeparatorItem(); 
 
-  item = new BMenuItem("Copy", new BMessage (B_COPY));
+  item = new BMenuItem("Copy", new BMessage (B_COPY), 'C');
   item->SetEnabled (enablecopy);
   item->SetTarget (this);
   myPopUp->AddItem (item);
   
-  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL));
+  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL), 'A');
   item->SetEnabled (enableselectall);
   item->SetTarget (this);
   myPopUp->AddItem (item);
