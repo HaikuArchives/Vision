@@ -1,10 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.3-0721]
+[0.9.3-0723]
          * unbroke auto-rejoin on disconnect
          * fixed bug where channel name list would be incorrect
          * fixed typo in rejoin on kick string
+         * fixed crash bug when closing last item in window list
 
 [0.9.2-0719]
          * fixed name item color drawing
