@@ -144,7 +144,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     }
     
         
-    case RPL_WELCOME5:         // 005
+    case RPL_MYINFO:         // 005
     {
       // this numeric also serves as RPL_NNMAP on Newnet
 
@@ -211,6 +211,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_STATSQLINE:        // 217
     case RPL_STATSYLINE:        // 218
     case RPL_ENDOFSTATS:        // 219
+    case RPL_STATSBLINE:        // 220
     case RPL_DALSTATSE:         // 223
     case RPL_DALSTATSF:         // 224
     case RPL_DALSTATSN:         // 226
@@ -218,6 +219,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_STATSUPTIME:       // 242
     case RPL_STATSOLINE:        // 243
     case RPL_STATSHLINE:        // 244
+    case RPL_STATSXLINE:        // 247
     case RPL_STATSPLINE:        // 249
     case RPL_ADMINME:           // 256
     case RPL_ADMINLOC1:         // 257
@@ -239,6 +241,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_NOTEXTTOSEND:      // 412
     case ERR_ERRONEOUSNICKNAME: // 432
     case ERR_NICKCHANGETOOFAST: // 438
+    case ERR_TARGETCHANGETOOFAST: // 439
     case ERR_SUMMONDISABLED:    // 445
     case ERR_USERSDISABLED:     // 446
     case ERR_NEEDMOREPARMS:     // 461
@@ -247,6 +250,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_NOPRIVILEGES:      // 481
     case ERR_NOOPERHOST:        // 491
     case ERR_USERSDONTMATCH:    // 502
+    case RPL_DCCALLOWLIST:      // 618;
+    case RPL_DCCALLOWEND:       // 619
+    case RPL_DCCALLOW:          // 620
     {
       BString tempString (RestOfString (data, 4));
       tempString.RemoveFirst (":");
@@ -392,7 +398,12 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       return true;    
     }
     
-    case RPL_WHOISOPERATOR:     // 313
+    case RPL_WHOISADMIN:          // 308
+    case RPL_WHOISSERVICESADMIN:  // 309
+    case RPL_WHOISHELPOP:         // 310
+    case RPL_WHOISOPERATOR:       // 313
+    case RPL_WHOISUSERMODES:      // 615
+    case RPL_WHOISREALHOSTNAME:   // 616
     {
       BString theInfo (RestOfString (data, 5));
       theInfo.RemoveFirst (":");
@@ -1072,23 +1083,36 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       return true;    
     }
 
-    // Added support for Ultimate dependent numerics
-    // Added by Bjorn Oksholen
-    case RPL_WHOISUSERMODES:  // 615
-    case RPL_WHOISREALHOSTNAME:  // 616
     case RPL_WHOISREGISTEREDBOT:  // 617
     {
+      // conflicts with RPL_DCCALLOWCHANGE
       BString theNick (GetWord (data, 4)),
               theMessage (RestOfString (data, 5)),
-              tempString ("[x] ");
+              tempString;
+      theNick.RemoveFirst (":");
       theMessage.RemoveFirst (":");
-      tempString += theMessage;
-      tempString += "\n";
-
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
-      PostActive (&msg);
-      return true;    
+      theMessage.Append ("\n");
+      
+      switch (ircdtype)
+      {
+        case IRCD_ULTIMATE:
+        {
+          tempString += "[@] ";
+          tempString += theMessage;
+          BMessage msg (M_DISPLAY);
+          PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+          PostActive (&msg);
+          return true;    
+        }
+        default:
+        {
+          tempString += theNick;
+          tempString += " ";
+          tempString += theMessage;
+          Display (tempString.String(), 0);
+          return true;
+        }
+      }
     }
 
     

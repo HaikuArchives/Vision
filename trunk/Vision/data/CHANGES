@@ -3,6 +3,11 @@ http://vision.sourceforge.net
 
 [0.1.0324]
  2001-03-24
+   * Add support for numeric 439 (target change too fast)
+   * Add support for /dccallow (bahamut)
+   * Resolve conflict between /dccallow and /whois on bahamut and ultimate, both
+     use the same numeric for one of the replies.
+   * Add support for various bahamut whois numerics (308, 309, 310)
    * Do some reshuffling with locks in ServerAgent and Establish()
    * Fix a bug in MessageAgent where doing /me would change the WindowListItem's
      name to yours
