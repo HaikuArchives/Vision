@@ -386,6 +386,8 @@ VisionApp::LoadDefaults (int32 section)
           
         if (!visionSettings->HasString ("timestamp_format"))
           visionSettings->AddString ("timestamp_format", "[%H:%M]");
+        else
+          visionSettings->ReplaceString ("timestamp_format", "[%H:%M]");
         
         if (!visionSettings->HasBool ("log_enabled"))
           visionSettings->AddBool ("log_enabled", false);
