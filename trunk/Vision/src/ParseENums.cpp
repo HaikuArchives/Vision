@@ -344,13 +344,22 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
     case RPL_AWAY:             // 301
       {
+        BString theNick (GetWord(data, 4));
         BString tempString ("[x] "),
 	            theReason (RestOfString(data, 5));
         theReason.RemoveFirst(":");
         tempString += "Away: ";
         tempString += theReason;
         tempString += '\n';
-
+        
+        if (fRemoteAwayMessages.find(theNick) != fRemoteAwayMessages.end())
+        {
+          if (fRemoteAwayMessages[theNick] == theReason)
+          {
+            return true;
+          }
+        }
+        fRemoteAwayMessages[theNick] = theReason;
         BMessage msg (M_DISPLAY);
         PackDisplay (&msg, tempString.String(), C_WHOIS, C_BACKGROUND, F_SERVER);
         PostActive (&msg);
