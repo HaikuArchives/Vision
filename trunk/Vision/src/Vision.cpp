@@ -860,7 +860,7 @@ VisionApp::Identity (void *)
   &&  identPoint.Bind (113)     == B_OK) 
   { 
     identPoint.Listen (2048); 
-    while (1) 
+    while (!vision_app->ShuttingDown) 
     { 
       accepted = identPoint.Accept (-1); 
       if (accepted) 
