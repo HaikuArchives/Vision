@@ -66,18 +66,27 @@ const uint32 M_SERVER_CONNECTED						= 0x1043;
 const uint32 M_RESIZE_VIEW                          = 0x1044;
 const uint32 M_ABOUT_SCROLL                         = 0x1045;
 
-const uint32 M_PREVIOUS_CLIENT						= 0x1300;
-const uint32 M_NEXT_CLIENT							= 0x1301;
-const uint32 M_PREVIOUS_INPUT						= 0x1302;
-const uint32 M_NEXT_INPUT							= 0x1303;
-const uint32 M_SUBMIT								= 0x1304;
-const uint32 M_DISPLAY								= 0x1305;
-const uint32 M_SUBMIT_INPUT							= 0x1306;
-const uint32 M_CHANNEL_MSG							= 0x1307;
-const uint32 M_CHANGE_NICK							= 0x1308;
-const uint32 M_CHANNEL_MODES						= 0x1309;
-const uint32 M_LAG_CHANGED							= 0x1310;
-const uint32 M_CLIENT_QUIT							= 0x1311;
+const uint32 M_PREVIOUS_INPUT                       = 0x1046;
+const uint32 M_NEXT_INPUT                           = 0x1047;
+
+const uint32 M_UP_CLIENT	  					    = 0x1300;
+const uint32 M_DOWN_CLIENT							= 0x1301;
+const uint32 M_SMART_UP_CLIENT                      = 0x1302;
+const uint32 M_SMART_DOWN_CLIENT                    = 0x1303;
+const uint32 M_NETWORK_CLIENT                       = 0x1304;
+const uint32 M_PREVIOUS_CLIENT                      = 0x1305;
+const uint32 M_COLLAPSE_NETWORK                     = 0x1306;
+const uint32 M_EXPAND_NETWORK                       = 0x1307;
+const uint32 M_NETWORK_UP                           = 0x1308;
+const uint32 M_NETWORK_DOWN                         = 0x1309;
+const uint32 M_SUBMIT								= 0x1310;
+const uint32 M_DISPLAY								= 0x1311;
+const uint32 M_SUBMIT_INPUT							= 0x1312;
+const uint32 M_CHANNEL_MSG							= 0x1313;
+const uint32 M_CHANGE_NICK							= 0x1314;
+const uint32 M_CHANNEL_MODES						= 0x1315;
+const uint32 M_LAG_CHANGED							= 0x1316;
+const uint32 M_CLIENT_QUIT							= 0x1317;
 
 const uint32 M_MSG_WHOIS                            = 0x1400;
 

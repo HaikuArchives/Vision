@@ -64,6 +64,32 @@
 /// Begin BWindow functions
 //////////////////////////////////////////////////////////////////////////////
 
+class DynamicEditMenu : public BMenu
+{
+  public:
+    DynamicEditMenu (void);
+    virtual ~DynamicEditMenu (void);
+
+    virtual void AllAttached (void);
+};
+
+DynamicEditMenu::DynamicEditMenu(void)
+  : BMenu (S_CW_EDIT_MENU)
+{
+}
+
+DynamicEditMenu::~DynamicEditMenu(void)
+{
+}
+
+void
+DynamicEditMenu::AllAttached(void)
+{
+  BMenu::AllAttached();
+  vision_app->pClientWin()->SetEditStates();
+}
+
+
 ClientWindow::ClientWindow (BRect frame)
   : BWindow (
       frame,
@@ -133,111 +159,6 @@ ClientWindow::ScreenChanged (BRect screenframe, color_space mode)
 }
 
 void
-ClientWindow::HandleKey (BMessage *keyMsg)
-{
-  const char *bytes;
-  int32 mod;
-  
-  keyMsg->FindString ("bytes", &bytes);
-  keyMsg->FindInt32 ("modifiers", &mod);
-
-  if ((mod & B_OPTION_KEY)  == 0
-  &&  (mod & B_COMMAND_KEY) != 0
-  &&  (mod & B_CONTROL_KEY) == 0
-  &&  (mod & B_SHIFT_KEY) != 0)
-  {
-    /////////////////////
-    /// Shift+Command ///
-    /////////////////////
-    switch (bytes[0])
-    {
-      case '0':
-      case B_INSERT:
-        // switch to last active agent
-        pWindowList()->SelectLast();
-        break;
-      
-      case B_UP_ARROW:
-      case B_LEFT_ARROW: // baxter muscle memory
-      case ',': // bowser muscle memory
-        pWindowList()->ContextSelectUp();
-        break;
-      
-      case B_DOWN_ARROW: //
-      case B_RIGHT_ARROW: // baxter muscle memory
-      case '.': // bowser muscle memory
-        pWindowList()->ContextSelectDown();
-        break;
-      
-      case 'U':
-        pWindowList()->MoveCurrentUp();
-        break;
-        
-      case 'D':
-        pWindowList()->MoveCurrentDown();
-        break;
-    }
-  }
-
-  else if ((mod & B_OPTION_KEY)  == 0
-       &&  (mod & B_COMMAND_KEY) != 0
-       &&  (mod & B_CONTROL_KEY) == 0
-       &&  (mod & B_SHIFT_KEY) == 0)
-  {
-    ///////////////
-    /// Command ///
-    ///////////////
-    switch (bytes[0])
-    {
-      case B_UP_ARROW:
-      case ',': // bowser muscle memory
-        // move up one agent
-        pWindowList()->Select (pWindowList()->CurrentSelection() - 1);
-        pWindowList()->ScrollToSelection();
-        break;
-
-      case B_DOWN_ARROW:
-      case '.': // bowser muscle memory
-        // move down one agent
-        pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
-        pWindowList()->ScrollToSelection();
-        break;
-        
-      case B_LEFT_ARROW: // collapse current server (if expanded)
-        pWindowList()->CollapseCurrentServer();
-        break;
-
-      case B_RIGHT_ARROW: // expand current server (if collapsed)
-        pWindowList()->ExpandCurrentServer();
-        break;
-
-      case '/': // bowser muscle memory
-        // move to the agents parent ServerAgent
-        // XXX move to WindowList ?
-        pWindowList()->SelectServer();
-        break;
-    }
-  }
-}
-
-void
-ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
-{
-  switch (msg->what)
-  {
-    case B_KEY_DOWN:
-      {
-        HandleKey (msg);
-        BWindow::DispatchMessage (msg, handler);
-      }
-      break;
-    
-    default:
-      BWindow::DispatchMessage (msg, handler);
-  }
-}
-
-void
 ClientWindow::AddMenu (BMenu *menu)
 {
   if (menu != NULL)
@@ -256,7 +177,70 @@ ClientWindow::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
   {
+    // this is somewhat annoying but these are needed in addition to the ones in the input filter since the menu items
+    // can't send the keyboard accelerators and only send the message ; annoying code duplication but oh well
+    case M_UP_CLIENT:
+      {
+        pWindowList()->Select (pWindowList()->CurrentSelection() - 1);
+        pWindowList()->ScrollToSelection();
+      }
+      break;
+
+    case M_DOWN_CLIENT:
+      {
+        pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
+        pWindowList()->ScrollToSelection();
+      }
+      break;
     
+    case M_SMART_UP_CLIENT:
+      {
+        pWindowList()->ContextSelectUp();
+      }
+      break;
+
+    case M_SMART_DOWN_CLIENT:
+      {
+        pWindowList()->ContextSelectDown();
+      }
+      break;
+      
+    case M_NETWORK_CLIENT:
+      {
+        pWindowList()->SelectServer();
+      }
+      break;
+
+    case M_PREVIOUS_CLIENT:
+      {
+        pWindowList()->SelectLast();
+      }
+      break;
+      
+    case M_NETWORK_UP:
+      {
+        pWindowList()->MoveCurrentUp();
+      }
+      break;
+
+    case M_NETWORK_DOWN:
+      {
+        pWindowList()->MoveCurrentDown();
+      }
+      break;
+
+    case M_COLLAPSE_NETWORK:
+      {
+        pWindowList()->CollapseCurrentServer();
+      }
+      break;
+    
+    case M_EXPAND_NETWORK:
+      {
+        pWindowList()->ExpandCurrentServer();
+      }
+      break;
+      
     case M_CW_UPDATE_STATUS:
       {
          WindowListItem *item (NULL),
@@ -298,7 +282,6 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_STATUS_CLEAR:
       {
         fStatus->Clear();
-        SetEditStates();
       }
       break;
     
@@ -479,6 +462,7 @@ ClientWindow::GetTopServer (WindowListItem *request) const
   return target;
 }
 
+// TODO: move this to ClientAgent and pass it the menu to update as a parameter
 void
 ClientWindow::SetEditStates (void)
 {
@@ -487,33 +471,8 @@ ClientWindow::SetEditStates (void)
   if (item != NULL)
   {
     ClientAgent *agent (dynamic_cast<ClientAgent *>(item->pAgent()));
-    VTextControl *input (NULL);
     if (agent != NULL)
-      input = agent->pInput();
-    BMenuItem *menuItem (fEdit->FindItem(S_CW_EDIT_CUT));
-    if (input != NULL)
-      menuItem->SetTarget (input->TextView());
-    int32 start (0), finish (0);
-    if (input != NULL)
-      input->TextView()->GetSelection(&start, &finish);
-    menuItem->SetEnabled (start != finish);
-    menuItem = fEdit->FindItem(S_CW_EDIT_COPY);
-    menuItem->SetEnabled (start != finish);
-    if (input != NULL)
-      menuItem->SetTarget (input->TextView());
-    menuItem = fEdit->FindItem(S_CW_EDIT_PASTE);
-    if (input != NULL)
-      menuItem->SetTarget (input->TextView());
-    BClipboard clipboard("system");
-    BMessage *clip ((BMessage *)NULL);
-    if (clipboard.Lock()) {
-      if ((clip = clipboard.Data()))
-      if (clip->HasData ("text/plain", B_MIME_TYPE))
-        menuItem->SetEnabled(true);
-      else
-        menuItem->SetEnabled(false);
-      clipboard.Unlock();
-    }
+      agent->SetEditStates(fEdit);
   }
 }
 
@@ -645,23 +604,36 @@ ClientWindow::Init (void)
   item->SetTarget (vision_app);
   fMenuBar->AddItem (fServer);
   
-  
   // Edit menu
-  fEdit = new BMenu (S_CW_EDIT_MENU);
+  fEdit = new DynamicEditMenu ();
 
   fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_CUT, new BMessage (B_CUT), 'X'));
   fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_COPY, new BMessage (B_COPY), 'C'));
   fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_PASTE, new BMessage (B_PASTE), 'V'));
-
-  RemoveShortcut('X', B_COMMAND_KEY);
-  RemoveShortcut('C', B_COMMAND_KEY);
-  RemoveShortcut('V', B_COMMAND_KEY);
- 
+  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_SELECT_ALL, new BMessage (B_SELECT_ALL), 'A', B_OPTION_KEY));
   fMenuBar->AddItem (fEdit);
   
   // Window menu
   fWindow = new BMenu (S_CW_WINDOW_MENU);
   
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_UP, new BMessage (M_UP_CLIENT), B_UP_ARROW));
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_DOWN, new BMessage (M_DOWN_CLIENT), B_DOWN_ARROW));
+
+  // bowser muscle memory
+  AddShortcut(',', B_COMMAND_KEY, new BMessage (M_UP_CLIENT));
+  AddShortcut('.', B_COMMAND_KEY, new BMessage (M_DOWN_CLIENT));
+
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_SM_UP, new BMessage (M_SMART_UP_CLIENT), B_UP_ARROW, B_SHIFT_KEY));
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_SM_DOWN, new BMessage (M_SMART_DOWN_CLIENT), B_DOWN_ARROW, B_SHIFT_KEY));
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_NETWORK, new BMessage (M_NETWORK_CLIENT), '/'));
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_PREVIOUS, new BMessage (M_PREVIOUS_CLIENT), '0', B_SHIFT_KEY));
+  AddShortcut(B_INSERT, B_SHIFT_KEY, new BMessage (M_PREVIOUS_CLIENT));
+  fWindow->AddSeparatorItem();
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_NET_UP, new BMessage (M_NETWORK_UP), 'U', B_SHIFT_KEY));
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_NET_DOWN, new BMessage (M_NETWORK_DOWN), 'D', B_SHIFT_KEY));
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_COLLAPSE, new BMessage (M_COLLAPSE_NETWORK), B_LEFT_ARROW));
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_EXPAND, new BMessage (M_EXPAND_NETWORK), B_RIGHT_ARROW));
+  fWindow->AddSeparatorItem();
   fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_PART, new BMessage (M_CW_ALTP), 'P'));
   
   item->SetTarget (this);

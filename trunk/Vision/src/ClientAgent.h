@@ -32,6 +32,7 @@
 class BScrollView;
 class VTextControl;
 
+class BMenu;
 class BPopUpMenu;
 class ClientAgentInputFilter;
 class RunView;
@@ -64,14 +65,13 @@ class ClientAgent : public BView
     virtual void                DetachedFromWindow (void);
     virtual void                Show (void);
 
-    VTextControl                *pInput() const;
-
     virtual void                AddMenuItems (BPopUpMenu *) = 0;
 
     float                       ScrollPos(void) const;
     void                        SetScrollPos(float);
     void                        ScrollRange(float *, float *) const;
     void                        SetServerName(const char *);
+    void                        SetEditStates(BMenu *);
     
     bool                        ParseCmd (const char *);
     virtual void                TabExpansion (void);
