@@ -31,7 +31,7 @@
 #  include "gnome/String.h"
 #elif BEOS_BUILD
 #  include <ListItem.h>
-#  include <ListView.h>
+#  include <OutlineListView.h>
 #  include <String.h>
 #endif
 
@@ -77,7 +77,7 @@ class WindowListItem : public BListItem
 };
 
 
-class WindowList : public BListView
+class WindowList : public BOutlineListView
 {
    public:
                                     WindowList (BRect);

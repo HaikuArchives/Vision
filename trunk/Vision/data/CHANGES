@@ -23,6 +23,7 @@ http://vision.sourceforge.net
          * window list is now resizable
          * nick list is now resizable
          * fixed keymap bugs
+         * made servers collapsible (very experimental, may still have bugs)
 
 [0.3.0828]
 2001-08-28

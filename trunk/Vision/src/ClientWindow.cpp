@@ -260,7 +260,7 @@ ClientWindow::MessageReceived (BMessage *msg)
            return;
          }
        
-         if (!pWindowList()->HasItem (item))
+         if (!pWindowList()->FullListHasItem (item))
            return;
        
          if (msg->HasBool("hidden"))
