@@ -305,8 +305,8 @@ MessageAgent::DCCIn (void *arg)
                 state (0);
 
           convert_to_utf8 (
-            B_ISO1_CONVERSION,
-            inputBuffer.String(), 
+            vision_app->GetInt32("encoding"),
+	    inputBuffer.String(), 
             &length,
             convBuffer,
             &destLength,
@@ -449,6 +449,20 @@ MessageAgent::DCCOut (void *arg)
         {
           inputBuffer.RemoveLast ("\r");
           inputBuffer = FilterCrap (inputBuffer.String(), false);
+
+	  char convBuffer[2048];
+	  memset (convBuffer, 0, sizeof(convBuffer));
+          int32 length (inputBuffer.Length()),
+            destLength (sizeof(convBuffer)),
+	    state (0);
+	    
+	    convert_to_utf8 (
+              vision_app->GetInt32("encoding"),					              inputBuffer.String(), 
+              &length,
+              convBuffer,
+	      &destLength,
+	      &state);
+	  
           BMessage dispMsg (M_CHANNEL_MSG);
           dispMsg.AddString ("msgz", inputBuffer.String());
           mMsgr.SendMessage (&dispMsg);
