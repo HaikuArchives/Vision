@@ -97,7 +97,19 @@ MessageAgent::MessageReceived (BMessage *msg)
       break;
 
     }
-      
+
+	case M_CLIENT_QUIT:
+	{
+	  	BMessage deathchant (M_OBITUARY);
+	  	deathchant.AddPointer ("agent", this);
+	  	deathchant.AddPointer ("item", agentWinItem);
+	  	vision_app->pClientWin()->PostMessage (&deathchant);
+	  
+	  	deathchant.what = M_CLIENT_SHUTDOWN;
+	  	sMsgr.SendMessage (&deathchant);
+	  break;
+	}
+     
     case M_STATUS_ADDITEMS:
     {
       vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (

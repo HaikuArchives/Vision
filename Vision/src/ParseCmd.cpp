@@ -652,7 +652,6 @@ ClientAgent::ParseCmd (const char *data)
 		return true;
 	}
 	
-	#if 0
 	if (firstWord == "/MSG")
 	{
 		BString theRest (RestOfString (data, 3));
@@ -661,9 +660,9 @@ ClientAgent::ParseCmd (const char *data)
 		if (theRest != "-9z99"
 		&&  myNick.ICompare (theNick))
 		{
-			if (vision_app->GetMessageOpenState())
+			if (!vision_app->GetBool ("messageactiveagent"))
 			{
-				BMessage msg (OPEN_MWINDOW);
+				BMessage msg (M_OPEN_MSGAGENT);
 				BMessage buffer (M_SUBMIT);
 	
 				buffer.AddString ("input", theRest.String());
@@ -674,7 +673,6 @@ ClientAgent::ParseCmd (const char *data)
 			else
 			{
 				BString tempString;
-				
 				tempString << "[M]-> " << theNick << " > " << theRest << "\n";
 				Display (tempString.String(), 0);
 	
@@ -689,7 +687,6 @@ ClientAgent::ParseCmd (const char *data)
 		}
 		return true;
 	}
-	#endif
 	
 	if (firstWord == "/NEWSERVER")
 	{

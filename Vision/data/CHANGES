@@ -3,6 +3,8 @@ http://vision.sourceforge.net
 
 [0.1.0322]
  2001-03-22
+   * /msg now works decently
+   * MessageAgent responds to M_CLIENT_QUIT now
    * Tweak some spacing/margin issues with the IRCView and Input controls
      on the ClientWindow
    * MessageAgent is working for the most part, still needs some more
