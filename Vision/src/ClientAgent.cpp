@@ -86,14 +86,14 @@ ClientAgent::ClientAgent (
     id_,
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW),
+  fSMsgr (sMsgr_),
   fActiveTheme (vision_app->ActiveTheme()),
   fId (id_),
   fServerName (serverName_),
   fMyNick (myNick_),
   fTimeStampState (vision_app->GetBool ("timestamp")),
   fIsLogging (vision_app->GetBool ("log_enabled")),
-  fFrame (frame_),
-  fSMsgr (sMsgr_)
+  fFrame (frame_)
 {
   fMyLag = "0.000";
   Init();
