@@ -129,7 +129,7 @@ WindowList::MouseDown (BPoint myPoint)
     {
       // since Expand/Collapse are not virtual, override them by taking over processing
       // the collapse triangle logic manually
-      WindowListItem *item ((WindowListItem *)FullListItemAt (selected));
+      WindowListItem *item ((WindowListItem *)ItemAt (selected));
       {
         if (item && (item->Type() == WIN_SERVER_TYPE))
         {
@@ -668,7 +668,6 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       if ((strcasecmp (name, item->Name().String()) == 0)
       &&  (item->Sid() == serverId)) 
       {
-        printf("found it\n");
         dynamic_cast<ClientAgent *>(newagent)->agentWinItem = item;
         break;      
       }
