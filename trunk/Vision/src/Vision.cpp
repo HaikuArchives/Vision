@@ -94,12 +94,13 @@ main (void)
 
 VisionApp::VisionApp (void)
   : BApplication ("application/x-vnd.Ink-Vision"),
-      fAboutWin (0),
-      fSetupWin (0),
-      fClientWin (0),
-      fPrefsWin (0),
-      fNetWin (0),
-      fDccFileWin (0),
+      fAboutWin (NULL),
+      fSetupWin (NULL),
+      fClientWin (NULL),
+      fPrefsWin (NULL),
+      fNetWin (NULL),
+      fDccFileWin (NULL),
+      fVisionSettings (NULL),
       fIdentThread (-1),
       fWinThread (-1),
       fIdentSocket (-1),
@@ -119,8 +120,6 @@ VisionApp::VisionApp (void)
 
 VisionApp::~VisionApp (void)
 {
-  SaveSettings();
-  delete fVisionSettings;
   int32 i (0);
   for (; i < MAX_FONTS; i++)
     delete fClientFont[i];
@@ -650,6 +649,13 @@ VisionApp::QuitRequested (void)
   // give our child threads a chance to die gracefully
   while (ThreadStates() > 2)
     snooze (100000);
+
+  if (fSettingsLoaded)
+  {
+    SaveSettings();
+    delete fVisionSettings;
+  }
+
 
   return true;
 }
