@@ -485,7 +485,7 @@ VisionApp::GetThreadName (void)
   tnames[23] = "buttercup"; // shes the toughest fighter
                             // Powerpuffs save the day!
     
-  int rnd (rand() % 20);
+  int rnd (rand() % 23);
   buffer = tnames[rnd];
     
   return buffer.String();
