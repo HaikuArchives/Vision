@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.3.0822]
+2001-08-22
+		* fixed stupid error with not updating URL fonts, thanks tic for catching that.
+
 [0.3.0802]
 2001-08-02
         * fixed status view nick update bug, thanks to EnochRoot
