@@ -95,6 +95,8 @@ class RunView : public BView
 	bool 				resizedirty;
 	bool				fontsdirty;
 	BPopUpMenu			*myPopUp;
+	BPoint				lastClick;
+	bigtime_t			lastClickTime;
 
 	bool					RecalcScrollBar (bool constrain);
 	void					ResizeRecalc (void);
@@ -124,6 +126,7 @@ class RunView : public BView
 
 	void					CheckURLCursor (BPoint);
 	void					BuildPopUp (void);
+	bool				WasDoubleClick (BPoint);
 	
 	virtual void		MouseDown (BPoint);
 	virtual void		MouseMoved (BPoint, uint32, const BMessage *);
