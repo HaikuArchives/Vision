@@ -96,6 +96,14 @@ ClientWindow::QuitRequested (void)
 }
 
 void
+ClientWindow::FrameMoved (BPoint origin)
+{
+  BWindow::FrameMoved (origin);
+  vision_app->SetRect ("windowDockRect", fCwDock->Bounds());
+  vision_app->SetRect ("clientWinRect", Frame());
+}
+
+void
 ClientWindow::FrameResized (float width, float height)
 {
   BWindow::FrameResized (width, height);
