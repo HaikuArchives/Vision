@@ -154,7 +154,6 @@ IRCView::BuildPopUp (void)
     enablelookup = true; // has a selection less than 32 chars long
     char *stringchar (querystring.LockBuffer(384));
     GetText (selstart, (selfinish - selstart), stringchar);
-    printf (": [%s]\n", stringchar);
     querystring.UnlockBuffer(-1);
   }
   
