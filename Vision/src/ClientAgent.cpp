@@ -71,6 +71,7 @@ ClientAgent::ClientAgent (
   serverName (serverName_),
   myNick (myNick_),
   timeStampState (vision_app->GetBool ("timestamp")),
+  isLogging (vision_app->GetBool ("log_enabled")),
   frame (frame_)
 {
   Init();
@@ -95,6 +96,7 @@ ClientAgent::ClientAgent (
   serverName (serverName_),
   myNick (myNick_),
   timeStampState (vision_app->GetBool ("timestamp")),
+  isLogging (vision_app->GetBool ("log_enabled")),
   frame (frame_),
   sMsgr (sMsgr_)
 {
@@ -104,6 +106,8 @@ ClientAgent::ClientAgent (
 
 ClientAgent::~ClientAgent (void)
 {
+  if (logger)
+    delete logger;
   delete agentWinItem;
 }
 
@@ -215,6 +219,10 @@ ClientAgent::Init (void)
     B_NO_BORDER);
   AddChild (textScroll);
 
+  if (isLogging)
+    logger = new Logger (id, serverName);
+  else
+    logger = NULL;
 }
 
 void
@@ -377,28 +385,25 @@ ClientAgent::Display (
   const BFont *font,
   bool timeStamp)
 {
-  #if 0
-  if (isLogging)
-  {
-    BString printbuf;
-    if (timeStamp)
-      printbuf += TimeStamp().String();
-
-    printbuf << buffer;
-
-    off_t len = strlen (printbuf.String());
-    logFile.Write (printbuf.String(), len);
-  }
-  #endif
 
   timeStampState = vision_app->GetBool ("timestamp");
 
+  if (isLogging)
+  {
+    BString printbuf;
+    if (timeStamp && timeStampState)
+      printbuf += TimeStamp().String();
+        
+    printbuf += buffer;
+    logger->Log (printbuf.String());
+  }
+  
   if (timeStamp && timeStampState)
     text->DisplayChunk (
       TimeStamp().String(),
       &textColor,
       &myFont);
-
+  
   text->DisplayChunk (
     buffer,
     color ? color : &textColor,
