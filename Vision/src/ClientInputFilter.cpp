@@ -220,22 +220,6 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 				break;
 			}
 
-			case B_HOME:
-			{
-				window->text->ScrollTo(0.0, 0.0);
-				result = B_SKIP_MESSAGE;
-				break;
-			}
-			
-			case B_END:
-			{
-				float min, max;
-				window->textScroll->ScrollBar(B_VERTICAL)->GetRange(&min, &max);
-				window->text->ScrollTo(0.0, max);
-				result = B_SKIP_MESSAGE;
-				break;
-			}
-	
 			case '\t': // tab, skip
 			{
 				window->TabExpansion();
@@ -268,6 +252,22 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 	   			HandleDrop (data.String());
 	   			result = B_SKIP_MESSAGE;
 	   			break;
+			}
+
+			case B_HOME:
+			{
+				window->text->ScrollTo(0.0, 0.0);
+				result = B_SKIP_MESSAGE;
+				break;
+			}
+			
+			case B_END:
+			{
+				float min, max;
+				window->textScroll->ScrollBar(B_VERTICAL)->GetRange(&min, &max);
+				window->text->ScrollTo(0.0, max);
+				result = B_SKIP_MESSAGE;
+				break;
 			}
 		}
 	}

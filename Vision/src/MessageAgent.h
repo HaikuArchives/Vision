@@ -52,6 +52,11 @@ class MessageAgent : public ClientAgent
     virtual void         Parser (const char *);
     virtual void         DroppedFile (BMessage *);
     virtual void         TabExpansion (void);
+    
+    virtual void         ChannelMessage (const char *,
+                                         const char * = 0,
+                                         const char * = 0,
+                                         const char * = 0);
 
 
   private:

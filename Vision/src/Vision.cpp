@@ -588,49 +588,47 @@ const char *
 VisionApp::GetThreadName (void)
 {
   // random names for the connection thread
-  BString buffer;
-  BString tnames[31];
-    
-  tnames[0]  = "gummi_bear_orgy"; // pictures will be taken and uploaded
+  static BString tnames[] = {
+    "gummi_bear_orgy", // pictures will be taken and uploaded
                                   // via the personal_info_uploader thread.
-  tnames[1]  = "complimentary_tote_bag"; // mmmm... free stuff
-  tnames[2]  = "cheating_at_solitaire"; 
-  tnames[3]  = "impatient";
-  tnames[4]  = "personal_info_uploader";
-  tnames[5]  = "keystroke_logger"; 
-  tnames[6]  = "rc5_cracker";
-  tnames[7]  = "seti_at_home"; 
-  tnames[8]  = "stare_girl"; // can you out stare stare girl?
-  tnames[9]  = "baron_arnold"; // ba owns j00
-  tnames[10] = "nsa_pingflood";
-  tnames[11] = "random_death_threat_emailer";
-  tnames[12] = "marketing_research_assistant";
-  tnames[13] = "beos_stock_monitor";
-  tnames[14] = "stack_underflow";
-  tnames[15] = "the_matrix_has_you";
-  tnames[15] = "follow_the_white_rabbit";
-  tnames[16] = "psycho psycho_killer killer";
-  tnames[17] = "a_s_l_check_msg_on_join";
-  tnames[18] = "wudan_training"; // http://us.imdb.com/Title?0190332
-  tnames[19] = "peer_reset_thread";
-  tnames[20] = "chocoak_is_my_hero";
-  tnames[21] = "blossom";   // commander and the leader
-  tnames[22] = "bubbles";   // the joy and the laughter 
-  tnames[23] = "buttercup"; // shes the toughest fighter
-                            // Powerpuffs save the day!
-  tnames[24] = "youlooklikeyouneedamonkey";
-  tnames[25] = "wegotdeathstar";   // we got def star! we got def star!
-  tnames[26] = "whatcha_gonna_do";  // uh oh!
-  tnames[27] = "lookit! a ball!";
-  tnames[28] = "5038";
-  tnames[29] = "talk_to_the_hand";
-  tnames[30] = "manah, manah!";
-  tnames[31] = "magic 8-nipple";
+    "complimentary_tote_bag", // mmmm... free stuff
+    "cheating_at_solitaire", 
+    "impatient",
+    "personal_info_uploader",
+    "keystroke_logger",
+    "rc5_cracker",
+    "seti_at_home",
+    "stare_girl", // can you out stare stare girl?
+    "baron_arnold", // ba owns j00
+    "nsa_pingflood",
+    "random_death_threat_emailer",
+    "marketing_research_assistant",
+    "beos_stock_monitor",
+    "stack_underflow",
+    "the_matrix_has_you",
+    "follow_the_white_rabbit",
+    "psycho psycho_killer killer",
+    "a_s_l_check_msg_on_join",
+    "wudan_training", // http://us.imdb.com/Title?0190332
+    "peer_reset_thread",
+    "chocoak_is_my_hero",
+    "blossom",   // commander and the leader
+    "bubbles",   // the joy and the laughter 
+    "buttercup", // shes the toughest fighter
+                 // Powerpuffs save the day!
+    "youlooklikeyouneedamonkey",
+    "wegotdeathstar",   // we got def star! we got def star!
+    "whatcha_gonna_do",  // uh oh!
+    "lookit! a ball!",
+    "5038",
+    "talk_to_the_hand",
+    "manah, manah!",
+    "magic 8-nipple"
+  };
   
   int rnd (rand() % 31);
-  buffer = tnames[rnd];
-    
-  return buffer.String();
+ 
+  return tnames[rnd].String();
 }
 
 void

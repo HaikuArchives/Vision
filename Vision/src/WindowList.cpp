@@ -320,7 +320,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
   int32 itemindex;
   int32 currentindex (CurrentSelection());
   
-  WindowListItem *newagentitem (new WindowListItem(name, serverId, winType, WIN_NORMAL_BIT, agent));
+  WindowListItem *newagentitem (new WindowListItem (name, serverId, winType, WIN_NORMAL_BIT, agent));
   AddItem (newagentitem);
   BView *newagent;
   newagent = newagentitem->pAgent();
@@ -529,6 +529,7 @@ void
 WindowListItem::SetName (const char *name)
 {
   myName = name;
+  vision_app->pClientWin()->pWindowList()->Invalidate();
 }
 
 void
