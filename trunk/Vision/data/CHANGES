@@ -1,5 +1,8 @@
 Vision
 http://vision.sourceforge.net
+[0.9.4-0818]
+         * fixed deadlock in DCC Transfers window
+         * fixed memleak in logger
 
 [0.9.3-0817]
          * unbroke auto-rejoin on disconnect
