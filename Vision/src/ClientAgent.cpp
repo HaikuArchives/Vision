@@ -908,7 +908,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         BString lookup;
         msg->FindString ("string", &lookup);
         lookup = StringToURI (lookup.String());
-        lookup.Prepend ("http://www.dictionary.com/cgi-bin/dict.pl?term=");
+        lookup.Prepend ("http://www.m-w.com/cgi-bin/dictionary?va=");
         vision_app->LoadURL (lookup.String());
       }
       break;

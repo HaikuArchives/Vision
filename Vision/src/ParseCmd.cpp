@@ -140,8 +140,6 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
-
-
   if (firstWord == "/AWAY")
   {
     BString theReason (RestOfString (data, 2)),
@@ -1095,7 +1093,7 @@ ClientAgent::ParseCmd (const char *data)
       fMsgr.SendMessage (&lookup);
     }
     else
-      vision_app->LoadURL ("http://www.dictionary.com");
+      vision_app->LoadURL ("http://www.m-w.com");
     return true;
   }
 
