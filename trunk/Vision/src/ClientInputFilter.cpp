@@ -408,6 +408,11 @@ ClientInputFilter::HandleDrop (const char *buffer)
     ++lines;
   }
 
+  int32 start, finish;
+  window->input->TextView()->GetSelection (&start, &finish);
+  msg.AddInt32 ("selstart", start);
+  msg.AddInt32 ("selend", finish);
+
   int32 result (0);
 
   if (lines > 1)
@@ -430,16 +435,14 @@ ClientInputFilter::HandleDrop (const char *buffer)
       B_WIDTH_FROM_WIDEST,
       B_OFFSET_SPACING,
       B_WARNING_ALERT));
-
-    result = alert->Go();
+      
+    BMessage *invokeMsg (new BMessage (msg));
+    BInvoker *invoker (new BInvoker (invokeMsg, msgr));
+    invokeMsg->AddPointer ("invoker", invoker);
+    result = alert->Go (invoker);
   }
 
-  int32 start, finish;
-  window->input->TextView()->GetSelection (&start, &finish);
-  msg.AddInt32 ("selstart", start);
-  msg.AddInt32 ("selend", finish);
-
-  if (result || lines == 1)
+  if ((result > 0) || lines == 1)
   {
     msg.AddBool ("lines", result == 1);
     msgr.SendMessage (&msg);

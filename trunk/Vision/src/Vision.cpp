@@ -50,6 +50,8 @@ class VisionApp * vision_app;
 
 #include "TestScript.h"
 
+static BLocker threadNameLock;
+
 // And so it begins....
 int
 main (void)
@@ -713,6 +715,7 @@ VisionApp::SetBool (const char *settingName, bool value)
 const char *
 VisionApp::GetThreadName (int thread_type)
 {
+  threadNameLock.Lock();
   // random names for the connection thread
   static BString tnames[] = {
     /*  0 */ "gummi_bear_orgy",
@@ -782,6 +785,8 @@ VisionApp::GetThreadName (int thread_type)
   }
   
   output += tnames[rnd];
+  
+  threadNameLock.Unlock();
   
   return output.String();
 }
