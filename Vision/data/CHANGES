@@ -3,5 +3,7 @@ http://vision.sourceforge.net
 
 [0.1.0315]
  2001-03-18
+   * Fix bug with \n's in StringToURI()
+   * Rename RelativePath() to RelToAbsPath()
    * Changed some BString <<'s to +='s in ParseENums (faster)
    
