@@ -38,7 +38,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.bottom = checkboxRect.top;
   msg.AddString ("setting", "versionParanoid");
   versionParanoid = new BCheckBox (checkboxRect, "version Paranoid",
-    "Show OS information in version reply",
+    S_PREFAPP_VERSION_PARANOID,
     new BMessage (msg));
   versionParanoid->SetValue ((!vision_app->GetBool ("versionParanoid")) ? B_CONTROL_ON : B_CONTROL_OFF);
   versionParanoid->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -51,7 +51,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.top += versionParanoid->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "catchAltW");
   catchAltW = new BCheckBox (checkboxRect, "catch AltW",
-    "Cmd+W closes Vision",
+    S_PREFAPP_CMDW,
     new BMessage (msg));
   catchAltW->SetValue ((!vision_app->GetBool ("catchAltW")) ? B_CONTROL_ON : B_CONTROL_OFF);
   catchAltW->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -64,7 +64,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.top += catchAltW->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "timestamp");
   timeStamp = new BCheckBox (checkboxRect, "timeStamp",
-    "Show timestamps in IRC window",
+    S_PREFAPP_SHOW_TIMESTAMP,
     new BMessage (msg));
   timeStamp->SetValue ((vision_app->GetBool ("timestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
   timeStamp->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -77,7 +77,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.top += timeStamp->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "log_enabled");
   logEnabled = new BCheckBox (checkboxRect, "logEnabled",
-    "Enable logging",
+    S_PREFAPP_USE_LOGGING,
     new BMessage (msg));
   logEnabled->SetValue ((vision_app->GetBool ("log_enabled")) ? B_CONTROL_ON : B_CONTROL_OFF);
   logEnabled->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -90,7 +90,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.top += logEnabled->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "log_filetimestamp");
   logFileTimestamp = new BCheckBox (checkboxRect, "logFileTimestamp",
-    "Append timestamp to log filenames",
+    S_PREFAPP_LOG_TIMESTAMP,
     new BMessage (msg));
   logFileTimestamp->SetValue (vision_app->GetBool (("log_filetimestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
   logFileTimestamp->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -104,7 +104,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.top += logFileTimestamp->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "stripcolors");
   stripColors = new BCheckBox (checkboxRect, "stripcolors",
-    "Strip mIRC Colors",
+    S_PREFAPP_STRIP_MIRC,
     new BMessage (msg));
   stripColors->SetValue ((vision_app->GetBool ("stripcolors")) ? B_CONTROL_ON : B_CONTROL_OFF);
   stripColors->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -117,7 +117,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.top += stripColors->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "Newbie Spam Mode");
   spamMode = new BCheckBox (checkboxRect, "newbiespammode",
-    "Warn when multiline pasting",
+    S_PREFAPP_WARN_MULTILINE,
     new BMessage (msg));
   spamMode->SetValue ((vision_app->GetBool ("Newbie Spam Mode")) ? B_CONTROL_ON : B_CONTROL_OFF);
   spamMode->MoveBy(be_plain_font->StringWidth("S"), 0);

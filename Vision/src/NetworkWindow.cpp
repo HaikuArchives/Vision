@@ -33,7 +33,7 @@
 NetworkWindow::NetworkWindow (void)
   : BWindow (
       BRect (50, 50, 500, 350),
-      "Network Setup",
+      S_NETWORK_WINDOW_TITLE,
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
@@ -61,7 +61,7 @@ NetworkWindow::QuitRequested (void)
 NetPrefServerWindow::NetPrefServerWindow (BHandler *target)
   : BWindow (
       BRect (50, 50, 350, 250),
-      "Servers",
+      S_SERVERPREFS_TITLE,
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {

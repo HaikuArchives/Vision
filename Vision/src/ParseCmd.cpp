@@ -234,7 +234,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /ctcp: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /ctcp: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -289,14 +289,14 @@ ClientAgent::ParseCmd (const char *data)
           }
         }
         BFilePanel *myPanel (new BFilePanel);
-        BString myTitle ("Sending a file to ");
+        BString myTitle (S_PCMD_SEND_TITLE);
 
         myTitle.Append (theNick);
         myPanel->Window()->SetTitle (myTitle.String());
 
         myPanel->SetMessage (msg);
 
-        myPanel->SetButtonLabel (B_DEFAULT_BUTTON, "Send");
+        myPanel->SetButtonLabel (B_DEFAULT_BUTTON, S_PCMD_SEND_BUTTON);
         myPanel->SetTarget (sMsgr);
         myPanel->Show();
       }
@@ -348,7 +348,7 @@ ClientAgent::ParseCmd (const char *data)
         }
       }
       else
-        Display ("[x] /deop: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /deop: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -432,7 +432,7 @@ ClientAgent::ParseCmd (const char *data)
         resume_thread (lookupThread);
       }
       else
-        Display ("[x] /dns: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /dns: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -532,7 +532,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /invite: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /invite: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -581,7 +581,7 @@ ClientAgent::ParseCmd (const char *data)
         }
       }
       else
-        Display ("[x] /join: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /join: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -611,7 +611,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /kick: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /kick: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -664,7 +664,7 @@ ClientAgent::ParseCmd (const char *data)
       if (theAction != "-9z99")
         ActionMessage (theAction.String(), myNick.String());
       else
-        Display ("[x] /me: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /me: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -688,7 +688,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /mode: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /mode: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -736,7 +736,7 @@ ClientAgent::ParseCmd (const char *data)
 
       if (newNick != "-9z99")
       {
-        BString tempString ("*** Trying new nick ");
+        BString tempString (S_PCMD_TRY_NEW_NICK);
 
         tempString << newNick << ".\n";
         Display (tempString.String());
@@ -746,7 +746,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /nick: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /nick: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -773,7 +773,7 @@ ClientAgent::ParseCmd (const char *data)
         Display (tempString.String());
       }
       else
-        Display ("[x] /notice: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /notice: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -830,7 +830,7 @@ ClientAgent::ParseCmd (const char *data)
         }
       }
       else
-        Display ("[x] /deop: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /op: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -924,7 +924,7 @@ ClientAgent::ParseCmd (const char *data)
         Display (tempString.String());
       }
       else
-        Display ("[x] /raw: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /raw: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -962,15 +962,15 @@ ClientAgent::ParseCmd (const char *data)
 
       if (!caught || value == "-9z99")
       {
-        Display ("[x] /setbool: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /setbool: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
       }
       else
       {
         status_t returned (vision_app->SetBool (var.String(), newvalue));
         if (returned == B_OK)
-          Display ("[x] /setbool: Bool has been set\n", C_ERROR);
+          Display ("[x] /setbool: " S_PCMD_SET_BOOL_SUCCESS "\n", C_ERROR);
         else
-          Display ("[x] /setbool: Error setting bool\n", C_ERROR);
+          Display ("[x] /setbool: " S_PCMD_SET_BOOL_FAILURE "\n", C_ERROR);
       }
     }
     return true;
@@ -1127,7 +1127,7 @@ ClientAgent::ParseCmd (const char *data)
       if (buffer != "-9z99")
         vision_app->LoadURL (buffer.String());
       else
-        Display ("[x] /visit: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /visit: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
     return true;
   }
@@ -1248,14 +1248,14 @@ ClientAgent::DNSLookup (void *arg)
 
       in_addr *addr = (in_addr *)hp->h_addr_list[0];
       strcpy(addr_buf, inet_ntoa(*addr));
-      output += "Resolved ";
+      output += S_PCMD_DNS1;
       output += resolve.String();
-      output += " to ";
+      output += S_PCMD_DNS2;
       output += addr_buf;
     }
     else
     {
-      output += "Unable to resolve ";
+      output += S_PCMD_DNS_ERROR;
       output += resolve.String();
     }
   }
@@ -1266,14 +1266,14 @@ ClientAgent::DNSLookup (void *arg)
     
     if (hp)
     {
-      output += "Resolved ";
+      output += S_PCMD_DNS1;
       output += resolve.String();
-      output += " to ";
+      output += S_PCMD_DNS2;
       output += hp->h_name;
     }
     else
     {
-      output += "Unable to resolve ";
+      output += S_PCMD_DNS_ERROR;
       output += resolve.String();
     }
   }

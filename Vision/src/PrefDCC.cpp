@@ -39,30 +39,30 @@ DCCPrefsView::DCCPrefsView (BRect frame)
   : BView (frame, "DCC prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  BMenu *menu (new BMenu ("DCC Block Size"));
+  BMenu *menu (new BMenu (S_PREFDCC_BLOCK_SIZE));
   menu->AddItem (new BMenuItem ("1024", new BMessage (M_BLOCK_SIZE_CHANGED)));
   menu->AddItem (new BMenuItem ("2048", new BMessage (M_BLOCK_SIZE_CHANGED)));
   menu->AddItem (new BMenuItem ("4096", new BMessage (M_BLOCK_SIZE_CHANGED)));
   menu->AddItem (new BMenuItem ("8192", new BMessage (M_BLOCK_SIZE_CHANGED)));
-  blockSize = new BMenuField (BRect (0,0,0,0), NULL, "DCC Block size: ", menu);
-  autoAccept = new BCheckBox (BRect (0,0,0,0), NULL, "Automatically accept incoming sends",
+  blockSize = new BMenuField (BRect (0,0,0,0), NULL, S_PREFDCC_BLOCK_SIZE, menu);
+  autoAccept = new BCheckBox (BRect (0,0,0,0), NULL, S_PREFDCC_AUTOACK,
     new BMessage (M_AUTO_ACCEPT_CHANGED));
-  defDir = new VTextControl (BRect (0,0,0,0), NULL, "Default path: ", "", new BMessage (M_DEFAULT_PATH_CHANGED));
-  defDir->SetDivider (defDir->StringWidth ("Default path: " + 5));
+  defDir = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_DEFPATH, "", new BMessage (M_DEFAULT_PATH_CHANGED));
+  defDir->SetDivider (defDir->StringWidth (S_PREFDCC_DEFPATH + 5));
   box = new BBox (BRect (0,0,0,0), NULL);
-  box->SetLabel ("DCC Port Range");
+  box->SetLabel (S_PREFDCC_PORTRANGE);
   AddChild (defDir);
   AddChild (autoAccept);
   AddChild (blockSize);
   AddChild (box);
-  dccPortMin = new VTextControl (BRect (0,0,0,0), NULL, "Min: ", "",
+  dccPortMin = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_PORTMIN, "",
     new BMessage (M_DCC_MIN_PORT_CHANGED));
   dccPortMin->TextView()->AddFilter (new NumericFilter());
-  dccPortMin->SetDivider (dccPortMin->StringWidth ("Min: ") + 5);
+  dccPortMin->SetDivider (dccPortMin->StringWidth (S_PREFDCC_PORTMIN) + 5);
   box->AddChild (dccPortMin);
-  dccPortMax = new VTextControl (BRect (0,0,0,0), NULL, "Max: ", "",
+  dccPortMax = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_PORTMAX, "",
     new BMessage (M_DCC_MAX_PORT_CHANGED));
-  dccPortMax->SetDivider (dccPortMax->StringWidth ("Max: ") + 5);
+  dccPortMax->SetDivider (dccPortMax->StringWidth (S_PREFDCC_PORTMAX) + 5);
   dccPortMax->TextView()->AddFilter (new NumericFilter());
   box->AddChild (dccPortMax);
 }
@@ -85,7 +85,7 @@ DCCPrefsView::AttachedToWindow (void)
   autoAccept->MoveTo (defDir->Frame().left, defDir->Frame().bottom + 5);
   blockSize->ResizeToPreferred ();
   blockSize->ResizeTo (Bounds().Width() - 15, blockSize->Bounds().Height());
-  blockSize->SetDivider (blockSize->StringWidth ("DCC Block size: ") + 5);
+  blockSize->SetDivider (blockSize->StringWidth (S_PREFDCC_BLOCK_SIZE) + 5);
   blockSize->MoveTo (autoAccept->Frame().left, autoAccept->Frame().bottom + 5);
   blockSize->Menu()->SetLabelFromMarked (true);
   

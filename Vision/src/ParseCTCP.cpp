@@ -347,14 +347,14 @@ ServerAgent::ParseCTCPResponse (BString theNick, BString theMsg)
 		}
 		tempString += "[";
 		tempString += theNick;
-		tempString += " PING response]: ";
+		tempString += " PING" S_PCTCP_RESPONSE "]: ";
 		if (theSeconds != 1)
 		{
 			tempString << theSeconds;
-			tempString += " seconds\n";
+			tempString += " " S_PCTCP_SECOND_PLURAL "\n";
 		}
 		else
-			tempString += "1 second\n";
+			tempString += "1 " S_PCTCP_SECOND "\n";
 	}
 	else
 	{
@@ -363,7 +363,7 @@ ServerAgent::ParseCTCPResponse (BString theNick, BString theMsg)
 		tempString += theNick;
 		tempString += " ";
 		tempString += firstWord;
-		tempString += " response]: ";
+		tempString += S_PCTCP_RESPONSE "]: ";
 		tempString += theReply;
 		tempString += '\n';
 	}

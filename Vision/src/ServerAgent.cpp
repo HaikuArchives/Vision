@@ -251,12 +251,12 @@ ServerAgent::Establish (void *arg)
     
       if (sMsgrE->SendMessage (M_INC_RECONNECT) != B_OK)
         throw failToLock();
-      statString = "[@] Attempting to ";
+      statString = S_SERVER_ATTEMPT1;
       if (retrycount != 0)
-        statString += "re";
-      statString += "connect (attempt ";
+        statString += S_SERVER_ATTEMPT2;
+      statString += S_SERVER_ATTEMPT3;
       statString << retrycount + 1;
-      statString += " of ";
+      statString += S_SERVER_ATTEMPT4;
       statString << reply.FindInt32 ("max_retries");
       statString += ")\n";
       ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
@@ -271,11 +271,11 @@ ServerAgent::Establish (void *arg)
     else
       throw failToLock();
  
-    statString = "[@] Attempting a connection to ";
+    statString = S_SERVER_ATTEMPT5;
     statString << connectId;
     statString += ":";
     statString << connectPort;
-    statString += "...\n";
+    statString += B_UTF8_ELLIPSIS "\n";
     ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
     sMsgrE->SendMessage (&statMsg);
 
@@ -292,7 +292,7 @@ ServerAgent::Establish (void *arg)
          remoteAddr.sin_addr = *((in_addr *)remoteInet->h_addr_list[0]);
        else 
        {
-         ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", C_ERROR);
+         ClientAgent::PackDisplay (&statMsg, S_SERVER_CONN_ERROR1 "\n", C_ERROR);
          sMsgrE->SendMessage (&statMsg);
          sMsgrE->SendMessage (M_NOT_CONNECTING);
          sMsgrE->SendMessage (M_SERVER_DISCONNECT);
@@ -307,7 +307,7 @@ ServerAgent::Establish (void *arg)
 
     if ((serverSock = socket (AF_INET, SOCK_STREAM, 0)) < 0)
     {
-         ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", C_ERROR);
+         ClientAgent::PackDisplay (&statMsg, S_SERVER_CONN_ERROR1 "\n", C_ERROR);
          sMsgrE->SendMessage (&statMsg);
          sMsgrE->SendMessage (M_NOT_CONNECTING);
          sMsgrE->SendMessage (M_SERVER_DISCONNECT);
@@ -316,7 +316,7 @@ ServerAgent::Establish (void *arg)
     
     // just see if he's still hanging around before
     // we got blocked for a minute
-    ClientAgent::PackDisplay (&statMsg, "[@] Connection open, waiting for reply from server\n", C_ERROR);
+    ClientAgent::PackDisplay (&statMsg, S_SERVER_CONN_OPEN "\n", C_ERROR);
     sMsgrE->SendMessage (&statMsg);
     sMsgrE->SendMessage (M_LAG_CHANGED);
 
@@ -328,7 +328,7 @@ ServerAgent::Establish (void *arg)
       // store local ip address for future use (dcc, etc)
       int addrlength (sizeof (struct sockaddr_in));
       if (getsockname (serverSock,(struct sockaddr *)&sockin,&addrlength)) {
-        ClientAgent::PackDisplay (&statMsg, "[@] Error getting Local IP\n", C_ERROR);
+        ClientAgent::PackDisplay (&statMsg, S_SERVER_LOCALIP_ERROR "\n", C_ERROR);
         sMsgrE->SendMessage (&statMsg);
         BMessage setIP (M_SET_IP);
         setIP.AddString("ip", "127.0.0.1");
@@ -342,7 +342,7 @@ ServerAgent::Establish (void *arg)
         setIP.AddBool("private", PrivateIPCheck (ip.String()));
         setIP.AddString("ip", ip.String());
         sMsgrE->SendMessage(&setIP);
-        statString = "[@] Local IP: ";
+        statString = S_SERVER_LOCALIP;
         statString += ip.String();
         statString += "\n";
         ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
@@ -351,11 +351,11 @@ ServerAgent::Establish (void *arg)
 
       if (PrivateIPCheck (ip.String()))
       {
-        ClientAgent::PackDisplay (&statMsg, "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)\n", C_ERROR);
+        ClientAgent::PackDisplay (&statMsg, "\n", C_ERROR);
         sMsgrE->SendMessage (&statMsg);  
       }
       
-            ClientAgent::PackDisplay (&statMsg, "[@] Handshaking\n", C_ERROR);
+            ClientAgent::PackDisplay (&statMsg, S_SERVER_HANDSHAKE "\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
 
       BString string;
@@ -382,12 +382,12 @@ ServerAgent::Establish (void *arg)
     
       // resume normal business matters.
 
-      ClientAgent::PackDisplay (&statMsg, "[@] Established\n", C_ERROR);
+      ClientAgent::PackDisplay (&statMsg, S_SERVER_ESTABLISH "\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
     }
     else // No endpoint->connect
     {
-      ClientAgent::PackDisplay (&statMsg, "[@] Could not establish a connection to the server. Sorry.\n", C_ERROR);
+      ClientAgent::PackDisplay (&statMsg, S_SERVER_CONN_ERROR2 "\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
       sMsgrE->SendMessage (M_NOT_CONNECTING);
       sMsgrE->SendMessage (M_SERVER_DISCONNECT);
@@ -768,7 +768,7 @@ ServerAgent::HandleReconnect (void)
     reconnecting = false;
     retry = 0;
     const char *soSorry;
-    soSorry = "[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n";
+    soSorry = S_SERVER_RETRY_LIMIT "\n";
     Display (soSorry, C_ERROR);
     ClientAgent *agent (ActiveClient());
     if (agent && (agent != this))
@@ -1216,7 +1216,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         if (isConnected)
         {
           BString sAnnounce;
-          sAnnounce += "[@] Disconnected from ";
+          sAnnounce += S_SERVER_DISCONNECT;
           sAnnounce += serverName;
           sAnnounce += "\n";
           Display (sAnnounce.String(), C_ERROR);
@@ -1227,7 +1227,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 			
         isConnected = false;
 
-        myLag = "CONNECTION PROBLEM";
+        myLag = S_SERVER_DISCON_STATUS;
         msgr.SendMessage (M_LAG_CHANGED);
         checkingLag = false;
         serverSocket = -1;
@@ -1283,7 +1283,7 @@ ServerAgent::MessageReceived (BMessage *msg)
             {
               // we've waited 50 seconds
               // connection problems?
-              myLag = "CONNECTION PROBLEM";
+              myLag = S_SERVER_CONN_PROBLEM;
               msgr.SendMessage (M_LAG_CHANGED);
             }
             else

@@ -45,12 +45,12 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   prefsBox->AddChild(prefsItems[1]);
   prefsList = new BListView (BRect (0.0, 0.0, prefsItems[0]->Bounds().right / 2, prefsItems[0]->Bounds().bottom), "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
   prefsList->MoveTo(5, 5);
-  prefsList->AddItem (new BStringItem ("Application"));
-  prefsList->AddItem (new BStringItem ("Colors"));
-  prefsList->AddItem (new BStringItem ("Fonts"));
-  prefsList->AddItem (new BStringItem ("Commands"));
-  prefsList->AddItem (new BStringItem ("Events"));
-  prefsList->AddItem (new BStringItem ("DCC"));
+  prefsList->AddItem (new BStringItem (S_PREFGEN_APP_ITEM));
+  prefsList->AddItem (new BStringItem (S_PREFGEN_COLOR_ITEM));
+  prefsList->AddItem (new BStringItem (S_PREFGEN_FONT_ITEM));
+  prefsList->AddItem (new BStringItem (S_PREFGEN_COMMAND_ITEM));
+  prefsList->AddItem (new BStringItem (S_PREFGEN_EVENT_ITEM));
+  prefsList->AddItem (new BStringItem (S_PREFGEN_DCC_ITEM));
   prefsList->SetSelectionMessage (new BMessage (M_GENERALPREFS_SELECTION_CHANGED));
   BScrollView *scroller (new BScrollView("list scroller", prefsList, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, 0, false, true));
   AddChild(scroller);

@@ -491,7 +491,7 @@ ServerAgent::ParseEvents (const char *data)
 
       theMode.RemoveFirst(":");
 
-      buffer += "*** User mode changed: ";
+      buffer += S_PEVENTS_UMODE_CHANGE;
       buffer += theMode;
       buffer += "\n";
       
@@ -547,9 +547,9 @@ ServerAgent::ParseEvents (const char *data)
 
     theChannel.RemoveFirst(":");
 
-    tempString += "*** You have been invited to ";
+    tempString += S_PEVENTS_INVITE1;
     tempString += theChannel;
-    tempString += " by ";
+    tempString += S_PEVENTS_INVITE2;
     tempString += GetNick(data);
     tempString += ".\n";
 
@@ -568,10 +568,10 @@ ServerAgent::ParseEvents (const char *data)
 		const char *hostmask = theHostmask.String();
 		
 		if (hostmask[0] == '+') {
-	    tempString += "*** Hostmask added to SILENCE list:  ";
+	    tempString += S_PEVENTS_SILENCE_ADDED;
       theHostmask.RemoveFirst("+");
 		} else {
-	    tempString += "*** Hostmask removed from SILENCE list:  ";
+	    tempString += S_PEVENTS_SILENCE_REMOVED;
       theHostmask.RemoveFirst("-");
 		}
 
