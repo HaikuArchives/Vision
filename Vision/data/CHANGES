@@ -1,6 +1,13 @@
 Vision
 http://vision.sourceforge.net
 
+[0.8.3-0301]
+         * fixed crash bug in net prefs
+         * fixed potential crash bug in dcc chat
+         * fixed case where nickname would not get highlighted
+         * removed some redundant code in server agent
+         * fixed minor textview drawing bug
+
 [0.8.2-0211]
          * fixed bug where parameters to /list would get ignored
          * added support for numerics 325, 609, 610, 611, 614

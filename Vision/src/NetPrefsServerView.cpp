@@ -307,6 +307,11 @@ NetPrefsServerView::UpdateNetworkData (const ServerData * newServer)
 void
 NetPrefsServerView::SetNetworkData (BMessage * msg)
 {
+  // this shouldn't theoretically be able to happen but better safe than sorry
+  BLooper *looper (Looper());
+  if (looper == NULL)
+    return;
+  
   BAutolock lock (Looper ());
   if (!lock.IsLocked ())
     return;
