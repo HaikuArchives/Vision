@@ -645,7 +645,7 @@ DCCSend::Transfer (void *arg)
     const uint32 DCC_BLOCK_SIZE (atoi(vision_app->GetString ("dccBlockSize")));
     char buffer[DCC_BLOCK_SIZE];
     int period (0);
-    ssize_t count;
+    ssize_t count (0);
     bigtime_t start = system_time();
 
     while ((msgr.Target(&looper) != NULL)
@@ -658,11 +658,6 @@ DCCSend::Transfer (void *arg)
         UpdateStatus (msgr, S_DCC_WRITE_ERROR);
         break;
       }
-          
-      bytes_sent += sent;
-      BMessage msg (M_DCC_UPDATE_TRANSFERRED);
-      msg.AddInt32 ("transferred", bytes_sent);
-      msgr.SendMessage (&msg);
 
       uint32 confirm;
       fd_set rset, eset;
@@ -682,6 +677,11 @@ DCCSend::Transfer (void *arg)
         FD_SET (dccSock, &rset);
         FD_SET (dccSock, &eset);
       }
+      
+      bytes_sent += sent;
+      BMessage msg (M_DCC_UPDATE_TRANSFERRED);
+      msg.AddInt32 ("transferred", bytes_sent);
+      msgr.SendMessage (&msg);
 
       now = system_time();
       period += sent;

@@ -449,7 +449,7 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 0
+  #if 1
   if (firstWord == "/EXCLUDE")
   {
     {
@@ -478,7 +478,7 @@ ClientAgent::ParseCmd (const char *data)
   }
   
 
-  #if 0
+  #if 1
   if (firstWord == "/IGNORE")
   {
     {
@@ -742,7 +742,7 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 0
+  #if 1
   if (firstWord == "/NOTIFY")
   {
     {
@@ -936,24 +936,39 @@ ClientAgent::ParseCmd (const char *data)
     }
     return true;
   }
-
-  if (firstWord == "/TOPIC" || firstWord == "/T")
+  
+  if (firstWord == "/T")
   {
     BString theChan (fId),
-            theTopic (RestOfString (data, 2));
-
-    AddSend (&sendMsg, "TOPIC ");
-
-    if (theTopic == "-9z99")
-      AddSend (&sendMsg, theChan);
-    else
-      AddSend (&sendMsg, theChan << " :" << theTopic);
-      
-    AddSend (&sendMsg, endl);
+             cmd (RestOfString (data, 2));
+    
+    theChan += " ";
+    theChan.Prepend ("/TOPIC ");
+    theChan += cmd;
+    ParseCmd(theChan.String());
     return true;
   }
 
-  #if 0
+  if (firstWord == "/TOPIC")
+  {
+    BString theChan (GetWord(data, 2));
+    BString theTopic (RestOfString (data, 3));
+    if (theChan != "-9z99")
+    {
+      AddSend (&sendMsg, "TOPIC ");
+      AddSend (&sendMsg, theChan);
+      if (theTopic != "-9z99")
+      {
+        AddSend (&sendMsg, " :");
+        AddSend (&sendMsg, theTopic);
+      }
+      AddSend (&sendMsg, endl);
+    }
+    // TODO: print nice error message about topic parameters here
+    return true;
+  }
+
+  #if 1
   if (firstWord == "/UNIGNORE")
   {
     {
@@ -973,7 +988,7 @@ ClientAgent::ParseCmd (const char *data)
   #endif
 
 
-  #if 0
+  #if 1
   if (firstWord == "/UNNOTIFY")
   {
     {

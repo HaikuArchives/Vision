@@ -85,6 +85,13 @@ ChannelAgent::~ChannelAgent (void)
    
   fNamesList->ClearList();
   
+  // empty recent nick list
+  while (fRecentNicks.CountItems() > 0)
+    delete fRecentNicks.RemoveItem (0L);
+  
+  // empty nick completion list
+  while (fCompletionNicks.CountItems() > 0)
+    delete fCompletionNicks.RemoveItem (0L);
 }
 
 void
@@ -191,6 +198,50 @@ ChannelAgent::FindPosition (const char *data)
   return -1;
 }
 
+void
+ChannelAgent::RemoveNickFromList (BList &list, const char *data)
+{
+  int32 count (list.CountItems());
+  for (int32 i = 0; i < count; i++)
+  {
+    if (((BString *)list.ItemAt(i))->ICompare(data) == 0)
+    {
+      delete list.RemoveItem (i);
+      break;
+    }
+  }
+}
+
+void
+ChannelAgent::AddUser (const char *nick, const int32 status)
+{
+  fNamesList->AddItem (new NameItem (nick, status));
+  fNamesList->SortItems (SortNames);
+
+  ++fUserCount;
+  BString buffer;
+  buffer << fUserCount;
+  
+  // check if new nickname matches against tab completion sequence and update nick list
+  // if so
+  if (fLastExpansion != "" && fLastExpansion.ICompare(nick, fLastExpansion.Length()) == 0)
+  {
+    BString *string (new BString (nick));
+    int32 count (fCompletionNicks.CountItems());
+    for (int32 i = count - 1; i > 0; i++)
+    {
+      if (((BString *)fCompletionNicks.ItemAt(i))->ICompare (nick) < 0)
+      {
+        fCompletionNicks.AddItem (string, i+1);
+        break;
+      }
+    }
+  }
+  
+  if (!IsHidden())
+    vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
+}
+
 bool
 ChannelAgent::RemoveUser (const char *data)
 {
@@ -203,6 +254,10 @@ ChannelAgent::RemoveUser (const char *data)
   
   if (fNamesList == NULL)
     return false;
+  
+  // if nickname is present in tab completion lists, remove
+  RemoveNickFromList(fRecentNicks, data);
+  RemoveNickFromList(fCompletionNicks, data);
   
   int32 myIndex (FindPosition (data));
 
@@ -230,13 +285,36 @@ ChannelAgent::RemoveUser (const char *data)
       buffer << fUserCount;
       if (!IsHidden())
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
-
+        
       delete item;
       return true;
     }
   }
   
   return false;
+}
+
+void
+ChannelAgent::ChannelMessage (
+  const char *msgz,
+  const char *nick,
+  const char *ident,
+  const char *address)
+{
+  if (nick)
+  {
+     int32 count (fRecentNicks.CountItems());
+     if (count > MAX_RECENT_NICKS)
+     {
+       delete fRecentNicks.RemoveItem (0L);
+       --count;
+     }
+     // scan for presence of nick in list, and remove duplicate if found
+     RemoveNickFromList (fRecentNicks, nick);
+     fRecentNicks.AddItem (new BString (nick));
+  }
+
+  ClientAgent::ChannelMessage (msgz, nick, ident, address);
 }
 
 int
@@ -250,23 +328,18 @@ ChannelAgent::AlphaSortNames(const void *name1, const void *name2)
    
    // clunky way to get around C++ warnings re casting from const void * to NameItem *
    
-  const NameItem *firstPtr (*((NameItem * const *)name1));
-  const NameItem *secondPtr (*((NameItem * const *)name2));
+  const BString *first (*((BString * const *)name1));
+  const BString *second (*((BString * const *)name2));
 
   // Not sure if this can happen, and we
   // are assuming that if one is NULL
   // we return them as equal.  What if one
   // is NULL, and the other isn't?
-  if (!firstPtr
-  ||  !secondPtr)
+  if (!first
+  ||  !second)
     return 0;
 
-  BString first, second;
-
-  first  += (firstPtr)->Name();
-  second += (secondPtr)->Name();
-  
-  return first.ICompare (second);
+  return first->ICompare (*second);
 }
 
 
@@ -323,7 +396,6 @@ ChannelAgent::TabExpansion (void)
   int32 start, finish;
   static int32 lastindex;
   static BString lastNick;
-  static BList myList;
   fInput->TextView()->GetSelection (&start, &finish);
 
   if (fInput->TextView()->TextLength()
@@ -342,24 +414,53 @@ ChannelAgent::TabExpansion (void)
     }
 
     if (fLastExpansion == "" 
-    || fLastExpansion.ICompare(place, strlen(fLastExpansion.String())) != 0
+    || fLastExpansion.ICompare(place, fLastExpansion.Length()) != 0
     || lastNick != place)
     {
       lastindex = 0;
       fLastExpansion = place;
-      if (!myList.IsEmpty())
-        myList.MakeEmpty();
+
+      while (!fCompletionNicks.IsEmpty())
+        delete fCompletionNicks.RemoveItem(0L);
       
-      int32 count (fNamesList->CountItems());
+      int32 count (fNamesList->CountItems()),
+            i (0);
       
-      for (int32 i = 0; i < count ; i++)
-        if (!((NameItem *)fNamesList->ItemAt(i))->Name().ICompare(fLastExpansion.String(), strlen(fLastExpansion.String())))
-         myList.AddItem(fNamesList->ItemAt(i));
-      
+      for (i = 0; i < count ; i++)
+      {
+        BString *name (new BString(((NameItem *)fNamesList->ItemAt(i))->Name()));
+        if (!(name->ICompare(fLastExpansion.String(), strlen(fLastExpansion.String()))))
+          fCompletionNicks.AddItem(name);
+        else
+          delete name;
+      }
       // sort items alphabetically
-      myList.SortItems (AlphaSortNames);
+      fCompletionNicks.SortItems (AlphaSortNames);
+      
+      count = fRecentNicks.CountItems();
+      // parse recent nicks in reverse to ensure that they're pushed onto the completion
+      // list in the correct order
+      for (i = 0; i < count; i++)
+      {
+        BString *name (new BString(*(BString *)fRecentNicks.ItemAt(i)));
+        if (!(name->ICompare(fLastExpansion.String(), strlen(fLastExpansion.String()))))
+        {
+          // parse through list and nuke duplicate if present
+          for (int32 j = fCompletionNicks.CountItems() - 1; j >= 0; j--)
+          {
+            if (!(name->ICompare(*(BString *)fCompletionNicks.ItemAt (j))))
+            {
+              delete fCompletionNicks.RemoveItem(j);
+              break;
+            }
+          }
+          fCompletionNicks.AddItem(name, 0);
+        }
+        else
+          delete name;
+      }
     }
-  
+    
     // We first check if what the user typed matches the channel
     // If that doesn't match, we check the names
     BString insertion;
@@ -368,10 +469,10 @@ ChannelAgent::TabExpansion (void)
       insertion = fId;
     else
     {
-      int32 count (myList.CountItems());
+      int32 count = fCompletionNicks.CountItems();
       if (count > 0)
       {
-        insertion = ((NameItem *)myList.ItemAt(lastindex++))->Name();
+        insertion = *((BString *)fCompletionNicks.ItemAt(lastindex++));
     
         if (lastindex == count) lastindex = 0;
           lastNick = insertion;
@@ -437,16 +538,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
         msg->FindBool ("ignore", &ignore);
 
         if (ignore) iStatus |= STATUS_IGNORE_BIT;
- 
-        fNamesList->AddItem (new NameItem (nick, iStatus));
-        fNamesList->SortItems (SortNames);
-
-        ++fUserCount;
-        BString buffer;
-        buffer << fUserCount;
-  
-        if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
+        
+        AddUser (nick, iStatus);
 
         BMessage display;
         if (msg->FindMessage ("display", &display) == B_NO_ERROR)

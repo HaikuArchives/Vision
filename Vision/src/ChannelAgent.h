@@ -26,9 +26,9 @@
 #ifndef _CHANNELAGENT_H_
 #define _CHANNELAGENT_H_
 
+#include <List.h>
 #include <Rect.h>
 #include <String.h>
-
 #include "ClientAgent.h"
 
 class ChannelOptions;
@@ -36,6 +36,8 @@ class BScrollView;
 class ServerWindow;
 class NamesView;
 class ResizeView;
+
+const int32 MAX_RECENT_NICKS = 5;
 
 class ChannelAgent : public ClientAgent
 {
@@ -55,9 +57,15 @@ class ChannelAgent : public ClientAgent
     virtual void            MessageReceived (BMessage *);
     virtual void            Parser (const char *);
     virtual void            TabExpansion (void);
+    virtual void            ChannelMessage (
+                                  const char *,
+                                  const char * = 0,
+                                  const char * = 0,
+                                  const char * = 0);
     virtual void            AddMenuItems (BPopUpMenu *);
     virtual void            Show (void);
-
+    
+    void                    AddUser (const char *, const int32);
     bool                    RemoveUser (const char *);
     int                     FindPosition (const char *);
     void                    UpdateMode (char, char);
@@ -69,8 +77,9 @@ class ChannelAgent : public ClientAgent
 
     
   private:
-   void                    Init();
-
+    void                    Init();
+    void                    RemoveNickFromList (BList &, const char *);    
+    
     BString                 fChanMode,
                             fChanLimit,
                             fChanLimitOld,
@@ -78,9 +87,13 @@ class ChannelAgent : public ClientAgent
                             fChanKeyOld,
                             fLastExpansion,
                             fTopic;
+    
+    BList                   fRecentNicks,
+                              fCompletionNicks;
 
     int32                   fUserCount,
                             fOpsCount;
+                            
     int                     fIrcdtype;
 
     friend class            ClientAgent;

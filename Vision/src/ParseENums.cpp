@@ -939,7 +939,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           BMessage msg (M_SUBMIT_INPUT);
           const char *place (fCmds.String()), *eol;
 
-          msg.AddInt32 ("which", PASTE_MULTI);
+          msg.AddInt32 ("which", PASTE_MULTI_NODELAY);
  
           while ((eol = strchr (place, '\n')) != 0)
           {
