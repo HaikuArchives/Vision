@@ -750,7 +750,7 @@ RunView::Append (
 									back,
 									font);
 
-				working->Append  (buffer + place + (url_offset - last_offset),
+				working->Append  (temp.String(),
 									temp.Length(),
 									&boxbuf,
 									&boxbuf_size,
@@ -761,7 +761,7 @@ RunView::Append (
 									F_URL);
 
 				place += (url_offset - last_offset) + temp.Length();
-				last_offset = url_offset;
+				last_offset = url_offset + temp.Length();
 			}
 			
 			if (place < end)
@@ -812,9 +812,8 @@ RunView::Append (
 
 			while ((url_offset = crunch.Crunch (&temp)) != B_ERROR)
 			{
-				url_offset -= last_offset;
 				working->Append  (buffer + place,
-									url_offset,
+									(url_offset - last_offset),
 									&boxbuf,
 									&boxbuf_size,
 									width,
@@ -833,7 +832,7 @@ RunView::Append (
 									back,
 									F_URL);
 
-				place += url_offset + temp.Length();
+				place += (url_offset - last_offset) + temp.Length();
 				last_offset = url_offset + temp.Length();
 			}
 
