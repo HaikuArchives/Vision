@@ -870,6 +870,10 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           Window()->PostMessage (&statusMsg);
         }
+        else if (!Window()->IsActive())
+          if (hasNick || dynamic_cast<MessageAgent *>(this))
+            system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+
       }
       break;
 
