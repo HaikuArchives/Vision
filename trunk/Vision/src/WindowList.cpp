@@ -54,7 +54,7 @@ WindowList::WindowList (BRect frame)
     B_SINGLE_SELECTION_LIST,
     B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM)
 {
-  textColor   = vision_app->GetColor (C_WINLIST_TEXT);
+  textColor   = vision_app->GetColor (C_WINLIST_NORMAL);
   newsColor   = vision_app->GetColor (C_WINLIST_NEWS);
   nickColor   = vision_app->GetColor (C_WINLIST_NICK);
   sixColor    = vision_app->GetColor (C_WINLIST_PAGESIX);
@@ -293,11 +293,173 @@ WindowList::ClearList (void)
     RemoveItem (0L);
 }
 
-//int32
-//WindowList::GetActiveAgent (void)
-//{
-//  return activeindex;
-//}
+void
+WindowList::SelectLast (void)
+{
+  /*
+   * Function purpose: Select the last active agent
+   */
+
+  LockLooper();
+  int32 lastInt (IndexOf (lastSelected));
+  if (lastInt >= 0)
+    Select (lastInt);
+  else
+    Select (0);
+    
+  ScrollToSelection();
+  UnlockLooper();
+  
+}
+
+void
+WindowList::SelectServer (void)
+{
+  int32 currentsel (CurrentSelection());
+  if (currentsel < 0)
+    return;
+      
+  int32 currentsid;
+       
+  WindowListItem *citem ((WindowListItem *)ItemAt (currentsel));
+      
+  if (citem)
+    currentsid = citem->Sid();
+  else
+    return;
+      
+  for (int32 i (1); i <= CountItems(); ++i)
+  { 
+    WindowListItem *aitem ((WindowListItem *)ItemAt (i - 1));
+    if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
+    {
+      Select (IndexOf (aitem));
+      break; 
+    }
+  }
+}
+
+void
+WindowList::ContextSelectUp (void)
+{
+  int32 currentsel (CurrentSelection());
+  if (currentsel < 0)
+    return;
+          
+  WindowListItem *aitem;
+  bool foundone (false);
+  int iloop;
+        
+  // try to find a WIN_NICK_BIT item first
+  for (iloop = currentsel; iloop > -1; --iloop)
+  {
+    aitem = (WindowListItem *)ItemAt (iloop);
+    if ((aitem->Status() == WIN_NICK_BIT))
+    {
+      Select (IndexOf (aitem));
+      foundone = true;
+      break; 
+    }
+  }
+        
+  if (foundone)
+    return;        
+        
+  // try to find a WIN_NEWS_BIT item first
+  for (iloop = currentsel; iloop > -1; --iloop)
+  {
+    aitem = (WindowListItem *)ItemAt (iloop);
+    if ((aitem->Status() == WIN_NEWS_BIT))
+    {
+      Select (IndexOf (aitem));
+      foundone = true;
+      break; 
+    }
+  }
+        
+  if (foundone)
+    return;
+
+  // try to find a WIN_PAGESIX_BIT item first
+  for (iloop = currentsel; iloop > -1; --iloop)
+  {
+    aitem = (WindowListItem *)ItemAt (iloop);
+    if ((aitem->Status() == WIN_PAGESIX_BIT))
+    {
+      Select (IndexOf (aitem));
+      foundone = true;
+      break; 
+    }
+  }
+        
+  if (foundone)
+    return;
+          
+  // just select the previous item then.
+  Select (currentsel - 1);
+  ScrollToSelection();        
+}
+
+void
+WindowList::ContextSelectDown (void)
+{
+  int32 currentsel (CurrentSelection());
+  if (currentsel < 0)
+    return;
+          
+  WindowListItem *aitem;
+  bool foundone (false);
+  int iloop;
+        
+  // try to find a WIN_NICK_BIT item first
+  for (iloop = currentsel; iloop < CountItems(); ++iloop)
+  {
+    aitem = (WindowListItem *)ItemAt (iloop);
+    if ((aitem->Status() == WIN_NICK_BIT))
+    {
+      Select (IndexOf (aitem));
+      foundone = true;
+      break; 
+    }
+  }
+        
+  if (foundone)
+    return;        
+        
+  // try to find a WIN_NEWS_BIT item first
+  for (iloop = currentsel; iloop < CountItems(); ++iloop)
+  {
+    aitem = (WindowListItem *)ItemAt (iloop);
+    if ((aitem->Status() == WIN_NICK_BIT))
+    {
+      Select (IndexOf (aitem));
+      foundone = true;
+      break; 
+    }
+  }
+        
+  if (foundone)
+    return;   
+
+  // try to find a WIN_PAGESIX_BIT item first
+  for (iloop = currentsel; iloop < CountItems(); ++iloop)
+  {
+    aitem = (WindowListItem *)ItemAt (iloop);
+    if ((aitem->Status() == WIN_NICK_BIT))
+    {
+      Select (IndexOf (aitem));
+      foundone = true;
+      break; 
+    }
+  }
+        
+  if (foundone)
+    return;   
+          
+  // just select the previous item then.
+  Select (currentsel + 1);
+  ScrollToSelection();      
+}
 
 ClientAgent *
 WindowList::Agent (int32 serverId, const char *aName)
@@ -351,6 +513,9 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       }
     }
   }
+  
+  // reset newagent
+  newagent = newagentitem->pAgent();
   
   if (!(newagent = dynamic_cast<BView *>(newagent)))
   {
@@ -447,11 +612,7 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   SortItems (SortListItems);
   delete agent;
   
-  int32 lastInt (IndexOf (lastSelected));
-  if (lastInt >= 0)
-    Select (lastInt);
-  else
-    Select (0);
+  SelectLast();
   UnlockLooper();
 }
 
@@ -641,7 +802,7 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
     frame.bottom - fh.descent);
 
   BString drawString (myName);
-  rgb_color color = father->GetColor (C_WINLIST_TEXT);
+  rgb_color color = father->GetColor (C_WINLIST_NORMAL);
 
   if ((myStatus & WIN_NEWS_BIT) != 0)
     color = father->GetColor (C_WINLIST_NEWS);
@@ -659,11 +820,7 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
     drawString.Prepend ("  ");
 
   if (IsSelected())
-  {
-    color.red   = 0;
-    color.green = 0;
-    color.blue  = 0;
-  }
+    color = father->GetColor (C_WINLIST_NORMAL);
   
   father->SetHighColor (color);
 

@@ -94,7 +94,12 @@ class WindowList : public BListView
     void                            ClearList (void);
     void                            Activate (int32);
     void                            CloseActive (void);
-    //int32                       	GetActiveAgent (void);
+    void                            SelectLast (void);
+    
+    void                            SelectServer (void);
+    
+    void                            ContextSelectUp (void);
+    void                            ContextSelectDown (void);
     
     ClientAgent                     *Agent (int32, const char *);
     

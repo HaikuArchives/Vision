@@ -120,6 +120,92 @@ ClientWindow::ScreenChanged (BRect screenframe, color_space mode)
 }
 
 void
+ClientWindow::HandleKey (BMessage *keyMsg)
+{
+  int32 key;
+  int32 mod;
+  keyMsg->FindInt32 ("key", &key);
+  keyMsg->FindInt32 ("modifiers", &mod);
+
+  // keycodes can be viewed at
+  // http://www.be.com/documentation/be_book/Keyboard/KeyboardKeyCodes.html
+  
+  if ((mod & B_OPTION_KEY)  == 0
+  &&  (mod & B_COMMAND_KEY) != 0
+  &&  (mod & B_CONTROL_KEY) == 0
+  &&  (mod & B_SHIFT_KEY) != 0)
+  {
+    /////////////////////
+    /// Shift+Command ///
+    /////////////////////
+    switch (key)
+    {
+      case '\x64': // numpad 0
+        // switch to last active agent
+        pWindowList()->SelectLast();
+        break;
+      
+      case '\x57': // up arrow
+      case '\x61': // left arrow (baxter muscle memory)
+      case '\x53': // comma (bowser muscle memory)
+        pWindowList()->ContextSelectUp();
+        break;
+      
+      case '\x62': // down arrow
+      case '\x63': // right arrow (baxter muscle memory)
+      case '\x54': // period (bowser muscle memory)
+        pWindowList()->ContextSelectDown();
+        break;      
+    }
+  }
+
+  else if ((mod & B_OPTION_KEY)  == 0
+       &&  (mod & B_COMMAND_KEY) != 0
+       &&  (mod & B_CONTROL_KEY) == 0
+       &&  (mod & B_SHIFT_KEY) == 0)
+  {
+    ////////////////
+    /// Command  ///
+    ////////////////
+    switch (key)
+    {
+      case '\x57': // up arrow
+      case '\x61': // left arrow (baxter muscle memory)
+      case '\x53': // comma (bowser muscle memory)
+        // move up one agent
+        pWindowList()->Select (pWindowList()->CurrentSelection() - 1);
+        pWindowList()->ScrollToSelection();
+        break;
+
+      case '\x62': // down arrow
+      case '\x63': // right arrow (baxter muscle memory)
+      case '\x54': // period (bowser muscle memory)
+        // move down one agent
+        pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
+        pWindowList()->ScrollToSelection();
+        break;
+        
+      case '\x55': // forward slash (/) (bowser muscle memory)
+        // move to the agents parent ServerAgent
+        // XXX move to WindowList ?
+        pWindowList()->SelectServer();
+        break;
+      
+      case '\x30': // P
+        // close agent
+        PostMessage (M_CW_ALTP);
+        break;
+      
+      case '\x28': // W
+        // close window/quit vision
+        PostMessage (M_CW_ALTW);
+        break;      
+    }
+  }
+    
+}
+
+void
 ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
 {
   switch (msg->what)
@@ -145,6 +231,13 @@ ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
       }
       break;
     
+    case B_KEY_DOWN:
+      {
+        HandleKey (msg);
+        BWindow::DispatchMessage (msg, handler);
+      }
+      break;
+    
     default:
       BWindow::DispatchMessage (msg, handler);
   }
@@ -155,168 +248,6 @@ ClientWindow::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
   {
-    case M_MOVE_DOWN:
-      {
-        pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
-        pWindowList()->ScrollToSelection();
-      }
-      break;
-      
-    case M_MOVE_UP:
-      {
-        pWindowList()->Select (pWindowList()->CurrentSelection() - 1);
-        pWindowList()->ScrollToSelection();
-      }
-      break;
-
-    case M_MOVE_UP_SHIFT:
-      {
-        int32 currentsel (pWindowList()->CurrentSelection());
-        if (currentsel < 0)
-          break;
-          
-        WindowListItem *aitem;
-        bool foundone (false);
-        int iloop;
-        
-        // try to find a WIN_NICK_BIT item first
-        for (iloop = currentsel; iloop > -1; --iloop)
-        {
-          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
-          if ((aitem->Status() == WIN_NICK_BIT))
-          {
-            pWindowList()->Select (pWindowList()->IndexOf (aitem));
-            foundone = true;
-            break; 
-          }
-        }
-        
-        if (foundone)
-          break;        
-        
-        // try to find a WIN_NEWS_BIT item
-        for (iloop = currentsel; iloop > -1; --iloop)
-        {
-          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
-          if ((aitem->Status() == WIN_NEWS_BIT))
-          {
-            pWindowList()->Select (pWindowList()->IndexOf (aitem));
-            foundone = true;
-            break; 
-          }
-        }
-        
-        if (foundone)
-          break;
-
-        // try to find a WIN_PAGESIX_BIT item
-        for (iloop = currentsel; iloop > -1; --iloop)
-        {
-          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
-          if ((aitem->Status() == WIN_PAGESIX_BIT))
-          {
-            pWindowList()->Select (pWindowList()->IndexOf (aitem));
-            foundone = true;
-            break; 
-          }
-        }
-        
-        if (foundone)
-          break;
-          
-        // just select the previous item then.
-        pWindowList()->Select (currentsel - 1);
-        pWindowList()->ScrollToSelection();        
-      }
-      break;
-
-    case M_MOVE_DOWN_SHIFT:
-      {
-        int32 currentsel (pWindowList()->CurrentSelection());
-        if (currentsel < 0)
-          break;
-          
-        WindowListItem *aitem;
-        bool foundone (false);
-        int iloop;
-        
-        // try to find a WIN_NICK_BIT item first
-        for (iloop = currentsel; iloop < pWindowList()->CountItems(); ++iloop)
-        {
-          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
-          if ((aitem->Status() == WIN_NICK_BIT))
-          {
-            pWindowList()->Select (pWindowList()->IndexOf (aitem));
-            foundone = true;
-            break; 
-          }
-        }
-        
-        if (foundone)
-          break;        
-        
-        // try to find a WIN_NEWS_BIT item
-        for (iloop = currentsel; iloop < pWindowList()->CountItems(); ++iloop)
-        {
-          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
-          if ((aitem->Status() == WIN_NEWS_BIT))
-          {
-            pWindowList()->Select (pWindowList()->IndexOf (aitem));
-            foundone = true;
-            break; 
-          }
-        }
-        
-        if (foundone)
-          break;
-
-        // try to find a WIN_PAGESIX_BIT item
-        for (iloop = currentsel; iloop < pWindowList()->CountItems(); ++iloop)
-        {
-          aitem = (WindowListItem *)pWindowList()->ItemAt (iloop);
-          if ((aitem->Status() == WIN_PAGESIX_BIT))
-          {
-            pWindowList()->Select (pWindowList()->IndexOf (aitem));
-            foundone = true;
-            break; 
-          }
-        }
-        
-        if (foundone)
-          break;
-          
-        // just select the previous item then.
-        pWindowList()->Select (currentsel + 1);
-        pWindowList()->ScrollToSelection();        
-      }
-      break;
-    
-    case M_MOVE_TOP_SERVER:
-      {
-        int32 currentsel (pWindowList()->CurrentSelection());
-        if (currentsel < 0)
-          break;
-      
-        int32 currentsid;
-      
-        WindowListItem *citem ((WindowListItem *)pWindowList()->ItemAt (currentsel));
-      
-        if (citem)
-          currentsid = citem->Sid();
-        else
-          break;
-      
-        for (int32 i (1); i <= pWindowList()->CountItems(); ++i)
-        { 
-          WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i - 1));
-          if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
-          {
-            pWindowList()->Select (pWindowList()->IndexOf (aitem));
-            break; 
-          }
-        }
-      }
-      break;
     
     case M_UPDATE_STATUS:
       {
@@ -528,25 +459,6 @@ ClientWindow::Init (void)
 {
   SetSizeLimits (330,2000,150,2000);
 
-  AddShortcut ('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
- 
-  // logical nav shortcuts
-  // (moved to Window menu below)
-
-  // baxter-habit-friendly nav shortcuts
-  AddShortcut (B_LEFT_ARROW, B_COMMAND_KEY, new BMessage (M_MOVE_UP));
-  AddShortcut (B_RIGHT_ARROW, B_COMMAND_KEY, new BMessage (M_MOVE_DOWN));
-
-  // bowser-habit-friendly nav shortcuts
-  AddShortcut (',', B_COMMAND_KEY, new BMessage (M_MOVE_UP));
-  AddShortcut ('.', B_COMMAND_KEY, new BMessage (M_MOVE_DOWN));
-  
-  AddShortcut (B_UP_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_UP_SHIFT));
-  AddShortcut (B_DOWN_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_DOWN_SHIFT));
-
-  AddShortcut (B_LEFT_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_UP_SHIFT));
-  AddShortcut (B_RIGHT_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_DOWN_SHIFT));
-   
   shutdown_in_progress = false;
   wait_for_quits = false;
   altw_catch = false;
@@ -588,15 +500,6 @@ ClientWindow::Init (void)
   
   // Window menu
   mWindow = new BMenu ("Window");
-  mWindow->AddItem (item = new BMenuItem ("Close Window",
-                    new BMessage (M_CW_ALTP), 'P'));
-  mWindow->AddSeparatorItem();
-  mWindow->AddItem (item = new BMenuItem ("Next Window",
-                    new BMessage (M_MOVE_DOWN), B_DOWN_ARROW));
-  mWindow->AddItem (item = new BMenuItem ("Previous Window",
-                    new BMessage (M_MOVE_UP), B_UP_ARROW));
-  mWindow->AddItem (item = new BMenuItem ("Server Window",
-                    new BMessage (M_MOVE_TOP_SERVER), '/'));
   menubar->AddItem (mWindow);  
   
   AddChild (menubar);
