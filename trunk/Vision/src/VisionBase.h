@@ -32,6 +32,70 @@
 #  include <GraphicsDefs.h>
 #endif
 
+
+  // keycodes can be viewed at
+  // http://www.be.com/documentation/be_book/Keyboard/KeyboardKeyCodes.html
+enum {
+  VK_A         = 0x3c,
+  VK_B         = 0x50,
+  VK_C         = 0x4e,
+  VK_D         = 0x3e,
+  VK_E         = 0x29,
+  VK_F         = 0x3f,
+  VK_G         = 0x40,
+  VK_H         = 0x41,
+  VK_I         = 0x2e,
+  VK_J         = 0x42,
+  VK_K         = 0x43,
+  VK_L         = 0x44,
+  VK_M         = 0x52,
+  VK_N         = 0x51,
+  VK_O         = 0x2f,
+  VK_P         = 0x30,
+  VK_Q         = 0x27,
+  VK_R         = 0x2a,
+  VK_S         = 0x3d,
+  VK_T         = 0x2b,
+  VK_U         = 0x2d,
+  VK_V         = 0x4f,
+  VK_W         = 0x28,
+  VK_X         = 0x4d,
+  VK_Y         = 0x2c,
+  VK_Z         = 0x4c,
+  
+  VK_ESCAPE    = 0x01,
+  VK_TAB       = 0x26,  
+  VK_COMMA     = 0x53,
+  VK_PERIOD    = 0x54,
+  VK_SLASH     = 0x55,
+  VK_RETURN    = 0x47,
+  VK_PAGE_UP   = 0x21,
+  VK_PAGE_DOWN = 0x36,
+  VK_HOME      = 0x20,
+  VK_END       = 0x35,
+  
+  // directional arrows
+  VK_UP        = 0x57,
+  VK_LEFT      = 0x61,
+  VK_DOWN      = 0x62,
+  VK_RIGHT     = 0x63,
+  
+  // keycodes are the same regardless of numlock state
+  VK_NUMPAD0      = 0x64,
+  VK_NUMPAD1      = 0x58,
+  VK_NUMPAD2      = 0x59,
+  VK_NUMPAD3      = 0x5a,
+  VK_NUMPAD4      = 0x48,
+  VK_NUMPAD5      = 0x49,
+  VK_NUMPAD6      = 0x4a,
+  VK_NUMPAD7      = 0x37,
+  VK_NUMPAD8      = 0x38,
+  VK_NUMPAD9      = 0x39,
+  VK_DECIMAL      = 0x65,
+  VK_NUMPADRETURN = 0x5b,
+};
+
+
 #define C_TEXT											0
 #define C_BACKGROUND									1
 #define C_NAMES											2

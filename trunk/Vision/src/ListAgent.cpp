@@ -47,7 +47,6 @@ ListAgent::ListAgent (
   channelWidth (0.0)
 {
 
-  #if 0
   frame = Bounds();
 
   BMenuBar *bar (new BMenuBar (frame, "menubar"));
@@ -152,7 +151,6 @@ ListAgent::ListAgent (
 //    title,
 //    BOWSER_SETTINGS);
 //  settings->Restore();
-#endif
 }
 
 ListAgent::~ListAgent (void)

@@ -1,6 +1,18 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0511]
+ 2001-05-11
+   * Rewrote ClientAgentInputFilter to switch against the keycode not
+     bytecode of the keypress.
+   * Added Ctrl+U support to the input control (deletes line's text up
+     to caret). A nice Ctrl+H implementation is already provided by
+     BTextView.
+   * Added CTCP TIME|DATE reply
+   * Made the logfile opening async, so ClientAgent creation
+     doesn't block if disk is readonly (doing chkbfs)
+   * Dropped GNOME implementation.
+
 [0.2.0507]
  2001-05-07
    * Shift+Cmd+NumPad0 switches to the previously active agent
