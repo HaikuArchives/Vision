@@ -443,10 +443,6 @@ VisionApp::QuitRequested (void)
     return false;
   }
 
-  if (settingsloaded)
-    if ((visionSettings->Save() == B_OK) && debugsettings)
-      printf (":SETTINGS: saved to file\n");
-
   // give our child threads a chance to die gracefully
   snooze (500000);  // 0.5 seconds
   
@@ -578,7 +574,8 @@ VisionApp::MessageReceived (BMessage *msg)
     case M_SETUP_CLOSE:
       {
         // save settings here since user has closed prefs and changes are done.
-        visionSettings->Save();
+        if ((visionSettings->Save() == B_OK) && debugsettings)
+          printf (":SETTINGS: saved to file\n");
         prefsWin = 0;
       }
       break;
