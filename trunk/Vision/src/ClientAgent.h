@@ -71,9 +71,9 @@ class ClientAgent : public BView
 
     virtual void                AddMenuItems (BPopUpMenu *) = 0;
 
-    float                       ScrollPos(void);
+    float                       ScrollPos(void) const;
     void                        SetScrollPos(float);
-    void                        ScrollRange(float *, float *);
+    void                        ScrollRange(float *, float *) const;
     void                        SetServerName(const char *);
     
     bool                        ParseCmd (const char *);
@@ -99,7 +99,7 @@ class ClientAgent : public BView
                                   const char *);
 
     void                        CTCPAction (BString theTarget, BString theMsg);
-	bool						CancelMultilineTextPaste() {  return fCancelMLPaste; }
+	bool						CancelMultilineTextPaste() const {  return fCancelMLPaste; }
 
     WindowListItem                 *fAgentWinItem;
     
@@ -151,17 +151,17 @@ class ClientAgent : public BView
     int32                           FirstKnownAs (
                                       const BString &,
                                       BString &,
-                                      bool *);
+                                      bool *) const;
     int32                           FirstSingleKnownAs (
                                       const BString &,
-                                      const BString &);
+                                      const BString &) const;
 
     virtual void                    Parser (const char *);
     virtual bool                    SlashParser (const char *);
     
-    void                            AddSend (BMessage *, const char *);
-    void                            AddSend (BMessage *, const BString &);
-    void                            AddSend (BMessage *, int32);
+    void                            AddSend (BMessage *, const char *) const;
+    void                            AddSend (BMessage *, const BString &) const;
+    void                            AddSend (BMessage *, int32) const;
 
     BString                         fId;
     BString                         fServerName;

@@ -375,11 +375,12 @@ ClientAgent::ParseCmd (const char *data)
 
     if ((channelagent = dynamic_cast<ChannelAgent *>(this)))
     {
-      int32 count (channelagent->fNamesList->CountItems());
+      const NamesView *namesList (channelagent->pNamesList());
+      int32 count (namesList->CountItems());
 
       for (int32 i = 0; i < count; ++i)
       {
-        NameItem *item ((NameItem *)(channelagent->fNamesList->ItemAt (i)));
+        NameItem *item ((NameItem *)(namesList->ItemAt (i)));
 
         if (!item->Name().ICompare (parms.String(), strlen (parms.String()))) //nick
         {

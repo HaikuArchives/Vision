@@ -383,6 +383,10 @@
 #define S_SERVER_CONN_PROBLEM       "CONNECTION PROBLEM"
 #define S_SERVER_LAG_DISABLED       "Disabled"
 #define S_SERVER_DCC_CHAT_PROMPT    " wants to begin a DCC chat with you."
+#define S_SERVER_WAITING_RETRY      "[@] Waiting "
+#define S_SERVER_WAITING_SECONDS    " second"
+#define S_SERVER_WAITING_PLURAL     "s"
+#define S_SERVER_WAITING_ENDING     " before next attempt"
 
 // server entry window
 

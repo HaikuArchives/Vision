@@ -56,14 +56,12 @@ class ClientWindow : public BWindow
 {
 
   protected:
-    BMenuBar              *menubar;
-    BMenu                 *mServer,
-                          *mEdit,
-                          *mTools,
-                          *mWindow,
-                          *mHelp;
-                          
-    ServerAgent           *serverAgent;
+    BMenuBar              *fMenuBar;
+    BMenu                 *fServer,
+                          *fEdit,
+                          *fTools,
+                          *fWindow,
+                          *fHelp;
 
   public:
                           ClientWindow (BRect);
@@ -79,17 +77,17 @@ class ClientWindow : public BWindow
     void                  AddMenu (BMenu *);
     void                  RemoveMenu (BMenu *);
     
-    ServerAgent           *GetTopServer (WindowListItem *);
+    ServerAgent           *GetTopServer (WindowListItem *) const;
     
-    bool                  ServerBroadcast (BMessage *);
+    bool                  ServerBroadcast (BMessage *) const;
 
     BView                 *bgView;
       
-    BRect                 *AgentRect (void);
-    WindowList            *pWindowList (void);
-    NotifyList            *pNotifyList (void);
-    ClientWindowDock      *pCwDock (void);
-    StatusView            *pStatusView (void);
+    BRect                 *AgentRect (void) const;
+    WindowList            *pWindowList (void) const;
+    NotifyList            *pNotifyList (void) const;
+    ClientWindowDock      *pCwDock (void) const;
+    StatusView            *pStatusView (void) const;
     
     BString               joinStrings;  // used to keep track of channel
                                         // keys on u2 ircds

@@ -8,6 +8,9 @@ http://vision.sourceforge.net
          * fixed crash bug when closing last item in window list
          * reordered some code so autoexec commands get executed before attempting channel rejoins
          * fixed reconnect bug where tab completion would include nicks that no longer were present in the channel
+         * added message indicating timeout for server retry
+         * added missing const qualifier to various class functions
+         * code audit time!
 
 [0.9.2-0719]
          * fixed name item color drawing

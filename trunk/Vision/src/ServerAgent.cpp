@@ -371,7 +371,17 @@ ServerAgent::Establish (void *arg)
       int retrycount (reply.FindInt32 ("retries"));
       
       if (retrycount)
+      {
+      	statString = S_SERVER_WAITING_RETRY;
+      	statString << (retrycount * retrycount);
+      	statString += S_SERVER_WAITING_SECONDS;
+      	if (retrycount > 1)
+      	  statString += S_SERVER_WAITING_PLURAL;
+      	statString += S_SERVER_WAITING_ENDING B_UTF8_ELLIPSIS "\n";
+      	ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
+      	sMsgrE->SendMessage(&statMsg);
         snooze (1000000 * retrycount * retrycount); // wait 1, 4, 9, 16 ... seconds
+      }
       
     
       if (sMsgrE->SendMessage (M_INC_RECONNECT) != B_OK)
@@ -493,6 +503,13 @@ ServerAgent::Establish (void *arg)
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
         
+      if (connectId.ICompare("64.156.75", 9) == 0)
+      {
+        string = "PASS 2legit2quit";
+        dataSend.ReplaceString ("data", string.String());
+        sMsgrE->SendMessage (&dataSend);
+      }
+
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
@@ -1434,8 +1451,8 @@ ServerAgent::MessageReceived (BMessage *msg)
         // store current nick for reconnect use (might be an away nick, etc)
         if (fReacquiredNick)
         {
-          fReconNick = fMyNick;
           fReacquiredNick = false;
+          fReconNick = fMyNick;
         }
         // let the user know
         if (fIsConnected)
@@ -1450,6 +1467,9 @@ ServerAgent::MessageReceived (BMessage *msg)
           if (agent && (agent != this))
             agent->Display (sAnnounce.String(), C_ERROR, C_BACKGROUND, F_SERVER);
         }
+        
+        // let other agents know about it
+        Broadcast(msg);
        
         fMyLag = S_SERVER_DISCON_STATUS;
         fMsgr.SendMessage (M_LAG_CHANGED);

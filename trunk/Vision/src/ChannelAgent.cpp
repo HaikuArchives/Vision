@@ -162,7 +162,7 @@ ChannelAgent::Show (void)
 }
 
 int
-ChannelAgent::FindPosition (const char *data)
+ChannelAgent::FindPosition (const char *data) const
 {
   ASSERT (data != NULL);
   /*
@@ -197,6 +197,12 @@ ChannelAgent::FindPosition (const char *data)
   }
 
   return -1;
+}
+
+const NamesView *
+ChannelAgent::pNamesList(void) const
+{
+  return fNamesList;
 }
 
 void

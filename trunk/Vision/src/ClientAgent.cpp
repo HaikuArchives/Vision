@@ -228,14 +228,14 @@ ClientAgent::Init (void)
 }
 
 void
-ClientAgent::ScrollRange (float *scrollMin, float *scrollMax)
+ClientAgent::ScrollRange (float *scrollMin, float *scrollMax) const
 {
   fTextScroll->ScrollBar(B_VERTICAL)->GetRange (scrollMin, scrollMax);
 }
 
 
 float
-ClientAgent::ScrollPos (void)
+ClientAgent::ScrollPos (void) const
 {
   return fTextScroll->ScrollBar (B_VERTICAL)->Value();
 }
@@ -832,7 +832,7 @@ ClientAgent::MessageReceived (BMessage *msg)
     case M_CHANNEL_MSG:
       {
         BString theNick;
-        const char *theMessage;
+        const char *theMessage (NULL);
         bool hasNick (false);
         bool isAction (false);
         BString knownAs;
@@ -890,7 +890,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
     case M_CHANGE_NICK:
       {
-        const char *oldNick;
+        const char *oldNick (NULL);
 
         msg->FindString ("oldnick", &oldNick);
 
@@ -1003,7 +1003,7 @@ int32
 ClientAgent::FirstKnownAs (
   const BString &data,
   BString &result,
-  bool *me)
+  bool *me) const
 {
   BString myAKA (vision_app->GetString ("alsoKnownAs"));
 
@@ -1035,7 +1035,7 @@ ClientAgent::FirstKnownAs (
 
 
 int32
-ClientAgent::FirstSingleKnownAs (const BString &data, const BString &target)
+ClientAgent::FirstSingleKnownAs (const BString &data, const BString &target) const
 {
   int32 place;
 
@@ -1053,7 +1053,7 @@ ClientAgent::FirstSingleKnownAs (const BString &data, const BString &target)
 }
 
 void
-ClientAgent::AddSend (BMessage *msg, const char *buffer)
+ClientAgent::AddSend (BMessage *msg, const char *buffer) const
 {
   if (strcmp (buffer, endl) == 0)
   {
@@ -1068,14 +1068,14 @@ ClientAgent::AddSend (BMessage *msg, const char *buffer)
 
 
 void
-ClientAgent::AddSend (BMessage *msg, const BString &buffer)
+ClientAgent::AddSend (BMessage *msg, const BString &buffer) const
 {
   AddSend (msg, buffer.String());
 }
 
 
 void
-ClientAgent::AddSend (BMessage *msg, int32 value)
+ClientAgent::AddSend (BMessage *msg, int32 value) const
 {
   BString buffer;
 
