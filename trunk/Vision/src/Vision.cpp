@@ -110,6 +110,11 @@ VisionApp::VisionApp (void)
   fShuttingDown = false;
 }
 
+VisionApp::~VisionApp (void)
+{
+  // empty d'tor
+}
+
 void
 VisionApp::ThreadStates (void)
 {
@@ -425,9 +430,9 @@ VisionApp::LoadDefaults (int32 section)
           fVisionSettings->AddBool ("timestamp", false);
           
         if (!fVisionSettings->HasString ("timestamp_format"))
-          fVisionSettings->AddString ("timestamp_format", "[%H:%M]");
+          fVisionSettings->AddString ("timestamp_format", "[%H:%M:%S]");
         else
-          fVisionSettings->ReplaceString ("timestamp_format", "[%H:%M]");
+          fVisionSettings->ReplaceString ("timestamp_format", "[%H:%M:%S]");
         
         if (!fVisionSettings->HasBool ("log_enabled"))
           fVisionSettings->AddBool ("log_enabled", false);
@@ -595,9 +600,8 @@ VisionApp::QuitRequested (void)
   //  snooze (500000);  // 0.5 seconds
 
   //ThreadStates();
-
   SaveSettings();
- 
+
   return true;
 }
 
@@ -761,6 +765,14 @@ VisionApp::LoadURL (const char *url)
   }
 }
 
+void
+VisionApp::AppActivated (bool state)
+{
+  if (state && fClientWin)
+    fClientWin->Activate(true);
+    
+  BApplication::AppActivated(state);  
+}
 
 void
 VisionApp::MessageReceived (BMessage *msg)
@@ -928,22 +940,20 @@ VisionApp::pClientWin() const
   return fClientWin;
 }
 
-BString
-VisionApp::VisionVersion (int typebit)
+void
+VisionApp::VisionVersion (int typebit, BString &result)
 {
-  static BString versionReply;
   switch (typebit)
   {
     case VERSION_VERSION:
-      versionReply = VERSION_STRING;
+      result = VERSION_STRING;
       break;
       
     case VERSION_DATE:
-      versionReply = BUILD_DATE;
-      versionReply.ReplaceAll ("_", " ");
+      result = BUILD_DATE;
+      result.ReplaceAll ("_", " ");
       break;
   }
-  return versionReply;
 }
 
 const char *

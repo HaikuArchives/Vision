@@ -114,19 +114,22 @@ ServerAgent::~ServerAgent (void)
 {
   if (fLagRunner)
     delete fLagRunner;
-
+  
+#ifdef NETSERVER_BUILD
   if (!fEstablishHasLock && fEndPointLock)
     delete fEndPointLock;
-  
+#endif
+
   while (fStartupChannels.CountItems() != 0)
     delete fStartupChannels.RemoveItem (0L);
-  
+
   delete fLogger;
-  
+
   delete_sem (fSendSyncSem);
   
   status_t result;
   wait_for_thread (fSenderThread, &result);
+
   while (fPendingSends.CountItems() > 0)
     delete fPendingSends.RemoveItem (0L);
 }
@@ -157,10 +160,13 @@ ServerAgent::Init (void)
 #ifdef NETSERVER_BUILD
   fEndPointLock = new BLocker();
 #endif
+  BString revString;
   Display ("Vision ");
-  Display (vision_app->VisionVersion(VERSION_VERSION).String(), C_MYNICK);
+  vision_app->VisionVersion (VERSION_VERSION, revString);
+  Display (revString.String(), C_MYNICK);
   Display (" built on ");
-  Display (vision_app->VisionVersion(VERSION_DATE).String());
+  vision_app->VisionVersion (VERSION_DATE, revString);
+  Display (revString.String());
   Display ("\nThis agent goes by the name of Smith... err ");
   BString temp;
   temp << fId << " (sid: " << fSid << ")";
@@ -255,12 +261,9 @@ ServerAgent::Sender (void *arg)
     agent->Window()->Unlock();
   }
   else
-  {
     return B_ERROR;
-  }
     
   BString *data (NULL);
-  
   while (acquire_sem (sendSyncLock) == B_NO_ERROR)
   {
     sendDataLock->Lock();
@@ -322,6 +325,7 @@ ServerAgent::Establish (void *arg)
       
       if (retrycount)
         snooze (1000000 * retrycount * retrycount); // wait 1, 4, 9, 16 ... seconds
+      
     
       if (sMsgrE->SendMessage (M_INC_RECONNECT) != B_OK)
         throw failToLock();
@@ -449,7 +453,7 @@ ServerAgent::Establish (void *arg)
         throw failToLock();
     
       // resume normal business matters.
-
+      
       ClientAgent::PackDisplay (&statMsg, S_SERVER_ESTABLISH "\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
     }
@@ -489,7 +493,7 @@ ServerAgent::Establish (void *arg)
   FD_SET (serverSock, &rset);
   FD_SET (serverSock, &wset);
   BLooper *looper;
-  
+
   while (sMsgrE->Target (&looper) != NULL)
   {
     char indata[1024];
@@ -504,7 +508,7 @@ ServerAgent::Establish (void *arg)
 #elif NETSERVER_BUILD
     if (select (serverSock + 1, &rset, 0, &eset, &tv) > 0
 #endif
-    &&  FD_ISSET (serverSock, &rset))
+    &&  FD_ISSET (serverSock, &rset) && !FD_ISSET (serverSock, &eset))
     {
 #ifdef NETSERVER_BUILD
       endpointLock->Lock();
@@ -569,7 +573,6 @@ ServerAgent::Establish (void *arg)
             FD_ISSET (serverSock, &rset) ? "true" : "false",
             FD_ISSET (serverSock, &wset) ? "true" : "false");
 		}
-		
         // tell the user all about it
         sMsgrE->SendMessage (M_NOT_CONNECTING);
         sMsgrE->SendMessage (M_SERVER_DISCONNECT);
@@ -606,16 +609,16 @@ ServerAgent::AsyncSendData (const char *cData)
   int32 length (0);
   if (!cData)
     return;
-    
-  BString data (cData);
 
+  BString data (cData);
+  
   data.Append("\r\n");
   length = data.Length();
-
+  
   memset(fSend_buffer, 0, sizeof(fSend_buffer));
 
   int32 dest_length (sizeof(fSend_buffer)), state (0);
-
+  
   convert_from_utf8 (
     B_ISO1_CONVERSION,
     data.String(), 
@@ -623,13 +626,13 @@ ServerAgent::AsyncSendData (const char *cData)
     fSend_buffer,
     &dest_length,
     &state);
-    
+
 #ifdef NETSERVER_BUILD
   fEndPointLock->Lock();
 #endif
   if (fServerSocket > 0 &&
 #ifdef BONE_BUILD  
-  (length = send (fServerSocket, fSend_buffer, dest_length, MSG_DONTWAIT) < 0)
+  (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
 #elif NETSERVER_BUILD
   (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
 #endif
@@ -639,6 +642,7 @@ ServerAgent::AsyncSendData (const char *cData)
     if (!fReconnecting && !fIsConnecting)
       fMsgr.SendMessage (M_SERVER_DISCONNECT);
   }
+
 #ifdef NETSERVER_BUILD
   fEndPointLock->Unlock();
 #endif
@@ -742,8 +746,6 @@ ServerAgent::Broadcast (BMessage *msg)
     if (client != this)
       client->fMsgr.SendMessage (msg);
   }
-  if (fListAgent)
-    vision_app->pClientWin()->DispatchMessage(msg, (BView *)fListAgent);
 }
 
 void
@@ -1097,6 +1099,7 @@ ServerAgent::MessageReceived (BMessage *msg)
       
     case M_NOT_CONNECTING:
       fIsConnecting = false;
+      fIsConnected = false;
       break;
      
     case M_CONNECTED:
@@ -1515,14 +1518,14 @@ ServerAgent::MessageReceived (BMessage *msg)
           if (fQuitMsg.Length() == 0)
           {
             const char *expansions[1];
-            BString version (vision_app->VisionVersion(VERSION_VERSION));
+            BString version;
+            vision_app->VisionVersion(VERSION_VERSION, version);
             expansions[0] = version.String();
             fQuitMsg << "QUIT :" << ExpandKeyed (vision_app->GetCommand (CMD_QUIT).String(), "V", expansions);
           }
  
           SendData (fQuitMsg.String());
         }
-        
 
         Broadcast (new BMessage (M_CLIENT_QUIT));
 		BMessenger listMsgr(fListAgent);
@@ -1532,7 +1535,6 @@ ServerAgent::MessageReceived (BMessage *msg)
         deathchant.AddPointer ("agent", this);
         deathchant.AddPointer ("item", fAgentWinItem);
         vision_app->pClientWin()->PostMessage (&deathchant);
-        msg->SendReply (B_REPLY);
       }
       break;
 

@@ -49,16 +49,18 @@ class VisionApp : public BApplication
 {
   public:
                             VisionApp (void);
+    virtual                 ~VisionApp (void);
 
     virtual void            MessageReceived (BMessage *);
     virtual void            AboutRequested (void);
     virtual bool            QuitRequested (void);
     virtual void            ArgvReceived (int32, char **);
     virtual void            ReadyToRun (void);
+    virtual void            AppActivated (bool);
     
     void                    LoadURL (const char *);
 
-    BString                 VisionVersion (int);
+    void                    VisionVersion (int, BString &);
     
     void                    InitDefaults (void);
     

@@ -99,6 +99,9 @@ class WindowList : public BOutlineListView
     void                            ContextSelectUp (void);
     void                            ContextSelectDown (void);
     
+    void                            MoveCurrentUp (void);
+    void                            MoveCurrentDown (void);
+    
     ClientAgent                     *Agent (int32, const char *);
     
     void                            AddAgent (BView *, int32, const char *, int32, bool);
