@@ -758,15 +758,6 @@ VisionApp::LoadURL (const char *url)
 }
 
 void
-VisionApp::AppActivated (bool state)
-{
-  if (state && fClientWin)
-    fClientWin->Activate(true);
-    
-  BApplication::AppActivated(state);  
-}
-
-void
 VisionApp::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
