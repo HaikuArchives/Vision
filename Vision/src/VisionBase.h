@@ -218,6 +218,15 @@ const uint32 M_CHANNEL_GOT_KICKED					= 0x1606;
 const uint32 M_LOOKUP_WEBSTER                       = 0x1607;
 const uint32 M_LOOKUP_GOOGLE                        = 0x1608;
 
+const uint32 M_DCC_COMPLETE                         = 0x1800;
+const uint32 M_DCC_PORT                             = 0x1801;
+const uint32 M_DCC_FILE_WIN_DONE                    = 0x1802;
+const uint32 M_DCC_FILE_WIN                         = 0x1803;
+const uint32 M_ADD_RESUME_DATA                      = 0x1804;
+const uint32 M_DCC_MESSENGER                        = 0x1805;
+const uint32 M_DCC_ACCEPT                           = 0x1806;
+const uint32 M_CHOSE_FILE                           = 0x1807;
+
 // Sound event identifiers
 enum SoundEvent
 {

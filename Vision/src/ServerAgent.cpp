@@ -26,7 +26,11 @@
 
 #include <UTF8.h>
 #include <Autolock.h>
+#include <Directory.h>
+#include <Entry.h>
+#include <FilePanel.h>
 #include <MessageRunner.h>
+#include <Path.h>
 
 #ifdef NETSERVER_BUILD 
 #  include <netdb.h>
@@ -44,6 +48,7 @@
 
 #include "ServerAgent.h"
 #include "ChannelAgent.h"
+#include "DCCConnect.h"
 #include "Vision.h"
 #include "ClientWindow.h"
 #include "MessageAgent.h"
@@ -620,12 +625,13 @@ ClientAgent *
 ServerAgent::Client (const char *cName)
 {
   ClientAgent *client (0);
+
   for (int32 i = 0; i < clients.CountItems(); ++i)
   {
     ClientAgent *item ((ClientAgent *)clients.ItemAt (i));
-    
     if (strcasecmp (cName, item->Id().String()) == 0)
     {
+      
       client = item;
       break;
     }
@@ -975,6 +981,100 @@ ServerAgent::MessageReceived (BMessage *msg)
           msg->SendReply(B_REPLY);
       }
       break;
+
+    case M_DCC_ACCEPT:
+      {
+        bool cont (false);
+        const char *nick,
+   	               *size,
+			       *ip,
+			       *port;
+        BPath path;
+			
+        msg->FindString("vision:nick", &nick);
+        msg->FindString("vision:size", &size);
+        msg->FindString("vision:ip", &ip);
+        msg->FindString("vision:port", &port);
+			
+        if (msg->HasString ("path"))
+          path.SetTo (msg->FindString ("path"));
+        else
+        {
+          const char *file;
+          entry_ref ref;
+
+          msg->FindRef ("directory", &ref);
+          msg->FindString("name", &file);
+ 
+          BDirectory dir (&ref);
+          path.SetTo (&dir, file);
+        }
+
+        if (msg->HasBool ("continue"))
+          msg->FindBool ("continue", &cont);
+        
+        DCCReceive *view;
+        view = new DCCReceive (
+          nick,
+          path.Path(),
+          size,
+          ip,
+          port,
+          cont);
+	
+          BMessage aMsg (M_DCC_FILE_WIN);
+          aMsg.AddPointer ("view", view);
+          be_app->PostMessage (&aMsg);
+      }
+      break;
+      
+    case M_CHOSE_FILE: // DCC send
+      {
+        const char *nick;
+        entry_ref ref;
+        off_t size;
+        msg->FindString ("nick", &nick);
+        msg->FindRef ("refs", &ref); // get file
+			
+        BEntry entry (&ref);
+        BPath path (&entry);
+        // PRINT(("file path: %s\n", path.Path()));
+        entry.GetSize (&size);
+
+        BString ssize;
+        ssize << size;
+
+        // because of a bug in the be library
+        // we have to get the sockname on this
+        // socket, and not the one that DCCSend
+        // binds.  calling getsockname on a
+        // a binded socket will return the
+        // LAN ip over the DUN one 
+			
+        hostent *hp = gethostbyname (localip);
+				
+        DCCSend *view;
+        view = new DCCSend (
+                nick,
+                path.Path(),
+                ssize.String(),
+                sMsgr,
+                *((struct in_addr*)(hp->h_addr_list)[0]));
+            BMessage msg (M_DCC_FILE_WIN);
+            msg.AddPointer ("view", view);
+            be_app->PostMessage (&msg);
+      }
+      break;
+
+    case B_CANCEL:
+      if (msg->HasPointer ("source"))
+      {
+        BFilePanel *fPanel;
+        msg->FindPointer ("source", reinterpret_cast<void **>(&fPanel));
+        delete fPanel;
+      }
+      break;
+
     
     case M_CHAT_ACCEPT:
       {

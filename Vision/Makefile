@@ -16,11 +16,11 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.6.5-1125
+VERSION := 0.7-exp-1126
 BUILDDATE := $(shell date +%b_%d_%Y)
 
 # system libs
-REG_LIBS := -lbe -ltranslation -ltextencoding -L./lib -lcolumnlistview
+REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -L./lib -lcolumnlistview
 
 # net_server libs
 NET_LIBS := -lnet -lnetapi

@@ -246,11 +246,11 @@ ClientAgent::ParseCmd (const char *data)
       BString secondWord (GetWord (data, 2)),
               theNick (GetWord (data, 3)),
               theFile (RestOfString(data, 4));
-#if 0
+
       if (secondWord.ICompare ("SEND") == 0
       &&  theNick != "-9z99")
       {
-        BMessage *msg (new BMessage (CHOSE_FILE));
+        BMessage *msg (new BMessage (M_CHOSE_FILE));
         msg->AddString ("nick", theNick.String());
         if (theFile != "-9z99")
         {
@@ -300,7 +300,7 @@ ClientAgent::ParseCmd (const char *data)
         myPanel->SetTarget (sMsgr);
         myPanel->Show();
       }
-#endif
+
       if (secondWord.ICompare ("CHAT") == 0
       &&       theNick != "-9z99")
       {

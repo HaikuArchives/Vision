@@ -56,6 +56,8 @@ class VisionApp * vision_app;
 #include "AboutWindow.h"
 #include "Vision.h"
 #include "ClientWindow.h"
+#include "DCCConnect.h"
+#include "DCCFileWindow.h"
 #include "NetworkWindow.h"
 #include "SettingsFile.h"
 #include "SetupWindow.h"
@@ -94,6 +96,7 @@ VisionApp::VisionApp (void)
       clientWin (0),
       prefsWin (0),
       netWin (0),
+      dccFileWin (0),
       identSocket (-1),
       activeTheme (new Theme ("current", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
 {
@@ -104,7 +107,7 @@ VisionApp::VisionApp (void)
   debugsettings = false;
   numBench = false;
   ShuttingDown = false;
-  
+  dcc_sid     = create_sem (1, "dcc accept");
 }
 
 void
@@ -782,8 +785,6 @@ VisionApp::MessageReceived (BMessage *msg)
         else
         {
           netWin = new NetworkWindow();
-          if (setupWin)
-            netWin->AddToSubset (setupWin);
           netWin->Show();
           
         }
@@ -824,6 +825,57 @@ VisionApp::MessageReceived (BMessage *msg)
         clientWin->PostMessage (&connMsg);
       }
       break;
+
+    case M_DCC_PORT:
+      {
+        if (msg->IsSourceWaiting())
+        {
+          BMessage reply (B_REPLY);
+          reply.AddInt32 ("sid", dcc_sid);
+          msg->SendReply (&reply);
+        }
+      }
+      break;
+
+		
+    case M_DCC_FILE_WIN:
+    {
+      if (dccFileWin)
+      {
+        dccFileWin->PostMessage (msg);
+      }
+      else
+      {
+        DCCConnect *view;
+				
+        msg->FindPointer ("view", reinterpret_cast<void **>(&view));
+        dccFileWin = new DCCFileWindow (view, 1);
+        dccFileWin->Show();
+      }
+    }
+    break;
+		
+    case M_DCC_MESSENGER:
+    if (msg->IsSourceWaiting())
+    {
+      BMessenger msgr (dccFileWin);
+      BMessage reply;
+      reply.AddMessenger ("msgr", msgr);
+      msg->SendReply (&reply);
+    }
+    break;
+
+    case M_DCC_FILE_WIN_DONE:
+    {
+      dccFileWin = 0;
+    }
+    break;
+
+    case M_DCC_COMPLETE:
+    {
+      Broadcast(msg);
+    }
+    break;
       
     default:
       BApplication::MessageReceived (msg);

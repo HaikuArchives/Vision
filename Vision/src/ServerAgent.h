@@ -37,6 +37,19 @@ class BMessageRunner;
 class ListAgent;
 struct ServerData;
 
+struct ResumeData
+{
+	bigtime_t					expire;
+	off_t							pos;
+	BString						nick,
+									file,
+									size,
+									ip,
+									port,
+									path;
+};
+
+
 class ServerAgent : public ClientAgent
 {
   public:
@@ -62,6 +75,7 @@ class ServerAgent : public ClientAgent
   private:
     virtual void                Init (void);
     void                        DCCChatDialog (BString, BString, BString);
+    void                        DCCGetDialog (BString, BString, BString, BString, BString);
     
 	void						SendData (const char *);
 	void						ParseLine (const char *);
@@ -107,6 +121,8 @@ class ServerAgent : public ClientAgent
 	BString                     reconNick; // used when reconnecting
 	BString						quitMsg;
 	BString                     myLag;
+	
+	BList                       resumes;
 
 	bool						isConnected,		// were done connecting
 									isConnecting,		// in process

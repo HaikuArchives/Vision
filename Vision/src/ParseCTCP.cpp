@@ -157,24 +157,41 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
   else if(theCTCP == "DCC")
   {
     BString theType = GetWord(theMsg.String(), 2);
-#if 0
+
     if (theType == "SEND")
     {
-      BString theFile (GetWord(theMsg.String(), 3)),
-              theIP   (GetWord(theMsg.String(), 4)),
-              thePort (GetWord(theMsg.String(), 5)),
-              theSize (GetWord(theMsg.String(), 6));
+      BString theFile,
+              theIP,
+              thePort,
+              theSize;
+      int32 startPos (0), endPos (0);
+      if ((startPos = theMsg.FindFirst ('\"')) != B_ERROR)
+      {
+        endPos = theMsg.FindFirst ('\"', startPos + 1);
+        theMsg.CopyInto (theFile, startPos + 1, endPos - (startPos + 1));
+        BString rest;
+        theMsg.CopyInto (rest, endPos+1, theMsg.Length() - (endPos + 1));
+        theIP = GetWord (rest.String(), 2);
+        thePort = GetWord (rest.String(), 3);
+        theSize = GetWord (rest.String(), 4);
+      }
+      else
+      {
+        theFile = GetWord(theMsg.String(), 3);
+        theIP   = GetWord(theMsg.String(), 4);
+        thePort = GetWord(theMsg.String(), 5);
+        theSize = GetWord(theMsg.String(), 6);
+      }
       theSize.RemoveLast ("\1"); // strip CTCP char
       DCCGetDialog (theNick, theFile, theSize, theIP, thePort);
-#endif    }
+    }
     if (theType == "CHAT")
     {
-      BString theIP   (GetWord(theMsg.String(), 4)),
-              thePort (GetWord(theMsg.String(), 5));
+          BString theIP (GetWord(theMsg.String(), 4)),
+                  thePort (GetWord(theMsg.String(), 5));
       thePort.RemoveLast ("\1");
       DCCChatDialog(theNick, theIP, thePort);
     }
-#if 0
     else if (theType == "ACCEPT")
     {
       BString file (GetWord (theMsg.String(), 3)),
@@ -196,16 +213,16 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
         {
           resumes.RemoveItem (i);
 
-          BMessage msg (DCC_ACCEPT);
-          msg.AddString ("bowser:nick", data->nick.String());
-          msg.AddString ("bowser:file", data->file.String());
-          msg.AddString ("bowser:size", data->size.String());
-          msg.AddString ("bowser:ip",   data->ip.String());
-          msg.AddString ("bowser:port", data->port.String());
+          BMessage msg (M_DCC_ACCEPT);
+          msg.AddString ("vision:nick", data->nick.String());
+          msg.AddString ("vision:file", data->file.String());
+          msg.AddString ("vision:size", data->size.String());
+          msg.AddString ("vision:ip",   data->ip.String());
+          msg.AddString ("vision:port", data->port.String());
           msg.AddString ("path",        data->path.String());
           msg.AddBool   ("continue",    true);
 
-          PostMessage(&msg);
+          msgr.SendMessage(&msg);
 					
           delete data;
           break;
@@ -242,10 +259,10 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       bReply.FindMessenger ("msgr", &msgr);
 
       BMessage msg (M_ADD_RESUME_DATA), reply;
-      msg.AddString ("bowser:nick", theNick.String());
-      msg.AddString ("bowser:port", port.String());
-      msg.AddString ("bowser:file", file.String());
-      msg.AddInt64 ("bowser:pos", pos);
+      msg.AddString ("vision:nick", theNick.String());
+      msg.AddString ("vision:port", port.String());
+      msg.AddString ("vision:file", file.String());
+      msg.AddInt64 ("vision:pos", pos);
 
       // do sync.. we do not want to have the transfer
       // start before we tell it okay
@@ -266,7 +283,6 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
         SendData (buffer.String());
       }
     }
-  #endif
   }
 
   BMessage display (M_DISPLAY);
