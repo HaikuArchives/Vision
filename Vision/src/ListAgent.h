@@ -34,6 +34,7 @@
 #include <regex.h>
 
 class BColumnListView;
+class BColumn;
 class BScrollView;
 class BMenuItem;
 class StatusView;
@@ -60,6 +61,10 @@ class ListAgent : public BView
     BMessageRunner          *listUpdateTrigger;
     BMenu                   *listMenu;
     BColumnListView               *listView;
+    BColumn                 *channelColumn,
+                            *usersColumn,
+                            *topicColumn;
+                            
     StatusView              *status;
 
     BString                 filter,
