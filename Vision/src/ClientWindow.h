@@ -79,12 +79,12 @@ class ClientWindow : public BWindow
     ServerAgent           *GetTopServer (WindowListItem *);
     
     bool                  ServerBroadcast (BMessage *);
+
+    BView                 *bgView;
       
     BRect                 *AgentRect (void);
     WindowList            *pWindowList (void);
     StatusView            *pStatusView (void);
-    
-    BView                 *bgView;
     
     BString               joinStrings;  // used to keep track of channel
                                         // keys on u2 ircds
@@ -97,6 +97,7 @@ class ClientWindow : public BWindow
     bool                  wait_for_quits;
     
     bool                  altw_catch;    
+    
     BMessageRunner        *altwRunner;
     
     BRect                 *agentrect;

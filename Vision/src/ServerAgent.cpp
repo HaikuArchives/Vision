@@ -307,7 +307,6 @@ ServerAgent::Establish (void *arg)
       struct sockaddr_in sockin;
 
 
-//#ifdef NETSERVER_BUILD
       // store local ip address for future use (dcc, etc)
       int addrlength (sizeof (struct sockaddr_in));
       if (getsockname (endPoint->Socket(),(struct sockaddr *)&sockin,&addrlength)) {
@@ -337,8 +336,6 @@ ServerAgent::Establish (void *arg)
         ClientAgent::PackDisplay (&statMsg, "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)\n", &errorcolor);
         sMsgrE->SendMessage (&statMsg);  
       }
-
-//#endif
 
       // resume normal business matters.
 
@@ -584,7 +581,6 @@ ServerAgent::SendData (const char *cData)
   || lEndpoint == 0)
   {
     // doh, we aren't even connected.
-
     if (!reconnecting && !isConnecting)
       msgr.SendMessage (M_SERVER_DISCONNECT);
   }
