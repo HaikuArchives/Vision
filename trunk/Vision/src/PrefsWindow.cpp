@@ -144,7 +144,6 @@ NetManagementPrefsView::MessageReceived (BMessage *msg)
     break;
       
     default:
-      msg->PrintToStream();
       BView::MessageReceived(msg);
   }
 }

@@ -381,7 +381,7 @@ ServerAgent::Establish (void *arg)
       dataSend.ReplaceString ("data", string.String());
       if (sMsgrE->SendMessage (&dataSend) != B_OK)
         throw failToLock();
-
+    
       // resume normal business matters.
 
       ClientAgent::PackDisplay (&statMsg, "[@] Established\n", C_ERROR);
@@ -443,7 +443,7 @@ ServerAgent::Establish (void *arg)
 #ifdef NETSERVER_BUILD
       endpointLock->Lock();
 #endif
-      if ((length = recv (serverSock, indata, 1024, 0)) > 0)
+      if ((length = recv (serverSock, indata, 1023, 0)) > 0)
       {
 #ifdef NETSERVER_BUILD
         endpointLock->Unlock();
@@ -590,8 +590,7 @@ ServerAgent::SendData (const char *cData)
 void
 ServerAgent::ParseLine (const char *cData)
 {
-  BString data (FilterCrap (cData));
-
+  BString data = FilterCrap (cData);
   int32 length (data.Length() + 1);
 
   if (parse_size < length * 3UL)
@@ -741,7 +740,9 @@ ServerAgent::FilterCrap (const char *data)
 
   for (int32 i = 0; i < theChars; ++i)
   {
-    if (data[i] > 1 && data[i] < 32)
+    if (data[i] == 3 && !vision_app->GetBool ("stripcolors"))
+      outData << data[i];
+    else if (data[i] > 1 && data[i] < 32)
     {
       // TODO Get these codes working
       if (data[i] == 3)

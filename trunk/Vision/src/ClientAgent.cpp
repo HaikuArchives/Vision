@@ -36,6 +36,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 
 #include "VTextControl.h"
@@ -222,6 +223,7 @@ ClientAgent::Init (void)
     logger = new ClientAgentLogger (id, serverName);
   else
     logger = NULL;
+  
 }
 
 void
@@ -388,8 +390,10 @@ ClientAgent::Display (
   if (isLogging)
     logger->Log (buffer);
   
-  text->Append(buffer, fore, back, font);
-  
+  // displays normal text if no color codes are present
+  // (i.e. if the text has already been filtered by ServerAgent::FilterCrap
+  ParsemIRCColors (buffer, fore, back, font);
+
   if (IsHidden())
   {
     BMessage statusMsg (M_UPDATE_STATUS);
@@ -399,6 +403,59 @@ ClientAgent::Display (
   }
 }
 
+void
+ClientAgent::ParsemIRCColors (
+  const char *buffer,
+  uint32 fore,
+  uint32 back,
+  uint32 font)
+{
+  int mircFore = fore;
+  int mircBack = back;
+  int mircFont = font;
+  while (buffer && *buffer)
+  {
+   
+    const char *start = buffer;
+    while (*buffer)
+    {
+      if (*buffer != 3)
+      {
+        ++buffer;
+        continue;
+      }
+      if (*buffer == 3 && start != buffer)
+        break;
+      ++buffer;
+      if (!isdigit (*buffer))
+      {
+        // reset
+        mircFore = fore;
+        mircBack = back;
+        mircFont = font;
+      }
+      else
+      {
+        // parse colors
+        mircFore = 0;
+        while (isdigit (*buffer))
+          mircFore = mircFore * 10 + *buffer++ - '0';
+        mircFore = (mircFore % 16) + C_MIRC_WHITE;
+        if (*buffer == ',')
+        {
+          ++buffer;
+          mircBack = 0;
+          while (isdigit (*buffer))
+            mircBack = mircBack * 10 + *buffer++ - '0';
+          mircBack = (mircBack % 16) + C_MIRC_WHITE;
+        }
+      }
+      // set start to text portion (we have recorded the mirc stuff)
+      start = buffer;
+    }
+    text->Append (start, buffer - start, mircFore, mircBack, mircFont);
+  }
+}
 
 void
 ClientAgent::Parser (const char *)

@@ -122,7 +122,7 @@ class VisionApp : public BApplication
 	void					InitSettings (void);
     void                    ThreadStates (void);
     
-    bool                    ShuttingDown;
+    volatile bool           ShuttingDown;
 
     AboutWindow             *aboutWin;
     SetupWindow             *setupWin;

@@ -849,14 +849,14 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         if (num == RPL_MOTD)
           motdBuffer.Append (tempString);
         else
-          Display (tempString.String());
+          Display (tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
       }
       return true;
     
     case RPL_MOTDSTART:        // 375
       {
         BString tempString ("- Server Message Of The Day:\n");
-        Display (tempString.String());
+        Display (tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
       }
       return true;
     
@@ -870,11 +870,11 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 	    if (motdBuffer.Length() > 0)
 	    {
 	      motdBuffer.Append (tempString);
-	      Display (motdBuffer.String());
+	      Display (motdBuffer.String(), C_SERVER, C_BACKGROUND, F_SERVER);
 	      motdBuffer = "";
 	    }
 	    else
-	      Display (tempString.String());
+	      Display (tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
       		
         if (reconnecting)
         {

@@ -100,6 +100,20 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   maxWidth *= 1.2;
   maxHeight += trackingBoundsRect.Height() * 1.5;
   AddChild (logFileTimestamp);
+  
+  checkboxRect.top += logFileTimestamp->Bounds().Height() * 1.2;
+  msg.ReplaceString ("setting", "stripcolors");
+  stripColors = new BCheckBox (checkboxRect, "stripcolors",
+    "strip mIRC Colors",
+    new BMessage (msg));
+  stripColors->SetValue ((vision_app->GetBool ("stripcolors")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  stripColors->MoveBy(be_plain_font->StringWidth("S"), 0);
+  stripColors->ResizeToPreferred();
+  trackingBoundsRect = stripColors->Bounds();
+  maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
+  maxHeight += trackingBoundsRect.Height() * 1.5; 
+  AddChild (stripColors);
+  
   ResizeTo(maxWidth, maxHeight);
 }
 
@@ -121,7 +135,7 @@ AppWindowPrefsView::AllAttached (void)
   timeStamp->SetTarget (this);
   logEnabled->SetTarget (this);
   logFileTimestamp->SetTarget (this);
-
+  stripColors->SetTarget (this);
   BView::AllAttached();
 }
 

@@ -41,7 +41,8 @@ class AppWindowPrefsView : public BView
               *catchAltW,
               *timeStamp,
               *logEnabled,
-              *logFileTimestamp;
+              *logFileTimestamp,
+              *stripColors;
 };
 
 #endif // _PREFAPP_H

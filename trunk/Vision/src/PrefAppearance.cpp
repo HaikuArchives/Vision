@@ -85,7 +85,23 @@ static const char *ColorLabels[] =
 	"Wallops",
 	"Timestamp",
 	"Timestamp background",
-	"Selection"
+	"Selection",
+	"mIRC White",
+	"mIRC Black",
+	"mIRC Dark Blue",
+	"mIRC Green",
+	"mIRC Red",
+	"mIRC Brown",
+	"mIRC Purple",
+	"mIRC Orange",
+	"mIRC Yellow",
+	"mIRC Lime",
+	"mIRC Teal",
+	"mIRC Aqua",
+	"mIRC Light Blue",
+	"mIRC Pink",
+	"mIRC Grey",
+	"mIRC Silver"
 };
 
 static struct {
@@ -347,6 +363,23 @@ AppearancePrefsView::AttachedToWindow (void)
       SetColorPair (C_TIMESTAMP, C_TIMESTAMP_BACKGROUND, C_TIMESTAMP);
       SetColorPair (C_TIMESTAMP_BACKGROUND, C_TIMESTAMP_BACKGROUND, C_TIMESTAMP);
       SetColorPair (C_SELECTION, C_SELECTION, C_TEXT);
+      SetColorPair (C_MIRC_WHITE, C_MIRC_WHITE, C_MIRC_WHITE);
+      SetColorPair (C_MIRC_BLACK, C_MIRC_BLACK, C_MIRC_BLACK);
+      SetColorPair (C_MIRC_BLUE, C_MIRC_BLUE, C_MIRC_BLUE);
+      SetColorPair (C_MIRC_GREEN, C_MIRC_GREEN, C_MIRC_GREEN);
+      SetColorPair (C_MIRC_RED, C_MIRC_RED, C_MIRC_RED);
+      SetColorPair (C_MIRC_BROWN, C_MIRC_BROWN, C_MIRC_BROWN);
+      SetColorPair (C_MIRC_PURPLE, C_MIRC_PURPLE, C_MIRC_PURPLE);
+      SetColorPair (C_MIRC_ORANGE, C_MIRC_ORANGE, C_MIRC_ORANGE);
+      SetColorPair (C_MIRC_YELLOW, C_MIRC_YELLOW, C_MIRC_YELLOW);
+      SetColorPair (C_MIRC_LIME, C_MIRC_LIME, C_MIRC_LIME);
+      SetColorPair (C_MIRC_TEAL, C_MIRC_TEAL, C_MIRC_TEAL);
+      SetColorPair (C_MIRC_AQUA, C_MIRC_AQUA, C_MIRC_AQUA);
+      SetColorPair (C_MIRC_LT_BLUE, C_MIRC_LT_BLUE, C_MIRC_LT_BLUE);
+      SetColorPair (C_MIRC_PINK, C_MIRC_PINK, C_MIRC_PINK);
+      SetColorPair (C_MIRC_GREY, C_MIRC_GREY, C_MIRC_GREY);
+      SetColorPair (C_MIRC_SILVER, C_MIRC_SILVER, C_MIRC_SILVER);
+
    }
 }
 
@@ -436,7 +469,6 @@ AppearancePrefsView::MessageReceived (BMessage *msg)
 
      case M_FONT_SIZE_CHANGE:
      {
-        msg->PrintToStream();
         int32 which, size;
 
         msg->FindInt32 ("which", &which);

@@ -127,6 +127,12 @@ class ClientAgent : public BView
                                       uint32 = 0,
                                       uint32 = 0,
                                       uint32 = 0);
+
+    void                            ParsemIRCColors (
+                                      const char *,
+                                      uint32 = 0,
+                                      uint32 = 0,
+                                      uint32 = 0);
                                       
     virtual void                    Submit (const char *, bool = true, bool = true);
 
