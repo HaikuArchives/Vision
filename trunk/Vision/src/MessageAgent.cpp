@@ -133,6 +133,15 @@ MessageAgent::AddMenuItems (BPopUpMenu *pMenu)
   if (Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
       item->SetEnabled (false);
   pMenu->AddItem (item);
+  BMessage *msg (new BMessage (M_SUBMIT));
+  BString command ("/dcc send ");
+  command += fId;
+  msg->AddString ("input", command.String());
+  item = new BMenuItem("DCC Send", msg);
+  item->SetTarget (this);
+  if (Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
+      item->SetEnabled (false);
+  pMenu->AddItem (item);
   pMenu->AddSeparatorItem();
 }
 

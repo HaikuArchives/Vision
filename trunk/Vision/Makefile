@@ -16,8 +16,10 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.8.4-0329
+VERSION := 0.8.4-0411
 BUILDDATE := $(shell date +%b_%d_%Y)
+
+CHECK_MEM := false
 
 # system libs
 REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker
