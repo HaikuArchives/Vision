@@ -29,6 +29,10 @@
 #include <Autolock.h>
 #include <MessageRunner.h>
 
+#ifdef NETSERVER_BUILD
+#  include <netdb.h>
+#endif
+
 //#ifdef BONE_BUILD
 //#  include <bone/arpa/inet.h>
 //#endif
