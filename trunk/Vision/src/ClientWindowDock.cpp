@@ -24,21 +24,17 @@
 #include <ScrollView.h>
 #include <StringView.h>
 
-#include "AgentDock.h"
+#include "ClientWindowDock.h"
 #include "Vision.h"
 #include "WindowList.h"
 
 #include <stdio.h>
 
-const rgb_color HEADER_NORMAL  = ui_color (B_MENU_BACKGROUND_COLOR);
-const rgb_color HEADER_DARK_1  = tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT);
-const rgb_color HEADER_DARK_2  = tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT);
-
 //////////////////////////////////////////////////////////////////////////////
 /// Begin AgentDock functions
 //////////////////////////////////////////////////////////////////////////////
 
-AgentDock::AgentDock (BRect frame)
+ClientWindowDock::ClientWindowDock (BRect frame)
   : BView (
     frame,
     "agentDock",
@@ -56,20 +52,20 @@ AgentDock::AgentDock (BRect frame)
   AddWinList();
 }
 
-AgentDock::~AgentDock (void)
+ClientWindowDock::~ClientWindowDock (void)
 {
   //
 }
 
 void
-AgentDock::AddWinList (void)
+ClientWindowDock::AddWinList (void)
 {
   winListAgent = new AgentDockWinList (workingFrame);
   AddChild (winListAgent);
 }
 
 void
-AgentDock::AddNotifyList (void)
+ClientWindowDock::AddNotifyList (void)
 {
   BRect notifyFrame (workingFrame);
   notifyFrame.top = workingFrame.bottom - 15;
@@ -81,7 +77,7 @@ AgentDock::AddNotifyList (void)
 }
 
 WindowList *
-AgentDock::pWindowList (void)
+ClientWindowDock::pWindowList (void)
 {
   return winListAgent->pWindowList();
 }
