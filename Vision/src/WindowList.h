@@ -122,7 +122,7 @@ class WindowList : public BOutlineListView
                                     selColor,
                                     bgColor;
                                     
-    static int                      SortListItems (const void *, const void *);
+    static int                      SortListItems (const BListItem *, const BListItem *);
     
 };
 
