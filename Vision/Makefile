@@ -26,7 +26,7 @@ REG_LIBS := -lbe -ltranslation -ltextencoding
 NET_LIBS := -lnet -lnetapi
 
 # bone libs
-BONE_LIBS := -lroot -lsocket -lbnetapi -lbind
+BONE_LIBS := -lroot -lsocket -lbnetapi -lbind -lbe2
 
 # lua
 LUA_LIBS := -L./src/lua/lib -llua -llualib
@@ -44,25 +44,37 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 
 # compiler, linker, ...
 
-#CC := g++ -c -pipe
 CC := g++ -c -pipe
-CFLAGS :=
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 ifeq ($(wildcard /system/lib/libbind.so),)
 CFLAGS += -DNETSERVER_BUILD
 else
 CFLAGS += -DBONE_BUILD
 endif
+
+ifeq ($(VIS_BUILD),alan)
+CFLAGS += -DALAN_BUILD=1
+endif
+
+ifeq ($(VIS_BUILD),be)
+CFLAGS += -DBE_INC_BUILD=1
+endif
+
+ifeq ($(BUILD_DEBUG),true)
+	CFLAGS += -g
+else
+	CFLAGS += -O1
+endif
+
 CFLAGS += -DBEOS_BUILD
 CFLAGS += -DBUILD_DATE=\"$(BUILDDATE)\"
-CFLAGS += -g
 CFLAGS += -fno-pic
 CFLAGS += -ffast-math
 CFLAGS += -march=pentium -mcpu=pentium
-CFLAGS += -Wall -W -Wno-multichar -Wshadow -Wpointer-arith
+CFLAGS += -Wall -W -Wno-multichar -Wpointer-arith
 CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith
-CFLAGS += -Wcast-qual
+#CFLAGS += -Wcast-qual
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
 
 LD := g++
@@ -92,7 +104,7 @@ EXTRADATA:= $(wildcard data.zip)
 BASESOURCES := $(shell cd $(SRCDIR) && ls -1 *.cpp)
 SOURCES := $(addprefix $(SRCDIR)/,$(BASESOURCES))
 OBJECTS := $(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(BASESOURCES))))
-DEPENDS := $(addprefix $(DEPDIR)/,$(addsuffix .d,$(basename $(BASESOURCES))))
+#DEPENDS := $(addprefix $(DEPDIR)/,$(addsuffix .d,$(basename $(BASESOURCES))))
 
 BASEHEADERS := $(shell cd $(SRCDIR) && ls -1 *.h)
 HEADERS := $(addprefix $(SRCDIR)/,$(BASEHEADERS))
@@ -132,7 +144,7 @@ endif
 	@mimeset -f $@
 	
 $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
-	@echo compiling $@
+	@echo compiling : $@
 	@mkdir -p $(OBJDIR)
 	@$(CC) $< $(CFLAGS) -o $@
 
@@ -174,7 +186,7 @@ endif
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),depend)
 ifneq ($(MAKECMDGOALS),sourcearchive)
-include $(DEPENDS)
+#include $(DEPENDS)
 endif
 endif
 endif
