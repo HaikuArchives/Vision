@@ -106,11 +106,17 @@ NameItem::DrawItem (BView *passedFather, BRect frame, bool complete)
 		drawString.Prepend ("@");
 		color = father->GetColor (C_OP);
 	}
+	else if ((myStatus & STATUS_HELPER_BIT) != 0)
+	{
+		drawString.Prepend ("%");
+		color = father->GetColor (C_HELPER);
+	}
 	else if ((myStatus & STATUS_VOICE_BIT) != 0)
 	{
 		drawString.Prepend("+");
 		color = father->GetColor (C_VOICE);
 	}
+	
 
 	if ((myStatus & STATUS_IGNORE_BIT) != 0)
 		color = father->GetColor (C_IGNORE);
