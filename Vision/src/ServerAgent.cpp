@@ -651,6 +651,11 @@ ServerAgent::SortNotifyItems (const void *item1, const void *item2)
   if (!ptr1 || !ptr2)
     return 0;
   
+  if (ptr1->GetState() && !ptr2->GetState())
+    return -1;
+  if (!ptr1->GetState() && ptr2->GetState())
+    return 1;
+  
   BString name (ptr1->Text());
     
   return name.ICompare(ptr2->Text());

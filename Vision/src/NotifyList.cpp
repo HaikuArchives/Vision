@@ -277,7 +277,7 @@ NotifyListItem::SetState (bool newState)
 }
 
 bool
-NotifyListItem::GetState(void)
+NotifyListItem::GetState(void) const
 {
   return fNotifyState;
 }

@@ -453,7 +453,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             }
           }
         }
-
+        fNotifyNicks.SortItems(SortNotifyItems);
         msg.AddPointer ("list", &fNotifyNicks);
         msg.AddPointer ("source", this);
         msg.AddInt32 ("change", hasChanged);
