@@ -1,9 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.4-0901]
+[0.9.4-0902]
          * fix stupid crash bug
          * fix crash bug in PPC rev
+         * fix bug where items would get attached to the wrong server
+         * fixed bug where font changes would update the font size but not spacing of list items
 
 [0.9.4-0830]
          * fixed deadlock in DCC Transfers window

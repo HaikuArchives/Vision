@@ -401,8 +401,11 @@ NamesView::MessageReceived (BMessage *msg)
       if (which == F_NAMES)
       {
         fActiveTheme->ReadLock();
-        SetFont (&fActiveTheme->FontAt (F_NAMES));
+        BFont newFont (fActiveTheme->FontAt (F_NAMES));
         fActiveTheme->ReadUnlock();
+        SetFont (&newFont);
+        for (int32 i = 0; i < CountItems(); i++)
+          ItemAt(i)->Update(this, &newFont);
         Invalidate();
       }
     }
