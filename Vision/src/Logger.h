@@ -43,8 +43,8 @@ class Logger
    thread_id           logThread;
    BString             logName;
    BString             serverName;
-   BList               logBuffer;
-   BLocker             logBufferLock;
+   BList               *logBuffer;
+   BLocker             *logBufferLock;
    sem_id              logSyncherLock;
    BFile               *logFile;
 };

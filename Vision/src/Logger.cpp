@@ -35,8 +35,14 @@ Logger::Logger (BString currentLog, BString server)
   logName = currentLog;
   serverName = server;
   isQuitting = false;
+  // the file, BList and Locker are taken over by logThread as soon as SetupLogging
+  // is done. From there it will take care of cleaning them up on destruct.
   logFile = new BFile();
+  logBuffer = new BList();
+  logBufferLock = new BLocker();
+  // initialize the log file if it doesn't already exist
   SetupLogging();
+  // semaphore used to synchronize the log thread and newly incoming log requests
   logSyncherLock = create_sem (0, "logSynchLock_sem");
   logThread = spawn_thread (AsyncLogger,
                             vision_app->GetThreadName (THREAD_L),
@@ -47,8 +53,12 @@ Logger::Logger (BString currentLog, BString server)
 
 Logger::~Logger (void)
 {
+  // tell log thread it's time to die
   delete_sem (logSyncherLock);
   status_t result;
+  // if the whole app's shutting down, wait for the logger to finish its work to
+  // prevent possible race/crash conditions, otherwise terminate immediately and let
+  // logThread finish up in the background
   if (isQuitting)
     wait_for_thread (logThread, &result);
 }
@@ -56,6 +66,9 @@ Logger::~Logger (void)
 void
 Logger::SetupLogging (void)
 {
+  // if the logFile doesn't exist already create the dirs
+  // and initialize the file, otherwise just open the existing one
+  // and add a starting session line
   if (logFile->InitCheck() == B_NO_INIT)
   {
     time_t myTime (time (0));
@@ -83,7 +96,8 @@ Logger::SetupLogging (void)
     wName.ReplaceAll ("/", "_");
     wName.ReplaceAll ("*", "_");
     wName.ReplaceAll ("?", "_");
-
+    
+    // append timestamp in year/month/day format to filename if desired
     if (vision_app->GetBool ("log_filetimestamp"))
     {
       char tempDate[16];
@@ -116,17 +130,18 @@ Logger::SetupLogging (void)
     else
       logFile->Unset();
   }
-
   return;
 }
 
 void
 Logger::Log (const char *data)
 {
-  logBufferLock.Lock();
+  // add entry to logfile for logThread to write asynchronously
+  logBufferLock->Lock();
   BString *logString (new BString (data));
-  logBuffer.AddItem (logString);
-  logBufferLock.Unlock();
+  logBuffer->AddItem (logString);
+  logBufferLock->Unlock();
+  // unlock logThread so it can go to work
   release_sem (logSyncherLock);
 }
 
@@ -135,15 +150,18 @@ Logger::AsyncLogger (void *arg)
 {
   Logger *logger ((Logger *)arg);
   BString *currentString (NULL);
-  BLocker *myLogBufferLock (&(logger->logBufferLock));
-  BList *myLogBuffer (&(logger->logBuffer));
+  BLocker *myLogBufferLock ((logger->logBufferLock));
+  BList *myLogBuffer ((logger->logBuffer));
   BFile *myLogFile ((logger->logFile));
   
+  // sit in event loop waiting for new data
+  // loop will break when ~Logger deletes the semaphore
   while (acquire_sem (logger->logSyncherLock) == B_NO_ERROR)
   {
     myLogBufferLock->Lock();
     if (!myLogBuffer->IsEmpty())
     {
+      // grab next string from list and write to file
       currentString = (BString *)myLogBuffer->RemoveItem (0L);
       myLogBufferLock->Unlock();
       if (myLogFile->InitCheck() != B_NO_INIT)
@@ -153,6 +171,7 @@ Logger::AsyncLogger (void *arg)
     else myLogBufferLock->Unlock();
   }
 
+  // on shutdown empty out all remaining data (if any) and write to file
   while (!myLogBuffer->IsEmpty())
   {
     currentString = (BString *)myLogBuffer->RemoveItem(0L);
@@ -160,7 +179,12 @@ Logger::AsyncLogger (void *arg)
       myLogFile->Write (currentString->String(), currentString->Length());
     delete currentString;
   }
-
+  
+  // clean up the now unneeded BList and Locker
+  delete myLogBuffer;
+  delete myLogBufferLock;
+    
+  // write Session Close and close/clean up
   if (myLogFile->InitCheck() != B_NO_INIT)
   {
     time_t myTime (time (0));
