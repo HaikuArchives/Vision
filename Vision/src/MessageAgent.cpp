@@ -510,7 +510,6 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
 void
 MessageAgent::Parser (const char *buffer)
 {
-  printf("buffer: %s\n", buffer);
   if (!dChat)
   {
     BMessage dataSend (M_SERVER_SEND);
