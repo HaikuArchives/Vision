@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #  -*- Python -*-
 
-# modified by Wade Majors to remove CVS diff
+# modified by Wade Majors (guru@startrek.com) to remove CVS diff
 
 """Complicated notification for CVS checkins.
 
