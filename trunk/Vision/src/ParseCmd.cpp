@@ -60,6 +60,23 @@ ClientAgent::ParseCmd (const char *data)
   BString firstWord (GetWord(data, 1).ToUpper());
   BMessage sendMsg (M_SERVER_SEND);
 
+  if (dynamic_cast<ChannelAgent *>(this) && vision_app->HasAlias(firstWord))
+  {
+    return ParseCmd(vision_app->ParseAlias(data, fId).String());
+  }
+  
+  if (firstWord == "/ADDALIAS")
+  {
+    vision_app->AddAlias(GetWord(data, 2).ToUpper(), RestOfString(data, 3));
+    return true;
+  }
+  
+  if (firstWord == "/DELALIAS")
+  {
+    vision_app->RemoveAlias(GetWord(data, 2).ToUpper());
+    return true;
+  }
+
   if (firstWord == "/WALLOPS"  // we need to insert a ':' before parm2
   ||  firstWord == "/SQUIT"    // for the user
   ||  firstWord == "/PRIVMSG")
