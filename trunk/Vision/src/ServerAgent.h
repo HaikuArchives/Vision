@@ -41,7 +41,6 @@ class ServerAgent : public ClientAgent
                                 ServerAgent (
                                   const char *,  // id_
                                   const char *,  // port
-                                  BString *,     // events
                                   bool identd_,  // enable identd?
                                   const char *,  // connect commands
                                   BRect);        // frame
