@@ -80,7 +80,8 @@ main (void)
 
 VisionApp::VisionApp (void)
   : BApplication ("application/x-vnd.Ink-Vision"),
-      aboutWin (0)
+      aboutWin (0),
+      identEndpoint (0)
 {
   // some setup
   settingsloaded = false;
@@ -416,9 +417,13 @@ VisionApp::QuitRequested (void)
   // give our child threads a chance to die gracefully
   snooze (500000);  // 0.5 seconds
   
-  status_t result;
-
-  wait_for_thread (identThread, &result);
+  if (identEndpoint)
+  {
+    status_t result;
+    identEndpoint->Close();
+    wait_for_thread (identThread, &result);
+  }
+  
   //ThreadStates();
   
   return true;
@@ -926,11 +931,12 @@ VisionApp::Identity (void *)
       
   if (identPoint.InitCheck()    == B_OK 
   &&  identPoint.Bind (113)     == B_OK) 
-  { 
+  {
+    vision_app->identEndpoint = &identPoint;
     identPoint.Listen (2048);
     while (!vision_app->ShuttingDown) 
     {
-      accepted = identPoint.Accept (30 * 1000);
+      accepted = identPoint.Accept (-1);
       
       if (accepted) 
       {
@@ -979,7 +985,6 @@ VisionApp::Identity (void *)
       } 
     }
   }
-  identPoint.Close();
   return 0; 
 
 } 

@@ -1,12 +1,16 @@
 Vision
 http://vision.sourceforge.net
 
-[0.2.0620]
+[0.2.0630]
+ 2001-06-30
+   * yet another ident fix *sigh*
+
+[0.2.0628]
  2001-06-28
    * fixed ident thread crash on shutdown bug
 
-[0.2.0620]
- 2001-06-20
+[0.2.0624]
+ 2001-06-24
    * fixed auto-rejoin on u2 ircd (undernet)
 
 [0.2.0620]
