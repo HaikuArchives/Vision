@@ -162,7 +162,7 @@ $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
 	@mkdir -p $(DEPDIR)
 	@$(DEP) $< > middle.tmp
 	@echo -n "$@ " > start.tmp
-	@echo $(basename $(subst $(DEPDIR),$(OBJDIR),$@))".o : Makefile" > end.tmp
+	@echo $(basename $(subst $(DEPDIR),$(OBJDIR),$@))".o : $(MAKEFILE)" > end.tmp
 	@cat start.tmp middle.tmp end.tmp > $@
 # This line slows the dep gen down...
 #	@echo -e yf.i$(OBJDIR)/\\033t:a$(DEPDIR)/\\033pad \\033f:a $(MAKEFILE)\\033ZZ | vi $@ >/dev/null 2>/dev/null
