@@ -166,15 +166,15 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 	&&  (keymodifiers & B_CONTROL_KEY) == 0)
 		switch(keyStroke)
 		{
-			case B_UP_ARROW:
-				msgr.SendMessage (M_PREVIOUS_INPUT);
-				result = B_SKIP_MESSAGE;
-				break;
-	
-			case B_DOWN_ARROW:
-				msgr.SendMessage (M_NEXT_INPUT);
-				result = B_SKIP_MESSAGE;
-				break;
+//			case B_UP_ARROW:
+//				msgr.SendMessage (M_PREVIOUS_INPUT);
+//				result = B_SKIP_MESSAGE;
+//				break;
+//	
+//			case B_DOWN_ARROW:
+//				msgr.SendMessage (M_NEXT_INPUT);
+//				result = B_SKIP_MESSAGE;
+//				break;
 	
 			case B_RETURN:
 			

@@ -3,6 +3,7 @@ http://vision.sourceforge.net
 
 [0.1.0322]
  2001-03-22
+   * Add keyboard nav shortcuts
    * MessageAgent does what it needs to with M_NICK_CHANGE msgs now
    * Forgot to update Makefile :)
    * /msg now works decently

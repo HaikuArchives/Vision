@@ -144,7 +144,21 @@ void
 ClientWindow::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
-  {   
+  {
+    case M_MOVE_DOWN:
+    {
+      winList->Select (winList->CurrentSelection() + 1);
+      winList->ScrollToSelection();
+      break;
+    }
+    
+    case M_MOVE_UP:
+    {
+      winList->Select (winList->CurrentSelection() - 1);
+      winList->ScrollToSelection();
+      break;
+    }
+    
     case M_UPDATE_STATUS:
     {
        WindowListItem *item;
@@ -318,7 +332,21 @@ ClientWindow::Init (void)
 {
   SetSizeLimits (330,2000,150,2000);
 
-  AddShortcut('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
+  AddShortcut ('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
+ 
+  BMessage *navUp (new BMessage (M_MOVE_UP));
+  BMessage *navDown (new BMessage (M_MOVE_DOWN));
+  // logical nav shortcuts
+  AddShortcut (B_UP_ARROW, B_COMMAND_KEY, navUp);
+  AddShortcut (B_DOWN_ARROW, B_COMMAND_KEY, navDown);
+
+  // baxter-habit-friendly nav shortcuts
+  AddShortcut (B_LEFT_ARROW, B_COMMAND_KEY, navUp);
+  AddShortcut (B_RIGHT_ARROW, B_COMMAND_KEY, navDown);
+
+  // bowser-habit-friendly nav shortcuts
+  AddShortcut (',', B_COMMAND_KEY, navUp);
+  AddShortcut ('.', B_COMMAND_KEY, navDown);
    
   shutdown_in_progress = false;
   wait_for_quits = false;
@@ -361,25 +389,6 @@ ClientWindow::Init (void)
   
   // Window menu
   mWindow = new BMenu ("Window");
-  mWindow->AddItem (item = new BMenuItem ("Close Window",
-                    new BMessage (M_CW_ALTP), 'P'));
-  mWindow->AddSeparatorItem();                    
-  mWindow->AddItem (item = new BMenuItem ("Next Window",
-                    new BMessage (B_ABOUT_REQUESTED), ','));
-  item->SetTarget (vision_app);
-  mWindow->AddItem (item = new BMenuItem ("Previous Window",
-                    new BMessage (B_ABOUT_REQUESTED), '.'));
-  item->SetTarget (vision_app);
-  mWindow->AddItem (item = new BMenuItem ("Next Server",
-                    new BMessage (B_ABOUT_REQUESTED), ',', B_SHIFT_KEY));
-  item->SetTarget (vision_app);
-  mWindow->AddItem (item = new BMenuItem ("Previous Server",
-                    new BMessage (B_ABOUT_REQUESTED), '.', B_SHIFT_KEY));
-  item->SetTarget (vision_app);
-  mWindow->AddSeparatorItem();
-  mWindow->AddItem (item = new BMenuItem ("Server",
-                    new BMessage (B_ABOUT_REQUESTED), '/'));
-  item->SetTarget (vision_app);
   menubar->AddItem (mWindow);
   
   AddChild (menubar);
