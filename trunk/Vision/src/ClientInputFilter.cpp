@@ -173,7 +173,7 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 	&&  (keymodifiers & B_CONTROL_KEY) == 0
 	&&  (keymodifiers & B_SHIFT_KEY) == 0)
 	{
-		switch(keyStroke)
+		switch (keyStroke)
 		{
 			case B_UP_ARROW:
 				msgr.SendMessage (M_PREVIOUS_INPUT);
@@ -236,6 +236,31 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 			}
 		}
 	}
+
+	if ((keymodifiers & B_OPTION_KEY)  == 0
+	&&  (keymodifiers & B_COMMAND_KEY) == 0
+	&&  (keymodifiers & B_CONTROL_KEY) == 0
+	&&  (keymodifiers & B_SHIFT_KEY) != 0)
+	{
+		switch (keyStroke)
+		{
+			case B_RETURN:
+			
+				if (window->input->TextView()->TextLength())
+				{
+					BMessage msg (M_SUBMIT);
+
+					msg.AddString (
+						"input",
+						window->input->TextView()->Text());
+					msgr.SendMessage (&msg);
+				}
+
+				result = B_SKIP_MESSAGE;
+				break;
+		}
+	}		
+		
 		
 	else if ((keymodifiers & B_OPTION_KEY)  == 0
 	&&  (keymodifiers & B_COMMAND_KEY) != 0

@@ -201,7 +201,7 @@ MessageAgent::MessageReceived (BMessage *msg)
 void
 MessageAgent::Parser (const char *buffer)
 {
-  if(!dChat)
+  if (!dChat)
   {
     BMessage send (M_SERVER_SEND);
 
@@ -235,26 +235,6 @@ MessageAgent::Parser (const char *buffer)
   BString sBuffer (buffer);
   Display (sBuffer.String(), 0);
   
-  #if 0
-  int32 place;
-  while ((place = FirstSingleKnownAs (sBuffer, chatee)) != B_ERROR)
-  {
-    BString tempString;
-
-    if (place)
-    {
-      sBuffer.MoveInto (tempString, 0, place);
-      Display (tempString.String(), 0);
-    }
-
-    sBuffer.MoveInto (tempString, 0, chatee.Length());
-    Display (tempString.String(), &nickColor);
- 
-  }
-
-  if (sBuffer.Length())
-    Display (sBuffer.String(), 0);
-  #endif
 
   Display ("\n", 0);
 }

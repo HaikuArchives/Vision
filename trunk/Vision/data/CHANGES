@@ -3,6 +3,11 @@ http://vision.sourceforge.net
 
 [0.1.0409]
  2001-04-09
+   * Shift+Enter won't select the input controls text anymore, it will function
+     like a normal Enter keypress.
+   * Typing a line more than 440 characters will result it in it being split
+     into a second line. This is to prevent the server from truncating it for
+     you and resulting in lost text. (ChannelAgent only)
    * Started Gnome implementation
    * Changed <nick> coloration
    * Lots of code changes

@@ -38,6 +38,11 @@
 BString
 GetWord (const char *cData, int32 wordNeeded)
 {
+  /*
+   * Function purpose: Get word number {wordNeeded} from {cData}
+   *                   (space delimited)
+   */
+   
   BString data (cData);
   BString buffer ("-9z99");
   int32 wordAt (1), place (0);
@@ -66,8 +71,49 @@ GetWord (const char *cData, int32 wordNeeded)
 }
 
 BString
+GetWordColon (const char *cData, int32 wordNeeded)
+{
+  /*
+   * Function purpose: Get word number {wordNeeded} from {cData}
+   *                   (colon delimited)
+   */
+   
+  BString data (cData);
+  BString buffer ("-9z99");
+  int32 wordAt (1), place (0);
+
+  while (wordAt != wordNeeded && place != B_ERROR)
+  {
+    if ((place = data.FindFirst (':', place)) != B_ERROR)
+      if (++place < data.Length()
+      &&  data[place] != ':')
+        ++wordAt;
+  }
+
+  if (wordAt == wordNeeded
+  &&  place != B_ERROR
+  &&  place < data.Length())
+  {
+    int32 end (data.FindFirst (':', place));
+
+    if (end == B_ERROR)
+      end = data.Length();
+
+    data.CopyInto (buffer, place, end - place);
+  }
+
+  return buffer;
+}
+
+BString
 RestOfString (const char *cData, int32 wordStart)
 {
+  /*
+   * Function purpose: Get word number {wordStart} from {cData}
+   *                   append the rest of the string after {wordStart}
+   *                   (space delimited)
+   */
+
   BString data (cData);
   int32 wordAt (1), place (0);
   BString buffer ("-9z99");
@@ -91,6 +137,12 @@ RestOfString (const char *cData, int32 wordStart)
 BString
 GetNick (const char *cData)
 {
+  /*
+   * Function purpose: Get nickname from {cData}
+   *
+   *  Expected format: nickname!user@host.name
+   */
+   
   BString data (cData);
   BString theNick;
 
@@ -103,6 +155,12 @@ GetNick (const char *cData)
 BString
 GetIdent (const char *cData)
 {
+  /*
+   * Function purpose: Get identname/username from {cData}
+   *
+   *  Expected format: nickname!user@host.name
+   */
+   
   BString data (GetWord(cData, 1));
   BString theIdent;
   int32 place[2];
@@ -120,6 +178,12 @@ GetIdent (const char *cData)
 BString
 GetAddress (const char *cData)
 {
+  /*
+   * Function purpose: Get address/hostname from {cData}
+   *
+   *  Expected format: nickname!user@host.name
+   */
+
   BString data (GetWord(cData, 1));
   BString address;
   int32 place;
@@ -141,6 +205,11 @@ GetAddress (const char *cData)
 BString
 TimeStamp()
 {
+  /*
+   * Function purpose: Return the timestamp string
+   *
+   */
+   
   if(!vision_app->GetBool("timestamp"))
     return "";
 
@@ -191,6 +260,11 @@ ExpandKeyed (
 BString
 StringToURI (const char *string)
 {
+  /*
+   * Function purpose: Converts {string} to a URI safe format
+   *
+   */
+
   BString buffer (string);
   buffer.ToLower();
   buffer.ReplaceAll ("%",  "%25"); // do this first!
@@ -217,6 +291,11 @@ StringToURI (const char *string)
 BString
 DurationString (int64 value)
 {
+  /*
+   * Function purpose: Return a duration string based on {value}
+   *
+   */
+   
 	BString duration;
 	bigtime_t micro = value;
 	bigtime_t milli = micro/1000;
@@ -258,32 +337,17 @@ RelToAbsPath (const char *append_)
   return path.Path();  
 }
 
-BString
-GetWordColon (const char *cData, int32 wordNeeded)
+
+int32
+Get440Len (const char *cData)
 {
   BString data (cData);
-  BString buffer ("-9z99");
-  int32 wordAt (1), place (0);
+  int32 place;
+  
+  place = data.FindLast ('\x20', 440);
 
-  while (wordAt != wordNeeded && place != B_ERROR)
-  {
-    if ((place = data.FindFirst (':', place)) != B_ERROR)
-      if (++place < data.Length()
-      &&  data[place] != ':')
-        ++wordAt;
-  }
-
-  if (wordAt == wordNeeded
-  &&  place != B_ERROR
-  &&  place < data.Length())
-  {
-    int32 end (data.FindFirst (':', place));
-
-    if (end == B_ERROR)
-      end = data.Length();
-
-    data.CopyInto (buffer, place, end - place);
-  }
-
-  return buffer;
+  if (place == B_ERROR)
+    return 440;
+  else
+    return place;
 }

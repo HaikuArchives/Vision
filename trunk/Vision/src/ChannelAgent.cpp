@@ -801,68 +801,43 @@ ChannelAgent::Parser (const char *buffer)
    */
    
   lastExpansion = "";  // used by ChannelAgent::TabExpansion()
-  
+
   BMessage send (M_SERVER_SEND);
 
   AddSend (&send, "PRIVMSG ");
   AddSend (&send, id);
   AddSend (&send, " :");
-  AddSend (&send, buffer);
-  AddSend (&send, endl);
 
   Display ("<", &myNickColor, 0, true);
   Display (myNick.String(), &nickdisplayColor);
-  Display ("> ", &myNickColor);
-
+  Display ("> ", &myNickColor);  
+  
   BString sBuffer (buffer);
-  Display (sBuffer.String(), 0);
-
-  #if 0
-  int32 hit;
-
-  do
+  
+  if (sBuffer.Length() > 440)
   {
-    int32 place (0);
-    BString nick;
+    // length isn't irc safe (512 limit), truncate and send the text after
+    // character 440 on another line
+    BString tempBuffer;
+    int32 hit (Get440Len (buffer));
 
-    hit = sBuffer.Length();
-
-    for (int32 i = 0; i < namesList->CountItems(); ++i)
-    {
-      NameItem *item (static_cast<NameItem *>(namesList->ItemAt (i)));
-      BString iNick (item->Name());
-
-      if (myNick.ICompare (item->Name())
-      && (place = FirstSingleKnownAs (sBuffer, iNick)) != B_ERROR
-      &&  place < hit)
-      {
-        hit = place;
-        nick = item->Name();
-        break;
-      }
-    }
-
-    BString tempString;
-
-    if (hit < sBuffer.Length())
-    {
-      if (hit)
-      {
-        sBuffer.MoveInto (tempString, 0, hit);
-        Display (tempString.String(), 0);
-      }
-
-      sBuffer.MoveInto (tempString, 0, nick.Length());
-      Display (tempString.String(), &nickColor);
-    }
-
- } while (hit < sBuffer.Length());
-
-  if (sBuffer.Length())
-    Display (sBuffer.String(), 0);
-  #endif
+    sBuffer.MoveInto (tempBuffer, 0, hit);
+    AddSend (&send, tempBuffer.String());
+    AddSend (&send, endl);
+  
+    Display (tempBuffer.String(), 0);
+    Display ("\n", 0);
     
-  Display ("\n", 0);
+    Parser (sBuffer.String());
+  }
+  else
+  {
+    AddSend (&send, buffer);
+    AddSend (&send, endl);
+
+    Display (buffer, 0);
+    Display ("\n", 0);  
+  }
 }
 
 void
