@@ -263,6 +263,7 @@ StatusItem::GeneratePopUp (BPoint point, BRect openrect)
   if (menu->CountItems() > 0)
   {
     menu->SetTargetForItems(be_app);
+    menu->SetAsyncAutoDestruct(true);
     menu->Go(point, true, true, openrect, true);
   }
   else
