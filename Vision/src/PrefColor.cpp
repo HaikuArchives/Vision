@@ -153,7 +153,6 @@ ColorPrefsView::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     case M_REVERT_SELECTION:
-      printf("received revert message\n");
       selector->Revert();
       break;
   }

@@ -22,6 +22,7 @@
 #include "PrefGeneral.h"
 #include "PrefApp.h"
 #include "PrefColor.h"
+#include "PrefFont.h"
 #include "PrefCommand.h"
 #include "PrefEvent.h"
 
@@ -45,6 +46,7 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   prefsList->MoveTo(5, 5);
   prefsList->AddItem (new BStringItem ("Application"));
   prefsList->AddItem (new BStringItem ("Colors"));
+  prefsList->AddItem (new BStringItem ("Fonts"));
   prefsList->AddItem (new BStringItem ("Commands"));
   prefsList->AddItem (new BStringItem ("Events"));
   prefsList->SetSelectionMessage (new BMessage (M_GENERALPREFS_SELECTION_CHANGED));
@@ -65,14 +67,17 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   prefsItems[1]->ResizeTo(bounds.Width() - 3, bounds.Height() - 3);
 
   prefsItems[1]->Hide();
-  prefsItems[2] = new CommandPrefsView (bounds);
+  prefsItems[2] = new FontPrefsView (bounds);
   prefsBox->AddChild (prefsItems[2]);
   prefsItems[2]->Hide();
-  prefsItems[3] = new EventPrefsView (bounds);
+  prefsItems[3] = new CommandPrefsView (bounds);
   prefsBox->AddChild (prefsItems[3]);
   prefsItems[3]->Hide();
+  prefsItems[4] = new EventPrefsView (bounds);
+  prefsBox->AddChild (prefsItems[4]);
+  prefsItems[4]->Hide();
   
-  for (int32 i = 4; i < C_PREFS_COUNT; i++)
+  for (int32 i = 5; i < C_PREFS_COUNT; i++)
     prefsItems[i] = NULL;
 }
 
