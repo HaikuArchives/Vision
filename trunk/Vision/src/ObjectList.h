@@ -371,8 +371,8 @@ _PointerList_::Owning() const
 }
 
 template<class T> 
-BObjectList<T>::BObjectList(int32 itemsPerBlock, bool owning)
-	:	_PointerList_(itemsPerBlock, owning)
+BObjectList<T>::BObjectList(int32 itemsPerBlock, bool isOwning)
+	:	_PointerList_(itemsPerBlock, isOwning)
 {
 }
 
@@ -506,7 +506,7 @@ template<class T>
 int32 
 BObjectList<T>::IndexOf(const T *item) const
 {
-	return _PointerList_::IndexOf((void *)item);
+	return _PointerList_::IndexOf((void *)const_cast<T *>(item));
 }
 
 template<class T> 

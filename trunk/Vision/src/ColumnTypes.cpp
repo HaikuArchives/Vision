@@ -311,12 +311,12 @@ void BDateColumn::DrawField(BField* _field, BRect rect, BView* parent)
 	if (field->Width() != rect.Width())
 	{
 		char	dateString[256];
-		time_t	time = field->UnixTime();
+		time_t	curtime = field->UnixTime();
 		tm		time_data;
 		BFont	font;
 
 		parent->GetFont(&font);
-		localtime_r(&time, &time_data);
+		localtime_r(&curtime, &time_data);
 		for (int32 index = 0; ; index++)
 		{
 			if (!kTIME_FORMATS[index])
@@ -448,14 +448,15 @@ void BSizeColumn::DrawField(BField* _field, BRect rect, BView* parent)
 			// strip off an insignificant zero so we don't get readings
 			// such as 1.00
 			char *period = 0;
-			for (char *tmp = str; *tmp; tmp++)
+			char *tmp (NULL);
+			for (tmp = str; *tmp; tmp++)
 			{
 				if (*tmp == '.')
 					period = tmp;
 			}
 			if (period && period[1] && period[2] == '0')
 				// move the rest of the string over the insignificant zero
-				for (char *tmp = &period[2]; *tmp; tmp++)
+				for (tmp = &period[2]; *tmp; tmp++)
 					*tmp = tmp[1];
 			if (font.StringWidth(str) <= width)
 				break;
