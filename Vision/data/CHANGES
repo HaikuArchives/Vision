@@ -1,6 +1,8 @@
 Vision
 http://vision.sourceforge.net
 
+[0.7.1-1203]
+         * fixed crash bug in DCC Send code
 [0.7-1203]
          * DCC file transfer support 
          * added packet size configuration for DCC
