@@ -11,7 +11,7 @@ http://vision.sourceforge.net
      has focus doesnt put a garbage chracter in the input control.
    * The spam/single line dialog when pasting multiple lines is now
      non-blocking
-   * Shift+Up/Down-Arrow will jump to to the prev/next agent with nick activity
+   * Shift+Alt+Up/Down-Arrow will jump to to the prev/next agent with nick activity
      (red entry). If one isn't found it will jump to the prev/next agent with
      normal activity (green). If one isn't found it will jump to the adjacent
      agent.
