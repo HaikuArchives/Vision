@@ -38,6 +38,9 @@
 #include "Vision.h"
 #include "ClickView.h"
 
+
+#define PULSE_RATE 100000
+
 class ClickView;
 
 AboutWindow::AboutWindow (void)
@@ -51,6 +54,7 @@ AboutWindow::AboutWindow (void)
    * Function purpose: Construct
    */
 
+  
   BRect bounds (Bounds());
   BBitmap *bmp;
 
@@ -59,18 +63,13 @@ AboutWindow::AboutWindow (void)
                      "background",
                      B_FOLLOW_ALL_SIDES,
                      B_WILL_DRAW);
-  rgb_color myBlack = {0, 0, 0, 255};
   background->SetViewColor (255, 255, 255);
   AddChild (background);
 
 
   if ((bmp = BTranslationUtils::GetBitmap ('bits', "vision")) != 0)
   {
-    BRect logo_bounds (bmp->Bounds());
-
-//    ResizeTo (
-//      logo_bounds.Width() + 50,
-//      logo_bounds.Height() + 250);
+    //BRect logo_bounds (bmp->Bounds());
 
     logo = new ClickView (
                     bmp->Bounds().OffsetByCopy (16, 16),
@@ -84,32 +83,33 @@ AboutWindow::AboutWindow (void)
 
     bounds.Set (
       0.0,
-      logo->Frame().bottom + 1, 
+      logo->Frame().bottom + 12, 
       Bounds().right,
       Bounds().bottom);
   }
 
-//  credits = new BTextView (
-//                  bounds,
-//                  "credits",
-//                  bounds.OffsetToCopy (B_ORIGIN).InsetByCopy (20, 0),
-//                  B_FOLLOW_LEFT | B_FOLLOW_TOP,
-//                  B_WILL_DRAW); 
-//
-//  credits->SetViewColor (myBlack);
-//  credits->MakeSelectable (false);
-//  credits->MakeEditable (false);
-//  credits->SetStylable (true);
-//  credits->SetAlignment (B_ALIGN_CENTER);
-//  background->AddChild (credits);
+  credits = new BTextView (
+                  bounds,
+                  "credits",
+                  bounds.OffsetToCopy (B_ORIGIN).InsetByCopy (20, 0),
+                  B_FOLLOW_LEFT | B_FOLLOW_TOP,
+                  B_WILL_DRAW); 
 
-  const char *unita =
+  //credits->SetViewColor (myBlack);
+  credits->MakeSelectable (false);
+  credits->MakeEditable (false);
+  credits->SetStylable (true);
+  credits->SetAlignment (B_ALIGN_CENTER);
+  background->AddChild (credits);
+
+  creditsText =
+    "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+    "Unit A\n[Vision]\n"
     "{A-Z}\n"
     "Rene Gollent (AnEvilYak)\n"
     "Wade Majors (kurros)\n\n\n\n"
-  ;
-  
-  const char *unitb =
+
+    "\n\n\n\nUnit B\n[Bowser]\n"
     "{A-Z}\n"
     "Andrew Bazan (Hiisi)\n"
     "Rene Gollent (AnEvilYak)\n"
@@ -117,20 +117,8 @@ AboutWindow::AboutWindow (void)
     "Brian Luft (Electroly)\n"
     "Wade Majors (kurros)\n"
     "Jamie Wilkinson (project)\n\n\n\n"
-  ;
   
-  const char *unitc =
-    "Assistant to Wade Majors: Patches\n"
-    "Music Supervisor: Baron Arnold\n"
-    "Assistant to Baron Arnold: Ficus Kirkpatrick\n"
-    "Stunt Coordinator: Gilligan\n"
-    "Nude Scenes: Natalie Portman\n"
-    "Counselors: regurg and helix\n\n\n"
-    "No animals were injured during the production of this IRC client\n\n\n"
-    "Soundtrack available on Catastrophe Records\n\n\n\n"
-  ;
-  
-  const char *contrib =
+    "\n\n\n\nBrought To You In Part By Contributions From\n"
     "{A-Z}\n"
     "Seth Flaxman (Flax)\n"
     "Joshua Jensen\n"
@@ -139,10 +127,18 @@ AboutWindow::AboutWindow (void)
     "Bjorn Oksholen (GuinessM)\n"
     "Jean-Baptiste M. Quéru (jbq)\n"
     "\n\n\n"
-  ;
 
-  
-  const char *thanks =
+    "\n\n\n\nUnit C\n[Support Crew]\n"
+    "Assistant to Wade Majors: Patches\n"
+    "Music Supervisor: Baron Arnold\n"
+    "Assistant to Baron Arnold: Ficus Kirkpatrick\n"
+    "Stunt Coordinator: Gilligan\n"
+    "Nude Scenes: Natalie Portman\n"
+    "Counselors: regurg and helix\n\n\n"
+    "No animals were injured during the production of this IRC client\n\n\n"
+    "Soundtrack available on Catastrophe Records\n\n\n\n"
+    
+    "\n\n\n\nSpecial Thanks\n\n"
     "Olathe\n"
     "Terminus\n"
     "Bob Maple\n"
@@ -153,10 +149,8 @@ AboutWindow::AboutWindow (void)
     "Kristine Gouveia\n"
     "Be, Inc., Menlo Park, CA\n"
     "Pizza Hut, Winter Haven, FL (now give me that free pizza Mike)\n\n\n"
-    "^^^ Click The Logo ^^^\nhttp://vision.sourceforge.net\n^^^ Click The Logo ^^^\n\n\n\n\n\n"
-  ;
-  
-  const char *quote =
+
+    "\n\n\n\n\n"
     "\"A human being should be able to change "
     "a diaper, plan an invasion, butcher a "
     "hog, conn a ship, design a building, "
@@ -170,64 +164,23 @@ AboutWindow::AboutWindow (void)
     "is for insects.\" -- Robert A. Heinlein"
   ;
 
-//  rgb_color myBlue   = {56, 172, 236, 255};
-//  rgb_color myWhite  = {255, 255, 255, 255};
-//  rgb_color myHeader = {119, 119, 255, 255};
-//  rgb_color myQuote  = {153, 204, 153, 255};
-//  BFont font (*be_plain_font);
-//  text_run_array run;
-//
-//  font.SetSize (24);
-//  font.SetFace (B_BOLD_FACE);
-//  
-//  run.count          = 1;
-//  run.runs[0].offset = 0;
-//  run.runs[0].font   = font;
-//  run.runs[0].color  = myBlue;
-//
-//  credits->Insert ("\n\n\n\n\n\n\nVision\n", &run);
-//  credits->Insert (vision_app->VisionVersion (VERSION_VERSION).String(), &run);
-//  credits->Insert ("\n\n\n\n", &run);
-//  
-//  font = *be_plain_font;
-//  font.SetSize (11);
-//  
-//  run.runs[0].font = font;
-//  run.runs[0].color = myWhite;
-//  
-//  text_run_array runhead;
-//  runhead = run;
-//  
-//  font = *be_plain_font;
-//  font.SetSize (16);
-//  font.SetFace (B_BOLD_FACE);  
-//  runhead.runs[0].color = myHeader;
-//  runhead.runs[0].font  = font;
-//  
-//  credits->Insert ("A Vision Team Production\n\n© 1999, 2000, 2001\n\n\n\n\n\n", &run);
-//  
-//  credits->Insert ("Unit A\n[Vision]\n", &runhead);      
-//  credits->Insert (unita, &run);
-//  credits->Insert ("\n\n\n\nUnit B\n[Bowser]\n", &runhead);      
-//  credits->Insert (unitb, &run);
-//  credits->Insert ("\n\n\n\nBrought To You In Part By Contributions From\n", &runhead);
-//  credits->Insert (contrib, &run); 
-//  credits->Insert ("\n\n\n\nUnit C\n[Support Crew]\n", &runhead);
-//  credits->Insert (unitc, &run);        
-//  credits->Insert ("\n\n\n\nSpecial Thanks\n\n", &runhead);      
-//  credits->Insert (thanks, &run);
-//  
-//  run.runs[0].color = myQuote;
-//  credits->Insert (quote, &run);
-  
-  // Center that bad boy
+  fixedFont = *be_fixed_font;
+  rgb_color myBlack = {0,0,0,255};
+  textRun.count          = 1;
+  textRun.runs[0].offset = 0;
+  textRun.runs[0].font   = fixedFont;
+  textRun.runs[0].color  = myBlack;
+
+  credits->Insert (creditsText, &textRun);
+
+  // Center window
   BRect frame (BScreen().Frame());
   MoveTo (
     frame.Width()/2 - Frame().Width()/2,
     frame.Height()/2 - Frame().Height()/2); 
  
 
-  //SetPulseRate (74000);
+  SetPulseRate (PULSE_RATE);
 }
 
 

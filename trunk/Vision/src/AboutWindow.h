@@ -29,14 +29,13 @@
 #  include "gnome/Window.h"
 #elif BEOS_BUILD
 #  include <Window.h>
+#  include <TextView.h>
 #endif
 
-class BTextView;
 class BView;
 
 class AboutWindow : public BWindow
 {
-  BTextView             *credits;
 
   public:
                           AboutWindow (void);
@@ -47,9 +46,14 @@ class AboutWindow : public BWindow
     void                  Pulse (void);
 
   private:
+    BTextView             *credits; 
     BView                 *background;
     bool                  EasterEggOn;
     BView                 *logo;
+    const char            *creditsText;
+    BFont                 fixedFont;
+    text_run_array        textRun;
+    
     void                  AboutImage (const char *, bool);
 };
 

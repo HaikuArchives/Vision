@@ -24,13 +24,8 @@
  *                 Bjorn Oksholen
  */
 
-#ifdef GNOME_BUILD 
-#  include "gnome/Menu.h"
-#  include "gnome/NetEndpoint.h"
-#elif BEOS_BUILD
-#  include <Menu.h>
-#  include <NetEndpoint.h>
-#endif
+#include <Menu.h>
+//#include <NetworkKit.h>
 
 #include "ParseENums.h"
 #include "Vision.h"
@@ -575,36 +570,46 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     
     case RPL_LISTSTART:       // 321
       {
-        BMessage msg (M_LIST_BEGIN);
-
-        msg.AddString ("server", serverName.String());
-        vision_app->PostMessage (&msg);
+        printf("RPL_LISTSTART\n");
+        if (pListAgent)
+        {
+          BMessenger listMsgr ((BView *)pListAgent);
+          listMsgr.SendMessage (M_LIST_BEGIN);
+        }
       }
       return true;
     
     case RPL_LIST:            // 322
       {
+        printf("RPL_LIST\n");
         BMessage msg (M_LIST_EVENT);
         BString channel (GetWord (data, 4)),
                 users (GetWord (data, 5)),
                 topic (RestOfString (data, 6));
         topic.RemoveFirst (":");
 		
-        msg.AddString ("server", serverName.String());
         msg.AddString ("channel", channel.String());
         msg.AddString ("users", users.String());
         msg.AddString ("topic", topic.String());
 
-        vision_app->PostMessage (&msg);
+        if (pListAgent)
+        {
+          BMessenger listMsgr ((BView *)pListAgent);
+          listMsgr.SendMessage (&msg);
+        }
       }
       return true;    
     
     case RPL_LISTEND:         // 323
       {
+        printf("RPL_LISTEND\n");
         BMessage msg (M_LIST_DONE);
 
-        msg.AddString ("server", serverName.String());
-        vision_app->PostMessage (&msg);
+        if (pListAgent)
+        {
+          BMessenger listMsgr ((BView *)pListAgent);
+          listMsgr.SendMessage (&msg);
+        }
       }
       return true;
     

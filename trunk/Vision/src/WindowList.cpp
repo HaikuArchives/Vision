@@ -25,21 +25,16 @@
  */
  
 
-#ifdef GNOME_BUILD
-#  include "gnome/PopUpMenu.h"
-#  include "gnome/MenuItem.h"
-#  include "gnome/List.h"
-#elif BEOS_BUILD
 #  include <PopUpMenu.h>
 #  include <MenuItem.h>
 #  include <List.h>
-#endif
 
 #include "Vision.h"
 #include "WindowList.h"
 #include "ClientWindow.h"
 #include "ClientAgent.h"
 #include "ServerAgent.h"
+#include "ListAgent.h"
 
 #include <stdio.h>
 
@@ -106,8 +101,10 @@ WindowList::CloseActive (void)
         
     BView *killTarget (myItem->pAgent());
         
-    if ((killTarget = dynamic_cast<ClientAgent *>(killTarget)))
+    if (dynamic_cast<ClientAgent *>(killTarget))
       dynamic_cast<ClientAgent *>(killTarget)->msgr.SendMessage (&killMsg);
+    else if (dynamic_cast<ListAgent *>(killTarget))
+      dynamic_cast<ListAgent *>(killTarget)->msgr.SendMessage(&killMsg);
   }
 }
 
@@ -469,11 +466,21 @@ WindowList::Agent (int32 serverId, const char *aName)
   for (int32 i = 0; i < CountItems(); ++i)
   {
     WindowListItem *item ((WindowListItem *)ItemAt (i));
-    if ((strcasecmp (aName, reinterpret_cast<ClientAgent *>(item->pAgent())->Id().String()) == 0)
-    &&  (item->Sid() == serverId)) 
+    if (item->Sid() == serverId)
     {
-      agent = reinterpret_cast<ClientAgent *>(item->pAgent());
-      break;      
+      if (dynamic_cast<ClientAgent *>(item->pAgent()))
+      {
+        if (strcasecmp (aName, reinterpret_cast<ClientAgent *>(item->pAgent())->Id().String()) == 0)
+        {
+          agent = reinterpret_cast<ClientAgent *>(item->pAgent());
+          break;      
+        }
+      }
+      else if (dynamic_cast<ListAgent *>(item->pAgent()))
+      {
+          agent = reinterpret_cast<ClientAgent *>(item->pAgent());
+          break;
+      }
     }
   }
   return agent;
@@ -526,6 +533,22 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
   }
   
   // reset newagent
+  newagent = newagentitem->pAgent();
+  
+  if (dynamic_cast<ListAgent *>(newagent))
+  {
+     for (int32 i = 0; i < CountItems(); ++i)
+     {
+       WindowListItem *item = (WindowListItem *)ItemAt (i);
+       if ((item->Sid() == serverId) && (item->Name().ICompare("Channels") == 0))
+       {
+         dynamic_cast<ListAgent *>(newagent)->agentWinItem = item;
+         break;
+       }
+     }
+  }
+  
+  // reset newagent again
   newagent = newagentitem->pAgent();
   
   if (!(newagent = dynamic_cast<BView *>(newagent)))
