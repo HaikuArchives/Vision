@@ -321,7 +321,7 @@ ServerAgent::Establish (void *arg)
       int retrycount (reply.FindInt32 ("retries"));
       
       if (retrycount)
-        snooze (1000000); // wait 1 second
+        snooze (1000000 * retrycount * retrycount); // wait 1, 4, 9, 16 ... seconds
     
       if (sMsgrE->SendMessage (M_INC_RECONNECT) != B_OK)
         throw failToLock();
