@@ -877,6 +877,17 @@ ClientAgent::MessageReceived (BMessage *msg)
         vision_app->LoadURL (lookup.String());
       }
       break;
+    
+    case M_LOOKUP_ACRONYM:
+      {
+        BString lookup;
+        msg->FindString ("string", &lookup);
+        lookup = StringToURI (lookup.String());
+        lookup.Prepend ("http://www.acronymfinder.com/af-query.asp?String=exact&Acronym=");
+        lookup.Append ("&Find=Find");
+        vision_app->LoadURL (lookup.String());
+      }
+      break;
       
 	case B_ESCAPE:
 	  	fCancelMLPaste = true;
