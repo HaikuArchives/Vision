@@ -42,9 +42,9 @@ class AboutWindow : public BWindow
 
   private:
     BTextView             *fCredits; 
-    BView                 *fBackground;
+    BView                 *fBackground,
+                            *fLogo;
     bool                  fEasterEggOn;
-    BView                 *fLogo;
     const char            *fCreditsText;
     text_run_array        fTextRun;
     BMessageRunner        *fScrollRunner;

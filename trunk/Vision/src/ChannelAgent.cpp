@@ -178,7 +178,11 @@ ChannelAgent::FindPosition (const char *data)
 
   for (int32 i = 0; i < count; ++i)
   {
-    NameItem *item ((NameItem *)(fNamesList->ItemAt (i)));
+    NameItem *item (static_cast<NameItem *>(fNamesList->ItemAt (i)));
+    
+    if (item == NULL)
+      continue;
+      
     BString nick (item->Name());
 
     if ((nick[0] == '@' || nick[0] == '+' || nick[0] == '%')
@@ -202,7 +206,7 @@ ChannelAgent::RemoveNickFromList (BList &list, const char *data)
   int32 count (list.CountItems());
   for (int32 i = 0; i < count; i++)
   {
-    if (((BString *)list.ItemAt(i))->ICompare(data) == 0)
+    if (static_cast<BString *>(list.ItemAt(i))->ICompare(data) == 0)
     {
       delete list.RemoveItem (i);
       break;
@@ -221,7 +225,7 @@ ChannelAgent::AddUser (const char *nick, const int32 status)
   int32 i;
   for (i = 0; i < fNamesList->CountItems(); i++)
   {
-    compareItem = dynamic_cast<NameItem *>(fNamesList->ItemAt(i));
+    compareItem = static_cast<NameItem *>(fNamesList->ItemAt(i));
     if (compareItem && compareItem->Name().ICompare(nick) == 0)
       return;
   }
@@ -241,7 +245,7 @@ ChannelAgent::AddUser (const char *nick, const int32 status)
     int32 count (fCompletionNicks.CountItems());
     for (i = count - 1; i >= 0; i--)
     {
-      comparator = (BString *)fCompletionNicks.ItemAt (i);
+      comparator = static_cast<BString *>(fCompletionNicks.ItemAt (i));
       if (comparator && comparator->ICompare (nick) < 0)
       {   
         BString *string (new BString (nick));
@@ -279,7 +283,7 @@ ChannelAgent::RemoveUser (const char *data)
     NameItem *item;
 
     fNamesList->Deselect (myIndex);
-    if ((item = (NameItem *)fNamesList->RemoveItem (myIndex)) != NULL)
+    if ((item = static_cast<NameItem *>(fNamesList->RemoveItem (myIndex))) != NULL)
     {
       BString buffer;
 
@@ -687,7 +691,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
           BPoint point;
           msg->FindPoint ("loc", &point);
           point.x -= Frame().left;
-          int32 offset ((int32)(point.x - (fNamesScroll->Frame().left)));
+          float offset ((int32)(point.x - (fNamesScroll->Frame().left)));
           fResize->MoveBy (offset, 0.0);
           fTextScroll->ResizeBy (offset, 0.0);
           fNamesScroll->ResizeBy (-offset, 0.0);
@@ -708,6 +712,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
           break;
         }
         fMyNick = newNick;  // update nickname (might have changed on reconnect)
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String());
 			                    
         Display (S_CHANNEL_RECON_REJOIN B_UTF8_ELLIPSIS "\n", C_ERROR, C_BACKGROUND, F_SERVER);
 		
@@ -1315,7 +1321,6 @@ ChannelAgent::UpdateMode(char theSign, char theMode)
   if (!IsHidden())
     vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, fChanMode.String());
 }
-
 
 void
 ChannelAgent::ModeEvent (BMessage *msg)

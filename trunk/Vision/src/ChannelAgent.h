@@ -77,15 +77,15 @@ class ChannelAgent : public ClientAgent
     
   private:
     void                    Init();
-    void                    RemoveNickFromList (BList &, const char *);    
+    void                    RemoveNickFromList (BList &, const char *);
     
     BString                 fChanMode,
-                            fChanLimit,
-                            fChanLimitOld,
-                            fChanKey,
-                            fChanKeyOld,
-                            fLastExpansion,
-                            fTopic;
+                              fChanLimit,
+                              fChanLimitOld,
+                              fChanKey,
+                              fChanKeyOld,
+                              fLastExpansion,
+                              fTopic;
     
     BList                   fRecentNicks,
                               fCompletionNicks;
