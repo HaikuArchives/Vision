@@ -1670,9 +1670,6 @@ ServerAgent::MessageReceived (BMessage *msg)
         deathchant.AddPointer ("agent", deadagent);
         deathchant.AddPointer ("item", deadagent->fAgentWinItem);
         vision_app->pClientWin()->PostMessage (&deathchant);
-
-        if (fIsQuitting && fClients.CountItems() <= 1)
-          fSMsgr.SendMessage (M_CLIENT_QUIT);
       }
       break;
     
