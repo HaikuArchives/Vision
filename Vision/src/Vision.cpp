@@ -999,7 +999,7 @@ VisionApp::GetString (const char *stringName) const
 {
   BAutolock stringLock (const_cast<BLocker *>(&fSettingsLock));
 
-  BString value;
+  const char *value;
 
   if (stringLock.IsLocked())
   {
@@ -1008,12 +1008,12 @@ VisionApp::GetString (const char *stringName) const
     
     if ((fVisionSettings->FindString (stringName, &value)) == B_OK)
       if (fDebugSettings) 
-        printf ("found; returning %s\n", value.String());
+        printf ("found; returning %s\n", value);
     else
       if (fDebugSettings)
         printf (" not found; returning NULL\n");
   }      
-  return value.String();
+  return value;
 }
 
 
