@@ -31,6 +31,12 @@
 
 #include "ClientAgent.h"
 
+
+const int MODE_NORMAL = 1;
+const int MODE_VOICE  = 2;
+const int MODE_HELP   = 3;
+const int MODE_OP     = 4;
+
 class ChannelOptions;
 class BScrollView;
 class ServerWindow;

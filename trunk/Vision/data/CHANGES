@@ -3,6 +3,9 @@ http://vision.sourceforge.net
 
 [0.1.0315]
  2001-03-18
+   * Define some status bits which will eventually used for keeping
+     track if you are opped/voiced/etc in a channel
+   * Start a little bit of work on ChannelOptions window
    * No longer relies on .rsrc file for Version info
    * Remove old #define not needed anymore
    * Begin work on IRCd dectection
