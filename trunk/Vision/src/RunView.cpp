@@ -727,7 +727,7 @@ RunView::CheckURLCursor (BPoint point)
 	urllist::const_iterator it;
 	for (it = lines[s.line]->urls->begin(); it != lines[s.line]->urls->end(); ++it)
 		if ((s.offset >= (*it)->offset)
-		 && (s.offset < (*it)->offset + (*it)->length))
+		 && (s.offset <= (*it)->offset + (*it)->length))
 		 {
 		 	SetViewCursor (URLCursor);
 		 	return;
@@ -810,7 +810,7 @@ RunView::MouseUp (BPoint point)
 		urllist::const_iterator it;
 		for (it = lines[s.line]->urls->begin(); it != lines[s.line]->urls->end(); ++it)
 			if ((s.offset >= (*it)->offset)
-			 && (s.offset < (*it)->offset + (*it)->length))
+			 && (s.offset <= (*it)->offset + (*it)->length))
 			 {
 			 	vision_app->LoadURL ((*it)->url.String());
 			 	url_handle = true;
@@ -1434,7 +1434,7 @@ SelectPos
 RunView::PositionAt (BPoint point) const
 {
 	int16 i, lindex (0);
-	SelectPos pos;
+	SelectPos pos (-1, 0);
 
 	if (line_count == 0)
 		return pos;
@@ -1444,8 +1444,15 @@ RunView::PositionAt (BPoint point) const
 	{
 		if (lines[i]->top > point.y)
 			break;
-
 		lindex = i;
+	}
+	
+	// check to make sure we actually did find a line and not just run into line_count
+	if (lines[lindex]->bottom < point.y)
+	{
+		pos.line = line_count - 1;
+		pos.offset = lines[line_count - 1]->length;
+		return pos;
 	}
 
 //	printf ("Line: %hd\n", lindex);
@@ -1714,22 +1721,18 @@ Line::Append (
 
 	delete [] text;
 	text = new_text;
-
+	
 	FigureFontColors (save, fore, back, font);
-
+	
+	if (fore == C_URL)
+	{
+		if (!urls)
+			urls = new urllist;
+		urls->push_front (new URL (buffer, save, len));
+	}
+	
 	if (text[length - 1] == '\n')
 	{
-		URLCrunch crunch (text, length);
-		int32 offset (0);
-		BString temp_url;
-		
-		while ((offset = crunch.Crunch (&temp_url)) != B_ERROR)
-		{
-			if (!urls)
-				urls = new urllist;
-			urls->push_front (new URL (temp_url.String(), offset, temp_url.Length()));
-		}
-		
 		if (urls)
 			urls->sort();
 			
