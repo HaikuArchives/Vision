@@ -32,7 +32,8 @@ class GeneralPrefsView : public BView
 {
   enum PrefsItems
   {
-    piWindow = 0,
+    piAlias = 0,
+    piWindow,
     piColor,
     piFonts,
     piCommands,

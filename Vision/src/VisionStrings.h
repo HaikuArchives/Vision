@@ -239,6 +239,13 @@
 #define S_PEVENTS_SILENCE_ADDED     "*** Hostmask added to SILENCE list: "
 #define S_PEVENTS_SILENCE_REMOVED   "*** Hostmask removed from SILENCE list: "
 
+// alias prefs
+
+#define S_PREFALIAS_COLUMN_NAME     "Name"
+#define S_PREFALIAS_COLUMN_ALIAS    "Alias"
+#define S_PREFALIAS_ADD             "Add"
+#define S_PREFALIAS_REMOVE          "Remove"
+
 // app prefs
 
 #define S_PREFAPP_VERSION_PARANOID  "Show OS information in version reply"
@@ -365,6 +372,7 @@
 
 // main prefs view
 
+#define S_PREFGEN_ALIAS_ITEM        "Aliases"
 #define S_PREFGEN_APP_ITEM          "Application"
 #define S_PREFGEN_COLOR_ITEM        "Colors"
 #define S_PREFGEN_FONT_ITEM         "Fonts"
