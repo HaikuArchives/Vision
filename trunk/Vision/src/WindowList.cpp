@@ -113,10 +113,9 @@ void
 WindowList::MouseDown (BPoint myPoint)
 {
   int32 selected (IndexOf (myPoint));
-  bool handled (false);
-  
   if (selected >= 0)
   {
+    BOutlineListView::MouseDown (myPoint);
     BMessage *inputMsg (Window()->CurrentMessage());
     int32 mousebuttons (0),
           keymodifiers (0);
@@ -145,7 +144,6 @@ WindowList::MouseDown (BPoint myPoint)
         ConvertToScreen (ItemFrame (selected)),
         true);
     }
-    handled = true;
   }
   else
   {
@@ -165,8 +163,6 @@ WindowList::MouseDown (BPoint myPoint)
     if (activeagent)
       Select (IndexOf (activeagent));
   }    
-
-  BOutlineListView::MouseDown (myPoint);
 }
 
 void 
@@ -203,6 +199,7 @@ WindowList::SelectionChanged (void)
     if (myItem)
       Activate (currentIndex);
   }
+  BOutlineListView::SelectionChanged();
 }
 
 void
@@ -565,6 +562,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     else
       agentParent = (ServerAgent *)((ListAgent *)agent)->sMsgr->Target(&looper);
     AddUnder (newagentitem, agentParent->agentWinItem);
+    SortItemsUnder (agentParent->agentWinItem, false, SortListItems);
   }
   
   BView *newagent;
@@ -575,7 +573,6 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     newagentitem->SetSid (newsid);
     serverId = newsid;
   }
-  SortItems (SortListItems);
   itemindex = IndexOf (newagentitem);
 
   // give the agent its own pointer to its WinListItem,
@@ -637,7 +634,6 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
 void
 WindowList::Activate (int32 index)
 {
-
   WindowListItem *newagentitem ((WindowListItem *)ItemAt (index));
   BView *newagent (newagentitem->pAgent());
 
@@ -703,7 +699,7 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   agent->Hide();
   agent->RemoveSelf();
   RemoveItem (agentitem);
-  SortItems (SortListItems);
+  FullListSortItems (SortListItems);
   delete agent;
   
   SelectLast();
@@ -712,10 +708,10 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
 
 
 int
-WindowList::SortListItems (const void *name1, const void *name2)
+WindowList::SortListItems (const BListItem *name1, const BListItem *name2)
 {
-  WindowListItem *firstPtr (*(WindowListItem * const *)name1);
-  WindowListItem *secondPtr (*(WindowListItem * const *)name2);
+  const WindowListItem *firstPtr ((const WindowListItem *)name1);
+  const WindowListItem *secondPtr ((const WindowListItem *)name2);
 
   /* Not sure if this can happen, and we
    * are assuming that if one is NULL
