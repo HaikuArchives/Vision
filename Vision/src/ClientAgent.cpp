@@ -40,7 +40,7 @@
 #include "WindowList.h"
 
 
-const char *ClientAgent::endl						("\1\1\1\1\1");
+const char *ClientAgent::endl               ("\1\1\1\1\1");
 
 ClientAgent::ClientAgent (
   const char *id_,
@@ -133,21 +133,21 @@ ClientAgent::Show (void)
 void
 ClientAgent::Init (void)
 {    
-	textColor		= vision_app->GetColor (C_TEXT);
-	nickColor		= vision_app->GetColor (C_NICK);
-	ctcpReqColor	= vision_app->GetColor (C_CTCP_REQ);
-	quitColor		= vision_app->GetColor (C_QUIT);
-	errorColor		= vision_app->GetColor (C_ERROR);
-	whoisColor		= vision_app->GetColor (C_WHOIS);
-	joinColor		= vision_app->GetColor (C_JOIN);
-	myNickColor		= vision_app->GetColor (C_MYNICK);
-	actionColor		= vision_app->GetColor (C_ACTION);
-	opColor			= vision_app->GetColor (C_OP);
-	inputColor		= vision_app->GetColor (C_INPUT);
+  textColor     = vision_app->GetColor (C_TEXT);
+  nickColor     = vision_app->GetColor (C_NICK);
+  ctcpReqColor  = vision_app->GetColor (C_CTCP_REQ);
+  quitColor	    = vision_app->GetColor (C_QUIT);
+  errorColor    = vision_app->GetColor (C_ERROR);
+  whoisColor    = vision_app->GetColor (C_WHOIS);
+  joinColor     = vision_app->GetColor (C_JOIN);
+  myNickColor   = vision_app->GetColor (C_MYNICK);
+  actionColor   = vision_app->GetColor (C_ACTION);
+  opColor       = vision_app->GetColor (C_OP);
+  inputColor    = vision_app->GetColor (C_INPUT);
 	
-	myFont			= *(vision_app->GetClientFont (F_TEXT));
-	serverFont		= *(vision_app->GetClientFont (F_SERVER));
-	inputFont   	= *(vision_app->GetClientFont (F_INPUT));
+  myFont     = *(vision_app->GetClientFont (F_TEXT));
+  serverFont = *(vision_app->GetClientFont (F_SERVER));
+  inputFont  = *(vision_app->GetClientFont (F_INPUT));
 
   input = new VTextControl (
                 BRect (

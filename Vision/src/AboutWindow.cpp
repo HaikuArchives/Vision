@@ -20,7 +20,7 @@
  *                 Brian Luft
  *                 Todd Lair
  *                 Rene Gollent
- */ 
+ */
 
 #include <Bitmap.h>
 #include <Screen.h>
