@@ -1007,6 +1007,32 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
+  if (firstWord == "/VUPTIME")
+  {
+    BString parms (GetWord(data, 2)),
+  	        clientUptime (DurationString(vision_app->VisionUptime())),
+  	        expandedString (S_PCMD_VIS_UPTIME);
+  	expandedString += clientUptime;
+
+    if ((fId != fServerName) && (parms == "-9z99"))
+    {
+      AddSend (&sendMsg, "PRIVMSG ");
+      AddSend (&sendMsg, fId);
+      AddSend (&sendMsg, " :");
+      AddSend (&sendMsg, expandedString.String());
+      AddSend (&sendMsg, endl);
+        
+      ChannelMessage (expandedString.String(), fMyNick.String());
+    }
+    else if ((parms == "-l") || (fId == fServerName)) // echo locally
+    {
+      BString tempString;
+      tempString << "Vision Uptime: " << clientUptime.String() << "\n";
+      Display (tempString.String(), C_WHOIS);
+    }
+    return true;
+
+  }
 
   if (firstWord == "/UPTIME")
   {

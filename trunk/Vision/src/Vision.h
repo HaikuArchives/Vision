@@ -115,6 +115,8 @@ class VisionApp : public BApplication
     void                    ReleaseDCCLock (void);
 
 	bool                    SaveSettings (void);
+	
+	bigtime_t               VisionUptime (void);
     
     BString                 fEvents[MAX_EVENTS];
 
@@ -156,7 +158,9 @@ class VisionApp : public BApplication
 	volatile thread_id      fIdentThread,
 	                        fWinThread;
 	int32                   fIdentSocket;
+
 	Theme                   *fActiveTheme;
+	bigtime_t               fStartupTime;
 };
 
 const uint32 VIS_NETWORK_DATA        = 'vndc';
