@@ -28,7 +28,7 @@
 #include <stdlib.h>
 
 #include "Vision.h"
-#include "StringManip.h"
+#include "Utilities.h"
 #include "ServerAgent.h"
 
 void
@@ -203,15 +203,15 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       for (int32 i = 0; i < poss.Length(); ++i)
         pos = pos * 10 + poss[i] - '0';
 
-      for (int32 i = 0; i < resumes.CountItems(); ++i)
+      for (int32 i = 0; i < fResumes.CountItems(); ++i)
       {
-        ResumeData *data ((ResumeData *)resumes.ItemAt (i));
+        ResumeData *data ((ResumeData *)fResumes.ItemAt (i));
 
         if (data->nick == theNick
         &&  data->pos  == pos
         &&  data->port == port);
         {
-          resumes.RemoveItem (i);
+          fResumes.RemoveItem (i);
 
           BMessage msg (M_DCC_ACCEPT);
           msg.AddString ("vision:nick", data->nick.String());
@@ -222,7 +222,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
           msg.AddString ("path",        data->path.String());
           msg.AddBool   ("continue",    true);
 
-          msgr.SendMessage(&msg);
+          fMsgr.SendMessage(&msg);
 					
           delete data;
           break;
@@ -255,8 +255,8 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       BMessage bMsg (M_DCC_MESSENGER), bReply;
       be_app_messenger.SendMessage (&bMsg, &bReply);
 
-      BMessenger msgr;
-      bReply.FindMessenger ("msgr", &msgr);
+      BMessenger fMsgr;
+      bReply.FindMessenger ("msgr", &fMsgr);
 
       BMessage msg (M_ADD_RESUME_DATA), reply;
       msg.AddString ("vision:nick", theNick.String());
@@ -266,7 +266,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
 
       // do sync.. we do not want to have the transfer
       // start before we tell it okay
-      msgr.SendMessage (&msg, &reply);
+      fMsgr.SendMessage (&msg, &reply);
       if (reply.HasBool ("hit")
       &&  reply.FindBool ("hit"))
       {
@@ -291,7 +291,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
   buffer += "[";
   buffer += theNick;
   buffer += " ";
-  if (theTarget != myNick)
+  if (theTarget != fMyNick)
   {
     buffer += theTarget;
     buffer += ":";

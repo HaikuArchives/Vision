@@ -38,9 +38,9 @@ class ColorPrefsView : public BView
     virtual void AttachedToWindow (void);
     virtual void AllAttached (void);
   private:
-    rgb_color colors [MAX_COLORS];
-    ColorSelector *selector;
-    BButton *revert;
+    rgb_color fColors [MAX_COLORS];
+    ColorSelector *fSelector;
+    BButton *fRevert;
 };
 
 #endif // _PREFCOLOR_H

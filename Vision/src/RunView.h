@@ -39,19 +39,19 @@ class SelectPos
 {
 	public:
 
-	int16					line;
-	int16					offset;
+	int16					fLine;
+	int16					fOffset;
 
 							SelectPos (
 								int16 selLine = 0,
 								int16 selOffset = 0)
-								:	line (selLine),
-									offset (selOffset)
+								:	fLine (selLine),
+									fOffset (selOffset)
 							{ }
 
 							SelectPos (const SelectPos &pos)
-								:	line (pos.line),
-									offset (pos.offset)
+								:	fLine (pos.fLine),
+									fOffset (pos.fOffset)
 							{ }
 
 							~SelectPos (void)
@@ -59,15 +59,15 @@ class SelectPos
 
 	SelectPos			&operator = (const SelectPos &pos)
 							{
-								line = pos.line;
-								offset = pos.offset;
+								fLine = pos.fLine;
+								fOffset = pos.fOffset;
 
 								return *this;
 							}
 							
 	inline int			operator == (const SelectPos &rhs) const
 							{
-								return ((line == rhs.line) && (offset == rhs.offset));
+								return ((fLine == rhs.fLine) && (fOffset == rhs.fOffset));
 							}
 	
 
@@ -75,29 +75,30 @@ class SelectPos
 
 class RunView : public BView
 {
-	BScrollView			*scroller;
-	BCursor				*URLCursor;
-	Theme					*theme;
+	BScrollView			*fScroller;
+	BCursor				*fURLCursor;
+	Theme					*fTheme;
 
-	Line					*working;
-	Line					*lines[LINE_COUNT];
-	int16					line_count;
+	Line					*fWorking;
+	Line					*fLines[LINE_COUNT];
+	int16					fLine_count,
+	                        fClickCount;
 
-	char					*stamp_format;
-	char					*clipping_name;
+	char					*fStamp_format;
+	char					*fClipping_name;
 	
-	SelectPos			sp_start, sp_end;
+	SelectPos			fSp_start, fSp_end;
 	
-	int32							tracking;
-	SelectPos							track_offset;
-	BMessageRunner				*off_view_runner;
-	bigtime_t					off_view_time;
+	int32							fTracking;
+	SelectPos							fTrack_offset;
+	BMessageRunner				*fOff_view_runner;
+	bigtime_t					fOff_view_time;
 
-	bool 				resizedirty;
-	bool				fontsdirty;
-	BPopUpMenu			*myPopUp;
-	BPoint				lastClick;
-	bigtime_t			lastClickTime;
+	bool 				fResizedirty;
+	bool				fFontsdirty;
+	BPopUpMenu			*fMyPopUp;
+	BPoint				fLastClick;
+	bigtime_t			fLastClickTime;
 
 	bool					RecalcScrollBar (bool constrain);
 	void					ResizeRecalc (void);
@@ -106,7 +107,7 @@ class RunView : public BView
 	void					ShiftTrackingSelect (BPoint, bool, bigtime_t);
 	void					CheckURLCursor (BPoint);
 	void					BuildPopUp (void);
-	uint16				CheckClickCount (BPoint);
+
 	bool				CheckClickBounds (const SelectPos &, const BPoint &) const;
 	
 	public:

@@ -49,7 +49,7 @@ ChannelOptions::~ChannelOptions (void)
 bool
 ChannelOptions::QuitRequested (void)
 {
-  parent->msgr.SendMessage (M_CHANNEL_OPTIONS_CLOSE);
+  parent->fMsgr.SendMessage (M_CHANNEL_OPTIONS_CLOSE);
   return true;  
 }
 

@@ -39,9 +39,9 @@ class EventPrefsView : public BView
     virtual void AllAttached (void);
     virtual void FrameResized (float, float);
   private:
-    VTextControl **events;
-    BScrollView *scroller;
-    float maxheight, proportionheight;
+    VTextControl **fEvents;
+    BScrollView *fScroller;
+    float fMaxheight, fProportionheight;
 };
 
 #endif // _PREFEVENT_H

@@ -52,7 +52,8 @@ class MessageAgent : public ClientAgent
                                        const char * = "");
                          
                          ~MessageAgent (void);
-    virtual void         AttachedToWindow (void);
+    virtual void         AllAttached (void);
+    virtual void         AddMenuItems (BPopUpMenu *);
     
     virtual void         MessageReceived (BMessage *);
     virtual void         Parser (const char *);
@@ -74,21 +75,21 @@ class MessageAgent : public ClientAgent
     static status_t      DCCOut (void *);
     
     
-    BString                     chatAddy,
-                                chatee,
-                                dIP,
-                                dPort;
+    BString                     fChatAddy,
+                                fChatee,
+                                fDIP,
+                                fDPort;
 
-    bool                        dChat,
-                                dInitiate,
-                                dConnected;
+    bool                        fDChat,
+                                fDInitiate,
+                                fDConnected;
 
-    int                         mySocket,
-                                acceptSocket;
+    int                         fMySocket,
+                                fAcceptSocket;
 
-    thread_id                   dataThread;
+    thread_id                   fDataThread;
 #ifdef NETSERVER_BUILD
-    BLocker                     *locker;
+    BLocker                     *fLocker;
 #endif
 };
 #endif

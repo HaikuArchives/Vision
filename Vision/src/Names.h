@@ -75,14 +75,14 @@ class NamesView : public BListView
 
   private:
 
-    bool                            _tracking;
+    bool                            fTracking;
 
-    BPopUpMenu                      *myPopUp;
-    BMenu                           *CTCPPopUp;
-    int32                           lastSelected,
-                                      lastButton,
-                                      currentindex;
-    Theme                           *activeTheme;
+    BPopUpMenu                      *fMyPopUp;
+    BMenu                           *fCTCPPopUp;
+    int32                           fLastSelected,
+                                      fLastButton,
+                                      fCurrentindex;
+    Theme                           *fActiveTheme;
 };
 
 #endif

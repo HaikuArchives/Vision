@@ -106,24 +106,24 @@ ColorPrefsView::ColorPrefsView (BRect frame)
 {
   SetViewColor (ui_color(B_PANEL_BACKGROUND_COLOR));
   for (int32 i = 0 ; i < MAX_COLORS ; i++)
-    colors[i] = vision_app->GetColor (i);
+    fColors[i] = vision_app->GetColor (i);
   
   BMessage mycolors, labels;
 
   for (int32 i = 0 ; i < MAX_COLORS; i++)
   {
-  	mycolors.AddData ("color", B_RGB_COLOR_TYPE, &colors[i], sizeof(rgb_color));
+  	mycolors.AddData ("color", B_RGB_COLOR_TYPE, &fColors[i], sizeof(rgb_color));
   	labels.AddString ("color", ColorLabels[i]);
   }
 
-  selector = new ColorSelector (frame, "selector", NULL, mycolors, labels, new BMessage ('vtst'));
-  selector->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  selector->ResizeToPreferred();
-  revert = new BButton (BRect (0,0,0,0), "revert", S_PREFCOLOR_REVERT, new BMessage (M_REVERT_COLOR_SELECTIONS));
-  revert->ResizeToPreferred();
-  ResizeTo (selector->Bounds().Width() + 30, selector->Bounds().Height() + 30 + revert->Bounds().Height());
-  AddChild (selector);
-  AddChild (revert);
+  fSelector = new ColorSelector (frame, "fSelector", NULL, mycolors, labels, new BMessage ('vtst'));
+  fSelector->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+  fSelector->ResizeToPreferred();
+  fRevert = new BButton (BRect (0,0,0,0), "fRevert", S_PREFCOLOR_REVERT, new BMessage (M_REVERT_COLOR_SELECTIONS));
+  fRevert->ResizeToPreferred();
+  ResizeTo (fSelector->Bounds().Width() + 30, fSelector->Bounds().Height() + 30 + fRevert->Bounds().Height());
+  AddChild (fSelector);
+  AddChild (fRevert);
 }
 
 ColorPrefsView::~ColorPrefsView (void)
@@ -140,11 +140,11 @@ void
 ColorPrefsView::AllAttached (void)
 {
   BView::AllAttached();
-  selector->ResizeToPreferred();
-  selector->MoveTo ((Bounds().Width() - selector->Bounds().Width()) / 2 ,
+  fSelector->ResizeToPreferred();
+  fSelector->MoveTo ((Bounds().Width() - fSelector->Bounds().Width()) / 2 ,
     5);
-  revert->MoveTo (selector->Frame().left, selector->Frame().bottom + 10);
-  revert->SetTarget (this);
+  fRevert->MoveTo (fSelector->Frame().left, fSelector->Frame().bottom + 10);
+  fRevert->SetTarget (this);
 }
 
 void
@@ -153,7 +153,7 @@ ColorPrefsView::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     case M_REVERT_COLOR_SELECTIONS:
-      selector->Revert();
+      fSelector->Revert();
       break;
   }
   BView::MessageReceived(msg);

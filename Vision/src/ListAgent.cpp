@@ -32,7 +32,7 @@
 #include "Prompt.h"
 #include "StatusView.h"
 #include "Vision.h"
-#include "StringManip.h"
+#include "Utilities.h"
 #include "ListAgent.h"
 #include "WindowList.h"
 #include "ClientWindow.h"
@@ -66,7 +66,7 @@ ListAgent::ListAgent (
       B_FOLLOW_ALL_SIDES,
       B_WILL_DRAW | B_FRAME_EVENTS),
    activeTheme (vision_app->ActiveTheme()),
-   sMsgr (sMsgr_),
+   fSMsgr (sMsgr_),
    listUpdateTrigger (NULL),
   filter (""),
   find (""),
@@ -150,8 +150,8 @@ ListAgent::~ListAgent (void)
   while (hiddenItems.CountItems() > 0)
     delete (BRow *)hiddenItems.RemoveItem (0L);
   
-  delete sMsgr;
-  delete agentWinItem;
+  delete fSMsgr;
+  delete fAgentWinItem;
 
   regfree (&re);
   regfree (&fre);
@@ -160,7 +160,7 @@ ListAgent::~ListAgent (void)
 void
 ListAgent::AttachedToWindow (void)
 {
-  msgr = BMessenger (this);
+  fMsgr = BMessenger (this);
   listView->SetTarget(this);
 }
 
@@ -169,7 +169,7 @@ void
 ListAgent::Show (void)
 {
   Window()->PostMessage (M_STATUS_CLEAR);
-  this->msgr.SendMessage (M_STATUS_ADDITEMS);
+  this->fMsgr.SendMessage (M_STATUS_ADDITEMS);
   
   vision_app->pClientWin()->AddMenu (listMenu);
   listMenu->SetTargetForItems (this);
@@ -251,7 +251,7 @@ ListAgent::MessageReceived (BMessage *msg)
 
           sMsg.AddString ("data", "LIST");
 
-          sMsgr->SendMessage (&sMsg);
+          fSMsgr->SendMessage (&sMsg);
           processing = true;
 
           if (!IsHidden())
@@ -373,7 +373,7 @@ ListAgent::MessageReceived (BMessage *msg)
        					 }
 					  }
 					}
-					msgr.SendMessage (M_LIST_DONE);
+					fMsgr.SendMessage (M_LIST_DONE);
 					processing = true;
 				}
 			}
@@ -468,7 +468,7 @@ ListAgent::MessageReceived (BMessage *msg)
 			{
 				msg->AddString ("text", find.String());
 				msg->what = M_LIST_FIND;
-				msgr.SendMessage (msg);
+				fMsgr.SendMessage (msg);
 			}
 			break;
 
@@ -486,17 +486,17 @@ ListAgent::MessageReceived (BMessage *msg)
                  msg.AddBool ("history", false);
                  msg.AddBool ("clear", false);
                  msg.AddString ("input", buffer.String());
-                 sMsgr->SendMessage (&msg);
+                 fSMsgr->SendMessage (&msg);
             }
 		}
 		break;
 		
 		case M_CLIENT_QUIT:
 		{
-		  sMsgr->SendMessage(M_LIST_SHUTDOWN);
+		  fSMsgr->SendMessage(M_LIST_SHUTDOWN);
 		  BMessage deathchant (M_OBITUARY);
           deathchant.AddPointer ("agent", this);
-          deathchant.AddPointer ("item", agentWinItem);
+          deathchant.AddPointer ("item", fAgentWinItem);
           vision_app->pClientWin()->PostMessage (&deathchant);
 		}
 		break;

@@ -22,10 +22,12 @@
  *                 Andrew Bazan
  *                 Jamie Wilkinson
  */
+
+#include <PopUpMenu.h>
+#include <MenuItem.h>
  
 #include "MessageAgent.h"
 #include "WindowList.h"
-#include "ServerAgent.h"
 #include "ClientWindow.h"
 #include "StatusView.h"
 #include "Vision.h"
@@ -47,8 +49,8 @@ MessageAgent::MessageAgent (
   BRect &frame_,
   const char *id_,
   int32 sid_,
-  const char *serverName_,
-  const BMessenger &sMsgr_,
+  const char *fServerName_,
+  const BMessenger &fSMsgr_,
   const char *nick,
   const char *addyString,
   bool chat,
@@ -59,66 +61,79 @@ MessageAgent::MessageAgent (
   : ClientAgent (
     id_,
     sid_,
-    serverName_,
+    fServerName_,
     nick,
-    sMsgr_,
+    fSMsgr_,
     frame_),
 
-  chatAddy (addyString ? addyString : ""),
-  chatee (id_),
-  dIP (IP),
-  dPort (port),
-  dChat (chat),
-  dInitiate (initiate),
-  dConnected (false),
-  mySocket (0),
+  fChatAddy (addyString ? addyString : ""),
+  fChatee (id_),
+  fDIP (IP),
+  fDPort (port),
+  fDChat (chat),
+  fDInitiate (initiate),
+  fDConnected (false),
+  fMySocket (0),
 #ifdef NETSERVER_BUILD
-  acceptSocket (0),
-  locker (NULL)
+  fAcceptSocket (0),
+  fLocker (NULL)
 #elif BONE_BUILD
-  acceptSocket (0)
+  fAcceptSocket (0)
 #endif
 {
   Init();
 #ifdef NETSERVER_BUILD
-  if (dChat)
-    locker = new BLocker();
+  if (fDChat)
+    fLocker = new BLocker();
 #endif
 }
 
 MessageAgent::~MessageAgent (void)
 {
-  dConnected = false;
-  if (dChat)
+  fDConnected = false;
+  if (fDChat)
   {
-    if (mySocket)
+    if (fMySocket)
 #ifdef BONE_BUILD
-      close (mySocket);
+      close (fMySocket);
 #elif NETSERVER_BUILD
-      closesocket (mySocket);
+      closesocket (fMySocket);
 #endif
-    if (acceptSocket)
+    if (fAcceptSocket)
 #ifdef BONE_BUILD 
-      close (acceptSocket);
+      close (fAcceptSocket);
 #elif NETSERVER_BUILD
-      closesocket (acceptSocket);
+      closesocket (fAcceptSocket);
 #endif
   }
 }
 
 void
-MessageAgent::AttachedToWindow (void)
+MessageAgent::AllAttached (void)
 {
   // initialize threads here since messenger will otherwise not be valid
-  if (dChat)
+  if (fDChat)
   {
-    if (dInitiate)
-      dataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY, this);
+    if (fDInitiate)
+      fDataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY, this);
     else
-      dataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY, this);
+      fDataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY, this);
     
-    resume_thread (dataThread);
+    resume_thread (fDataThread);
   }
+  ClientAgent::AllAttached();
+}
+
+void
+MessageAgent::AddMenuItems (BPopUpMenu *pMenu)
+{
+  BMenuItem *item (NULL);
+  item = new BMenuItem("Whois", new BMessage (M_MSG_WHOIS));
+  item->SetTarget (this);
+  if (Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
+      item->SetEnabled (false);
+  pMenu->AddItem (item);
+  pMenu->AddSeparatorItem();
 }
 
 void
@@ -135,22 +150,22 @@ MessageAgent::DCCServerSetup(void)
   if (diff > 0)
     myPort += rand() % diff;
     
-  BString outNick (chatee);
+  BString outNick (fChatee);
   outNick.RemoveFirst (" [DCC]");
   struct sockaddr_in sa;
   
   BMessage reply;
-  sMsgr.SendMessage (M_GET_IP, &reply);
+  fSMsgr.SendMessage (M_GET_IP, &reply);
   
   BString address;
   reply.FindString ("ip", &address);
     
-  if (dPort != "")
-    myPort = atoi (dPort.String());
+  if (fDPort != "")
+    myPort = atoi (fDPort.String());
 
-  mySocket = socket (AF_INET, SOCK_STREAM, 0);
+  fMySocket = socket (AF_INET, SOCK_STREAM, 0);
 
-  if (mySocket < 0)
+  if (fMySocket < 0)
   {
     LockLooper();
     Display (S_DCC_SOCKET_ERROR);
@@ -164,17 +179,12 @@ MessageAgent::DCCServerSetup(void)
   
   sa.sin_port = htons(myPort);
   
-  if (bind (mySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
+  if (bind (fMySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
   {
-    myPort = 1500 + (rand() % 5000); // try once more
-    sa.sin_port = htons(myPort);
-    if (bind (mySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
-    {
       LockLooper();
       Display (S_DCC_BIND_ERROR);
       UnlockLooper();
       return;
-    }
   }
   
   BMessage sendMsg (M_SERVER_SEND);
@@ -186,10 +196,10 @@ MessageAgent::DCCServerSetup(void)
   buffer << htonl(sa.sin_addr.s_addr) << " ";
   buffer << myPort << "\1";
   sendMsg.AddString ("data", buffer.String());
-  sMsgr.SendMessage (&sendMsg);
+  fSMsgr.SendMessage (&sendMsg);
   
   vision_app->AcquireDCCLock();	
-  listen (mySocket, 1);
+  listen (fMySocket, 1);
 
   BString dataBuffer;
   struct in_addr addr;
@@ -206,14 +216,14 @@ status_t
 MessageAgent::DCCIn (void *arg)
 {
   MessageAgent *agent ((MessageAgent *)arg);
-  BMessenger sMsgrE (agent->sMsgr);
+  BMessenger fSMsgrE (agent->fSMsgr);
   BMessenger mMsgr (agent);
 #ifdef NETSERVER_BUILD
-  BLocker *myLocker (agent->locker);
+  BLocker *myLocker (agent->fLocker);
 #endif  
   agent->DCCServerSetup();
     
-  int dccSocket (agent->mySocket);
+  int dccSocket (agent->fMySocket);
   int dccAcceptSocket (0);
   
   struct sockaddr_in remoteAddy;
@@ -226,8 +236,8 @@ MessageAgent::DCCIn (void *arg)
   if (dccAcceptSocket < 0)
     return B_ERROR;
     
-  agent->acceptSocket = dccAcceptSocket;
-  agent->dConnected = true;
+  agent->fAcceptSocket = dccAcceptSocket;
+  agent->fDConnected = true;
   
   BMessage msg (M_DISPLAY);
 
@@ -247,7 +257,7 @@ MessageAgent::DCCIn (void *arg)
   FD_SET (dccAcceptSocket, &rset);
   FD_SET (dccAcceptSocket, &eset);
   
-  while (agent->dConnected)
+  while (agent->fDConnected)
   {
 #ifdef NETSERVER_BUILD 
     if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) <= 0)
@@ -259,7 +269,7 @@ MessageAgent::DCCIn (void *arg)
       {
         BMessage termMsg (M_DISPLAY);
         
-        agent->dConnected = false;
+        agent->fDConnected = false;
         ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
         mMsgr.SendMessage (&termMsg);
         goto outta_there; // I hate goto, but this is a good use.
@@ -280,7 +290,7 @@ MessageAgent::DCCIn (void *arg)
     {
       BMessage termMsg (M_DISPLAY);
 
-      agent->dConnected = false;
+      agent->fDConnected = false;
       ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
       mMsgr.SendMessage (&termMsg);
 #ifdef NETSERVER_BUILD
@@ -297,7 +307,9 @@ MessageAgent::DCCIn (void *arg)
         {
           inputBuffer.RemoveLast ("\r");
           inputBuffer = FilterCrap (inputBuffer.String(), false);
-          agent->ChannelMessage (inputBuffer.String());
+          BMessage dispMsg (M_DISPLAY);
+          ClientAgent::PackDisplay (&dispMsg, inputBuffer.String());
+          mMsgr.SendMessage (&dispMsg);
           inputBuffer = "";
         }
         else if (tempBuffer[0] != '\r')
@@ -323,14 +335,14 @@ MessageAgent::DCCOut (void *arg)
   
   BMessenger mMsgr (agent);
 #ifdef NETSERVER_BUILD
-  BLocker *myLocker (agent->locker);
+  BLocker *myLocker (agent->fLocker);
 #endif
   struct sockaddr_in sa;
   int status;
   int dccAcceptSocket (0);
   char *endpoint;
   
-  uint32 realIP = strtoul (agent->dIP.String(), &endpoint, 10);
+  uint32 realIP = strtoul (agent->fDIP.String(), &endpoint, 10);
 
   if ((dccAcceptSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
   {
@@ -341,10 +353,10 @@ MessageAgent::DCCOut (void *arg)
     return false;
   }
   
-  agent->acceptSocket = dccAcceptSocket;
+  agent->fAcceptSocket = dccAcceptSocket;
 	
   sa.sin_family = AF_INET;
-  sa.sin_port = htons (atoi (agent->dPort.String()));
+  sa.sin_port = htons (atoi (agent->fDPort.String()));
   sa.sin_addr.s_addr = ntohl (realIP);
   memset (sa.sin_zero, 0, sizeof(sa.sin_zero));
 
@@ -357,7 +369,7 @@ MessageAgent::DCCOut (void *arg)
 
     buffer << S_DCC_CHAT_TRY
       << inet_ntoa (addr)
-      << S_DCC_CHAT_PORT << agent->dPort << "\n";
+      << S_DCC_CHAT_PORT << agent->fDPort << "\n";
     
     ClientAgent::PackDisplay (&msg, buffer.String());
     mMsgr.SendMessage (&msg);
@@ -371,14 +383,14 @@ MessageAgent::DCCOut (void *arg)
     ClientAgent::PackDisplay (&msg, S_DCC_CONN_ERROR);
     mMsgr.SendMessage (&msg);
 #ifdef BONE_BUILD
-    close (agent->mySocket);
+    close (agent->fMySocket);
 #elif NETSERVER_BUILD
-    closesocket (agent->mySocket);
+    closesocket (agent->fMySocket);
 #endif
     return false;
   }
 
-  agent->dConnected = true;
+  agent->fDConnected = true;
 
   BMessage msg (M_DISPLAY);
   ClientAgent::PackDisplay (&msg, S_DCC_CHAT_CONNECTED);
@@ -397,7 +409,7 @@ MessageAgent::DCCOut (void *arg)
   FD_SET (dccAcceptSocket, &rset);
   FD_SET (dccAcceptSocket, &eset);
   
-  while (agent->dConnected)
+  while (agent->fDConnected)
   {
 #ifdef NETSERVER_BUILD
     if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) <= 0)
@@ -408,7 +420,7 @@ MessageAgent::DCCOut (void *arg)
       if (FD_ISSET (dccAcceptSocket, &eset))
       {
         BMessage termMsg (M_DISPLAY);
-        agent->dConnected = false;
+        agent->fDConnected = false;
         ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
         mMsgr.SendMessage (&termMsg);
         goto outta_loop; // I hate goto, but this is a good use.
@@ -428,7 +440,7 @@ MessageAgent::DCCOut (void *arg)
     {
       BMessage termMsg (M_DISPLAY);
 
-      agent->dConnected = false;
+      agent->fDConnected = false;
       ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
       mMsgr.SendMessage (&termMsg);
       goto outta_loop; // I hate goto, but this is a good use.
@@ -440,9 +452,11 @@ MessageAgent::DCCOut (void *arg)
     {
       if (tempBuffer[0] == '\n')
       {
-      	inputBuffer.RemoveLast ("\r");
-      	inputBuffer = FilterCrap (inputBuffer.String(), false);
-        agent->ChannelMessage (inputBuffer.String());
+        inputBuffer.RemoveLast ("\r");
+        inputBuffer = FilterCrap (inputBuffer.String(), false);
+        BMessage dispMsg (M_DISPLAY);
+        ClientAgent::PackDisplay (&dispMsg, inputBuffer.String());
+        mMsgr.SendMessage (&dispMsg);
         inputBuffer = "";
       }
       else
@@ -466,7 +480,7 @@ MessageAgent::ChannelMessage (
   const char *ident,
   const char *address)
 {
-//  agentWinItem->SetName (nick);
+//  fAgentWinItem->SetName (nick);
 
   ClientAgent::ChannelMessage (msgz, nick, ident, address);
 }
@@ -485,17 +499,20 @@ MessageAgent::MessageReceived (BMessage *msg)
           msg->FindString ("nick", &nick);
           BString outNick (nick);
           outNick.RemoveFirst (" [DCC]");
-          if (myNick.ICompare (outNick) != 0 && !dChat)
-            agentWinItem->SetName (outNick.String());      
+          if (fMyNick.ICompare (outNick) != 0 && !fDChat)
+            fAgentWinItem->SetName (outNick.String());      
           msg->ReplaceString ("nick", outNick.String());
         }
         else
         {
-          BString outNick (chatee.String());
+          BString outNick (fChatee.String());
           outNick.RemoveFirst (" [DCC]");
           msg->AddString ("nick", outNick.String());
         }
-        
+
+        if (IsHidden())
+          UpdateStatus (WIN_NICK_BIT);
+
         // Send the rest of processing up the chain
         ClientAgent::MessageReceived (msg);
       }
@@ -506,9 +523,9 @@ MessageAgent::MessageReceived (BMessage *msg)
         BMessage dataSend (M_SERVER_SEND);
 
         AddSend (&dataSend, "WHOIS ");
-        AddSend (&dataSend, chatee.String());
+        AddSend (&dataSend, fChatee.String());
         AddSend (&dataSend, " ");
-        AddSend (&dataSend, chatee.String());
+        AddSend (&dataSend, fChatee.String());
         AddSend (&dataSend, endl);      
       }
 
@@ -519,7 +536,7 @@ MessageAgent::MessageReceived (BMessage *msg)
         msg->FindString ("oldnick", &oldNick);
         msg->FindString ("newnick", &newNick);
 
-        if (chatee.ICompare (oldNick) == 0)
+        if (fChatee.ICompare (oldNick) == 0)
         {
           const char *address;
           const char *ident;
@@ -527,19 +544,19 @@ MessageAgent::MessageReceived (BMessage *msg)
           msg->FindString ("address", &address);
           msg->FindString ("ident", &ident);
 
-          BString oldId (id);
-          chatee = id = newNick;
+          BString oldId (fId);
+          fChatee = fId = newNick;
 
-          if (dChat)
-            id.Append(" [DCC]");
+          if (fDChat)
+            fId.Append(" [DCC]");
         
-          agentWinItem->SetName (id.String());
+          fAgentWinItem->SetName (fId.String());
 
                  
           ClientAgent::MessageReceived (msg);
         }
       
-        else if (myNick.ICompare (oldNick) == 0)
+        else if (fMyNick.ICompare (oldNick) == 0)
         {
           if (!IsHidden())
             vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
@@ -553,11 +570,11 @@ MessageAgent::MessageReceived (BMessage *msg)
         ClientAgent::MessageReceived(msg);
         BMessage deathchant (M_OBITUARY);
         deathchant.AddPointer ("agent", this);
-        deathchant.AddPointer ("item", agentWinItem);
+        deathchant.AddPointer ("item", fAgentWinItem);
         vision_app->pClientWin()->PostMessage (&deathchant);
   
         deathchant.what = M_CLIENT_SHUTDOWN;
-        sMsgr.SendMessage (&deathchant);
+        fSMsgr.SendMessage (&deathchant);
       }
       break;
      
@@ -581,9 +598,9 @@ MessageAgent::MessageReceived (BMessage *msg)
 
         // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
         // We send true on the last SetItemValue().
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String(), false);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), false);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, fServerName.String(), false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String(), false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String(), true);
       }        
       break;
     
@@ -595,9 +612,9 @@ MessageAgent::MessageReceived (BMessage *msg)
 void
 MessageAgent::ActionMessage (const char *msg, const char *nick)
 {
-  if (!dChat)
+  if (!fDChat)
     ClientAgent::ActionMessage (msg, nick);
-  else if (dConnected)
+  else if (fDConnected)
   {
     BString outTemp;
     outTemp = "\1ACTION ";
@@ -605,19 +622,19 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
     outTemp += "\1";
     outTemp += "\n";
 #ifdef NETSERVER_BUILD
-    locker->Lock();
+    fLocker->Lock();
 #endif
-    if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
+    if (send(fAcceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
     {
-      dConnected = false;
+      fDConnected = false;
       Display (S_DCC_CHAT_TERM);
 #ifdef NETSERVER_BUILD
-      locker->Unlock();
+      fLocker->Unlock();
 #endif
       return;
     }
 #ifdef NETSERVER_BUILD
-    locker->Unlock();
+    fLocker->Unlock();
 #endif
     outTemp.RemoveLast ("\n");
     ChannelMessage (outTemp.String(), nick);
@@ -627,42 +644,42 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
 void
 MessageAgent::Parser (const char *buffer)
 {
-  if (!dChat)
+  if (!fDChat)
   {
     BMessage dataSend (M_SERVER_SEND);
 
     AddSend (&dataSend, "PRIVMSG ");
-    AddSend (&dataSend, chatee);
+    AddSend (&dataSend, fChatee);
     AddSend (&dataSend, " :");
     AddSend (&dataSend, buffer);
     AddSend (&dataSend, endl);
   }
-  else if (dConnected)
+  else if (fDConnected)
   {
     BString outTemp (buffer);
 
     outTemp << "\n";
 #ifdef NETSERVER_BUILD
-    locker->Lock();
+    fLocker->Lock();
 #endif
-    if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
+    if (send(fAcceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
     {
-      dConnected = false;
+      fDConnected = false;
       Display (S_DCC_CHAT_TERM);
 #ifdef NETSERVER_BUILD
-      locker->Unlock();
+      fLocker->Unlock();
 #endif
       return;
     }
 #ifdef NETSERVER_BUILD
-    locker->Unlock();
+    fLocker->Unlock();
 #endif
   }
   else
     return;
 
   Display ("<", C_MYNICK);
-  Display (myNick.String(), C_NICKDISPLAY);
+  Display (fMyNick.String(), C_NICKDISPLAY);
   Display ("> ", C_MYNICK);
 
   BString sBuffer (buffer);
@@ -684,19 +701,19 @@ MessageAgent::TabExpansion (void)
   int32 start,
         finish;
 
-  input->TextView()->GetSelection (&start, &finish);
+  fInput->TextView()->GetSelection (&start, &finish);
 
-  if (input->TextView()->TextLength()
+  if (fInput->TextView()->TextLength()
   &&  start == finish
-  &&  start == input->TextView()->TextLength())
+  &&  start == fInput->TextView()->TextLength())
   {
-    const char *inputText (
-                  input->TextView()->Text()
-                  + input->TextView()->TextLength());
-    const char *place (inputText);
+    const char *fInputText (
+                  fInput->TextView()->Text()
+                  + fInput->TextView()->TextLength());
+    const char *place (fInputText);
 
 
-    while (place > input->TextView()->Text())
+    while (place > fInput->TextView()->Text())
     {
       if (*(place - 1) == '\x20')
         break;
@@ -705,24 +722,24 @@ MessageAgent::TabExpansion (void)
 
     BString insertion;
 
-    if (!id.ICompare (place, strlen (place)))
+    if (!fId.ICompare (place, strlen (place)))
     {
-      insertion = id;
+      insertion = fId;
       insertion.RemoveLast(" [DCC]");
     }
-    else if (!myNick.ICompare (place, strlen (place)))
-      insertion = myNick;
+    else if (!fMyNick.ICompare (place, strlen (place)))
+      insertion = fMyNick;
 
     if (insertion.Length())
     {
-      input->TextView()->Delete (
-        place - input->TextView()->Text(),
-        input->TextView()->TextLength());
+      fInput->TextView()->Delete (
+        place - fInput->TextView()->Text(),
+        fInput->TextView()->TextLength());
 
-      input->TextView()->Insert (insertion.String());
-      input->TextView()->Select (
-        input->TextView()->TextLength(),
-        input->TextView()->TextLength());
+      fInput->TextView()->Insert (insertion.String());
+      fInput->TextView()->Select (
+        fInput->TextView()->TextLength(),
+        fInput->TextView()->TextLength());
     }
   }
 }

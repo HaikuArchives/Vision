@@ -33,6 +33,7 @@
 
 #include "ClientAgent.h"
 
+class ClientAgentLogger;
 class BMessageRunner;
 class ListAgent;
 struct ServerData;
@@ -61,118 +62,109 @@ class ServerAgent : public ClientAgent
     virtual                     ~ServerAgent (void);
 
 
-	virtual void				MessageReceived (BMessage *);
-	virtual void				AttachedToWindow (void);
-    void						PostActive (BMessage *);
-
-
-	void						Broadcast (BMessage *);
-	void						RepliedBroadcast (BMessage *);
-	status_t                    NewTimer (const char *, int32, int32);
+    virtual void                MessageReceived (BMessage *);
+    virtual void                AttachedToWindow (void);
+    virtual void                AllAttached (void);
+    virtual void                AddMenuItems (BPopUpMenu *);
+    void                        PostActive (BMessage *);
+    void                        Broadcast (BMessage *);
+    void                        RepliedBroadcast (BMessage *);
+    status_t                    NewTimer (const char *, int32, int32);
 	
-	int                         IRCDType (void);
+    int                         IRCDType (void);
 	
   private:
     virtual void                Init (void);
     void                        DCCChatDialog (BString, BString, BString);
     void                        DCCGetDialog (BString, BString, BString, BString, BString);
-    
-	void						SendData (const char *);
-	void						ParseLine (const char *);
-	bool						ParseEvents (const char *);
-	bool						ParseENums (const char *, const char *);
-	void						ParseCTCP (BString theNick, BString theTarget, BString theMsg);
-	void						ParseCTCPResponse (BString theNick, BString theMsg);
+    void                        SendData (const char *);
+    void                        ParseLine (const char *);
+    bool                        ParseEvents (const char *);
+    bool                        ParseENums (const char *, const char *);
+    void                        ParseCTCP (BString, BString, BString);
+    void                        ParseCTCPResponse (BString, BString);
 
     void                        HandleReconnect (void);
-	static bool                 PrivateIPCheck (const char *);
-	const char                  *GetNextNick (void);
-	const ServerData            *GetNextServer (void);
+    static bool                 PrivateIPCheck (const char *);
+    const char                  *GetNextNick (void);
+    const ServerData            *GetNextServer (void);
 	
- 	ClientAgent					*Client (const char *);
-	ClientAgent					*ActiveClient (void);
+    ClientAgent                 *Client (const char *);
+    ClientAgent                 *ActiveClient (void);
 
-	void						DisplayAll (const char *, const uint32 = 0, const uint32 = 0, const uint32 = 0);
+    void                        DisplayAll (const char *, const uint32 = 0, const uint32 = 0, const uint32 = 0);
 	
-	void                        AddResumeData (BMessage *);
-	BLocker						*endPointLock,
-								loginLock;
+    void                        AddResumeData (BMessage *);
 
-	static int32				ServerSeed;
+    BLocker                     *fEndPointLock;
 
-    BMessageRunner              *lagRunner;
-	
-	BString                     localip;           // our local ip
+    static int32                fServerSeed;
 
-	bool                        localip_private;    // if localip is private
-	                                                // (set by PrivateIPCheck)
-	bool                        getLocalIP;
+    BMessageRunner              *fLagRunner;
 	
-	const BString					lname,
-									lident;
+	BString                     fLocalip,           // our local ip
+	                              fMyNick,
+	                              fReconNick, // used when reconnecting
+	                              fQuitMsg,
+	                              fMyLag;
+	
+	
+    const BString               fLname,
+	                             fLident;
 
-	int32							nickAttempt;		// going through list
-	
-	
 	// these are used to make Vision more dynamic to various
 	// ircd and server configurations	
-	int                         ircdtype;
+    int                         fIrcdtype;
 	
-	
-	
-	BString						myNick;
-	BString                     reconNick; // used when reconnecting
-	BString						quitMsg;
-	BString                     myLag;
-	
-	BList                       resumes;
+	BList                       fResumes;
 
-	bool						isConnected,		// were done connecting
-									isConnecting,		// in process
-									reconnecting,		// we're reconnecting
-									hasWarned,			// warn about quitting
-									isQuitting,			// look out, going down
-									checkingLag,		// waiting for a lag_check reply
-									reacquiredNick,     // disconnected nick has been reacquired
-									establishHasLock;  // establish has taken ownership of
+    bool                        fLocalip_private,    // if localip is private
+	                                                // (set by PrivateIPCheck)
+                                  fGetLocalIP,
+                                  fIsConnected,		// were done connecting
+                                  fIsConnecting,		// in process
+                                  fReconnecting,		// we're reconnecting
+                                  fHasWarned,			// warn about quitting
+                                  fIsQuitting,			// look out, going down
+                                  fCheckingLag,		// waiting for a lag_check reply
+                                  fReacquiredNick,     // disconnected nick has been reacquired
+                                  fEstablishHasLock;  // establish has taken ownership of
 									                   // the endPointLock pointer
 									                   
-	int32						retry,				// what retry # we're on
-								retryLimit,			// connect retry limit	
-								lagCheck,			// system_time()
-								lagCount;			// passes made waiting
+    int32                       fRetry,				// what retry # we're on
+                                fRetryLimit,			// connect retry limit	
+                                fLagCheck,			// system_time()
+                                fLagCount,			// passes made waiting
+                                fNickAttempt,
+                                fServerSocket;
+    char                        fSend_buffer[4096];		// dynamic buffer for sending
 
-    int32                       serverSocket;
-	char						send_buffer[4096];		// dynamic buffer for sending
+    char                        *fParse_buffer;		// dynamic buffer for parsing
+    size_t                      fParse_size;			// size of buffer
 
-	char							*parse_buffer;		// dynamic buffer for parsing
-	size_t						parse_size;			// size of buffer
+    thread_id                   fLoginThread;		// thread that receives
 
-	thread_id					loginThread;		// thread that receives
-
-	BList							clients;			// agents this server "owns"
-
-	BString						*events;
-	
-	BString                     serverHostName;
-	
-	
-	
-	bool						initialMotd,
-									identd;
-	BString						cmds;
-	int32 s;  // socket
-	
-	BList                       timers;
+    BList                       fClients;			// agents this server "owns"
     
-    static int32				Establish (void *);
+    BString                     *fEvents;
+    BString                     fServerHostName;
+
+    bool                        fInitialMotd,
+                                  fIdentd;
+    BString                     fCmds;
+    int32                       fSocket;  // socket
+	
+    BList                       fTimers;
+    
+    static int32                Establish (void *);
     static int32                Timer (void *);
     
-    ListAgent                   *pListAgent;
+    ListAgent                   *fListAgent;
     
-    BMessage                    networkData;
-    int32                       serverIndex,
-                                nickIndex;
+    BMessage                    fNetworkData;
+    int32                       fServerIndex,
+                                  fNickIndex;
+    ClientAgentLogger           *fLogger;
 };
 
 #endif

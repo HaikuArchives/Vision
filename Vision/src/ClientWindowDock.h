@@ -52,7 +52,7 @@ class AgentDockHeader : public BView
   
   private:
     
-    AgentDockHeaderString  *headerView;
+    AgentDockHeaderString  *fHeaderView;
 
 };
 
@@ -65,10 +65,10 @@ class AgentDockWinList : public BView
     WindowList            *pWindowList (void);
 
   private:
-    WindowList            *winList;
-    BScrollView           *winListScroll;
+    WindowList            *fWinList;
+    BScrollView           *fWinListScroll;
     
-    AgentDockHeader       *aHeader;
+    AgentDockHeader       *fAHeader;
 
 };
 
@@ -80,7 +80,7 @@ class AgentDockNotifyList : public BView
 
   private:
     
-    AgentDockHeader       *aHeader;
+    AgentDockHeader       *fAHeader;
 
 };
 
@@ -96,10 +96,10 @@ class ClientWindowDock : public BView
     	
   private:
     
-    BRect                   workingFrame;
+    BRect                   fWorkingFrame;
     
-    AgentDockWinList        *winListAgent;
-    AgentDockNotifyList     *notifyAgent;
+    AgentDockWinList        *fWinListAgent;
+    AgentDockNotifyList     *fNotifyAgent;
     
 };
 

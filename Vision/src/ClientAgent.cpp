@@ -30,26 +30,23 @@
 #include <PopUpMenu.h>
 #include <ScrollView.h>
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 
-#include "VTextControl.h"
-#include "Vision.h"
-#include "HistoryList.h"
-#include "Theme.h"
-#include "RunView.h"
-#include "MessageAgent.h"
-#include "ChannelAgent.h"
 #include "ClientWindow.h"
-#include "StatusView.h"
 #include "ClientAgent.h"
 #include "ClientAgentInputFilter.h"
-#include "StringManip.h"
-#include "ServerAgent.h"
-#include "WindowList.h"
 #include "ClientAgentLogger.h"
+#include "HistoryList.h"
 #include "ResizeView.h"
+#include "RunView.h"
+#include "StatusView.h"
+#include "Utilities.h"
+#include "Theme.h"
+#include "Vision.h"
+#include "VTextControl.h"
+#include "WindowList.h"
 
 const char *ClientAgent::endl               ("\1\1\1\1\1");
 
@@ -66,14 +63,14 @@ ClientAgent::ClientAgent (
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW | B_FRAME_EVENTS),
   fCancelMLPaste(false),
-  activeTheme (vision_app->ActiveTheme()),
-  id (id_),
-  sid (sid_),
-  serverName (serverName_),
-  myNick (myNick_),
-  timeStampState (vision_app->GetBool ("timestamp")),
-  isLogging (vision_app->GetBool ("log_enabled")),
-  frame (frame_)
+  fActiveTheme (vision_app->ActiveTheme()),
+  fId (id_),
+  fSid (sid_),
+  fServerName (serverName_),
+  fMyNick (myNick_),
+  fTimeStampState (vision_app->GetBool ("timestamp")),
+  fIsLogging (vision_app->GetBool ("log_enabled")),
+  fFrame (frame_)
 {
   Init();
   SetViewColor (B_TRANSPARENT_COLOR);
@@ -92,25 +89,23 @@ ClientAgent::ClientAgent (
     id_,
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW),
-  activeTheme (vision_app->ActiveTheme()),
-  id (id_),
-  sid (sid_),
-  serverName (serverName_),
-  myNick (myNick_),
-  timeStampState (vision_app->GetBool ("timestamp")),
-  isLogging (vision_app->GetBool ("log_enabled")),
-  frame (frame_),
-  sMsgr (sMsgr_)
+  fActiveTheme (vision_app->ActiveTheme()),
+  fId (id_),
+  fSid (sid_),
+  fServerName (serverName_),
+  fMyNick (myNick_),
+  fTimeStampState (vision_app->GetBool ("timestamp")),
+  fIsLogging (vision_app->GetBool ("log_enabled")),
+  fFrame (frame_),
+  fSMsgr (sMsgr_)
 {
-  myLag = "0.000";
+  fMyLag = "0.000";
   Init();
 }
 
 ClientAgent::~ClientAgent (void)
 {
-  if (logger)
-    delete logger;
-  delete agentWinItem;
+  delete fAgentWinItem;
 }
 
 
@@ -121,35 +116,42 @@ ClientAgent::AttachedToWindow (void)
 }
 
 void
+ClientAgent::DetachedFromWindow (void)
+{
+  BView::DetachedFromWindow ();
+}
+
+void
 ClientAgent::AllAttached (void)
 {
-  msgr = BMessenger (this);
+  fMsgr = BMessenger (this);
 
-  ServerAgent *sagent;
-  if ((sagent = dynamic_cast<ServerAgent *>(this)))
-  {
-    sMsgr = BMessenger (this);
-  }
-
-  // we initialize the color constants for the input control here
+  // we initialize the color constants for the fInput control here
   // because BTextControl ignores them prior to being attached for some reason
-  activeTheme->ReadLock();
-  rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
-  input->TextView()->SetFontAndColor (&activeTheme->FontAt (F_INPUT), B_FONT_ALL,
-    &inputColor);
-  input->TextView()->SetViewColor (activeTheme->ForegroundAt (C_INPUT_BACKGROUND));
-  input->TextView()->SetColorSpace (B_RGB32);
-  activeTheme->ReadUnlock();
+  fActiveTheme->ReadLock();
+  rgb_color fInputColor (fActiveTheme->ForegroundAt (C_INPUT));
+  fInput->TextView()->SetFontAndColor (&fActiveTheme->FontAt (F_INPUT), B_FONT_ALL,
+    &fInputColor);
+  fInput->TextView()->SetViewColor (fActiveTheme->ForegroundAt (C_INPUT_BACKGROUND));
+  fInput->TextView()->SetColorSpace (B_RGB32);
+  fActiveTheme->ReadUnlock();
+
+  if (fIsLogging)
+  {
+    BMessage logMessage (M_REGISTER_LOGGER);
+    logMessage.AddString ("name", fId.String());
+    fSMsgr.SendMessage (&logMessage);
+  }
 }
 
 void
 ClientAgent::Show (void)
 {
   Window()->PostMessage (M_STATUS_CLEAR);
-  this->msgr.SendMessage (M_STATUS_ADDITEMS);
+  this->fMsgr.SendMessage (M_STATUS_ADDITEMS);
 
   BMessage statusMsg (M_CW_UPDATE_STATUS);
-  statusMsg.AddPointer ("item", agentWinItem);
+  statusMsg.AddPointer ("item", fAgentWinItem);
   statusMsg.AddInt32 ("status", WIN_NORMAL_BIT);
   statusMsg.AddBool ("hidden", false);
   Window()->PostMessage (&statusMsg);
@@ -161,22 +163,9 @@ ClientAgent::Show (void)
     ResizeTo (agentRect->Width(), agentRect->Height());
     MoveTo (agentRect->left, agentRect->top);
   }
-  ChannelAgent *agent (dynamic_cast<ChannelAgent *>(this));
-  if (agent)
-  {
-    const BRect namesListRect (vision_app->GetRect ("namesListRect"));
-    int32 difference ((int32)(((BView *)agent->namesList)->Bounds().Width() - namesListRect.Width()));
-    if (difference != 0.0)
-    {
-      agent->resize->MoveBy (difference, 0.0);
-      textScroll->ResizeBy (difference, 0.0);
-      agent->namesScroll->ResizeBy (-difference, 0.0);
-      agent->namesScroll->MoveBy (difference, 0.0);
-      Sync();
-    }
-  }
+
   // make RunView recalculate itself
-  text->Show();
+  fText->Show();
   BView::Show();
 }
 
@@ -184,123 +173,84 @@ ClientAgent::Show (void)
 void
 ClientAgent::Init (void)
 {
-  input = new VTextControl (
+  fInput = new VTextControl (
                 BRect (
                   0,
-                  frame.top, // tmp. will be moved
-                  frame.right - frame.left,
-                  frame.bottom),
+                  fFrame.top, // tmp. will be moved
+                  fFrame.right - fFrame.left,
+                  fFrame.bottom),
                 "Input", 0, 0,
                 0,
                 B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
   
-  input->SetDivider (0);
-  input->ResizeToPreferred();
-  input->MoveTo (
+  fInput->SetDivider (0);
+  fInput->ResizeToPreferred();
+  fInput->MoveTo (
            0,
-           frame.bottom - input->Frame().Height() + 1);
-  AddChild (input);
-  input->TextView()->AddFilter (new ClientAgentInputFilter (this));
-  input->Invalidate();
+           fFrame.bottom - fInput->Frame().Height() + 1);
+  AddChild (fInput);
+  fInput->TextView()->AddFilter (new ClientAgentInputFilter (this));
+  fInput->Invalidate();
 
-  activeTheme->AddView (this);  
+  fActiveTheme->AddView (this);  
 
-  history = new HistoryList ();
+  fHistory = new HistoryList ();
   
   BRect textrect (
     1,
-    frame.top - 2,
-    frame.right - frame.left - 1 - B_V_SCROLL_BAR_WIDTH,
-    frame.bottom - input->Frame().Height() - 1);
+    fFrame.top - 2,
+    fFrame.right - fFrame.left - 1 - B_V_SCROLL_BAR_WIDTH,
+    fFrame.bottom - fInput->Frame().Height() - 1);
   
-  text = new RunView (
+  fText = new RunView (
     textrect,
-    id.String(),
-    activeTheme,
+    fId.String(),
+    fActiveTheme,
     B_FOLLOW_ALL);
    
-  text->SetClippingName (id.String());
+  fText->SetClippingName (fId.String());
   
   if (vision_app->GetBool ("timestamp"))
-    text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
+    fText->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
  
-  activeTheme->AddView (text);
+  fActiveTheme->AddView (fText);
   
-  textScroll = new BScrollView (
+  fTextScroll = new BScrollView (
     "textscroll",
-    text,
+    fText,
     B_FOLLOW_ALL,
     0,
     false,
     true,
     B_PLAIN_BORDER);
   
-  AddChild (textScroll);
-
-  if (isLogging)
-    logger = new ClientAgentLogger (id, serverName);
-  else
-    logger = NULL;
-  
+  AddChild (fTextScroll);
 }
 
 void
 ClientAgent::ScrollRange (float *min, float *max)
 {
-  textScroll->ScrollBar(B_VERTICAL)->GetRange (min, max);
+  fTextScroll->ScrollBar(B_VERTICAL)->GetRange (min, max);
 }
 
 
 float
 ClientAgent::ScrollPos (void)
 {
-  return textScroll->ScrollBar (B_VERTICAL)->Value();
+  return fTextScroll->ScrollBar (B_VERTICAL)->Value();
 }
 
 
 void
 ClientAgent::SetScrollPos (float value)
 {
-  textScroll->ScrollBar (B_VERTICAL)->SetValue(value);
+  fTextScroll->ScrollBar (B_VERTICAL)->SetValue(value);
 }
 
 void
 ClientAgent::SetServerName (const char *name)
 {
-  serverName = name;
-}
-
-void
-ClientAgent::AddMenuItems (BPopUpMenu *pmenu)
-{
-  // TODO: make this an empty virtual and implement the specific menus in the subclasses
-  BMenuItem *item;
-
-  ChannelAgent *channelagent;
-  MessageAgent *messageagent;
-
-  if ((channelagent = dynamic_cast<ChannelAgent *>(this)))
-  {
-    // Channel Options
-    item = new BMenuItem("Channel Options", new BMessage (M_CHANNEL_OPTIONS_SHOW));
-    item->SetTarget (this);
-    pmenu->AddItem (item);
-
-    pmenu->AddSeparatorItem();
-  }
-
-  if ((messageagent = dynamic_cast<MessageAgent *>(this)))
-  {
-    // Whois
-    item = new BMenuItem("Whois", new BMessage (M_MSG_WHOIS));
-    item->SetTarget (this);
-    if (messageagent->Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
-      item->SetEnabled (false);
-    pmenu->AddItem (item);
-
-    pmenu->AddSeparatorItem();
-  }
-
+  fServerName = name;
 }
 
 BString
@@ -371,16 +321,16 @@ void
 ClientAgent::Submit (
   const char *buffer,
   bool clear,
-  bool historyAdd)
+  bool fHistoryAdd)
 {
   BString cmd;
 
-  if (historyAdd)
-    cmd = history->Submit (buffer);
+  if (fHistoryAdd)
+    cmd = fHistory->Submit (buffer);
   else
     cmd = buffer;
 
-  if (clear) input->SetText ("");
+  if (clear) fInput->SetText ("");
   if (cmd.Length()
   && !SlashParser (cmd.String())
   &&   cmd[0] != '/')
@@ -396,7 +346,7 @@ ClientAgent::TimedSubmit (void *arg)
   ClientWindow *window;
   BString buffer;
   int32 i;
-  bool addtohistory (true);
+  bool addtofHistory (true);
 
   if (msg->FindPointer ("agent", reinterpret_cast<void **>(&agent)) != B_OK)
   {
@@ -412,11 +362,11 @@ ClientAgent::TimedSubmit (void *arg)
 
   bool delay (!msg->HasBool ("delay"));
   if (msg->HasBool ("autoexec"))
-    addtohistory = false;
+    addtofHistory = false;
 
   BMessenger agentMsgr (agent);
   BMessage submitMsg (M_SUBMIT);
-  submitMsg.AddBool ("history", addtohistory);
+  submitMsg.AddBool ("history", addtofHistory);
   for (i = 0; (msg->HasString ("data", i)) && (agentMsgr.IsValid()) && (false == agent->CancelMultilineTextPaste()); ++i)
   {
     const char *data;
@@ -473,10 +423,6 @@ ClientAgent::Display (
   uint32 back,
   uint32 font)
 {
-
-  if (isLogging)
-    logger->Log (buffer);
-  
   // displays normal text if no color codes are present
   // (i.e. if the text has already been filtered by ServerAgent::FilterCrap
   ParsemIRCColors (buffer, fore, back, font);
@@ -484,10 +430,19 @@ ClientAgent::Display (
   if (IsHidden())
   {
     BMessage statusMsg (M_CW_UPDATE_STATUS);
-    statusMsg.AddPointer ("item", agentWinItem);
+    statusMsg.AddPointer ("item", fAgentWinItem);
     statusMsg.AddInt32 ("status", WIN_PAGESIX_BIT);
     Window()->PostMessage (&statusMsg);
   }
+
+  if (fIsLogging)
+  {
+    BMessage logMessage (M_CLIENT_LOG);
+    logMessage.AddString ("name", fId.String());
+    logMessage.AddString ("data", buffer);
+    fSMsgr.SendMessage (&logMessage);
+  }
+
 }
 
 void
@@ -552,7 +507,7 @@ ClientAgent::ParsemIRCColors (
       start = buffer;
     }
     if (buffer - start > 0)
-      text->Append (start, buffer - start, mircFore, mircBack, mircFont);
+      fText->Append (start, buffer - start, mircFore, mircBack, mircFont);
   }
 }
 
@@ -587,6 +542,16 @@ ClientAgent::SlashParser (const char *data)
   return false;
 }
 
+void
+ClientAgent::UpdateStatus (int32 status)
+{
+  BMessage statusMsg (M_CW_UPDATE_STATUS);
+  statusMsg.AddPointer ("item", fAgentWinItem);
+  statusMsg.AddInt32 ("status", status);
+  Window()->PostMessage (&statusMsg);
+  if (status == WIN_NICK_BIT)
+    system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+}
 
 void
 ClientAgent::MessageReceived (BMessage *msg)
@@ -594,31 +559,31 @@ ClientAgent::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     // 22/8/99: this will now look for "text" to add to the
-    // input view. -jamie
+    // fInput view. -jamie
     case M_INPUT_FOCUS:
       {
         if (msg->HasString ("text"))
         {
           BString newtext;
-          newtext = input->Text();
+          newtext = fInput->Text();
           newtext.Append (msg->FindString("text"));
-          input->SetText (newtext.String());
+          fInput->SetText (newtext.String());
         }
-        input->MakeFocus (true);
+        fInput->MakeFocus (true);
         // We don't like your silly selecting-on-focus.
-        input->TextView()->Select (input->TextView()->TextLength(),
-        input->TextView()->TextLength());
+        fInput->TextView()->Select (fInput->TextView()->TextLength(),
+        fInput->TextView()->TextLength());
       }
       break;
 
     case M_CLIENT_QUIT:
       {
-        bool shuttingdown (false);
-        if (msg->HasBool ("vision:shutdown_in_progress"))
-          msg->FindBool ("vision:shutdown_in_progress", &shuttingdown);
-
-        if (logger)
-          logger->isQuitting = shuttingdown;
+        if (fIsLogging)
+        {
+          BMessage logMessage (M_UNREGISTER_LOGGER);
+          logMessage.AddString ("name", fId.String());
+          fSMsgr.SendMessage (&logMessage);
+        }
       }
       break;
 
@@ -627,13 +592,13 @@ ClientAgent::MessageReceived (BMessage *msg)
         int16 which (msg->FindInt16 ("which"));
         if (which == C_INPUT || which == C_INPUT_BACKGROUND)
         {
-          activeTheme->ReadLock();
-          rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
-          input->TextView()->SetFontAndColor (&activeTheme->FontAt(F_INPUT), B_FONT_ALL,
-             &inputColor);
-          input->TextView()->SetViewColor (activeTheme->ForegroundAt (C_INPUT_BACKGROUND));
-          activeTheme->ReadUnlock();
-          input->TextView()->Invalidate();
+          fActiveTheme->ReadLock();
+          rgb_color fInputColor (fActiveTheme->ForegroundAt (C_INPUT));
+          fInput->TextView()->SetFontAndColor (&fActiveTheme->FontAt(F_INPUT), B_FONT_ALL,
+             &fInputColor);
+          fInput->TextView()->SetViewColor (fActiveTheme->ForegroundAt (C_INPUT_BACKGROUND));
+          fActiveTheme->ReadUnlock();
+          fInput->TextView()->Invalidate();
         }
       }
       break;
@@ -643,11 +608,11 @@ ClientAgent::MessageReceived (BMessage *msg)
         int16 which (msg->FindInt16 ("which"));
         if (which == F_INPUT)
         {
-          activeTheme->ReadLock();
-          rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
-          input->TextView()->SetFontAndColor (&activeTheme->FontAt (F_INPUT), B_FONT_ALL,
-            &inputColor);
-          activeTheme->ReadUnlock();
+          fActiveTheme->ReadLock();
+          rgb_color fInputColor (fActiveTheme->ForegroundAt (C_INPUT));
+          fInput->TextView()->SetFontAndColor (&fActiveTheme->FontAt (F_INPUT), B_FONT_ALL,
+            &fInputColor);
+          fActiveTheme->ReadUnlock();
           Invalidate();
         }
       }
@@ -657,24 +622,30 @@ ClientAgent::MessageReceived (BMessage *msg)
       {
         if (msg->HasBool ("bool"))
         {
-          if (timeStampState = vision_app->GetBool ("timestamp"))
-            text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
-          else
-            text->SetTimeStampFormat (NULL);
-         
-          bool logging (vision_app->GetBool ("log_enabled"));
-          if (logging != isLogging)
+          bool shouldStamp (vision_app->GetBool ("timestamp"));
+          if (fTimeStampState != shouldStamp)
           {
-            if (isLogging)
+            if ((fTimeStampState = shouldStamp))
+              fText->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
+            else
+              fText->SetTimeStampFormat (NULL);
+          }
+          
+          bool shouldLog = vision_app->GetBool ("log_enabled");
+          
+          if (fIsLogging != shouldLog)
+          {
+            if ((fIsLogging = shouldLog))
             {
-              isLogging = false;
-              delete logger;
-              logger = 0;
-            }
+              BMessage logMessage (M_REGISTER_LOGGER);
+              logMessage.AddString ("name", fId.String());
+              fSMsgr.SendMessage (&logMessage);
+            } 
             else
             {
-              logger = new ClientAgentLogger (id, serverName);
-              isLogging = true;
+              BMessage logMessage (M_UNREGISTER_LOGGER);
+              logMessage.AddString ("name", fId.String());
+              fSMsgr.SendMessage (&logMessage);
             }
           }
         }
@@ -734,43 +705,43 @@ ClientAgent::MessageReceived (BMessage *msg)
           {
             msg->FindInt32 ("selend", &finish);
             if (start != finish)
-              input->TextView()->Delete (start, finish);
+              fInput->TextView()->Delete (start, finish);
 
             if ((start == 0) && (finish == 0))
             {
-              input->TextView()->Insert (input->TextView()->TextLength(),
+              fInput->TextView()->Insert (fInput->TextView()->TextLength(),
                 buffer.String(), buffer.Length());
-              input->TextView()->Select (input->TextView()->TextLength(),
-                input->TextView()->TextLength());
+              fInput->TextView()->Select (fInput->TextView()->TextLength(),
+                fInput->TextView()->TextLength());
             }
             else
             {
-              input->TextView()->Insert (start, buffer.String(), buffer.Length());
-              input->TextView()->Select (start + buffer.Length(),
+              fInput->TextView()->Insert (start, buffer.String(), buffer.Length());
+              fInput->TextView()->Select (start + buffer.Length(),
                 start + buffer.Length());
             }
           }
           else
           {
-            input->TextView()->Insert (buffer.String());
-            input->TextView()->Select (input->TextView()->TextLength(),
-            input->TextView()->TextLength());
+            fInput->TextView()->Insert (buffer.String());
+            fInput->TextView()->Select (fInput->TextView()->TextLength(),
+            fInput->TextView()->TextLength());
           }
 
-          input->TextView()->ScrollToSelection();
+          fInput->TextView()->ScrollToSelection();
         }
       }
       break;
 
     case M_PREVIOUS_INPUT:
       {
-        history->PreviousBuffer (input);
+        fHistory->PreviousBuffer (fInput);
       }
       break;
 
     case M_NEXT_INPUT:
       {
-        history->NextBuffer (input);
+        fHistory->NextBuffer (fInput);
       }
       break;
 
@@ -778,7 +749,7 @@ ClientAgent::MessageReceived (BMessage *msg)
       {
         const char *buffer (NULL);
         bool clear (true),
-        add2history (true);
+        add2fHistory (true);
 
         msg->FindString ("input", &buffer);
 
@@ -786,18 +757,18 @@ ClientAgent::MessageReceived (BMessage *msg)
           msg->FindBool ("clear", &clear);
 
         if (msg->HasBool ("history"))
-          msg->FindBool ("history", &add2history);
+          msg->FindBool ("history", &add2fHistory);
 
-        Submit (buffer, clear, add2history);
+        Submit (buffer, clear, add2fHistory);
       }
       break;
 
     case M_LAG_CHANGED:
       {
-        msg->FindString ("lag", &myLag);
+        msg->FindString ("lag", &fMyLag);
 
         if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String());
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String());
       }
       break;
 
@@ -849,33 +820,14 @@ ClientAgent::MessageReceived (BMessage *msg)
         }
         else
         {
-          Display ("<", theNick == myNick ? C_MYNICK : C_NICK);
+          Display ("<", theNick == fMyNick ? C_MYNICK : C_NICK);
           Display (theNick.String(), C_NICKDISPLAY);
-          Display (">", theNick == myNick ? C_MYNICK : C_NICK);
+          Display (">", theNick == fMyNick ? C_MYNICK : C_NICK);
           tempString += " ";
           tempString += theMessage;
           tempString += '\n';
         }
 
-        // soley for the purpose of iterating through the words
-        // TODO: rewrite this so nicks highlight without breaking URLs
-/*        int32 place;
-        while ((place = FirstKnownAs (tempString, knownAs, &hasNick)) != B_ERROR)
-        {
-          BString buffer;
-          if (place)
-          {
-            tempString.MoveInto (buffer, 0, place);
-            Display (buffer.String(), isAction ? C_ACTION : C_TEXT);
-            buffer = "";
-          }
-          
-          tempString.MoveInto (buffer, 0, knownAs.Length());
-          Display (buffer.String(), C_MYNICK);
-          buffer = "";
-        } */
-        
-        
         // scan for presence of nickname, highlight if present
         FirstKnownAs (tempString, knownAs, &hasNick);
 
@@ -888,26 +840,6 @@ ClientAgent::MessageReceived (BMessage *msg)
           dispColor = C_ACTION;
         
         Display (tempString.String(), dispColor);
-
-        if (IsHidden())
-        {
-          BMessage statusMsg (M_CW_UPDATE_STATUS);
-          statusMsg.AddPointer ("item", agentWinItem);
-
-          if (hasNick || dynamic_cast<MessageAgent *>(this))
-          {
-            statusMsg.AddInt32 ("status", WIN_NICK_BIT);
-            system_beep(kSoundEventNames[(uint32)seNickMentioned]);
-          }
-          else
-            statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
-
-          Window()->PostMessage (&statusMsg);
-        }
-        else if (!Window()->IsActive())
-          if (hasNick || dynamic_cast<MessageAgent *>(this))
-            system_beep(kSoundEventNames[(uint32)seNickMentioned]);
-
       }
       break;
 
@@ -917,9 +849,8 @@ ClientAgent::MessageReceived (BMessage *msg)
 
         msg->FindString ("oldnick", &oldNick);
 
-        if (myNick.ICompare (oldNick) == 0)
-          myNick = msg->FindString ("newnick");
-        
+        if (fMyNick.ICompare (oldNick) == 0)
+          fMyNick = msg->FindString ("newnick");
          
         BMessage display;
         if (msg->FindMessage ("display", &display) == B_NO_ERROR)
@@ -947,25 +878,6 @@ ClientAgent::MessageReceived (BMessage *msg)
       }
       break;
       
-    case M_RESIZE_VIEW:
-      {
-        ChannelAgent *currentAgent (dynamic_cast<ChannelAgent *>(this));
-        if (currentAgent)
-        {
-          BPoint point;
-          msg->FindPoint ("loc", &point);
-          point.x -= currentAgent->Frame().left;
-          int32 offset ((int32)(point.x - ((BView *)currentAgent->namesScroll)->Frame().left));
-          currentAgent->resize->MoveBy (offset, 0.0);
-          textScroll->ResizeBy (offset, 0.0);
-          currentAgent->namesScroll->ResizeBy (-offset, 0.0);
-          currentAgent->namesScroll->MoveBy (offset, 0.0);
-          BRect namesRect (0, 0, currentAgent->namesScroll->Bounds().Width(), 0);
-          vision_app->SetRect ("namesListRect", namesRect);
-        } 
-      }
-      break;
-
 	case B_ESCAPE:
 	  	fCancelMLPaste = true;
 		break;
@@ -1028,14 +940,14 @@ ClientAgent::MessageReceived (BMessage *msg)
 const BString &
 ClientAgent::Id (void) const
 {
-  return id;
+  return fId;
 }
 
 int32
 ClientAgent::Sid (void) const
 {
-  //return const_cast<long int>(sid);
-  return sid;
+  //return const_cast<long int>(fSid);
+  return fSid;
 }
 
 int32
@@ -1051,9 +963,9 @@ ClientAgent::FirstKnownAs (
         place;
   BString target;
 
-  if ((place = FirstSingleKnownAs (data, myNick)) != B_ERROR)
+  if ((place = FirstSingleKnownAs (data, fMyNick)) != B_ERROR)
   {
-    result = myNick;
+    result = fMyNick;
     hit = place;
     *me = true;
   }
@@ -1095,8 +1007,8 @@ ClientAgent::AddSend (BMessage *msg, const char *buffer)
 {
   if (strcmp (buffer, endl) == 0)
   {
-    if (sMsgr.IsValid())
-      sMsgr.SendMessage (msg);
+    if (fSMsgr.IsValid())
+      fSMsgr.SendMessage (msg);
     else
       this->MessageReceived (msg);
 
@@ -1143,7 +1055,7 @@ ClientAgent::ChannelMessage (
   if (address)
     msg.AddString ("address", address);
 
-  msgr.SendMessage (&msg);
+  fMsgr.SendMessage (&msg);
 }
 
 void
@@ -1154,7 +1066,7 @@ ClientAgent::ActionMessage (
   BMessage actionSend (M_SERVER_SEND);
 
   AddSend (&actionSend, "PRIVMSG ");
-  AddSend (&actionSend, id);
+  AddSend (&actionSend, fId);
   AddSend (&actionSend, " :\1ACTION ");
   AddSend (&actionSend, msgz);
   AddSend (&actionSend, "\1");

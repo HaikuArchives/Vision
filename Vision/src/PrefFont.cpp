@@ -177,28 +177,28 @@ static const char *FontControlLabels[] =
 
 FontPrefsView::FontPrefsView (BRect frame)
   : BView (frame, "Font prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS),
-    fontMenuField (NULL),
-    fontElementField (NULL),
-    activeFont (0)
+    fFontMenuField (NULL),
+    fFontElementField (NULL),
+    fActiveFont (0)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  BMenu *elementMenu (new BMenu ("elements"));
+  BMenu *fElementMenu (new BMenu ("elements"));
   for (int32 i = 0; FontControlLabels[i]; i++)
   {
   	BMessage *msg (new BMessage (M_FONT_ELEMENT_CHANGE));
   	msg->AddInt32 ("index", i);
-    elementMenu->AddItem (new BMenuItem (FontControlLabels[i], msg));
+    fElementMenu->AddItem (new BMenuItem (FontControlLabels[i], msg));
   }
-  fontElementField = new BMenuField (BRect (10, 10, 200, 50), "elements", "Element: ",
-    elementMenu);
-  AddChild (fontElementField);
+  fFontElementField = new BMenuField (BRect (10, 10, 200, 50), "elements", "Element: ",
+    fElementMenu);
+  AddChild (fFontElementField);
   FontMenu *menu (new FontMenu ("fonts"));
-  fontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", S_PREFFONT_FONTLABEL, menu);
-  AddChild (fontMenuField);
-  textControl = new BTextControl (BRect (60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
+  fFontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", S_PREFFONT_FONTLABEL, menu);
+  AddChild (fFontMenuField);
+  fTextControl = new BTextControl (BRect (60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
   	new BMessage (M_FONT_SIZE_CHANGE));
-  textControl->TextView()->AddFilter (new NumericFilter());
-  AddChild (textControl);
+  fTextControl->TextView()->AddFilter (new NumericFilter());
+  AddChild (fTextControl);
 }
 
 FontPrefsView::~FontPrefsView (void)
@@ -215,13 +215,13 @@ void
 FontPrefsView::AllAttached (void)
 {
   BView::AllAttached ();
-  fontElementField->ResizeToPreferred();
-  fontElementField->SetDivider (fontElementField->StringWidth(
-    fontElementField->Label()) + 5);
-  fontMenuField->SetDivider (fontMenuField->StringWidth (fontMenuField->Label()) + 5);
-  textControl->SetDivider (textControl->StringWidth (textControl->Label()) + 5);
-  BMenu *menu (fontElementField->Menu());
-  textControl->SetTarget (this);
+  fFontElementField->ResizeToPreferred();
+  fFontElementField->SetDivider (fFontElementField->StringWidth(
+    fFontElementField->Label()) + 5);
+  fFontMenuField->SetDivider (fFontMenuField->StringWidth (fFontMenuField->Label()) + 5);
+  fTextControl->SetDivider (fTextControl->StringWidth (fTextControl->Label()) + 5);
+  BMenu *menu (fFontElementField->Menu());
+  fTextControl->SetTarget (this);
   menu->SetTargetForItems (this);
   menu->SetLabelFromMarked (true);
 
@@ -230,17 +230,17 @@ FontPrefsView::AllAttached (void)
   if (it)
   	dynamic_cast<BInvoker *>(it)->Invoke();
 
-  BRect frame (fontElementField->Frame());
-  fontMenuField->MoveTo (frame.left + 20, frame.bottom + 20);
-  menu = fontMenuField->Menu();
+  BRect frame (fFontElementField->Frame());
+  fFontMenuField->MoveTo (frame.left + 20, frame.bottom + 20);
+  menu = fFontMenuField->Menu();
   menu->SetTargetForItems (this);
   menu->SetLabelFromMarked (true);
   float width;
   float height;
-  fontMenuField->GetPreferredSize(&width, &height);
-  textControl->ResizeToPreferred();
-  textControl->MoveTo (fontMenuField->Frame().left + width + 5,
-    fontMenuField->Frame().top);
+  fFontMenuField->GetPreferredSize(&width, &height);
+  fTextControl->ResizeToPreferred();
+  fTextControl->MoveTo (fFontMenuField->Frame().left + width + 5,
+    fFontMenuField->Frame().top);
 
   for (int32 i = 0; i < menu->CountItems(); i++)
   	menu->ItemAt(i)->Submenu()->SetTargetForItems (this);
@@ -291,44 +291,45 @@ FontPrefsView::MessageReceived (BMessage *msg)
         BMenuItem *item (NULL);
         const char *family (NULL);
         const char *style (NULL);
-        UnsetMarked (fontMenuField);
+        UnsetMarked (fFontMenuField);
 
         msg->FindPointer ("source", reinterpret_cast<void **>(&item));
 		item->SetMarked (true);
         msg->FindString ("family", &family);
         msg->FindString ("style", &style);
-        vision_app->ClientFontFamilyAndStyle (activeFont, family, style);
-        fontMenuField->MenuItem()->SetLabel (family);
+        vision_app->ClientFontFamilyAndStyle (fActiveFont, family, style);
+        fFontMenuField->MenuItem()->SetLabel (family);
       }
   	  break;
   	
   	case M_FONT_SIZE_CHANGE:
   	  {
-  	    const char *text (textControl->TextView()->Text());
+  	    const char *text (fTextControl->TextView()->Text());
   	    int32 size (atoi (text));
-  	    vision_app->ClientFontSize (activeFont, size);
+  	    vision_app->ClientFontSize (fActiveFont, size);
   	  }
       break;
       
   	case M_FONT_ELEMENT_CHANGE:
   	{
-  	   activeFont = msg->FindInt32 ("index");
-       UnsetMarked (fontMenuField);
-       const BFont *font (vision_app->GetClientFont (activeFont));
+  	   fActiveFont = msg->FindInt32 ("index");
+       UnsetMarked (fFontMenuField);
+       const BFont *font (vision_app->GetClientFont (fActiveFont));
        font_family family;
        font_style style;
        font->GetFamilyAndStyle (&family, &style);
        char line[100];
        memset (line, 0, sizeof(line));
        sprintf(line, "%ld", (long)(font->Size()));
-       textControl->TextView()->SetText (line);
-       BMenuItem *it = fontMenuField->Menu()->FindItem (family);
+       fTextControl->TextView()->SetText (line);
+       BMenuItem *it = fFontMenuField->Menu()->FindItem (family);
        if (it)
        {
          it = it->Submenu()->FindItem (style);
          if (it)
            it->SetMarked (true);
        }
+       fFontMenuField->MenuItem()->SetLabel (family);
   	}
   	break;
   	

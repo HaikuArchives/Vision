@@ -52,12 +52,12 @@ class ListAgent : public BView
     virtual void			Show (void);
     virtual void            Hide (void);
 
-    WindowListItem          *agentWinItem;
-    BMessenger              msgr;
+    WindowListItem          *fAgentWinItem;
+    BMessenger              fMsgr;
     
   private:
     Theme                   *activeTheme;
-    BMessenger              *sMsgr;
+    BMessenger              *fSMsgr;
     BMessageRunner          *listUpdateTrigger;
     BMenu                   *listMenu;
     BColumnListView               *listView;

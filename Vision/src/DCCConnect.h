@@ -24,9 +24,9 @@
 #ifndef DCCCONNECT_H_
 #define DCCCONNECT_H_
 
-#include <View.h>
-#include <String.h>
 #include <File.h>
+#include <String.h>
+#include <View.h>
 
 #ifdef BONE_BUILD
 #include <sys/socket.h>
@@ -44,89 +44,87 @@ class PauseButton;
 
 class DCCConnect : public BView
 {
-	StopButton			*stop;
+  public:
+                          DCCConnect (
+                            const char *,
+                            const char *,
+                            const char *,
+                            const char *,
+                            const char *,
+                            const BMessenger &);
+    virtual               ~DCCConnect (void);
 
-	protected:
+    virtual void          AttachedToWindow (void);
+    virtual void          AllAttached (void);
+    virtual void          DetachedFromWindow (void);
+    virtual void          Draw (BRect);
+    virtual void          MessageReceived (BMessage *);
+    static void           UpdateBar (const BMessenger &, int, int, uint32, bool);
+    static void           UpdateStatus (const BMessenger &, const char *);
 
-    BMessenger			caller;
+  protected:
+    virtual void          Stopped (void);
+    virtual void          Lock (void);
+    virtual void          Unlock (void);
 
-	BString				nick,
-							file_name,
-							size,
-							ip,
-							port;
-		
-	BStatusBar			*bar;
-	BStringView			*label;
+    StopButton            *fStop;
+    BMessenger            fCaller;
 
-	int32				totalTransferred;
-	int32				finalRateAverage;
+    BString               fNick,
+                           fFileName,
+                           fSize,
+                           fIp,
+                           fPort;
 
-	thread_id			tid;
-	bool					isStopped;
+    BStatusBar            *fBar;
+    BStringView           *fLabel;
 
-	virtual void		Stopped (void);
-	virtual void		Lock (void);
-	virtual void		Unlock (void);
-
-	public:
-							DCCConnect (
-								const char *,
-								const char *,
-								const char *,
-								const char *,
-								const char *,
-								const BMessenger &);
-	virtual				~DCCConnect (void);
-
-	virtual void		AttachedToWindow (void);
-	virtual void		AllAttached (void);
-	virtual void		DetachedFromWindow (void);
-	virtual void		Draw (BRect);
-	virtual void		MessageReceived (BMessage *);
-	static void			UpdateBar (const BMessenger &, int, int, uint32, bool);
-	static void			UpdateStatus (const BMessenger &, const char *);
-
+    int32                 fTotalTransferred;
+    int32                 fFinalRateAverage;
+    
+    thread_id             fTid;
+    bool                  fIsStopped;
 };
 
 class DCCReceive : public DCCConnect
 {
-	friend DCCConnect;
-	protected:
-	bool					resume;
+  friend DCCConnect;
+  public:
+                          DCCReceive (
+                            const char *,
+                            const char *,
+                            const char *,
+                            const char *,
+                            const char *,
+                            const BMessenger &,
+                            bool);
+                            
+    virtual               ~DCCReceive (void);
+    virtual void          AttachedToWindow (void);
+    static int32          Transfer (void *);
 
-	public:
-							DCCReceive (
-								const char *,
-								const char *,
-								const char *,
-								const char *,
-								const char *,
-								const BMessenger &,
-								bool);
-	virtual				~DCCReceive (void);
-	virtual void		AttachedToWindow (void);
-	static int32		Transfer (void *);
+  protected:
+    bool                  fResume;
 };
 
 class DCCSend : public DCCConnect
 {
-	friend DCCConnect;
-	protected:
-	int64				pos;
+  friend DCCConnect;
+  public:
+                          DCCSend (
+                            const char *,
+                            const char *,
+                            const char *,
+                            const BMessenger &);
+                            
+    virtual               ~DCCSend (void);
+    virtual void          AttachedToWindow (void);
+    static int32          Transfer (void *);
+    bool                  IsMatch (const char *, const char *) const;
+    void                  SetResume (off_t);
 
-	public:
-							DCCSend (
-								const char *,
-								const char *,
-								const char *,
-								const BMessenger &);
-	virtual				~DCCSend (void);
-	virtual void		AttachedToWindow (void);
-	static int32		Transfer (void *);
-	bool					IsMatch (const char *, const char *) const;
-	void					SetResume (off_t);
-	
+  protected:
+    int64                 fPos;
 };
 
 #endif

@@ -47,7 +47,7 @@
 #include "ChannelAgent.h"
 #include "MessageAgent.h"
 #include "Names.h"
-#include "StringManip.h"
+#include "Utilities.h"
 #include "ClientAgent.h"
 #include "ClientWindow.h"
 #include "RunView.h"
@@ -63,39 +63,35 @@ ClientAgent::ParseCmd (const char *data)
   ||  firstWord == "/SQUIT"    // for the user
   ||  firstWord == "/PRIVMSG")
   {
-    {
-      BString theCmd (firstWord.RemoveAll ("/")),
-              theRest (RestOfString (data, 2));
+    BString theCmd (firstWord.RemoveAll ("/")),
+            theRest (RestOfString (data, 2));
 
-      AddSend (&sendMsg, theCmd);
-      if (theRest != "-9z99")
-      {
-        AddSend (&sendMsg, " :");
-        AddSend (&sendMsg, theRest);
-      }
-      AddSend (&sendMsg, endl);
+    AddSend (&sendMsg, theCmd);
+    if (theRest != "-9z99")
+    {
+      AddSend (&sendMsg, " :");
+      AddSend (&sendMsg, theRest);
     }
+    AddSend (&sendMsg, endl);
     return true;
   }
   
 
   if (firstWord == "/KILL") // we need to insert a ':' before parm3
   {                         // for the user
-    {
-      BString theCmd (firstWord.RemoveAll ("/")),
-             theTarget (GetWord (data, 2)),
-             theRest (RestOfString (data, 3));
+    BString theCmd (firstWord.RemoveAll ("/")),
+           theTarget (GetWord (data, 2)),
+           theRest (RestOfString (data, 3));
 
-      AddSend (&sendMsg, theCmd);
-      AddSend (&sendMsg, " ");
-      AddSend (&sendMsg, theTarget);
-      if (theRest != "-9z99")
-      {
-        AddSend (&sendMsg, " :");
-        AddSend (&sendMsg, theRest);
-      }
-      AddSend (&sendMsg, endl);
+    AddSend (&sendMsg, theCmd);
+    AddSend (&sendMsg, " ");
+    AddSend (&sendMsg, theTarget);
+    if (theRest != "-9z99")
+    {
+      AddSend (&sendMsg, " :");
+      AddSend (&sendMsg, theRest);
     }
+    AddSend (&sendMsg, endl);
     return true;
   }
 
@@ -106,35 +102,33 @@ ClientAgent::ParseCmd (const char *data)
   if (firstWord == "/SOUNDPLAY"
   ||  firstWord == "/CL-AMP")
   {
-    {
-      app_info ai;
-      be_app->GetAppInfo (&ai);
+    app_info ai;
+    be_app->GetAppInfo (&ai);
 
-      BEntry entry (&ai.ref);
-      BPath path;
-      entry.GetPath (&path);
-      path.GetParent (&path);
-      path.Append ("scripts");
+    BEntry entry (&ai.ref);
+    BPath path;
+    entry.GetPath (&path);
+    path.GetParent (&path);
+    path.Append ("scripts");
  
-      if (firstWord == "/SOUNDPLAY")
-        path.Append ("soundplay-hey");
-      else
-        path.Append ("cl-amp-clr");
+    if (firstWord == "/SOUNDPLAY")
+      path.Append ("soundplay-hey");
+    else
+      path.Append ("cl-amp-clr");
 
-      BString *theCmd (new BString (path.Path()));
+    BString *theCmd (new BString (path.Path()));
       
-      BMessage *execmsg (new BMessage);
-      execmsg->AddPointer ("exec", theCmd);
-      execmsg->AddPointer ("agent", this);
+    BMessage *execmsg (new BMessage);
+    execmsg->AddPointer ("exec", theCmd);
+    execmsg->AddPointer ("agent", this);
 
-      thread_id execThread = spawn_thread (
-        ExecPipe,
-        "exec_thread",
-        B_LOW_PRIORITY,
-        execmsg);
+    thread_id execThread = spawn_thread (
+      ExecPipe,
+      "exec_thread",
+      B_LOW_PRIORITY,
+      execmsg);
 
-      resume_thread (execThread);
-    }
+    resume_thread (execThread);
     return true;
   }
   
@@ -149,231 +143,217 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/AWAY")
   {
-    {
-      BString theReason (RestOfString (data, 2)),
-              tempString;
+    BString theReason (RestOfString (data, 2)),
+            tempString;
 
-      if (theReason == "-9z99")
-        theReason = "BRB"; // Todo: make a default away msg option
+    if (theReason == "-9z99")
+      theReason = "BRB"; // Todo: make a default away msg option
 
-      const char *expansions[1];
-      expansions[0] = theReason.String();
+    const char *expansions[1];
+    expansions[0] = theReason.String();
 
-      tempString = ExpandKeyed (vision_app->GetCommand (CMD_AWAY).String(), "R",
-        expansions);
-      tempString.RemoveFirst("\n");
+    tempString = ExpandKeyed (vision_app->GetCommand (CMD_AWAY).String(), "R",
+      expansions);
+    tempString.RemoveFirst("\n");
 
-      AddSend (&sendMsg, "AWAY");
-      AddSend (&sendMsg, " :");
-      AddSend (&sendMsg, theReason.String());
-      AddSend (&sendMsg, endl);
+    AddSend (&sendMsg, "AWAY");
+    AddSend (&sendMsg, " :");
+    AddSend (&sendMsg, theReason.String());
+    AddSend (&sendMsg, endl);
 
-      if (id != serverName)
-        ActionMessage (tempString.String(), myNick.String());
-    }
+    if (fId != fServerName)
+      ActionMessage (tempString.String(), fMyNick.String());
     return true;
   }
   
 
   if (firstWord == "/BACK")
   {
-    {
-      AddSend (&sendMsg, "AWAY");
-      AddSend (&sendMsg, endl);
+    AddSend (&sendMsg, "AWAY");
+    AddSend (&sendMsg, endl);
 
-      if (id != serverName)
-        ActionMessage (vision_app->GetCommand (CMD_BACK).String(), myNick.String());
-    }
+    if (fId != fServerName)
+      ActionMessage (vision_app->GetCommand (CMD_BACK).String(), fMyNick.String());
     return true;
   }
   
   
   if (firstWord == "/CLEAR")
   {
-    text->Clear ();
+    fText->Clear ();
     return true;
   }
 
   if (firstWord == "/GOOGLE")
   {
+    BString buffer (RestOfString (data, 2));
+    if (buffer != "-9z99")
     {
-      BString buffer (RestOfString (data, 2));
-      if (buffer != "-9z99")
-      {
-        BMessage lookup (M_LOOKUP_GOOGLE);
-        lookup.AddString ("string", buffer);
-        msgr.SendMessage (&lookup);
-      }
-      else
-        vision_app->LoadURL ("http://www.google.com");
+      BMessage lookup (M_LOOKUP_GOOGLE);
+      lookup.AddString ("string", buffer);
+      fMsgr.SendMessage (&lookup);
     }
+    else
+      vision_app->LoadURL ("http://www.google.com");
     return true;
   }
   
 
   if (firstWord == "/CTCP")
   {
+    BString theTarget (GetWord (data, 2)),
+            theAction (RestOfString (data, 3));
+
+    if (theAction != "-9z99")
     {
-      BString theTarget (GetWord (data, 2)),
-              theAction (RestOfString (data, 3));
+      theAction.ToUpper();
 
-      if (theAction != "-9z99")
+      if (theAction.ICompare ("PING") == 0)
       {
-        theAction.ToUpper();
-
-        if (theAction.ICompare ("PING") == 0)
-        {
-          time_t now (time (0));
-          theAction << " " << now;
-        }
-
-        CTCPAction (theTarget, theAction);
-
-        AddSend (&sendMsg, "PRIVMSG ");
-        AddSend (&sendMsg, theTarget << " :\1" << theAction << "\1");
-        AddSend (&sendMsg, endl);
+        time_t now (time (0));
+        theAction << " " << now;
       }
-      else
-        Display ("[x] /ctcp: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+
+      CTCPAction (theTarget, theAction);
+
+      AddSend (&sendMsg, "PRIVMSG ");
+      AddSend (&sendMsg, theTarget << " :\1" << theAction << "\1");
+      AddSend (&sendMsg, endl);
     }
+    else
+      Display ("[x] /ctcp: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
 
   if (firstWord == "/DCC")
   {
+    BString secondWord (GetWord (data, 2)),
+            theNick (GetWord (data, 3)),
+            theFile (RestOfString(data, 4));
+
+    if (secondWord.ICompare ("SEND") == 0
+    &&  theNick != "-9z99")
     {
-      BString secondWord (GetWord (data, 2)),
-              theNick (GetWord (data, 3)),
-              theFile (RestOfString(data, 4));
-
-      if (secondWord.ICompare ("SEND") == 0
-      &&  theNick != "-9z99")
+      BMessage *msg (new BMessage (M_CHOSE_FILE));
+      msg->AddString ("nick", theNick.String());
+      if (theFile != "-9z99")
       {
-        BMessage *msg (new BMessage (M_CHOSE_FILE));
-        msg->AddString ("nick", theNick.String());
-        if (theFile != "-9z99")
+        char filePath[B_PATH_NAME_LENGTH] = "\0";
+        
+        if (theFile.ByteAt (0) != '/')
         {
-          char filePath[B_PATH_NAME_LENGTH] = "\0";
-          
-          if (theFile.ByteAt (0) != '/')
-          {
-            find_directory (B_USER_DIRECTORY, 0, false, filePath, B_PATH_NAME_LENGTH);
-            filePath[strlen (filePath)] = '/';
-          }
-          
-          strcat (filePath, theFile.LockBuffer (0));
-          theFile.UnlockBuffer();
-
-          // use BPath to resolve relative pathnames, above code forces it
-          // to use /boot/home as a working dir as opposed to the app path
-          BPath sendPath (filePath, NULL, true);
-
-          // the BFile is used to verify if the file exists
-          // based off the documentation get_ref_for_path *should*
-          // return something other than B_OK if the file doesn't exist
-          // but that doesn't seem to be working correctly
-
-          BFile sendFile (sendPath.Path(), B_READ_ONLY);
-
-          // if the file exists, sendMsg, otherwise drop to the file panel
-
-          if (sendFile.InitCheck() == B_OK)
-          {
-            sendFile.Unset();
-            entry_ref ref;
-            get_ref_for_path(sendPath.Path(), &ref);
-            msg->AddRef("refs", &ref);
-            sMsgr.SendMessage(msg);
-            return true;
-          }
+          find_directory (B_USER_DIRECTORY, 0, false, filePath, B_PATH_NAME_LENGTH);
+          filePath[strlen (filePath)] = '/';
         }
-        BFilePanel *myPanel (new BFilePanel);
-        BString myTitle (S_PCMD_SEND_TITLE);
+          
+        strcat (filePath, theFile.LockBuffer (0));
+        theFile.UnlockBuffer();
 
-        myTitle.Append (theNick);
-        myPanel->Window()->SetTitle (myTitle.String());
+        // use BPath to resolve relative pathnames, above code forces it
+        // to use /boot/home as a working dir as opposed to the app path
+        BPath sendPath (filePath, NULL, true);
 
-        myPanel->SetMessage (msg);
+        // the BFile is used to verify if the file exists
+        // based off the documentation get_ref_for_path *should*
+        // return something other than B_OK if the file doesn't exist
+        // but that doesn't seem to be working correctly
 
-        myPanel->SetButtonLabel (B_DEFAULT_BUTTON, S_PCMD_SEND_BUTTON);
-        myPanel->SetTarget (sMsgr);
-        myPanel->Show();
+        BFile sendFile (sendPath.Path(), B_READ_ONLY);
+
+        // if the file exists, sendMsg, otherwise drop to the file panel
+
+        if (sendFile.InitCheck() == B_OK)
+        {
+          sendFile.Unset();
+          entry_ref ref;
+          get_ref_for_path(sendPath.Path(), &ref);
+          msg->AddRef("refs", &ref);
+          fSMsgr.SendMessage(msg);
+          return true;
+        }
       }
+      BFilePanel *myPanel (new BFilePanel);
+      BString myTitle (S_PCMD_SEND_TITLE);
 
-      if (secondWord.ICompare ("CHAT") == 0
+      myTitle.Append (theNick);
+      myPanel->Window()->SetTitle (myTitle.String());
+
+      myPanel->SetMessage (msg);
+
+      myPanel->SetButtonLabel (B_DEFAULT_BUTTON, S_PCMD_SEND_BUTTON);
+      myPanel->SetTarget (fSMsgr);
+      myPanel->Show();
+    }
+
+    if (secondWord.ICompare ("CHAT") == 0
       &&       theNick != "-9z99")
-      {
-        if (theNick.ICompare(myNick) == 0)
-          return false;
-        BString thePort (GetWord (data, 4));
-        BMessage msg (M_CHAT_ACTION);
-        msg.AddString ("nick", theNick.String());
-        if (thePort != "-9z99")
-          msg.AddString ("port", thePort.String());
-        sMsgr.SendMessage (&msg);
-      }
+    {
+      if (theNick.ICompare(fMyNick) == 0)
+        return false;
+      BString thePort (GetWord (data, 4));
+      BMessage msg (M_CHAT_ACTION);
+      msg.AddString ("nick", theNick.String());
+      if (thePort != "-9z99")
+        msg.AddString ("port", thePort.String());
+      fSMsgr.SendMessage (&msg);
     }
     return true;
   }
 
   if (firstWord == "/DOP" || firstWord == "/DEOP")
   {
+    BString theNick (RestOfString (data, 2));
+    int32 current (2),
+          last (2);
+    if (theNick != "-9z99")
     {
-      BString theNick (RestOfString (data, 2));
-      int32 current (2),
-            last (2);
-      if (theNick != "-9z99")
+      BString command ("MODE ");
+      command += fId;
+      command += " -";
+      while (GetWord(data, current) != "-9z99")
       {
-        BString command ("MODE ");
-        command += id;
-        command += " -";
-        while (GetWord(data, current) != "-9z99")
+        AddSend (&sendMsg, command.String());
+        for (; GetWord(data, current) != "-9z99" && (current - last != 4); current++)
+          AddSend (&sendMsg, "o");
+        AddSend (&sendMsg, " ");
+        for (; last < current; last++)
         {
-          AddSend (&sendMsg, command.String());
-          for (; GetWord(data, current) != "-9z99" && (current - last != 4); current++)
-            AddSend (&sendMsg, "o");
-          AddSend (&sendMsg, " ");
-          for (; last < current; last++)
+          BString curNick (GetWord(data, last));
+          if (curNick != "-9z99")
           {
-            BString curNick (GetWord(data, last));
-            if (curNick != "-9z99")
-            {
-              AddSend (&sendMsg, curNick);
-              AddSend (&sendMsg, " ");
-            }
+            AddSend (&sendMsg, curNick);
+            AddSend (&sendMsg, " ");
           }
-          AddSend (&sendMsg, endl);
-          sendMsg.MakeEmpty();
         }
+        AddSend (&sendMsg, endl);
+        sendMsg.MakeEmpty();
       }
-      else
-        Display ("[x] /deop: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
+    else
+      Display ("[x] /deop: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
 
   if (firstWord == "/DESCRIBE")
   {
+    BString theTarget (GetWord (data, 2)),
+            theAction (RestOfString (data, 3));
+
+    if (theAction != "-9z99")
     {
-      BString theTarget (GetWord (data, 2)),
-              theAction (RestOfString (data, 3));
+      AddSend (&sendMsg, "PRIVMSG ");
+      AddSend (&sendMsg, theTarget);
+      AddSend (&sendMsg, " :\1ACTION ");
+      AddSend (&sendMsg, theAction);
+      AddSend (&sendMsg, "\1");
+      AddSend (&sendMsg, endl);
 
-      if (theAction != "-9z99")
-      {
-        AddSend (&sendMsg, "PRIVMSG ");
-        AddSend (&sendMsg, theTarget);
-        AddSend (&sendMsg, " :\1ACTION ");
-        AddSend (&sendMsg, theAction);
-        AddSend (&sendMsg, "\1");
-        AddSend (&sendMsg, endl);
+      BString theActionMessage ("[ACTION]-> ");
+      theActionMessage << theTarget << " -> " << theAction << "\n";
 
-        BString theActionMessage ("[ACTION]-> ");
-        theActionMessage << theTarget << " -> " << theAction << "\n";
-
-        Display (theActionMessage.String());
-      }
+      Display (theActionMessage.String());
     }
     return true;
   }
@@ -381,86 +361,82 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/DNS")
   {
+    BString parms (GetWord(data, 2));
+
+    ChannelAgent *channelagent;
+    MessageAgent *messageagent;
+
+    if ((channelagent = dynamic_cast<ChannelAgent *>(this)))
     {
-      BString parms (GetWord(data, 2));
+      int32 count (channelagent->fNamesList->CountItems());
 
-      ChannelAgent *channelagent;
-      MessageAgent *messageagent;
-
-      if ((channelagent = dynamic_cast<ChannelAgent *>(this)))
+      for (int32 i = 0; i < count; ++i)
       {
-        int32 count (channelagent->namesList->CountItems());
+        NameItem *item ((NameItem *)(channelagent->fNamesList->ItemAt (i)));
 
-        for (int32 i = 0; i < count; ++i)
-        {
-          NameItem *item ((NameItem *)(channelagent->namesList->ItemAt (i)));
-
-          if (!item->Name().ICompare (parms.String(), strlen (parms.String()))) //nick
-          {
-            AddSend (&sendMsg, "USERHOST ");
-            AddSend (&sendMsg, item->Name().String());
-            AddSend (&sendMsg, endl);
-            return true;
-          }
-        }
-      }
-      else if ((messageagent = dynamic_cast<MessageAgent *>(this)))
-      {
-        BString eid (id);
-        eid.RemoveLast (" [DCC]");
-        if (!ICompare(eid, parms) || !ICompare(myNick, parms))
+        if (!item->Name().ICompare (parms.String(), strlen (parms.String()))) //nick
         {
           AddSend (&sendMsg, "USERHOST ");
-          AddSend (&sendMsg, parms.String());
+          AddSend (&sendMsg, item->Name().String());
           AddSend (&sendMsg, endl);
           return true;
         }
       }
-
-      if (parms != "-9z99")
-      {
-        BMessage *lookupmsg (new BMessage);
-        lookupmsg->AddString ("lookup", parms.String());
-        lookupmsg->AddPointer ("agent", this);
-
-        thread_id lookupThread = spawn_thread (
-          DNSLookup,
-          "dns_lookup",
-          B_LOW_PRIORITY,
-          lookupmsg);
-
-        resume_thread (lookupThread);
-      }
-      else
-        Display ("[x] /dns: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
+    else if ((messageagent = dynamic_cast<MessageAgent *>(this)))
+    {
+      BString eid (fId);
+      eid.RemoveLast (" [DCC]");
+      if (!ICompare(eid, parms) || !ICompare(fMyNick, parms))
+      {
+        AddSend (&sendMsg, "USERHOST ");
+        AddSend (&sendMsg, parms.String());
+        AddSend (&sendMsg, endl);
+        return true;
+      }
+    }
+
+    if (parms != "-9z99")
+    {
+      BMessage *lookupmsg (new BMessage);
+      lookupmsg->AddString ("lookup", parms.String());
+      lookupmsg->AddPointer ("agent", this);
+
+      thread_id lookupThread = spawn_thread (
+        DNSLookup,
+        "dns_lookup",
+        B_LOW_PRIORITY,
+        lookupmsg);
+
+      resume_thread (lookupThread);
+    }
+    else
+      Display ("[x] /dns: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
   
   if (firstWord == "/PEXEC" || firstWord == "/RRUN") // piped exec
   {
+    BString *theCmd (new BString (RestOfString (data, 2)));
+
+    if (*theCmd != "-9z99")
     {
-      BString *theCmd (new BString (RestOfString (data, 2)));
+      BMessage *msg (new BMessage);
+      msg->AddPointer ("exec", theCmd);
+      msg->AddPointer ("agent", this);
 
-      if (*theCmd != "-9z99")
-      {
-        BMessage *msg (new BMessage);
-        msg->AddPointer ("exec", theCmd);
-        msg->AddPointer ("agent", this);
+      thread_id execThread = spawn_thread (
+        ExecPipe,
+        "exec_thread",
+        B_LOW_PRIORITY,
+        msg);
 
-        thread_id execThread = spawn_thread (
-          ExecPipe,
-          "exec_thread",
-          B_LOW_PRIORITY,
-          msg);
-
-        resume_thread (execThread);
-      }
-      else
-      {
-        Display ("[x] /pexec: Error: Invalid parameters\n", C_ERROR);
-        delete theCmd;
-      }
+      resume_thread (execThread);
+    }
+    else
+    {
+      Display ("[x] /pexec: Error: Invalid parameters\n", C_ERROR);
+      delete theCmd;
     }
     return true;
   }
@@ -478,7 +454,7 @@ ClientAgent::ParseCmd (const char *data)
         BMessage msg (M_EXCLUDE_COMMAND);
         msg.AddString ("second", second.String());
         msg.AddString ("cmd", rest.String());
-        msg.AddString ("server", serverName.String());
+        msg.AddString ("server", fServerName.String());
         msg.AddRect ("frame", Frame());
         vision_app->PostMessage (&msg);
       }
@@ -505,7 +481,7 @@ ClientAgent::ParseCmd (const char *data)
       {
         BMessage msg (M_IGNORE_COMMAND);
         msg.AddString ("cmd", rest.String());
-        msg.AddString ("server", serverName.String());
+        msg.AddString ("server", fServerName.String());
         msg.AddRect ("frame", Frame());
         vision_app->PostMessage (&msg);
       }
@@ -517,23 +493,21 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/INVITE" || firstWord == "/I")
   {
+    BString theUser (GetWord (data, 2));
+
+    if (theUser != "-9z99")
     {
-      BString theUser (GetWord (data, 2));
+      BString theChan (GetWord (data, 3));
 
-      if (theUser != "-9z99")
-      {
-        BString theChan (GetWord (data, 3));
+      if (theChan == "-9z99")
+        theChan = fId;
 
-        if (theChan == "-9z99")
-          theChan = id;
-
-        AddSend (&sendMsg, "INVITE ");
-        AddSend (&sendMsg, theUser << " " << theChan);
-        AddSend (&sendMsg, endl);
-      }
-      else
-        Display ("[x] /invite: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+      AddSend (&sendMsg, "INVITE ");
+      AddSend (&sendMsg, theUser << " " << theChan);
+      AddSend (&sendMsg, endl);
     }
+    else
+      Display ("[x] /invite: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
@@ -541,189 +515,175 @@ ClientAgent::ParseCmd (const char *data)
   if (firstWord == "/JOIN" || firstWord == "/J")
   {
     // Bugs: Will not handle passing more than one channel key
+    BString channel (GetWord (data, 2));
+
+    if (channel != "-9z99")
     {
-      BString channel (GetWord (data, 2));
+      if (channel[0] != '#'
+      &&  channel[0] != '!'
+      &&  channel[0] != '&'
+      &&  channel[0] != '+')
+        channel.Prepend ("#");
 
-      if (channel != "-9z99")
+      AddSend (&sendMsg, "JOIN ");
+      AddSend (&sendMsg, channel);
+
+      BString key (GetWord (data, 3));
+      if (key != "-9z99")
       {
-        if (channel[0] != '#'
-        &&  channel[0] != '!'
-        &&  channel[0] != '&'
-        &&  channel[0] != '+')
-          channel.Prepend ("#");
+        AddSend (&sendMsg, " ");
+        AddSend (&sendMsg, key);
+      }
 
-        AddSend (&sendMsg, "JOIN ");
-        AddSend (&sendMsg, channel);
-
-        BString key (GetWord (data, 3));
-        if (key != "-9z99")
-        {
-          AddSend (&sendMsg, " ");
-          AddSend (&sendMsg, key);
-        }
-
-        AddSend (&sendMsg, endl);
+      AddSend (&sendMsg, endl);
         
         
-        if (key != "-9z99")
+      if (key != "-9z99")
+      {
+        // used for keeping track of channel keys on u2 ircds
+        // (not included as part of the mode reply on join)
+        ServerAgent *fatherServer (vision_app->pClientWin()->GetTopServer (fAgentWinItem));
+        if (fatherServer != NULL)
         {
-          // used for keeping track of channel keys on u2 ircds
-          // (not included as part of the mode reply on join)
-          ServerAgent *fatherServer (vision_app->pClientWin()->GetTopServer (agentWinItem));
-          if (fatherServer != NULL)
+          if (fatherServer->IRCDType() == IRCD_UNDERNET)
           {
-            if (fatherServer->IRCDType() == IRCD_UNDERNET)
-            {
-              vision_app->pClientWin()->joinStrings.Append (",");
-              vision_app->pClientWin()->joinStrings.Append (data);
-            }
+            vision_app->pClientWin()->joinStrings.Append (",");
+            vision_app->pClientWin()->joinStrings.Append (data);
           }
         }
       }
-      else
-        Display ("[x] /join: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
+    else
+      Display ("[x] /join: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
 
   if (firstWord == "/KICK" || firstWord == "/K")
   {
+    BString theNick (GetWord (data, 2));
+
+    if (theNick != "-9z99")
     {
-      BString theNick (GetWord (data, 2));
+      BString theReason (RestOfString (data, 3));
 
-      if (theNick != "-9z99")
+      if (theReason == "-9z99")
       {
-        BString theReason (RestOfString (data, 3));
-
-        if (theReason == "-9z99")
-        {
-          // No expansions
-          theReason = vision_app->GetCommand (CMD_KICK);
-        }
-
-        AddSend (&sendMsg, "KICK ");
-        AddSend (&sendMsg, id);
-        AddSend (&sendMsg, " ");
-        AddSend (&sendMsg, theNick);
-        AddSend (&sendMsg, " :");
-        AddSend (&sendMsg, theReason);
-        AddSend (&sendMsg, endl);
+        // No expansions
+        theReason = vision_app->GetCommand (CMD_KICK);
       }
-      else
-        Display ("[x] /kick: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+
+      AddSend (&sendMsg, "KICK ");
+      AddSend (&sendMsg, fId);
+      AddSend (&sendMsg, " ");
+      AddSend (&sendMsg, theNick);
+      AddSend (&sendMsg, " :");
+      AddSend (&sendMsg, theReason);
+      AddSend (&sendMsg, endl);
     }
+    else
+      Display ("[x] /kick: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
 
   if (firstWord == "/LIST")
   {
-    {
-      BString theArgs (RestOfString (data, 2));
-      
-      BMessage msg (M_LIST_COMMAND);
-      msg.AddString ("cmd", data);
-      sMsgr.SendMessage (&msg);
-    }
+    BString theArgs (RestOfString (data, 2));
+    
+    BMessage msg (M_LIST_COMMAND);
+    msg.AddString ("cmd", data);
+    fSMsgr.SendMessage (&msg);
     return true;
   }
 
 
   if (firstWord == "/M")
   {
-    {
-      BString theMode (RestOfString (data, 2));
+    BString theMode (RestOfString (data, 2));
 
-      AddSend (&sendMsg, "MODE ");
+    AddSend (&sendMsg, "MODE ");
 
-      if (id == serverName)
-        AddSend (&sendMsg, myNick);
-      else if (id[0] == '#' || id[0] == '!' || id[0] == '&' || id[0] == '+')
-        AddSend (&sendMsg, id);
-      else
-        AddSend (&sendMsg, myNick);
+    if (fId == fServerName)
+      AddSend (&sendMsg, fMyNick);
+    else if (fId[0] == '#' || fId[0] == '!' || fId[0] == '&' || fId[0] == '+')
+      AddSend (&sendMsg, fId);
+    else
+      AddSend (&sendMsg, fMyNick);
  
-      if (theMode != "-9z99")
-      {
-        AddSend (&sendMsg, " ");
-        AddSend (&sendMsg, theMode);
-      }
-
-      AddSend (&sendMsg, endl);
+    if (theMode != "-9z99")
+    {
+      AddSend (&sendMsg, " ");
+      AddSend (&sendMsg, theMode);
     }
+
+    AddSend (&sendMsg, endl);
     return true;
   }
 
 
   if (firstWord == "/ME")
   {
-    {
-      BString theAction (RestOfString (data, 2));
+    BString theAction (RestOfString (data, 2));
 
-      if (theAction != "-9z99")
-        ActionMessage (theAction.String(), myNick.String());
-      else
-        Display ("[x] /me: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
-    }
+    if (theAction != "-9z99")
+      ActionMessage (theAction.String(), fMyNick.String());
+    else
+      Display ("[x] /me: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
   
 
   if (firstWord == "/MODE")
   {
+    BString theMode (RestOfString (data, 3)),
+            theTarget (GetWord (data, 2));
+
+    if (theTarget != "-9z99")
     {
-      BString theMode (RestOfString (data, 3)),
-              theTarget (GetWord (data, 2));
+      AddSend (&sendMsg, "MODE ");
 
-      if (theTarget != "-9z99")
-      {
-        AddSend (&sendMsg, "MODE ");
-
-        if (theMode == "-9z99")
-          AddSend (&sendMsg, theTarget);
-        else
-          AddSend (&sendMsg, theTarget << " " << theMode);
-
-        AddSend (&sendMsg, endl);
-      }
+      if (theMode == "-9z99")
+        AddSend (&sendMsg, theTarget);
       else
-        Display ("[x] /mode: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+        AddSend (&sendMsg, theTarget << " " << theMode);
+
+      AddSend (&sendMsg, endl);
     }
+    else
+      Display ("[x] /mode: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
 
   if (firstWord == "/MSG")
   {
+    BString theRest (RestOfString (data, 3));
+    BString theNick (GetWord (data, 2));
+
+    if (theRest != "-9z99")
     {
-      BString theRest (RestOfString (data, 3));
-      BString theNick (GetWord (data, 2));
-
-      if (theRest != "-9z99")
+      if (vision_app->GetBool ("queryOnMsg"))
       {
-        if (vision_app->GetBool ("queryOnMsg"))
-        {
-          BMessage msg (M_OPEN_MSGAGENT);
-          BMessage buffer (M_SUBMIT);
+        BMessage msg (M_OPEN_MSGAGENT);
+        BMessage buffer (M_SUBMIT);
 
-          buffer.AddString ("input", theRest.String());
-          msg.AddMessage ("msg", &buffer);
-          msg.AddString ("nick", theNick.String());
-          sMsgr.SendMessage (&msg);
-        }
-        else
-        {
-          BString tempString;
-          tempString << "[M]-> " << theNick << " > " << theRest << "\n";
-          Display (tempString.String());
+        buffer.AddString ("input", theRest.String());
+        msg.AddMessage ("msg", &buffer);
+        msg.AddString ("nick", theNick.String());
+        fSMsgr.SendMessage (&msg);
+      }
+      else
+      {
+        BString tempString;
+        tempString << "[M]-> " << theNick << " > " << theRest << "\n";
+        Display (tempString.String());
 
-          AddSend (&sendMsg, "PRIVMSG ");
-          AddSend (&sendMsg, theNick);
-          AddSend (&sendMsg, " :");
-          AddSend (&sendMsg, theRest);
-          AddSend (&sendMsg, endl);
-        }
+        AddSend (&sendMsg, "PRIVMSG ");
+        AddSend (&sendMsg, theNick);
+        AddSend (&sendMsg, " :");
+        AddSend (&sendMsg, theRest);
+        AddSend (&sendMsg, endl);
       }
     }
     return true;
@@ -731,50 +691,46 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/NICK")
   {
+    BString newNick (GetWord (data, 2));
+
+    if (newNick != "-9z99")
     {
-      BString newNick (GetWord (data, 2));
+      BString tempString (S_PCMD_TRY_NEW_NICK);
 
-      if (newNick != "-9z99")
-      {
-        BString tempString (S_PCMD_TRY_NEW_NICK);
+      tempString << newNick << ".\n";
+      Display (tempString.String());
 
-        tempString << newNick << ".\n";
-        Display (tempString.String());
-
-        AddSend (&sendMsg, "NICK ");
-        AddSend (&sendMsg, newNick);
-        AddSend (&sendMsg, endl);
-      }
-      else
-        Display ("[x] /nick: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+      AddSend (&sendMsg, "NICK ");
+      AddSend (&sendMsg, newNick);
+      AddSend (&sendMsg, endl);
     }
+    else
+      Display ("[x] /nick: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
   if (firstWord == "/NOTICE")
   {
+    BString theTarget (GetWord (data, 2)),
+            theMsg (RestOfString (data, 3));
+
+    if (theMsg != "-9z99")
     {
-      BString theTarget (GetWord (data, 2)),
-              theMsg (RestOfString (data, 3));
+      AddSend (&sendMsg, "NOTICE ");
+      AddSend (&sendMsg, theTarget);
+      AddSend (&sendMsg, " :");
+      AddSend (&sendMsg, theMsg);
+      AddSend (&sendMsg, endl);
 
-      if (theMsg != "-9z99")
-      {
-        AddSend (&sendMsg, "NOTICE ");
-        AddSend (&sendMsg, theTarget);
-        AddSend (&sendMsg, " :");
-        AddSend (&sendMsg, theMsg);
-        AddSend (&sendMsg, endl);
-
-        BString tempString ("[N]-> ");
-        tempString += theTarget;
-        tempString += " -> ";
-        tempString += theMsg;
-        tempString += '\n';
-        Display (tempString.String());
-      }
-      else
-        Display ("[x] /notice: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+      BString tempString ("[N]-> ");
+      tempString += theTarget;
+      tempString += " -> ";
+      tempString += theMsg;
+      tempString += '\n';
+      Display (tempString.String());
     }
+    else
+      Display ("[x] /notice: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
@@ -790,7 +746,7 @@ ClientAgent::ParseCmd (const char *data)
         BMessage msg (M_NOTIFY_COMMAND);
         msg.AddString ("cmd", rest.String());
         msg.AddBool ("add", true);
-        msg.AddString ("server", serverName.String());
+        msg.AddString ("server", fServerName.String());
         msg.AddRect ("frame", Frame());
         vision_app->PostMessage (&msg);
       }
@@ -801,213 +757,192 @@ ClientAgent::ParseCmd (const char *data)
   
   if (firstWord == "/OP")
   {
+    BString theNick (RestOfString (data, 2));
+    int32 current (2),
+          last (2);
+    if (theNick != "-9z99")
     {
-      BString theNick (RestOfString (data, 2));
-      int32 current (2),
-            last (2);
-      if (theNick != "-9z99")
+      BString command ("MODE ");
+      command += fId;
+      command += " +";
+      while (GetWord(data, current) != "-9z99")
       {
-        BString command ("MODE ");
-        command += id;
-        command += " +";
-        while (GetWord(data, current) != "-9z99")
+        AddSend (&sendMsg, command.String());
+        for (; GetWord(data, current) != "-9z99" && (current - last != 4); current++)
+          AddSend (&sendMsg, "o");
+        AddSend (&sendMsg, " ");
+        for (; last < current; last++)
         {
-          AddSend (&sendMsg, command.String());
-          for (; GetWord(data, current) != "-9z99" && (current - last != 4); current++)
-            AddSend (&sendMsg, "o");
-          AddSend (&sendMsg, " ");
-          for (; last < current; last++)
+          BString curNick (GetWord(data, last));
+          if (curNick != "-9z99")
           {
-            BString curNick (GetWord(data, last));
-            if (curNick != "-9z99")
-            {
-              AddSend (&sendMsg, curNick);
-              AddSend (&sendMsg, " ");
-            }
+            AddSend (&sendMsg, curNick);
+            AddSend (&sendMsg, " ");
           }
-          AddSend (&sendMsg, endl);
-          sendMsg.MakeEmpty();
         }
+        AddSend (&sendMsg, endl);
+        sendMsg.MakeEmpty();
       }
-      else
-        Display ("[x] /op: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     }
+    else
+      Display ("[x] /op: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
   
   if (firstWord == "/PART")
   {
-    {
-      if ((dynamic_cast<ChannelAgent *>(this)) || (dynamic_cast<MessageAgent *>(this)))
-      {
-        BMessage msg (M_CLIENT_QUIT);
-        msg.AddBool ("vision:part", true);
-        msgr.SendMessage (&msg);
-      }
-    }
+    BMessage msg (M_CLIENT_QUIT);
+    msg.AddBool ("vision:part", true);
+    fMsgr.SendMessage (&msg);
     return true;
   }
 
   if (firstWord == "/PING")
   {
-    {
-      BString theNick (GetWord (data, 2));
+    BString theNick (GetWord (data, 2));
 
-      if (theNick != "-9z99")
-      {
-        long theTime (time (0));
-        BString tempString ("/CTCP ");
-        tempString << theNick << " PING " << theTime;
-        ParseCmd (tempString.String());
-      }
+    if (theNick != "-9z99")
+    {
+      long theTime (time (0));
+      BString tempString ("/CTCP ");
+      tempString << theNick << " PING " << theTime;
+      ParseCmd (tempString.String());
     }
     return true;
   }
 
   if (firstWord == "/QUERY" || firstWord == "/Q")
   {
+    BString theNick (GetWord (data, 2)),
+            theMsg (RestOfString (data, 3));
+      
+    if (theNick != "-9z99")
     {
-      BString theNick (GetWord (data, 2)),
-              theMsg (RestOfString (data, 3));
-        
-      if (theNick != "-9z99")
-      {
-        BMessage msg (M_OPEN_MSGAGENT);
-        msg.AddString ("nick", theNick.String());
+      BMessage msg (M_OPEN_MSGAGENT);
+      msg.AddString ("nick", theNick.String());
 
-        if (theMsg != "-9z99")
-        {
-          BMessage buffer (M_SUBMIT);
-          buffer.AddString ("input", theMsg.String());
-          msg.AddMessage ("msg", &buffer);
-        }
-        
-        sMsgr.SendMessage (&msg);
+      if (theMsg != "-9z99")
+      {
+        BMessage buffer (M_SUBMIT);
+        buffer.AddString ("input", theMsg.String());
+        msg.AddMessage ("msg", &buffer);
       }
+        
+      fSMsgr.SendMessage (&msg);
     }
     return true;
   }
 
   if (firstWord == "/QUI" || firstWord == "/QUIT")
   {
+    BString theRest (RestOfString (data, 2)),
+            buffer;
+             
+    if (theRest != "-9z99")
     {
-      BString theRest (RestOfString (data, 2)),
-              buffer;
-              
-      if (theRest != "-9z99")
-      {
-        buffer += "QUIT :";
-        buffer += theRest; 
-      }
-
-      BMessage msg (M_CLIENT_QUIT);
-      msg.AddString ("vision:quit", buffer.String());
-      if (sMsgr.IsValid())
-        sMsgr.SendMessage (&msg);
+      buffer += "QUIT :";
+      buffer += theRest; 
     }
+
+    BMessage msg (M_CLIENT_QUIT);
+    msg.AddString ("vision:quit", buffer.String());
+    if (fSMsgr.IsValid())
+      fSMsgr.SendMessage (&msg);
     return true;
   }
 
   if (firstWord == "/RAW" || firstWord == "/QUOTE")
   {
-    {
-      BString theRaw (RestOfString (data, 2));
+    BString theRaw (RestOfString (data, 2));
       
-      if (theRaw != "-9z99")
-      {
-        AddSend (&sendMsg, theRaw);
-        AddSend (&sendMsg, endl);
+    if (theRaw != "-9z99")
+    {
+      AddSend (&sendMsg, theRaw);
+      AddSend (&sendMsg, endl);
 
-        BString tempString ("[R]-> ");
-        tempString << theRaw << '\n';
+      BString tempString ("[R]-> ");
+      tempString << theRaw << '\n';
 
-        Display (tempString.String());
-      }
-      else
-        Display ("[x] /raw: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+      Display (tempString.String());
     }
+    else
+      Display ("[x] /raw: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
 
   if (firstWord == "/RECONNECT")
   {
-    sMsgr.SendMessage (M_SLASH_RECONNECT);
+    fSMsgr.SendMessage (M_SLASH_RECONNECT);
     return true;
   }
 
 
   if (firstWord == "/SETBOOL")
   {
+    BString var (GetWord (data, 2)),
+            value (GetWord (data, 3));
+    bool newvalue (false),
+         caught (false);
+    value.ToLower();
+
+    if (value != "-9z99")
     {
-      BString var (GetWord (data, 2)),
-              value (GetWord (data, 3));
-      bool newvalue (false),
-           caught (false);
-      value.ToLower();
-
-      if (value != "-9z99")
+      if (value == "true")
       {
-        if (value == "true")
-        {
-          caught = true;
-          newvalue = true;
-        }
-        else if (value == "false")
-        {
-          caught = true;
-          newvalue = false;
-        }
+        caught = true;
+        newvalue = true;
       }
-
-      if (!caught || value == "-9z99")
+      else if (value == "false")
       {
-        Display ("[x] /setbool: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+        caught = true;
+        newvalue = false;
       }
+    }
+
+    if (!caught || value == "-9z99")
+    {
+      Display ("[x] /setbool: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+    }
+    else
+    {
+      status_t returned (vision_app->SetBool (var.String(), newvalue));
+      if (returned == B_OK)
+        Display ("[x] /setbool: " S_PCMD_SET_BOOL_SUCCESS "\n", C_ERROR);
       else
-      {
-        status_t returned (vision_app->SetBool (var.String(), newvalue));
-        if (returned == B_OK)
-          Display ("[x] /setbool: " S_PCMD_SET_BOOL_SUCCESS "\n", C_ERROR);
-        else
-          Display ("[x] /setbool: " S_PCMD_SET_BOOL_FAILURE "\n", C_ERROR);
-      }
+        Display ("[x] /setbool: " S_PCMD_SET_BOOL_FAILURE "\n", C_ERROR);
     }
     return true;
   }
   
   if (firstWord == "/SLEEP")
   {
-    {
-      BString rest (RestOfString (data, 2));
+    BString rest (RestOfString (data, 2));
 
-      if (rest != "-9z99")
-      {
-        // this basically locks up the window its called from,
-        // but I can't think of a better way with our current
-        // commands implementation
-        int32 sleeptime = atoi(rest.String());
-        snooze (sleeptime * 1000 * 100); // deciseconds? 10 = one second
-      }
+    if (rest != "-9z99")
+    {
+      // this basically locks up the window its called from,
+      // but I can't think of a better way with our current
+      // commands implementation
+      int32 sleeptime = atoi(rest.String());
+      snooze (sleeptime * 1000 * 100); // deciseconds? 10 = one second
     }
     return true;
   }
 
   if (firstWord == "/TOPIC" || firstWord == "/T")
   {
-    {
-      BString theChan (id),
-              theTopic (RestOfString (data, 2));
+    BString theChan (fId),
+            theTopic (RestOfString (data, 2));
 
-      AddSend (&sendMsg, "TOPIC ");
+    AddSend (&sendMsg, "TOPIC ");
 
-      if (theTopic == "-9z99")
-        AddSend (&sendMsg, theChan);
-      else
-        AddSend (&sendMsg, theChan << " :" << theTopic);
+    if (theTopic == "-9z99")
+      AddSend (&sendMsg, theChan);
+    else
+      AddSend (&sendMsg, theChan << " :" << theTopic);
       
-      AddSend (&sendMsg, endl);
-    }
+    AddSend (&sendMsg, endl);
     return true;
   }
 
@@ -1021,7 +956,7 @@ ClientAgent::ParseCmd (const char *data)
       {
         BMessage msg (M_UNIGNORE_COMMAND);
         msg.AddString ("cmd", rest.String());
-        msg.AddString ("server", serverName.String());
+        msg.AddString ("server", fServerName.String());
         msg.AddRect ("frame", Frame());
         vision_app->PostMessage (&msg);
       }
@@ -1043,7 +978,7 @@ ClientAgent::ParseCmd (const char *data)
         msg.AddString ("cmd", rest.String());
         msg.AddBool ("add", false);
         msg.AddRect ("frame", Frame());
-        msg.AddString ("server", serverName.String());
+        msg.AddString ("server", fServerName.String());
         vision_app->PostMessage (&msg);
       }
     }
@@ -1054,33 +989,31 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/UPTIME")
   {
-    {
-      BString parms (GetWord(data, 2)),
-              uptime (DurationString (system_time())),
-              expandedString;
+    BString parms (GetWord(data, 2)),
+            uptime (DurationString (system_time())),
+            expandedString;
               
-      const char *expansions[1];
-      expansions[0] = uptime.String();
-      expandedString = ExpandKeyed (vision_app->GetCommand (CMD_UPTIME).String(), "U",
-        expansions);
-      expandedString.RemoveFirst("\n");
+    const char *expansions[1];
+    expansions[0] = uptime.String();
+    expandedString = ExpandKeyed (vision_app->GetCommand (CMD_UPTIME).String(), "U",
+      expansions);
+    expandedString.RemoveFirst("\n");
 
-      if ((id != serverName) && (parms == "-9z99"))
-      {
-        AddSend (&sendMsg, "PRIVMSG ");
-        AddSend (&sendMsg, id);
-        AddSend (&sendMsg, " :");
-        AddSend (&sendMsg, expandedString.String());
-        AddSend (&sendMsg, endl);
+    if ((fId != fServerName) && (parms == "-9z99"))
+    {
+      AddSend (&sendMsg, "PRIVMSG ");
+      AddSend (&sendMsg, fId);
+      AddSend (&sendMsg, " :");
+      AddSend (&sendMsg, expandedString.String());
+      AddSend (&sendMsg, endl);
         
-        ChannelMessage (expandedString.String(), myNick.String());
-      }
-      else if ((parms == "-l") || (id == serverName)) // echo locally
-      {
-        BString tempString;
-        tempString << "Uptime: " << expandedString << "\n";
-        Display (tempString.String(), C_WHOIS);
-      }
+      ChannelMessage (expandedString.String(), fMyNick.String());
+    }
+    else if ((parms == "-l") || (fId == fServerName)) // echo locally
+    {
+      BString tempString;
+      tempString << "Uptime: " << expandedString << "\n";
+      Display (tempString.String(), C_WHOIS);
     }
     return true;
   }
@@ -1089,31 +1022,29 @@ ClientAgent::ParseCmd (const char *data)
   if (firstWord == "/VERSION"
   ||  firstWord == "/TIME")
   {
+    BString theCmd (firstWord.RemoveFirst ("/")),
+            theNick (GetWord (data, 2));
+    theCmd.ToUpper();
+
+    // the "." check is because the user might specify a server name
+
+    if (theNick != "-9z99" && theNick.FindFirst(".") < 0)
     {
-      BString theCmd (firstWord.RemoveFirst ("/")),
-              theNick (GetWord (data, 2));
-      theCmd.ToUpper();
+      BString tempString ("/CTCP ");
+      tempString << theNick << " " << theCmd;
+      ParseCmd (tempString.String());
+    }
+    else
+    {
+      AddSend (&sendMsg, theCmd);
 
-      // the "." check is because the user might specify a server name
-
-      if (theNick != "-9z99" && theNick.FindFirst(".") < 0)
+      if (theNick != "-9z99")
       {
-        BString tempString ("/CTCP ");
-        tempString << theNick << " " << theCmd;
-        ParseCmd (tempString.String());
+        AddSend (&sendMsg, " ");
+        AddSend (&sendMsg, theNick);
       }
-      else
-      {
-        AddSend (&sendMsg, theCmd);
 
-        if (theNick != "-9z99")
-        {
-          AddSend (&sendMsg, " ");
-          AddSend (&sendMsg, theNick);
-        }
-
-        AddSend (&sendMsg, endl);
-      }
+      AddSend (&sendMsg, endl);
     }
     return true;
   }
@@ -1121,60 +1052,52 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/VISIT")
   {
-    {
-      BString buffer (GetWord (data, 2));
+    BString buffer (GetWord (data, 2));
 
-      if (buffer != "-9z99")
-        vision_app->LoadURL (buffer.String());
-      else
-        Display ("[x] /visit: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
-    }
+    if (buffer != "-9z99")
+      vision_app->LoadURL (buffer.String());
+    else
+      Display ("[x] /visit: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
     return true;
   }
 
   if (firstWord == "/WEBSTER" || firstWord =="/DICTIONARY")
   {
-    {
-      BString buffer (RestOfString (data, 2));
+    BString buffer (RestOfString (data, 2));
     
-      if (buffer != "-9z99")
-      {
-        BMessage lookup (M_LOOKUP_WEBSTER);
-        lookup.AddString ("string", buffer);
-        msgr.SendMessage (&lookup);
-      }
-      else
-        vision_app->LoadURL ("http://www.dictionary.com");
+    if (buffer != "-9z99")
+    {
+      BMessage lookup (M_LOOKUP_WEBSTER);
+      lookup.AddString ("string", buffer);
+      fMsgr.SendMessage (&lookup);
     }
+    else
+      vision_app->LoadURL ("http://www.dictionary.com");
     return true;
   }
 
   if (firstWord != "" && firstWord[0] == '/')
   // != "" is required to prevent a nasty crash with firstWord[0]
   {
+    BString theCmd (firstWord.RemoveAll ("/")),
+            theRest (RestOfString (data, 2));
+
+    if (theCmd == "W")
+      theCmd = "WHOIS";
+
+    AddSend (&sendMsg, theCmd);
+
+    if (theRest != "-9z99")
     {
-      BString theCmd (firstWord.RemoveAll ("/")),
-              theRest (RestOfString (data, 2));
-
-
-      if (theCmd == "W")
-        theCmd = "WHOIS";
-
-      AddSend (&sendMsg, theCmd);
-
-      if (theRest != "-9z99")
-      {
-        AddSend (&sendMsg, " ");
-        AddSend (&sendMsg, theRest);
-      }
-      
-      AddSend (&sendMsg, endl);
+      AddSend (&sendMsg, " ");
+      AddSend (&sendMsg, theRest);
     }
+      
+    AddSend (&sendMsg, endl);
     return true;
   }
 
   return false;  // we couldn't handle this message
-
 }
 
 
@@ -1284,7 +1207,7 @@ ClientAgent::DNSLookup (void *arg)
 
   BMessage dnsMsg (M_DISPLAY);
   agent->PackDisplay (&dnsMsg, output.String(), C_WHOIS);
-  agent->msgr.SendMessage (&dnsMsg);
+  agent->fMsgr.SendMessage (&dnsMsg);
 
   return B_OK;
 }

@@ -28,18 +28,17 @@
 #include <Roster.h>
 
 #include "ClientAgentLogger.h"
-#include "StringManip.h"
+#include "Utilities.h"
 #include "Vision.h"
 
-ClientAgentLogger::ClientAgentLogger (BString currentLog, BString server)
+ClientAgentLogger::ClientAgentLogger (BString server)
 {
-  logName = currentLog;
-  serverName = server;
-  isQuitting = false;
-  isLogging = false;
-  logThread = -1;
+  fServerName = server;
+  fIsQuitting = false;
+  fIsLogging = false;
+  fLogThread = -1;
+  fNewLine = false;
   StartLogging();
-  newLine = false;
 }
 
 ClientAgentLogger::~ClientAgentLogger (void)
@@ -49,162 +48,235 @@ ClientAgentLogger::~ClientAgentLogger (void)
   status_t result;
   // if the whole app's shutting down, wait for the logger to finish its work to
   // prevent possible race/crash conditions, otherwise terminate immediately and let
-  // logThread finish up in the background
-  if (isQuitting)
-    wait_for_thread (logThread, &result);
+  // fLogThread finish up in the background
+  if (fIsQuitting)
+    wait_for_thread (fLogThread, &result);
 }
 
 void
 ClientAgentLogger::StartLogging (void)
 {
   // someone tried to call StartLogging while a logger was already active, do nothing.
-  if (logThread != -1)
+  if (fLogThread != -1)
      return;
 
-  // the file, BList and Locker are taken over by logThread as soon as SetupLogging
+  // the file, BList and Locker are taken over by fLogThread as soon as SetupLogging
   // is done. From there it will take care of cleaning them up on destruct.
-  logFile = new BFile();
-  logBuffer = new BList();
-  logBufferLock = new BLocker();
-  isLogging = true;
+  fLogBuffer = new BList();
+  fLogBufferLock = new BLocker();
+  fIsLogging = true;
   
   // semaphore used to synchronize the log thread and newly incoming log requests
-  logSyncherLock = create_sem (0, "logSynchLock_sem");
+  fLogSyncherLock = create_sem (0, "logSynchLock_sem");
   
   BString name;
   vision_app->GetThreadName (THREAD_L, name);
   
-  logThread = spawn_thread (AsyncLogger,
+  fLogThread = spawn_thread (AsyncLogger,
                             name.String(),
                             B_LOW_PRIORITY,
                             this);
-  resume_thread (logThread);
-  
+  if (fLogThread >= B_OK)
+    resume_thread (fLogThread);
 }
 
 void
 ClientAgentLogger::StopLogging (void)
 {
-  isLogging = false;
-  delete_sem(logSyncherLock);
-  logThread = -1;
+  fIsLogging = false;
+  delete_sem(fLogSyncherLock);
+  fLogThread = -1;
+}
+
+void
+ClientAgentLogger::RegisterLogger (const char *logName)
+{
+  // if it doesn't already exist
+  // initialize the file, otherwise just open the existing one
+  // and add a starting session line
+  
+  time_t myTime (time (0));
+  struct tm ptr;
+  localtime_r (&myTime, &ptr);
+
+  BString wName (logName);     // do some cleaning up
+  wName.ReplaceAll ("/", "_");
+  wName.ReplaceAll ("*", "_");
+  wName.ReplaceAll ("?", "_");
+    
+  // append timestamp in year/month/day format to filename if desired
+  if (vision_app->GetBool ("log_filetimestamp"))
+  {
+    char tempDate[16];
+    strftime (tempDate, 16, "_%Y%m%d", &ptr);
+    wName << tempDate;
+  }
+
+  wName << ".log";
+  wName.ToLower();
+
+  BPath filePath (fLogPath);
+  filePath.Append (wName.String());
+  
+  if (filePath.InitCheck() != B_OK)
+    return;
+    
+  BFile *logFile = new BFile (filePath.Path(), B_READ_WRITE | B_CREATE_FILE | B_OPEN_AT_END);
+ 
+  if (logFile->InitCheck() == B_OK)
+  {
+    char tempTime[96];
+    if (logFile->Position() == 0) // new file
+    {
+      strftime (tempTime, 96, "Session Start: %a %b %d %H:%M %Y\n", &ptr);
+    }
+    else
+    {
+      strftime (tempTime, 96, "\n\nSession Start: %a %b %d %H:%M %Y\n", &ptr);
+    }
+
+    BString timeString(tempTime);
+    logFile->Write (timeString.String(), timeString.Length());
+    update_mime_info (filePath.Path(), false, false, true);
+    BString filename (logName);
+    fLogFiles[filename] = logFile;
+  }
+  else
+    logFile->Unset();
+}
+
+void
+ClientAgentLogger::UnregisterLogger (const char *name)
+{
+  BFile *logFile (fLogFiles[name]);
+  if (logFile != NULL)
+  {
+    if (fIsLogging)
+    {
+      fLogBufferLock->Lock();
+      for (int32 i = 0; i < fLogBuffer->CountItems();)
+      {
+        BString *currentLog (NULL);
+        
+        // read through buffer and find all strings that belonged to this file,
+        // then write and remove them
+        
+        if (((currentLog = (BString *)fLogBuffer->ItemAt(i)) != NULL)
+        && (currentLog->ICompare (name) == 0))
+        {
+          delete fLogBuffer->RemoveItem (i);
+          currentLog = (BString *)fLogBuffer->RemoveItem (i);
+          logFile->Write (currentLog->String(), currentLog->Length());
+          delete currentLog;
+        }
+        else
+          i += 2;
+      }
+      fLogBufferLock->Unlock();
+    }
+    
+    CloseSession (logFile);
+    fLogFiles.erase(BString(name));
+  }
+}
+
+void
+ClientAgentLogger::CloseSession (BFile *logFile)
+{
+  // write Session Close and close/clean up
+  if (logFile->InitCheck() != B_NO_INIT)
+  {
+    time_t myTime (time (0));
+    struct tm ptr;
+    localtime_r (&myTime, &ptr);
+    char tempTime[96];
+    strftime (tempTime, 96, "Session Close: %a %b %d %H:%M %Y\n", &ptr);
+    off_t len = strlen (tempTime);
+    logFile->Write (tempTime, len);
+    logFile->Unset();
+    delete logFile;
+  }
 }
 
 void
 ClientAgentLogger::SetupLogging (void)
 {
-  // if the logFile doesn't exist already create the dirs
-  // and initialize the file, otherwise just open the existing one
-  // and add a starting session line
-  if (logFile->InitCheck() == B_NO_INIT)
-  {
-    time_t myTime (time (0));
-    struct tm ptr;
-    localtime_r (&myTime, &ptr);
+  // create the dirs if they don't already exist
 
-    app_info ai;
-    be_app->GetAppInfo (&ai);
+  app_info ai;
+  be_app->GetAppInfo (&ai);
 
-    BEntry entry (&ai.ref);
-    BPath path;
-    entry.GetPath (&path);
-    path.GetParent (&path);
+  BEntry entry (&ai.ref);
+  entry.GetPath (&fLogPath);
+  fLogPath.GetParent (&fLogPath);
 
-    BDirectory dir (path.Path());
-    dir.CreateDirectory ("logs", &dir);
-    path.Append ("logs");
-    dir.SetTo (path.Path());
-    BString sName (serverName);
-    sName.ToLower();
-    dir.CreateDirectory (sName.String(), &dir);
-    path.Append (sName.String());
+  BDirectory dir (fLogPath.Path());
+  dir.CreateDirectory ("logs", &dir);
+  fLogPath.Append ("logs");
+  dir.SetTo (fLogPath.Path());
+  BString sName (fServerName);
+  sName.ToLower();
+  dir.CreateDirectory (sName.String(), &dir);
+  fLogPath.Append (sName.String());
 
-    BString wName (logName);     // do some cleaning up
-    wName.ReplaceAll ("/", "_");
-    wName.ReplaceAll ("*", "_");
-    wName.ReplaceAll ("?", "_");
-    
-    // append timestamp in year/month/day format to filename if desired
-    if (vision_app->GetBool ("log_filetimestamp"))
-    {
-      char tempDate[16];
-      strftime (tempDate, 16, "_%Y%m%d", &ptr);
-      wName << tempDate;
-    }
-
-    wName << ".log";
-    wName.ToLower();
-
-    path.Append (wName.String());
- 
-    logFile->SetTo (path.Path(), B_READ_WRITE | B_CREATE_FILE | B_OPEN_AT_END);
-
-    if (logFile->InitCheck() == B_OK)
-    {
-      char tempTime[96];
-      if (logFile->Position() == 0) // new file
-      {
-        strftime (tempTime, 96, "Session Start: %a %b %d %H:%M %Y\n", &ptr);
-      }
-      else
-      {
-        strftime (tempTime, 96, "\n\nSession Start: %a %b %d %H:%M %Y\n", &ptr);
-      }
-      BString timeString(tempTime);
-      logFile->Write (timeString.String(), timeString.Length());
-      update_mime_info (path.Path(), false, false, true);
-    }
-    else
-      logFile->Unset();
-  }
   return;
 }
 
 void
-ClientAgentLogger::Log (const char *data)
+ClientAgentLogger::Log (const char *loggername, const char *data)
 {
-  if (!isLogging)
+  if (!fIsLogging)
     return;
   
-  // add entry to logfile for logThread to write asynchronously
-  logBufferLock->Lock();
+  if ((loggername == NULL) || (data == NULL))
+    return;
+  
+  // add entry to logfile for fLogThread to write asynchronously
+  fLogBufferLock->Lock();
+  BString *pathString (new BString (loggername));
   BString *logString (new BString (data));
-  if (newLine)
+  
+  if (fNewLine)
     logString->Prepend (TimeStamp().String());
   
-  newLine = (logString->IFindFirst("\n") == B_ERROR) ? false : true;
+  fNewLine = (logString->IFindFirst("\n") == B_ERROR) ? false : true;
   
-  logBuffer->AddItem (logString);
-  logBufferLock->Unlock();
-  // unlock logThread so it can go to work
-  release_sem (logSyncherLock);
+  fLogBuffer->AddItem (pathString);
+  fLogBuffer->AddItem (logString);
+  fLogBufferLock->Unlock();
+  // unlock fLogThread so it can go to work
+  release_sem (fLogSyncherLock);
 }
 
 int32
 ClientAgentLogger::AsyncLogger (void *arg)
 {
   ClientAgentLogger *logger ((ClientAgentLogger *)arg);
-
+  
+  BString *currentLogger (NULL);
   BString *currentString (NULL);
-  BLocker *myLogBufferLock ((logger->logBufferLock));
-  BList *myLogBuffer ((logger->logBuffer));
-  BFile *myLogFile ((logger->logFile));  
-
+  BLocker *myLogBufferLock ((logger->fLogBufferLock));
+  BList *myLogBuffer ((logger->fLogBuffer));
+  BFile *myLogFile (NULL);  
+  
   // initialize the log file if it doesn't already exist
   logger->SetupLogging();
 
   // sit in event loop waiting for new data
   // loop will break when ~Logger deletes the semaphore
-  while (acquire_sem (logger->logSyncherLock) == B_NO_ERROR)
+  while (acquire_sem (logger->fLogSyncherLock) == B_NO_ERROR)
   {
     myLogBufferLock->Lock();
     if (!myLogBuffer->IsEmpty())
     {
       // grab next string from list and write to file
+      currentLogger = (BString *)myLogBuffer->RemoveItem (0L);
       currentString = (BString *)myLogBuffer->RemoveItem (0L);
       myLogBufferLock->Unlock();
-      if (myLogFile->InitCheck() != B_NO_INIT)
+      myLogFile = logger->fLogFiles[*currentLogger];
+      if (myLogFile && myLogFile->InitCheck() != B_NO_INIT)
         myLogFile->Write (currentString->String(), currentString->Length());
+      delete currentLogger;
       delete currentString;
     }
     else myLogBufferLock->Unlock();
@@ -213,29 +285,18 @@ ClientAgentLogger::AsyncLogger (void *arg)
   // on shutdown empty out all remaining data (if any) and write to file
   while (!myLogBuffer->IsEmpty())
   {
+    currentLogger = (BString *)myLogBuffer->RemoveItem (0L);
     currentString = (BString *)myLogBuffer->RemoveItem(0L);
-    if (myLogFile->InitCheck() != B_NO_INIT)
+    myLogFile = logger->fLogFiles[*currentLogger];
+    if (myLogFile && myLogFile->InitCheck() != B_NO_INIT)
       myLogFile->Write (currentString->String(), currentString->Length());
+    delete currentLogger;
     delete currentString;
   }
   
   // clean up the now unneeded BList and Locker
   delete myLogBuffer;
   delete myLogBufferLock;
-    
-  // write Session Close and close/clean up
-  if (myLogFile->InitCheck() != B_NO_INIT)
-  {
-    time_t myTime (time (0));
-    struct tm ptr;
-    localtime_r (&myTime, &ptr);
-    char tempTime[96];
-    strftime (tempTime, 96, "Session Close: %a %b %d %H:%M %Y\n", &ptr);
-    off_t len = strlen (tempTime);
-    myLogFile->Write (tempTime, len);
-    myLogFile->Unset();
-    delete myLogFile;
-  }
 
   return 0;
 }

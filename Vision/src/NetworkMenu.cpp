@@ -27,8 +27,8 @@
 
 NetworkMenu::NetworkMenu (const char *title, uint32 what, BMessenger msgTarget)
   : BMenu (title),
-    msgConst (what),
-    target (msgTarget)
+    fMsgConst (what),
+    fTarget (msgTarget)
 {
 }
 
@@ -51,14 +51,14 @@ NetworkMenu::AttachedToWindow (void)
   for (int32 i = 0; (msg = vision_app->GetNetwork (i)), !msg.HasBool ("error"); i++)
   {
     const char *name = msg.FindString ("name");
-    invoke = new BMessage (msgConst);
+    invoke = new BMessage (fMsgConst);
     invoke->AddString ("network", name);
     BMenuItem *item (new BMenuItem(name, invoke));
     AddItem (item);
     if (!vision_app->CheckNetworkValid (name))
       item->SetEnabled (false);
   }
-  SetTargetForItems (target.Target(NULL));
+  SetTargetForItems (fTarget.Target(NULL));
   BMenu::AttachedToWindow();
 }
 

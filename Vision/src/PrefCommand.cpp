@@ -57,11 +57,11 @@ CommandPrefsView::CommandPrefsView (BRect frame)
   
   BView *bgView (new BView (bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
   bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  commands = new VTextControl * [MAX_COMMANDS];
+  fCommands = new VTextControl * [MAX_COMMANDS];
 
   for (i = 0; i < MAX_COMMANDS; ++i)
   {
-    commands[i] = new VTextControl (
+    fCommands[i] = new VTextControl (
       BRect (5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()), 5 + bounds.right - be_plain_font->StringWidth("gP"),
       be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
       "commands",
@@ -70,29 +70,29 @@ CommandPrefsView::CommandPrefsView (BRect frame)
       NULL,
       B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
 
-    commands[i]->SetDivider (label_width + 5);
+    fCommands[i]->SetDivider (label_width + 5);
 
     BMessage *msg (new BMessage (M_COMMAND_MODIFIED));
 
     msg->AddInt32 ("which", i);
-    commands[i]->SetModificationMessage (msg);
-    bgView->AddChild (commands[i]);
+    fCommands[i]->SetModificationMessage (msg);
+    bgView->AddChild (fCommands[i]);
   }
-  scroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES,
+  fScroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES,
     0, false, true);
-  BScrollBar *bar (scroller->ScrollBar(B_VERTICAL));
+  BScrollBar *bar (fScroller->ScrollBar(B_VERTICAL));
  
-  maxheight = bgView->Bounds().Height();
-  proportionheight = commands[MAX_COMMANDS-1]->Frame().bottom;
-  bar->SetRange (0.0, maxheight);
-  bar->SetProportion (scroller->Bounds().Height() / proportionheight);
+  fMaxheight = bgView->Bounds().Height();
+  fProportionheight = fCommands[MAX_COMMANDS-1]->Frame().bottom;
+  bar->SetRange (0.0, fMaxheight);
+  bar->SetProportion (fScroller->Bounds().Height() / fProportionheight);
 
-  AddChild (scroller);
+  AddChild (fScroller);
 }
 
 CommandPrefsView::~CommandPrefsView (void)
 {
-  delete [] commands;
+  delete [] fCommands;
 }
 
 void
@@ -100,7 +100,7 @@ CommandPrefsView::AttachedToWindow (void)
 {
   BView::AttachedToWindow ();
   for (int32 i = 0; i < MAX_COMMANDS; i++)
-    commands[i]->SetTarget (this);
+    fCommands[i]->SetTarget (this);
 }
 
 void
@@ -113,17 +113,17 @@ void
 CommandPrefsView::FrameResized (float width, float height)
 {
   BView::FrameResized (width, height);
-  BScrollBar *bar(scroller->ScrollBar(B_VERTICAL));
+  BScrollBar *bar(fScroller->ScrollBar(B_VERTICAL));
   if (!bar)
     return;
-  float min, max, scrollheight (scroller->Bounds().Height());
+  float min, max, scrollheight (fScroller->Bounds().Height());
   
   bar->GetRange (&min, &max);
-  if (scrollheight < proportionheight)
+  if (scrollheight < fProportionheight)
   {
-    if (max != maxheight)
+    if (max != fMaxheight)
       bar->SetRange (0.0, scrollheight);
-    bar->SetProportion (scrollheight / proportionheight);
+    bar->SetProportion (scrollheight / fProportionheight);
   }
   else
   {
@@ -144,7 +144,7 @@ CommandPrefsView::MessageReceived (BMessage *msg)
       msg->FindInt32 ("which", &which);
       vision_app->SetCommand (
         which,
-        commands[which]->TextView()->Text());
+        fCommands[which]->TextView()->Text());
     }
     break;
 

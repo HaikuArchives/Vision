@@ -55,6 +55,8 @@ class ChannelAgent : public ClientAgent
     virtual void            MessageReceived (BMessage *);
     virtual void            Parser (const char *);
     virtual void            TabExpansion (void);
+    virtual void            AddMenuItems (BPopUpMenu *);
+    virtual void            Show (void);
 
     bool                    RemoveUser (const char *);
     int                     FindPosition (const char *);
@@ -68,23 +70,23 @@ class ChannelAgent : public ClientAgent
   private:
    void                    Init();
 
-    BString                 chanMode,
-                            chanLimit,
-                            chanLimitOld,
-                            chanKey,
-                            chanKeyOld,
-                            lastExpansion,
-                            topic;
+    BString                 fChanMode,
+                            fChanLimit,
+                            fChanLimitOld,
+                            fChanKey,
+                            fChanKeyOld,
+                            fLastExpansion,
+                            fTopic;
 
-    int32                   userCount,
-                            opsCount;
-    int                     ircdtype;
+    int32                   fUserCount,
+                            fOpsCount;
+    int                     fIrcdtype;
 
     friend class            ClientAgent;
-    NamesView               *namesList;
-    BScrollView             *namesScroll;
-    ChannelOptions          *chanOpt;
-    ResizeView              *resize;
+    NamesView               *fNamesList;
+    BScrollView             *fNamesScroll;
+    ChannelOptions          *fChanOpt;
+    ResizeView              *fResize;
 
 };
 

@@ -30,7 +30,7 @@
 class ClickView : public BView
 {
   public:
-    BString launch_url;
+    BString fLaunchUrl;
 
     ClickView (BRect frame,
                const char *name,
@@ -39,7 +39,7 @@ class ClickView : public BView
                const char *url) 
       : BView (frame, name, resizeMask, flags)
         {
-          launch_url = url;
+          fLaunchUrl = url;
         };
 
 

@@ -24,7 +24,6 @@ class NetPrefsServerView : public BView
 	virtual			~NetPrefsServerView (void);
 	virtual void	MessageReceived (BMessage *);
 	virtual void	AttachedToWindow (void);
-	virtual void	DetachedFromWindow (void);
 	void			SetNetworkData (BMessage *);
 	
 	private:
@@ -32,16 +31,16 @@ class NetPrefsServerView : public BView
 	void			AddServer (const ServerData *);
 	void			RemoveServer (void);
 	void            UpdateNetworkData (const ServerData *);
-	BStringView *selectTitleString,
-	            *legend4;
-	BColumnListView   *serverList;
-	BButton     *addButton,
-	            *editButton,
-	            *removeButton,
-	            *okButton;
-	BWindow *entryWin;
-	BMessage *activeNetwork;
-	BMessenger netWin;
+	BStringView     *fSelectTitleString,
+	                *fLegend4;
+	BColumnListView *fServerList;
+	BButton         *fAddButton,
+	                *fEditButton,
+	                *fRemoveButton,
+	                *fOkButton;
+	BWindow         *fEntryWin;
+	BMessage        *fActiveNetwork;
+	BMessenger      fNetWin;
 };
 
 #endif

@@ -29,6 +29,7 @@
 #include <TextView.h>
 
 class BView;
+class BMessageRunner;
 
 class AboutWindow : public BWindow
 {
@@ -36,19 +37,17 @@ class AboutWindow : public BWindow
   public:
                           AboutWindow (void);
     virtual               ~AboutWindow (void);
-  
+    virtual void          MessageReceived (BMessage *);
     virtual bool          QuitRequested (void);
-    virtual void          DispatchMessage (BMessage *, BHandler *);
-    void                  Pulse (void);
 
   private:
-    BTextView             *credits; 
-    BView                 *background;
-    bool                  EasterEggOn;
-    BView                 *logo;
-    const char            *creditsText;
-    BFont                 fixedFont;
-    text_run_array        textRun;
+    BTextView             *fCredits; 
+    BView                 *fBackground;
+    bool                  fEasterEggOn;
+    BView                 *fLogo;
+    const char            *fCreditsText;
+    text_run_array        fTextRun;
+    BMessageRunner        *fScrollRunner;
     
     void                  AboutImage (const char *, bool);
 };

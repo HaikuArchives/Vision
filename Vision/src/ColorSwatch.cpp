@@ -47,7 +47,7 @@ ColorSwatch::ColorSwatch (
 	uint32 flags)
 
 	: BView (frame, name, resize, flags),
-	  color (color_)
+	  fColor (color_)
 {
 }
 
@@ -163,19 +163,19 @@ ColorSwatch::Draw (BRect)
 rgb_color
 ColorSwatch::ValueAsColor (void) const
 {
-	return color;
+	return fColor;
 }
 
 void
 ColorSwatch::SetColor (rgb_color c)
 {
-	if (color.red   == c.red
-	&&  color.green == c.green
-	&&  color.blue  == c.blue
-	&&  color.alpha == c.alpha)
+	if (fColor.red   == c.red
+	&&  fColor.green == c.green
+	&&  fColor.blue  == c.blue
+	&&  fColor.alpha == c.alpha)
 		return;
 
-	color = c;
+	fColor = c;
 	if (Parent()) Invalidate (Bounds());
 }
 
@@ -203,5 +203,5 @@ ColorSwatch::Inverted (void) const
 	baseColor.blue  = 255 - value.blue;
 	baseColor.alpha = value.alpha;
 
-	return color;
+	return fColor;
 }

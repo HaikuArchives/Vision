@@ -34,7 +34,7 @@
 #include <stdlib.h>
 
 #include "Vision.h"
-#include "StringManip.h"
+#include "Utilities.h"
 #include "ServerAgent.h"
 #include "VTextControl.h"
 
@@ -100,7 +100,7 @@ ServerAgent::DCCGetDialog (
 
 	  panel = new BFilePanel (
         B_SAVE_PANEL,
-        &sMsgr,
+        &fSMsgr,
         0,
         0,
         false,
@@ -119,13 +119,16 @@ ServerAgent::DCCGetDialog (
           BDirectory path (vision_app->GetString ("dccDefPath"));
           if (path.InitCheck() == B_OK)
             panel->SetPanelDirectory(&path);
+        }
+  	    panel->Window()->Unlock();
+        if (vision_app->GetBool ("dccAutoAccept"))
+        {
+          panel->Hide();
           BButton *button (dynamic_cast<BButton *>(panel->Window()->FindView ("default button")));
           if (button)
             button->Invoke();
         }
-  	    panel->Window()->Unlock();
-        if (!vision_app->GetBool ("dccAutoAccept"))
-          panel->Show();
+        panel->Show();
       }
 }
 

@@ -24,24 +24,24 @@
  */
 
 #include <Alert.h>
-#include <NodeInfo.h>
 #include <Clipboard.h>
+#include <NodeInfo.h>
 #include <ScrollView.h>
 #include <String.h>
 
 #include <stdio.h>
 
-#include "RunView.h"
-#include "VisionBase.h"
 #include "ClientAgent.h"
 #include "ClientAgentInputFilter.h"
-#include "VTextControl.h"
+#include "RunView.h"
 #include "Vision.h"
+#include "VisionBase.h"
+#include "VTextControl.h"
 
 ClientAgentInputFilter::ClientAgentInputFilter (ClientAgent *agent)
 		: BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE),
-		window (agent),
-		handledDrop (false)
+		fWindow (agent),
+		fHandledDrop (false)
 {}
 
 
@@ -58,16 +58,16 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 	case B_COPY:
 		{
 			int32 start, finish;
-			window->input->TextView()->GetSelection (&start, &finish);
+			fWindow->fInput->TextView()->GetSelection (&start, &finish);
 			if (start == finish)
-				*target = window->text;
+				*target = fWindow->fText;
 		}
 		break;
 
 	case B_SELECT_ALL:
 		{
-			if (window->input->TextView()->TextLength() == 0)
-				*target = window->text;
+			if (fWindow->fInput->TextView()->TextLength() == 0)
+				*target = fWindow->fText;
 		}
 		break;
 
@@ -79,9 +79,9 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 
 	case B_MOUSE_UP:
 		{
-			if (handledDrop)
+			if (fHandledDrop)
 			{
-				handledDrop = false;
+				fHandledDrop = false;
 				result = B_SKIP_MESSAGE;
 			}
 		}
@@ -109,7 +109,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 				string.Append (buffer, size);
 				HandleDrop (string.String());
 
-				handledDrop = true;
+				fHandledDrop = true;
 				result = B_SKIP_MESSAGE;
 			}
 		}
@@ -151,10 +151,10 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 					}
 				}
 
-				// Give the window a chance to handle non
+				// Give the fWindow a chance to handle non
 				// text files.  If it's a message window, it'll
 				// kick off a dcc send
-				window->DroppedFile (msg);
+				fWindow->DroppedFile (msg);
 			}
 		}
 		break;
@@ -163,7 +163,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 		{
 			// we have our own pasting code so we can catch multiple lines
 			BClipboard clipboard ("system");
-			const char *text;
+			const char *fText;
 			int32 textLen;
 			BMessage *clip ((BMessage *)NULL);
 
@@ -171,7 +171,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 			{
 				if ((clip = clipboard.Data()))
 					if (clip->FindData ("text/plain", B_MIME_TYPE,
-					        (const void **)&text, &textLen) != B_OK)
+					        (const void **)&fText, &textLen) != B_OK)
 					{
 						clipboard.Unlock();
 						break;
@@ -179,7 +179,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 			}
 
 			clipboard.Unlock();
-			BString data (text, textLen);
+			BString data (fText, textLen);
 			HandleDrop (data.String());
 			result = B_SKIP_MESSAGE;
 		}
@@ -188,7 +188,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 	case B_MOUSE_WHEEL_CHANGED:
 		{
 			// pass this msg to IRCView
-			window->text->MessageReceived (msg);
+			fWindow->fText->MessageReceived (msg);
 			result = B_SKIP_MESSAGE;
 		}
 		break;
@@ -213,7 +213,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 	const char *keyStroke;
 	int32 keymodifiers;
 
-	BMessenger msgr (window);
+	BMessenger msgr (fWindow);
 
 	msg->FindString ("bytes", &keyStroke);
 	msg->FindInt32 ("modifiers", &keymodifiers);
@@ -228,10 +228,10 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		{
 			// we dont want Shift+B_RETURN to select all the text
 			// treat keypress like we would a normal B_RETURN
-			if (window->input->TextView()->TextLength())
+			if (fWindow->fInput->TextView()->TextLength())
 			{
 				BMessage msg (M_SUBMIT);
-				msg.AddString ("input", window->input->TextView()->Text());
+				msg.AddString ("input", fWindow->fInput->TextView()->Text());
 				msgr.SendMessage (&msg);
 			}
 			result = B_SKIP_MESSAGE;
@@ -269,13 +269,13 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		case B_PAGE_UP:
 			{
 				// scroll the IRCView
-				BRect myrect (window->text->Bounds());
+				BRect myrect (fWindow->fText->Bounds());
 				float height (myrect.bottom - myrect.top - 10.0);
 
-				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() > height)
-					window->text->ScrollBy (0.0, -1 * height);
+				if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() > height)
+					fWindow->fText->ScrollBy (0.0, -1 * height);
 				else
-					window->text->ScrollTo (0.0, 0.0);
+					fWindow->fText->ScrollTo (0.0, 0.0);
 
 				result = B_SKIP_MESSAGE;
 			}
@@ -284,13 +284,13 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		case B_PAGE_DOWN:
 			{
 				// scroll the IRCView
-				BRect myrect (window->text->Bounds());
+				BRect myrect (fWindow->fText->Bounds());
 				float height (myrect.bottom - myrect.top - 10.0);
 
 				float min, max;
-				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
-				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
-					window->text->ScrollBy (0.0, height);
+				fWindow->fTextScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+				if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() != max)
+					fWindow->fText->ScrollBy (0.0, height);
 				result = B_SKIP_MESSAGE;
 			}
 			break;
@@ -298,14 +298,14 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		case B_TAB: // tab key
 			{
 				// used for tabcompletion for nickname/channelname/etc
-				window->TabExpansion();
+				fWindow->TabExpansion();
 				result = B_SKIP_MESSAGE;
 			}
 			break;
 
 		case B_ESCAPE:
 		    {
-			window->fCancelMLPaste = true;
+			fWindow->fCancelMLPaste = true;
 			result = B_SKIP_MESSAGE;
 			}
 			break;
@@ -325,9 +325,9 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		case B_UP_ARROW:
 			{
 				// scroll the IRCView up by 1 line
-				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != 0)
+				if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() != 0)
 				{
-					// window->text->ScrollBy (0.0, window->text->LineHeight() * -1);
+					// fWindow->fText->ScrollBy (0.0, fWindow->fText->LineHeight() * -1);
 					result = B_SKIP_MESSAGE;
 				}
 			}
@@ -337,10 +337,10 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			{
 				// scroll the IRCView down by 1 line
 				float min, max;
-				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
-				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
+				fWindow->fTextScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+				if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() != max)
 				{
-					// window->text->ScrollBy (0.0, window->text->LineHeight());
+					// fWindow->fText->ScrollBy (0.0, fWindow->fText->LineHeight());
 					result = B_SKIP_MESSAGE;
 				}
 			}
@@ -349,7 +349,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		case B_HOME:
 			{
 				// scroll to the beginning of the IRCView
-				window->text->ScrollTo (0.0, 0.0);
+				fWindow->fText->ScrollTo (0.0, 0.0);
 				result = B_SKIP_MESSAGE;
 			}
 			break;
@@ -358,8 +358,8 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			{
 				// scroll to the end of the IRCView
 				float min, max;
-				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
-				window->text->ScrollTo (0.0, max);
+				fWindow->fTextScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+				fWindow->fText->ScrollTo (0.0, max);
 				result = B_SKIP_MESSAGE;
 			}
 			break;
@@ -368,22 +368,22 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		case B_PAGE_DOWN:
 			{
 				// scroll the IRCView
-				BRect myrect (window->text->Bounds());
+				BRect myrect (fWindow->fText->Bounds());
 				float height (myrect.bottom - myrect.top);
 
 				if (keyStroke[0] == B_PAGE_UP)
 				{
-					if (window->textScroll->ScrollBar (B_VERTICAL)->Value() > height)
-						window->text->ScrollBy (0.0, -1 * height);
+					if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() > height)
+						fWindow->fText->ScrollBy (0.0, -1 * height);
 					else
-						window->text->ScrollTo (0.0, 0.0);
+						fWindow->fText->ScrollTo (0.0, 0.0);
 				}
 				else // B_PAGE_DOWN
 				{
 					float min, max;
-					window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
-					if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
-						window->text->ScrollBy (0.0, height);
+					fWindow->fTextScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+					if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() != max)
+						fWindow->fText->ScrollBy (0.0, height);
 				}
 
 				result = B_SKIP_MESSAGE;
@@ -393,11 +393,11 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			// ctrl+u = special control char - ascii 21
 		case 21:
 			{
-				if (window->input->TextView()->TextLength())
+				if (fWindow->fInput->TextView()->TextLength())
 				{
 					int32 selstart, selfinish;
-					window->input->TextView()->GetSelection (&selstart, &selfinish);
-					window->input->TextView()->Delete (0,
+					fWindow->fInput->TextView()->GetSelection (&selstart, &selfinish);
+					fWindow->fInput->TextView()->Delete (0,
 					        selfinish);
 				}
 				result = B_SKIP_MESSAGE;
@@ -417,7 +417,7 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 	const char *place;
 	int32 lines (0);
 
-	BMessenger msgr (window);
+	BMessenger msgr (fWindow);
 
 	while ((place = strchr (buffer, '\n')))
 	{
@@ -436,7 +436,7 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 	}
 
 	int32 start, finish;
-	window->input->TextView()->GetSelection (&start, &finish);
+	fWindow->fInput->TextView()->GetSelection (&start, &finish);
 	msg.AddInt32 ("selstart", start);
 	msg.AddInt32 ("selend", finish);
 
@@ -481,8 +481,8 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 	{
 		msg.AddBool ("lines", result == 1);
 		msgr.SendMessage (&msg);
-		window->input->MakeFocus(false);
-		window->input->MakeFocus(true);
+		fWindow->fInput->MakeFocus(false);
+		fWindow->fInput->MakeFocus(true);
 	}
 }
 

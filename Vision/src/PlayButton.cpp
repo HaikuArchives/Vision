@@ -1,84 +1,29 @@
-
+/* 
+ * The contents of this file are subject to the Mozilla Public 
+ * License Version 1.1 (the "License"); you may not use this file 
+ * except in compliance with the License. You may obtain a copy of 
+ * the License at http://www.mozilla.org/MPL/ 
+ * 
+ * Software distributed under the License is distributed on an "AS 
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * rights and limitations under the License. 
+ * 
+ * The Original Code is Vision. 
+ * 
+ * The Initial Developer of the Original Code is The Vision Team.
+ * Portions created by The Vision Team are
+ * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Reserved.
+ * 
+ * Contributor(s): Rene Gollent
+ *                 Todd Lair
+ */
+ 
 #include <Window.h>
 
 #include "PlayButton.h"
 
-PauseButton::PauseButton (BPoint left_top, BMessage *msg)
-	: BButton (
-		BRect (left_top, left_top + BPoint (21, 17)),
-		"pause", "", msg),
-
-	  isPaused (false),
-	  isActive (false)
-{
-}
-
-PauseButton::~PauseButton (void)
-{
-}
-
-void
-PauseButton::AttachedToWindow (void)
-{
-	BButton::AttachedToWindow();
-	ResizeTo (22, 18);
-}
-
-void
-PauseButton::Draw (BRect frame)
-{
-	rgb_color black = {0, 0, 0, 255};
-	rgb_color white = {255, 255, 255, 255};
-
-	BButton::Draw (frame);
-
-	frame = Bounds();
-	frame.InsetBy (9, 6);
-	SetHighColor (Value() ? white : black);
-
-	if (isPaused)
-	{
-		FillTriangle (
-			frame.LeftTop(),
-			frame.LeftBottom(),
-			frame.RightTop() + BPoint (0, 3));
-	}
-	else
-	{
-		BRect rect (frame);
-		rect.right -= 3;
-
-		frame.left += 3;
-		frame.OffsetBy (1, 0);
-
-		FillRect (frame);
-		FillRect (rect);
-	}
-}
-
-void
-PauseButton::MouseDown (BPoint point)
-{
-	isActive =
-		 Window()->IsActive()
-	|| (Window()->Flags() & B_WILL_ACCEPT_FIRST_CLICK) != 0;
-	BButton::MouseDown (point);
-}
-
-void
-PauseButton::MouseUp (BPoint point)
-{
-	if (isActive && Bounds().Contains (point))
-		isPaused = !isPaused;
-
-	BButton::MouseUp (point);
-}
-
-bool
-PauseButton::IsPaused (void) const
-{
-	return isPaused;
-}
 
 StopButton::StopButton (BPoint left_top, BMessage *msg)
 	: BButton (
