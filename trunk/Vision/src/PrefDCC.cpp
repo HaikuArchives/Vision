@@ -30,6 +30,7 @@
 #include <Menu.h>
 #include <MenuField.h>
 #include <MenuItem.h>
+#include <Path.h>
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -155,7 +156,8 @@ DCCPrefsView::MessageReceived (BMessage *msg)
     case M_DEFAULT_PATH_CHANGED:
       {
         const char *path (defDir->Text());
-        if (path)
+        BPath testPath (path, NULL, true);
+        if (testPath.InitCheck() == B_OK)
           vision_app->SetString ("dccDefPath", 0, path);
       }
       break;
