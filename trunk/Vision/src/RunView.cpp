@@ -720,12 +720,13 @@ RunView::MouseDown (BPoint point)
 		{
 			SetMouseEventMask (B_POINTER_EVENTS);
 			tracking = 1;
+/*
 			if ((point.y < lines[sp_start.line]->top)
 				|| (s.line == sp_start.line && point.x < lines[sp_start.line]->edges[sp_start.offset])
 			  	|| (point.y > lines[sp_end.line]->bottom)
-			  	|| (s.line == sp_end.line && point.x > lines[sp_end.line]->edges[sp_end.offset])
-			  	|| (point.x > lines[s.line]->edges[s.offset]))
-			  	Select (s,s);
+			  	|| (s.line == sp_end.line && point.x > lines[sp_end.line]->edges[sp_end.offset]))
+
+			  	Select (s,s); */
 			track_offset = s;
 		}
 	}
@@ -877,7 +878,7 @@ RunView::MouseUp (BPoint point)
 	SelectPos s (PositionAt (point));
 	bool url_handle (false);
 	
-	if (!line_count || !lines[s.line]->urls)
+	if (!line_count)
 	{
 		tracking = 0;
 		return;
@@ -885,17 +886,19 @@ RunView::MouseUp (BPoint point)
 	
 	if (tracking == 1)
 	{
-		urllist::const_iterator it;
-		for (it = lines[s.line]->urls->begin(); it != lines[s.line]->urls->end(); ++it)
-			if ((s.offset >= (*it)->offset)
-			 && (s.offset <= (*it)->offset + (*it)->length))
-			 {
-			 	vision_app->LoadURL ((*it)->url.String());
-			 	url_handle = true;
-			 	break;
-			 }
-			 
-		if (!url_handle)
+		if (lines[s.line]->urls)
+		{
+			urllist::const_iterator it;
+			for (it = lines[s.line]->urls->begin(); it != lines[s.line]->urls->end(); ++it)
+				if ((s.offset >= (*it)->offset)
+				 && (s.offset <= (*it)->offset + (*it)->length))
+				 {
+				 	vision_app->LoadURL ((*it)->url.String());
+				 	url_handle = true;
+				 	break;
+				 }
+		}			 
+		if (!url_handle && s == track_offset)
 			Select (s, s);
 	}
 
