@@ -795,7 +795,6 @@ ClientAgent::MessageReceived (BMessage *msg)
         BString theNick;
         const char *theMessage;
         bool hasNick (false);
-        bool me (false);
         bool isAction (false);
         BString knownAs;
 
@@ -806,7 +805,6 @@ ClientAgent::MessageReceived (BMessage *msg)
           theNick.RemoveFirst (" [DCC]");
         
         BString tempString;
-        BString nickString;
         
         if (theMessage[0] == '\1')
         {
@@ -817,9 +815,10 @@ ClientAgent::MessageReceived (BMessage *msg)
           tempString = " ";
           tempString += aMessage;
           tempString += "\n";
-          
-          nickString = "* ";
+            
+          BString nickString = "* ";
           nickString += theNick;
+          Display (nickString.String(), C_ACTION);
           isAction = true;
         }
         else
@@ -833,21 +832,23 @@ ClientAgent::MessageReceived (BMessage *msg)
         }
 
         // soley for the purpose of iterating through the words
-        BString tempString2 (tempString);
-        if (FirstKnownAs (tempString2, knownAs, &me) != B_ERROR)
-            hasNick = true;
+        int32 place;
+        while ((place = FirstKnownAs (tempString, knownAs, &hasNick)) != B_ERROR)
+        {
+          BString buffer;
+          if (place)
+          {
+            tempString.MoveInto (buffer, 0, place);
+            Display (buffer.String(), isAction ? C_ACTION : C_TEXT);
+            buffer = "";
+          }
+          
+          tempString.MoveInto (buffer, 0, knownAs.Length());
+          Display (buffer.String(), C_MYNICK);
+          buffer = "";
+        }
         
-        tempString2 = nickString;
-        tempString2 += tempString;
-        tempString = tempString2;
-        
-        int32 colorIndex (C_TEXT);
-        if (hasNick)
-          colorIndex = C_MYNICK;
-        else if (isAction)
-          colorIndex = C_ACTION;
-        
-        Display (tempString.String(), colorIndex);
+        Display (tempString.String(), isAction ? C_ACTION : C_TEXT);
 
         if (IsHidden())
         {
