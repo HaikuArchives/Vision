@@ -136,6 +136,7 @@ ClientAgent::AllAttached (void)
   input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
     &inputColor);
   input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
+  input->TextView()->SetColorSpace (B_RGB32);
 }
 
 void
