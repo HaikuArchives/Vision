@@ -628,7 +628,7 @@ WindowList::Activate (int32 index)
   BView *newagent (newagentitem->pAgent());
 
   // find the currently active agent (if there is one)
-  BView *activeagent (0);
+  BView *activeagent (NULL);
   for (int32 i (0); i < FullListCountItems(); ++i)
   { 
     WindowListItem *aitem ((WindowListItem *)FullListItemAt (i));
@@ -648,7 +648,7 @@ WindowList::Activate (int32 index)
   }
   
    
-  if ((activeagent != newagent) && (activeagent != 0))
+  if ((activeagent != newagent) && (activeagent != NULL))
   {
     newagent->Show();
     
@@ -683,6 +683,9 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   agent->RemoveSelf();
   RemoveItem (agentitem);
   FullListSortItems (SortListItems);
+  // not quite sure why this would happen but better safe than sorry
+  if (fLastSelected == agentitem)
+    fLastSelected = NULL;
   // agent owns the window list item and destroys it on destruct
   delete agent;
   // if there isn't anything left in the list, don't try to do any ptr comparisons

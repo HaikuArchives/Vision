@@ -138,6 +138,22 @@ VisionApp::ThreadStates (void)
 
   while (get_next_thread_info (team, &cookie, &info) == B_NO_ERROR)
   {
+    // wake up any threads that're snoozing for their next reconnect run
+    if (strstr(info.name, "s>") != NULL)
+    {
+      switch(info.state)
+      {
+        case B_THREAD_ASLEEP:
+          suspend_thread(info.thread);
+          // fall through
+        case B_THREAD_SUSPENDED:
+          resume_thread(info.thread);
+          break;
+        default:
+          break;
+      }
+    }
+    
     if (fDebugShutdown)
     {
       buffer += "thread: ";

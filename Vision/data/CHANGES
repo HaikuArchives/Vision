@@ -1,9 +1,10 @@
 Vision
 http://vision.sourceforge.net
-[0.9.4-0824]
+[0.9.4-0825]
          * fixed deadlock in DCC Transfers window
          * fixed memleak in logger
          * fixed some shutdown/cleanups that weren't happening
+         * modified shutdown process to hopefully get rid of those thread race conditions/crashes
          * added /voice and /devoice
          * added text encoding support (Preferences, App)  -- not really tested much yet
          * added server password support (Network Setup, Change Servers, Edit/Add New Server)
