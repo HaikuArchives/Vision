@@ -25,24 +25,26 @@
 #include <View.h>
 #include <Window.h>
 
+#include "VisionBase.h"
+
 class BButton;
 class BHandler;
 class BMessage;
 class VTextControl;
 class BMenuField;
-struct ServerData;
+class BCheckBox;
 
 class ServerEntryWindow : public BWindow
 {
   public:
-    ServerEntryWindow (BHandler *, BMessage *, const ServerData*);
+    ServerEntryWindow (BHandler *, BMessage *, const ServerData*, int32);
     virtual ~ServerEntryWindow (void);
 };
 
 class ServerEntryView : public BView
 {
   public:
-                              ServerEntryView (BRect, BHandler *, BMessage *, const ServerData *);
+                              ServerEntryView (BRect, BHandler *, BMessage *, const ServerData *, int32);
     virtual                   ~ServerEntryView (void);
     virtual void              AttachedToWindow (void);
     virtual void              AllAttached (void);
@@ -54,11 +56,13 @@ class ServerEntryView : public BView
     BMessage                  *invocation;
     BHandler                  *target;
     VTextControl              *serverName,
-                              *port;
+                              *port,
+                              *passwordField;
     BMenuField                *statusField;
     BButton                   *okButton,
                               *cancelButton;
-    const ServerData          *currentServer;
+    BCheckBox                 *usePassword;
+    ServerData                currentServer;
 };
 
 

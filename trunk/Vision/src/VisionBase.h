@@ -189,6 +189,7 @@ struct ServerData
 	char serverName[255];
 	uint32 port;
 	uint32 state;
+	char password[255];
 };
 
 #endif

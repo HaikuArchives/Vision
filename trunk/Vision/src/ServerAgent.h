@@ -33,6 +33,7 @@
 
 #include "ClientAgent.h"
 #include "ObjectList.h"
+#include "VisionBase.h"
 
 class NotifyListItem;
 class ClientAgentLogger;
@@ -180,7 +181,7 @@ class ServerAgent : public ClientAgent
     ClientAgentLogger           *fLogger;
     
     sem_id                      fSendSyncSem; // synchronization semaphore for data sends
-    
+    ServerData                  currentServer;
 };
 
 #endif
