@@ -42,7 +42,7 @@ static const char *EventControlLabels[] =
 };
 
 EventPrefsView::EventPrefsView (BRect frame)
-  : BView (frame, "Event prefs", B_FOLLOW_NONE, B_WILL_DRAW)
+  : BView (frame, "Event prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   BRect bounds (Bounds());
@@ -58,7 +58,7 @@ EventPrefsView::EventPrefsView (BRect frame)
     if (StringWidth (EventControlLabels[i]) > label_width)
       label_width = StringWidth (EventControlLabels[i]);
   
-  BView *bgView (new BView (bounds, "", B_FOLLOW_NONE, B_WILL_DRAW));
+  BView *bgView (new BView (bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
   bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   events = new VTextControl * [MAX_EVENTS];
 
@@ -70,7 +70,8 @@ EventPrefsView::EventPrefsView (BRect frame)
       "commands",
       EventControlLabels[i],
       vision_app->GetEvent (i).String(),
-      0);
+      NULL,
+      B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
 
     events[i]->SetDivider (label_width + 5);
 
@@ -80,12 +81,14 @@ EventPrefsView::EventPrefsView (BRect frame)
     events[i]->SetModificationMessage (msg);
     bgView->AddChild (events[i]);
   }
-  BScrollView *scroller (new BScrollView("command scroller", bgView, B_FOLLOW_LEFT | B_FOLLOW_TOP,
-    0, false, true));
-  BScrollBar *bar (scroller->ScrollBar(B_VERTICAL));
- 
-  bar->SetRange (0.0, .6 * events[MAX_EVENTS-1]->Frame().bottom);
-  bar->SetProportion (115.0 / events[MAX_EVENTS-1]->Frame().bottom);
+  scroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES,
+    0, false, true);
+  BScrollBar *bar (scroller->ScrollBar (B_VERTICAL));
+  
+  maxheight = bgView->Bounds().Height();
+  proportionheight = events[MAX_EVENTS-1]->Frame().bottom;
+  bar->SetRange (0.0, maxheight);
+  bar->SetProportion (scroller->Bounds().Height() / proportionheight);
   
   AddChild (scroller);
 }
@@ -101,12 +104,39 @@ EventPrefsView::AttachedToWindow (void)
   BView::AttachedToWindow ();
   for (int32 i = 0; i < MAX_EVENTS; i++)
     events[i]->SetTarget (this);
+    
+  BScrollBar *bar (scroller->ScrollBar (B_VERTICAL));
+  if (bar)
+    bar->SetSteps (3.0, 10.0);
 }
 
 void
 EventPrefsView::AllAttached (void)
 {
   BView::AllAttached ();
+}
+
+void
+EventPrefsView::FrameResized (float width, float height)
+{
+  BView::FrameResized (width, height);
+  BScrollBar *bar(scroller->ScrollBar(B_VERTICAL));
+  if (!bar)
+    return;
+  float min, max, scrollheight (scroller->Bounds().Height());
+  
+  bar->GetRange (&min, &max);
+  if (scrollheight < proportionheight)
+  {
+    if (max != maxheight)
+      bar->SetRange (0.0, maxheight);
+    bar->SetProportion (scrollheight / proportionheight);
+  }
+  else
+  {
+    bar->SetProportion (1.0);
+    bar->SetRange (0.0, 0.0);
+  }
 }
 
 void

@@ -40,7 +40,7 @@ static const char *CommandControlLabels[] =
 
 
 CommandPrefsView::CommandPrefsView (BRect frame)
-  : BView (frame, "Command prefs", B_FOLLOW_NONE, B_WILL_DRAW)
+  : BView (frame, "Command prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   BRect bounds (Bounds());
@@ -55,7 +55,7 @@ CommandPrefsView::CommandPrefsView (BRect frame)
     if (StringWidth (CommandControlLabels[i]) > label_width)
       label_width = StringWidth (CommandControlLabels[i]);
   
-  BView *bgView (new BView (bounds, "", B_FOLLOW_NONE, B_WILL_DRAW));
+  BView *bgView (new BView (bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
   bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   commands = new VTextControl * [MAX_COMMANDS];
 
@@ -67,7 +67,8 @@ CommandPrefsView::CommandPrefsView (BRect frame)
       "commands",
       CommandControlLabels[i],
       vision_app->GetCommand (i).String(),
-      0);
+      NULL,
+      B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
 
     commands[i]->SetDivider (label_width + 5);
 
@@ -77,12 +78,14 @@ CommandPrefsView::CommandPrefsView (BRect frame)
     commands[i]->SetModificationMessage (msg);
     bgView->AddChild (commands[i]);
   }
-  BScrollView *scroller (new BScrollView("command scroller", bgView, B_FOLLOW_LEFT | B_FOLLOW_TOP,
-    0, false, true));
+  scroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES,
+    0, false, true);
   BScrollBar *bar (scroller->ScrollBar(B_VERTICAL));
  
-  bar->SetRange (0.0, 0.5 * commands[MAX_COMMANDS-1]->Frame().bottom - 15);
-  bar->SetProportion (115.0 / 181.0);
+  maxheight = bgView->Bounds().Height();
+  proportionheight = commands[MAX_COMMANDS-1]->Frame().bottom;
+  bar->SetRange (0.0, maxheight);
+  bar->SetProportion (scroller->Bounds().Height() / proportionheight);
 
   AddChild (scroller);
 }
@@ -104,6 +107,29 @@ void
 CommandPrefsView::AllAttached (void)
 {
   BView::AllAttached ();
+}
+
+void
+CommandPrefsView::FrameResized (float width, float height)
+{
+  BView::FrameResized (width, height);
+  BScrollBar *bar(scroller->ScrollBar(B_VERTICAL));
+  if (!bar)
+    return;
+  float min, max, scrollheight (scroller->Bounds().Height());
+  
+  bar->GetRange (&min, &max);
+  if (scrollheight < proportionheight)
+  {
+    if (max != maxheight)
+      bar->SetRange (0.0, scrollheight);
+    bar->SetProportion (scrollheight / proportionheight);
+  }
+  else
+  {
+    bar->SetProportion (1.0);
+    bar->SetRange (0.0, 0.0);
+  }
 }
 
 void

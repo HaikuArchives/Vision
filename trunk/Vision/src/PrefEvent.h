@@ -29,6 +29,7 @@
 const uint32 M_EVENT_MODIFIED = 'epem';
 
 class VTextControl;
+class BScrollView;
 
 class EventPrefsView : public BView
 {
@@ -38,8 +39,11 @@ class EventPrefsView : public BView
     virtual void MessageReceived (BMessage *);
     virtual void AttachedToWindow (void);
     virtual void AllAttached (void);
+    virtual void FrameResized (float, float);
   private:
     VTextControl **events;
+    BScrollView *scroller;
+    float maxheight, proportionheight;
 };
 
 #endif // _PREFEVENT_H

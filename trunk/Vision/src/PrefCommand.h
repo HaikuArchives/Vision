@@ -29,6 +29,7 @@ const uint32 M_COMMAND_MODIFIED = 'cocm';
 #define MAX_COMMANDS                                     7
 
 class VTextControl;
+class BScrollView;
 
 class CommandPrefsView : public BView
 {
@@ -38,8 +39,12 @@ class CommandPrefsView : public BView
     virtual void MessageReceived (BMessage *);
     virtual void AttachedToWindow (void);
     virtual void AllAttached (void);
+    virtual void FrameResized (float, float);
   private:
     VTextControl **commands;
+    BScrollView *scroller;
+    float maxheight;
+    float proportionheight;
 };
 
 #endif // _PREFCOMMAND_H
