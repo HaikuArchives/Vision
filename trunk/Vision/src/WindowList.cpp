@@ -100,11 +100,9 @@ WindowList::CloseActive (void)
     killMsg.AddBool ("vision:winlist", true);
         
     BView *killTarget (myItem->pAgent());
-        
-    if (dynamic_cast<ClientAgent *>(killTarget))
-      dynamic_cast<ClientAgent *>(killTarget)->msgr.SendMessage (&killMsg);
-    else if (dynamic_cast<ListAgent *>(killTarget))
-      dynamic_cast<ListAgent *>(killTarget)->msgr.SendMessage(&killMsg);
+    
+    BMessenger killmsgr (killTarget);
+    killmsgr.SendMessage (&killMsg);
   }
 }
 
@@ -157,13 +155,14 @@ WindowList::MouseDown (BPoint myPoint)
         if (item && !item->IsSelected())
           Select (IndexOf (myPoint));
 
-        // do this synchronously otherwise things behave a little strangely
         BuildPopUp();
+
         myPopUp->Go (
           ConvertToScreen (myPoint),
           true,
-          false,
-          ConvertToScreen (ItemFrame (selected)));
+          true,
+          ConvertToScreen (ItemFrame (selected)),
+          true);
       }
     }
   }
