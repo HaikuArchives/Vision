@@ -416,6 +416,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
 			msg->FindString ("topic", &theTopic);
 			
+			topic = theTopic;
 			vision_app->pClientWin()->status->SetItemValue (STATUS_META, theTopic);
 
 				
@@ -686,6 +687,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			vision_app->pClientWin()->status->SetItemValue (STATUS_LAG, "0.000");
 			vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, myNick.String());
 			vision_app->pClientWin()->status->SetItemValue (STATUS_MODES, chanMode.String());
+			vision_app->pClientWin()->status->SetItemValue (STATUS_META, topic.String());
+			
 			BString buffer;
 			buffer << userCount;
 			vision_app->pClientWin()->status->SetItemValue (STATUS_USERS, buffer.String());
