@@ -172,12 +172,12 @@ ServerAgent::Timer (void *arg)
   BMessage *msg (reinterpret_cast<BMessage *>(arg));
   ServerAgent *agent;
   const char *cmd;
-  int32 sleep,
+  int32 sleeptimer,
         loops;
 
   if ((msg->FindString  ("command", &cmd) != B_OK)
   ||  (msg->FindInt32   ("loops", &loops) != B_OK)
-  ||  (msg->FindInt32   ("sleep", &sleep) != B_OK)
+  ||  (msg->FindInt32   ("sleep", &sleeptimer) != B_OK)
   ||  (msg->FindPointer ("agent", reinterpret_cast<void **>(&agent)) != B_OK))
   {  
     printf (":ERROR: couldn't find valid data in BMsg to Timer() -- bailing\n");
