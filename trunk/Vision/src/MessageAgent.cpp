@@ -257,74 +257,64 @@ MessageAgent::DCCIn (void *arg)
   FD_SET (dccAcceptSocket, &rset);
   FD_SET (dccAcceptSocket, &eset);
   
-  while (agent->fDConnected)
+  while (mMsgr.IsValid() && agent->fDConnected)
   {
-#ifdef NETSERVER_BUILD 
-    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) <= 0)
+#ifdef NETSERVER_BUILD
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) > 0)
 #elif BONE_BUILD
-    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) <= 0)
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) > 0)
 #endif
     {
-      if (FD_ISSET (dccAcceptSocket, &eset))
+#ifdef NETSERVER_BUILD
+      myLocker->Lock();
+#endif
+      if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
       {
         BMessage termMsg (M_DISPLAY);
-        
+
         agent->fDConnected = false;
         ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
         mMsgr.SendMessage (&termMsg);
-        goto outta_there; // I hate goto, but this is a good use.
+        break;
       }
-      if (!FD_ISSET (dccAcceptSocket, &rset))
-#ifdef NETSERVER_BUILD
-      snooze (20000);
-#endif
-     FD_SET (dccAcceptSocket, &rset);
-     FD_SET (dccAcceptSocket, &eset);
-     continue;
-    }
-#ifdef NETSERVER_BUILD
-    myLocker->Lock();
-#endif
-
-    if ((recvReturn = recv(dccAcceptSocket, tempBuffer, 1, 0)) == 0)
-    {
-      BMessage termMsg (M_DISPLAY);
-
-      agent->fDConnected = false;
-      ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
-      mMsgr.SendMessage (&termMsg);
 #ifdef NETSERVER_BUILD
       myLocker->Unlock();
 #endif
-      goto outta_there; // I hate goto, but this is a good use.
+      if (recvReturn > 0)
+      {
+        if (tempBuffer[0] == '\n')
+        {
+          inputBuffer.RemoveLast ("\r");
+          inputBuffer = FilterCrap (inputBuffer.String(), false);
+          BMessage dispMsg (M_CHANNEL_MSG);
+          dispMsg.AddString ("msgz", inputBuffer.String());
+          mMsgr.SendMessage (&dispMsg);
+          inputBuffer = "";
+        }
+        else
+          inputBuffer.Append(tempBuffer[0],1);
+      }
+    }
+    else if (FD_ISSET (dccAcceptSocket, &eset))
+    {
+      BMessage termMsg (M_DISPLAY);
+      agent->fDConnected = false;
+      ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
+      mMsgr.SendMessage (&termMsg);
+      break;
     }
 #ifdef NETSERVER_BUILD
-    myLocker->Unlock();
+    else
+      snooze (20000);
 #endif
-    if (recvReturn > 0)
-    {
-      if (tempBuffer[0] == '\n')
-      {
-        inputBuffer.RemoveLast ("\r");
-        inputBuffer = FilterCrap (inputBuffer.String(), false);
-        BMessage dispMsg (M_CHANNEL_MSG);
-        dispMsg.AddString ("msgz", inputBuffer.String());
-        mMsgr.SendMessage (&dispMsg);
-        inputBuffer = "";
-      }
-      else
-        inputBuffer.Append(tempBuffer[0],1);
-    }
+    FD_SET (dccAcceptSocket, &rset);
+    FD_SET (dccAcceptSocket, &eset);
   }
-
 	
-  outta_there: // GOTO MARKER
-
 #ifdef NETSERVER_BUILD
   myLocker->Unlock();
   delete myLocker;
-#endif
-
+#endif  
   return 0;
 }
 
@@ -409,63 +399,60 @@ MessageAgent::DCCOut (void *arg)
   FD_SET (dccAcceptSocket, &rset);
   FD_SET (dccAcceptSocket, &eset);
   
-  while (agent->fDConnected)
+  while (mMsgr.IsValid() && agent->fDConnected)
   {
 #ifdef NETSERVER_BUILD
-    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) <= 0)
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) > 0)
 #elif BONE_BUILD
-    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) <= 0)
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) > 0)
 #endif
     {
-      if (FD_ISSET (dccAcceptSocket, &eset))
+#ifdef NETSERVER_BUILD
+      myLocker->Lock();
+#endif
+      if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
       {
         BMessage termMsg (M_DISPLAY);
+
         agent->fDConnected = false;
         ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
         mMsgr.SendMessage (&termMsg);
-        goto outta_loop; // I hate goto, but this is a good use.
+        break;
       }
-      if (!FD_ISSET (dccAcceptSocket, &rset))
 #ifdef NETSERVER_BUILD
-      snooze (20000);
-      FD_SET (dccAcceptSocket, &rset);
-      FD_SET (dccAcceptSocket, &eset);
+      myLocker->Unlock();
 #endif
-      continue;
+      if (recvReturn > 0)
+      {
+        if (tempBuffer[0] == '\n')
+        {
+          inputBuffer.RemoveLast ("\r");
+          inputBuffer = FilterCrap (inputBuffer.String(), false);
+          BMessage dispMsg (M_CHANNEL_MSG);
+          dispMsg.AddString ("msgz", inputBuffer.String());
+          mMsgr.SendMessage (&dispMsg);
+          inputBuffer = "";
+        }
+        else
+          inputBuffer.Append(tempBuffer[0],1);
+      }
     }
-#ifdef NETSERVER_BUILD
-    myLocker->Lock();
-#endif
-    if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
+    else if (FD_ISSET (dccAcceptSocket, &eset))
     {
       BMessage termMsg (M_DISPLAY);
-
       agent->fDConnected = false;
       ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
       mMsgr.SendMessage (&termMsg);
-      goto outta_loop; // I hate goto, but this is a good use.
+      break;
     }
 #ifdef NETSERVER_BUILD
-    myLocker->Unlock();
+    else
+      snooze (20000);
 #endif
-    if (recvReturn > 0)
-    {
-      if (tempBuffer[0] == '\n')
-      {
-        inputBuffer.RemoveLast ("\r");
-        inputBuffer = FilterCrap (inputBuffer.String(), false);
-        BMessage dispMsg (M_CHANNEL_MSG);
-        dispMsg.AddString ("msgz", inputBuffer.String());
-        mMsgr.SendMessage (&dispMsg);
-        inputBuffer = "";
-      }
-      else
-        inputBuffer.Append(tempBuffer[0],1);
-    }
+    FD_SET (dccAcceptSocket, &rset);
+    FD_SET (dccAcceptSocket, &eset);
   }
 	
-  outta_loop: // GOTO MARKER
-
 #ifdef NETSERVER_BUILD
   myLocker->Unlock();
   delete myLocker;
