@@ -60,6 +60,10 @@ ifeq ($(VIS_BUILD),be)
 CFLAGS += -DBE_INC_BUILD=1
 endif
 
+ifndef VIS_BUILD
+CFLAGS += -Wcast-qual -Wshadow
+endif
+
 ifeq ($(BUILD_DEBUG),true)
 	CFLAGS += -g
 else
@@ -74,7 +78,6 @@ CFLAGS += -march=pentium -mcpu=pentium
 CFLAGS += -Wall -W -Wno-multichar -Wpointer-arith
 CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith
-#CFLAGS += -Wcast-qual
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
 
 LD := g++
@@ -104,7 +107,7 @@ EXTRADATA:= $(wildcard data.zip)
 BASESOURCES := $(shell cd $(SRCDIR) && ls -1 *.cpp)
 SOURCES := $(addprefix $(SRCDIR)/,$(BASESOURCES))
 OBJECTS := $(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(BASESOURCES))))
-#DEPENDS := $(addprefix $(DEPDIR)/,$(addsuffix .d,$(basename $(BASESOURCES))))
+DEPENDS := $(addprefix $(DEPDIR)/,$(addsuffix .d,$(basename $(BASESOURCES))))
 
 BASEHEADERS := $(shell cd $(SRCDIR) && ls -1 *.h)
 HEADERS := $(addprefix $(SRCDIR)/,$(BASEHEADERS))
@@ -186,7 +189,7 @@ endif
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),depend)
 ifneq ($(MAKECMDGOALS),sourcearchive)
-#include $(DEPENDS)
+include $(DEPENDS)
 endif
 endif
 endif
