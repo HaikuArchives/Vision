@@ -128,7 +128,10 @@ IRCView::IRCView (
   tracking = false;
   MakeEditable (false); 
   MakeSelectable (true); 
-  SetStylable (true); 
+  SetStylable (true);
+  
+  // hack to work around color redraw bug in BTextView
+  SetColorSpace (B_RGB32); 
 } 
 
 
