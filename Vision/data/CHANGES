@@ -3,6 +3,10 @@ http://vision.sourceforge.net
 
 [0.2.0620]
  2001-06-20
+   * fixed auto-rejoin on u2 ircd (undernet)
+
+[0.2.0620]
+ 2001-06-20
    * fixed bug where status items wouldn't get updated correctly
  
 [0.2.0619]
