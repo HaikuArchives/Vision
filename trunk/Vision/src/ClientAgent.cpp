@@ -666,13 +666,21 @@ ClientAgent::MessageReceived (BMessage *msg)
 		
 		case M_LOOKUP_WEBSTER:
 		{
-		  vision_app->LoadURL ("http://work.ucsd.edu:5141/cgi-bin/http_webster?vision");
+		  BString lookup;
+		  msg->FindString ("string", &lookup);
+		  lookup = StringToURI (lookup.String());
+		  lookup.Prepend ("http://work.ucsd.edu:5141/cgi-bin/http_webster?");	  		  		  
+		  vision_app->LoadURL (lookup.String());
 		  break;
 		}
 
 		case M_LOOKUP_GOOGLE:
 		{
-		  vision_app->LoadURL ("http://www.google.com/search?q=vision");
+		  BString lookup;
+		  msg->FindString ("string", &lookup);
+		  lookup = StringToURI (lookup.String());
+		  lookup.Prepend ("http://www.google.com/search?q=");	  		  		  
+		  vision_app->LoadURL (lookup.String());
 		  break;
 		}
 		
