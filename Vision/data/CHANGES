@@ -1,6 +1,13 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0507]
+ 2001-05-07
+   * Shift+Alt+NumPad0 switches to the previously active agent
+   * Removed BWindow::AddShortcut stuff and setup a B_KEY_DOWN catch
+     in ClientWindow for Alt/Shift+Alt shortcuts (cuts down on BMessage
+     allocation). Decreased resource usage!
+
 [0.2.0506]
  2001-05-06
    * Revised WindowList notification colors:

@@ -133,7 +133,7 @@ VisionApp::VisionApp (void)
   colors[C_INPUT]                     = INPUT_COLOR;
   colors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
   colors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
-  colors[C_WINLIST_TEXT]              = myBlack;
+  colors[C_WINLIST_NORMAL]            = myBlack;
   colors[C_WINLIST_NEWS]              = JOIN_COLOR;
   colors[C_WINLIST_NICK]              = QUIT_COLOR;
   colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;

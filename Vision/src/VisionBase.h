@@ -56,7 +56,7 @@
 #define C_INPUT_BACKGROUND								21
 #define C_INPUT											22
 #define C_WINLIST_BACKGROUND                            23
-#define C_WINLIST_TEXT                                  24
+#define C_WINLIST_NORMAL                                24
 #define C_WINLIST_NEWS                                  25
 #define C_WINLIST_NICK                                  26
 #define C_WINLIST_SELECTION                             27
@@ -99,7 +99,6 @@
 #define CMD_UPTIME											6
 
 #define MAX_COMMANDS										7
-
 
 // tells the NamesView how to color the nicks
 #define STATUS_OP_BIT                                   0x0001
