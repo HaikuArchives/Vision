@@ -91,8 +91,8 @@ class VisionApp : public BApplication
 	bool                    settingsloaded;
 	
 
-	ClientWindow           *pClientWin (void) const;
-	
+	ClientWindow            *pClientWin (void) const;
+
   private:
 	void					InitSettings(void);
     AboutWindow             *aboutWin;

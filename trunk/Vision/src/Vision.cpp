@@ -39,7 +39,6 @@ class VisionApp * vision_app;
 #include "SettingsFile.h"
 #include "SetupWindow.h"
 
-
 // And so it begins....
 int
 main (void)
