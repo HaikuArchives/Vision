@@ -255,7 +255,7 @@ public:
 			void				RedrawColumn(BColumn *column, float leftEdge, bool isFirstColumn);
 			void 				StartSorting();
 	
-			void				AddRow(BRow*, int32 index, BRow *parent);
+			void				AddRow(BRow*, int32 index, BRow *TheRow);
 			BRow*				CurrentSelection(BRow *lastSelected) const;
 			void 				ToggleFocusRowSelection(bool selectRange);
 			void 				ToggleFocusRowOpen();
@@ -723,9 +723,9 @@ void BColumnListView::MessageDropped(BMessage*, BPoint)
 {
 }
 
-void BColumnListView::ExpandOrCollapse(BRow *row, bool open)
+void BColumnListView::ExpandOrCollapse(BRow* Row, bool Open)
 {
-	fOutlineView->ExpandOrCollapse(row, open);
+	fOutlineView->ExpandOrCollapse(Row, Open);
 }
 
 status_t BColumnListView::Invoke(BMessage *message)
@@ -761,19 +761,19 @@ BRow* BColumnListView::FocusRow() const
 	return fOutlineView->FocusRow();
 }
 
-void BColumnListView::SetFocusRow(int32 index, bool select)
+void BColumnListView::SetFocusRow(int32 Index, bool Select)
 {
-	SetFocusRow(RowAt(index),select);
+	SetFocusRow(RowAt(Index), Select);
 }
 
-void BColumnListView::SetFocusRow(BRow *row, bool select)
+void BColumnListView::SetFocusRow(BRow* Row, bool Select)
 {
-	fOutlineView->SetFocusRow(row, select);
+	fOutlineView->SetFocusRow(Row, Select);
 }
 
-void BColumnListView::SetMouseTrackingEnabled(bool enabled)
+void BColumnListView::SetMouseTrackingEnabled(bool Enabled)
 {
-	fOutlineView->SetMouseTrackingEnabled(enabled);	
+	fOutlineView->SetMouseTrackingEnabled(Enabled);	
 }
 
 list_view_type BColumnListView::SelectionMode() const
@@ -987,20 +987,20 @@ void BColumnListView::SetColumnFlags(column_flags flags)
 	fTitleView->SetColumnFlags(flags);
 }
 
-const BRow* BColumnListView::RowAt(int32 index, BRow *parent) const
+const BRow* BColumnListView::RowAt(int32 Index, BRow* ParentRow) const
 {
-	if (parent == 0)
-		return fOutlineView->RowList()->ItemAt(index);	
+	if (ParentRow == 0)
+		return fOutlineView->RowList()->ItemAt(Index);	
 
-	return parent->fChildList ? parent->fChildList->ItemAt(index) : NULL;
+	return ParentRow->fChildList ? ParentRow->fChildList->ItemAt(Index) : NULL;
 }
 
-BRow* BColumnListView::RowAt(int32 index, BRow *parent)
+BRow* BColumnListView::RowAt(int32 Index, BRow* ParentRow)
 {
-	if (parent == 0)
-		return fOutlineView->RowList()->ItemAt(index);	
+	if (ParentRow == 0)
+		return fOutlineView->RowList()->ItemAt(Index);	
 
-	return parent->fChildList ? parent->fChildList->ItemAt(index) : 0;
+	return ParentRow->fChildList ? ParentRow->fChildList->ItemAt(Index) : 0;
 }
 
 const BRow* BColumnListView::RowAt(BPoint point) const
@@ -1032,27 +1032,27 @@ int32 BColumnListView::IndexOf(BRow *row)
 	return fOutlineView->IndexOf(row);
 }
 
-int32 BColumnListView::CountRows(BRow *parent) const
+int32 BColumnListView::CountRows(BRow* ParentRow) const
 {
-	if (parent == 0)
+	if (ParentRow == 0)
 		return fOutlineView->RowList()->CountItems();	
-	if (parent->fChildList)
-		return parent->fChildList->CountItems();
+	if (ParentRow->fChildList)
+		return ParentRow->fChildList->CountItems();
 	else
 		return 0;
 }
 
-void BColumnListView::AddRow(BRow *row, BRow *parent)
+void BColumnListView::AddRow(BRow *row, BRow* ParentRow)
 {
-	AddRow(row, -1, parent);
+	AddRow(row, -1, ParentRow);
 }
 
-void BColumnListView::AddRow(BRow *row, int32 index, BRow *parent)
+void BColumnListView::AddRow(BRow *row, int32 index, BRow* ParentRow)
 {
 	row->fChildList = 0;
 	row->fList = this;
 	row->ValidateFields();
-	fOutlineView->AddRow(row, index, parent);
+	fOutlineView->AddRow(row, index, ParentRow);
 }
 
 void BColumnListView::RemoveRow(BRow *row)
@@ -1454,7 +1454,10 @@ void BColumnListView::Draw(BRect)
 void BColumnListView::SaveState(BMessage *msg)
 {
 	msg->MakeEmpty();
-	for(int i=0;;i++)
+
+	// Damn compiler issuing l43m incorrect warnings.
+	int i;
+	for (i = 0; ;i++)
 	{
 		BColumn *col = (BColumn*) fColumns.ItemAt(i);
 		if(!col)
@@ -1463,10 +1466,12 @@ void BColumnListView::SaveState(BMessage *msg)
 		msg->AddFloat("width",col->fWidth);
 		msg->AddBool("visible",col->fVisible);
 	}
+
 	msg->AddBool("sortingenabled",fSortingEnabled);
+
 	if(fSortingEnabled)
 	{
-		for(int i=0;;i++)
+		for (i = 0; ;i++)
 		{
 			BColumn *col = (BColumn*) fSortColumns.ItemAt(i);
 			if(!col)
@@ -1506,10 +1511,11 @@ void BColumnListView::LoadState(BMessage *msg)
 	if(B_OK==msg->FindBool("sortingenabled",&b))
 	{
 		SetSortingEnabled(b);
-		for(int i=0;;i++)
+		// Damn compiler issuing l43m incorrect warnings.
+		for(int k=0;;k++)
 		{
 			int32 ID;
-			if(B_OK!=msg->FindInt32("sortID",i,&ID))
+			if(B_OK!=msg->FindInt32("sortID", k, &ID))
 				break;
 			for(int j=0;;j++)
 			{
@@ -1519,9 +1525,9 @@ void BColumnListView::LoadState(BMessage *msg)
 				if(col->fFieldID==ID)
 				{
 					// add this column to the sort list
-					bool b;
-					if(B_OK==msg->FindBool("sortascending",i,&b))
-						SetSortColumn(col,true,b);
+					bool val;
+					if(B_OK==msg->FindBool("sortascending", k, &val))
+						SetSortColumn(col, true, val);
 				}
 			}
 		}
