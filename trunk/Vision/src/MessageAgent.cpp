@@ -79,7 +79,6 @@ MessageAgent::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
   {
-  
     case M_CHANNEL_MSG:
     {
       const char *nick;
@@ -96,6 +95,39 @@ MessageAgent::MessageReceived (BMessage *msg)
       ClientAgent::MessageReceived (msg);
       break;
 
+    }
+
+    case M_CHANGE_NICK:
+    {
+      const char *oldNick, *newNick;
+
+      msg->FindString ("oldnick", &oldNick);
+      msg->FindString ("newnick", &newNick);
+
+      if (chatee.ICompare (oldNick) == 0)
+      {
+        const char *address;
+        const char *ident;
+
+        msg->FindString ("address", &address);
+        msg->FindString ("ident", &ident);
+
+        BString oldId (id);
+        chatee = id = newNick;
+
+        if (dChat)
+          id.Append(" [DCC]");
+				
+        ClientAgent::MessageReceived (msg);
+      }
+      else if (myNick.ICompare (oldNick) == 0)
+      {
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
+        ClientAgent::MessageReceived (msg);
+      }
+
+      break;
     }
 
 	case M_CLIENT_QUIT:
