@@ -204,7 +204,7 @@ class BRowContainer : public BObjectList<BRow>
 class TitleView : public BView {
 public:
 	TitleView(BRect, OutlineView*, BList *visibleColumns, BList *sortColumns,
-		BColumnListView *masterView);
+		BColumnListView *masterView, uint32 resizingMode);
 	~TitleView();
 	void ColumnAdded(BColumn*);
 	void SetColumnVisible(BColumn*, bool);
@@ -733,7 +733,22 @@ BColumnListView::BColumnListView(BRect rect, const char *name, uint32 resizingMo
 	
 	fOutlineView = new OutlineView(outlineRect, &fColumns, &fSortColumns, this);
 	AddChild(fOutlineView);
-	fTitleView = new TitleView(titleRect, fOutlineView, &fColumns, &fSortColumns, this);
+
+	
+	// Adapt to correct resizing mode
+	uint32 fParentFlags = resizingMode;
+	// Always follow LEFT_RIGHT
+	uint32 fTitleFlags = B_FOLLOW_LEFT_RIGHT;
+	
+	if ((fParentFlags & B_FOLLOW_TOP) && (fParentFlags & ~B_FOLLOW_BOTTOM)) {
+		fTitleFlags |= B_FOLLOW_TOP;
+	}
+	else if ((fParentFlags & B_FOLLOW_BOTTOM) && (fParentFlags & ~B_FOLLOW_TOP)) {
+		fTitleFlags |= B_FOLLOW_BOTTOM;
+	}
+	
+	fTitleView = new TitleView(titleRect, fOutlineView, &fColumns, &fSortColumns, this, fTitleFlags);
+
 
 	AddChild(fTitleView);
 	fVerticalScrollBar = new BScrollBar(vScrollBarRect, "vertical_scroll_bar",
@@ -1600,8 +1615,8 @@ void BColumnListView::Refresh()
 
 
 TitleView::TitleView(BRect rect, OutlineView *horizontalSlave, BList *visibleColumns,
-		BList *sortColumns, BColumnListView *listView)
-	:	BView(rect, "title_view", B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW | B_FRAME_EVENTS),
+		BList *sortColumns, BColumnListView *listView, uint32 resizingMode)
+	:	BView(rect, "title_view", resizingMode, B_WILL_DRAW | B_FRAME_EVENTS),
 		fOutlineView(horizontalSlave),
 		fColumns(visibleColumns),
 		fSortColumns(sortColumns),
