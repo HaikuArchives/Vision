@@ -406,8 +406,6 @@ ClientAgent::Display (
   bool timeStamp)
 {
 
-  timeStampState = vision_app->GetBool ("timestamp");
-
   if (isLogging)
   {
     BString printbuf;
@@ -603,6 +601,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         }
         else if (msg->HasBool ("bool"))
         {
+          timeStampState = vision_app->GetBool ("timestamp");
           bool logging (vision_app->GetBool ("log_enabled"));
           if (logging != isLogging)
           {
@@ -867,7 +866,8 @@ ClientAgent::MessageReceived (BMessage *msg)
 
         if (myNick.ICompare (oldNick) == 0)
           myNick = msg->FindString ("newnick");
-
+        
+         
         BMessage display;
         if (msg->FindMessage ("display", &display) == B_NO_ERROR)
           ClientAgent::MessageReceived (&display);

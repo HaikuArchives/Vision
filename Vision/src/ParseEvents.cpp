@@ -292,7 +292,7 @@ ServerAgent::ParseEvents (const char *data)
     buffer = ExpandKeyed (events[E_NICK].String(), "NnIA", expansions);
     BMessage display (M_DISPLAY);
     PackDisplay (&display, buffer.String(), C_NICK, 0,
-                  vision_app->GetBool ("timestamp"));
+                  timeStampState);
 
     BMessage msg (M_CHANGE_NICK);
     msg.AddString ("oldnick", oldNick.String());
@@ -560,7 +560,7 @@ ServerAgent::ParseEvents (const char *data)
     BMessage msg (M_DISPLAY);
 
     PackDisplay (&msg, tempString.String(), C_WHOIS, 0,
-                   vision_app->GetBool("timestamp"));
+                   timeStampState);
     PostActive (&msg);
 
     return true;
@@ -586,7 +586,7 @@ ServerAgent::ParseEvents (const char *data)
     BMessage msg (M_DISPLAY);
 
     PackDisplay (&msg, tempString.String(), C_WHOIS, 0,
-                   vision_app->GetBool("timestamp"));
+                   timeStampState);
     PostActive (&msg);
 
     return true;

@@ -668,7 +668,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         }
       
         BMessage dispMsg (M_DISPLAY);
-        PackDisplay (&dispMsg, msgz, C_OP, 0, vision_app->GetBool ("timestamp"));
+        PackDisplay (&dispMsg, msgz, C_OP, 0, timeStampState);
         BMessenger display (this);
         display.SendMessage (&dispMsg);
       }
@@ -1048,8 +1048,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
   int32 modPos (0), targetPos (1);
   const char *mode (0), *target (0), *theNick (0);
   char theOperator (0);
-  bool hit (false),
-       timeStamp (vision_app->GetBool ("timestamp"));
+  bool hit (false);
 
 
   // TODO Change Status to bitmask -- Too hard this way
@@ -1076,7 +1075,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
   BMessenger display (this);
 
   BMessage modeMsg (M_DISPLAY);
-  PackDisplay (&modeMsg, buffer.String(), C_OP, 0, timeStamp);
+  PackDisplay (&modeMsg, buffer.String(), C_OP, 0, timeStampState);
   display.SendMessage (&modeMsg);
 
 

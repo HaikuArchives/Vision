@@ -697,7 +697,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           buffer += theTopic;
           buffer += '\n';
           PackDisplay (&display, buffer.String(), C_WHOIS, 0,
-            vision_app->GetBool ("timestamp"));
+            timeStampState);
 
           BMessage msg (M_CHANNEL_TOPIC);
           msg.AddString ("topic", theTopic.String());
@@ -738,7 +738,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           buffer += theTimeParsed;
           buffer += '\n';
           PackDisplay (&display, buffer.String(), C_WHOIS, 0,
-            vision_app->GetBool ("timestamp"));
+            timeStampState);
           if (client->msgr.IsValid())
             client->msgr.SendMessage (&display);
         }
@@ -760,7 +760,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BMessage display (M_DISPLAY);
         
         PackDisplay (&display, tempString.String(), C_WHOIS, 0,
-          vision_app->GetBool ("timestamp"));
+          timeStampState);
         PostActive (&display);
       }
       return true;
