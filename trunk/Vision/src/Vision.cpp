@@ -528,10 +528,15 @@ VisionApp::LoadDefaults (int32 section)
        
        for (i = 0; i < MAX_FONTS; i++)
        {
-         if (!fVisionSettings->HasString ("family", i))
+         BString fontStr, styleStr;
+         fontStr = "family";
+         styleStr = "style";
+         fontStr << i;
+         styleStr << i;
+         if (!fVisionSettings->HasString (fontStr.String()))
          {
-           fVisionSettings->AddString ("family", default_family);
-           fVisionSettings->AddString ("style", default_style);
+           fVisionSettings->AddString (fontStr.String(), default_family);
+           fVisionSettings->AddString (styleStr.String(), default_style);
            fVisionSettings->AddFloat ("size", size);
          }
          else
@@ -540,8 +545,8 @@ VisionApp::LoadDefaults (int32 section)
            BString style;
            size = 0.0;
                   
-           fVisionSettings->FindString ("family", i, &family);
-           fVisionSettings->FindString ("style", i, &style);
+           fVisionSettings->FindString (fontStr.String(), &family);
+           fVisionSettings->FindString (styleStr.String(), &style);
            fVisionSettings->FindFloat ("size", i, &size);
            
            ClientFontFamilyAndStyle (i, family.String(), style.String());
@@ -571,28 +576,27 @@ VisionApp::LoadDefaults (int32 section)
    
    case SET_STRINGS:
      {
-       // fEvents
-       if (!fVisionSettings->HasString ("event"))
+       BString eventStr, commandStr;
+       int32 i(0);
+       for (i = 0; i < MAX_EVENTS; i++)
        {
-         for (int32 i = 0; i < MAX_EVENTS; i++)
-           fVisionSettings->AddString ("event", fEvents[i]);
-       }
-       else
-       {
-         for (int32 i = 0; i < MAX_EVENTS; i++)
-           fVisionSettings->FindString ("event", i, &fEvents[i]);
+         eventStr = "event";
+         eventStr << i;
+         if (!fVisionSettings->HasString (eventStr.String()))
+           fVisionSettings->AddString (eventStr.String(), fEvents[i]);
+         else
+           fVisionSettings->FindString (eventStr.String(), &fEvents[i]);
        }
        
        // fCommands
-       if (!fVisionSettings->HasString ("command"))
+       for (i = 0; i < MAX_COMMANDS; i++)
        {
-         for (int32 i = 0; i < MAX_COMMANDS; i++)
-           fVisionSettings->AddString ("command", fCommands[i]);
-       }
-       else
-       {
-         for (int32 i = 0; i < MAX_COMMANDS; i++)
-           fVisionSettings->FindString ("command", i, &fCommands[i]);
+         commandStr = "command";
+         commandStr << i;
+         if (!fVisionSettings->HasString (commandStr.String()))
+           fVisionSettings->AddString (commandStr.String(), fCommands[i]);
+         else
+           fVisionSettings->FindString (commandStr.String(), &fCommands[i]);
        }
      }
      break;
@@ -1145,6 +1149,12 @@ VisionApp::ClientFontFamilyAndStyle (
     
   if (which < MAX_FONTS && which >= 0)
   {
+    BString fontStr;
+    BString styleStr;
+    fontStr = "family";
+    fontStr << which;
+    styleStr = "style";
+    styleStr << which;
     fClientFont[which]->SetFamilyAndStyle (family, style);
 
     fActiveTheme->WriteLock();
@@ -1153,8 +1163,8 @@ VisionApp::ClientFontFamilyAndStyle (
       fActiveTheme->SetFont (MAX_FONTS, fClientFont[which]);
     fActiveTheme->WriteUnlock();
     
-    SetString ("family", which, family);
-    SetString ("style", which, style);
+    SetString (fontStr.String(), 0, family);
+    SetString (styleStr.String(), 0, style);
   }
 }
 
@@ -1220,12 +1230,16 @@ VisionApp::SetEvent (int32 which, const char *event)
   if (!eventLock.IsLocked())
     return;
 
+  BString eventStr;
+  eventStr = "event";
+  eventStr << which;
+
   if (which < MAX_EVENTS && which >= 0
   &&  fEvents[which].Compare (event))
   {
     fEvents[which] = event;
 
-    SetString ("event", which, event);
+    SetString (eventStr.String(), 0, event);
   }
 }
 
@@ -1256,11 +1270,15 @@ VisionApp::SetCommand (int32 which, const char *command)
   if (!commandLock.IsLocked())
     return;
 
+  BString commandStr;
+  commandStr = "command";
+  commandStr << which;
+
   if (which < MAX_COMMANDS && which >= 0)
   {
     fCommands[which] = command;
     
-    SetString ("command", which, command);
+    SetString (commandStr.String(), 0, command);
   }
 }
 

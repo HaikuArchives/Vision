@@ -102,7 +102,17 @@ NameItem::DrawItem (BView *father, BRect frame, bool complete)
   BString drawString (myName);
   rgb_color color = activeTheme->ForegroundAt (C_NAMES);
 
-  if ((myStatus & STATUS_OP_BIT) != 0)
+  if ((myStatus & STATUS_FOUNDER_BIT) != 0)
+  {
+    drawString.Prepend ("*");
+    color = activeTheme->ForegroundAt (C_OP);
+  }
+  else if ((myStatus & STATUS_PROTECTED_BIT) != 0)
+  {
+    drawString.Prepend ("!");
+    color = activeTheme->ForegroundAt (C_OP);
+  }
+  else if ((myStatus & STATUS_OP_BIT) != 0)
   {
     drawString.Prepend ("@");
     color = activeTheme->ForegroundAt (C_OP);

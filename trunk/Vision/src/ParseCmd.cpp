@@ -107,6 +107,8 @@ ClientAgent::ParseCmd (const char *data)
     be_app->GetAppInfo (&ai);
 
     BEntry entry (&ai.ref);
+    if (entry.InitCheck() != B_OK)
+      return true;
     BPath path;
     entry.GetPath (&path);
     path.GetParent (&path);

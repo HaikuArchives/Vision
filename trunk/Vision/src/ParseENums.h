@@ -237,6 +237,7 @@ const int RPL_ENDOFWATCHLIST          = 607;
 const int RPL_OPERMOTDSTART           = 609; // PTLink
 const int RPL_OPERMOTD                = 610; // possibly others
 const int RPL_OPERENDOFMOTD           = 611;
+const int RPL_WHOWASIP                = 612; 
 const int RPL_WHOISUSERMODESALT       = 614; // user modes on PTLink
 const int RPL_WHOISUSERMODES          = 615;
 const int RPL_WHOISREALHOSTNAME       = 616;

@@ -375,7 +375,7 @@ ClientWindow::MessageReceived (BMessage *msg)
       {
         BView *view (NULL);
         msg->FindPointer ("view", reinterpret_cast<void **>(&view));
-        WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (pWindowList()->CurrentSelection()));
+        WindowListItem *item (dynamic_cast<WindowListItem *>(pWindowList()->ItemAt (pWindowList()->CurrentSelection())));
         BView *agent (item->pAgent());
         if (dynamic_cast<ClientWindowDock *>(view))
         {
@@ -396,8 +396,23 @@ ClientWindow::MessageReceived (BMessage *msg)
       break;
     
     case M_OPEN_TERM:
-      be_roster->Launch ("application/x-vnd.Be-SHEL", 0, NULL);
-      break;
+    {
+      status_t result = be_roster->Launch ("application/x-vnd.Be-SHEL", 0, NULL);
+      if (result != B_OK)
+      {
+        BMessage errMsg (M_DISPLAY);
+        BString errString ("Launch failed! Error code: ");
+        errString << result;
+        errString += "\n";
+        ClientAgent::PackDisplay(&errMsg, errString.String(), C_ERROR, C_BACKGROUND, F_TEXT);
+        WindowListItem *item(dynamic_cast<WindowListItem *>(pWindowList()->ItemAt (pWindowList()->CurrentSelection())));
+        if (item)
+        {
+          BMessenger (item->pAgent()).SendMessage (&errMsg);
+        }
+      }
+    }
+    break;
     
     case M_LIST_COMMAND:
     {

@@ -1,6 +1,6 @@
 Vision
 http://vision.sourceforge.net
-[0.9.4-0825]
+[0.9.4-0828]
          * fixed deadlock in DCC Transfers window
          * fixed memleak in logger
          * fixed some shutdown/cleanups that weren't happening
@@ -9,6 +9,8 @@ http://vision.sourceforge.net
          * added text encoding support (Preferences, App)  -- not really tested much yet
          * added server password support (Network Setup, Change Servers, Edit/Add New Server)
          * added support for euIRC's * and ! channel modes
+         * fixed some settings bugs which would cause strings to get cut off sometimes (note that this change will break your old settings for said strings, which include fonts)
+         * fixed bug where autoexec string would be forgotten
 
 [0.9.3-0817]
          * unbroke auto-rejoin on disconnect
