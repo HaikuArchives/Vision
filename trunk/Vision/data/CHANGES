@@ -3,6 +3,8 @@ http://vision.sourceforge.net
 
 [0.1.0414]
  2001-04-14
+   * Fix regression from yesterday's myNick fix; all nick changes were showing in
+     all MessageAgents for that server
    * Added visual keyboard shortcut identifiers to VTextControl for Copy/Cut/etc
    * Tweaked the width of ChannelAgent's IRCView. It was off by 1px.
 
