@@ -810,7 +810,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
 			
 			break;
-					
+		
 		}
 		
 		case M_LAG_CHECK:
