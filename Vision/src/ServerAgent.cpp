@@ -361,6 +361,10 @@ ServerAgent::Establish (void *arg)
     int32 size;
     
     getMsg.FindData ("server", B_ANY_TYPE, reinterpret_cast<const void **>(&serverData), &size);
+    // better safe than sorry, seems under certain circumstances the SendMessage can fail
+    // "silently"
+    if (serverData == NULL)
+      throw failToLock();
     connectId = serverData->serverName;
     connectPort << serverData->port;
     getMsg.FindString ("ident", &ident);
