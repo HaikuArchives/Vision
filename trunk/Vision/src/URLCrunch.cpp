@@ -85,7 +85,7 @@ URLCrunch::Crunch (BString *url)
 			else
 				pos = markers[i] + 1;
 		}
-
+		
 		if (marker < buffer.Length())
 		{
 			*url = "";

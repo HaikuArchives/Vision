@@ -1770,6 +1770,68 @@ ServerAgent::MessageReceived (BMessage *msg)
         fLogger->Log (logName, data);
       }
       break;
+    
+    case M_IGNORE_ADD:
+      {
+        BString cmd (msg->FindString("cmd"));
+        BString curNick;
+        int32 idx (-1);
+        int32 i (0);
+
+
+        type_code type;
+        int32 attrCount;
+  
+        // make sure this nick hasn't already been added
+        fNetworkData.GetInfo ("ignore", &type, &attrCount);
+
+        // TODO: print notification message to user
+        while ((idx = cmd.IFindFirst(" ")) > 0)
+        {
+          cmd.MoveInto(curNick, 0, cmd.IFindFirst(" "));
+          // remove leading space
+          cmd.Remove(0, 1);
+          for (i = 0; i < attrCount; i++)
+            if (curNick.ICompare(fNetworkData.FindString("ignore", i)) == 0)
+              break;
+          // no dupes found, add it
+          if (i == attrCount)
+          {
+            vision_app->AddIgnoreNick(fNetworkData.FindString("name"), curNick.String());
+            fNetworkData.AddString("ignore", curNick.String());
+          }
+          curNick = "";
+        }
+        // catch last one
+        if (cmd.Length() > 0)
+        {
+          for (i = 0; i < attrCount; i++)
+            if (cmd.ICompare(fNetworkData.FindString("ignore", i)) == 0)
+              break;
+          // no dupes found, add it
+          if (i == fNotifyNicks.CountItems())
+          {
+            vision_app->AddIgnoreNick(fNetworkData.FindString("name"), curNick.String());
+            fNetworkData.AddString("ignore", curNick.String());
+          }
+        }
+      }
+      break;
+      
+    case M_IGNORE_REMOVE:
+      {
+      }
+      break;
+    
+    case M_EXCLUDE_ADD:
+      {
+      }
+      break;
+      
+    case M_EXCLUDE_REMOVE:
+      {
+      }
+      break;
       
     case M_NOTIFYLIST_ADD:
       {

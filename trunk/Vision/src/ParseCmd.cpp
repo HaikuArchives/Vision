@@ -542,25 +542,23 @@ ClientAgent::ParseCmd (const char *data)
   }
   
 
-  #if 1
   if (firstWord == "/IGNORE")
   {
-    {
-      BString rest (RestOfString (data, 2));
+    BString rest (RestOfString (data, 2));
+      
+    // strip trailing spaces
+    int32 count (rest.Length() - 1);
+    while (rest[count--] == ' ')
+      rest.RemoveLast(" ");
 
-      if (rest != "-9z99")
-      {
-        BMessage msg (M_IGNORE_ADD);
-        msg.AddString ("cmd", rest.String());
-        msg.AddString ("server", fServerName.String());
-        msg.AddRect ("frame", Frame());
-        vision_app->PostMessage (&msg);
-      }
+    if (rest != "-9z99")
+    {
+      BMessage msg (M_IGNORE_ADD);
+      msg.AddString ("cmd", rest.String());
+      fSMsgr.SendMessage(&msg);
     }
     return true;
   }
-  #endif
-  
 
   if (firstWord == "/INVITE" || firstWord == "/I")
   {
@@ -808,20 +806,18 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/NOTIFY")
   {
-    {
-      BString rest (RestOfString (data, 2));
+    BString rest (RestOfString (data, 2));
       
-      // strip trailing spaces
-      int32 count (rest.Length() - 1);
-      while (rest[count--] == ' ')
-        rest.RemoveLast(" ");
+    // strip trailing spaces
+    int32 count (rest.Length() - 1);
+    while (rest[count--] == ' ')
+      rest.RemoveLast(" ");
 
-      if (rest != "-9z99")
-      {
-        BMessage msg (M_NOTIFYLIST_ADD);
-        msg.AddString ("cmd", rest.String());
-        fSMsgr.SendMessage(&msg);
-      }
+    if (rest != "-9z99")
+    {
+      BMessage msg (M_NOTIFYLIST_ADD);
+      msg.AddString ("cmd", rest.String());
+      fSMsgr.SendMessage(&msg);
     }
     return true;
   }
@@ -870,6 +866,21 @@ ClientAgent::ParseCmd (const char *data)
   {
     BMessage msg (M_CLIENT_QUIT);
     msg.AddBool ("vision:part", true);
+    BString secondWord (GetWord(data, 2));
+    BString partmsg;
+    if (secondWord == fId)
+    {
+      partmsg = RestOfString(data, 3);
+    }
+    else
+    {
+      partmsg = RestOfString(data, 2);
+    }
+    
+    if (partmsg != "-9z99")
+    {
+      msg.AddString("vision:partmsg", partmsg);
+    }
     fMsgr.SendMessage (&msg);
     return true;
   }
@@ -1038,24 +1049,23 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
-  #if 1
   if (firstWord == "/UNIGNORE")
   {
-    {
-      BString rest (RestOfString (data, 2));
+    BString rest (RestOfString (data, 2));
+      
+    // strip trailing spaces
+    int32 count (rest.Length() - 1);
+    while (rest[count--] == ' ')
+      rest.RemoveLast(" ");
 
-      if (rest != "-9z99")
-      {
-        BMessage msg (M_IGNORE_REMOVE);
-        msg.AddString ("cmd", rest.String());
-        msg.AddString ("server", fServerName.String());
-        msg.AddRect ("frame", Frame());
-        vision_app->PostMessage (&msg);
-      }
+    if (rest != "-9z99")
+    {
+      BMessage msg (M_IGNORE_REMOVE);
+      msg.AddString ("cmd", rest.String());
+      fSMsgr.SendMessage(&msg);
     }
     return true;
   }
-  #endif
 
 
   if (firstWord == "/UNNOTIFY")
