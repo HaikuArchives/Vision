@@ -72,6 +72,10 @@ class ClientWindow : public BWindow
     virtual void          ScreenChanged (BRect, color_space);
     virtual void          Show (void);
     
+    // accessors that add/remove menus to the main Vision menu bar
+    void                  AddMenu (BMenu *);
+    void                  RemoveMenu (BMenu *);
+    
     ServerAgent           *GetTopServer (WindowListItem *);
     
     bool                  ServerBroadcast (BMessage *);

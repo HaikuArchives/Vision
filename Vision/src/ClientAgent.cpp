@@ -598,25 +598,32 @@ ClientAgent::MessageReceived (BMessage *msg)
 
     case M_THEME_FOREGROUND_CHANGE:
       {
-        activeTheme->ReadLock();
-        rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
-        input->TextView()->SetFontAndColor (&activeTheme->FontAt(F_INPUT), B_FONT_ALL,
-           &inputColor);
-        input->TextView()->SetViewColor (activeTheme->ForegroundAt (C_INPUT_BACKGROUND));
-        input->TextView()->Invalidate();
-        activeTheme->ReadUnlock();
+        int16 which (msg->FindInt16 ("which"));
+        if (which == C_INPUT || which == C_INPUT_BACKGROUND)
+        {
+          activeTheme->ReadLock();
+          rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
+          input->TextView()->SetFontAndColor (&activeTheme->FontAt(F_INPUT), B_FONT_ALL,
+             &inputColor);
+          input->TextView()->SetViewColor (activeTheme->ForegroundAt (C_INPUT_BACKGROUND));
+          activeTheme->ReadUnlock();
+          input->TextView()->Invalidate();
+        }
       }
       break;
      
     case M_THEME_FONT_CHANGE:
       {
-        activeTheme->ReadLock();
-        rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
-        input->TextView()->SetFontAndColor (&activeTheme->FontAt (F_INPUT), B_FONT_ALL,
-          &inputColor);
-        activeTheme->ReadUnlock();
-        Invalidate();
-
+        int16 which (msg->FindInt16 ("which"));
+        if (which == F_INPUT)
+        {
+          activeTheme->ReadLock();
+          rgb_color inputColor (activeTheme->ForegroundAt (C_INPUT));
+          input->TextView()->SetFontAndColor (&activeTheme->FontAt (F_INPUT), B_FONT_ALL,
+            &inputColor);
+          activeTheme->ReadUnlock();
+          Invalidate();
+        }
       }
       break; 
 

@@ -36,6 +36,7 @@
 #include "ListAgent.h"
 #include "WindowList.h"
 #include "ClientWindow.h"
+#include "Theme.h"
 
 /*
   -- #beos was here --
@@ -64,6 +65,7 @@ ListAgent::ListAgent (
       title,
       B_FOLLOW_ALL_SIDES,
       B_WILL_DRAW | B_FRAME_EVENTS),
+   activeTheme (vision_app->ActiveTheme()),
    sMsgr (sMsgr_),
    listUpdateTrigger (NULL),
   filter (""),
@@ -71,34 +73,31 @@ ListAgent::ListAgent (
   processing (false)
 {
   frame = Bounds();
-/*
-  mBar = new BMenuBar (frame, "menubar");
+  
+  listMenu = new BMenu ("Channels");
 
-  BMenu *menu (new BMenu ("Channel"));
-
-  menu->AddItem (mFind = new BMenuItem (
+  listMenu->AddItem (mFind = new BMenuItem (
     "Find" B_UTF8_ELLIPSIS, 
     new BMessage (M_LIST_FIND)));
-  menu->AddItem (mFindAgain = new BMenuItem (
+  listMenu->AddItem (mFindAgain = new BMenuItem (
     "Find Next", 
     new BMessage (M_LIST_FAGAIN)));
-  menu->AddItem (mFilter = new BMenuItem (
+  listMenu->AddItem (mFilter = new BMenuItem (
     "Filter" B_UTF8_ELLIPSIS,
     new BMessage (M_LIST_FILTER)));
-  mBar->AddItem (menu);
-
-  AddChild (mBar);
-  mBar->ResizeToPreferred();
   
-  frame.top = mBar->Frame().bottom + 1;
-*/
+  mFind->SetEnabled (false);
+  mFindAgain->SetEnabled (false);
+  mFilter->SetEnabled (false);
+  
+
   BView *bgView (new BView (
     frame,
     "background",
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW));
 
-  bgView->SetViewColor (vision_app->GetColor (C_BACKGROUND));
+  bgView->SetViewColor (activeTheme->ForegroundAt (C_BACKGROUND));
   AddChild (bgView);
 
   frame = bgView->Bounds().InsetByCopy (1, 1);
@@ -124,11 +123,12 @@ ListAgent::ListAgent (
   listView->SetSelectionMode (B_SINGLE_SELECTION_LIST);
   listView->SetSortingEnabled (true);
   listView->SetSortColumn (channel, true, true);
-  listView->SetColor (B_COLOR_BACKGROUND, vision_app->GetColor (C_BACKGROUND));
-  listView->SetColor (B_COLOR_TEXT, vision_app->GetColor (C_TEXT));
-  listView->SetColor (B_COLOR_SELECTION, vision_app->GetColor (C_SELECTION));
-  
-  listView->SetFont (B_FONT_ROW, vision_app->GetClientFont (F_LISTAGENT));
+  activeTheme->ReadLock();
+  listView->SetColor (B_COLOR_BACKGROUND, activeTheme->ForegroundAt (C_BACKGROUND));
+  listView->SetColor (B_COLOR_TEXT, activeTheme->ForegroundAt (C_TEXT));
+  listView->SetColor (B_COLOR_SELECTION, activeTheme->ForegroundAt (C_SELECTION));
+  listView->SetFont (B_FONT_ROW, &activeTheme->FontAt (F_LISTAGENT));
+  activeTheme->ReadUnlock();
 
   memset (&re, 0, sizeof (re));
   memset (&fre, 0, sizeof (fre));
@@ -147,6 +147,9 @@ ListAgent::~ListAgent (void)
     delete row;
   }
   
+  while (hiddenItems.CountItems() > 0)
+    delete (BRow *)hiddenItems.RemoveItem (0L);
+  
   delete sMsgr;
   delete agentWinItem;
 
@@ -158,30 +161,9 @@ void
 ListAgent::AttachedToWindow (void)
 {
   msgr = BMessenger (this);
+  listView->SetTarget(this);
 }
 
-void
-ListAgent::AllAttached (void)
-{
-  listView->SetTarget(this);
-/*
-  // target all menu items at the list agent
-  // from here since SetTarget(this) fails until
-  // AllAttached
-  for (int32 i = 0; i < mBar->CountItems(); i++)
-  {
-    BMenuItem *superitem = (BMenuItem *)mBar->ItemAt(i);
-    superitem->SetTarget(this);
-    BMenu *submenu (superitem->Submenu());
-    for (int32 j = 0; j < submenu->CountItems(); j++)
-    {
-      BMenuItem *item = (BMenuItem *)submenu->ItemAt(j);
-      if (item != NULL)
-        item->SetTarget(this);
-    }    
-  }
-*/
-}
 
 void
 ListAgent::Show (void)
@@ -189,7 +171,16 @@ ListAgent::Show (void)
   Window()->PostMessage (M_STATUS_CLEAR);
   this->msgr.SendMessage (M_STATUS_ADDITEMS);
   
+  vision_app->pClientWin()->AddMenu (listMenu);
+  listMenu->SetTargetForItems (this);
   BView::Show();
+}
+
+void
+ListAgent::Hide (void)
+{
+  vision_app->pClientWin()->RemoveMenu (listMenu);
+  BView::Hide();
 }
 
 void
@@ -197,18 +188,47 @@ ListAgent::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
   {
-    case M_STATE_CHANGE:
+    case M_THEME_FONT_CHANGE:
       {
-        if (msg->HasBool ("font"))
+        int32 which (msg->FindInt32 ("which"));
+        if (which == F_LISTAGENT)
         {
-          int32 which (msg->FindInt32 ("which"));
-          switch (which)
-          {
-            case F_LISTAGENT:
-              listView->Invalidate();
-              break;
-          }
+          activeTheme->ReadLock();
+          listView->SetFont (B_FONT_ROW, &activeTheme->FontAt (F_LISTAGENT));
+          activeTheme->ReadUnlock();
+          listView->Invalidate();
         }
+      }
+      break;
+      
+    case M_THEME_FOREGROUND_CHANGE:
+      {
+        int32 which (msg->FindInt32 ("which"));
+        activeTheme->ReadLock();
+        bool refresh (false);
+        switch (which)
+        {
+          case C_BACKGROUND:
+            listView->SetColor (B_COLOR_BACKGROUND, activeTheme->ForegroundAt (C_BACKGROUND));
+            refresh = true;
+            break;
+            
+          case C_TEXT:
+            listView->SetColor (B_COLOR_TEXT, activeTheme->ForegroundAt (C_TEXT));
+            refresh = true;
+            break;
+
+          case C_SELECTION:             
+            listView->SetColor (B_COLOR_SELECTION, activeTheme->ForegroundAt (C_SELECTION));
+            refresh = true;
+            break;
+            
+          default:
+            break;
+        }
+        activeTheme->ReadUnlock();
+        if (refresh)
+          Invalidate();
       }
       break;
       
@@ -261,11 +281,11 @@ ListAgent::MessageReceived (BMessage *msg)
         
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
-/*
+
         mFind->SetEnabled (true);
         mFindAgain->SetEnabled (true);
         mFilter->SetEnabled (true);
-*/
+
         processing = false;
 
         BString cString;
@@ -301,7 +321,6 @@ ListAgent::MessageReceived (BMessage *msg)
       break;
 
 		case M_LIST_FILTER:
-/*			
 			if (msg->HasString ("text"))
 			{
 				const char *buffer;
@@ -321,10 +340,39 @@ ListAgent::MessageReceived (BMessage *msg)
 						&re,
 						filter.String(),
 						REG_EXTENDED | REG_ICASE | REG_NOSUB);
-					listView->MakeEmpty();
+					
+					BRow *currentRow;	
+					BStringField *channel,
+					             *topic;
 
-					BScrollBar *bar (scroller->ScrollBar (B_HORIZONTAL));
-					bar->SetRange (0.0, 0.0);
+					while (hiddenItems.CountItems() != 0)
+					{
+					  currentRow = (BRow *)hiddenItems.RemoveItem (0L);
+					  listView->AddRow (currentRow);
+					}
+					
+					if (filter != NULL)
+					{
+  					  int32 k (0);
+  					  					
+					  while (k < listView->CountRows())
+					  {
+					     currentRow = listView->RowAt (k);
+					     channel = (BStringField *)currentRow->GetField (0);
+					     topic = (BStringField *)currentRow->GetField (2);
+       				  	 if ((regexec (&re, channel->String(), 0, 0, 0) != REG_NOMATCH)
+       				  	    || (regexec (&re, topic->String(), 0, 0, 0) != REG_NOMATCH))
+       				  	  {
+       				  	    k++;
+       					    continue;
+       					  }
+       					 else
+       					 {
+       					   listView->RemoveRow (currentRow);
+       					   hiddenItems.AddItem (currentRow);
+       					 }
+					  }
+					}
 					msgr.SendMessage (M_LIST_DONE);
 					processing = true;
 				}
@@ -341,14 +389,13 @@ ListAgent::MessageReceived (BMessage *msg)
 					new RegExValidate ("Filter"),
 					true));
 				prompt->Show();
-			} */
+			}
 			break;
 
 		case M_LIST_FIND:
-/*
 			if (msg->HasString ("text"))
 			{
-				int32 selection (listView->CurrentSelection());
+				int32 selection (listView->IndexOf(listView->CurrentSelection()));
 				const char *buffer;
 
 				msg->FindString ("text", &buffer);
@@ -379,21 +426,21 @@ ListAgent::MessageReceived (BMessage *msg)
 					find = buffer;
 				}
 
-				ChannelItem *item;
+				BStringField *field;
 				int32 i;
 
-				for (i = selection; i < listView->CountItems(); ++i)
+				for (i = selection; i < listView->CountRows(); ++i)
 				{
-					item = (ChannelItem *)listView->ItemAt (i);
+					field = (BStringField *)listView->RowAt (i)->GetField (0);
 
-					if (regexec (&fre, item->Channel(), 0, 0, 0) != REG_NOMATCH)
+					if (regexec (&fre, field->String(), 0, 0, 0) != REG_NOMATCH)
 						break;
 				}
 
-				if (i < listView->CountItems())
+				if (i < listView->CountRows())
 				{
-					listView->Select (i);
-					listView->ScrollToSelection();
+					listView->DeselectAll();
+					listView->AddToSelection (listView->RowAt (i));
 				}
 				else
 				{
@@ -412,16 +459,16 @@ ListAgent::MessageReceived (BMessage *msg)
 					new RegExValidate ("Find:"),
 					true));
 				prompt->Show();
-			} */
+			} 
 			break;
 
 		case M_LIST_FAGAIN:
-/*			if (find.Length())
+			if (find.Length())
 			{
 				msg->AddString ("text", find.String());
 				msg->what = M_LIST_FIND;
 				msgr.SendMessage (msg);
-			} */
+			}
 			break;
 
 		case M_LIST_INVOKE:
