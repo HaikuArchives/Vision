@@ -369,38 +369,24 @@ ServerAgent::ParseEvents (const char *data)
 		return true;
 	}
 
-	#if 0
 	if (secondWord == "KICK")
 	{
 		BString kicker (GetNick (data)),
 		        kickee (GetWord (data, 4)),
 		        rest (RestOfString (data, 5)),
 		        channel (GetWord (data, 3));
-		ClientWindow *client (Client (channel.String()));
+		ClientAgent *client (Client (channel.String()));
 
 		rest.RemoveFirst (":");
 
 		if ((client = Client (channel.String())) != 0
 		&&   kickee == myNick)
 		{
-			BMessage display (M_DISPLAY); // "you were kicked"
-			BString buffer;
-
-			buffer << "*** You have been kicked from "
-				<< channel << " by " << kicker << " (" << rest << ")\n";
-			PackDisplay (&display, buffer.String(), &quitColor, 0, true);
-
-			BMessage display2 (M_DISPLAY); // "attempting auto rejoin"
-			buffer = "*** Attempting to automagically rejoin ";
-			buffer << channel << "...\n";
-			PackDisplay (&display2, buffer.String(), &quitColor, 0, true);
-						
-
 			BMessage msg (M_CHANNEL_GOT_KICKED);
 			msg.AddString ("channel", channel.String());
-			msg.AddMessage ("display", &display);  // "you were kicked"
-			msg.AddMessage ("display2", &display2); // "attempting auto rejoin"
-			client->PostMessage (&msg);
+			msg.AddString ("kicker", kicker.String());
+			msg.AddString ("rest", rest.String());
+			client->msgr.SendMessage (&msg);
 		}
 
 		if (client && kickee != myNick)
@@ -414,18 +400,17 @@ ServerAgent::ParseEvents (const char *data)
 			expansions[2] = kicker.String();
 			expansions[3] = rest.String();
 
-			buffer = ExpandKeyed (events[E_KICK], "NCnR", expansions);
+			buffer = ExpandKeyed (events[E_KICK].String(), "NCnR", expansions);
 			PackDisplay (&display, buffer.String(), &quitColor, 0, true);
 
 			BMessage msg (M_USER_QUIT);
 			msg.AddString ("nick", kickee.String());
 			msg.AddMessage ("display", &display);
-			client->PostMessage (&msg);
+			client->msgr.SendMessage (&msg);
 		}
 
 		return true;
 	}
-    #endif
    
 	if(secondWord == "TOPIC")
 	{
