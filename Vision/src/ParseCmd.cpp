@@ -688,7 +688,7 @@ ClientAgent::ParseCmd (const char *data)
         AddSend (&sendMsg, endl);
       }
       else
-        Display ("[x] /nick: Error: Invalid parameters\n", C_ERROR);
+        Display ("[x] /mode: Error: Invalid parameters\n", C_ERROR);
     }
     return true;
   }
