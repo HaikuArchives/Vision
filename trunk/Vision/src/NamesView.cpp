@@ -24,6 +24,7 @@
  *                 Seth Flaxman
  */
 
+#include <Entry.h>
 #include <PopUpMenu.h>
 #include <MenuItem.h>
 #include <Window.h>
@@ -287,9 +288,15 @@ NamesView::MouseUp (BPoint myPoint)
 }
 
 void
-NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg)
+NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *dragMessage)
 {
- if (fTracking)
+ if ((dragMessage != NULL) && (dragMessage->HasRef("refs")))
+ {
+   int32 nameIndex (IndexOf(myPoint));
+   if (nameIndex >= 0)
+     Select(nameIndex);
+ }
+ else if (fTracking)
  {
    if (transitcode == B_INSIDE_VIEW)
    {
@@ -338,7 +345,7 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg
      fTracking = false;
  }
  else
-   BListView::MouseMoved (myPoint, transitcode, mmMsg);
+   BListView::MouseMoved (myPoint, transitcode, dragMessage);
 }
 
 void
@@ -395,6 +402,29 @@ NamesView::MessageReceived (BMessage *msg)
         SetFont (&fActiveTheme->FontAt (F_NAMES));
         fActiveTheme->ReadUnlock();
         Invalidate();
+      }
+    }
+    break;
+    
+    case B_SIMPLE_DATA:
+    {
+      if (msg->HasRef("refs"))
+      {
+        // this only grabs the first ref for now
+        // TODO: maybe implement queueing of multiple sends next time
+        entry_ref ref;
+        msg->FindRef("refs", &ref);
+        int32 idx (CurrentSelection());
+        if (idx >= 0)
+        {
+          NameItem *item (dynamic_cast<NameItem *>(ItemAt(idx)));
+          BMessage msg (M_CHOSE_FILE);
+          msg.AddString ("nick", item->Name());
+          msg.AddRef ("refs", &ref);
+          ClientAgent *myParent (dynamic_cast<ClientAgent *>(Parent()->Parent()));
+          if (myParent)
+            myParent->fSMsgr.SendMessage (&msg);
+        }
       }
     }
     break;

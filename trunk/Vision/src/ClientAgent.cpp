@@ -476,11 +476,12 @@ ClientAgent::ParsemIRCColors (
         mircBack (back),
         mircFont (font),
         i (0);
+  const char *start (NULL);
         
   while (buffer && *buffer)
   {
    
-    const char *start = buffer;
+    start = buffer;
     while (*buffer)
     {
       if (*buffer != 3)
