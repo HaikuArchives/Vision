@@ -776,7 +776,7 @@ ServerAgent::HandleReconnect (void)
     soSorry = "[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n";
     Display (soSorry, C_ERROR);
     ClientAgent *agent (ActiveClient());
-    if (agent != this)
+    if (agent && (agent != this))
       agent->Display (soSorry, C_ERROR, C_BACKGROUND, F_SERVER);    
   }
 }
@@ -1052,8 +1052,8 @@ ServerAgent::MessageReceived (BMessage *msg)
           sAnnounce += serverName;
           sAnnounce += "\n";
           Display (sAnnounce.String(), C_ERROR);
-          ClientAgent *agent;
-          if ((agent = ActiveClient()) != this)
+          ClientAgent *agent (ActiveClient());
+          if (agent && (agent != this))
             agent->Display (sAnnounce.String(), C_ERROR, C_BACKGROUND, F_SERVER);
         }
 			
