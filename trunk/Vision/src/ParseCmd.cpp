@@ -848,27 +848,21 @@ ClientAgent::ParseCmd (const char *data)
 	if (firstWord == "/QUIT")
 	{
 	    printf ("quitcmd\n");
-		BString theRest (RestOfString (data, 2));
-		BString buffer;
-	
+		BString theRest (RestOfString (data, 2)),
+		        buffer;
+		
 		if (theRest == "-9z99")
+		  buffer = "";
+		else
 		{
-			const char *expansions[1];
-			BString version (vision_app->VisionVersion());
-	
-			expansions[0] = version.String();
-			theRest = ExpandKeyed (vision_app
-				->GetCommand (CMD_QUIT).String(), "V", expansions);
+		  buffer += "QUIT :";
+		  buffer += theRest; 
 		}
-	
-		buffer << "QUIT :" << theRest;
 	
 		BMessage msg (M_CLIENT_QUIT);
 		msg.AddString ("vision:quit", buffer.String());
 		if (sMsgr.IsValid())
 		  sMsgr.SendMessage (&msg);
-		else
-		  printf ("sMsgr isnt valid! omg!\n");
 	
 		return true;
 	}
