@@ -610,7 +610,10 @@ ClientAgent::MessageReceived (BMessage *msg)
               logger = 0;
             }
             else
+            {
               logger = new ClientAgentLogger (id, serverName);
+              isLogging = true;
+            }
           }
         }
       }
