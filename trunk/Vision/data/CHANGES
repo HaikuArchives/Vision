@@ -22,7 +22,7 @@ http://vision.sourceforge.net
          * fixed timestamp format bug
          * window list is now resizable
          * nick list is now resizable
-         * fixed some hard-coded key values to adhere to keymaps
+         * fixed keymap bugs
 
 [0.3.0828]
 2001-08-28

@@ -199,22 +199,21 @@ filter_result
 ClientAgentInputFilter::HandleKeys (BMessage *msg)
 {
   filter_result result (B_DISPATCH_MESSAGE);
-  int32 keyStroke;
+  const char *keyStroke;
   int32 keymodifiers;
 
   BMessenger msgr (window);
 
-  msg->FindInt32 ("key", &keyStroke);
+  msg->FindString ("bytes", &keyStroke);
   msg->FindInt32 ("modifiers", &keymodifiers);
 
-  switch (keyStroke)
+  switch (keyStroke[0])
   {
     /////////////////
     /// catch all ///
     /////////////////
     
-    case VK_RETURN:
-    case VK_NUMPADRETURN:
+    case B_RETURN:
       {
         // we dont want Shift+B_RETURN to select all the text
         // treat keypress like we would a normal B_RETURN
@@ -228,7 +227,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
       }
       break;
         
-    case VK_ESCAPE:
+    case B_ESCAPE:
       result = B_SKIP_MESSAGE;
       break;
   }
@@ -242,9 +241,9 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
     ////////////////////
     /// no modifiers ///
     ////////////////////
-    switch (keyStroke)
+    switch (keyStroke[0])
     {
-      case VK_UP:
+      case B_UP_ARROW:
         {
           // used for input history
           msgr.SendMessage (M_PREVIOUS_INPUT);
@@ -252,7 +251,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case VK_DOWN:
+      case B_DOWN_ARROW:
         {
           // used for input history
           msgr.SendMessage (M_NEXT_INPUT);
@@ -260,7 +259,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case VK_PAGE_UP:
+      case B_PAGE_UP:
         {
           // scroll the IRCView
           BRect myrect (window->text->Bounds());
@@ -275,7 +274,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case VK_PAGE_DOWN:
+      case B_PAGE_DOWN:
         {
           // scroll the IRCView
           BRect myrect (window->text->Bounds());
@@ -289,7 +288,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
       
-      case VK_TAB: // tab key
+      case B_TAB: // tab key
         {
           // used for tabcompletion for nickname/channelname/etc
           window->TabExpansion();
@@ -308,9 +307,9 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
     ////////////
     /// Ctrl ///
     ////////////
-    switch (keyStroke)
+    switch (keyStroke[0])
     {
-      case VK_UP:
+      case B_UP_ARROW:
         {
           // scroll the IRCView up by 1 line
           if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != 0)
@@ -321,7 +320,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case VK_DOWN:
+      case B_DOWN_ARROW:
         {
           // scroll the IRCView down by 1 line
           float min, max;
@@ -334,7 +333,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case VK_HOME:
+      case B_HOME:
         {
           // scroll to the beginning of the IRCView
           window->text->ScrollTo (0.0, 0.0);
@@ -342,7 +341,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case VK_END:
+      case B_END:
         {
           // scroll to the end of the IRCView
           float min, max;
@@ -352,14 +351,14 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case VK_PAGE_UP:
-      case VK_PAGE_DOWN:
+      case B_PAGE_UP:
+      case B_PAGE_DOWN:
         {
           // scroll the IRCView
           BRect myrect (window->text->Bounds());
           float height (myrect.bottom - myrect.top);
           
-          if (keyStroke == B_PAGE_UP)
+          if (keyStroke[0] == B_PAGE_UP)
           {
             if (window->textScroll->ScrollBar (B_VERTICAL)->Value() > height)
               window->text->ScrollBy (0.0, -1 * height);
@@ -378,7 +377,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
       
-      case VK_U:
+      case 'U':
         {
           if (window->input->TextView()->TextLength())
           {
