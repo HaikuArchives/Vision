@@ -36,6 +36,9 @@ $user     = shift;
 $subject  = shift;
 $cvsdirectory = shift;
 
+system("echo mailfrom: $mailfrom");
+system("echo mailto: $mailto");
+
 system("echo user: $user");
 system("echo subject: $subject");
 
