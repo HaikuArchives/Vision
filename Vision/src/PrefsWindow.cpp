@@ -66,13 +66,3 @@ PrefsWindow::QuitRequested(void)
   be_app_messenger.SendMessage (M_PREFS_CLOSE);
   return true;  
 }
-void
-PrefsWindow::MessageReceived(BMessage *msg)
-{
-  switch (msg->what)
-  {
-     default:
-        BWindow::MessageReceived(msg);
-        break;
-  }
-}

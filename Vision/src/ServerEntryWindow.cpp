@@ -34,12 +34,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-const uint32 M_SERVER_NAME_CHANGED = 'sesn';
-const uint32 M_SERVER_PORT_CHANGED = 'sesp';
-const uint32 M_SERVER_DONE         = 'sesd';
-const uint32 M_SERVER_CANCEL       = 'sesc';
-const uint32 M_SERVER_STATE        = 'sess';
-
 
 ServerEntryWindow::ServerEntryWindow (BHandler *handler, BMessage *invoked, const ServerData *data)
   : BWindow (

@@ -120,6 +120,4 @@ class WindowList : public BOutlineListView
     
 };
 
-const uint32 M_MENU_NUKE            = 'wlmn';
-
 #endif

@@ -53,7 +53,4 @@ class AboutWindow : public BWindow
     void                  AboutImage (const char *, bool);
 };
 
-
-const uint32 M_ABOUT_CLOSE           = 'abcl'; // The party has to stop sometime
-
 #endif

@@ -134,7 +134,7 @@ ChannelAgent::Init (void)
 
   AddChild (resize);
 
-  Display ("*** Now talking in ", C_JOIN);
+  Display (S_CHANNEL_INIT, C_JOIN);
   Display (id.String(), C_JOIN);
   Display ("\n", C_JOIN);
 }
@@ -193,7 +193,7 @@ ChannelAgent::RemoveUser (const char *data)
     NameItem *item;
 
     namesList->Deselect (myIndex);
-    if ((item = (NameItem *)namesList->RemoveItem (myIndex)) != 0)
+    if ((item = (NameItem *)namesList->RemoveItem (myIndex)) != NULL)
     {
       BString buffer;
 
@@ -494,7 +494,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         }
         myNick = newNick;  // update nickname (might have changed on reconnect)
 			                    
-        Display ("[@] Attempting to rejoin...\n", C_ERROR, C_BACKGROUND, F_SERVER);
+        Display (S_CHANNEL_RECON_REJOIN B_UTF8_ELLIPSIS, C_ERROR, C_BACKGROUND, F_SERVER);
 		
 		// clean up
         namesList->ClearList();
@@ -571,9 +571,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
         BMessage wegotkicked (M_DISPLAY); // "you were kicked"
         BString buffer;
-        buffer += "*** You have been kicked from ";
+        buffer += S_CHANNEL_GOT_KICKED;
         buffer += theChannel;
-        buffer += " by ";
+        buffer += S_CHANNEL_GOT_KICKED2;
         buffer += kicker;
         buffer += " (";
         buffer += rest;
@@ -587,9 +587,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
         msgr.SendMessage (&wegotkicked);
 
         BMessage attemptrejoin (M_DISPLAY); // "you were kicked"
-        buffer = "*** Attempting to rejoin ";
+        buffer = S_CHANNEL_REJOIN;
         buffer += theChannel;
-        buffer += "...\n";
+        buffer += B_UTF8_ELLIPSIS"\n";
         PackDisplay (&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
         msgr.SendMessage (&attemptrejoin);
 
@@ -674,7 +674,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
       }
       break;
 
-    case POPUP_MODE:
+    case M_NAMES_POPUP_MODE:
       {
         const char *inaction (NULL);
         msg->FindString ("action", &inaction);
@@ -728,7 +728,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
       }
       break;
 
-    case POPUP_CTCP:
+    case M_NAMES_POPUP_CTCP:
       {
         const char *inaction (NULL);
         msg->FindString ("action", &inaction);
@@ -761,7 +761,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
       }
       break;
 
-    case POPUP_WHOIS:
+    case M_NAMES_POPUP_WHOIS:
       {
         int32 index (0);
         BString victims,
@@ -787,7 +787,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
       }
       break;
 
-    case POPUP_DCCCHAT: 
+    case M_NAMES_POPUP_DCCCHAT: 
       { 
         int32 index (0); 
         BString targetNick; 
@@ -807,7 +807,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
        } 
        break;
      
-    case POPUP_DCCSEND:
+    case M_NAMES_POPUP_DCCSEND:
       {
         int32 index (0); 
         BString targetNick; 
@@ -827,7 +827,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
       }
       break;
 
-    case POPUP_KICK:
+    case M_NAMES_POPUP_KICK:
       {
         int32 index (0);
         BString targetNick,
@@ -856,19 +856,19 @@ ChannelAgent::MessageReceived (BMessage *msg)
            0, ""), true);
        
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-           "Lag: ", "", STATUS_ALIGN_LEFT), true);
+           S_STATUS_LAG, "", STATUS_ALIGN_LEFT), true);
 
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
            0, "", STATUS_ALIGN_LEFT), true);
 
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-           "Users: ", ""), true);
+           S_STATUS_USERS, ""), true);
 
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-           "Ops: ", ""), true);
+           S_STATUS_OPS, ""), true);
 
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-           "Modes: ", ""), true);
+           S_STATUS_MODES, ""), true);
 
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
            "", "", STATUS_ALIGN_LEFT), true);
@@ -904,7 +904,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
      case M_CHANNEL_OPTIONS_CLOSE:
        {
-         chanOpt = 0;
+         chanOpt = NULL;
        }
        break;
 
@@ -1082,7 +1082,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
 
   buffer += "*** ";
   buffer += theNick;
-  buffer += " set mode: ";
+  buffer += S_CHANNEL_SET_MODE;
   buffer += mode;
 
   if (targetS != "-9z99")

@@ -16,12 +16,6 @@
 #include "ColumnTypes.h"
 #include "Vision.h"
 
-const uint32 M_SERVER_ADD_ITEM = 'msai';
-const uint32 M_SERVER_EDIT_ITEM = 'msae';
-const uint32 M_SERVER_REMOVE_ITEM = 'msri';
-const uint32 M_SERVER_RECV_DATA = 'msrd';
-const uint32 M_SERVER_ITEM_SELECTED = 'msis';
-
 const rgb_color serverItemNormalColor = { 0,0,0,255 };
 const rgb_color serverItemDefaultColor = { 0, 127, 0, 255 };
 const rgb_color serverItemDisabledColor = { 0, 0, 192, 255 };

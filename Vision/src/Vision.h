@@ -157,15 +157,6 @@ class VisionApp : public BApplication
 	sem_id                  shutdownSem;
 };
 
-const uint32 M_SETUP_CLOSE           = 'vasc';
-const uint32 M_SETUP_SHOW            = 'vass';
-const uint32 M_NETWORK_SHOW          = 'vans';
-const uint32 M_NETWORK_CLOSE         = 'vanc';
-const uint32 M_PREFS_SHOW            = 'vaps';
-const uint32 M_PREFS_CLOSE           = 'vapc';
-
-const uint32 M_CONNECT_NETWORK       = 'vacn';
-
 const uint32 VIS_NETWORK_DATA        = 'vndc';
 const uint32 VIS_NETWORK_DEFAULTS    = 'vndd';
 

@@ -26,8 +26,6 @@
 #include <View.h>
 #include "VisionBase.h"
 
-const uint32 M_EVENT_MODIFIED = 'epem';
-
 class VTextControl;
 class BScrollView;
 

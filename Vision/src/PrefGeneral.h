@@ -24,7 +24,6 @@
 
 #include <View.h>
 
-const uint32 M_GENERALPREFS_SELECTION_CHANGED = 'gpsc';
 const int32 C_PREFS_COUNT = 6;
 
 class BListView;

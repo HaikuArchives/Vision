@@ -84,9 +84,4 @@ class ListAgent : public BView
     friend class WindowList;
 };
 
-const uint32 M_LIST_FIND               = 'lalf';
-const uint32 M_LIST_FAGAIN             = 'lafa';
-const uint32 M_LIST_FILTER             = 'lafr';
-const uint32 M_LIST_INVOKE             = 'lali';
-const uint32 M_LIST_UPDATE             = 'lalu';
 #endif

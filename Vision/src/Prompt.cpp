@@ -20,16 +20,14 @@
  *                 Wade Majors
  *                 Todd Lair
  */
-#include <Application.h>
-#include <Handler.h>
-#include <Button.h>
 #include <Alert.h>
+#include <Application.h>
+#include <Button.h>
+#include <Handler.h>
 
-#include "VTextControl.h"
 #include "Prompt.h"
-
-const uint32 M_DONE							= 'done';
-const uint32 M_CANCEL						= 'cncl';
+#include "VisionBase.h"
+#include "VTextControl.h"
 
 PromptValidate::PromptValidate (void)
 {
@@ -102,7 +100,7 @@ PromptWindow::PromptWindow (
 			field->Frame().bottom + 30),
 		"Done",
 		"Done",
-		new BMessage (M_DONE),
+		new BMessage (M_PROMPT_DONE),
 		B_FOLLOW_RIGHT | B_FOLLOW_TOP);
 	done->ResizeToPreferred();
 	done->MoveTo (
@@ -118,7 +116,7 @@ PromptWindow::PromptWindow (
 			field->Frame().bottom + 30),
 		"Cancel",
 		"Cancel",
-		new BMessage (M_CANCEL),
+		new BMessage (M_PROMPT_CANCEL),
 		B_FOLLOW_RIGHT | B_FOLLOW_TOP);
 	cancel->ResizeToPreferred();
 	cancel->MoveTo (
@@ -143,7 +141,7 @@ PromptWindow::MessageReceived (BMessage *msg)
 {
 	switch (msg->what)
 	{
-		case M_DONE:
+		case M_PROMPT_DONE:
 
 			if (field->TextView()->TextLength() || blanks)
 			{
@@ -158,7 +156,7 @@ PromptWindow::MessageReceived (BMessage *msg)
 				else break;
 			}
 
-		case M_CANCEL:
+		case M_PROMPT_CANCEL:
 
 			PostMessage (B_QUIT_REQUESTED);
 			break;

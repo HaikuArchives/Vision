@@ -530,7 +530,7 @@ ServerAgent::ParseEvents (const char *data)
     
     if (IsHidden())
     {
-      BMessage statusMsg (M_UPDATE_STATUS);
+      BMessage statusMsg (M_CW_UPDATE_STATUS);
       statusMsg.AddPointer ("item", agentWinItem);
       statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
       Window()->PostMessage (&statusMsg);

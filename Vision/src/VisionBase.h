@@ -25,6 +25,9 @@
 #ifndef _VISIONBASE_H_
 #define _VISIONBASE_H_
 
+#include "VisionMessages.h"
+#include "VisionStrings.h"
+
 /// base includes and defines ///
 #include <GraphicsDefs.h>
 
@@ -143,6 +146,19 @@
 #define WIN_MESSAGE_TYPE                                0x0100
 #define WIN_LIST_TYPE                                   0x0200
 
+/// IRCDS
+/// an effort to properly support conflicting numeric meanings
+
+const int IRCD_STANDARD               =  1;
+const int IRCD_HYBRID                 =  2;  // "hybrid"    
+const int IRCD_ULTIMATE               =  3;  // "UltimateIRCd"
+const int IRCD_COMSTUD                =  4;  // "comstud"
+const int IRCD_UNDERNET               =  5;  // "u2."
+const int IRCD_BAHAMUT                =  6;  // "bahamut"
+const int IRCD_PTLINK                 =  7;  // "PTlink"
+const int IRCD_CONFERENCEROOM         =  8;  // "CR"
+const int IRCD_NEWNET                 =  9;  // "nn-"
+
 
 const int32 ID_SERVER = -47;
 const int32 ID_NOTCHILD = -1;
@@ -150,87 +166,6 @@ const int32 ID_NOTCHILD = -1;
 
 
 const int32 BIG_ENOUGH_FOR_A_REALLY_FAST_ETHERNET	= 1024 * 16;
-
-const uint32 M_ACTIVATION_CHANGE 					= 0x1011;
-const uint32 M_NEW_CLIENT							= 0x1012;
-const uint32 M_QUIT_CLIENT							= 0x1013;
-const uint32 M_NEWS_CLIENT							= 0x1014;
-const uint32 M_NICK_CLIENT							= 0x1015;
-const uint32 M_ID_CHANGE							= 0x1016;
-
-const uint32 M_NOTIFY_SELECT						= 0x1017;
-const uint32 M_NOTIFY_PULSE							= 0x1018;
-const uint32 M_NOTIFY_END							= 0x1019;
-const uint32 M_NOTIFY_START							= 0x1020;
-const uint32 M_NOTIFY_USER							= 0x1021;
-const uint32 M_NOTIFY_COMMAND						= 0x1022;
-const uint32 M_NOTIFY_WINDOW						= 0x1023;
-const uint32 M_NOTIFY_SHUTDOWN						= 0x1024;
-
-const uint32 M_LIST_BEGIN							= 0x1025;
-const uint32 M_LIST_EVENT							= 0x1026;
-const uint32 M_LIST_DONE							= 0x1027;
-const uint32 M_LIST_COMMAND							= 0x1028;
-const uint32 M_LIST_SHUTDOWN						= 0x1029;
-
-const uint32 M_IS_IGNORED							= 0x1030;
-const uint32 M_IGNORE_COMMAND						= 0x1031;
-const uint32 M_IGNORE_SHUTDOWN						= 0x1032;
-const uint32 M_UNIGNORE_COMMAND  					= 0x1033;
-const uint32 M_EXCLUDE_COMMAND						= 0x1034;
-const uint32 M_IGNORE_WINDOW						= 0x1035;
-
-const uint32 M_STATE_CHANGE							= 0x1036;
-const uint32 M_SERVER_STARTUP						= 0x1037;
-const uint32 M_SERVER_CONNECTED						= 0x1038;
-const uint32 M_RESIZE_VIEW                          = 0x1039;
-
-const uint32 M_SEND_TO_AGENT                        = 0x2000;
-
-const uint32 M_PREVIOUS_CLIENT						= 0x1300;
-const uint32 M_NEXT_CLIENT							= 0x1301;
-const uint32 M_PREVIOUS_INPUT						= 0x1302;
-const uint32 M_NEXT_INPUT							= 0x1303;
-const uint32 M_SUBMIT								= 0x1304;
-const uint32 M_DISPLAY								= 0x1305;
-const uint32 M_SUBMIT_INPUT							= 0x1306;
-const uint32 M_CHANNEL_MSG							= 0x1307;
-const uint32 M_CHANGE_NICK							= 0x1308;
-const uint32 M_CHANNEL_MODES						= 0x1309;
-const uint32 M_LAG_CHANGED							= 0x1310;
-const uint32 M_CLIENT_QUIT							= 0x1311;
-
-const uint32 M_SERVER_SEND							= 0x1701;
-const uint32 M_SERVER_SHUTDOWN						= 0x1702;
-const uint32 M_CLIENT_SHUTDOWN						= 0x1703;
-const uint32 M_IGNORED_PRIVMSG						= 0x1704;
-const uint32 M_OPEN_MSGAGENT   						= 0x1705;
-const uint32 M_SLASH_RECONNECT						= 0x1708;
-const uint32 M_REJOIN                               = 0x1709;
-
-const uint32 M_USER_QUIT							= 0x1600;
-const uint32 M_USER_ADD								= 0x1601;
-const uint32 M_CHANNEL_NAMES						= 0x1602;
-const uint32 M_CHANNEL_TOPIC						= 0x1603;
-const uint32 M_CHANNEL_MODE							= 0x1604;
-const uint32 M_INPUT_FOCUS                          = 0x1605;
-const uint32 M_CHANNEL_GOT_KICKED					= 0x1606;
-const uint32 M_LOOKUP_WEBSTER                       = 0x1607;
-const uint32 M_LOOKUP_GOOGLE                        = 0x1608;
-
-const uint32 M_DCC_COMPLETE                         = 0x1800;
-const uint32 M_DCC_FILE_WIN_DONE                    = 0x1801;
-const uint32 M_DCC_FILE_WIN                         = 0x1802;
-const uint32 M_ADD_RESUME_DATA                      = 0x1803;
-const uint32 M_DCC_MESSENGER                        = 0x1804;
-const uint32 M_DCC_ACCEPT                           = 0x1805;
-const uint32 M_CHOSE_FILE                           = 0x1806;
-
-// Theme constants
-
-const uint32 M_THEME_FOREGROUND_CHANGE              = 0x1900;
-const uint32 M_THEME_BACKGROUND_CHANGE              = 0x1901;
-const uint32 M_THEME_FONT_CHANGE                    = 0x1902;
 
 // Sound event identifiers
 enum SoundEvent

@@ -74,16 +74,16 @@ ListAgent::ListAgent (
 {
   frame = Bounds();
   
-  listMenu = new BMenu ("Channels");
+  listMenu = new BMenu (S_LIST_MENU);
 
   listMenu->AddItem (mFind = new BMenuItem (
-    "Find" B_UTF8_ELLIPSIS, 
+    S_LIST_MENU_FIND B_UTF8_ELLIPSIS, 
     new BMessage (M_LIST_FIND)));
   listMenu->AddItem (mFindAgain = new BMenuItem (
-    "Find Next", 
+    S_LIST_MENU_FINDNEXT, 
     new BMessage (M_LIST_FAGAIN)));
   listMenu->AddItem (mFilter = new BMenuItem (
-    "Filter" B_UTF8_ELLIPSIS,
+    S_LIST_MENU_FILTER B_UTF8_ELLIPSIS,
     new BMessage (M_LIST_FILTER)));
   
   mFind->SetEnabled (false);
@@ -112,18 +112,17 @@ ListAgent::ListAgent (
   bgView->AddChild (listView);
   listView->MakeFocus (true);
   listView->SetTarget(this);
-  channelColumn = new BStringColumn ("Channel", be_plain_font->StringWidth ("Channel") * 2,
+  channelColumn = new BStringColumn (S_LIST_COLUMN_CHAN, be_plain_font->StringWidth (S_LIST_COLUMN_CHAN) * 2,
     0, frame.Width(), 0);
   listView->AddColumn (channelColumn, 0);
-  usersColumn = new BIntegerColumn ("Users", be_plain_font->StringWidth ("Users") * 2, 0, frame.Width(), B_ALIGN_CENTER);
+  usersColumn = new BIntegerColumn (S_LIST_COLUMN_USER, be_plain_font->StringWidth (S_LIST_COLUMN_USER) * 2, 0, frame.Width(), B_ALIGN_CENTER);
   listView->AddColumn (usersColumn, 1);
-  topicColumn = new BStringColumn ("Topic", frame.Width() / 2,
+  topicColumn = new BStringColumn (S_LIST_COLUMN_TOPIC, frame.Width() / 2,
     0, frame.Width(), 0);
   listView->AddColumn (topicColumn, 2);
   listView->SetSelectionMode (B_SINGLE_SELECTION_LIST);
   listView->SetSortingEnabled (true);
   listView->SetSortColumn (channelColumn, true, true);
-//  listView->SetColumnFlags (B_ALLOW_COLUMN_RESIZE);
   activeTheme->ReadLock();
   listView->SetColor (B_COLOR_BACKGROUND, activeTheme->ForegroundAt (C_BACKGROUND));
   listView->SetColor (B_COLOR_TEXT, activeTheme->ForegroundAt (C_TEXT));
@@ -235,9 +234,9 @@ ListAgent::MessageReceived (BMessage *msg)
       
     case M_STATUS_ADDITEMS:
       {
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem ("Count: ", ""), true);
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem ("Status: ", ""), true);
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem ("Filter: ", "", STATUS_ALIGN_LEFT), true);
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTCOUNT, ""), true);
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTSTAT, ""), true);
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTFILTER, "", STATUS_ALIGN_LEFT), true);
         vision_app->pClientWin()->pStatusView()->SetItemValue (0, "0", false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (2, filter.String(), true);
@@ -265,7 +264,7 @@ ListAgent::MessageReceived (BMessage *msg)
       {
         BMessage msg (M_LIST_UPDATE);
         listUpdateTrigger = new BMessageRunner (BMessenger(this), &msg, 3000000); 
-        statusStr = "Loading";
+        statusStr = S_LIST_STATUS_LOADING;
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
       }
@@ -278,7 +277,7 @@ ListAgent::MessageReceived (BMessage *msg)
           delete listUpdateTrigger;
           listUpdateTrigger = 0;
         }
-        statusStr = "Done";
+        statusStr = S_LIST_STATUS_DONE;
         
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
@@ -453,8 +452,8 @@ ListAgent::MessageReceived (BMessage *msg)
 			{
 				PromptWindow *prompt (new PromptWindow (
 					BPoint ((Window()->Frame().right / 2) - 100, (Window()->Frame().bottom/2) - 50),
-					"    Find:",
-					"Find",
+					S_LIST_PROMPT_LABEL,
+					S_LIST_PROMPT_TITLE,
 					find.String(),
 					this,
 					new BMessage (M_LIST_FIND),

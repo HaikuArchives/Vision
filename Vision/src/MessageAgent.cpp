@@ -153,7 +153,7 @@ MessageAgent::DCCServerSetup(void)
   if (mySocket < 0)
   {
     LockLooper();
-    Display ("Error creating socket.\n");
+    Display (S_DCC_SOCKET_ERROR);
     UnlockLooper();
     return;
   }
@@ -171,7 +171,7 @@ MessageAgent::DCCServerSetup(void)
     if (bind (mySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
     {
       LockLooper();
-      Display ("Error binding socket.\n");
+      Display (S_DCC_BIND_ERROR);
       UnlockLooper();
       return;
     }
@@ -195,8 +195,8 @@ MessageAgent::DCCServerSetup(void)
   struct in_addr addr;
 		
   addr.s_addr = inet_addr (address.String());
-  dataBuffer << "Accepting connection on address "
-    << address.String() << ", port " << myPort << "\n";
+  dataBuffer << S_DCC_CHAT_LISTEN 
+    << address.String() << S_DCC_CHAT_PORT << myPort << "\n";
   LockLooper();
   Display (dataBuffer.String());
   UnlockLooper();
@@ -231,7 +231,7 @@ MessageAgent::DCCIn (void *arg)
   
   BMessage msg (M_DISPLAY);
 
-  ClientAgent::PackDisplay (&msg, "Connected!\n");
+  ClientAgent::PackDisplay (&msg, S_DCC_CHAT_CONNECTED);
   mMsgr.SendMessage (&msg);
 
   char tempBuffer[2];
@@ -260,7 +260,7 @@ MessageAgent::DCCIn (void *arg)
         BMessage termMsg (M_DISPLAY);
         
         agent->dConnected = false;
-        ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n");
+        ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
         mMsgr.SendMessage (&termMsg);
         goto outta_there; // I hate goto, but this is a good use.
       }
@@ -281,7 +281,7 @@ MessageAgent::DCCIn (void *arg)
       BMessage termMsg (M_DISPLAY);
 
       agent->dConnected = false;
-      ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n");
+      ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
       mMsgr.SendMessage (&termMsg);
 #ifdef NETSERVER_BUILD
       myLocker->Unlock();
@@ -336,7 +336,7 @@ MessageAgent::DCCOut (void *arg)
   {
     BMessage msg (M_DISPLAY);
 
-    ClientAgent::PackDisplay (&msg, "Error opening socket.\n");
+    ClientAgent::PackDisplay (&msg, S_DCC_SOCKET_ERROR);
     mMsgr.SendMessage (&msg);
     return false;
   }
@@ -355,9 +355,9 @@ MessageAgent::DCCOut (void *arg)
 
     addr.s_addr = ntohl (realIP);
 
-    buffer << "Trying to connect to address "
+    buffer << S_DCC_CHAT_TRY
       << inet_ntoa (addr)
-      << " port " << agent->dPort << "\n";
+      << S_DCC_CHAT_PORT << agent->dPort << "\n";
     
     ClientAgent::PackDisplay (&msg, buffer.String());
     mMsgr.SendMessage (&msg);
@@ -368,7 +368,7 @@ MessageAgent::DCCOut (void *arg)
   {
     BMessage msg (M_DISPLAY);
 
-    ClientAgent::PackDisplay (&msg, "Error connecting socket.\n");
+    ClientAgent::PackDisplay (&msg, S_DCC_CONN_ERROR);
     mMsgr.SendMessage (&msg);
 #ifdef BONE_BUILD
     close (agent->mySocket);
@@ -381,7 +381,7 @@ MessageAgent::DCCOut (void *arg)
   agent->dConnected = true;
 
   BMessage msg (M_DISPLAY);
-  ClientAgent::PackDisplay (&msg, "Connected!\n");
+  ClientAgent::PackDisplay (&msg, S_DCC_CHAT_CONNECTED);
   mMsgr.SendMessage (&msg);
 
   char tempBuffer[2];
@@ -409,7 +409,7 @@ MessageAgent::DCCOut (void *arg)
       {
         BMessage termMsg (M_DISPLAY);
         agent->dConnected = false;
-        ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n");
+        ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
         mMsgr.SendMessage (&termMsg);
         goto outta_loop; // I hate goto, but this is a good use.
       }
@@ -429,7 +429,7 @@ MessageAgent::DCCOut (void *arg)
       BMessage termMsg (M_DISPLAY);
 
       agent->dConnected = false;
-      ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n");
+      ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
       mMsgr.SendMessage (&termMsg);
       goto outta_loop; // I hate goto, but this is a good use.
     }
@@ -610,7 +610,7 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
     if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
     {
       dConnected = false;
-      Display ("DCC chat terminated.\n");
+      Display (S_DCC_CHAT_TERM);
 #ifdef NETSERVER_BUILD
       locker->Unlock();
 #endif
@@ -619,7 +619,7 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
 #ifdef NETSERVER_BUILD
     locker->Unlock();
 #endif
-    outTemp.RemoveLast("\n");
+    outTemp.RemoveLast ("\n");
     ChannelMessage (outTemp.String(), nick);
   }
   
@@ -648,7 +648,7 @@ MessageAgent::Parser (const char *buffer)
     if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
     {
       dConnected = false;
-      Display ("DCC chat terminated.\n");
+      Display (S_DCC_CHAT_TERM);
 #ifdef NETSERVER_BUILD
       locker->Unlock();
 #endif

@@ -25,7 +25,6 @@
 
 #include <View.h>
 
-const uint32 M_COMMAND_MODIFIED = 'cocm';
 #define MAX_COMMANDS                                     7
 
 class VTextControl;

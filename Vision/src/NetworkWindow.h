@@ -24,8 +24,6 @@
 
 #include <Window.h>
 
-const uint32 M_SERVER_DATA_CHANGED = 'nsdc';
-
 class BView;
 class NetPrefsServerView;
 class BHandler;

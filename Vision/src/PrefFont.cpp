@@ -34,10 +34,6 @@
 #include "NumericFilter.h"
 #include <TextControl.h>
 
-const uint32 M_FONT_ELEMENT_CHANGE = 'mfec';
-const uint32 M_FONT_CHANGE = 'mffc';
-const uint32 M_FONT_SIZE_CHANGE = 'mfsc';
-
 struct FontStat
 {
   font_family				family;

@@ -263,7 +263,7 @@ ClientWindow::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     
-    case M_UPDATE_STATUS:
+    case M_CW_UPDATE_STATUS:
       {
          WindowListItem *item (NULL),
                          *superItem (NULL);
@@ -272,7 +272,7 @@ ClientWindow::MessageReceived (BMessage *msg)
          if ((msg->FindPointer ("item", reinterpret_cast<void **>(&item)) != B_OK)
          || (msg->FindInt32 ("status", ((int32 *)&newstatus)) != B_OK))
          {
-           printf (":ERROR: no valid pointer and int found in M_UPDATE_STATUS, bailing...\n");
+           printf (":ERROR: no valid pointer and int found in M_CW_UPDATE_STATUS, bailing...\n");
            return;
          }
          
@@ -527,42 +527,42 @@ ClientWindow::Init (void)
   BMenuItem *item;
   BMenu *menu;
   // Server menu
-  mServer = new BMenu ("Server");
-  mServer->AddItem (menu = new NetworkMenu ("Connect to" B_UTF8_ELLIPSIS, M_CONNECT_NETWORK, BMessenger (vision_app)));
+  mServer = new BMenu (S_CW_SERVER_MENU);
+  mServer->AddItem (menu = new NetworkMenu (S_CW_SERVER_CONNECT B_UTF8_ELLIPSIS, M_CONNECT_NETWORK, BMessenger (vision_app)));
   
-  mServer->AddItem (item = new BMenuItem ("Setup" B_UTF8_ELLIPSIS,
+  mServer->AddItem (item = new BMenuItem (S_CW_SERVER_SETUP B_UTF8_ELLIPSIS,
                     new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
   menubar->AddItem (mServer);
   
   
   // Edit menu
-  mEdit = new BMenu ("Edit");
+  mEdit = new BMenu (S_CW_EDIT_MENU);
   menubar->AddItem (mEdit);
   
   // Tools menu
-  mTools = new BMenu ("Tools");
+  mTools = new BMenu (S_CW_TOOLS_MENU);
 
-  mTools->AddItem (item = new BMenuItem ("Channel List" B_UTF8_ELLIPSIS,
+  mTools->AddItem (item = new BMenuItem (S_CW_TOOLS_CHANLIST,
                     new BMessage (M_LIST_COMMAND), 'L'));
   
-  mTools->AddItem (item = new BMenuItem ("Ignore List" B_UTF8_ELLIPSIS,
+  mTools->AddItem (item = new BMenuItem (S_CW_TOOLS_IGNORELIST B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), 'I'));
   item->SetTarget (vision_app);
-  mTools->AddItem (item = new BMenuItem ("Notify List" B_UTF8_ELLIPSIS,
+  mTools->AddItem (item = new BMenuItem (S_CW_TOOLS_NOTIFYLIST B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), 'N'));
   item->SetTarget (vision_app);
   
-  mTools->AddItem (item = new BMenuItem ("New Terminal", new BMessage (M_OPEN_TERM),
+  mTools->AddItem (item = new BMenuItem (S_CW_TOOLS_TERMINAL, new BMessage (M_OPEN_TERM),
                     'T', B_OPTION_KEY));
 
 
   menubar->AddItem (mTools);
   
   // Window menu
-  mWindow = new BMenu ("Window");
+  mWindow = new BMenu (S_CW_WINDOW_MENU);
   
-  mWindow->AddItem (item = new BMenuItem ("Part Agent", new BMessage (M_CW_ALTP), 'P'));
+  mWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_PART, new BMessage (M_CW_ALTP), 'P'));
   
   item->SetTarget (this);
   menubar->AddItem (mWindow);  

@@ -34,12 +34,6 @@
 
 #include <ctype.h>
 #include <stdlib.h>
-
-const uint32 M_BLOCK_SIZE_CHANGED   = 'mdsc';
-const uint32 M_DEFAULT_PATH_CHANGED = 'mdpc';
-const uint32 M_AUTO_ACCEPT_CHANGED  = 'mdac';
-const uint32 M_DCC_MIN_PORT_CHANGED = 'mdmp';
-const uint32 M_DCC_MAX_PORT_CHANGED = 'mdmc';
  
 DCCPrefsView::DCCPrefsView (BRect frame)
   : BView (frame, "DCC prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)

@@ -24,8 +24,6 @@
 
 #include <View.h>
 
-const uint32 M_APPWINDOWPREFS_SETTING_CHANGED = 'awsc';
-
 class BCheckBox;
 
 class AppWindowPrefsView : public BView

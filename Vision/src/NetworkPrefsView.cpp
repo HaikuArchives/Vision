@@ -44,22 +44,6 @@
 #include "SpeedButton.h"
 #include "Vision.h"
 
-const uint32 M_NETWORK_DEFAULTS = 'mnnd';
-const uint32 M_CHOOSE_NETWORK = 'mncn';
-const uint32 M_ADD_NEW_NETWORK = 'mnan';
-const uint32 M_DUPE_CURRENT_NETWORK = 'mndc';
-const uint32 M_REMOVE_CURRENT_NETWORK = 'mnrc';
-const uint32 M_SERVER_DIALOG = 'mnsd';
-const uint32 M_EXEC_COMMAND_DIALOG = 'mned';
-const uint32 M_CONNECT_ON_STARTUP = 'mncs';
-const uint32 M_REMOVE_NICK = 'mnrn';
-const uint32 M_ADD_NICK = 'mnai';
-const uint32 M_NICK_ADDED = 'mnna';
-const uint32 M_NICK_UP = 'mnup';
-const uint32 M_NICK_DOWN = 'mndn';
-const uint32 M_NICK_SELECTED = 'mnns';
-const uint32 M_USE_NICK_DEFAULTS = 'mnun';
-
 NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	:	BView (
 			bounds,

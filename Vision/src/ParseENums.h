@@ -240,12 +240,4 @@ const int RPL_DCCALLOWLIST            = 618;
 const int RPL_DCCALLOWEND             = 619;
 const int RPL_DCCALLOW                = 620;
 
-
-
-/// IRCDS
-/// an effort to properly support conflicting numeric meanings
-
-/// (moved to ClientAgent.h)
-
-
 #endif

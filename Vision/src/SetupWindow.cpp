@@ -36,8 +36,6 @@
 
 #include <stdio.h>
 
-const uint32 M_CHOOSE_NETWORK = 'swcn';
-
 SetupWindow::SetupWindow (void)
   : BWindow (
       BRect (188.0, 88.0, 535.0, 290.0),
@@ -107,7 +105,7 @@ SetupWindow::QuitRequested (void)
 void
 SetupWindow::BuildNetworkMenu (void)
 {
-  BMenu *netMenu (new NetworkMenu ("Choose Network", M_CHOOSE_NETWORK, BMessenger(this)));
+  BMenu *netMenu (new NetworkMenu ("Choose Network", M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
   netMenu->SetLabelFromMarked (true);
   netList = new BMenuField (BRect (0,0,0,0), "Network List", "Network: ", netMenu);
   netList->ResizeToPreferred();
@@ -121,7 +119,7 @@ SetupWindow::MessageReceived (BMessage *msg)
 {
   switch(msg->what)
   {
-    case M_CHOOSE_NETWORK:
+    case M_SETUP_CHOOSE_NETWORK:
       {
         BMenuItem *item (NULL);
         msg->FindPointer ("source", reinterpret_cast<void **>(&item));

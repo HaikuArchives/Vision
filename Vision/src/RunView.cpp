@@ -27,7 +27,6 @@
 #define MARGIN_WIDTH			10.0
 #define MARGIN_INDENT			10.0
 
-#define M_OFFVIEW_SELECTION		'mros'
 #define OFFVIEW_TIMER					(10000LL)
 #define ABS(x)							(x * ((x<0) ? -1 : 1))
 #define SOFTBREAK_STEP			5
@@ -295,7 +294,8 @@ void
 RunView::Draw (BRect frame)
 {
 	Window()->DisableUpdates();
-	//BStopWatch watch ("draw");
+	Window()->BeginViewTransaction();
+
 	rgb_color low_color, hi_color, view_color, sel_color, sel_text;
 	float height (frame.bottom);
 	BRect bounds (Bounds());
@@ -548,6 +548,7 @@ RunView::Draw (BRect frame)
 	}
 
 	theme->ReadUnlock();
+	Window()->EndViewTransaction();
 	Window()->EnableUpdates();
 	ConstrainClippingRegion (NULL);
 }

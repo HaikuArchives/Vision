@@ -105,7 +105,7 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   headerFrame.top = 1;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
-  aHeader = new AgentDockHeader (headerFrame, "Window List", B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+  aHeader = new AgentDockHeader (headerFrame, S_CWD_WINLIST_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
   AddChild (aHeader);
    
   frame.top = frame.top + headerFrame.Height() + 4;  // make room for header
@@ -165,7 +165,7 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   headerFrame.top = 0;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
-  aHeader = new AgentDockHeader (headerFrame, "Notify List", B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+  aHeader = new AgentDockHeader (headerFrame, S_CWD_NOTIFY_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
   AddChild (aHeader);
 }
 
