@@ -1221,11 +1221,16 @@ ClientAgent::ExecPipe (void *arg)
   FILE *fp = popen (exec->String(), "r");
 
   char read[768]; // should be long enough for any line...
-
-  while (fgets(read, 768, fp))
+  
+  // read one less just in case we need to offset by a char (prepended '/')
+  while (fgets(read, 767, fp))
   {
     read[strlen(read)-1] = '\0'; // strip termination
-
+    if (read[0] == '/')
+    {
+      memmove(read + 1, read, strlen(read));
+      read[0] = ' ';      
+    }
     // ship off to agent
     agent->LockLooper();
     agent->Submit (read);
