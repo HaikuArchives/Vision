@@ -123,7 +123,7 @@ ListAgent::ListAgent (
   listView->SetSelectionMode (B_SINGLE_SELECTION_LIST);
   listView->SetSortingEnabled (true);
   listView->SetSortColumn (channelColumn, true, true);
-//  listView->SetColumnFlags (B_ALLOW_COLUMN_RESIZE | B_ALLOW_COLUMN_MOVE);
+  listView->SetColumnFlags (B_ALLOW_COLUMN_RESIZE);
   activeTheme->ReadLock();
   listView->SetColor (B_COLOR_BACKGROUND, activeTheme->ForegroundAt (C_BACKGROUND));
   listView->SetColor (B_COLOR_TEXT, activeTheme->ForegroundAt (C_TEXT));
