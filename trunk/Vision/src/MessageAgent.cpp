@@ -144,15 +144,12 @@ MessageAgent::MessageReceived (BMessage *msg)
 
         if (dChat)
           id.Append(" [DCC]");
-				
-        ClientAgent::MessageReceived (msg);
       }
-      else if (myNick.ICompare (oldNick) == 0)
-      {
-        if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
-        ClientAgent::MessageReceived (msg);
-      }
+      
+      else if (myNick.ICompare (oldNick) == 0 && !IsHidden())
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
+      
+      ClientAgent::MessageReceived (msg);
 
       break;
     }

@@ -239,13 +239,7 @@ AboutWindow::AboutWindow (void)
 
 AboutWindow::~AboutWindow (void)
 {
-  background->RemoveSelf();
-  delete graphic;
-  graphic = NULL;
-  delete credits;
-  credits = NULL;
-  delete background;
-  background = NULL;
+  //
 }
 
 
