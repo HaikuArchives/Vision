@@ -1,6 +1,15 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0418]
+ 2001-04-18
+   * Establish() always thought your IP was private, no matter what it actually
+     was.
+   * Fixed a big (non crashing) bug in IRCView. Elements weren't getting
+     deleted properly from the scrollback buffer. This broke URLs if you were
+     in a channel for a very long time.
+
+
 [0.2.0417]
  2001-04-17
    * Code audit time!

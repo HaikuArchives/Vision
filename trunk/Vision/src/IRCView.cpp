@@ -233,7 +233,7 @@ IRCView::MouseDown (BPoint myPoint)
   {
     BTextView::MouseDown (myPoint);   
     if (selstart == selfinish) 
-    { 
+    {
       list<URL> &urls (settings->urls); 
       list<URL>::const_iterator it; 
       int32 offset (OffsetAt (myPoint));
@@ -378,7 +378,9 @@ IRCView::DisplayChunk (
 
      list<URL>::iterator it; 
      for (it = urls.begin(); it != urls.end(); ++it) 
-       it->offset -= bytes; 
+       it->offset -= bytes;
+
+     Delete (0, bytes);
                
    } 
 
