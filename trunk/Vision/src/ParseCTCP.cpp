@@ -323,7 +323,7 @@ ServerAgent::ParseCTCPResponse (BString theNick, BString theMsg)
 		theResponse.Remove(0, 1);
 	int32 theChars = theResponse.Length();
 	if(theResponse[theChars - 1] == '\1')
-		theResponse.Truncate (theChars - 1, false);
+		theResponse.Truncate (theChars - 1);
 
 	BString firstWord = GetWord (theResponse.String(), 1).ToUpper();
 	BString tempString;

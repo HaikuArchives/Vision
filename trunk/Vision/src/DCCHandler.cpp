@@ -25,6 +25,8 @@
 
 #include <AppFileInfo.h>
 #include <Alert.h>
+#include <Button.h>
+#include <Directory.h>
 #include <FilePanel.h>
 #include <Invoker.h>
 #include <Path.h>
@@ -86,80 +88,6 @@ ServerAgent::DCCGetDialog (
 	msg.AddString ("vision:ip", ip.String());
 	msg.AddString ("vision:port", port.String());
 
-
-	bool handled (false);
-
-// ignore this part until some minor details with DCC Prefs are worked out
-
-    
-    if (vision_app->GetBool ("dccAutoAccept"))
-    {
-      const char *directory = vision_app->GetString ("dccDefPath");
-      entry_ref ref;
-      BEntry entry;
-
-		create_directory (directory, 0777);
-		if (entry.SetTo (directory) == B_NO_ERROR && entry.GetRef (&ref) == B_NO_ERROR)
-		{
-			BDirectory dir (&ref);
-			BEntry file_entry; 
-			struct stat s;
-
-			if (file_entry.SetTo (&dir, file.String()) == B_NO_ERROR
-			&&  file_entry.GetStat (&s)       == B_NO_ERROR
-			&&  S_ISREG (s.st_mode))
-			{
-				BString buffer;
-				BAlert *alert;
-				int32 which;
-
-				buffer << "The file \""
-					<< file
-					<< "\" already exists in the specified folder.  "
-						"Do you want to continue the transfer?";
-
-				alert = new BAlert (
-					"DCC Request",
-					buffer.String(),
-					"Refuse",
-					"Get",
-					"Resume",
-					B_WIDTH_AS_USUAL,
-					B_OFFSET_SPACING,
-					B_WARNING_ALERT);
-
-				which = alert->Go();
-
-				if (which == 0)
-				{
-					return;
-				}
-
-				if (which == 2)
-				{
-					BFile file (&file_entry, B_READ_ONLY);
-					off_t position;
-					BPath path;
-
-					file.GetSize (&position);
-					file_entry.GetPath (&path);
-					msg.AddString ("path", path.Path());
-					msg.AddInt64 ("pos", position);
-
-					AddResumeData (&msg);
-					return;
-				}
-			}
-
-			msg.AddRef ("directory", &ref);
-			msg.AddString ("name", file);
-			sMsgr.SendMessage (&msg);
-			handled = true;
-		}
-	}
-
-    if (!handled)
-    {
       BFilePanel *panel;
 	  BString text;
 
@@ -186,10 +114,19 @@ ServerAgent::DCCGetDialog (
         panel->Window()->SetTitle (text.String());
         panel->Window()->SetFlags (panel->Window()->Flags() | B_AVOID_FOCUS);
         panel->Window()->AddFilter (new DCCFileFilter (panel, msg));
-        panel->Window()->Unlock();
+        if (vision_app->GetBool ("dccAutoAccept"))
+        {
+          BDirectory path (vision_app->GetString ("dccDefPath"));
+          if (path.InitCheck() == B_OK)
+            panel->SetPanelDirectory(&path);
+          BButton *button (dynamic_cast<BButton *>(panel->Window()->FindView ("default button")));
+          if (button)
+            button->Invoke();
+        }
+  	    panel->Window()->Unlock();
+        if (!vision_app->GetBool ("dccAutoAccept"))
+          panel->Show();
       }
-      panel->Show();
-    }
 }
 
 DCCFileFilter::DCCFileFilter (BFilePanel *p, const BMessage &msg)
@@ -266,7 +203,7 @@ DCCFileFilter::HandleButton (BMessage *)
 				"DCC Request",
 				buffer.String(),
 				"Cancel",
-				"Get",
+				"Replace",
 				"Resume",
 				B_WIDTH_AS_USUAL,
 				B_OFFSET_SPACING,
