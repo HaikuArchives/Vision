@@ -117,7 +117,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.top += stripColors->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "Newbie Spam Mode");
   spamMode = new BCheckBox (checkboxRect, "newbiespammode",
-    "Use paste flood protection",
+    "Warn when multiline pasting",
     new BMessage (msg));
   spamMode->SetValue ((vision_app->GetBool ("Newbie Spam Mode")) ? B_CONTROL_ON : B_CONTROL_OFF);
   spamMode->MoveBy(be_plain_font->StringWidth("S"), 0);
