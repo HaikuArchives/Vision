@@ -53,6 +53,8 @@ class VisionApp : public BApplication
     virtual void            ReadyToRun (void);
 
     BString                 VisionVersion (void);
+    
+    void                    LoadDefaults (int32);
 
     void                    ClientFontFamilyAndStyle (int32, const char *,
                               const char *);
@@ -60,6 +62,10 @@ class VisionApp : public BApplication
     const BFont             *GetClientFont (int32) const;
     
     status_t                SetRect (const char *, BRect);
+    
+    BString                 GetString (const char *) const;
+    status_t                SetString (const char *, BString); 
+    status_t                SetString (const char *, const char *); 
     
     rgb_color               GetColor (int32) const;
     void                    SetColor (int32, const rgb_color);
@@ -103,5 +109,9 @@ class VisionApp : public BApplication
 
 const uint32 M_SETUP_CLOSE           = 'vasc';
 const uint32 M_SETUP_SHOW            = 'vass';
+
+const int SET_SERVER    = 1;
+const int SET_GENERAL   = 2;
+const int SET_WINDOW    = 3;
 
 #endif
