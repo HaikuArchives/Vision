@@ -508,6 +508,7 @@ ServerAgent::Establish (void *arg)
 		}
 		
         // tell the user all about it
+        sMsgrE->SendMessage (M_NOT_CONNECTING);
         sMsgrE->SendMessage (M_SERVER_DISCONNECT);
         break;
       }

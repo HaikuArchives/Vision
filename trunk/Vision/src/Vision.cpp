@@ -1220,7 +1220,7 @@ VisionApp::Identity (void *)
     struct linger lng = { 0, 0 }; 
     setsockopt (identSock, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
 #endif
-    listen (identSock, 2048);
+    listen (identSock, 5);
 
     while (!vision_app->ShuttingDown) 
     {
