@@ -491,6 +491,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_WHOISSERVICESADMIN:  // 309
     case RPL_WHOISHELPOP:         // 310
     case RPL_WHOISOPERATOR:       // 313
+    case RPL_WHOISREGNICK:        // 320
     case RPL_WHOISACTUALLY:       // 338
     case RPL_WHOISMASK:           // 550
     case RPL_WHOISUSERMODESALT:   // 614
