@@ -38,6 +38,7 @@ class SetupWindow;
 class PrefsWindow;
 class ClientWindow;
 class NetworkWindow;
+class DCCFileWindow;
 class SettingsFile;
 class BLocker;
 class BNetEndpoint;
@@ -136,6 +137,7 @@ class VisionApp : public BApplication
     ClientWindow            *clientWin;
     PrefsWindow             *prefsWin;
     NetworkWindow           *netWin;
+    DCCFileWindow           *dccFileWin;
     
     SettingsFile			*visionSettings;
     
@@ -148,7 +150,8 @@ class VisionApp : public BApplication
 	thread_id               identThread;
 	int32                   identSocket;
 	Theme                   *activeTheme;
-	sem_id                  shutdownSem;
+	sem_id                  shutdownSem,
+	                        dcc_sid;
 };
 
 const uint32 M_SETUP_CLOSE           = 'vasc';

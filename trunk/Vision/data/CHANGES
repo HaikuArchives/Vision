@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.7-exp-1126]
+         * prototype DCC transfer support (*NOT DONE* -- USE AT OWN RISK, code is currently
+           known to have several different crash problems)
+
 [0.6.5-1125]
          * really fixed nick = network bug
          * crash fix in network prefs view if PNG translator is missing or corrupt
