@@ -425,22 +425,6 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
   
-  #if 0
-  if (firstWord == "/EXEC" || firstWord == "/RUN")
-  {
-    {
-      BString theCmd (RestOfString (data, 2));
-
-      if (theCmd != "-9z99")
-        system (theCmd.String());
-      else
-        Display ("[x] /exec: Error: Invalid parameters\n", &errorColor);
-    }
-    return true;
-  }
-  #endif 
-
-
   if (firstWord == "/PEXEC" || firstWord == "/RRUN") // piped exec
   {
     {

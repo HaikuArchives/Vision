@@ -8,8 +8,7 @@ http://vision.sourceforge.net
      in ClientWindow for Alt/Shift+Alt shortcuts (cuts down on BMessage
      allocation). Decreased resource usage!
    * Opt+Cmd+T opens a Terminal session
-   * /exec executes something without piping its output
-
+   
 [0.2.0506]
  2001-05-06
    * Revised WindowList notification colors:
