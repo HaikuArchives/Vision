@@ -21,6 +21,7 @@
  *                 Todd Lair
  *                 Andrew Bazan
  *                 Jamie Wilkinson
+ *                 Bjorn Oksholen
  */
  
 #include <Menu.h>
@@ -911,6 +912,25 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       Display (tempString.String(), 0);
       return true;    
     }
+
+    // Added support for Ultimate dependent numerics
+    // Added by Bjorn Oksholen
+    case ULTIMATE_USERMODES:  // 615
+    case ULTIMATE_REALHOSTNAME:  // 616
+    case ULTIMATE_REGISTEREDBOT:  // 617
+    {
+      BString theNick (GetWord (data, 4)),
+              theMessage (RestOfString (data, 5)),
+              tempString ("[x] ");
+      theMessage.RemoveFirst (":");
+      tempString << theMessage << "\n";
+
+      BMessage msg (M_DISPLAY);
+      PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+      PostActive (&msg);
+      return true;    
+    }
+
     
   }
 
