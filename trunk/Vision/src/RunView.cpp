@@ -584,27 +584,36 @@ RunView::BuildPopUp (void)
     GetSelectionText(querystring);
   }
 
-  fMyPopUp = new BPopUpMenu ("IRCView ConfText Menu", false, false);
+  fMyPopUp = new BPopUpMenu ("IRCView Context Menu", false, false);
 
   BMenuItem *item;
+  if (enablelookup)
+  {
+    BMessage *lookup;
+    lookup = new BMessage (M_LOOKUP_WEBSTER);
+    lookup->AddString ("string", querystring);
+    item = new BMenuItem("Lookup (Dictionary)", lookup);
+    item->SetEnabled (enablelookup);
+    item->SetTarget (Parent());
+    fMyPopUp->AddItem (item);
 
-  BMessage *lookup;
-  lookup = new BMessage (M_LOOKUP_WEBSTER);
-  lookup->AddString ("string", querystring);
-  item = new BMenuItem("Lookup (Dictionary)", lookup);
-  item->SetEnabled (enablelookup);
-  item->SetTarget (Parent());
-  fMyPopUp->AddItem (item);
+    lookup = new BMessage (M_LOOKUP_GOOGLE);
+    lookup->AddString ("string", querystring);
+    item = new BMenuItem("Lookup (Google)", lookup);
+    item->SetEnabled (enablelookup);
+    item->SetTarget (Parent());
+    fMyPopUp->AddItem (item);
+  
+    lookup = new BMessage (M_LOOKUP_ACRONYM);
+    lookup->AddString ("string", querystring);
+    item = new BMenuItem("Lookup (Acronym Finder)", lookup);
+    item->SetEnabled (enablelookup);
+    item->SetTarget (Parent());
+    fMyPopUp->AddItem (item);
 
-  lookup = new BMessage (M_LOOKUP_GOOGLE);
-  lookup->AddString ("string", querystring);
-  item = new BMenuItem("Lookup (Google)", lookup);
-  item->SetEnabled (enablelookup);
-  item->SetTarget (Parent());
-  fMyPopUp->AddItem (item);
-
-  fMyPopUp->AddSeparatorItem();
-
+    fMyPopUp->AddSeparatorItem();
+  }
+  
   item = new BMenuItem("Copy", new BMessage (B_COPY), 'C');
   item->SetEnabled (enablecopy);
   item->SetTarget (this);

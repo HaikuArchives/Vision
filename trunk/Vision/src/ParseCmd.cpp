@@ -198,6 +198,19 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
   
+  if (firstWord == "/ACRONYM" || firstWord == "/ACRO")
+  {
+    BString buffer (RestOfString (data, 2));
+    if (buffer != "-9z99")
+    {
+      BMessage lookup (M_LOOKUP_ACRONYM);
+      lookup.AddString ("string", buffer);
+      fMsgr.SendMessage (&lookup);
+    }
+    else
+      vision_app->LoadURL ("http://www.acronymfinder.com");
+    return true;
+  }
 
   if (firstWord == "/CTCP")
   {

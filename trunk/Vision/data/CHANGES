@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8-exp-0202]
+[0.8-exp-0204]
          * cleaned up message constants
          * fixed crash bug in mirc color parser
          * fixed bug in control code stripper where too many digits would get removed
@@ -19,6 +19,7 @@ http://vision.sourceforge.net
          * style cleanups
          * fixed major bug in data send calls
          * fixed small bug in nick notification code
+         * added /acro and /acronym + popup item in textview for doing acronym lookups
 
 [0.7.8-0113]
          * fixed crash bug in ParseEvents
