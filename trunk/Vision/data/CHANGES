@@ -3,6 +3,8 @@ http://vision.sourceforge.net
 
 [0.1.0325]
  2001-03-25
+   * Now intelligently selects the previously active agent when closing the
+     active agent
    * Fixed a crash on quit that resulted from adding the Alt+Arrow shortcuts
      (JBQ saves the day again)
    * Alt+/ works, brings you to the ServerAgent "parent" for the active Agent
