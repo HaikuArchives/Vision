@@ -129,8 +129,7 @@ ClientAgent::ParseCmd (const char *data)
 
 	if (firstWord == "/ABOUT")
 	{
-		be_app_messenger.SendMessage (B_ABOUT_REQUESTED);
-		
+		vision_app->PostMessage (B_ABOUT_REQUESTED);		
 		return true;
 	}
 	
@@ -243,9 +242,14 @@ ClientAgent::ParseCmd (const char *data)
 	if (firstWord == "/GOOGLE")
 	{
 		BString buffer (RestOfString (data, 2));
-		BMessage lookup (M_LOOKUP_GOOGLE);
-		lookup.AddString ("string", buffer);		
-		msgr.SendMessage (&lookup);
+		if (buffer != "-9z99")
+		{
+		  BMessage lookup (M_LOOKUP_GOOGLE);
+		  lookup.AddString ("string", buffer);		
+		  msgr.SendMessage (&lookup);
+		}
+		else
+		  vision_app->LoadURL ("http://www.google.com");
 		return true;
 	}
 	
@@ -272,6 +276,8 @@ ClientAgent::ParseCmd (const char *data)
 			AddSend (&sendMsg, theTarget << " :\1" << theAction << "\1");
 			AddSend (&sendMsg, endl);
 		}
+		else
+			Display ("[x] /ctcp: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -362,6 +368,8 @@ ClientAgent::ParseCmd (const char *data)
 			AddSend (&sendMsg, theNick);
 			AddSend (&sendMsg, endl);
 		}
+		else
+			Display ("[x] /deop: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -444,6 +452,8 @@ ClientAgent::ParseCmd (const char *data)
 	
 			resume_thread (lookupThread);
 		}
+		else
+			Display ("[x] /dns: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -469,7 +479,10 @@ ClientAgent::ParseCmd (const char *data)
 		
 		}
 		else
-		  delete theCmd;
+		{
+			Display ("[x] /pexec: Error: Invalid parameters\n", &errorColor);
+			delete theCmd;
+		}
 		
 		return true;
 	
@@ -537,6 +550,8 @@ ClientAgent::ParseCmd (const char *data)
 			AddSend (&sendMsg, theUser << " " << theChan);
 			AddSend (&sendMsg, endl);
 		}
+		else
+			Display ("[x] /invite: Error: Invalid parameters\n", &errorColor);
 		
 		return true;	
 	}
@@ -563,6 +578,8 @@ ClientAgent::ParseCmd (const char *data)
 	
 			AddSend (&sendMsg, endl);
 		}
+		else
+			Display ("[x] /join: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -590,7 +607,9 @@ ClientAgent::ParseCmd (const char *data)
 			AddSend (&sendMsg, theReason);
 			AddSend (&sendMsg, endl);
 		}
-		
+		else
+			Display ("[x] /kick: Error: Invalid parameters\n", &errorColor);
+					
 		return true;
 	}
 	
@@ -617,7 +636,7 @@ ClientAgent::ParseCmd (const char *data)
 	
 		if (id == serverName)
 			AddSend (&sendMsg, myNick);
-		else if (id[0] == '#' || id[0] == '&')
+		else if (id[0] == '#' || id[0] == '&' || id[0] == '!')
 			AddSend (&sendMsg, id);
 		else
 			AddSend (&sendMsg, myNick);
@@ -638,9 +657,9 @@ ClientAgent::ParseCmd (const char *data)
 		BString theAction (RestOfString (data, 2));
 
 		if (theAction != "-9z99")
-		{
 			ActionMessage (theAction.String(), myNick.String());
-		}
+		else
+			Display ("[x] /me: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -663,6 +682,8 @@ ClientAgent::ParseCmd (const char *data)
 	
 			AddSend (&sendMsg, endl);
 		}
+		else
+			Display ("[x] /nick: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -709,12 +730,19 @@ ClientAgent::ParseCmd (const char *data)
 	  if (newPort == "-9z99")
 	    newPort = "6667";	  	  
 
-      BMessage newserver (M_MAKE_NEW_SERVER);
-      newserver.AddString ("hostname", newServer);
-      newserver.AddString ("port", newPort);
-      newserver.AddString ("autoexec", "");
-      newserver.AddBool   ("enidentd", true);
-      vision_app->pClientWin()->PostMessage (&newserver);
+      if (newServer != "-9z99")
+      {
+        BMessage newserver (M_MAKE_NEW_SERVER);
+        newserver.AddString ("hostname", newServer);
+        newserver.AddString ("port", newPort);
+        newserver.AddString ("autoexec", "");
+        newserver.AddBool   ("enidentd", true);
+        vision_app->pClientWin()->PostMessage (&newserver);
+      }
+      else
+      {
+        Display ("[x] /newserver: Error: Invalid parameters\n", &errorColor);
+      }
      
       return true;     
     }
@@ -735,6 +763,8 @@ ClientAgent::ParseCmd (const char *data)
 			AddSend (&sendMsg, newNick);
 			AddSend (&sendMsg, endl);
 		}
+		else
+			Display ("[x] /nick: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -759,6 +789,8 @@ ClientAgent::ParseCmd (const char *data)
 	
 			Display (tempString.String(), 0);
 		}
+		else
+			Display ("[x] /notice: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -903,6 +935,8 @@ ClientAgent::ParseCmd (const char *data)
 			Display (tempString.String(), 0);
 	
 		}
+		else
+			Display ("[x] /raw: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -1103,6 +1137,8 @@ ClientAgent::ParseCmd (const char *data)
 
 		if (buffer != "-9z99")
 			vision_app->LoadURL (buffer.String());
+		else
+			Display ("[x] /visit: Error: Invalid parameters\n", &errorColor);
 		
 		return true;
 	}
@@ -1111,9 +1147,14 @@ ClientAgent::ParseCmd (const char *data)
 	if (firstWord == "/WEBSTER" || firstWord =="/DICTIONARY")
 	{
 		BString buffer (RestOfString (data, 2));
-		BMessage lookup (M_LOOKUP_WEBSTER);
-		lookup.AddString ("string", buffer);		
-		msgr.SendMessage (&lookup);
+		if (buffer != "-9z99")
+		{
+		  BMessage lookup (M_LOOKUP_WEBSTER);
+		  lookup.AddString ("string", buffer);		
+		  msgr.SendMessage (&lookup);
+		}
+		else
+		  vision_app->LoadURL ("http://www.dictionary.com");
 		return true;
 	}
 
