@@ -4,6 +4,7 @@ http://vision.sourceforge.net
 [0.2.0612]
  2001-06-12
    * Vision properly recognizes and deals with UnrealIRCd
+   * added numerics parsing for /silence (submitted by Bjorn Oksholen) 
 
 [0.2.0611]
  2001-06-11
