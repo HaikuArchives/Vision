@@ -417,6 +417,7 @@ NetPrefsServerView::MessageReceived (BMessage *msg)
 		case M_SERVER_REMOVE_ITEM:
 		{
 			RemoveServer();
+			netWin.SendMessage (M_SERVER_DATA_CHANGED);
 		}
 		break;
 		

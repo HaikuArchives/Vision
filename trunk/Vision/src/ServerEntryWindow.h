@@ -42,8 +42,8 @@ class ServerEntryWindow : public BWindow
 class ServerEntryView : public BView
 {
   public:
-                              ServerEntryView (BHandler *, BMessage *, const ServerData *);
-    virtual                   ~ServerEntryView (void);
+                              ServerEntryView (BRect, BHandler *, BMessage *, const ServerData *);
+                              ~ServerEntryView (void);
     virtual void              AttachedToWindow (void);
     virtual void              AllAttached (void);
     virtual void              MessageReceived (BMessage *);

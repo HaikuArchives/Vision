@@ -97,8 +97,6 @@ class ServerAgent : public ClientAgent
 	int32							nickAttempt;		// going through list
 	
 	
-	BString						motdBuffer;
-	
 	// these are used to make Vision more dynamic to various
 	// ircd and server configurations	
 	int                         ircdtype;
