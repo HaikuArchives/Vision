@@ -401,7 +401,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_RESIZE_VIEW:
       {
         int32 agentCount (pWindowList()->CountItems());
-        float offset (msg->FindFloat ("delta"));
+        int32 offset (msg->FindInt32 ("delta"));
         BView *view (NULL);
         msg->FindPointer ("view", reinterpret_cast<void **>(&view));
         if (dynamic_cast<ClientWindowDock *>(view))
