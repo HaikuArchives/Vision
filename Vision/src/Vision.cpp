@@ -359,8 +359,22 @@ VisionApp::InitSettings (void)
   settingsloaded = true;  
   if (debugsettings)
     printf (":SETTINGS: done loading\n");
+}
+
+bool
+VisionApp::SaveSettings (void)
+{
+  BAutolock saveLock (const_cast<BLocker *>(&settingsLock));
   
-  
+  if (!saveLock.IsLocked())
+    return false;
+    
+  if ((visionSettings->Save() == B_OK) && debugsettings)
+  {
+    printf (":SETTINGS: saved to file\n");
+    return true;
+  }
+  return false;
 }
 
 void
@@ -544,11 +558,6 @@ VisionApp::QuitRequested (void)
   closesocket (identSocket);
 #endif
   
-  settingsLock.Lock();
-  if ((visionSettings->Save() == B_OK) && debugsettings)
-    printf (":SETTINGS: saved to file\n");
-  settingsLock.Unlock();
-
   if(clientWin)
   {
     clientWin->PostMessage (B_QUIT_REQUESTED);
@@ -560,7 +569,9 @@ VisionApp::QuitRequested (void)
   snooze (500000);  // 0.5 seconds
 
   //ThreadStates();
-  
+
+  SaveSettings();
+ 
   return true;
 }
 
@@ -737,10 +748,7 @@ VisionApp::MessageReceived (BMessage *msg)
 
     case M_SETUP_CLOSE:
       {
-        settingsLock.Lock();
-        if ((visionSettings->Save() == B_OK) && debugsettings)
-          printf (":SETTINGS: saved to file\n");
-        settingsLock.Unlock();
+        SaveSettings();
         setupWin = 0;
         if (clientWin == NULL)
           PostMessage (B_QUIT_REQUESTED);
@@ -762,10 +770,7 @@ VisionApp::MessageReceived (BMessage *msg)
     
     case M_PREFS_CLOSE:
       {
-        settingsLock.Lock();
-        if ((visionSettings->Save() == B_OK) && debugsettings)
-          printf (":SETTINGS: saved to file\n");
-        settingsLock.Unlock();
+        SaveSettings();
         prefsWin = 0;
       }
       break;
@@ -784,10 +789,7 @@ VisionApp::MessageReceived (BMessage *msg)
 
     case M_NETWORK_CLOSE:
       {
-        settingsLock.Lock();
-        if ((visionSettings->Save() == B_OK) && debugsettings)
-          printf (":SETTINGS: saved to file\n");
-        settingsLock.Unlock();
+        SaveSettings();
         netWin = 0;
       }
       break;
