@@ -242,7 +242,7 @@ VisionApp::QuitRequested (void)
   if (settingsloaded)
     if ((visionSettings->Save() == B_OK) && debugsettings)
       printf (":SETTINGS: saved to file\n");
-    
+      
   return true;
 }
 
@@ -305,7 +305,8 @@ void
 VisionApp::ReadyToRun (void)
 {
   printf ("# START # TestScript::RunTestScripts()\n"); 
-  TestScript *tscript = new TestScript(); 
+  TestScript *tscript = new TestScript();
+  tscript = 0;
   printf ("# END   # TestScript::RunTestScripts()\n"); 
   
   InitSettings();

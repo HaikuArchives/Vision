@@ -825,7 +825,7 @@ ClientAgent::ParseCmd (const char *data)
 		
 		return true;
 	}
-	
+	#endif
 	
 	if (firstWord == "/QUERY" || firstWord == "/Q")
 	{
@@ -833,7 +833,7 @@ ClientAgent::ParseCmd (const char *data)
 
 		if (theNick != "-9z99")
 		{
-			BMessage msg (OPEN_MWINDOW);
+			BMessage msg (M_OPEN_MSGAGENT);
 	
 			msg.AddString ("nick", theNick.String());
 			sMsgr.SendMessage (&msg);
@@ -841,7 +841,6 @@ ClientAgent::ParseCmd (const char *data)
 	
 		return true;	
 	}
-	#endif
 	
 	if (firstWord == "/QUIT")
 	{

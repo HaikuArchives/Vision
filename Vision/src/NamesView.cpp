@@ -191,7 +191,7 @@ NamesView::MouseDown (BPoint myPoint)
         BMessage msg (M_OPEN_MSGAGENT);
 	
         msg.AddString ("nick", theNick.String());
-        Window()->PostMessage (&msg);
+        reinterpret_cast<ChannelAgent *>(Parent()->Parent())->msgr.SendMessage (&msg);
       }
       
       handled = true;

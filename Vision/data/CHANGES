@@ -1,6 +1,14 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0325]
+ 2001-03-25
+   * Bring back Alt+P to close the active window
+   * Move Alt+Up/Down shortcuts back to the Window menu
+   * Double clicking on a NickListItem opens a query window
+   * /q|/query works now
+   * Support numeric 451 (Not registered)
+   
 [0.1.0324]
  2001-03-24
    * Add support for numeric 439 (target change too fast)
