@@ -179,9 +179,16 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_CW_ALTW:
     {
       if (vision_app->GetBool("catchAltW"))
-        winList->CloseActive();
+        printf (":TODO: Alert box baby!\n");
       else
-        PostMessage (B_QUIT_REQUESTED);    
+        PostMessage (B_QUIT_REQUESTED);
+      break;
+    }
+    
+    case M_CW_ALTP:
+    {
+      winList->CloseActive();
+      break;
     }
         
     default:
@@ -212,7 +219,7 @@ ClientWindow::Init (void)
 {
   SetSizeLimits (330,2000,150,2000);
 
-  AddShortcut('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW)); 
+  AddShortcut('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
   
   BRect frame (Bounds());
   menubar = new BMenuBar (frame, "menu_bar");
@@ -226,8 +233,8 @@ ClientWindow::Init (void)
   mServer->AddItem (item = new BMenuItem ("Setup" B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
-  mServer->AddItem (item = new BMenuItem ("Preferences" B_UTF8_ELLIPSIS,
-                    new BMessage (B_ABOUT_REQUESTED), 'P'));
+  mServer->AddItem (item = new BMenuItem ("ptions" B_UTF8_ELLIPSIS,
+                    new BMessage (B_ABOUT_REQUESTED), 'O'));
   item->SetTarget (vision_app);
   mServer->AddSeparatorItem();
   mServer->AddItem (item = new BMenuItem ("Channel List" B_UTF8_ELLIPSIS,
@@ -252,6 +259,9 @@ ClientWindow::Init (void)
   
   // Window menu
   mWindow = new BMenu ("Window");
+  mWindow->AddItem (item = new BMenuItem ("Close Window",
+                    new BMessage (M_CW_ALTP), 'P'));
+  mWindow->AddSeparatorItem();                    
   mWindow->AddItem (item = new BMenuItem ("Next Window",
                     new BMessage (B_ABOUT_REQUESTED), ','));
   item->SetTarget (vision_app);
