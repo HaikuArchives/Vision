@@ -133,10 +133,10 @@ ClientWindow::ScreenChanged (BRect screenframe, color_space mode)
 void
 ClientWindow::HandleKey (BMessage *keyMsg)
 {
-  int32 key;
+  const char *bytes;
   int32 mod;
   
-  keyMsg->FindInt32 ("key", &key);
+  keyMsg->FindString ("bytes", &bytes);
   keyMsg->FindInt32 ("modifiers", &mod);
 
   if ((mod & B_OPTION_KEY)  == 0
@@ -147,22 +147,23 @@ ClientWindow::HandleKey (BMessage *keyMsg)
     /////////////////////
     /// Shift+Command ///
     /////////////////////
-    switch (key)
+    switch (bytes[0])
     {
-      case VK_NUMPAD0:
+      case '0':
+      case B_INSERT:
         // switch to last active agent
         pWindowList()->SelectLast();
         break;
       
-      case VK_UP:
-      case VK_LEFT: // baxter muscle memory
-      case VK_COMMA: // bowser muscle memory
+      case B_UP_ARROW:
+      case B_LEFT_ARROW: // baxter muscle memory
+      case ',': // bowser muscle memory
         pWindowList()->ContextSelectUp();
         break;
       
-      case VK_DOWN: //
-      case VK_RIGHT: // baxter muscle memory
-      case VK_PERIOD: // bowser muscle memory
+      case B_DOWN_ARROW: //
+      case B_RIGHT_ARROW: // baxter muscle memory
+      case '.': // bowser muscle memory
         pWindowList()->ContextSelectDown();
         break;      
     }
@@ -176,25 +177,25 @@ ClientWindow::HandleKey (BMessage *keyMsg)
     ///////////////
     /// Command ///
     ///////////////
-    switch (key)
+    switch (bytes[0])
     {
-      case VK_UP:
-      case VK_LEFT: // baxter muscle memory
-      case VK_COMMA: // bowser muscle memory
+      case B_UP_ARROW:
+      case B_LEFT_ARROW: // baxter muscle memory
+      case ',': // bowser muscle memory
         // move up one agent
         pWindowList()->Select (pWindowList()->CurrentSelection() - 1);
         pWindowList()->ScrollToSelection();
         break;
 
-      case VK_DOWN:
-      case VK_RIGHT: // baxter muscle memory
-      case VK_PERIOD: // bowser muscle memory
+      case B_DOWN_ARROW:
+      case B_RIGHT_ARROW: // baxter muscle memory
+      case '.': // bowser muscle memory
         // move down one agent
         pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
         pWindowList()->ScrollToSelection();
         break;
         
-      case VK_SLASH: // bowser muscle memory
+      case '/': // bowser muscle memory
         // move to the agents parent ServerAgent
         // XXX move to WindowList ?
         pWindowList()->SelectServer();
