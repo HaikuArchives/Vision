@@ -684,6 +684,11 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			
 		    break;
 		}
+		
+		case M_CLIENT_QUIT:
+		{
+		
+		}
 						
 		default:
 			ClientAgent::MessageReceived (msg);
