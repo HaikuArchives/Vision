@@ -49,15 +49,33 @@ ClientAgent::ParseCmd (const char *data)
 	BString firstWord (GetWord(data, 1).ToUpper());
 	BMessage sendMsg (M_SERVER_SEND);
 
-	if (firstWord == "/KILL"	// we need to insert a ':' before parm2
+	if (firstWord == "/WALLOPS"	// we need to insert a ':' before parm2
 	||  firstWord == "/SQUIT"   // for the user
-	||  firstWord == "/PRIVMSG"
-	||  firstWord == "/WALLOPS")
+	||  firstWord == "/PRIVMSG")
 	{
 		BString theCmd (firstWord.RemoveAll ("/")),
 	            theRest (RestOfString (data, 2));
 		
 		AddSend (&sendMsg, theCmd);
+		if (theRest != "-9z99")
+		{
+			AddSend (&sendMsg, " :");
+			AddSend (&sendMsg, theRest);
+		}
+		AddSend (&sendMsg, endl);	
+
+		return true;
+	}
+
+	if (firstWord == "/KILL")	// we need to insert a ':' before parm3
+	{                           // for the user
+		BString theCmd (firstWord.RemoveAll ("/")),
+				theTarget (GetWord (data, 2)),
+	            theRest (RestOfString (data, 3));
+				
+		AddSend (&sendMsg, theCmd);
+		AddSend (&sendMsg, " ");
+		AddSend (&sendMsg, theTarget);
 		if (theRest != "-9z99")
 		{
 			AddSend (&sendMsg, " :");
