@@ -858,16 +858,79 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 					lines[sp_start.line]->top,
 					lines[sp_end.line]->edges[sp_end.offset],
 					lines[sp_end.line]->bottom);
-
+				
 				if (sp_start.line != sp_end.line)
 				{
 					frame.left = 0.0;
 					frame.right = Bounds().right;
 				}
+				// selection lies within the bounds of a line, check
+				// if it lines on one of the wrapped sublines and calculate rectangle
+				// appropriately
+				else
+				{
+					Line *line (lines[sp_start.line]);
+					float left (line->edges[sp_start.offset]),
+						top (line->top),
+						right (line->edges[sp_end.offset]),
+						bottom (line->bottom);
+					int top_softie (0), bottom_softie (0);
+					bool start_found (false);
+					bool end_found (false);
+					
+					if (line->softie_used)
+					{
+						if (sp_start.offset < line->softies[0].offset)
+							start_found = true;
+						
+						if (sp_end.offset < line->softies[0].offset)
+							end_found = true;
+					}
+					
+					if (!end_found)
+					for (int16 sit = 1; sit < line->softie_used; ++sit)
+					{
+						if (!start_found && sp_start.offset < line->softies[sit].offset)
+						{
+							left = line->edges[sp_start.offset] -
+								line->edges[line->softies[sit-1].offset];
+							
+							top += (sit) * line->softies[sit].height;
+							top_softie = sit;
+							start_found = true;
+						}
+						
+						if (sp_end.offset < line->softies[sit].offset)
+						{
+							right = line->edges[sp_end.offset] -
+								line->edges[line->softies[sit-1].offset];
+								
+							bottom = top + (sit - top_softie + 1) * line->softies[sit].height;
+							bottom_softie = sit;
+							end_found = true;
+							break;
+						}	
+					}
+					if (!end_found)
+					{
+						right = line->edges[line->length - 1] -
+							line->edges[line->softies[line->softie_used - 2].offset];
+						bottom_softie = line->softie_used - 2;
+							
+					}
+					if (right < left || (bottom_softie - top_softie) > 0)
+					{
+						left = 0.0;
+						right = Bounds().right;
+					}
+			
+					frame.Set (left, top, right, bottom);
+					frame.OffsetBy (MARGIN_WIDTH / 2.0, 0.0);						
+				}
 
 				if (frame.Height() > Bounds().Height())
 					frame = Bounds();
-					
+				
 				DragMessage (&msg, frame);
 
 				tracking = 3;
@@ -2347,6 +2410,9 @@ Line::SelectWord (int16 *start, int16 *end)
 
 	while ((end_tmp - 1) < length && text[end_tmp] != ' ')
 			end_tmp++;
+	
+	while (end_tmp >= length)
+		--end_tmp;
 	
 	*start = start_tmp;
 	*end = end_tmp;
