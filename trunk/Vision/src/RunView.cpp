@@ -3,7 +3,7 @@
 #define BACK_WHICH				1
 #define FONT_WHICH				2
 
-#define MARGIN_WIDTH				10.0
+#define MARGIN_WIDTH			10.0
 #define MARGIN_INDENT			10.0
 
 #define SOFTBREAK_STEP			5
@@ -221,6 +221,7 @@ RunView::Show (void)
 	if (resizedirty)
 	{
 		ResizeRecalc();
+		resizedirty = false;
 	}
 	BView::Show();
 }
@@ -365,7 +366,7 @@ RunView::Draw (BRect frame)
 				int16 i (place + length - 1);
 				while (line->edges[i] == 0)
 					--i;
-
+					
 				r.Set (
 					left,
 					height,
@@ -405,7 +406,7 @@ RunView::Draw (BRect frame)
 			height += line->softies[sit].height;
 
 			if (sit == 0)
-				indent += MARGIN_INDENT;
+				indent += (MARGIN_INDENT / 2.0);
 		}
 	}
 
@@ -423,7 +424,7 @@ RunView::SetViewColor (rgb_color color)
 void
 RunView::MouseDown (BPoint point)
 {
-	SelectPos pos (PositionAt (point));
+	sp_start = PositionAt (point);
 }
 
 void
@@ -434,6 +435,7 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 void
 RunView::MouseUp (BPoint point)
 {
+	sp_end = PositionAt (point);
 }
 
 void
@@ -842,7 +844,7 @@ RunView::PositionAt (BPoint point) const
 		lindex = i;
 	}
 
-	printf ("Line: %hd\n", lindex);
+//	printf ("Line: %hd\n", lindex);
 
 	float height (lines[lindex]->top);
 	int16 sindex (0);
@@ -860,7 +862,7 @@ RunView::PositionAt (BPoint point) const
 	int16 width (0);
 	int16 start (0);
 
-	printf ("Softie: %hd\n", sindex);
+//	printf ("Softie: %hd\n", sindex);
 
 	if (sindex)
 	{
@@ -871,16 +873,13 @@ RunView::PositionAt (BPoint point) const
 	}
 
 	for (i = start; i <= lines[lindex]->softies[sindex].offset; ++i)
-	{
-		printf("char: %c, point, current: %f, %f\n", lines[lindex]->text[pos.offset], lines[lindex]->edges[i] + margin - width, point.x);
 		if (lines[lindex]->edges[i] + margin - width >= point.x)
 			break;
-	}
 
 	pos.line = lindex;
 	pos.offset = min_c (i, lines[lindex]->softies[sindex].offset);
 
-	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
+//	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
 
 	return pos;
 }
