@@ -479,6 +479,17 @@ WindowList::Agent (int32 serverId, const char *aName)
   return agent;
 }
 
+/*
+  -- #beos was here --
+  <kurros> main toaster turn on!
+  <Scott> we get toast
+  <Scott> all your butter are belong to us
+  <bullitB> someone set us up the jam!
+  <Scott> what you say
+  <bullitB> you have no chance make your breakfast
+  <bullitB> ha ha ha
+*/
+
 void
 WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winType, bool activate)
 {

@@ -51,6 +51,15 @@
 #include "ClientWindowDock.h"
 
 
+/*
+  -- #beos was here --
+  <Electroly> kurros has a l33t ass projector, I saw a picture of it just once
+              and I've been drooling ever since
+  <T-ball> nice...
+  <T-ball> I don't have room for a projector... :/
+  <Brazilian> I have a monkey who draws on my wall really fast
+*/
+
 //////////////////////////////////////////////////////////////////////////////
 /// Begin BWindow functions
 //////////////////////////////////////////////////////////////////////////////
@@ -210,11 +219,6 @@ ClientWindow::HandleKey (BMessage *keyMsg)
         // close agent
         PostMessage (M_CW_ALTP);
         break;
-      
-      case VK_W: // W
-        // close window/quit vision
-        PostMessage (M_CW_ALTW);
-        break;      
     }
   }
     
@@ -477,12 +481,13 @@ ClientWindow::Init (void)
   shutdown_in_progress = false;
   wait_for_quits = false;
   altw_catch = false;
+
+  AddShortcut ('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
   
   BRect frame (Bounds());
   menubar = new BMenuBar (frame, "menu_bar");
   
   BMenuItem *item;
-  
   
   // Server menu
   mServer = new BMenu ("Server");

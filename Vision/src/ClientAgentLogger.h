@@ -34,8 +34,11 @@ class ClientAgentLogger
   public:
                        ClientAgentLogger (BString, BString);
                        ~ClientAgentLogger (void);
+   void                StartLogging (void);    
    void                Log (const char *);
+   void                StopLogging (void);
    bool                isQuitting;
+   bool                isLogging;
   
   private:
    void                SetupLogging (void);

@@ -35,31 +35,54 @@ ClientAgentLogger::ClientAgentLogger (BString currentLog, BString server)
   logName = currentLog;
   serverName = server;
   isQuitting = false;
-  // the file, BList and Locker are taken over by logThread as soon as SetupLogging
-  // is done. From there it will take care of cleaning them up on destruct.
-  logFile = new BFile();
-  logBuffer = new BList();
-  logBufferLock = new BLocker();
-
-  // semaphore used to synchronize the log thread and newly incoming log requests
-  logSyncherLock = create_sem (0, "logSynchLock_sem");
-  logThread = spawn_thread (AsyncLogger,
-                            vision_app->GetThreadName (THREAD_L),
-                            B_LOW_PRIORITY,
-                            this);
-  resume_thread (logThread);
+  isLogging = false;
+  logThread = -1;
+  StartLogging();
 }
 
 ClientAgentLogger::~ClientAgentLogger (void)
 {
   // tell log thread it's time to die
-  delete_sem (logSyncherLock);
+  StopLogging();
   status_t result;
   // if the whole app's shutting down, wait for the logger to finish its work to
   // prevent possible race/crash conditions, otherwise terminate immediately and let
   // logThread finish up in the background
   if (isQuitting)
     wait_for_thread (logThread, &result);
+}
+
+void
+ClientAgentLogger::StartLogging (void)
+{
+  // someone tried to call StartLogging while a logger was already active, do nothing.
+  if (logThread != -1)
+     return;
+
+  // the file, BList and Locker are taken over by logThread as soon as SetupLogging
+  // is done. From there it will take care of cleaning them up on destruct.
+  logFile = new BFile();
+  logBuffer = new BList();
+  logBufferLock = new BLocker();
+  isLogging = true;
+  
+  // semaphore used to synchronize the log thread and newly incoming log requests
+  logSyncherLock = create_sem (0, "logSynchLock_sem");
+  
+  logThread = spawn_thread (AsyncLogger,
+                            vision_app->GetThreadName (THREAD_L),
+                            B_LOW_PRIORITY,
+                            this);
+  resume_thread (logThread);
+  
+}
+
+void
+ClientAgentLogger::StopLogging (void)
+{
+  isLogging = false;
+  delete_sem(logSyncherLock);
+  logThread = -1;
 }
 
 void
@@ -135,6 +158,8 @@ ClientAgentLogger::SetupLogging (void)
 void
 ClientAgentLogger::Log (const char *data)
 {
+  if (!isLogging)
+    return;
   // add entry to logfile for logThread to write asynchronously
   logBufferLock->Lock();
   BString *logString (new BString (data));
@@ -148,15 +173,15 @@ int32
 ClientAgentLogger::AsyncLogger (void *arg)
 {
   ClientAgentLogger *logger ((ClientAgentLogger *)arg);
-  
-  // initialize the log file if it doesn't already exist
-  logger->SetupLogging();
 
   BString *currentString (NULL);
   BLocker *myLogBufferLock ((logger->logBufferLock));
   BList *myLogBuffer ((logger->logBuffer));
-  BFile *myLogFile ((logger->logFile));
-  
+  BFile *myLogFile ((logger->logFile));  
+
+  // initialize the log file if it doesn't already exist
+  logger->SetupLogging();
+
   // sit in event loop waiting for new data
   // loop will break when ~Logger deletes the semaphore
   while (acquire_sem (logger->logSyncherLock) == B_NO_ERROR)

@@ -24,20 +24,17 @@
 
 class VisionApp * vision_app;
 
+/*
+  -- #beos was here --
+  <Brazilian> And then I says to the gnu, "Is that a horn on your head or
+              are you just happy to see me?"
+*/
 
-#ifdef GNOME_BUILD
-#  include "gnome/Alert.h"
-#  include "gnome/Resources.h"
-#  include "gnome/Font.h"
-#  include "gnome/Autolock.h"
-#  include "gnome/Roster.h"
-#elif BEOS_BUILD
-#  include <Alert.h>
-#  include <Resources.h>
-#  include <Font.h>
-#  include <Autolock.h>
-#  include <Roster.h>
-#endif
+#include <Alert.h>
+#include <Resources.h>
+#include <Font.h>
+#include <Autolock.h>
+#include <Roster.h>
 
 #include <algorithm>
 #include <stdio.h>
@@ -496,11 +493,15 @@ VisionApp::VisionVersion (int typebit)
         static BString version_version (VERSION_STRING);
         return version_version;
       }
+      break;
+      
     case VERSION_DATE:
-    {
-      static BString version_builddate (BUILD_DATE);
-      return version_builddate;
-    }
+      {
+        static BString version_builddate (BUILD_DATE);
+        version_builddate.ReplaceAll ("_", " ");
+        return version_builddate;
+      }
+      break;
   }
   
 }
