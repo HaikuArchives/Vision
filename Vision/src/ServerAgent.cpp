@@ -94,7 +94,7 @@ ServerAgent::ServerAgent (
     cmds (net.FindString ("autoexec")),
     pListAgent (NULL),
     networkData (net),
-    serverIndex (0),
+    serverIndex (-1),
     nickIndex (1)
 {
 
@@ -777,13 +777,13 @@ ServerAgent::GetNextServer ()
   {
     if (serverIndex >= count)
     {
-      serverIndex = 0;
+      serverIndex = -1;
       state = 0;
     }
     
     const ServerData *server (NULL);
-    for (; networkData.FindData ("server", B_RAW_TYPE, serverIndex, 
-      reinterpret_cast<const void **>(&server), &size) == B_OK; serverIndex++)
+    for (; ++serverIndex, networkData.FindData ("server", B_RAW_TYPE, serverIndex, 
+      reinterpret_cast<const void **>(&server), &size) == B_OK;)
         if (server->state == state)
           return server;
   }
