@@ -45,17 +45,14 @@ class WindowListItem : public BListItem
                                     WindowListItem (const char *,
                                                     int32,
                                                     int32,
-                                                    int32,
                                                     BView *);
     BString                         Name (void) const;
-    int32                           Sid (void) const;
     int32                           Type (void) const;
     int32                           Status (void) const;
     int32                           SubStatus (void) const;
     BView                           *pAgent (void) const;
 
     void                            SetName (const char *);
-    void                            SetSid (int32);
     void                            SetStatus (int32);
     void                            SetSubStatus (int32);
     void                            ActivateItem (void);
@@ -66,7 +63,6 @@ class WindowListItem : public BListItem
                                               
   private:
     BString                         fMyName;
-    int32							fMySid;
     int32                           fMyStatus;
     int32                           fMyType;
     int32                           fSubStatus; // servers only -- status of collapsed children
@@ -102,9 +98,9 @@ class WindowList : public BOutlineListView
     void                            MoveCurrentUp (void);
     void                            MoveCurrentDown (void);
     
-    ClientAgent                     *Agent (int32, const char *);
+//    ClientAgent                     *Agent (int32, const char *);
     
-    void                            AddAgent (BView *, int32, const char *, int32, bool);
+    void                            AddAgent (BView *, const char *, int32, bool);
     void                            RemoveAgent (BView *, WindowListItem *);
     void                            Expand (BListItem *);
     void                            Collapse (BListItem *);

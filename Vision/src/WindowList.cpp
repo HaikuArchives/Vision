@@ -350,14 +350,10 @@ WindowList::GetServer (int32 index)
   if (index < 0)
     return -1;
 
-  int32 currentsid;
-       
   WindowListItem *citem ((WindowListItem *)ItemAt (index));
-      
-  if (citem)
-    currentsid = citem->Sid();
-  else
-    return -1;
+  
+  if (citem == NULL)
+    return -1;    
     
   if (citem->Type() == WIN_SERVER_TYPE)
     return index;
@@ -552,34 +548,6 @@ WindowList::MoveCurrentDown (void)
   }
 }
 
-ClientAgent *
-WindowList::Agent (int32 serverId, const char *aName)
-{
-  ClientAgent *agent (NULL);
-
-  for (int32 i = 0; i < FullListCountItems(); ++i)
-  {
-    WindowListItem *item ((WindowListItem *)FullListItemAt (i));
-    if (item->Sid() == serverId)
-    {
-      if (dynamic_cast<ClientAgent *>(item->pAgent()))
-      {
-        if (strcasecmp (aName, reinterpret_cast<ClientAgent *>(item->pAgent())->Id().String()) == 0)
-        {
-          agent = reinterpret_cast<ClientAgent *>(item->pAgent());
-          break;      
-        }
-      }
-      else if (dynamic_cast<ListAgent *>(item->pAgent()) && !strcmp(aName, "Channels"))
-      {
-          agent = reinterpret_cast<ClientAgent *>(item->pAgent());
-          break;
-      }
-    }
-  }
-  return agent;
-}
-
 /*
   -- #beos was here --
   <kurros> main toaster turn on!
@@ -592,13 +560,16 @@ WindowList::Agent (int32 serverId, const char *aName)
 */
 
 void
-WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winType, bool activate)
+WindowList::AddAgent (BView *agent, const char *name, int32 winType, bool activate)
 {
+  if (agent == NULL)
+    return;
+
   int32 itemindex (0);
 
   WindowListItem *currentitem ((WindowListItem *)ItemAt (CurrentSelection()));
   
-  WindowListItem *newagentitem (new WindowListItem (name, serverId, winType, WIN_NORMAL_BIT, agent));
+  WindowListItem *newagentitem (new WindowListItem (name, winType, WIN_NORMAL_BIT, agent));
   if (dynamic_cast<ServerAgent *>(agent) != NULL)
   	AddItem (newagentitem);
   else
@@ -613,62 +584,19 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     SortItemsUnder (agentParent->fAgentWinItem, false, SortListItems);
   }
   
-  BView *newagent;
-  newagent = newagentitem->pAgent();
-  if (serverId == ID_SERVER)
-  {
-    int32 newsid (reinterpret_cast<ServerAgent *>(newagent)->Sid());
-    newagentitem->SetSid (newsid);
-    serverId = newsid;
-  }
-  
   itemindex = IndexOf (newagentitem);
 
   // give the agent its own pointer to its WinListItem,
   // so it can quickly update it's status entry
-  if ((newagent = dynamic_cast<ClientAgent *>(newagent)))
-  {
-    for (int32 i = 0; i < FullListCountItems(); ++i)
-    {
-      WindowListItem *item = (WindowListItem *)FullListItemAt (i);
-      if ((strcasecmp (name, item->Name().String()) == 0)
-      &&  (item->Sid() == serverId)) 
-      {
-        dynamic_cast<ClientAgent *>(newagent)->fAgentWinItem = item;
-        break;      
-      }
-    }
-  }
-  
-  // reset newagent
-  newagent = newagentitem->pAgent();
-  
-  if (dynamic_cast<ListAgent *>(newagent))
-  {
-     for (int32 i = 0; i < CountItems(); ++i)
-     {
-       WindowListItem *item = (WindowListItem *)FullListItemAt (i);
-       if ((item->Sid() == serverId) && (item->Name().ICompare("Channels") == 0))
-       {
-         dynamic_cast<ListAgent *>(newagent)->fAgentWinItem = item;
-         break;
-       }
-     }
-  }
+  if (dynamic_cast<ClientAgent *>(agent))
+    ((ClientAgent *)agent)->fAgentWinItem = newagentitem;
+  else if (dynamic_cast<ListAgent *>(agent))
+    ((ListAgent *)agent)->fAgentWinItem = newagentitem;
 
-  // reset newagent again
-  newagent = newagentitem->pAgent();
-  
-  if (!(newagent = dynamic_cast<BView *>(newagent)))
-  {
-    // stop crash
-    printf ("no newagent!?\n");
-    return;
-  }
   vision_app->pClientWin()->DisableUpdates();
-  newagent->Hide(); // get it out of the way
-  vision_app->pClientWin()->bgView->AddChild (newagent);
-  newagent->Sync(); // clear artifacts
+  agent->Hide(); // get it out of the way
+  vision_app->pClientWin()->bgView->AddChild (agent);
+  agent->Sync(); // clear artifacts
   vision_app->pClientWin()->EnableUpdates();
 
   if (activate && itemindex >= 0)  // if activate is true, show the new view now.
@@ -766,26 +694,14 @@ WindowList::SortListItems (const BListItem *name1, const BListItem *name2)
     return 0;
   }
   
-  int32 firstSid, secondSid;
   BString firstName, secondName;
-  
-  firstSid = (firstPtr)->Sid();
-  secondSid = (secondPtr)->Sid();
   
   firstName = (firstPtr)->Name();
   secondName = (secondPtr)->Name();
  
-  if (firstSid < secondSid)
+  if ((firstPtr)->Type() == WIN_SERVER_TYPE)
     return -1;
-  else if ((firstPtr)->Sid() > (secondPtr)->Sid())
-    return 1;
-  else
-  {
-    // same sid, sort by name
-    if ((firstPtr)->Type() == WIN_SERVER_TYPE)
-      return -1;
-    return firstName.ICompare (secondName);
-  } 
+  return firstName.ICompare (secondName);
 }
 
 void
@@ -821,14 +737,12 @@ WindowList::BuildPopUp (void)
 
 WindowListItem::WindowListItem (
   const char *name,
-  int32 serverId,
   int32 winType,
   int32 winStatus,
   BView *agent)
 
   : BListItem (),
     fMyName (name),
-    fMySid (serverId),
     fMyStatus (winStatus),
     fMyType (winType),
     fSubStatus (-1),
@@ -841,11 +755,6 @@ BString
 WindowListItem::Name (void) const
 {
   return fMyName;
-}
-int32
-WindowListItem::Sid (void) const
-{
-  return fMySid;
 }
 
 int32
@@ -889,12 +798,6 @@ WindowListItem::SetName (const char *name)
   }
     
   vision_app->pClientWin()->Unlock();
-}
-
-void
-WindowListItem::SetSid (int32 newSid)
-{
-  fMySid = newSid;
 }
 
 void

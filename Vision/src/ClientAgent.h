@@ -51,13 +51,11 @@ class ClientAgent : public BView
                                 // used by ServerAgent
                                 ClientAgent (
                                   const char *,         // id_  (window name)
-                                  int32,                // sid_ (server id)
                                   const char *,         // serverName_
                                   const char *,         // myNick_
                                   BRect);                // frame
                                 ClientAgent (
                                   const char *,         // id_  (window name)
-                                  int32,                // sid_ (server id)
                                   const char *,         // serverName_
                                   const char *,         // myNick_
                                   const BMessenger &,   // sMsgr pointer
@@ -86,7 +84,6 @@ class ClientAgent : public BView
     virtual void                DroppedFile (BMessage *);
     
     const BString               &Id (void) const;
-    int32                       Sid (void) const;
     
     BMessenger                  fMsgr;
     
@@ -166,7 +163,6 @@ class ClientAgent : public BView
     void                            AddSend (BMessage *, int32);
 
     BString                         fId;
-    const int32                     fSid;
     BString                         fServerName;
     BString                         fMyNick,
                                       fMyLag;

@@ -49,7 +49,6 @@
 MessageAgent::MessageAgent (
   BRect &frame_,
   const char *id_,
-  int32 sid_,
   const char *fServerName_,
   const BMessenger &fSMsgr_,
   const char *nick,
@@ -61,7 +60,6 @@ MessageAgent::MessageAgent (
 
   : ClientAgent (
     id_,
-    sid_,
     fServerName_,
     nick,
     fSMsgr_,

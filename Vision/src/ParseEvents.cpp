@@ -83,14 +83,12 @@ ServerAgent::ParseEvents (const char *data)
       client = new MessageAgent (
         *vision_app->pClientWin()->AgentRect(),
         theNick.String(),
-        fSid,
         fId.String(),
         fSMsgr,
         fMyNick.String(),
         addy.String()),
 
       vision_app->pClientWin()->pWindowList()->AddAgent (client,
-        fSid,
         theNick.String(),
         WIN_MESSAGE_TYPE,
         false);
@@ -199,22 +197,20 @@ ServerAgent::ParseEvents (const char *data)
       }
       if (!client)
       {
-        vision_app->pClientWin()->pWindowList()->AddAgent (
-          new ChannelAgent (
+        ChannelAgent *newAgent (new ChannelAgent (
             channel.String(),
-            fSid,
             fId.String(),
             fIrcdtype,
             fMyNick.String(),
             fSMsgr,
-            *vision_app->pClientWin()->AgentRect()),
-          fSid,
+            *vision_app->pClientWin()->AgentRect()));
+            
+        vision_app->pClientWin()->pWindowList()->AddAgent (newAgent,
           channel.String(),
           WIN_CHANNEL_TYPE,
           activateChan);
 
-        fClients.AddItem ((vision_app->pClientWin()->pWindowList()->Agent (fSid,
-                            channel.String())));
+        fClients.AddItem (newAgent);
       }
 
       BString tempString ("MODE ");
