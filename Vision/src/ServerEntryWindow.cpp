@@ -18,7 +18,8 @@
  * 
  * Contributor(s): Rene Gollent
  */
- 
+
+#include <Box.h>
 #include <Button.h>
 #include <MenuField.h>
 #include <Menu.h>
@@ -44,19 +45,19 @@ ServerEntryWindow::ServerEntryWindow (BHandler *handler, BMessage *invoked, cons
   : BWindow (
         BRect (50, 50, 350, 250), 
         "Add Server", 
-        B_FLOATING_WINDOW,
+        B_TITLED_WINDOW,
 		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS)
 {
-  AddChild (new ServerEntryView (handler, invoked, data));
+  AddChild (new ServerEntryView (Bounds(), handler, invoked, data));
 }
 
 ServerEntryWindow::~ServerEntryWindow (void)
 {
 }
 
-ServerEntryView::ServerEntryView (BHandler *handler, BMessage *invoked, const ServerData *data)
+ServerEntryView::ServerEntryView (BRect bounds, BHandler *handler, BMessage *invoked, const ServerData *data)
   : BView (
-      BRect (0, 0, 0, 0),
+      bounds,
       "entryView",
       B_FOLLOW_ALL_SIDES,
       B_WILL_DRAW),
@@ -68,13 +69,13 @@ ServerEntryView::ServerEntryView (BHandler *handler, BMessage *invoked, const Se
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
 	serverName = new VTextControl (BRect (0,0,0,0), "serverName", "Server: ",
 		(data) ? data->serverName : "", new BMessage (M_SERVER_NAME_CHANGED),
-		B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE_JUMP, true);
+		B_FOLLOW_LEFT | B_FOLLOW_TOP);
 	BString strPort ("");
 	if (data) strPort << data->port;
 	else strPort << 6667;
 	port = new VTextControl (BRect (0,0,0,0), "portVal", "Port: ",
 		strPort.String(), new BMessage (M_SERVER_PORT_CHANGED),
-		B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE, true);
+		B_FOLLOW_LEFT | B_FOLLOW_TOP);
     port->SetDivider (be_plain_font->StringWidth ("Port: ") + 5);
 
     BMenu *stateMenu = new BMenu ("Choose status");
@@ -82,19 +83,19 @@ ServerEntryView::ServerEntryView (BHandler *handler, BMessage *invoked, const Se
     stateMenu->AddItem (new BMenuItem ("Secondary", new BMessage (M_SERVER_STATE)));
     stateMenu->AddItem (new BMenuItem ("Disabled" , new BMessage (M_SERVER_STATE)));
     statusField = new BMenuField (BRect (0,0,0,0), "states", "State: ", stateMenu,
-      B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE_JUMP | B_WILL_DRAW);
+      B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
 
     okButton = new BButton (BRect (0,0,0,0), "serverOk", "Done",
-      new BMessage (M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE | B_WILL_DRAW);
+      new BMessage (M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
     
     cancelButton = new BButton (BRect (0,0,0,0), "serverCancel", "Cancel",
-      new BMessage (M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE | B_WILL_DRAW);
+      new BMessage (M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
 
-    AddChild (serverName);
-    AddChild (port);
-	AddChild (statusField);
-	AddChild (okButton);
-	AddChild (cancelButton);
+  AddChild (statusField);
+  AddChild (serverName);
+  AddChild (port);
+  AddChild (okButton);
+  AddChild (cancelButton);
 }
 
 
@@ -106,10 +107,10 @@ ServerEntryView::~ServerEntryView (void)
 void
 ServerEntryView::AttachedToWindow (void)
 {
-  BRect bounds (Window()->Bounds());
-  ResizeTo (bounds.Width(), bounds.Height());
+  BView::AttachedToWindow();
+
+  serverName->SetDivider (be_plain_font->StringWidth ("Server:") + 5);
   serverName->ResizeToPreferred();
-  serverName->SetDivider (be_plain_font->StringWidth ("Server: ") + 5);
   serverName->ResizeTo (Bounds().Width() / 2, serverName->Bounds().Height());
   serverName->MoveTo (10,10);
   serverName->SetTarget (this);
@@ -143,25 +144,19 @@ ServerEntryView::AttachedToWindow (void)
   okButton->SetEnabled (false);
     
   Window()->ResizeTo (okButton->Frame().right + 5, okButton->Frame().bottom + 10);
-  
-  BView::AttachedToWindow();
-
-  if (okButton->Frame().bottom > Bounds().bottom)
-    ResizeTo (Bounds().Width(), okButton->Frame().bottom + 5);
 
   if (currentServer)
 	dynamic_cast<BInvoker *>(statusField->Menu()->ItemAt(currentServer->state))->Invoke();
-  BView::AttachedToWindow();
 }
 
 void
 ServerEntryView::AllAttached (void)
 {
+  BView::AllAttached();
   port->MakeFocus (false);
   port->MakeFocus (true);
   serverName->MakeFocus(false);
   serverName->MakeFocus(true);
-  BView::AllAttached();
 }
 
 void

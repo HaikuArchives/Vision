@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.6-exp-1115]
+[0.6-1120]
          * added Network Preferences
             -- ability to organize networks as groups of servers that will
                automatically be cycled through on dis/reconnect
