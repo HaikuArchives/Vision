@@ -428,14 +428,15 @@ ChannelAgent::MessageReceived (BMessage *msg)
         msg->FindString ("oldnick", &oldNick);
         msg->FindString ("newnick", &newNick);
 
+        if (myNick.ICompare (oldNick) == 0 && !IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
+
         if (((thePos = FindPosition (oldNick)) >= 0)
         &&  ((item = (static_cast<NameItem *>(namesList->ItemAt (thePos)))) != 0))
         {
           item->SetName (newNick);
           namesList->SortItems (SortNames);
         }
-        else if (myNick.ICompare (oldNick) == 0 && !IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
         else
           break;
           
