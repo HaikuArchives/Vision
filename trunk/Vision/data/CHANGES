@@ -1,11 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8.9-0601]
+[0.8.9-0602]
          * added file: and mailto: URL support (Alan Ellis)
          * added keyboard shortcuts for reordering networks in the window list, shift+alt+u moves the current network up one, shift+alt+d moves the current network down one
          * fixed bug where reordering by above shortcut would get undone
          * code cleanups
+         * fixed crash bug when using /J in autoexec
 
 [0.8.8-0506]
          * changed list agent to not sort channels until done receiving for improved performance

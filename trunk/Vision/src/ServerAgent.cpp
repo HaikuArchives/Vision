@@ -995,7 +995,7 @@ ServerAgent::ParseAutoexecChans (const BString &origLine)
   }
   else if ((chanIndex = line.IFindFirst ("/J")) != B_ERROR)
   {
-    chanIndex += 2;
+    chanIndex += 3;
     line.Remove (0, chanIndex);
   }
   else
