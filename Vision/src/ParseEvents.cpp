@@ -307,6 +307,8 @@ ServerAgent::ParseEvents (const char *data)
     if (myNick.ICompare (oldNick) == 0)
     {
       myNick = newNick;
+      if (!reacquiredNick && (myNick == reconNick))
+        reacquiredNick = true;
       if (!IsHidden())
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK,
                                                                newNick.String());
@@ -351,6 +353,7 @@ ServerAgent::ParseEvents (const char *data)
       BString tempCmd ("/nick ");
       tempCmd += reconNick;
       ParseCmd (tempCmd.String());
+      reacquiredNick = true;
     }
 
     return true;

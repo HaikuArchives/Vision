@@ -118,6 +118,7 @@ class ServerAgent : public ClientAgent
 									hasWarned,			// warn about quitting
 									isQuitting,			// look out, going down
 									checkingLag,		// waiting for a lag_check reply
+									reacquiredNick,     // disconnected nick has been reacquired
 									establishHasLock;  // establish has taken ownership of
 									                   // the endPointLock pointer
 									                   

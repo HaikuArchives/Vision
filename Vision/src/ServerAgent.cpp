@@ -83,6 +83,7 @@ ServerAgent::ServerAgent (
     reconnecting (false),
     isQuitting (false),
     checkingLag (false),
+    reacquiredNick (true),
     establishHasLock (false),
     retry (0),
     retryLimit (47),
@@ -1059,8 +1060,11 @@ ServerAgent::MessageReceived (BMessage *msg)
         lEndpoint = 0;
         
         // store current nick for reconnect use (might be an away nick, etc)
-        reconNick = myNick;
-        
+        if (reacquiredNick)
+        {
+          reconNick = myNick;
+          reacquiredNick = false;
+        }
         // let the user know
         if (isConnected)
         {

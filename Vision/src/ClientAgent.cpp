@@ -498,12 +498,16 @@ ClientAgent::MessageReceived (BMessage *msg)
         int32 which (0);
         msg->FindBool ("lines", &lines);
         msg->FindInt32 ("which", &which);
+        
         if (msg->HasPointer ("invoker"))
         {
           BInvoker *invoker;
           msg->FindPointer ("invoker", reinterpret_cast<void **>(&invoker));
           delete invoker;
         }
+  
+        if (which == 0)
+          break;
 
         if (which == 1)
         {
@@ -521,15 +525,18 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           resume_thread (tid);
         }
-        else if ((which == 2) || (!lines))
+        else if ((which >= 2) || !lines)
         {
           BString buffer;
           for (int32 i = 0; msg->HasString ("data", i); ++i)
           {
             const char *data;
-
+            char marker (' ');
+            if (which == 3)
+              marker = '\n'; 
             msg->FindString ("data", i, &data);
-            buffer += (i ? " " : "");
+            if (i)
+              buffer << marker;
             buffer += data;
           }
 
