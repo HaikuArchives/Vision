@@ -712,6 +712,7 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       printf ("\t-r\t\tPrint data received across the network\n");
       printf ("\t-s\t\tPrint data sent across the network\n");
       printf ("\t-S\t\tPrint settings debug information\n");
+      printf ("\t-u\t\tPrint state debug information on shutdown\n");
       printf ("\n");
       if (IsLaunching())
         Quit();
@@ -993,27 +994,26 @@ VisionApp::VisionVersion (int typebit, BString &result)
   }
 }
 
-const char *
+const char * 
 VisionApp::GetString (const char *stringName) const
 {
   BAutolock stringLock (const_cast<BLocker *>(&fSettingsLock));
-  
-  if (!stringLock.IsLocked())
-    return "";
-  
-  if (fDebugSettings)
-    printf (":SETTINGS: looking up String \"%s\"... ", stringName);
+
+  BString value;
+
+  if (stringLock.IsLocked())
+  {
+    if (fDebugSettings)
+      printf (":SETTINGS: looking up String \"%s\"... ", stringName);
     
-  const char *value;
-  
-  if (fVisionSettings->FindString (stringName, &value) == B_OK)
-    if (fDebugSettings)
-      printf ("found; returning %s\n", value);
-  else
-    if (fDebugSettings)
-      printf (" not found; returning NULL\n");
-      
-  return value;
+    if ((fVisionSettings->FindString (stringName, &value)) == B_OK)
+      if (fDebugSettings) 
+        printf ("found; returning %s\n", value.String());
+    else
+      if (fDebugSettings)
+        printf (" not found; returning NULL\n");
+  }      
+  return value.String();
 }
 
 
@@ -1033,7 +1033,10 @@ VisionApp::SetString (const char *stringName, int32 index, const char *value)
     Broadcast (&msg);
   }
   
-  fVisionSettings->ReplaceString (stringName, index, value);
+  BString tmp;
+  tmp = value;
+  
+  fVisionSettings->ReplaceString (stringName, index, tmp);
 }
 
 const BRect
@@ -1196,15 +1199,16 @@ VisionApp::GetEvent (int32 which) const
 {
   BAutolock eventLock (const_cast<BLocker *>(&fSettingsLock));
   
-  if (!eventLock.IsLocked())
-    return "";
+  BString value;
   
-  BString buffer;
-
-  if (which < MAX_EVENTS && which >= 0)
-    buffer = fEvents[which];
-
-  return buffer;
+  if (eventLock.IsLocked())
+  {
+    if (which < MAX_EVENTS && which >= 0)
+    {
+      value = fEvents[which];
+    }
+  }
+  return value.String();
 }
 
 
@@ -1219,9 +1223,9 @@ VisionApp::SetEvent (int32 which, const char *event)
   if (which < MAX_EVENTS && which >= 0
   &&  fEvents[which].Compare (event))
   {
-    fEvents[which] =  event;
+    fEvents[which] = event;
 
-    fVisionSettings->ReplaceString ("event", which, event);
+    SetString ("event", which, event);
   }
 }
 
@@ -1231,15 +1235,16 @@ VisionApp::GetCommand (int32 which)
 {
   BAutolock commandLock (const_cast<BLocker *>(&fSettingsLock));
   
-  if (!commandLock.IsLocked())
-    return "";
-
-  BString buffer;
-
-  if (which < MAX_COMMANDS && which >= 0)
-    buffer = fCommands[which];
-
-  return buffer;
+  BString value;
+    
+  if (commandLock.IsLocked())
+  {
+    if (which < MAX_COMMANDS && which >= 0)
+    {
+      value = fCommands[which];
+    }
+  }
+  return value;
 }
 
 
@@ -1251,11 +1256,11 @@ VisionApp::SetCommand (int32 which, const char *command)
   if (!commandLock.IsLocked())
     return;
 
-  if (which < MAX_EVENTS && which >= 0)
+  if (which < MAX_COMMANDS && which >= 0)
   {
     fCommands[which] = command;
     
-    fVisionSettings->ReplaceString ("command", which, command);
+    SetString ("command", which, command);
   }
 }
 
