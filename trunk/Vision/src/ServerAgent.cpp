@@ -906,7 +906,8 @@ ServerAgent::MessageReceived (BMessage *msg)
       {
         const char *buffer (NULL);
         msg->FindString ("line", &buffer);
-        ParseLine (buffer);
+        if (buffer)
+          ParseLine (buffer);
       }
       break;
     
