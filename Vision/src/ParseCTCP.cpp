@@ -106,9 +106,11 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       sysInfoString = " : A bird in the bush usually has a friend in there with him : ";
 		
     BString tempString ("NOTICE ");
+    BString tempString2;
+    vision_app->VisionVersion (VERSION_VERSION, tempString2);
     tempString += theNick;
     tempString += " :\1VERSION Vision-"; 
-    tempString += vision_app->VisionVersion (VERSION_VERSION);
+    tempString += tempString2;
     tempString += sysInfoString;
     tempString += "http://vision.sourceforge.net";
 

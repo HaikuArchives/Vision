@@ -1,7 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8.8-0429]
+[0.8.9-0526]
+         * added file: and mailto: URL support (Alan Ellis)
+         * added keyboard shortcuts for reordering networks in the window list, shift+alt+u moves the current network up one, shift+alt+d moves the current network down one
+
+[0.8.8-0506]
          * changed list agent to not sort channels until done receiving for improved performance
          * rewrote network code to move server data sending into its own thread in an attempt
            to resolve dial-up locking issues

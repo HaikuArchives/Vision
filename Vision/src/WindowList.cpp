@@ -358,16 +358,11 @@ WindowList::GetServer (int32 index)
     currentsid = citem->Sid();
   else
     return -1;
-      
-  for (int32 i (0); i < CountItems(); ++i)
-  { 
-    WindowListItem *aitem ((WindowListItem *)ItemAt (i));
-    if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
-    {
-      return i;
-    }
-  }
-  return -1;
+    
+  if (citem->Type() == WIN_SERVER_TYPE)
+    return index;
+  
+  return IndexOf (Superitem(citem));
 }
 
 void
@@ -504,6 +499,57 @@ WindowList::ContextSelectDown (void)
   // just select the previous item then.
   Select (currentsel + 1);
   ScrollToSelection();      
+}
+
+void
+WindowList::MoveCurrentUp (void)
+{
+  int32 currentsel (FullListCurrentSelection());
+  if (currentsel < 0)
+    return;
+  
+  WindowListItem *item (dynamic_cast<WindowListItem *>(FullListItemAt(currentsel)));
+  if (item == NULL)
+    return;
+
+  if ((item->Type() == WIN_SERVER_TYPE) &&
+    currentsel > 0)
+  {
+    for (int32 i = currentsel - 1; i >= 0; i--)
+      if (dynamic_cast<WindowListItem *>(FullListItemAt(i))->Type() == WIN_SERVER_TYPE)
+      {
+        SwapItems(currentsel, i);
+        Select(IndexOf(item));
+        break;
+      }
+  }
+
+}
+
+void
+WindowList::MoveCurrentDown (void)
+{
+  int32 currentsel (FullListCurrentSelection());
+  if (currentsel < 0)
+    return;
+    
+  WindowListItem *item (dynamic_cast<WindowListItem *>(FullListItemAt(currentsel)));
+  if (item == NULL)
+    return;
+  
+  int32 itemCount (FullListCountItems());
+  
+  if ((item->Type() == WIN_SERVER_TYPE) &&
+    currentsel < itemCount)
+  {
+    currentsel = FullListIndexOf (item);
+    int32 i (currentsel + CountItemsUnder(item, true) + 1);
+    if (i < itemCount && dynamic_cast<WindowListItem *>(FullListItemAt(i))->Type() == WIN_SERVER_TYPE)
+    {
+      SwapItems(currentsel, i);
+      Select(IndexOf(item));
+    }
+  }
 }
 
 ClientAgent *

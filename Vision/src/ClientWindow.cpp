@@ -85,14 +85,14 @@ ClientWindow::QuitRequested (void)
     BMessage killMsg (M_CLIENT_QUIT);
     killMsg.AddBool ("vision:winlist", true);
     killMsg.AddBool ("vision:shutdown_in_progress", fShutdown_in_progress);
+
     if (ServerBroadcast (&killMsg))
       fWait_for_quits = true;
       
     if (fWait_for_quits)
       return false;
   }
-
-  vision_app->PostMessage (B_QUIT_REQUESTED);
+  be_app_messenger.SendMessage (B_QUIT_REQUESTED);
 
   return true;
 }
@@ -149,6 +149,14 @@ ClientWindow::HandleKey (BMessage *keyMsg)
       case B_RIGHT_ARROW: // baxter muscle memory
       case '.': // bowser muscle memory
         pWindowList()->ContextSelectDown();
+        break;
+      
+      case 'U':
+        pWindowList()->MoveCurrentUp();
+        break;
+        
+      case 'D':
+        pWindowList()->MoveCurrentDown();
         break;
     }
   }
@@ -306,7 +314,7 @@ ClientWindow::MessageReceived (BMessage *msg)
           printf (":ERROR: no valid pointers found in M_OBITUARY, bailing...\n");
           return;
         } 
-       
+        
         pWindowList()->RemoveAgent (agentview, agentitem);
 
         if (fShutdown_in_progress && pWindowList()->CountItems() == 0)
