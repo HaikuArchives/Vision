@@ -740,11 +740,10 @@ ServerAgent::MessageReceived (BMessage *msg)
 			//BMessage abortchildren (M_CLIENT_QUIT);
 			Broadcast (new BMessage (M_CLIENT_QUIT));
 
-		  	ClientWindow *window ((ClientWindow *)Window());
 		  	BMessage deathchant (M_OBITUARY);
 		  	deathchant.AddPointer ("agent", this);
 		  	deathchant.AddPointer ("item", agentWinItem);
-		  	window->PostMessage (&deathchant);						
+		  	vision_app->pClientWin()->PostMessage (&deathchant);						
 						
 //			BMessage aMsg (M_SERVER_SHUTDOWN);
 //			aMsg.AddString ("server", serverName.String());
