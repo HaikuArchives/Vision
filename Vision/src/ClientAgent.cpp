@@ -330,19 +330,20 @@ ClientAgent::TimedSubmit (void *arg)
   bool delay (!msg->HasBool ("delay"));
 
   BMessenger agentMsgr (agent);
+  BMessage submitMsg (M_SUBMIT);
   for (i = 0; msg->HasString ("data", i); ++i)
   {
     const char *data;
 
     msg->FindString ("data", i, &data);
-
+    if (!submitMsg.HasString ("input"))
+      submitMsg.AddString ("input", data);
+    else
+      submitMsg.ReplaceString ("input", data);
     // :TODO: wade 020101 move locks to ParseCmd?
-    if (agentMsgr.IsValid() && agent->LockLooper())
+    if (agentMsgr.IsValid())
     {
-      if (!agent->SlashParser (data))
-        agent->Parser (data);
-
-      agent->UnlockLooper();
+      agentMsgr.SendMessage (&submitMsg);
 
       // A small attempt to appease the
       // kicker gods

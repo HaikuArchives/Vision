@@ -89,6 +89,8 @@ class VisionApp : public BApplication
     bool                    GetBool (const char *);
     status_t                SetBool (const char *, bool);
     
+    sem_id                  GetShutdownSem(void);
+    
     Theme *                 ActiveTheme(void);
     
     const char              *GetThreadName (int);
@@ -140,6 +142,7 @@ class VisionApp : public BApplication
 	thread_id               identThread;
 	int32                   identSocket;
 	Theme                   *activeTheme;
+	sem_id                  shutdownSem;
 };
 
 const uint32 M_SETUP_CLOSE           = 'vasc';

@@ -509,21 +509,16 @@ VisionApp::QuitRequested (void)
   closesocket (identSocket);
 #endif
 
-  BMessage *quitRequest (CurrentMessage());
-
-  if ((clientWin) && (!quitRequest->HasBool ("real_thing")))
+  if(clientWin)
   {
     clientWin->PostMessage (B_QUIT_REQUESTED);
-    return false;
+    //hang out here until ClientWindow::QuitRequested is really done
+    acquire_sem_etc(shutdownSem, 1, B_RELATIVE_TIMEOUT, 500000);
   }
-
+  
   // give our child threads a chance to die gracefully
   snooze (500000);  // 0.5 seconds
 
-  status_t result;
-
-  wait_for_thread (identThread, &result);
-  
   //ThreadStates();
   
   return true;
@@ -609,6 +604,10 @@ VisionApp::ReadyToRun (void)
 
   BRect clientWinRect;
   visionSettings->FindRect ("clientWinRect", &clientWinRect);
+  
+  shutdownSem = create_sem(0, "ShutdownSem");
+  if(shutdownSem < B_OK) //that's an error
+  	vision_app->Quit();
   
   clientWin = new ClientWindow (clientWinRect);
   setupWin = new SetupWindow (true);
@@ -1025,6 +1024,12 @@ VisionApp::ActiveTheme (void)
   return activeTheme;
 }
 
+sem_id
+VisionApp::GetShutdownSem (void)
+{
+  return shutdownSem;
+}
+
 const char *
 VisionApp::GetThreadName (int thread_type)
 {
@@ -1187,12 +1192,12 @@ VisionApp::Identity (void *)
       FD_SET (identSock, &rset);
       FD_SET (identSock, &eset);
 
-      if (select (identSock, &rset, 0, &eset, &tv) < 0 || FD_ISSET (identSock, &eset))
+      if (select (identSock + 1, &rset, 0, &eset, &tv) < 0 || FD_ISSET (identSock, &eset))
          break;
       else if (FD_ISSET (identSock, &rset))
       {
         accepted = accept (identSock, (struct sockaddr *)&remoteSock, &size);
-        if (accepted >= 0) 
+        if (accepted >= 0)
         {
           FD_ZERO (&rset);
           FD_ZERO (&eset);

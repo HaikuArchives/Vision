@@ -103,9 +103,8 @@ ClientWindow::QuitRequested (void)
   }
 
 
-  BMessage killMeNow (B_QUIT_REQUESTED);
-  killMeNow.AddBool ("real_thing", true);  
-  vision_app->PostMessage (&killMeNow);
+  vision_app->PostMessage (B_QUIT_REQUESTED);
+  delete_sem(shutdownSem);
 
   return true;
 }
@@ -506,6 +505,7 @@ ClientWindow::Init (void)
   shutdown_in_progress = false;
   wait_for_quits = false;
   altw_catch = false;
+  shutdownSem = vision_app->GetShutdownSem();
 
   AddShortcut ('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
   
