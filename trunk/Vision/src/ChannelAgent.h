@@ -70,7 +70,8 @@ class ChannelAgent : public ClientAgent
                             chanLimitOld,
                             chanKey,
                             chanKeyOld,
-                            lastExpansion;
+                            lastExpansion,
+                            topic;
 
     rgb_color               ctcpReqColor,
                             ctcpRpyColor,
