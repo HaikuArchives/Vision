@@ -107,7 +107,7 @@ DCCFileWindow::MessageReceived (BMessage *msg)
             
             if (CountChildren() == 0)
             {
-              PostMessage (B_QUIT_REQUESTED);
+              BMessenger(this).SendMessage(B_QUIT_REQUESTED);
             }
             else
             {
