@@ -20,7 +20,7 @@ BINARY := Vision
 VTOP := 0.1
 VDATE := $(shell date +%Y%m%d)
 VERSION := $(VTOP)-$(VDATE)
-LIBS := -lbe -lnet -lnetapi -ltextencoding -ltranslation -ltracker
+LIBS := -lbe -lnet -lnetapi -ltextencoding -ltranslation -ltracker src/lua/lib/liblua.a
 
 ################################################
 
@@ -33,7 +33,7 @@ DATADIR := data
 
 # compiler, linker, ...
 
-CC := g++ -c -pipe -g3
+CC := g++ -c -pipe
 CFLAGS :=
 CFLAGS += -O3
 CFLAGS += -fno-pic
@@ -44,7 +44,6 @@ CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith
 CFLAGS += -Wcast-qual
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
-#CFLAGS += -Werror
 
 LD := g++
 LDFLAGS := $(LIBS)
@@ -79,7 +78,7 @@ HEADERS := $(addprefix $(SRCDIR)/,$(BASEHEADERS))
 
 default : build
 
-build : $(BINARY)
+build : makelua $(BINARY)
 
 clean :
 	@echo cleaning
@@ -90,6 +89,11 @@ all : sourcearchive binarchive
 sourcearchive : $(FULLNAME)-src.zip
 
 binarchive : $(FULLNAME).zip
+
+makelua :
+	@echo updating Lua if nessessary
+	@cd $(SRCDIR)/lua && make >/dev/null && cd $(SRCDIR)/..
+	@echo Lua is \(now\) current
 
 $(BINARY) : $(OBJECTS)
 	@echo linking $@
