@@ -774,7 +774,6 @@ ServerAgent::MessageReceived (BMessage *msg)
 		
 		case M_CLIENT_SHUTDOWN:
 		{
-		    printf ("m_client_shutdown\n");
 			ClientAgent *deadagent;
 			
 			if (msg->FindPointer ("agent", reinterpret_cast<void **>(&deadagent)) != B_OK)

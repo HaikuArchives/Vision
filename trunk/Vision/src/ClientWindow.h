@@ -79,6 +79,8 @@ class ClientWindow : public BWindow
 
   private:
     void                  Init (void);
+    bool                  shutdown_in_progress;
+    bool                  wait_for_quits;
 
 };
 
