@@ -885,9 +885,8 @@ VisionApp::SetString (const char *stringName, int32 index, const char *value)
   
   if (!stringLock.IsLocked())
     return B_ERROR;
-    
-  BString temp (value);
-  if (visionSettings->ReplaceString (stringName, index, temp) == B_OK)
+  
+  if (visionSettings->ReplaceString (stringName, index, value) == B_OK)
     return B_OK;
   
   return B_ERROR;  
@@ -1006,8 +1005,6 @@ VisionApp::ClientFontFamilyAndStyle (
     
   if (which < MAX_FONTS && which >= 0)
   {
-    client_font[which]->SetFamilyAndStyle (family, style);
-    
     activeTheme->SetFont (which, client_font[which]);
     
     if (which == F_TEXT)
