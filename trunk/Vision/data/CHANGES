@@ -1,6 +1,32 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0502]
+ 2001-05-02
+   * Fixed a potential contention issue in Establish()
+   * "NickHold" now tries to regain your previous nickname explicitly. This
+     means two things:
+     1) It will only come into play it's particular session of Vision
+        was using the nickname. It only takes effect after reconnects.
+     2) It uses your previous nickname, not your explicit first nickname. So
+        if you change your nickname to someoneAway, and Vision reconnections,
+        it wont try to change back to someone. (Actually before it wouldn't
+        try to change at all, because it only watchewd for your first nickname)
+     
+     An example of why Nickhold (and its new improvments) is useful
+     
+       <me> I'm going to goto sleep.
+       *** me is now known as meZzZ
+       [...]
+       [@] Disconnected
+       [@] Reconnected (using your alt nick)
+       [...]
+       *** meZzZ has quit (Ping Timeout)
+       *** me2 is now known as meZzZ
+       <someone> Wow that's cool. I wish my client did that for me while I was
+       away!
+--
+
 [0.2.0430]
  2001-04-30
    * Establish() rewrite
