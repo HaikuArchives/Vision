@@ -99,7 +99,7 @@ class ClientAgent : public BView
                                   const char * = 0,
                                   const char * = 0,
                                   const char * = 0);
-    void                        ActionMessage (
+    virtual void                        ActionMessage (
                                   const char *,
                                   const char *);
 

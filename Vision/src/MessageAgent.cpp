@@ -484,8 +484,33 @@ MessageAgent::MessageReceived (BMessage *msg)
 }
 
 void
+MessageAgent::ActionMessage (const char *msg, const char *nick)
+{
+  if (!dChat)
+    ClientAgent::ActionMessage (msg, nick);
+  else if (dConnected)
+  {
+    BString outTemp;
+    outTemp = "\1ACTION ";
+    outTemp += msg;
+    outTemp += "\1";
+    outTemp += "\n";
+
+    if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
+    {
+      dConnected = false;
+      Display ("DCC chat terminated.\n");
+      return;
+    }
+    
+    ChannelMessage (outTemp.String(), nick);
+  }
+  
+}
+void
 MessageAgent::Parser (const char *buffer)
 {
+  printf("buffer: %s\n", buffer);
   if (!dChat)
   {
     BMessage dataSend (M_SERVER_SEND);
