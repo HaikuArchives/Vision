@@ -153,7 +153,7 @@ ClientAgent::Init (void)
                 BRect (
                   0,
                   frame.top, // tmp. will be moved
-                  frame.right - 117,
+                  frame.right - 115,
                   frame.bottom),
                 "Input", 0, 0,
                 0,
@@ -180,7 +180,7 @@ ClientAgent::Init (void)
 
   BRect textrect (
     0,
-    frame.top - 1,
+    frame.top - 2,
     frame.right - 117 - B_V_SCROLL_BAR_WIDTH,
     frame.bottom - input->Frame().Height() - 1);
 
