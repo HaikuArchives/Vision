@@ -20,8 +20,8 @@
  *                 Rene Gollent
  */
 
-#ifndef _AGENTDOCK_H_
-#define _AGENTDOCK_H_
+#ifndef _CLIENTWINDOWDOCK_H_
+#define _CLIENTWINDOWDOCK_H_
 
 #ifdef GNOME_BUILD
 #  include "gnome/View.h"
@@ -88,11 +88,11 @@ class AgentDockNotifyList : public BView
 
 };
 
-class AgentDock : public BView
+class ClientWindowDock : public BView
 {
   public:
-                            AgentDock (BRect);
-    virtual                 ~AgentDock (void);
+                            ClientWindowDock (BRect);
+    virtual                 ~ClientWindowDock (void);
     
     void                    AddWinList (void);
     void                    AddNotifyList (void);

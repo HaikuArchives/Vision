@@ -47,7 +47,7 @@
 #include "SettingsFile.h"
 #include "ClientWindow.h"
 #include "ClientAgent.h"
-#include "AgentDock.h"
+#include "ClientWindowDock.h"
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -437,10 +437,10 @@ ClientWindow::GetTopServer (WindowListItem *request)
 BRect *
 ClientWindow::AgentRect (void)
 {
-  agentrect->left = aDock->Frame().right - aDock->Frame().left + 2;
+  agentrect->left = cwDock->Frame().right - cwDock->Frame().left + 2;
   agentrect->top = Bounds().top + 1;
   agentrect->right = Bounds().Width() - 1;
-  agentrect->bottom = aDock->Frame().Height();
+  agentrect->bottom = cwDock->Frame().Height();
   return agentrect;
 }
 
@@ -448,7 +448,7 @@ ClientWindow::AgentRect (void)
 WindowList *
 ClientWindow::pWindowList (void)
 {
-  return aDock->pWindowList();
+  return cwDock->pWindowList();
 }
 
 
@@ -591,15 +591,15 @@ ClientWindow::Init (void)
     "irc.elric.net", 0),
     true);
   
-  aDock = new AgentDock (BRect (0, frame.top, 130, status->Frame().top - 1));
+  cwDock = new ClientWindowDock (BRect (0, frame.top, 130, status->Frame().top - 1));
   
-  bgView->AddChild (aDock);
+  bgView->AddChild (cwDock);
 
   agentrect = new BRect (
-    aDock->Frame().right - aDock->Frame().left + 2,
+    cwDock->Frame().right - cwDock->Frame().left + 2,
     Bounds().top + 1,
     Bounds().Width() - 1,
-    aDock->Frame().Height());
+    cwDock->Frame().Height());
 }
 
 //////////////////////////////////////////////////////////////////////////////

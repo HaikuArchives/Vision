@@ -51,7 +51,7 @@ class ServerAgent;
 class StatusView;
 class WindowList;
 class WindowListItem;
-class AgentDock;
+class ClientWindowDock;
 
 
 class ClientWindow : public BWindow
@@ -101,7 +101,7 @@ class ClientWindow : public BWindow
     
     StatusView            *status;
     
-    AgentDock             *aDock;
+    ClientWindowDock      *cwDock;
 
 };
 
