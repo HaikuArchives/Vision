@@ -221,17 +221,19 @@ ChannelAgent::AddUser (const char *nick, const int32 status)
   ++fUserCount;
   BString buffer;
   buffer << fUserCount;
+  BString *comparator (NULL);
   
   // check if new nickname matches against tab completion sequence and update nick list
   // if so
   if (fLastExpansion.Length() > 0 && fLastExpansion.ICompare(nick, fLastExpansion.Length()) == 0)
   {
-    BString *string (new BString (nick));
     int32 count (fCompletionNicks.CountItems());
-    for (int32 i = count - 1; i > 0; i++)
+    for (int32 i = count - 1; i >= 0; i--)
     {
-      if (((BString *)fCompletionNicks.ItemAt(i))->ICompare (nick) < 0)
-      {
+      comparator = (BString *)fCompletionNicks.ItemAt (i);
+      if (comparator && comparator->ICompare (nick) < 0)
+      {   
+        BString *string (new BString (nick));
         fCompletionNicks.AddItem (string, i+1);
         break;
       }
@@ -261,7 +263,7 @@ ChannelAgent::RemoveUser (const char *data)
   
   int32 myIndex (FindPosition (data));
 
-  if (myIndex != -1)
+  if (myIndex >= 0)
   {
     NameItem *item;
 
@@ -536,6 +538,11 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
         msg->FindString ("nick", &nick);
         msg->FindBool ("ignore", &ignore);
+        if (nick == NULL)
+        {
+          printf("ERROR: attempted to AddUser an empty nick in ChannelAgent, channel: %s\n", fId.String());
+          break;
+        }
 
         if (ignore) iStatus |= STATUS_IGNORE_BIT;
         
