@@ -369,6 +369,13 @@ AppearancePrefsView::MessageReceived (BMessage *msg)
 			win->Show();
 			picker = BMessenger (win);
 		}
+	    else
+	    {
+	      ColorPicker *win (NULL);
+	      picker.Target (reinterpret_cast<BLooper **>(&win));
+	      if (win)
+	        win->Activate(true);
+	    }
         break;
         
       case M_COLOR_CHANGED:
