@@ -130,6 +130,7 @@ const uint32 M_REGISTER_LOGGER                      = 0x1726;
 const uint32 M_UNREGISTER_LOGGER                    = 0x1727;
 const uint32 M_CLIENT_LOG                           = 0x1728;
 const uint32 M_SERVER_THREAD_VALID                  = 0x1729;
+const uint32 M_GET_SENDER_DATA                      = 0x1730;
 
 const uint32 M_DCC_COMPLETE                         = 0x1800;
 const uint32 M_DCC_FILE_WIN_DONE                    = 0x1801;
