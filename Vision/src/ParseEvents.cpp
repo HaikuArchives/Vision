@@ -351,11 +351,11 @@ ServerAgent::ParseEvents (const char *data)
 		BMessage display (M_DISPLAY);
 		PackDisplay (&display, theMsg.String(), &quitColor, 0, true);
 
-//		BMessage msg (M_USER_QUIT);
-//		msg.AddMessage ("display", &display);
-//		msg.AddString ("nick", theNick.String());
-//
-//		Broadcast (&msg);
+		BMessage msg (M_USER_QUIT);
+		msg.AddMessage ("display", &display);
+		msg.AddString ("nick", theNick.String());
+
+		Broadcast (&msg);
 		
 		// see if it was our first nickname. if so, change
 		firstNick = (const char *)lnicks->ItemAt (0);
