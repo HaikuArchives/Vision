@@ -390,8 +390,8 @@ ChannelAgent::SortNames(const void *name1, const void *name2)
 
   BString first, second;
 
-  first += (((firstPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (firstPtr)->Status()); 
-  second += (((secondPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (secondPtr)->Status()); 
+  first += firstPtr->Status(); 
+  second += secondPtr->Status(); 
   first.Prepend ('0', 10 - first.Length());
   second.Prepend ('0', 10 - second.Length());
 
@@ -630,12 +630,16 @@ ChannelAgent::MessageReceived (BMessage *msg)
         for (i = 0; msg->HasString ("nick", i); ++i)
         {
           const char *nick (NULL);
-          bool op (false),
+          bool founder (false),
+            protect (false),
+            op (false),
             voice (false),
             helper (false),
             ignored (false);
 
           msg->FindString ("nick", i, &nick);
+          msg->FindBool ("founder", i, &founder);
+          msg->FindBool ("protect", i, &protect);
           msg->FindBool ("op", i, &op);
           msg->FindBool ("voice", i, &voice);
           msg->FindBool ("helper", i, &helper);
@@ -644,8 +648,20 @@ ChannelAgent::MessageReceived (BMessage *msg)
           if (FindPosition (nick) < 0)
           {
             int32 iStatus (ignored ? STATUS_IGNORE_BIT : 0);
-
-            if (op)
+            
+            if (founder)
+            {
+              ++nick;
+              ++fOpsCount;
+              iStatus |= STATUS_FOUNDER_BIT;
+            }
+            else if (protect)
+            {
+              ++nick;
+              ++fOpsCount;
+              iStatus |= STATUS_PROTECTED_BIT;
+            }
+            else if (op)
             {
               ++nick;
               ++fOpsCount;
