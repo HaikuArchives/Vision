@@ -112,17 +112,17 @@ class VisionApp : public BApplication
     void                    AcquireDCCLock (void);
     void                    ReleaseDCCLock (void);
     
-    BString                 events[MAX_EVENTS];
+    BString                 fEvents[MAX_EVENTS];
 
-    bool                    debugsettings;
-    bool                    debugsend;
-    bool                    debugrecv;
-    bool                    settingsloaded;
-    bool                    numBench;
+    bool                    fDebugSettings;
+    bool                    fDebugSend;
+    bool                    fDebugRecv;
+    bool                    fSettingsLoaded;
+    bool                    fNumBench;
 
     // used for benchmarking
-    int32                   bench1;
-    int32                   bench2;
+    int32                   fBench1;
+    int32                   fBench2;
 
     
     ClientWindow            *pClientWin (void) const;
@@ -133,28 +133,28 @@ class VisionApp : public BApplication
     void                    ThreadStates (void);
     bool                    CheckStartupNetworks (void);
     
-    volatile bool           ShuttingDown;
+    volatile bool           fShuttingDown;
 
-    AboutWindow             *aboutWin;
-    SetupWindow             *setupWin;
-    ClientWindow            *clientWin;
-    PrefsWindow             *prefsWin;
-    NetworkWindow           *netWin;
-    DCCFileWindow           *dccFileWin;
+    AboutWindow             *fAboutWin;
+    SetupWindow             *fSetupWin;
+    ClientWindow            *fClientWin;
+    PrefsWindow             *fPrefsWin;
+    NetworkWindow           *fNetWin;
+    DCCFileWindow           *fDccFileWin;
     
-    SettingsFile			*visionSettings;
+    SettingsFile			*fVisionSettings;
     
-    rgb_color               colors[MAX_COLORS];
-    BFont                   *client_font[MAX_FONTS];
-	BString					commands[MAX_COMMANDS];
-	BMessage                idents;
-	BLocker                 identLock,
-	                          settingsLock,
-	                        dccLock;
-	thread_id               identThread;
-	int32                   identSocket;
-	Theme                   *activeTheme;
-	sem_id                  shutdownSem;
+    rgb_color               fColors[MAX_COLORS];
+    BFont                   *fClientFont[MAX_FONTS];
+	BString					fCommands[MAX_COMMANDS];
+	BMessage                fIdents;
+	BLocker                 fIdentLock,
+	                          fSettingsLock,
+	                        fDccLock;
+	thread_id               fIdentThread;
+	int32                   fIdentSocket;
+	Theme                   *fActiveTheme;
+	sem_id                  fShutdownSem;
 };
 
 const uint32 VIS_NETWORK_DATA        = 'vndc';

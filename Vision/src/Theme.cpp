@@ -43,16 +43,16 @@ int16 Theme::SelectionBack      = 3;
 
 Theme::Theme (
   const char *n,
-  int16 fore_count,
-  int16 back_count,
-  int16 font_count)
+  int16 foreCount,
+  int16 backCount,
+  int16 fontCount)
   :  name (NULL),
      fores (NULL),
      backs (NULL),
      fonts (NULL),
-     fore_count (max_c (fore_count, 4)),
-     back_count (max_c (back_count, 4)),
-     font_count (max_c (font_count, 4))
+     fore_count (max_c (foreCount, 4)),
+     back_count (max_c (backCount, 4)),
+     font_count (max_c (fontCount, 4))
 {
   name = strcpy (new char [strlen (n) + 1], n);
 

@@ -97,7 +97,7 @@ ServerAgent::ServerAgent (
     fServerSocket (-1),
     fParse_buffer (NULL),
     fParse_size (0),
-    fEvents (vision_app->events),
+    fEvents (vision_app->fEvents),
     fServerHostName (id_),
     fInitialMotd (true),
     fCmds (net.FindString ("autoexec")),
@@ -477,7 +477,7 @@ ServerAgent::Establish (void *arg)
     
           temp.RemoveLast ("\r");
 
-          if (vision_app->debugrecv)
+          if (vision_app->fDebugRecv)
           {
             printf ("RECEIVED: (%ld:%03ld) \"", serverSid, temp.Length());
             for (int32 i = 0; i < temp.Length(); ++i)
@@ -510,7 +510,7 @@ ServerAgent::Establish (void *arg)
      {
         // we got disconnected :(
         
-        if (vision_app->debugrecv)
+        if (vision_app->fDebugRecv)
         {
           // print interesting info          
           printf ("Negative from endpoint receive! (%ld)\n", length);
@@ -567,7 +567,7 @@ ServerAgent::SendData (const char *cData)
   int32 dest_length (sizeof(fSend_buffer)), state (0);
 
   convert_from_utf8 (
-    B_ISO1_CONVERSION,
+    B_ISO_8859_1,
     data.String(), 
     &length,
     fSend_buffer,
@@ -592,7 +592,7 @@ ServerAgent::SendData (const char *cData)
 #ifdef NETSERVER_BUILD
   fEndPointLock->Unlock();
 #endif
-  if (vision_app->debugsend)
+  if (vision_app->fDebugSend)
   {
     data.RemoveAll ("\n");
     data.RemoveAll ("\r");
@@ -624,12 +624,12 @@ ServerAgent::ParseLine (const char *cData)
     &dest_length,
     &state);
   
-  if (vision_app->numBench)
+  if (vision_app->fNumBench)
   {
-    vision_app->bench1 = system_time();
+    vision_app->fBench1 = system_time();
     if (ParseEvents (fParse_buffer))
     {
-      vision_app->bench2 = system_time();
+      vision_app->fBench2 = system_time();
       BString bencht (GetWord (data.String(), 2));
       vision_app->BenchOut (bencht.String());
       return;

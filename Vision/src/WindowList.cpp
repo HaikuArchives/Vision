@@ -148,7 +148,7 @@ WindowList::CloseActive (void)
 void
 WindowList::MouseDown (BPoint myPoint)
 {
-  BMessage *message (Window()->CurrentMessage());
+  BMessage *msg (Window()->CurrentMessage());
   int32 selected (IndexOf (myPoint));
   if (selected >= 0)
   {
@@ -160,7 +160,7 @@ WindowList::MouseDown (BPoint myPoint)
     inputMsg->FindInt32 ("modifiers", &keymodifiers);
     
     bigtime_t sysTime;
-    message->FindInt64 ("when", &sysTime);
+    msg->FindInt64 ("when", &sysTime);
     uint16 clicks = CheckClickCount (myPoint, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
     
     // slight kludge to make sure the expand/collapse triangles behave how they should

@@ -889,7 +889,7 @@ ClientAgent::MessageReceived (BMessage *msg)
           file,
           size,
           type,
-          message ("[@] "),
+          completionMsg ("[@] "),
           fAck;
         int32 rate,
           xfersize;
@@ -912,22 +912,22 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           /// send mesage ///				
         if (completed)
-          message << S_CLIENT_DCC_SUCCESS;
-        else message << S_CLIENT_DCC_FAILED;
+          completionMsg << S_CLIENT_DCC_SUCCESS;
+        else completionMsg << S_CLIENT_DCC_FAILED;
 				
         if (type == "SEND")
-          message << S_CLIENT_DCC_SENDTYPE << pFile.Leaf() << S_CLIENT_DCC_TO;
-        else message << S_CLIENT_DCC_RECVTYPE << pFile.Leaf() << S_CLIENT_DCC_FROM;
+          completionMsg << S_CLIENT_DCC_SENDTYPE << pFile.Leaf() << S_CLIENT_DCC_TO;
+        else completionMsg << S_CLIENT_DCC_RECVTYPE << pFile.Leaf() << S_CLIENT_DCC_FROM;
 				
-        message << nick << " (";
+        completionMsg << nick << " (";
 
         if (!completed)
-          message << fAck << "/";
+          completionMsg << fAck << "/";
 				
-        message << size << S_CLIENT_DCC_SIZE_UNITS "), ";
-        message	<< rate << S_CLIENT_DCC_SPEED_UNITS "\n";
+        completionMsg << size << S_CLIENT_DCC_SIZE_UNITS "), ";
+        completionMsg	<< rate << S_CLIENT_DCC_SPEED_UNITS "\n";
 					
-        Display (message.String(), C_CTCP_RPY);
+        Display (completionMsg.String(), C_CTCP_RPY);
 	  }
 	  break;
 
@@ -962,7 +962,7 @@ ClientAgent::FirstKnownAs (
         i,
         place;
   BString target;
-
+  
   if ((place = FirstSingleKnownAs (data, fMyNick)) != B_ERROR)
   {
     result = fMyNick;
@@ -994,7 +994,7 @@ ClientAgent::FirstSingleKnownAs (const BString &data, const BString &target)
   &&  (place == 0
   ||   isspace (data[place - 1])
   ||   ispunct (data[place - 1]))
-  &&  (place + target.Length() == data.Length()
+  &&  (place + target.Length() + 1 == data.Length()
   ||   isspace (data[place + target.Length()])
   ||   ispunct (data[place + target.Length()])))
     return place;

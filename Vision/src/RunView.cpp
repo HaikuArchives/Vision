@@ -186,7 +186,7 @@ UTF8_CHAR_LEN (uchar c)
 RunView::RunView (
   BRect frame,
   const char *name,
-  Theme *fTheme,
+  Theme *theme,
   uint32 resizingMode,
   uint32 flags)
   :  BView (
@@ -195,7 +195,7 @@ RunView::RunView (
       resizingMode,
       flags | B_WILL_DRAW | B_FRAME_EVENTS),
     fScroller (NULL),
-    fTheme (fTheme),
+    fTheme (theme),
     fWorking (NULL),
     fLine_count (0),
     fStamp_format (NULL),
@@ -370,10 +370,10 @@ RunView::Draw (BRect frame)
 
       if (sit)
       {
-        int16 i (place);
+        int16 j (place);
 
-        while (--i >= 0)
-          if ((start = line->fEdges[i]) != 0)
+        while (--j >= 0)
+          if ((start = line->fEdges[j]) != 0)
             break;
       }
 
@@ -494,14 +494,14 @@ RunView::Draw (BRect frame)
         if (place + fLength == line->fLength)
           --fLength;
 
-        int16 i (place + fLength - 1);
-        while (line->fEdges[i] == 0)
-          --i;
+        int16 k (place + fLength - 1);
+        while (line->fEdges[k] == 0)
+          --k;
 
         r.Set (
           left,
           height,
-          line->fEdges[i] + indent - start,
+          line->fEdges[k] + indent - start,
           height + line->fSofties[sit].fHeight - 1.0);
 
         SetDrawingMode (B_OP_COPY);
@@ -522,7 +522,7 @@ RunView::Draw (BRect frame)
           min_c (fLength, line->fLength - place - 1),
           BPoint (left, height + line->fSofties[sit].fAscent));
 
-        left = line->fEdges[i] + indent - start;
+        left = line->fEdges[k] + indent - start;
 
         if ((place += fLength) + 1 >= line->fLength)
           ++place;
@@ -633,22 +633,22 @@ RunView::MouseDown (BPoint point)
 
   BMessage *msg (Window()->CurrentMessage());
   uint32 buttons;
-  uint32 modifiers;
+  uint32 mouseModifiers;
   bigtime_t sysTime;
   msg->FindInt64 ("when", &sysTime);
   uint16 clicks = CheckClickCount (point, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
   msg->FindInt32 ("buttons", reinterpret_cast<int32 *>(&buttons));
-  msg->FindInt32 ("modifiers", reinterpret_cast<int32 *>(&modifiers));
+  msg->FindInt32 ("modifiers", reinterpret_cast<int32 *>(&mouseModifiers));
 
   SelectPos s (PositionAt (point));
   bool inBounds (CheckClickBounds (s, point));
 
   if (buttons == B_SECONDARY_MOUSE_BUTTON
-  &&    (modifiers & B_SHIFT_KEY) == 0
-  &&    (modifiers & B_COMMAND_KEY) == 0
-  &&    (modifiers & B_CONTROL_KEY) == 0
-  &&    (modifiers & B_OPTION_KEY) == 0
-  &&      (modifiers & B_MENU_KEY) == 0)
+  &&    (mouseModifiers & B_SHIFT_KEY) == 0
+  &&    (mouseModifiers & B_COMMAND_KEY) == 0
+  &&    (mouseModifiers & B_CONTROL_KEY) == 0
+  &&    (mouseModifiers & B_OPTION_KEY) == 0
+  &&      (mouseModifiers & B_MENU_KEY) == 0)
   {
     SelectPos start (s),
           end (s);
@@ -673,11 +673,11 @@ RunView::MouseDown (BPoint point)
   }
 
   if (buttons == B_PRIMARY_MOUSE_BUTTON
-  &&      (modifiers & B_SHIFT_KEY)   == 0
-  &&      (modifiers & B_COMMAND_KEY) == 0
-  &&      (modifiers & B_CONTROL_KEY) == 0
-  &&      (modifiers & B_OPTION_KEY)  == 0
-  &&      (modifiers & B_MENU_KEY)    == 0)
+  &&      (mouseModifiers & B_SHIFT_KEY)   == 0
+  &&      (mouseModifiers & B_COMMAND_KEY) == 0
+  &&      (mouseModifiers & B_CONTROL_KEY) == 0
+  &&      (mouseModifiers & B_OPTION_KEY)  == 0
+  &&      (mouseModifiers & B_MENU_KEY)    == 0)
   {
     SelectPos start (s),
           end (s);
@@ -721,11 +721,11 @@ RunView::MouseDown (BPoint point)
     }
   }
   else if (buttons          == B_PRIMARY_MOUSE_BUTTON
-  &&      (modifiers & B_SHIFT_KEY)   != 0
-  &&      (modifiers & B_COMMAND_KEY) == 0
-  &&      (modifiers & B_CONTROL_KEY) == 0
-  &&      (modifiers & B_OPTION_KEY)  == 0
-  &&      (modifiers & B_MENU_KEY)    == 0)
+  &&      (mouseModifiers & B_SHIFT_KEY)   != 0
+  &&      (mouseModifiers & B_COMMAND_KEY) == 0
+  &&      (mouseModifiers & B_CONTROL_KEY) == 0
+  &&      (mouseModifiers & B_OPTION_KEY)  == 0
+  &&      (mouseModifiers & B_MENU_KEY)    == 0)
   {
     if (s.fLine < fSp_start.fLine || s.fOffset < fSp_start.fOffset)
     {
@@ -1190,10 +1190,10 @@ RunView::ResizeRecalc (void)
       Invalidate (Bounds());
     else
     {
-      int32 count (region.CountRects()), i;
+      int32 count (region.CountRects()), j;
 
-      for (i = 0; i < count; ++i)
-        Invalidate (region.RectAt (i));
+      for (j = 0; j < count; ++j)
+        Invalidate (region.RectAt (j));
 
       if (top <= bounds.bottom)
       {
@@ -1249,9 +1249,9 @@ RunView::RecalcScrollBar (bool constrain)
   BRect bounds (Bounds());
   bool changed (false);
   float bottom (0.0);
-  float min, max;
+  float scrollMin, scrollMax;
 
-  bar->GetRange (&min, &max);
+  bar->GetRange (&scrollMin, &scrollMax);
 
   if (fLine_count
   && (bounds.Contains (BPoint (0.0, 0.0)) == false
@@ -1273,11 +1273,11 @@ RunView::RecalcScrollBar (bool constrain)
     ConstrainClippingRegion (&region);
   }
 
-  if (max != bottom)
+  if (scrollMax != bottom)
   {
     bar->SetRange (0.0, bottom);
 
-    if (value == max || min == max)
+    if (value == scrollMax || scrollMin == scrollMax)
     {
       bar->SetValue (bottom);
       changed = true;
@@ -2361,10 +2361,10 @@ Line::SetStamp (const char *format, bool was_on)
   if (format)
   {
     char buffer[1024];
-    struct tm tm;
+    struct tm curTime;
 
-    localtime_r (&fStamp, &tm);
-    size = strftime (buffer, 1023, format, &tm);
+    localtime_r (&fStamp, &curTime);
+    size = strftime (buffer, 1023, format, &curTime);
     if (fUrls)
     {
       urllist::const_iterator it = fUrls->begin();

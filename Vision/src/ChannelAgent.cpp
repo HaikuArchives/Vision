@@ -667,7 +667,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
                   knownAs;
         msg->FindString ("msgz", &tempString);
         FirstKnownAs (tempString, knownAs, &hasNick);
-
+        
         if (IsHidden())
           UpdateStatus((hasNick) ? WIN_NICK_BIT : WIN_NEWS_BIT);
         else if (hasNick)
