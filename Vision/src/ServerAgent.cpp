@@ -312,13 +312,12 @@ ServerAgent::Sender (void *arg)
   BLocker *sendDataLock (NULL);
   BObjectList<BString> *pendingSends (NULL);
   
-  if (msgr.IsValid() && msgr.LockTarget())
+  BMessage reply;
+  if (msgr.IsValid() && (msgr.SendMessage(M_GET_SENDER_DATA, &reply) == B_OK))
   {
-    sendSyncLock = agent->fSendSyncSem;
-    sendDataLock = agent->fSendLock;
-    pendingSends = agent->fPendingSends;
-    // this is safe since we know we have the looper at this point
-    agent->Window()->Unlock();
+    sendSyncLock = reply.FindInt32("sendSyncLock");
+    reply.FindPointer("sendDataLock", reinterpret_cast<void **>(&sendDataLock));
+    reply.FindPointer("pendingSends", reinterpret_cast<void **>(&pendingSends));
   }
   else
     return B_ERROR;
@@ -534,7 +533,7 @@ ServerAgent::Establish (void *arg)
       endpointMsg.AddInt32 ("socket", serverSock);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
-        
+       
       if (strlen(serverData->password) > 0)
       {
         ClientAgent::PackDisplay (&statMsg, S_SERVER_PASS_MSG "\n", C_ERROR);
@@ -544,6 +543,13 @@ ServerAgent::Establish (void *arg)
         dataSend.ReplaceString ("data", string.String());
         sMsgrE->SendMessage (&dataSend);
       }
+
+      string = "NICK ";
+      string.Append (connectNick);
+        
+      dataSend.ReplaceString ("data", string.String());
+      if (sMsgrE->SendMessage (&dataSend) != B_OK)
+        throw failToLock();
 
       string = "USER ";
       string.Append (ident);
@@ -556,12 +562,6 @@ ServerAgent::Establish (void *arg)
       if (sMsgrE->SendMessage (&dataSend) != B_OK)
         throw failToLock();
 
-      string = "NICK ";
-      string.Append (connectNick);
-        
-      dataSend.ReplaceString ("data", string.String());
-      if (sMsgrE->SendMessage (&dataSend) != B_OK)
-        throw failToLock();
     
       // resume normal business matters.
       
@@ -583,7 +583,8 @@ ServerAgent::Establish (void *arg)
   }
   
   struct fd_set eset, rset, wset;
-
+  int selResult (0);
+  
   FD_ZERO (&eset);
   FD_ZERO (&rset);
   FD_ZERO (&wset);
@@ -604,7 +605,7 @@ ServerAgent::Establish (void *arg)
     FD_SET (serverSock, &wset);
     memset (indata, 0, 1024);
     struct timeval tv = { 0, 0 };
-    if (select (serverSock + 1, &rset, 0, &eset, &tv) > 0
+    if ((selResult = select (serverSock + 1, &rset, 0, &eset, &tv)) > 0
     &&  FD_ISSET (serverSock, &rset) && !FD_ISSET (serverSock, &eset))
     {
 #ifdef NETSERVER_BUILD
@@ -677,6 +678,13 @@ ServerAgent::Establish (void *arg)
       }
     }
     
+    // select error, treat this as a disconnect as well
+    if (selResult < 0)
+    {
+        sMsgrE->SendMessage (M_NOT_CONNECTING);
+        sMsgrE->SendMessage (M_SERVER_DISCONNECT);
+        break;
+    }    
   // take a nap, so the ServerAgent can do things
     snooze(20000);
   }
@@ -841,13 +849,18 @@ ClientAgent *
 ServerAgent::ActiveClient (void)
 {
   ClientAgent *client (NULL);
+//  printf("finding active client\n");
 
-  for (int32 i = 0; i < fClients.CountItems(); ++i)
+  for (int32 i = 0; i < fClients.CountItems(); i++)
+  {
+//    printf("checking against client: %d, %s\n", i, fClients.ItemAt(i)->fId.String());
     if (!fClients.ItemAt (i)->IsHidden())
     {
+//      printf("not hidden, break\n");
       client = fClients.ItemAt (i);
       break;
     }
+  }
   return client;
 }
 
@@ -908,8 +921,9 @@ void
 ServerAgent::PostActive (BMessage *msg)
 {
   BAutolock activeLock (Window());
+//  printf("postActive\n");
   ClientAgent *client (ActiveClient());
-
+//  printf("posting to: %p\n", client);
   if (client != NULL)
     client->fMsgr.SendMessage (msg);
   else
@@ -1193,9 +1207,21 @@ ServerAgent::MessageReceived (BMessage *msg)
         reply.AddString  ("nick", fMyNick.String());
 #ifdef NETSERVER_BUILD
         reply.AddPointer ("lock", fEndPointLock);
+        fEndPointLock = NULL;
 #endif
         msg->SendReply (&reply); 
         fEstablishHasLock = true;
+
+      }
+      break;
+    
+    case M_GET_SENDER_DATA:
+      {
+        BMessage reply;
+        reply.AddInt32 ("sendSyncLock", fSendSyncSem);
+        reply.AddPointer ("sendDataLock", fSendLock);
+        reply.AddPointer ("pendingSends", fPendingSends);
+        msg->SendReply (&reply);
       }
       break;
     
@@ -1440,6 +1466,9 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_SERVER_DISCONNECT:
       {
+        if (fIsQuitting)
+          break;
+          
         // store current nick for reconnect use (might be an away nick, etc)
         if (fReacquiredNick)
         {
@@ -1650,6 +1679,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         }
 
         fIsQuitting = true;
+
         if (fClients.CountItems() > 0)
         {
           Broadcast(msg);
