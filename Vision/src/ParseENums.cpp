@@ -127,7 +127,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         
           if (theMsg.FindFirst("hybrid") > 0)
             ircdtype = IRCD_HYBRID;
-          else if (theMsg.FindFirst("UltimateIRCd") > 0)
+          // ultimate and unreal share the same numerics, so treat them with the same
+          // identifier for now
+          else if ((theMsg.FindFirst("UltimateIRCd") > 0) || (theMsg.FindFirst("Unreal") > 0))
             ircdtype = IRCD_ULTIMATE;
           else if (theMsg.FindFirst("comstud") > 0)
             ircdtype = IRCD_COMSTUD;

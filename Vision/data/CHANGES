@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0612]
+ 2001-06-12
+   * Vision properly recognizes and deals with UnrealIRCd
+
 [0.2.0611]
  2001-06-11
    * made ListAgent font configurable
