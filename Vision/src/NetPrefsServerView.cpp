@@ -1,3 +1,4 @@
+#include <Autolock.h>
 #include <Box.h>
 #include <Button.h>
 #include <MenuField.h>
@@ -230,6 +231,10 @@ NetPrefsServerView::DetachedFromWindow (void)
 void
 NetPrefsServerView::AddServer (const ServerData *data)
 {
+	BAutolock lock (Looper());
+	if (!lock.IsLocked())
+		return;
+		
 	BRow *row (new BRow);
 	switch (data->state)
 	{
@@ -253,14 +258,17 @@ NetPrefsServerView::AddServer (const ServerData *data)
 	server << data->port;
 	BStringField *portField (new BStringField (server.String()));
 	row->SetField (portField, 2);
-	LockLooper();
 	serverList->AddRow (row);
-	UnlockLooper();
 }
 
 void
 NetPrefsServerView::RemoveServer ()
 {
+	BAutolock lock (Looper());
+	
+	if (!lock.IsLocked())
+	  return;
+
 	BRow *row (serverList->CurrentSelection());
 	if (row)
 	{
@@ -282,9 +290,7 @@ NetPrefsServerView::RemoveServer ()
 				break;
 			}
 		}
-		LockLooper();
 		serverList->RemoveRow (row);
-		UnlockLooper();
 		delete row;
 	}
 }
@@ -313,6 +319,17 @@ NetPrefsServerView::UpdateNetworkData (const ServerData *newServer)
 void
 NetPrefsServerView::SetNetworkData (BMessage *msg)
 {
+	BAutolock lock (Looper());
+	if (!lock.IsLocked())
+		return;
+	// clear previous servers (if any)
+	while (serverList->CountRows() > 0)
+	{
+		BRow *row (serverList->RowAt (0));
+		serverList->RemoveRow (row);
+		delete row;
+	}
+	
 	BString netString ("Select servers for ");
 	netString += msg->FindString ("name");
 	netString += ":";
@@ -326,10 +343,8 @@ NetPrefsServerView::SetNetworkData (BMessage *msg)
 		AddServer (data);
 	}
 	activeNetwork = msg;
-	LockLooper();
 	selectTitleString->SetText (netString.String());
 	selectTitleString->ResizeToPreferred();
-	UnlockLooper();
 }
 
 void
