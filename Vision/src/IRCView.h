@@ -28,7 +28,7 @@
 
 #include <TextView.h>
 
-class BTextControl;
+class VTextControl;
 class BFont;
 class ClientAgent;
 
@@ -43,7 +43,7 @@ class IRCView : public BTextView
     IRCView (
       BRect,
       BRect,
-      BTextControl *,
+      VTextControl *,
       ClientAgent *);
 
     ~IRCView (void);

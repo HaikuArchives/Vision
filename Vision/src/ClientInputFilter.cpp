@@ -25,7 +25,6 @@
 
 #include <Alert.h>
 #include <NodeInfo.h>
-#include <TextControl.h>
 #include <Roster.h>
 #include <ScrollView.h>
 #include <String.h>
@@ -36,6 +35,7 @@
 #include "VisionBase.h"
 #include "ClientAgent.h"
 #include "ClientInputFilter.h"
+#include "VTextControl.h"
 
 ClientInputFilter::ClientInputFilter (ClientAgent *agent)
 	: BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE),

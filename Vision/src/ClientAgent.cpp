@@ -23,12 +23,12 @@
  *                 Jamie Wilkinson
  */
 
-#include <TextControl.h>
 #include <ScrollView.h>
 
 #include <stdio.h>
 #include <ctype.h>
 
+#include "VTextControl.h"
 #include "Vision.h"
 #include "HistoryMenu.h"
 #include "IRCView.h"
@@ -147,7 +147,7 @@ ClientAgent::Init (void)
 	serverFont		= *(vision_app->GetClientFont (F_SERVER));
 	inputFont   	= *(vision_app->GetClientFont (F_INPUT));
 
-  input = new BTextControl (
+  input = new VTextControl (
                 BRect (
                   0,
                   frame.top, // tmp. will be moved

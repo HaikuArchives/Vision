@@ -30,7 +30,7 @@
 #include <Messenger.h>
 
 class BScrollView;
-class BTextControl;
+class VTextControl;
 
 class ClientInputFilter;
 class IRCView;
@@ -106,7 +106,7 @@ class ClientAgent : public BView
     HistoryMenu                 *history;
     IRCView                     *text;
     BScrollView                 *textScroll;
-    BTextControl                *input;
+    VTextControl                *input;
     
     //AgentSettings					*settings;
 
