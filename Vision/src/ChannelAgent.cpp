@@ -1229,7 +1229,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
       chanKey = myTarget;
       UpdateMode ('+', 'k');
     }
-    else if (theModifier == 'b') 
+    else if (theModifier == 'b' | 'a' | 'q') 
     {
       // dont do anything else
     }
