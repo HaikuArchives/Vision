@@ -270,13 +270,13 @@ ServerAgent::Establish (void *arg)
       statString += " of ";
       statString << reply.FindInt32 ("max_retries");
       statString += ")\n";
-      ClientAgent::PackDisplay (&statMsg, statString.String(), &errColor);
+      ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
       sMsgrE->SendMessage (&statMsg);
 //    server->DisplayAll (statString.String(), &errColor, &(server->serverFont));
       
       BMessage data (M_DISPLAY_ALL);
       data.AddString ("data", statString.String());
-      data.AddPointer ("color", &errColor);
+      data.AddInt32 ("color", C_ERROR);
       sMsgrE->SendMessage (&data);
 
     }
@@ -288,14 +288,14 @@ ServerAgent::Establish (void *arg)
     statString += ":";
     statString << connectPort;
     statString += "...\n";
-    ClientAgent::PackDisplay (&statMsg, statString.String(), &errColor);
+    ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
     sMsgrE->SendMessage (&statMsg);
 
     BNetAddress address;
  
     if (address.SetTo (connectId.String(), atoi (connectPort.String())) != B_NO_ERROR)
     {
-      ClientAgent::PackDisplay (&statMsg, "[@] The address and port seem to be invalid. Make sure your Internet connection is operational.\n", &errColor);
+      ClientAgent::PackDisplay (&statMsg, "[@] The address and port seem to be invalid. Make sure your Internet connection is operational.\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
       sMsgrE->SendMessage (M_SERVER_DISCONNECT);
       throw failToLock();
@@ -315,7 +315,7 @@ ServerAgent::Establish (void *arg)
 
     if (!endPoint || endPoint->InitCheck() != B_NO_ERROR)
     {
-      ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", &errColor);
+      ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
       sMsgrE->SendMessage (M_NOT_CONNECTING);
       throw failToLock();
@@ -323,21 +323,19 @@ ServerAgent::Establish (void *arg)
 
     // just see if he's still hanging around before
     // we got blocked for a minute
-
-    ClientAgent::PackDisplay (&statMsg, "[@] Connection open, waiting for reply from server\n", &errColor);
+    ClientAgent::PackDisplay (&statMsg, "[@] Connection open, waiting for reply from server\n", C_ERROR);
     sMsgrE->SendMessage (&statMsg);
     sMsgrE->SendMessage (M_LAG_CHANGED);
-    
+
     if (endPoint->Connect (address) == B_NO_ERROR)
     {
       BString ip ("");  
       struct sockaddr_in sockin;
 
-
       // store local ip address for future use (dcc, etc)
       int addrlength (sizeof (struct sockaddr_in));
       if (getsockname (endPoint->Socket(),(struct sockaddr *)&sockin,&addrlength)) {
-        ClientAgent::PackDisplay (&statMsg, "[@] Error getting Local IP\n", &errColor);
+        ClientAgent::PackDisplay (&statMsg, "[@] Error getting Local IP\n", C_ERROR);
         sMsgrE->SendMessage (&statMsg);
         BMessage setIP (M_SET_IP);
         setIP.AddString("ip", "127.0.0.1");
@@ -354,17 +352,17 @@ ServerAgent::Establish (void *arg)
         statString = "[@] Local IP: ";
         statString += ip.String();
         statString += "\n";
-        ClientAgent::PackDisplay (&statMsg, statString.String(), &errColor);
+        ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
         sMsgrE->SendMessage (&statMsg);
       }
 
       if (PrivateIPCheck (ip.String()))
       {
-        ClientAgent::PackDisplay (&statMsg, "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)\n", &errColor);
+        ClientAgent::PackDisplay (&statMsg, "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)\n", C_ERROR);
         sMsgrE->SendMessage (&statMsg);  
       }
       
-            ClientAgent::PackDisplay (&statMsg, "[@] Handshaking\n", &(errColor));
+            ClientAgent::PackDisplay (&statMsg, "[@] Handshaking\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
 
       BString string;
@@ -391,12 +389,12 @@ ServerAgent::Establish (void *arg)
 
       // resume normal business matters.
 
-      ClientAgent::PackDisplay (&statMsg, "[@] Established\n", &errColor);
+      ClientAgent::PackDisplay (&statMsg, "[@] Established\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
     }
     else // No endpoint->connect
     {
-      ClientAgent::PackDisplay (&statMsg, "[@] Could not establish a connection to the server. Sorry.\n", &(errColor));
+      ClientAgent::PackDisplay (&statMsg, "[@] Could not establish a connection to the server. Sorry.\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
       sMsgrE->SendMessage (M_SERVER_DISCONNECT);
       throw failToLock();
@@ -766,7 +764,7 @@ ServerAgent::RepliedBroadcast (BMessage *)
 void
 ServerAgent::DisplayAll (
   const char *buffer,
-  const rgb_color *color,
+  const int32 color,
   const BFont *font)
 {
   for (int32 i = 0; i < clients.CountItems(); ++i)
@@ -886,7 +884,7 @@ ServerAgent::HandleReconnect (void)
     const char *soSorry;
     soSorry = "[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n";
     Display (soSorry, &errorColor);
-    DisplayAll (soSorry, &errorColor, &serverFont);    
+    DisplayAll (soSorry, C_ERROR, &serverFont);    
   }
 }
 
@@ -974,9 +972,9 @@ ServerAgent::MessageReceived (BMessage *msg)
     case M_DISPLAY_ALL:
       {
         BString data;
-        rgb_color *color;
+        int32 color (-1);
         msg->FindString  ("data", &data);
-        msg->FindPointer ("color", reinterpret_cast<void **>(&color));
+        msg->FindInt32 ("color", color);
         DisplayAll (data.String(), color, &serverFont);
       }
       break;
@@ -1084,7 +1082,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           sAnnounce += serverName;
           sAnnounce += "\n";
           Display (sAnnounce.String(), &errorColor);
-          DisplayAll (sAnnounce.String(), &errorColor, &serverFont);
+          DisplayAll (sAnnounce.String(), C_ERROR, &serverFont);
         }
 			
         isConnected = false;

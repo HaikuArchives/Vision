@@ -132,7 +132,8 @@ class VisionApp : public BApplication
     BFont                   *client_font[MAX_FONTS];
 	BString					commands[MAX_COMMANDS];
 	BMessage                idents;
-	BLocker                 identLock;
+	BLocker                 identLock,
+	                          settingsLock;
 	thread_id               identThread;
 	BNetEndpoint            *identEndpoint;
 };

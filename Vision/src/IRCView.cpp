@@ -524,7 +524,7 @@ IRCView::ClearView (bool all)
     settings->parentAgent->ScrollRange (&scrollMin, &scrollMax); 
 
     Delete (0,bytes);
-    ScrollToOffset (TextLength());
+    ScrollToOffset (0);
   }
 } 
 

@@ -583,7 +583,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         buffer += " (";
         buffer += rest;
         buffer += ")\n";
-        PackDisplay (&wegotkicked, buffer.String(), &quitColor, 0, true);
+        PackDisplay (&wegotkicked, buffer.String(), C_QUIT, 0, true);
         // clean up
         namesList->ClearList();
         opsCount = 0;
@@ -595,7 +595,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         buffer = "*** Attempting to rejoin ";
         buffer += theChannel;
         buffer += "...\n";
-        PackDisplay (&attemptrejoin, buffer.String(), &quitColor, 0, true);
+        PackDisplay (&attemptrejoin, buffer.String(), C_QUIT, 0, true);
         msgr.SendMessage (&attemptrejoin);
 
         BMessage send (M_SERVER_SEND);
@@ -667,7 +667,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         }
       
         BMessage dispMsg (M_DISPLAY);
-        PackDisplay (&dispMsg, msgz, &opColor, 0, vision_app->GetBool ("timestamp"));
+        PackDisplay (&dispMsg, msgz, C_OP, 0, vision_app->GetBool ("timestamp"));
         BMessenger display (this);
         display.SendMessage (&dispMsg);
       }
@@ -1055,7 +1055,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
   BMessenger display (this);
 
   BMessage modeMsg (M_DISPLAY);
-  PackDisplay (&modeMsg, buffer.String(), &opColor, 0, timeStamp);
+  PackDisplay (&modeMsg, buffer.String(), C_OP, 0, timeStamp);
   display.SendMessage (&modeMsg);
 
 

@@ -362,20 +362,25 @@ void
 ClientAgent::PackDisplay (
   BMessage *msg,
   const char *buffer,
-  const rgb_color *color,
+  const int32 whichColor,
   const BFont *font,
   bool timestamp)
 {
   BMessage packed;
-
+  
+  rgb_color color;
+   
   packed.AddString ("msgz", buffer);
 
-  if (color)
+  if (whichColor >= 0)
+  {
+    color = vision_app->GetColor (whichColor);
     packed.AddData (
       "color",
       B_RGB_COLOR_TYPE,
-      color,
-      sizeof (color));
+      &color,
+      sizeof (rgb_color));
+  }
 
   if (font)
     packed.AddPointer ("font", font);

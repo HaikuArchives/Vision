@@ -166,7 +166,7 @@ ServerAgent::ParseEvents (const char *data)
 
       tempString = ExpandKeyed (events[E_UNOTICE].String(), "NRIA", expansions);
       BMessage display (M_DISPLAY);
-      PackDisplay (&display, tempString.String(), &noticeColor, 0, true);
+      PackDisplay (&display, tempString.String(), C_NOTICE, 0, true);
       PostActive (&display);
       return true;
     }
@@ -225,7 +225,7 @@ ServerAgent::ParseEvents (const char *data)
       PackDisplay (
         &display,
         tempString.String(),
-        &joinColor,
+        C_JOIN,
         0,
         true);
 
@@ -262,7 +262,7 @@ ServerAgent::ParseEvents (const char *data)
       buffer = ExpandKeyed (events[E_PART].String(), "NIA", expansions);
 
       BMessage display (M_DISPLAY);
-      PackDisplay (&display, buffer.String(), &joinColor, 0, true);
+      PackDisplay (&display, buffer.String(), C_JOIN, 0, true);
 
       BMessage msg (M_USER_QUIT);
       msg.AddString ("nick", nick.String());
@@ -291,7 +291,7 @@ ServerAgent::ParseEvents (const char *data)
 
     buffer = ExpandKeyed (events[E_NICK].String(), "NnIA", expansions);
     BMessage display (M_DISPLAY);
-    PackDisplay (&display, buffer.String(), &nickColor, 0,
+    PackDisplay (&display, buffer.String(), C_NICK, 0,
                   vision_app->GetBool ("timestamp"));
 
     BMessage msg (M_CHANGE_NICK);
@@ -337,7 +337,7 @@ ServerAgent::ParseEvents (const char *data)
     theMsg = ExpandKeyed (events[E_QUIT].String(), "NRIA", expansions);
     
     BMessage display (M_DISPLAY);
-    PackDisplay (&display, theMsg.String(), &quitColor, 0, true);
+    PackDisplay (&display, theMsg.String(), C_QUIT, 0, true);
 
     BMessage msg (M_USER_QUIT);
     msg.AddMessage ("display", &display);
@@ -417,7 +417,7 @@ ServerAgent::ParseEvents (const char *data)
       expansions[3] = rest.String();
 
       buffer = ExpandKeyed (events[E_KICK].String(), "NCnR", expansions);
-      PackDisplay (&display, buffer.String(), &quitColor, 0, true);
+      PackDisplay (&display, buffer.String(), C_QUIT, 0, true);
 
       BMessage msg (M_USER_QUIT);
       msg.AddString ("nick", kickee.String());
@@ -458,7 +458,7 @@ ServerAgent::ParseEvents (const char *data)
       BMessage display (M_DISPLAY);
 
       buffer = ExpandKeyed (events[E_TOPIC].String(), "NTCIA", expansions);
-      PackDisplay (&display, buffer.String(), &whoisColor, 0, true);
+      PackDisplay (&display, buffer.String(), C_WHOIS, 0, true);
       topic.AddMessage("display", &display);
       client->msgr.SendMessage (&topic);
     }
@@ -496,7 +496,7 @@ ServerAgent::ParseEvents (const char *data)
       buffer += theMode;
       buffer += "\n";
       
-      PackDisplay (&msg, buffer.String(), 0, 0, true);
+      PackDisplay (&msg, buffer.String(), -1, 0, true);
       PostActive (&msg);
     }
 
@@ -559,7 +559,7 @@ ServerAgent::ParseEvents (const char *data)
 
     BMessage msg (M_DISPLAY);
 
-    PackDisplay (&msg, tempString.String(), &whoisColor, 0,
+    PackDisplay (&msg, tempString.String(), C_WHOIS, 0,
                    vision_app->GetBool("timestamp"));
     PostActive (&msg);
 
@@ -585,7 +585,7 @@ ServerAgent::ParseEvents (const char *data)
 
     BMessage msg (M_DISPLAY);
 
-    PackDisplay (&msg, tempString.String(), &whoisColor, 0,
+    PackDisplay (&msg, tempString.String(), C_WHOIS, 0,
                    vision_app->GetBool("timestamp"));
     PostActive (&msg);
 
