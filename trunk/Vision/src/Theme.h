@@ -91,8 +91,4 @@ class Theme
 	void					RemoveView (BView *);
 };
 
-const uint32 M_FOREGROUND_CHANGE			= 'FGch';
-const uint32 M_BACKGROUND_CHANGE			= 'BGch';
-const uint32 M_FONT_CHANGE					= 'FNch';
-
 #endif

@@ -31,24 +31,21 @@
 #include "ChannelAgent.h"
 #include "Vision.h"
 #include "Names.h"
+#include "Theme.h"
 
 NamesView::NamesView(BRect frame)
   : BListView(
     frame,
     "namesList",
     B_MULTIPLE_SELECTION_LIST,
-    B_FOLLOW_ALL)
+    B_FOLLOW_ALL),
+      activeTheme (vision_app->ActiveTheme())
 {
-  BListView::SetFont (vision_app->GetClientFont (F_NAMES));
+  activeTheme->ReadLock();
+  SetFont (&activeTheme->FontAt (F_NAMES));
 
-  textColor   = vision_app->GetColor (C_NAMES);
-  opColor     = vision_app->GetColor (C_OP);
-  voiceColor  = vision_app->GetColor (C_VOICE);
-  helperColor = vision_app->GetColor (C_HELPER);
-  bgColor     = vision_app->GetColor (C_NAMES_BACKGROUND);
-  ignoreColor = vision_app->GetColor (C_IGNORE);
-
-  SetViewColor (bgColor);
+  SetViewColor (activeTheme->ForegroundAt (C_NAMES_BACKGROUND));
+  activeTheme->ReadUnlock();
 
   _tracking = false;
 }
@@ -325,127 +322,6 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg
 }
 
 void
-NamesView::SetColor (int32 which, rgb_color color)
-{
-  int32 i;
-    
-  switch (which)
-  {
-    case C_OP:
-      {
-        opColor = color;
-
-        // We try to be nice and only Invalidate Op's
-        for (i = 0; i < CountItems(); ++i)
-        {
-          NameItem *item ((NameItem *)ItemAt (i));
-
-          if ((item->Status() & STATUS_OP_BIT) != 0)
-            InvalidateItem (i);
-        }
-      }
-      break;
-
-    case C_VOICE:
-      {
-        voiceColor = color;
-
-        // Again.. nice.
-        for (i = 0; i < CountItems(); ++i)
-        {
-          NameItem *item ((NameItem *)ItemAt (i));
-
-          if ((item->Status() & STATUS_VOICE_BIT) != 0)
-            InvalidateItem (i);
-        }
-      }
-      break;
-    
-    case C_HELPER:
-      {
-        helperColor = color;
-     
-        for (i = 0; i < CountItems(); ++i)
-        {
-          NameItem *item((NameItem *)ItemAt (i));
-       
-          if ((item->Status() & STATUS_HELPER_BIT) != 0)
-            InvalidateItem (i);
-        }
-     }
-     break;
-
-    case C_NAMES:
-      {
-        textColor = color;
-
-        for (i = 0; i < CountItems(); ++i)
-        {
-          NameItem *item ((NameItem *)ItemAt (i));
-
-          if ((item->Status() & (STATUS_VOICE_BIT | STATUS_HELPER_BIT | STATUS_OP_BIT)) == 0)
-            InvalidateItem (i);
-        }
-      }
-      break;
-
-    case C_NAMES_BACKGROUND:
-      {
-        SetViewColor (bgColor = color);
-        Invalidate();
-      }
-      break;
-
-    case C_IGNORE:
-      {
-        ignoreColor = color;
-
-        for (i = 0; i < CountItems(); ++i)
-        {
-          NameItem *item ((NameItem *)ItemAt (i));
-
-          if ((item->Status() & (STATUS_IGNORE_BIT)) != 0)
-            InvalidateItem (i);
-        }
-      }
-      break;
-  }
-}
-
-rgb_color
-NamesView::GetColor (int32 which) const
-{
-  rgb_color color (textColor);
-
-  if (which == C_OP)
-    color = opColor;
-
-  if (which == C_VOICE)
-    color = voiceColor;
-
-  if (which == C_HELPER)
-    color = helperColor;
-    
-  if (which == C_NAMES_BACKGROUND)
-    color = bgColor;
-
-  if (which == C_IGNORE)
-    color = ignoreColor;
-
-  return color;
-}
-
-void
-NamesView::SetFont (int32 which, const BFont *font)
-{
-  if (which == F_NAMES)
-  {
-    BListView::SetFont (font);
-    Invalidate();
-  }
-}
-
-void
 NamesView::ClearList (void)
 {
   BListItem *nameItem;
@@ -454,5 +330,36 @@ NamesView::ClearList (void)
   {
     RemoveItem (nameItem);
     delete nameItem;
+  }
+}
+
+void
+NamesView::MessageReceived (BMessage *msg)
+{
+  switch (msg->what)
+  {
+    case M_THEME_FOREGROUND_CHANGE:
+    {
+      activeTheme->ReadLock();
+      SetViewColor (activeTheme->ForegroundAt (C_NAMES_BACKGROUND));
+      activeTheme->ReadUnlock();
+      Invalidate();
+    }
+    break;
+    
+    case M_THEME_FONT_CHANGE:
+    {
+      activeTheme->ReadLock();
+      SetFont (&activeTheme->FontAt (F_NAMES));
+      activeTheme->ReadUnlock();
+      Invalidate();
+    }
+    break;
+    
+    default:
+    {
+      BListView::MessageReceived (msg);
+    }
+    break;
   }
 }

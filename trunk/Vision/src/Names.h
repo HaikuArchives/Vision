@@ -32,6 +32,7 @@
 
 class BPopUpMenu;
 class BMenu;
+class Theme;
 
 class NameItem : public BListItem
 {
@@ -68,10 +69,8 @@ class NamesView : public BListView
     virtual void                    MouseMoved (BPoint, uint32, const BMessage *);
     virtual void                    MouseUp (BPoint);
     virtual void                    KeyDown (const char *, int32);
+    virtual void                    MessageReceived (BMessage *);
 
-    void                            SetColor (int32, rgb_color);
-    rgb_color                       GetColor (int32) const;
-    void                            SetFont (int32, const BFont *);
     void                            ClearList (void);
 
   private:
@@ -83,13 +82,7 @@ class NamesView : public BListView
     int32                           lastSelected,
                                       lastButton,
                                       currentindex;
-
-    rgb_color                       opColor,
-                                      voiceColor,
-                                      helperColor,
-                                      textColor,
-                                      ignoreColor,
-                                      bgColor;
+    Theme                           *activeTheme;
 };
 
 const uint32 POPUP_MODE               = 'pumo';

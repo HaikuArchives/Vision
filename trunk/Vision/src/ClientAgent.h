@@ -36,6 +36,7 @@ class BPopUpMenu;
 class ClientAgentInputFilter;
 class ClientAgentLogger;
 class RunView;
+class Theme;
 class HistoryMenu;
 class AgentSettings;
 class WindowListItem;
@@ -114,6 +115,7 @@ class ClientAgent : public BView
     RunView                     *text;
     BScrollView                 *textScroll;
     VTextControl                *input;
+    Theme                       *activeTheme;
 
     static const char               *endl;
 
@@ -155,7 +157,6 @@ class ClientAgent : public BView
 
     virtual void                    Parser (const char *);
     virtual bool                    SlashParser (const char *);
-    //virtual void                  StateChange (BMessage *);
     
     void                            AddSend (BMessage *, const char *);
     void                            AddSend (BMessage *, const BString &);

@@ -669,7 +669,7 @@ bool
 VisionApp::CheckStartupNetworks (void)
 {
   bool autoStarted (false);
-#if 1
+#if 0
   BMessage netData;
   for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
   {
@@ -879,7 +879,7 @@ VisionApp::MessageReceived (BMessage *msg)
       Broadcast(msg);
     }
     break;
-      
+    
     default:
       BApplication::MessageReceived (msg);
   }
@@ -1041,12 +1041,6 @@ VisionApp::SetColor (int32 which, const rgb_color color)
     }
     else
       activeTheme->SetForeground (which, color);
-
-    BMessage msg (M_STATE_CHANGE);
-
-    msg.AddInt32 ("which", which);
-    msg.AddBool ("color", true);
-    Broadcast (&msg);
   }
 }
 
@@ -1071,14 +1065,9 @@ VisionApp::ClientFontFamilyAndStyle (
     
     if (which == F_TEXT)
       activeTheme->SetFont (MAX_FONTS, client_font[which]);
-    BMessage msg (M_STATE_CHANGE);
     
     SetString ("family", which, family);
     SetString ("style", which, style);
-    
-    msg.AddBool ("font", true);
-    msg.AddInt32 ("which", which);
-    Broadcast (&msg);
   }
 }
 
@@ -1547,7 +1536,7 @@ VisionApp::Identity (void *)
             FD_SET (accepted, &rset);
             FD_SET (accepted, &eset);
             if (select (accepted + 1, &rset, 0, &eset, &tv) > 0
-              && FD_ISSET (accepted, &rset))
+              && FD_ISSET (accepted, &rset) && !FD_ISSET (accepted, &eset))
             {
             
               recv (accepted, received, 64, 0);

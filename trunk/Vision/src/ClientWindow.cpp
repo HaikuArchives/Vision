@@ -44,6 +44,7 @@
 #include "ChannelAgent.h"
 #include "ClientAgent.h"
 #include "ClientWindowDock.h"
+#include "ListAgent.h"
 #include "Names.h"
 
 
@@ -346,16 +347,6 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_STATE_CHANGE:
       {
         ServerBroadcast (msg);
-        if (msg->HasBool ("color"))
-        {
-          int32 which (msg->FindInt32 ("which"));
-          pWindowList()->SetColor (which, vision_app->GetColor (which));
-        }
-        else if (msg->HasBool ("font"))
-        {
-          int32 which (msg->FindInt32 ("which"));
-          pWindowList()->SetFont (which, vision_app->GetClientFont (which));
-        }
       }
       break;
       
@@ -402,6 +393,19 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_OPEN_TERM:
       be_roster->Launch ("application/x-vnd.Be-SHEL", 0, NULL);
       break;
+    
+    case M_LIST_COMMAND:
+    {
+      WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (pWindowList()->CurrentSelection()));
+      BView *view (NULL);
+      if (item)
+        view = item->pAgent();
+      if ((view == NULL) || (dynamic_cast<ListAgent *>(view) != NULL))
+        break;
+      dynamic_cast<ClientAgent *>(view)->ParseCmd ("/LIST");;
+    }
+    break;
+
         
     default:
       BWindow::MessageReceived (msg);
@@ -411,29 +415,14 @@ ClientWindow::MessageReceived (BMessage *msg)
 ServerAgent *
 ClientWindow::GetTopServer (WindowListItem *request)
 {
-  int32 requestindex;
-  int32 requestsid;
   ServerAgent *target (NULL);
   if (pWindowList()->FullListHasItem (request))
   {
-    requestindex = pWindowList()->IndexOf (request);
-    requestsid = request->Sid();
-  }
-  else
-  {
-    // can't find requesting agent in the Window List!
-    // make sure you check for this NULL your calls to GetTopServer!
-    return NULL;
-  }
-  
-  for (int32 i (1); i <= pWindowList()->CountItems(); ++i)
-  { 
-    WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i - 1));
-    if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == requestsid))
-    {
-      target = (ServerAgent *)aitem->pAgent();
-      break;
-    }
+    // if the item has no super, it is a server agent, return it.
+    if (pWindowList()->Superitem(request) == NULL)
+      target = dynamic_cast<ServerAgent *>(request->pAgent());
+    else
+      target = dynamic_cast<ServerAgent *>(((WindowListItem *)pWindowList()->Superitem(request))->pAgent());
   }
   return target;
 }
@@ -530,21 +519,6 @@ ClientWindow::Init (void)
   mServer->AddItem (item = new BMenuItem ("Setup" B_UTF8_ELLIPSIS,
                     new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
-  mServer->AddSeparatorItem();
-  mServer->AddItem (item = new BMenuItem ("Channel List" B_UTF8_ELLIPSIS,
-                    new BMessage (B_ABOUT_REQUESTED), 'L'));
-  item->SetTarget (vision_app);
-  mServer->AddItem (item = new BMenuItem ("Ignore List" B_UTF8_ELLIPSIS,
-                    new BMessage (B_ABOUT_REQUESTED), 'I'));
-  item->SetTarget (vision_app);
-  mServer->AddItem (item = new BMenuItem ("Notify List" B_UTF8_ELLIPSIS,
-                    new BMessage (B_ABOUT_REQUESTED), 'N'));
-  item->SetTarget (vision_app);
-  
-  mServer->AddItem (item = new BMenuItem ("New Terminal", new BMessage (M_OPEN_TERM),
-                    'T', B_OPTION_KEY));
-  
-  
   menubar->AddItem (mServer);
   
   
@@ -554,6 +528,21 @@ ClientWindow::Init (void)
   
   // Tools menu
   mTools = new BMenu ("Tools");
+
+  mTools->AddItem (item = new BMenuItem ("Channel List" B_UTF8_ELLIPSIS,
+                    new BMessage (M_LIST_COMMAND), 'L'));
+  
+  mTools->AddItem (item = new BMenuItem ("Ignore List" B_UTF8_ELLIPSIS,
+                    new BMessage (B_ABOUT_REQUESTED), 'I'));
+  item->SetTarget (vision_app);
+  mTools->AddItem (item = new BMenuItem ("Notify List" B_UTF8_ELLIPSIS,
+                    new BMessage (B_ABOUT_REQUESTED), 'N'));
+  item->SetTarget (vision_app);
+  
+  mTools->AddItem (item = new BMenuItem ("New Terminal", new BMessage (M_OPEN_TERM),
+                    'T', B_OPTION_KEY));
+
+
   menubar->AddItem (mTools);
   
   // Window menu

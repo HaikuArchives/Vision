@@ -226,6 +226,12 @@ const uint32 M_DCC_MESSENGER                        = 0x1804;
 const uint32 M_DCC_ACCEPT                           = 0x1805;
 const uint32 M_CHOSE_FILE                           = 0x1806;
 
+// Theme constants
+
+const uint32 M_THEME_FOREGROUND_CHANGE              = 0x1900;
+const uint32 M_THEME_BACKGROUND_CHANGE              = 0x1901;
+const uint32 M_THEME_FONT_CHANGE                    = 0x1902;
+
 // Sound event identifiers
 enum SoundEvent
 {

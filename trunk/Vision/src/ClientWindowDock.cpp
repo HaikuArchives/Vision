@@ -25,6 +25,7 @@
 #include <StringView.h>
 
 #include "ClientWindowDock.h"
+#include "Theme.h"
 #include "Vision.h"
 #include "WindowList.h"
 
@@ -97,7 +98,6 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
     B_FOLLOW_ALL,
     B_WILL_DRAW)
 {
-
   SetViewColor (vision_app->GetColor (C_WINLIST_BACKGROUND));
   BRect frame (frame_);
   
@@ -111,8 +111,12 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   frame.top = frame.top + headerFrame.Height() + 4;  // make room for header
   frame.right = frame.right - B_V_SCROLL_BAR_WIDTH; // scrollbar
   frame.bottom = frame.bottom - 2; // room for "fancy" border
-    
+
   winList = new WindowList (frame);
+
+  Theme *activeTheme (vision_app->ActiveTheme());
+
+  activeTheme->AddView (winList);
   
   winListScroll = new BScrollView (
     "winListScroll",
