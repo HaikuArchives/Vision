@@ -18,6 +18,7 @@
  * 
  * Contributor(s): Wade Majors <guru@startrek.com>
  *                 Rene Gollent
+ *                 Bjorn Oksholen
  */
 
 #ifndef _PARSEENUMS_H_
@@ -186,5 +187,11 @@ const int ERR_NOOPERHOST              = 491;
 const int ERR_NOSERVICEHOST           = 492;
 const int ERR_UMODEUNKNOWNFLAG        = 501;
 const int ERR_USERSDONTMATCH          = 502;
+
+/// Ultimate Support ///
+const int ULTIMATE_USERMODES          = 615;
+const int ULTIMATE_REALHOSTNAME       = 616;
+const int ULTIMATE_REGISTEREDBOT      = 617;
+
 
 #endif
