@@ -1713,9 +1713,11 @@ void TitleView::DragSelectedColumn(BPoint position)
 		fColumns->RemoveItem((void*) fSelectedColumn);
 		fColumns->AddItem((void*) fSelectedColumn);
 	} else {
+		MoveColumn(fSelectedColumn, columnIndex);
+		
 		// Swap with target
-		fColumns->RemoveItem((void*) fSelectedColumn);
-		fColumns->AddItem((void*) fSelectedColumn, columnIndex);
+//		fColumns->RemoveItem((void*) fSelectedColumn);
+//		fColumns->AddItem((void*) fSelectedColumn, columnIndex);
 	}
 
 	fSelectedColumn->fVisible = true;
@@ -1737,6 +1739,8 @@ void TitleView::MoveColumn(BColumn *column, int32 index)
 {
 	fColumns->RemoveItem((void*) column);
 	fColumns->AddItem((void*) column, index);
+	printf("Column %d moved to column %d", (int)column->LogicalFieldNum(), (int)index);
+	column->fFieldID = index;
 }
 
 void TitleView::SetColumnFlags(column_flags flags)
