@@ -176,7 +176,8 @@ ClientAgentLogger::UnregisterLogger (const char *name)
     }
     
     CloseSession (logFile);
-    fLogFiles.erase(BString(name));
+    BString logName (name);
+    fLogFiles.erase(logName);
   }
 }
 

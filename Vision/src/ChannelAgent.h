@@ -66,13 +66,14 @@ class ChannelAgent : public ClientAgent
     
     void                    AddUser (const char *, const int32);
     bool                    RemoveUser (const char *);
-    int                     FindPosition (const char *);
+    int                     FindPosition (const char *) const;
     void                    UpdateMode (char, char);
     void                    ModeEvent (BMessage *);
     
     static int              AlphaSortNames (const void *, const void *);
     static int              SortNames (const void *, const void *);
     
+    const NamesView         *pNamesList() const;
 
     
   private:
@@ -95,7 +96,6 @@ class ChannelAgent : public ClientAgent
                             
     int                     fIrcdtype;
 
-    friend class            ClientAgent;
     NamesView               *fNamesList;
     BScrollView             *fNamesScroll;
     ChannelOptions          *fChanOpt;

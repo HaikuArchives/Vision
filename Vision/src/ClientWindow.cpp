@@ -236,14 +236,14 @@ void
 ClientWindow::AddMenu (BMenu *menu)
 {
   if (menu != NULL)
-    menubar->AddItem (menu);
+    fMenuBar->AddItem (menu);
 }
 
 void
 ClientWindow::RemoveMenu (BMenu *menu)
 {
   if (menu != NULL)
-    menubar->RemoveItem (menu);
+    fMenuBar->RemoveItem (menu);
 }
 
 void
@@ -444,7 +444,7 @@ ClientWindow::MessageReceived (BMessage *msg)
 }
 
 ServerAgent *
-ClientWindow::GetTopServer (WindowListItem *request)
+ClientWindow::GetTopServer (WindowListItem *request) const
 {
   ServerAgent *target (NULL);
   if (pWindowList()->FullListHasItem (request))
@@ -459,7 +459,7 @@ ClientWindow::GetTopServer (WindowListItem *request)
 }
 
 BRect *
-ClientWindow::AgentRect (void)
+ClientWindow::AgentRect (void) const
 {
   fAgentrect->left = fResize->Frame().right - fCwDock->Frame().left + 1;
   fAgentrect->top = Bounds().top + 1;
@@ -470,26 +470,26 @@ ClientWindow::AgentRect (void)
 
 
 WindowList *
-ClientWindow::pWindowList (void)
+ClientWindow::pWindowList (void) const
 {
   return fCwDock->pWindowList();
 }
 
 NotifyList *
-ClientWindow::pNotifyList (void)
+ClientWindow::pNotifyList (void) const
 {
   return fCwDock->pNotifyList();
 }
 
 ClientWindowDock *
-ClientWindow::pCwDock (void)
+ClientWindow::pCwDock (void) const
 {
   return fCwDock;
 }
 
 
 StatusView *
-ClientWindow::pStatusView (void)
+ClientWindow::pStatusView (void) const
 {
   return fStatus;
 }
@@ -505,7 +505,7 @@ ClientWindow::pStatusView (void)
 */
 
 bool
-ClientWindow::ServerBroadcast (BMessage *outmsg_)
+ClientWindow::ServerBroadcast (BMessage *outmsg_) const
 {
   bool reply (false);
   
@@ -551,55 +551,54 @@ ClientWindow::Init (void)
   AddShortcut ('Q', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
   
   BRect frame (Bounds());
-  menubar = new BMenuBar (frame, "menu_bar");
+  fMenuBar = new BMenuBar (frame, "menu_bar");
   
   BMenuItem *item;
   BMenu *menu;
   // Server menu
-  mServer = new BMenu (S_CW_SERVER_MENU);
-  mServer->AddItem (menu = new NetworkMenu (S_CW_SERVER_CONNECT B_UTF8_ELLIPSIS, M_CONNECT_NETWORK, BMessenger (vision_app)));
+  fServer = new BMenu (S_CW_SERVER_MENU);
+  fServer->AddItem (menu = new NetworkMenu (S_CW_SERVER_CONNECT B_UTF8_ELLIPSIS, M_CONNECT_NETWORK, BMessenger (vision_app)));
   
-  mServer->AddItem (item = new BMenuItem (S_CW_SERVER_SETUP B_UTF8_ELLIPSIS,
+  fServer->AddItem (item = new BMenuItem (S_CW_SERVER_SETUP B_UTF8_ELLIPSIS,
                     new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
-  menubar->AddItem (mServer);
+  fMenuBar->AddItem (fServer);
   
   
   // Edit menu
-  mEdit = new BMenu (S_CW_EDIT_MENU);
-  menubar->AddItem (mEdit);
+  fEdit = new BMenu (S_CW_EDIT_MENU);
+  fMenuBar->AddItem (fEdit);
   
   // Tools menu
-  mTools = new BMenu (S_CW_TOOLS_MENU);
+  fTools = new BMenu (S_CW_TOOLS_MENU);
 
-  mTools->AddItem (item = new BMenuItem (S_CW_TOOLS_CHANLIST,
+  fTools->AddItem (item = new BMenuItem (S_CW_TOOLS_CHANLIST,
                     new BMessage (M_LIST_COMMAND), 'L'));
-  
-  mTools->AddItem (item = new BMenuItem (S_CW_TOOLS_IGNORELIST B_UTF8_ELLIPSIS,
+  fTools->AddItem (item = new BMenuItem (S_CW_TOOLS_IGNORELIST B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), 'I'));
   item->SetTarget (vision_app);
-  mTools->AddItem (item = new BMenuItem (S_CW_TOOLS_NOTIFYLIST B_UTF8_ELLIPSIS,
+  fTools->AddItem (item = new BMenuItem (S_CW_TOOLS_NOTIFYLIST B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), 'N'));
   item->SetTarget (vision_app);
   
-  mTools->AddItem (item = new BMenuItem (S_CW_TOOLS_TERMINAL, new BMessage (M_OPEN_TERM),
+  fTools->AddItem (item = new BMenuItem (S_CW_TOOLS_TERMINAL, new BMessage (M_OPEN_TERM),
                     'T', B_OPTION_KEY));
 
 
-  menubar->AddItem (mTools);
+  fMenuBar->AddItem (fTools);
   
   // Window menu
-  mWindow = new BMenu (S_CW_WINDOW_MENU);
+  fWindow = new BMenu (S_CW_WINDOW_MENU);
   
-  mWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_PART, new BMessage (M_CW_ALTP), 'P'));
+  fWindow->AddItem (item = new BMenuItem (S_CW_WINDOW_PART, new BMessage (M_CW_ALTP), 'P'));
   
   item->SetTarget (this);
-  menubar->AddItem (mWindow);  
+  fMenuBar->AddItem (fWindow);  
   
-  AddChild (menubar);
+  AddChild (fMenuBar);
   
   // add objects
-  frame.top = menubar->Frame().bottom + 1;
+  frame.top = fMenuBar->Frame().bottom + 1;
   bgView = new BView (frame,
                       "Background",
                       B_FOLLOW_ALL_SIDES,
