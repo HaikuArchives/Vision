@@ -24,9 +24,6 @@ $mailto   = shift;
 $subject  = shift;
 $cvsdirectory = shift;
 
-system("echo loginfo.pl: user: $user");
-system("echo loginfo.pl: cvsdirectory: $cvsdirectory");
-
 if (!open(LD_FD, "$last_dir_file.$my_pgrp_id")) {
     # last_dir file does not exist -> cvs add directory
     $mail = "To: $mailto
@@ -46,7 +43,6 @@ Subject: $subject
     
     open(MAIL, "| $MAILER -t");
     print MAIL $mail;
-    system("echo mail sent");
     close(MAIL);
 	
     exit 0;
@@ -102,7 +98,6 @@ Subject: $subject
 
   open(MAIL, "| $MAILER -t");
   print MAIL $mail;
-  system("echo mail sent");
   close(MAIL);
 
 # make a bit cleanup here.
