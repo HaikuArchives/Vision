@@ -146,9 +146,10 @@ MessageAgent::MessageReceived (BMessage *msg)
           ClientAgent::MessageReceived (msg);
         }
       
-        else if (myNick.ICompare (oldNick) == 0 && !IsHidden())
+        else if (myNick.ICompare (oldNick) == 0)
         {
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
+          if (!IsHidden())
+            vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
           ClientAgent::MessageReceived (msg);
         }
       }

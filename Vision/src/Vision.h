@@ -83,6 +83,8 @@ class VisionApp : public BApplication
     status_t                SetBool (const char *, bool);
     
     const char              *GetThreadName (int);
+    
+    void                    BenchOut (const char *);
 
     void                    Broadcast (BMessage *);
     void                    Broadcast (BMessage *, const char *, bool = false);
@@ -93,13 +95,19 @@ class VisionApp : public BApplication
     bool                    debugsend;
     bool                    debugrecv;
     bool                    settingsloaded;
+    bool                    numBench;
+
+    // used for benchmarking
+    int32                   bench1;
+    int32                   bench2;
+
     
     ClientWindow            *pClientWin (void) const;
 
   private:
 	void					InitSettings (void);
     void                    ThreadStates (void);
-
+    
     bool                    ShuttingDown;
 
     AboutWindow             *aboutWin;

@@ -618,8 +618,23 @@ ServerAgent::ParseLine (const char *cData)
     &dest_length,
     &state);
 
-  if (ParseEvents (parse_buffer))
-    return;
+  if (vision_app->numBench)
+  {
+    vision_app->bench1 = system_time();
+    if (ParseEvents (parse_buffer))
+    {
+      vision_app->bench2 = system_time();
+      BString bencht (GetWord (data.String(), 2));
+      vision_app->BenchOut (bencht.String());
+      return;
+    }
+  }
+  else
+  {
+    if (ParseEvents (parse_buffer))
+      return;
+  }
+  
 
   data.Append("\n");
   Display (data.String(), 0);
