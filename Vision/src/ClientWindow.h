@@ -95,8 +95,13 @@ const uint32 M_CW_ALTW                      = 'cwaw';
 const uint32 M_CW_ALTP                      = 'cwap';
 const uint32 M_MAKE_NEW_SERVER              = 'cwms';
 
+const uint32 M_MOVE_UP                      = 'cwmu';
+const uint32 M_MOVE_DOWN                    = 'cwmd';
+const uint32 M_MOVE_TOP_SERVER              = 'cwmt';
+
 const uint32 M_STATUS_CLEAR                 = 'cwsc';
 const uint32 M_STATUS_ADDITEMS              = 'cwsa';
+
 
 
 #endif

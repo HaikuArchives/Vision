@@ -159,6 +159,34 @@ ClientWindow::MessageReceived (BMessage *msg)
       break;
     }
     
+    case M_MOVE_TOP_SERVER:
+    {
+      
+      int32 currentsel (winList->CurrentSelection());
+      if (currentsel < 0)
+        break;
+      
+      int32 currentsid;
+      
+      WindowListItem *citem ((WindowListItem *)winList->ItemAt (currentsel));
+      
+      if (citem)
+        currentsid = citem->Sid();
+      else
+        break;
+      
+      for (int32 i (1); i <= winList->CountItems(); ++i)
+      { 
+        WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
+        if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
+        {
+          winList->Select (winList->IndexOf (aitem));
+          break; 
+        }
+      }
+      break;
+    }
+    
     case M_UPDATE_STATUS:
     {
        WindowListItem *item;
@@ -334,19 +362,16 @@ ClientWindow::Init (void)
 
   AddShortcut ('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
  
-  BMessage *navUp (new BMessage (M_MOVE_UP));
-  BMessage *navDown (new BMessage (M_MOVE_DOWN));
-  
   // logical nav shortcuts
   // (moved to Window menu below)
 
   // baxter-habit-friendly nav shortcuts
-  AddShortcut (B_LEFT_ARROW, B_COMMAND_KEY, navUp);
-  AddShortcut (B_RIGHT_ARROW, B_COMMAND_KEY, navDown);
+  AddShortcut (B_LEFT_ARROW, B_COMMAND_KEY, new BMessage (M_MOVE_UP));
+  AddShortcut (B_RIGHT_ARROW, B_COMMAND_KEY, new BMessage (M_MOVE_DOWN));
 
   // bowser-habit-friendly nav shortcuts
-  AddShortcut (',', B_COMMAND_KEY, navUp);
-  AddShortcut ('.', B_COMMAND_KEY, navDown);
+  AddShortcut (',', B_COMMAND_KEY, new BMessage (M_MOVE_UP));
+  AddShortcut ('.', B_COMMAND_KEY, new BMessage (M_MOVE_DOWN));
    
   shutdown_in_progress = false;
   wait_for_quits = false;
@@ -355,7 +380,6 @@ ClientWindow::Init (void)
   menubar = new BMenuBar (frame, "menu_bar");
   
   BMenuItem *item;
-  //BMessage *msg;
   
   
   // Server menu
@@ -397,8 +421,7 @@ ClientWindow::Init (void)
   mWindow->AddItem (item = new BMenuItem ("Previous Window",
                     navUp, B_UP_ARROW));
   mWindow->AddItem (item = new BMenuItem ("Server Agent",
-                    new BMessage (B_ABOUT_REQUESTED), '/'));
-  item->SetTarget (vision_app);
+                    new BMessage (M_MOVE_TOP_SERVER), '/'));
   menubar->AddItem (mWindow);  
   
   AddChild (menubar);
