@@ -320,7 +320,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_CW_ALTW:
       {
-        if (!altw_catch)
+        if (!altw_catch && vision_app->GetBool ("catchAltW"))
         {
            altw_catch = true;
            
