@@ -258,7 +258,9 @@ MessageAgent::DCCIn (void *arg)
 #ifdef NETSERVER_BUILD
       snooze (20000);
 #endif
-      continue;
+     FD_SET (dccAcceptSocket, &rset);
+     FD_SET (dccAcceptSocket, &eset);
+     continue;
     }
 #ifdef NETSERVER_BUILD
     myLocker->Lock();
@@ -271,6 +273,9 @@ MessageAgent::DCCIn (void *arg)
       agent->dConnected = false;
       ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n");
       mMsgr.SendMessage (&termMsg);
+#ifdef NETSERVER_BUILD
+      myLocker->Unlock();
+#endif
       goto outta_there; // I hate goto, but this is a good use.
     }
 #ifdef NETSERVER_BUILD
@@ -400,6 +405,8 @@ MessageAgent::DCCOut (void *arg)
       if (!FD_ISSET (dccAcceptSocket, &rset))
 #ifdef NETSERVER_BUILD
       snooze (20000);
+      FD_SET (dccAcceptSocket, &rset);
+      FD_SET (dccAcceptSocket, &eset);
 #endif
       continue;
     }
@@ -621,7 +628,7 @@ MessageAgent::Parser (const char *buffer)
   {
     BString outTemp (buffer);
 
-    outTemp << "\r\n";
+    outTemp << "\n";
 #ifdef NETSERVER_BUILD
     locker->Lock();
 #endif
