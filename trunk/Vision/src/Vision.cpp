@@ -155,7 +155,8 @@ VisionApp::VisionApp (void)
   client_font[F_NAMES]   = new BFont (be_plain_font);
   client_font[F_INPUT]   = new BFont (be_fixed_font);
   client_font[F_WINLIST] = new BFont (be_plain_font);
-
+  client_font[F_LISTAGENT] = new BFont (be_plain_font);
+  
   events[E_JOIN]            = "*** $N ($I@$A) has joined the channel.";
   events[E_PART]            = "*** $N has left the channel.";
   events[E_NICK]            = "*** $N is now known as $n.";
@@ -637,7 +638,7 @@ const BFont *
 VisionApp::GetClientFont (int32 which) const
 {
   return which < MAX_FONTS && which >= 0 
-    ? client_font[which] : new BFont (be_plain_font);
+    ? client_font[which] : be_plain_font;
 }
 /// end font prefs ///
 

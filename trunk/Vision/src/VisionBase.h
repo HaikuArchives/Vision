@@ -138,8 +138,9 @@ enum {
 #define F_NAMES												3
 #define F_INPUT												4
 #define F_WINLIST                                           5
+#define F_LISTAGENT                                         6
 
-#define MAX_FONTS											6
+#define MAX_FONTS											7
 
 #define E_JOIN												0
 #define E_PART												1
