@@ -159,6 +159,7 @@ const int ERR_NONICKNAMEGIVEN         = 431;
 const int ERR_ERRONEOUSNICKNAME       = 432;
 const int ERR_NICKNAMEINUSE           = 433;
 const int ERR_NICKCOLLISION           = 436;
+const int ERR_RESOURCEUNAVAILABLE     = 437;
 const int ERR_NICKCHANGETOOFAST       = 438;
 const int ERR_USERNOTINCHANNEL        = 441;
 const int ERR_NOTONCHANNEL            = 442;

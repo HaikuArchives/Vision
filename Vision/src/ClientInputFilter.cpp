@@ -166,15 +166,15 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 	&&  (keymodifiers & B_CONTROL_KEY) == 0)
 		switch(keyStroke)
 		{
-//			case B_UP_ARROW:
-//				msgr.SendMessage (M_PREVIOUS_INPUT);
-//				result = B_SKIP_MESSAGE;
-//				break;
-//	
-//			case B_DOWN_ARROW:
-//				msgr.SendMessage (M_NEXT_INPUT);
-//				result = B_SKIP_MESSAGE;
-//				break;
+			case B_UP_ARROW:
+				msgr.SendMessage (M_PREVIOUS_INPUT);
+				result = B_SKIP_MESSAGE;
+				break;
+	
+			case B_DOWN_ARROW:
+				msgr.SendMessage (M_NEXT_INPUT);
+				result = B_SKIP_MESSAGE;
+				break;
 	
 			case B_RETURN:
 			
@@ -190,78 +190,7 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 
 				result = B_SKIP_MESSAGE;
 				break;
-	
-			case '\t': // tab, skip
-			{
-				window->TabExpansion();
-				result = B_SKIP_MESSAGE;
-				break;
-			}
-		}
-	if (keymodifiers & B_COMMAND_KEY)
-	{
-		switch (keyStroke)
-		{
-			case 'v':
-			case 'V':
-			{
-				BClipboard clipboard("system");
-				const char *text;
-				int32 textLen;
-				BMessage *clip = (BMessage *)NULL;
-				if (clipboard.Lock()) {
-				   if ((clip = clipboard.Data()))
-	    			if (clip->FindData("text/plain", B_MIME_TYPE, 
-	    				(const void **)&text, &textLen) != B_OK)
-	 				{
-	 	  				clipboard.Unlock();
-	 					break;
-	    			}
-	    		}
-	   			clipboard.Unlock();
-	   			BString data(text, textLen);
-	   			HandleDrop(data.String());
-	   			result = B_SKIP_MESSAGE;
-	   			break;
-			}
-			case B_UP_ARROW:
-			{
-				if ( window->textScroll->ScrollBar(B_VERTICAL)->Value() != 0)
-				{
-					window->text->ScrollBy(0.0, window->text->LineHeight() * -1);
-					result = B_SKIP_MESSAGE;
-				}
-				break;
-			}
-			
-			case B_DOWN_ARROW:
-			{
-				float min, max;
-				window->textScroll->ScrollBar(B_VERTICAL)->GetRange(&min, &max);
-				if ( window->textScroll->ScrollBar(B_VERTICAL)->Value() != max)
-				{ 
-					window->text->ScrollBy(0.0, window->text->LineHeight());
-					result = B_SKIP_MESSAGE;
-				}
-				break;
-			}
-			
-			case B_HOME:
-			{
-				window->text->ScrollTo(0.0, 0.0);
-				result = B_SKIP_MESSAGE;
-				break;
-			}
-			
-			case B_END:
-			{
-				float min, max;
-				window->textScroll->ScrollBar(B_VERTICAL)->GetRange(&min, &max);
-				window->text->ScrollTo(0.0, max);
-				result = B_SKIP_MESSAGE;
-				break;
-			}
-			
+
 			case B_PAGE_UP:
 			{
 				BRect myrect (window->text->Bounds());
@@ -289,6 +218,56 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 					window->text->ScrollBy(0.0, height);
 				result = B_SKIP_MESSAGE;
 				break;
+			}
+
+			case B_HOME:
+			{
+				window->text->ScrollTo(0.0, 0.0);
+				result = B_SKIP_MESSAGE;
+				break;
+			}
+			
+			case B_END:
+			{
+				float min, max;
+				window->textScroll->ScrollBar(B_VERTICAL)->GetRange(&min, &max);
+				window->text->ScrollTo(0.0, max);
+				result = B_SKIP_MESSAGE;
+				break;
+			}
+	
+			case '\t': // tab, skip
+			{
+				window->TabExpansion();
+				result = B_SKIP_MESSAGE;
+				break;
+			}
+		}
+	if (keymodifiers & B_COMMAND_KEY)
+	{
+		switch (keyStroke)
+		{
+			case 'v':
+			case 'V':
+			{
+				BClipboard clipboard ("system");
+				const char *text;
+				int32 textLen;
+				BMessage *clip ((BMessage *)NULL);
+				if (clipboard.Lock()) {
+				   if ((clip = clipboard.Data()))
+	    			if (clip->FindData("text/plain", B_MIME_TYPE, 
+	    				(const void **)&text, &textLen) != B_OK)
+	 				{
+	 	  				clipboard.Unlock();
+	 					break;
+	    			}
+	    		}
+	   			clipboard.Unlock();
+	   			BString data (text, textLen);
+	   			HandleDrop (data.String());
+	   			result = B_SKIP_MESSAGE;
+	   			break;
 			}
 		}
 	}

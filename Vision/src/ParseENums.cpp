@@ -815,7 +815,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       return true;    
     }
 
-    case ERR_NICKNAMEINUSE:    // 433
+    case ERR_NICKNAMEINUSE:        // 433
+    case ERR_RESOURCEUNAVAILABLE:  // 437
     {
       BString theNick (GetWord (data, 4));
       
@@ -825,7 +826,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         {
           Display ("* Nickname \"", 0);
           Display (lnick1.String(), 0);
-          Display ("\" in use.. trying \"", 0);
+          Display ("\" in use or unavailable.. trying \"", 0);
           Display (lnick2.String(), 0);
           Display ("\"\n", 0);
 
@@ -856,9 +857,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       }
 
       BString tempString;
-      tempString += "[x] Nickname ";
+      tempString += "[x] Nickname/Channel ";
       tempString += theNick;
-      tempString += " is already in use.\n";
+      tempString += " is already in use or unavailable.\n";
 
       BMessage display (M_DISPLAY);
       PackDisplay (&display, tempString.String(), &nickColor);
