@@ -430,9 +430,9 @@ VisionApp::LoadDefaults (int32 section)
           fVisionSettings->AddBool ("timestamp", false);
           
         if (!fVisionSettings->HasString ("timestamp_format"))
-          fVisionSettings->AddString ("timestamp_format", "[%H:%M:%S]");
+          fVisionSettings->AddString ("timestamp_format", "[%H:%M]");
         else
-          fVisionSettings->ReplaceString ("timestamp_format", "[%H:%M:%S]");
+          fVisionSettings->ReplaceString ("timestamp_format", "[%H:%M]");
         
         if (!fVisionSettings->HasBool ("log_enabled"))
           fVisionSettings->AddBool ("log_enabled", false);
