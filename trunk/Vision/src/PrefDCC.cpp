@@ -86,6 +86,7 @@ DCCPrefsView::AttachedToWindow (void)
   fDefDir->MoveTo (10, 10);
   fAutoAccept->ResizeToPreferred ();
   fAutoAccept->MoveTo (fDefDir->Frame().left, fDefDir->Frame().bottom + 5);
+  fPrivateCheck->SetTarget (this);
   fPrivateCheck->ResizeToPreferred ();
   fPrivateCheck->MoveTo (fAutoAccept->Frame().left, fAutoAccept->Frame().bottom + 5);
   fBlockSize->ResizeToPreferred ();
