@@ -36,6 +36,7 @@
 #  include <MenuBar.h>
 #  include <Rect.h>
 #  include <MessageRunner.h>
+#  include <Roster.h>
 #endif
 
 #include <stdio.h>
@@ -159,14 +160,31 @@ ClientWindow::HandleKey (BMessage *keyMsg)
     }
   }
 
+  else if ((mod & B_OPTION_KEY)  != 0
+       &&  (mod & B_COMMAND_KEY) != 0
+       &&  (mod & B_CONTROL_KEY) == 0
+       &&  (mod & B_SHIFT_KEY) == 0)
+  {
+    //////////////////////
+    /// Option+Command ///
+    //////////////////////
+    switch (key)
+    {
+      case '\x2b': // T - TermHire muscle memory :)
+        // open Terminal
+        be_roster->Launch ("application/x-vnd.Be-SHEL", 0, NULL);
+        break;
+    }
+  }
+
   else if ((mod & B_OPTION_KEY)  == 0
        &&  (mod & B_COMMAND_KEY) != 0
        &&  (mod & B_CONTROL_KEY) == 0
        &&  (mod & B_SHIFT_KEY) == 0)
   {
-    ////////////////
-    /// Command  ///
-    ////////////////
+    ///////////////
+    /// Command ///
+    ///////////////
     switch (key)
     {
       case '\x57': // up arrow
