@@ -2494,3 +2494,24 @@ RunView::FindText(const char *text)
   }
   return result;
 }
+
+void
+RunView::ScrollToSelection(void)
+{
+  if (fLine_count > 0)
+  {
+    if (fSp_start != fSp_end)
+    {
+      ScrollTo(0.0, fLines[fSp_start.fLine]->fTop);
+    }
+  }
+}
+
+void
+RunView::ScrollToBottom(void)
+{
+  if (fLine_count > 0)
+  {
+    ScrollTo(0.0, fLines[fLine_count - 1]->fTop);
+  }
+}
