@@ -222,9 +222,6 @@
 
 #define S_PREFAPP_VERSION_PARANOID  "Show OS information in version reply"
 #define S_PREFAPP_CMDW              "Cmd+W closes Vision"
-#define S_PREFAPP_SHOW_TIMESTAMP    "Show timestamps in IRC window"
-#define S_PREFAPP_USE_LOGGING       "Enable logging"
-#define S_PREFAPP_LOG_TIMESTAMP     "Append timestamp to log filenames"
 #define S_PREFAPP_STRIP_MIRC        "Strip mIRC Colors"
 #define S_PREFAPP_WARN_MULTILINE    "Warn when multiline pasting"
 
@@ -328,6 +325,17 @@
 #define S_PREFFONT_FONTLABEL        "Font: "
 #define S_PREFFONT_SIZELABEL        "Size: "
 
+// log prefs
+
+#define S_PREFLOG_LOGPATH           "Log base path:"
+#define S_PREFLOG_TS_FORMAT         "Timestamp format:"
+#define S_PREFLOG_SHOW_TIMESTAMP    "Show timestamps in IRC window"
+#define S_PREFLOG_USE_LOGGING       "Enable logging"
+#define S_PREFLOG_LOG_TIMESTAMP     "Append timestamp to log filenames"
+#define S_PREFLOG_ALERT_TITLE       "Error"
+#define S_PREFLOG_ALERT_TEXT        "The log path you have entered is invalid."
+#define S_PREFLOG_ALERT_BUTTON      "OK"
+
 // main prefs view
 
 #define S_PREFGEN_APP_ITEM          "Application"
@@ -336,6 +344,7 @@
 #define S_PREFGEN_COMMAND_ITEM      "Commands"
 #define S_PREFGEN_EVENT_ITEM        "Events"
 #define S_PREFGEN_DCC_ITEM          "DCC"
+#define S_PREFGEN_LOG_ITEM          "Logging"
 
 // preferences window
 

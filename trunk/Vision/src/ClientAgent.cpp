@@ -658,6 +658,12 @@ ClientAgent::MessageReceived (BMessage *msg)
             }
           }
         }
+        else if (msg->HasBool ("string"))
+        {
+          BString which (msg->FindString ("which"));
+          if (which == "timestamp_format")
+            fText->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
+        }
       }
       break;
      

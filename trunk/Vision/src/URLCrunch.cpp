@@ -71,9 +71,6 @@ URLCrunch::Crunch (BString *url)
 			
 			url_length += strcspn (buffer.String() + url_length, " \t\n|\\<>");
 
-			while (!isalpha(buffer[url_length-1]) && !isdigit(buffer[url_length-1])
-				&& buffer[url_length-1] != '/')
-				--url_length; 
 
 			int len (strlen (tags[i]));
 

@@ -26,6 +26,7 @@
 #include "PrefFont.h"
 #include "PrefCommand.h"
 #include "PrefEvent.h"
+#include "PrefLog.h"
 
 #include <stdio.h>
 
@@ -51,6 +52,7 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_COMMAND_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_EVENT_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_DCC_ITEM));
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_LOG_ITEM));
   fPrefsList->SetSelectionMessage (new BMessage (M_GENERALPREFS_SELECTION_CHANGED));
   BScrollView *scroller (new BScrollView("list scroller", fPrefsList, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, 0, false, true));
   AddChild(scroller);
@@ -82,6 +84,10 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   fPrefsItems[5] = new DCCPrefsView (bounds);
   fPrefsBox->AddChild (fPrefsItems[5]);
   fPrefsItems[5]->Hide();
+  
+  fPrefsItems[6] = new LogPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[6]);
+  fPrefsItems[6]->Hide();
 }
 
 GeneralPrefsView::~GeneralPrefsView (void)

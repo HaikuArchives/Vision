@@ -207,27 +207,6 @@ ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
 {
   switch (msg->what)
   {
-    case M_SEND_TO_AGENT:
-      {
-        uint32 newWhat;
-        BView *target;
-
-        if (msg->FindInt32 ("covertops", ((int32 *) &newWhat)) != B_OK)
-        {
-          printf (":ERROR: no valid covertops found in M_SEND_TO_AGENT, bailing...\n");
-          return;
-        }
-        if (msg->FindPointer ("pointer", reinterpret_cast<void **>(&target)) != B_OK)
-        {
-          printf (":ERROR: no valid pointer found in M_SEND_TO_AGENT, bailing...\n");
-          return;
-        }
-
-        msg->what = newWhat;
-        target->MessageReceived (msg);
-      }
-      break;
-    
     case B_KEY_DOWN:
       {
         HandleKey (msg);
@@ -452,6 +431,18 @@ WindowList *
 ClientWindow::pWindowList (void)
 {
   return fCwDock->pWindowList();
+}
+
+NotifyList *
+ClientWindow::pNotifyList (void)
+{
+  return fCwDock->pNotifyList();
+}
+
+ClientWindowDock *
+ClientWindow::pCwDock (void)
+{
+  return fCwDock;
 }
 
 

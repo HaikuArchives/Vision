@@ -24,7 +24,9 @@
 #include <ScrollView.h>
 #include <StringView.h>
 
+#include "ClientWindow.h"
 #include "ClientWindowDock.h"
+#include "NotifyList.h"
 #include "Theme.h"
 #include "Vision.h"
 #include "WindowList.h"
@@ -40,7 +42,8 @@ ClientWindowDock::ClientWindowDock (BRect frame)
     frame,
     "agentDock",
     B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM,
-    B_WILL_DRAW | B_FRAME_EVENTS)
+    B_WILL_DRAW | B_FRAME_EVENTS),
+    fNotifyExpanded (false)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   
@@ -81,6 +84,42 @@ WindowList *
 ClientWindowDock::pWindowList (void)
 {
   return fWinListAgent->pWindowList();
+}
+
+NotifyList *
+ClientWindowDock::pNotifyList (void)
+{
+  return fNotifyAgent->pNotifyList();
+}
+
+void
+ClientWindowDock::MessageReceived (BMessage *msg)
+{
+  switch (msg->what)
+  {
+    case M_NOTIFYLIST_RESIZE:
+    {
+      if (fNotifyExpanded)
+      {
+        fNotifyAgent->ResizeTo (fNotifyAgent->Bounds().Width(), 15.0);
+        fNotifyAgent->MoveTo (0.0, Bounds().bottom - 15.0);
+        fWinListAgent->ResizeBy (0.0, (fNotifyAgent->Frame().top - fWinListAgent->Frame().bottom - 1.0));
+        fNotifyExpanded = false;
+      }
+      else
+      {
+        fWinListAgent->ResizeBy (0.0, -1.0 * (fWinListAgent->Bounds().Height() / 3.0));
+        fNotifyAgent->MoveTo (0.0, fWinListAgent->Frame().bottom + 1.0);
+        fNotifyAgent->ResizeBy (0.0, Frame().bottom - fNotifyAgent->Frame().bottom - 1.0);
+        fNotifyExpanded = true;
+      }
+      break;
+    }
+    
+    default:
+      BView::MessageReceived (msg);
+      break;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -158,16 +197,34 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   BRect frame (frame_);
   
   BRect headerFrame (frame);
-  headerFrame.top = 0;
+  headerFrame.top = 1;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
   fAHeader = new AgentDockHeader (headerFrame, S_CWD_NOTIFY_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+  headerFrame.top = headerFrame.top + headerFrame.Height() + 4;
+  headerFrame.bottom = headerFrame.top;
+  headerFrame.right -= B_V_SCROLL_BAR_WIDTH;
+  fNotifyList = new NotifyList (headerFrame);
+  fNotifyScroll = new BScrollView ("fNotifyListScroll",
+                                   fNotifyList,
+                                   B_FOLLOW_ALL,
+                                   0,
+                                   false,
+                                   true,
+                                   B_PLAIN_BORDER);
   AddChild (fAHeader);
+  AddChild (fNotifyScroll);
 }
 
 AgentDockNotifyList::~AgentDockNotifyList (void)
 {
   //
+}
+
+NotifyList *
+AgentDockNotifyList::pNotifyList (void)
+{
+  return fNotifyList;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -237,6 +294,20 @@ AgentDockHeaderString::MouseUp (BPoint where)
   Parent()->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
   Invalidate();
   Parent()->Invalidate();
+  
+  // check if this header string belongs to notify list and send resize message if so
+  BView *notifyList (Parent());
+  if (notifyList && dynamic_cast<AgentDockHeader *>(notifyList) != NULL)
+  {
+    notifyList = notifyList->Parent();
+    if (notifyList && dynamic_cast<AgentDockNotifyList *>(notifyList) != NULL)
+    {
+      BMessenger msgr (((AgentDockNotifyList *)notifyList)->pNotifyList());
+      if (msgr.IsValid())
+        msgr.SendMessage (M_NOTIFYLIST_RESIZE);
+    }
+  }
+
   BStringView::MouseUp (where);
 }
 
@@ -264,50 +335,6 @@ AgentDockHeader::~AgentDockHeader (void)
   // nothing
 }
 
-void
-AgentDockHeader::MouseMoved (BPoint where, uint32 transitcode, const BMessage *mmMsg)
-{
-  switch (transitcode)
-  {
-    case B_ENTERED_VIEW:
-      SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-      fHeaderView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-      Invalidate();
-      fHeaderView->Invalidate();
-      break;
-    
-    case B_EXITED_VIEW:
-      SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
-      fHeaderView->SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
-      Invalidate();
-      fHeaderView->Invalidate();
-      break;
-  }
-    
-  BView::MouseMoved (where, transitcode, mmMsg);
-}
-
-void
-AgentDockHeader::MouseDown (BPoint where)
-{
-  SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
-  fHeaderView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
-  Invalidate();
-  fHeaderView->Invalidate();
-  
-  BView::MouseDown (where);
-}
-
-void
-AgentDockHeader::MouseUp (BPoint where)
-{
-  SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-  fHeaderView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-  Invalidate();
-  fHeaderView->Invalidate();
-  
-  BView::MouseUp (where);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 /// End AgentDockHeader functions

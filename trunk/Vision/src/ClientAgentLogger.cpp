@@ -209,11 +209,16 @@ ClientAgentLogger::SetupLogging (void)
   BEntry entry (&ai.ref);
   entry.GetPath (&fLogPath);
   fLogPath.GetParent (&fLogPath);
-
+  
+  BString visLogPath (vision_app->GetString ("logBaseDir"));
+  if (visLogPath.Length() == 0)
+    visLogPath = "logs";
+  else if (visLogPath[0] == '/')
+    fLogPath.SetTo (visLogPath.String());
+  else
+    fLogPath.Append (visLogPath.String());
+  create_directory (fLogPath.Path(), 0777);
   BDirectory dir (fLogPath.Path());
-  dir.CreateDirectory ("logs", &dir);
-  fLogPath.Append ("logs");
-  dir.SetTo (fLogPath.Path());
   BString sName (fServerName);
   sName.ToLower();
   dir.CreateDirectory (sName.String(), &dir);

@@ -449,7 +449,7 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 0
+  #if 1
   if (firstWord == "/EXCLUDE")
   {
     {
@@ -473,12 +473,12 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/EXIT")
   {
-    vision_app->PostMessage (B_QUIT_REQUESTED);
+    Window()->PostMessage (B_QUIT_REQUESTED);
     return true;
   }
   
 
-  #if 0
+  #if 1
   if (firstWord == "/IGNORE")
   {
     {
@@ -742,7 +742,7 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 0
+  #if 1
   if (firstWord == "/NOTIFY")
   {
     {
@@ -750,11 +750,10 @@ ClientAgent::ParseCmd (const char *data)
 
       if (rest != "-9z99")
       {
-        BMessage msg (M_NOTIFY_COMMAND);
+        BMessage msg (M_NOTIFYLIST_ADD);
         msg.AddString ("cmd", rest.String());
         msg.AddBool ("add", true);
         msg.AddString ("server", fServerName.String());
-        msg.AddRect ("frame", Frame());
         vision_app->PostMessage (&msg);
       }
     }
@@ -968,7 +967,7 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
-  #if 0
+  #if 1
   if (firstWord == "/UNIGNORE")
   {
     {
@@ -988,7 +987,7 @@ ClientAgent::ParseCmd (const char *data)
   #endif
 
 
-  #if 0
+  #if 1
   if (firstWord == "/UNNOTIFY")
   {
     {
@@ -996,10 +995,9 @@ ClientAgent::ParseCmd (const char *data)
 
       if (rest != "-9z99")
       {
-        BMessage msg (M_NOTIFY_COMMAND);
+        BMessage msg (M_NOTIFYLIST_REMOVE);
         msg.AddString ("cmd", rest.String());
         msg.AddBool ("add", false);
-        msg.AddRect ("frame", Frame());
         msg.AddString ("server", fServerName.String());
         vision_app->PostMessage (&msg);
       }

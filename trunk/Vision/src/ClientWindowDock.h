@@ -26,6 +26,7 @@
 #include <View.h>
 #include <StringView.h>
 
+class NotifyList;
 class WindowList;
 class BScrollView;
 
@@ -45,11 +46,7 @@ class AgentDockHeader : public BView
   public:
                            AgentDockHeader (BRect, const char *, uint32);
     virtual                ~AgentDockHeader (void);
-    
-    virtual void           MouseMoved (BPoint, uint32, const BMessage *);
-    virtual void           MouseDown (BPoint);
-    virtual void           MouseUp (BPoint);
-  
+
   private:
     
     AgentDockHeaderString  *fHeaderView;
@@ -77,10 +74,14 @@ class AgentDockNotifyList : public BView
   public:
                           AgentDockNotifyList (BRect);
     virtual               ~AgentDockNotifyList (void);
+    
+    NotifyList            *pNotifyList (void);
 
   private:
     
     AgentDockHeader       *fAHeader;
+    NotifyList            *fNotifyList;
+    BScrollView           *fNotifyScroll;
 
 };
 
@@ -92,7 +93,10 @@ class ClientWindowDock : public BView
     
     void                    AddWinList (void);
     void                    AddNotifyList (void);
-    WindowList              *pWindowList (void); 
+    WindowList              *pWindowList (void);
+    NotifyList              *pNotifyList (void);
+    
+    virtual void            MessageReceived (BMessage *);
     	
   private:
     
@@ -100,7 +104,7 @@ class ClientWindowDock : public BView
     
     AgentDockWinList        *fWinListAgent;
     AgentDockNotifyList     *fNotifyAgent;
-    
+    bool                    fNotifyExpanded;
 };
 
 

@@ -21,6 +21,7 @@
  */
  
 #include "SettingsFile.h"
+#include "Vision.h" // for debug output
 
 #include <Path.h>
 #include <File.h>
@@ -96,6 +97,10 @@ status_t SettingsFile::Load() {
 		MakeEmpty();
 		return ret;
 	}
+	
+	if (vision_app->fDebugSettings)
+	  PrintToStream();
+	
 	ret=file.RewindAttrs();
 	if (ret!=B_OK) {
 		file.Unlock();
@@ -274,6 +279,10 @@ status_t SettingsFile::Save() const {
 	if (ret!=B_OK) {
 		return ret;
 	}
+
+	if (vision_app->fDebugSettings)
+	  PrintToStream();
+
 	file.RewindAttrs();
 	char name[B_ATTR_NAME_LENGTH];
 	
