@@ -252,6 +252,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_COMMANDSYNTAX:     // 334
     case RPL_VERSION:           // 351
     case RPL_WHOREPLY:          // 352
+    case RPL_BANLIST:           // 367
+    case RPL_ENDOFBANLIST:      // 368
     case RPL_INFO:              // 371
     case RPL_ENDOFINFO:         // 374
     case RPL_YOUREOPER:         // 381

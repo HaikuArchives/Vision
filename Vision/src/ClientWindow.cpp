@@ -71,6 +71,8 @@ ClientWindow::ClientWindow (BRect frame)
   Init();
 }
 
+
+
 bool
 ClientWindow::QuitRequested (void)
 {
@@ -376,7 +378,7 @@ ClientWindow::MessageReceived (BMessage *msg)
           ID_SERVER,
           netName.String(),
           WIN_SERVER_TYPE,
-          true); // bring to front
+          pWindowList()->CountItems() > 0 ? false : true); // grab focus if none present
       }
       break;
     

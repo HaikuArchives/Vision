@@ -240,13 +240,17 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 
 	case B_TAB: // tab key
 		{
-			// used for tabcompletion for nickname/channelname/etc
-			fWindow->TabExpansion();
-		    BMessage logMessage (M_CLIENT_LOG);
-		    logMessage.AddString ("name", fWindow->fId.String());
-		    logMessage.AddString ("data", "DEBUG: Tab completion used\n");
-		    fWindow->fSMsgr.SendMessage (&logMessage);
-			result = B_SKIP_MESSAGE;
+		    if (keymodifiers == 0)
+		    {
+  				// used for tabcompletion for nickname/channelname/etc
+				fWindow->TabExpansion();
+			    BMessage logMessage (M_CLIENT_LOG);
+				    logMessage.AddString ("name", fWindow->fId.String());
+			    logMessage.AddString ("data", "DEBUG: Tab completion used\n");
+			    fWindow->fSMsgr.SendMessage (&logMessage);
+			}
+			if ((keymodifiers & B_SHIFT_KEY) || modifiers == 0)
+				result = B_SKIP_MESSAGE;
 		}
 		break;
 	}
