@@ -1817,8 +1817,8 @@ Line::Line (
   int16 len,
   float top,
   float width,
-  Theme *fTheme,
-  const char *fStamp_format,
+  Theme *theme,
+  const char *stamp_format,
   int16 fore,
   int16 back,
   int16 font)
@@ -1838,22 +1838,10 @@ Line::Line (
     fSoftie_size (0),
     fSoftie_used (0)
 {
-  // Very important to call SetStamp before fText is allocated (avoids reallocation)
-  size_t stampsize (SetStamp (fStamp_format, false));
+  // Very important to call SetStamp before Append, It would look real funny otherwise!
+  SetStamp( stamp_format, false );
 
-  if (fText == NULL)
-    fText = new char [fLength + 1];
-
-  memcpy (fText + stampsize, buffer, fLength - stampsize);
-  fText[fLength] = '\0';
-
-  FigureFontColors (stampsize, fore, back, font);
-
-  if (fText[fLength - 1] == '\n')
-  {
-    FigureSpaces();
-    FigureEdges (fTheme, width);
-  }
+  Append( buffer, len, width, theme, fore, back, font );
 }
 
 Line::~Line (void)
@@ -1877,7 +1865,7 @@ Line::Append (
   const char *buffer,
   int16 len,
   float width,
-  Theme *fTheme,
+  Theme *theme,
   int16 fore,
   int16 back,
   int16 font)
@@ -1887,11 +1875,27 @@ Line::Append (
 
   new_fText = new char [fLength + len + 1];
 
-  memcpy (new_fText, fText, fLength);
-  memcpy (new_fText + fLength, buffer, len);
-  new_fText[fLength += len] = '\0';
+  if (fText != NULL)
+  {
+    memcpy (new_fText, fText, fLength);
+    delete [] fText;
+  }
 
-  delete [] fText;
+  memcpy (new_fText + fLength, buffer, len);
+  fLength += len;
+  new_fText[fLength] = '\0';
+
+  // replace Tab chars with spaces.
+  // todo: This should be temp until RunView can properly
+  //        display tabs.
+  for( char* pos = new_fText + save; *pos; ++pos )
+  {
+    if( '\t' == *pos )
+    {
+      *pos = ' ';
+    } 
+  }
+  
   fText = new_fText;
 
   FigureFontColors (save, fore, back, font);
@@ -1909,10 +1913,8 @@ Line::Append (
       fUrls->sort();
 
     FigureSpaces();
-    FigureEdges (fTheme, width);
+    FigureEdges (theme, width);
   }
-  
-    
 }
 
 void
@@ -2033,7 +2035,7 @@ Line::FigureFontColors (
 
 void
 Line::FigureEdges (
-  Theme *fTheme,
+  Theme *theme,
   float width)
 {
   delete [] fEdges;
@@ -2094,7 +2096,7 @@ Line::FigureEdges (
       seglen = fFcs[next_fFcs].fOffset - fFcs[cur_fFcs].fOffset;
     }
 
-    const BFont &f (fTheme->FontAt (fFcs[cur_font].fIndex));
+    const BFont &f (theme->FontAt (fFcs[cur_font].fIndex));
 
     float eshift[ccount];
     f.GetEscapements (
@@ -2147,13 +2149,13 @@ Line::FigureEdges (
     fEdge_count += ccount;
   }
 
-  SoftBreaks (fTheme, width);
+  SoftBreaks (theme, width);
 }
 
 
 void
 Line::AddSoftBreak (SoftBreakEnd sbe, float &start, uint16 &fText_place,
-  int16 &font, float &width, float &start_width, Theme *fTheme)
+  int16 &font, float &width, float &start_width, Theme *theme)
 {
     fText_place = sbe.fOffset;
 
@@ -2184,7 +2186,7 @@ Line::AddSoftBreak (SoftBreakEnd sbe, float &start, uint16 &fText_place,
     int16 last (font);
     while (font < fFc_count)
     {
-      const BFont &f (fTheme->FontAt (fFcs[font].fIndex));
+      const BFont &f (theme->FontAt (fFcs[font].fIndex));
       font_height fh;
       float height;
 
@@ -2220,7 +2222,7 @@ Line::AddSoftBreak (SoftBreakEnd sbe, float &start, uint16 &fText_place,
 }
 
 void
-Line::SoftBreaks (Theme *fTheme, float start_width)
+Line::SoftBreaks (Theme *theme, float start_width)
 {
   float margin (ceil (MARGIN_WIDTH / 2.0));
   float width (start_width);
@@ -2255,7 +2257,7 @@ Line::SoftBreaks (Theme *fTheme, float start_width)
         // everything fits.. how wonderful (but we want at least one softbreak)
         if (fEdge_count == 0)
         {
-          AddSoftBreak (SoftBreakEnd(fLength - 1), start, fText_place, font, width, start_width, fTheme);
+          AddSoftBreak (SoftBreakEnd(fLength - 1), start, fText_place, font, width, start_width, theme);
           break;
         }
 
@@ -2266,7 +2268,7 @@ Line::SoftBreaks (Theme *fTheme, float start_width)
         
         if (fEdges[i] - start <= width)
         {
-          AddSoftBreak (SoftBreakEnd(fLength - 1), start, fText_place, font, width, start_width, fTheme);
+          AddSoftBreak (SoftBreakEnd(fLength - 1), start, fText_place, font, width, start_width, theme);
           continue;
         }
 
@@ -2280,7 +2282,7 @@ Line::SoftBreaks (Theme *fTheme, float start_width)
 
           fText_place += UTF8_CHAR_LEN (fText[fText_place]);
         }
-        AddSoftBreak (SoftBreakEnd(fText_place), start, fText_place, font, width, start_width, fTheme);
+        AddSoftBreak (SoftBreakEnd(fText_place), start, fText_place, font, width, start_width, theme);
         continue;
       }
 
@@ -2298,7 +2300,7 @@ Line::SoftBreaks (Theme *fTheme, float start_width)
         
       if (fEdges[ccount1 + ccount2] - fEdges[i] < width - margin)
         {
-          AddSoftBreak (SoftBreakEnd(fSpaces[space_place]), start, fText_place, font, width, start_width, fTheme);
+          AddSoftBreak (SoftBreakEnd(fSpaces[space_place]), start, fText_place, font, width, start_width, theme);
           continue;
         }
 
