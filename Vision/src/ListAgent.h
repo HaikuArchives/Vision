@@ -56,11 +56,12 @@ class ListAgent : public BView
     BMessenger              fMsgr;
     
   private:
+    void                    AddBatch (void);
     Theme                   *activeTheme;
     BMessenger              *fSMsgr;
     BMessageRunner          *listUpdateTrigger;
     BMenu                   *listMenu;
-    BColumnListView               *listView;
+    BColumnListView         *listView;
     BColumn                 *channelColumn,
                             *usersColumn,
                             *topicColumn;
@@ -80,6 +81,7 @@ class ListAgent : public BView
     BMenuItem               *mFilter,
                               *mFind,
                               *mFindAgain;
+    BList                   fBuildList;
 
     friend class WindowList;
 };
