@@ -440,8 +440,6 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 	msg.AddInt32 ("selstart", start);
 	msg.AddInt32 ("selend", finish);
 
-	int32 result = 0;
-
 	if (lines > 1)
 	{
 		if (true == vision_app->GetBool("Newbie Spam Mode"))
@@ -468,18 +466,17 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 			BMessage *invokeMsg (new BMessage (msg));
 			BInvoker *invoker (new BInvoker (invokeMsg, msgr));
 			invokeMsg->AddPointer ("invoker", invoker);
-			result = alert->Go (invoker);
+			alert->Go (invoker);
 		}
 		else
 		{
-			result = 1;
-			msg.AddInt32 ("which", result);
+			msg.AddInt32 ("which", PASTE_MULTI);
 		}
 	}
 
-	if ((result > 0) || lines == 1)
+	if (lines == 1)
 	{
-		msg.AddBool ("lines", result == 1);
+		msg.AddInt32 ("which", PASTE_SINGLE);
 		msgr.SendMessage (&msg);
 		fWindow->fInput->MakeFocus(false);
 		fWindow->fInput->MakeFocus(true);

@@ -668,10 +668,8 @@ ClientAgent::MessageReceived (BMessage *msg)
     case M_SUBMIT_INPUT:
       {
       	fCancelMLPaste = false;
-        bool lines (false);
         int32 which (0);
 
-        msg->FindBool ("lines", &lines);
         msg->FindInt32 ("which", &which);
 
         if (msg->HasPointer ("invoker"))
@@ -681,67 +679,74 @@ ClientAgent::MessageReceived (BMessage *msg)
           delete invoker;
         }
         
-        if (which == 0 && msg->HasBool ("which"))
-          break;
-
-        if (which == 1 || which == 3)
+        switch (which)
         {
-          BMessage *buffer (new BMessage (*msg));
-          thread_id tid;
+        	case PASTE_CANCEL:
+              break;
+            
+            case PASTE_MULTI:
+            {
+              BMessage *buffer (new BMessage (*msg));
+              thread_id tid;
 
-          buffer->AddPointer ("agent", this);
-          buffer->AddPointer ("window", Window());
-          if (which == 3)
-            buffer->AddBool ("delay", false);
-          tid = spawn_thread (
-            TimedSubmit,
-            "Timed Submit",
-            B_LOW_PRIORITY,
-            buffer);
-
-          resume_thread (tid);
-        }
-        else if ((which == 2) || !lines)
-        {
-          BString buffer;
-          for (int32 i = 0; msg->HasString ("data", i); ++i)
-          {
-            const char *data;
-            msg->FindString ("data", i, &data);
-            buffer += (i ? " " : "");
-            buffer += data;
-          }
+              buffer->AddPointer ("agent", this);
+              buffer->AddPointer ("window", Window());
+              if (which == 3)
+                buffer->AddBool ("delay", false);
+              tid = spawn_thread (
+                TimedSubmit,
+                "Timed Submit",
+                B_LOW_PRIORITY,
+                buffer);
+              resume_thread (tid);
+            }
+            break;
+            
+            case PASTE_SINGLE:
+            {
+              BString buffer;
+              for (int32 i = 0; msg->HasString ("data", i); ++i)
+              {
+                const char *data;
+                msg->FindString ("data", i, &data);
+                buffer += (i ? " " : "");
+               buffer += data;
+              }
           
-          int32 start, finish;
+              int32 start, finish;
+ 
+              if (msg->FindInt32 ("selstart", &start) == B_OK)
+              {
+                msg->FindInt32 ("selend", &finish);
+                if (start != finish)
+                  fInput->TextView()->Delete (start, finish);
 
-          if (msg->FindInt32 ("selstart", &start) == B_OK)
-          {
-            msg->FindInt32 ("selend", &finish);
-            if (start != finish)
-              fInput->TextView()->Delete (start, finish);
-
-            if ((start == 0) && (finish == 0))
-            {
-              fInput->TextView()->Insert (fInput->TextView()->TextLength(),
-                buffer.String(), buffer.Length());
-              fInput->TextView()->Select (fInput->TextView()->TextLength(),
+                if ((start == 0) && (finish == 0))
+                {
+                   fInput->TextView()->Insert (fInput->TextView()->TextLength(),
+                     buffer.String(), buffer.Length());
+                   fInput->TextView()->Select (fInput->TextView()->TextLength(),
+                     fInput->TextView()->TextLength());
+                }
+                else
+                {
+                  fInput->TextView()->Insert (start, buffer.String(), buffer.Length());
+                  fInput->TextView()->Select (start + buffer.Length(),
+                    start + buffer.Length());
+                }
+              }
+              else
+              {
+                fInput->TextView()->Insert (buffer.String());
+                fInput->TextView()->Select (fInput->TextView()->TextLength(),
                 fInput->TextView()->TextLength());
+              }
+              fInput->TextView()->ScrollToSelection();
             }
-            else
-            {
-              fInput->TextView()->Insert (start, buffer.String(), buffer.Length());
-              fInput->TextView()->Select (start + buffer.Length(),
-                start + buffer.Length());
-            }
-          }
-          else
-          {
-            fInput->TextView()->Insert (buffer.String());
-            fInput->TextView()->Select (fInput->TextView()->TextLength(),
-            fInput->TextView()->TextLength());
-          }
-
-          fInput->TextView()->ScrollToSelection();
+            break;
+        
+          default:
+            break;
         }
       }
       break;

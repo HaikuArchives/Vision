@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.8.4-0411
+VERSION := 0.8.5-0414
 BUILDDATE := $(shell date +%b_%d_%Y)
 
 CHECK_MEM := false
