@@ -111,14 +111,18 @@ void
 ClientAgent::AttachedToWindow (void)
 {
   BView::AttachedToWindow();
-  fActiveTheme->AddView (this);  
+  fActiveTheme->WriteLock();
+  fActiveTheme->AddView (this);
+  fActiveTheme->WriteUnlock();  
 }
 
 void
 ClientAgent::DetachedFromWindow (void)
 {
   BView::DetachedFromWindow ();
-  fActiveTheme->RemoveView (this);  
+  fActiveTheme->WriteLock();
+  fActiveTheme->RemoveView (this);
+  fActiveTheme->WriteUnlock();  
 }
 
 void
@@ -156,7 +160,7 @@ ClientAgent::Show (void)
   statusMsg.AddBool ("hidden", false);
   Window()->PostMessage (&statusMsg);
   
-  const BRect *agentRect (((ClientWindow *)Window())->AgentRect());
+  const BRect *agentRect (dynamic_cast<ClientWindow *>(Window())->AgentRect());
   
   if (*agentRect != Frame())
   {
@@ -1049,8 +1053,6 @@ ClientAgent::AddSend (BMessage *msg, const char *buffer)
   {
     if (fSMsgr.IsValid())
       fSMsgr.SendMessage (msg);
-    else
-      this->MessageReceived (msg);
 
     msg->MakeEmpty();
   }

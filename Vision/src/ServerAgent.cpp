@@ -103,8 +103,8 @@ ServerAgent::ServerAgent (
     fCmds (net.FindString ("autoexec")),
     fListAgent (NULL),
     fNetworkData (net),
-    fServerIndex (-1),
-    fNickIndex (1),
+    fServerIndex (0),
+    fNickIndex (0),
     fLogger (NULL)
 {
   fLogger = new ClientAgentLogger(fId);
@@ -130,9 +130,6 @@ ServerAgent::~ServerAgent (void)
   status_t result;
   wait_for_thread (fSenderThread, &result);
 
-  while (fPendingSends.CountItems() > 0)
-    delete fPendingSends.RemoveItem (0L);
-  
   while (fIgnoreNicks.CountItems() > 0)
     delete fIgnoreNicks.RemoveItem(0L);
 
@@ -159,7 +156,7 @@ ServerAgent::AllAttached (void)
   int32 attrCount (0);
   
   BMessage updatemsg (M_NOTIFYLIST_ADD);
-  BString data = "";
+  BString data;
   
   fNetworkData.GetInfo ("notify", &type, &attrCount);
 
@@ -185,6 +182,8 @@ ServerAgent::AddMenuItems(BPopUpMenu *)
 void
 ServerAgent::Init (void)
 {
+  fPendingSends = new BList();
+  fSendLock = new BLocker();
 #ifdef NETSERVER_BUILD
   fEndPointLock = new BLocker();
 #endif
@@ -273,18 +272,17 @@ ServerAgent::Timer (void *arg)
 int32
 ServerAgent::Sender (void *arg)
 {
-  ServerAgent *agent ((ServerAgent *)arg);
+  ServerAgent *agent (reinterpret_cast<ServerAgent *>(arg));
   BMessenger msgr (agent);
   sem_id sendSyncLock (-1);
   BLocker *sendDataLock (NULL);
   BList *pendingSends (NULL);
   
-  
   if (msgr.IsValid() && msgr.LockTarget())
   {
     sendSyncLock = agent->fSendSyncSem;
-    sendDataLock = &(agent->fSendLock);
-    pendingSends = &(agent->fPendingSends);
+    sendDataLock = agent->fSendLock;
+    pendingSends = agent->fPendingSends;
     // this is safe since we know we have the looper at this point
     agent->Window()->Unlock();
   }
@@ -295,19 +293,33 @@ ServerAgent::Sender (void *arg)
   while (acquire_sem (sendSyncLock) == B_NO_ERROR)
   {
     sendDataLock->Lock();
-    data = (BString *)pendingSends->RemoveItem (0L);
-    sendDataLock->Unlock();
-    // this could happen if there are several queued data items and the server
-    // simultaneously disconnects, thus clearing the send queue, but not the semaphore
-    // releases
-    if (data != NULL)
+    if (!pendingSends->IsEmpty())
     {
+      data = (BString *)pendingSends->RemoveItem (0L);
+      sendDataLock->Unlock();
       agent->AsyncSendData (data->String());
       delete data;
       data = NULL;
     }
+    else
+      sendDataLock->Unlock();
+      
   }
+  
+  // sender takes possession of pending sends and sendDataLock structures
+  // allows for self-contained cleanups
+  while (pendingSends->CountItems() > 0)
+    delete pendingSends->RemoveItem (0L);
+  delete pendingSends;
+  delete sendDataLock;
+
   return B_OK;
+}
+
+bool
+ServerAgent::ServerThreadValid (thread_id tid)
+{
+  return (tid == fLoginThread);
 }
 
 int32
@@ -315,6 +327,7 @@ ServerAgent::Establish (void *arg)
 {
   BMessenger *sMsgrE (reinterpret_cast<BMessenger *>(arg));
   BMessage getMsg;
+  thread_id currentThread (find_thread(NULL));
 #ifdef NETSERVER_BUILD
   BLocker *endpointLock (NULL);
 #endif
@@ -473,6 +486,14 @@ ServerAgent::Establish (void *arg)
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
 
+      // temporary hack
+      if (connectId.ICompare("64.156.75", 9) == 0)
+      {
+        string = "PASS 2legit2quit";
+        dataSend.ReplaceString ("data", string.String());
+        sMsgrE->SendMessage (&dataSend);
+      }
+      
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
@@ -531,10 +552,13 @@ ServerAgent::Establish (void *arg)
   FD_SET (serverSock, &eset);
   FD_SET (serverSock, &rset);
   FD_SET (serverSock, &wset);
-  BLooper *looper;
-
-  while (sMsgrE->Target (&looper) != NULL)
+  ServerAgent *agent (dynamic_cast<ServerAgent *>(sMsgrE->Target(NULL)));
+  while (sMsgrE->LockTarget())
   {
+    if (!agent->ServerThreadValid (currentThread))
+      break;
+    agent->Looper()->Unlock();
+    
     char indata[1024];
     int32 length (0);
     
@@ -741,9 +765,9 @@ ServerAgent::SendData (const char *cData)
   // this function simply queues up the data into the requests buffer, then releases
   // the sender thread to take care of it
   BString *data (new BString (cData));
-  fSendLock.Lock();
-  fPendingSends.AddItem (data);
-  fSendLock.Unlock();
+  fSendLock->Lock();
+  fPendingSends->AddItem (data);
+  fSendLock->Unlock();
   release_sem (fSendSyncSem);
 }
 
@@ -897,10 +921,10 @@ ServerAgent::HandleReconnect (void)
   }
   
   // empty out old send buffer to ensure no erroneous strings get sent
-  fSendLock.Lock();
-  while (fPendingSends.CountItems() > 0)
-    delete fPendingSends.RemoveItem (0L);
-  fSendLock.Unlock();
+  fSendLock->Lock();
+  while (fPendingSends->CountItems() > 0)
+    delete fPendingSends->RemoveItem (0L);
+  fSendLock->Unlock();
   
   if (fRetry < fRetryLimit)
   {
@@ -919,9 +943,6 @@ ServerAgent::HandleReconnect (void)
       name.String(),
       B_NORMAL_PRIORITY,
       new BMessenger(this));
-    
-    close (fServerSocket);  
-    fServerSocket = -1;
 
     resume_thread (fLoginThread);
   }
@@ -952,13 +973,13 @@ ServerAgent::GetNextServer ()
   {
     if (fServerIndex >= count)
     {
-      fServerIndex = -1;
+      fServerIndex = 0;
       state = 0;
     }
     
     const ServerData *server (NULL);
-    for (; ++fServerIndex, fNetworkData.FindData ("server", B_RAW_TYPE, fServerIndex, 
-      reinterpret_cast<const void **>(&server), &size) == B_OK;)
+    for (; fNetworkData.FindData ("server", B_RAW_TYPE, fServerIndex, 
+      reinterpret_cast<const void **>(&server), &size) == B_OK; fServerIndex++)
         if (server->state == state)
           return server;
   }
@@ -1146,7 +1167,8 @@ ServerAgent::MessageReceived (BMessage *msg)
       {
         const char *buffer;
         msg->FindString ("line", &buffer);
-        SendData (buffer);
+        if (buffer)
+          SendData (buffer);
       }
       break;
 
@@ -1179,10 +1201,13 @@ ServerAgent::MessageReceived (BMessage *msg)
       
     case M_NOT_CONNECTING:
       fIsConnecting = false;
+      fReconnecting = false;
       break;
      
     case M_CONNECTED:
       fIsConnected = true;
+      fIsConnecting = false;
+      fReconnecting = false;
       break;
     
     case M_INC_RECONNECT:
