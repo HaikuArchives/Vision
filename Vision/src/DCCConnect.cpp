@@ -61,6 +61,7 @@ DCCConnect::DCCConnect (
 		size (sz),
 		ip (i),
 		port (p),
+		totalTransferred (0),
 		finalRateAverage (0),
 		tid (-1),
 		isStopped (false)
