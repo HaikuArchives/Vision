@@ -32,7 +32,8 @@ class SetupWindow : public BWindow
                               SetupWindow (bool);
     virtual                   ~SetupWindow (void);
     virtual bool              QuitRequested (void);
-    
+  
+  private:  
     void                      Init (void);
     void                      InitServerStartup (void);
     
