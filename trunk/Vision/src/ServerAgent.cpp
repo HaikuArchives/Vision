@@ -584,25 +584,20 @@ ServerAgent::RepliedBroadcast (BMessage *msg)
 
 void
 ServerAgent::DisplayAll (
-	const char *buffer,
-	bool channelOnly,
-	const rgb_color *color,
-	const BFont *font)
+  const char *buffer,
+  const rgb_color *color,
+  const BFont *font)
 {
-	for (int32 i = 0; i < clients.CountItems(); ++i)
-	{
-		ClientAgent *client ((ClientAgent *)clients.ItemAt (i));
+  for (int32 i = 0; i < clients.CountItems(); ++i)
+  {
+    ClientAgent *client ((ClientAgent *)clients.ItemAt (i));
 
-		//if (!channelOnly || dynamic_cast<ChannelWindow *>(client))
-		//{
-			BMessage msg (M_DISPLAY);
+    BMessage msg (M_DISPLAY);
+    PackDisplay (&msg, buffer, color, font);
+    client->msgr.SendMessage (&msg);
+  }
 
-			PackDisplay (&msg, buffer, color, font);
-			client->msgr.SendMessage (&msg);
-		//}
-	}
-
-	return;
+  return;
 }
 
 void
@@ -716,10 +711,10 @@ ServerAgent::MessageReceived (BMessage *msg)
 		
 		case M_CLIENT_QUIT:
 		{
-			bool shutdown (false);
+			bool shutingdown (false);
 
 			if (msg->HasBool ("vision:shutdown"))
-				msg->FindBool ("vision:shutdown", &shutdown);
+				msg->FindBool ("vision:shutdown", &shutingdown);
 				
 			if (msg->HasString ("vision:quit"))
 			{

@@ -75,7 +75,7 @@ class ServerAgent : public ClientAgent
  	ClientAgent					*Client (const char *);
 	ClientAgent					*ActiveClient (void);
 
-	void						DisplayAll (const char *, bool = false, const rgb_color * = 0, const BFont * = 0);
+	void						DisplayAll (const char *, const rgb_color * = 0, const BFont * = 0);
 	BString						FilterCrap (const char *);
 
 

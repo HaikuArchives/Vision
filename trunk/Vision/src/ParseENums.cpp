@@ -683,7 +683,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BString reString;
         reString << "[@] Successful reconnect\n";
         Display (reString.String(), &errorColor);
-        DisplayAll (reString.String(), false, &errorColor, &serverFont);
+        DisplayAll (reString.String(), &errorColor, &serverFont);
         // msgr.SendMessage (M_REJOIN_ALL);
         reconnecting = false;
       }
