@@ -187,10 +187,8 @@ ServerAgent::ParseEvents (const char *data)
 		if (nick == myNick)
 		{
 			if (!client)
-			{
-				vision_app->pClientWin()->UpdateAgentRect();
-				
-				vision_app->pClientWin()->winList->AddAgent (
+			{				
+				vision_app->pClientWin()->pWindowList()->AddAgent (
    					new ChannelAgent (
       					channel.String(),
       					//const_cast<long int>(sid),
@@ -198,13 +196,13 @@ ServerAgent::ParseEvents (const char *data)
       					serverName.String(),
       					myNick.String(),
       					sMsgr,
-      					*vision_app->pClientWin()->agentrect),
+      					*vision_app->pClientWin()->AgentRect()),
     				sid,
     				channel.String(),
     				WIN_CHANNEL_TYPE,
     				true);
     					
-				clients.AddItem ((vision_app->pClientWin()->winList->Agent (sid, channel.String())));
+				clients.AddItem ((vision_app->pClientWin()->pWindowList()->Agent (sid, channel.String())));
 			}
 				
 			BString tempString ("MODE ");
@@ -322,7 +320,7 @@ ServerAgent::ParseEvents (const char *data)
 		{
 			myNick = newNick;
 			if (!IsHidden());
-			  vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, newNick.String());
+			  vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick.String());
 		}
 
 		vision_app->PostMessage (&msg); // for ignores

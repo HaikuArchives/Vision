@@ -241,15 +241,13 @@ ClientWindow::MessageReceived (BMessage *msg)
         return;
       }
       
-      UpdateAgentRect();
-                 
       winList->AddAgent (
         new ServerAgent (
           const_cast<const char *>(hostname),
           const_cast<const char *>(port),
           enidentd,
           const_cast<const char *>(autoexec),
-          *agentrect),
+          *AgentRect()),
         ID_SERVER,
         hostname,
         WIN_SERVER_TYPE,
@@ -263,14 +261,35 @@ ClientWindow::MessageReceived (BMessage *msg)
   }
 }
 
-void
-ClientWindow::UpdateAgentRect (void)
+BRect *
+ClientWindow::AgentRect (void)
 {
   agentrect->left = winListScroll->Frame().right - winListScroll->Frame().left + 1;
   agentrect->top = Bounds().top + 1;
   agentrect->right = Bounds().Width() - 1;
   agentrect->bottom = winListScroll->Frame().Height();
+  return agentrect;
 }
+
+WindowList *
+ClientWindow::pWindowList (void)
+{
+  return winList;
+}
+
+StatusView *
+ClientWindow::pStatusView (void)
+{
+  return status;
+}
+
+
+void
+ClientWindow::ServerBroadcast (BMessage *outmsg)
+{
+  //
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 /// End BWindow functions

@@ -158,14 +158,14 @@ ChannelAgent::RemoveUser (const char *data)
 			{
 				--opsCount;
 				buffer << opsCount;
-				vision_app->pClientWin()->status->SetItemValue (STATUS_OPS, buffer.String());
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 
 				buffer = "";
 			}
 
 			--userCount;
 			buffer << userCount;
-			vision_app->pClientWin()->status->SetItemValue (STATUS_USERS, buffer.String());
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
 
 			delete item;
 			return true;
@@ -318,7 +318,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			BString buffer;
 			buffer << userCount;
 			
-			vision_app->pClientWin()->status->SetItemValue (STATUS_USERS, buffer.String());
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
 
 			BMessage display;
 			if (msg->FindMessage ("display", &display) == B_NO_ERROR)
@@ -350,7 +350,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
 			if (myNick.ICompare (oldNick) == 0)
 			{
-				vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, newNick);
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
 			}
 
 			ClientAgent::MessageReceived (msg);
@@ -402,11 +402,11 @@ ChannelAgent::MessageReceived (BMessage *msg)
 				namesList->SortItems (SortNames);
 				BString buffer;
 				buffer << opsCount;
-				vision_app->pClientWin()->status->SetItemValue (STATUS_OPS, buffer.String());
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 
 				buffer = "";
 				buffer << userCount;
-				vision_app->pClientWin()->status->SetItemValue (STATUS_USERS, buffer.String());
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
 			}
 			break;
 		}
@@ -419,7 +419,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			msg->FindString ("topic", &theTopic);
 			
 			topic = theTopic;
-			vision_app->pClientWin()->status->SetItemValue (STATUS_META, theTopic);
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, theTopic);
 
 				
 
@@ -494,7 +494,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
 				chanMode = mode;
 				
-				vision_app->pClientWin()->status->SetItemValue (STATUS_MODES, chanMode.String());
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
 			}
 			BMessage dispMsg (M_DISPLAY);
 			PackDisplay (&dispMsg, msgz, &opColor, 0, vision_app->GetBool ("timestamp"));
@@ -652,51 +652,51 @@ ChannelAgent::MessageReceived (BMessage *msg)
 		
 		case M_STATUS_ADDITEMS:
 		{
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 	     		serverName.String(), 0),
 				true);
 		
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 				"Lag: ",
 				"",
 				STATUS_ALIGN_LEFT),
 				true);
 
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 				0,
 				"",
 				STATUS_ALIGN_LEFT),
 			true);
 	
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 				"Users: ", ""),
 				true);
 
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 				"Ops: ", ""),
 				true);
 
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 				"Modes: ",
 				""),
 				true);
 
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 				"", "", 
 				STATUS_ALIGN_LEFT),
 				true);
 				
-			vision_app->pClientWin()->status->SetItemValue (STATUS_LAG, "0.000");
-			vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, myNick.String());
-			vision_app->pClientWin()->status->SetItemValue (STATUS_MODES, chanMode.String());
-			vision_app->pClientWin()->status->SetItemValue (STATUS_META, topic.String());
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000");
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, topic.String());
 			
 			BString buffer;
 			buffer << userCount;
-			vision_app->pClientWin()->status->SetItemValue (STATUS_USERS, buffer.String());
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
 			buffer = "";
 			buffer << opsCount;
-			vision_app->pClientWin()->status->SetItemValue (STATUS_OPS, buffer.String());
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 			
 			break;
 		}
@@ -877,7 +877,7 @@ ChannelAgent::UpdateMode(char theSign, char theMode)
 		chanMode = tempString;
 	}
 
-	vision_app->pClientWin()->status->SetItemValue (STATUS_MODES, chanMode.String());
+	vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
 }
 
 
@@ -959,7 +959,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
 
 					buffer = "";
 					buffer << opsCount;
-					vision_app->pClientWin()->status->SetItemValue (STATUS_OPS, buffer.String());
+					vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 				}
 			}
 
@@ -977,7 +977,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
 				
 					buffer = "";
 					buffer << opsCount;
-					vision_app->pClientWin()->status->SetItemValue (STATUS_OPS, buffer.String());
+					vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 				}
 			}
 

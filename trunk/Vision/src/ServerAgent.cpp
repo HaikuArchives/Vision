@@ -709,23 +709,23 @@ ServerAgent::MessageReceived (BMessage *msg)
 		
 		case M_STATUS_ADDITEMS:
 		{
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 	     		serverName.String(), 0),
 				true);
 		
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 				"Lag: ",
 				"",
 				STATUS_ALIGN_LEFT),
 				true);
 
-			vision_app->pClientWin()->status->AddItem (new StatusItem (
+			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
 				0,
 				"",
 				STATUS_ALIGN_LEFT),
 			true);
 			
-			vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, myNick.String());
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
 		
 			break;
 		
