@@ -360,6 +360,18 @@
 #define S_SERVER_DISCON_STATUS      "Disconnected"
 #define S_SERVER_CONN_PROBLEM       "CONNECTION PROBLEM"
 
+// server entry window
+
+#define S_SERVERWIN_TITLE           "Add Server"
+#define S_SERVERWIN_SERVER          "Server: "
+#define S_SERVERWIN_PORT            "Port: "
+#define S_SERVERWIN_MENU1           "Choose status"
+#define S_SERVERWIN_MENU_PRI        "Primary"
+#define S_SERVERWIN_MENU_SEC        "Secondary"
+#define S_SERVERWIN_MENU_DIS        "Disabled"
+#define S_SERVERWIN_STATE           "State: "
+#define S_SERVERWIN_DONE_BUTTON     "Done"
+#define S_SERVERWIN_CANCEL_BUTTON   "Cancel"
 // setup window
 
 #define S_SETUP_TITLE               "Setup Window"
