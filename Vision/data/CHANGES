@@ -24,6 +24,7 @@ http://vision.sourceforge.net
          * nick list is now resizable
          * fixed keymap bugs
          * made servers collapsible (very experimental, may still have bugs)
+         * changed dis/reconnect messages to only get posted to server and active agent
 
 [0.3.0828]
 2001-08-28

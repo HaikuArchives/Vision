@@ -121,6 +121,7 @@ class ClientAgent : public BView
 
 
     friend                          ClientAgentInputFilter;
+    friend class                    ServerAgent;
  
     virtual void                    Display (
                                       const char *,
