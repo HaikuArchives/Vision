@@ -505,7 +505,7 @@ ServerAgent::Establish (void *arg)
       endpointMsg.AddInt32 ("socket", serverSock);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
-
+        
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
@@ -1641,12 +1641,11 @@ ServerAgent::MessageReceived (BMessage *msg)
           SendData (fQuitMsg.String());
         }
         
-        if (fClients.CountItems() >= 1)
+        if (fClients.CountItems() != 0)
         {
           Broadcast (new BMessage (M_CLIENT_QUIT));
   	      BMessenger listMsgr(fListAgent);
           listMsgr.SendMessage(M_CLIENT_QUIT);
-          fSMsgr.SendMessage(M_CLIENT_QUIT);
         }
         else
         {
@@ -1671,6 +1670,11 @@ ServerAgent::MessageReceived (BMessage *msg)
         deathchant.AddPointer ("agent", deadagent);
         deathchant.AddPointer ("item", deadagent->fAgentWinItem);
         vision_app->pClientWin()->PostMessage (&deathchant);
+        
+        if (fClients.CountItems() == 0 && dynamic_cast<ServerAgent *>(deadagent) != this)
+        {
+          fSMsgr.SendMessage (M_CLIENT_QUIT);
+        }
       }
       break;
     
