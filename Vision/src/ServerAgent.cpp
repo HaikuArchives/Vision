@@ -1646,6 +1646,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           Broadcast (new BMessage (M_CLIENT_QUIT));
   	      BMessenger listMsgr(fListAgent);
           listMsgr.SendMessage(M_CLIENT_QUIT);
+          fSMsgr.SendMessage(M_CLIENT_QUIT);
         }
         else
         {
