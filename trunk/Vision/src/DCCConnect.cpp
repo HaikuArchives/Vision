@@ -29,7 +29,7 @@ DCCConnect::DCCConnect (
 	const char *p)
 
 	: BView (
-		BRect (0.0, 0.0, 325.0, 150.0),
+		BRect (0.0, 0.0, 275.0, 150.0),
 		"dcc connect",
 		B_FOLLOW_LEFT | B_FOLLOW_TOP,
 		B_WILL_DRAW),
@@ -51,7 +51,7 @@ DCCConnect::DCCConnect (
 	sprintf (trail, " / %.1fk", atol (size.String()) / 1024.0);
 
 	bar = new BStatusBar (
-		BRect (10, 10, Bounds().right - 80, Bounds().bottom - 10),
+		BRect (10, 10, Bounds().right - 30, Bounds().bottom - 10),
 		"progress",
 		"bps: ",
 		trail);
@@ -95,7 +95,7 @@ DCCConnect::AllAttached (void)
 	float width, height;
 	label->GetPreferredSize (&width, &height);
 	label->ResizeTo (label->Frame().Width(), height);
-	ResizeTo (Bounds().Width(), label->Frame().bottom + 5.0);
+	ResizeTo (stop->Frame().right + 5, label->Frame().bottom + 5.0);
 }
 
 void
@@ -593,7 +593,18 @@ DCCSend::Transfer (void *arg)
 			view->totalTransferred = bytes_sent;
 	
 			uint32 confirm;
-			recv (view->s, &confirm, sizeof (confirm), 0);
+			fd_set rset;
+			FD_ZERO (&rset);
+			FD_SET (view->s, &rset);
+			t.tv_sec = 0;
+			t.tv_usec = 10;
+			
+			while (select (view->s + 1, &rset, NULL, NULL, &t) > 0 && FD_ISSET (view->s, &rset))
+			{
+  			  recv (view->s, &confirm, sizeof (confirm), 0);
+  			  FD_ZERO (&rset);
+  			  FD_SET (view->s, &rset);
+  			}
 
 			now = system_time();
 			period += sent;
