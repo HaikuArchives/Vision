@@ -914,19 +914,18 @@ ServerAgent::ParseAutoexecChans (const BString &line)
    || line.IFindFirst ("/JOIN") != B_ERROR)
   {
     int32 chanIndex (0), chanLen (0);
-    int32 cmdLen (line.Length());
+    const char *lineData (line.String());
+    const char *currentData = lineData;
     BString *newChan (NULL);
+    printf("parsing channels\n");
     while ((chanIndex = line.FindFirst ('#', chanIndex)) != B_ERROR)
     {
-      chanLen = chanIndex;
-      while ((chanLen < cmdLen)
-           && line[chanLen] != ' '
-           && line[chanLen] != ',')
-        chanLen++;
+      currentData = lineData + chanIndex;
+      chanLen = strcspn(currentData, " ,");
       newChan = new BString();
-      line.CopyInto (*newChan, chanIndex, chanLen - chanIndex);
+      line.CopyInto (*newChan, chanIndex, chanLen);
       fStartupChannels.AddItem (newChan);
-      chanIndex = chanLen;
+      chanIndex += chanLen;
     }
   }
 }
