@@ -7,6 +7,8 @@ http://vision.sourceforge.net
            to resolve dial-up locking issues
          * fixed some tab navigation problems in the server entry window
          * hopefully fixed some race condition/crash issues on shutdown
+         * fixed bug where actions sent by self could trigger nick notification beep
+         * fixed a crash that could occur when someone joined/parted a channel
 
 [0.8.7-0424]
          * fixed another crash bug in tab completion
