@@ -17,6 +17,7 @@ http://vision.sourceforge.net
          * fixed DCC chat bugs from cleanups
          * fixed DCC file send path issue
          * style cleanups
+         * fixed major bug in data send calls
 
 [0.7.8-0113]
          * fixed crash bug in ParseEvents
