@@ -366,7 +366,8 @@ ClientAgent::TimedSubmit (void *arg)
   }
 
   bool delay (!msg->HasBool ("delay"));
-  if (msg->HasBool ("autoexec"))
+  bool autoexec (msg->FindBool ("autoexec"));
+  if (autoexec)
     addtofHistory = false;
 
   BMessenger agentMsgr (agent);
@@ -374,9 +375,15 @@ ClientAgent::TimedSubmit (void *arg)
   submitMsg.AddBool ("history", addtofHistory);
   for (i = 0; (msg->HasString ("data", i)) && (agentMsgr.IsValid()) && (false == agent->CancelMultilineTextPaste()); ++i)
   {
-    const char *data;
+    BString data;
+
 
     msg->FindString ("data", i, &data);
+    
+    // add a space so /'s don't get triggered as commands
+    if (!autoexec)
+      data.Prepend (" ");
+    
     if (!submitMsg.HasString ("input"))
       submitMsg.AddString ("input", data);
     else
