@@ -86,13 +86,13 @@ class VisionApp : public BApplication
 
     void                    Broadcast (BMessage *);
     void                    Broadcast (BMessage *, const char *, bool = false);
-    
-    BString					events[MAX_EVENTS];
-	
-	bool                    debugsettings;
-	bool                    debugsend;
-	bool                    debugrecv;
-	bool                    settingsloaded;
+
+    BString                 events[MAX_EVENTS];
+
+    bool                    debugsettings;
+    bool                    debugsend;
+    bool                    debugrecv;
+    bool                    settingsloaded;
 	
 
 	ClientWindow            *pClientWin (void) const;
