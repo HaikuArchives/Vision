@@ -390,17 +390,15 @@ ChannelAgent::SortNames(const void *name1, const void *name2)
 
   BString first, second;
 
-  first += firstPtr->Status(); 
-  second += secondPtr->Status(); 
-  first.Prepend ('0', 10 - first.Length());
-  second.Prepend ('0', 10 - second.Length());
+  first  = (firstPtr)->Name();
+  second = (secondPtr)->Name();
 
-
-
-  first  += (firstPtr)->Name();
-  second += (secondPtr)->Name();
+  if (firstPtr->Status() == secondPtr->Status())
+  {
+    return first.ICompare(second);
+  }
   
-  return first.ICompare (second);
+  return ((firstPtr->Status() > secondPtr->Status()) ? 1 : -1);
 }
 
 void
