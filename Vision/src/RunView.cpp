@@ -218,7 +218,7 @@ RunView::Show (void)
 		fontsdirty = false;
 		resizedirty = false;
 	}
-	if (resizedirty)
+	else if (resizedirty)
 	{
 		ResizeRecalc();
 		resizedirty = false;
@@ -229,6 +229,7 @@ RunView::Show (void)
 void
 RunView::Draw (BRect frame)
 {
+	Window()->DisableUpdates();
 	//BStopWatch watch ("draw");
 	rgb_color low_color, hi_color, view_color;
 	float height (frame.bottom);
@@ -260,7 +261,6 @@ RunView::Draw (BRect frame)
 	for (int16 i = line_count - 1; i >= 0; --i)
 	{
 		Line *line (lines[i]);
-
 		if (line->bottom < frame.top)
 			break;
 
@@ -286,6 +286,7 @@ RunView::Draw (BRect frame)
 
 			// Fill indentation
 			SetLowColor (view_color);
+
 			SetDrawingMode (B_OP_COPY);
 			r.Set (0.0, height, indent - 1.0, height + line->softies[sit].height - 1.0);
 			FillRect (r, B_SOLID_LOW);
@@ -372,7 +373,7 @@ RunView::Draw (BRect frame)
 					height,
 					line->edges[i] + indent - start,
 					height + line->softies[sit].height - 1.0);
-
+				
 				SetDrawingMode (B_OP_COPY);
 				SetLowColor (low_color);
 				SetHighColor (hi_color);
@@ -411,6 +412,7 @@ RunView::Draw (BRect frame)
 	}
 
 	theme->ReadUnlock();
+	Window()->EnableUpdates();
 	ConstrainClippingRegion (NULL);
 }
 
@@ -436,6 +438,13 @@ void
 RunView::MouseUp (BPoint point)
 {
 	sp_end = PositionAt (point);
+	if ((sp_end.line < sp_start.line) ||
+	  (sp_end.line == sp_start.line) && (sp_end.offset < sp_start.offset))
+	{
+		SelectPos temp = sp_end;
+		sp_end = sp_start;
+		sp_start = temp;
+	}
 }
 
 void
@@ -844,7 +853,7 @@ RunView::PositionAt (BPoint point) const
 		lindex = i;
 	}
 
-//	printf ("Line: %hd\n", lindex);
+	printf ("Line: %hd\n", lindex);
 
 	float height (lines[lindex]->top);
 	int16 sindex (0);
@@ -862,7 +871,7 @@ RunView::PositionAt (BPoint point) const
 	int16 width (0);
 	int16 start (0);
 
-//	printf ("Softie: %hd\n", sindex);
+	printf ("Softie: %hd\n", sindex);
 
 	if (sindex)
 	{
@@ -879,7 +888,7 @@ RunView::PositionAt (BPoint point) const
 	pos.line = lindex;
 	pos.offset = min_c (i, lines[lindex]->softies[sindex].offset);
 
-//	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
+	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
 
 	return pos;
 }

@@ -114,8 +114,6 @@ WindowList::MouseDown (BPoint myPoint)
   int32 selected (IndexOf (myPoint));
   if (selected >= 0)
   {
-    BOutlineListView::MouseDown (myPoint);
-
     BMessage *inputMsg (Window()->CurrentMessage());
     int32 mousebuttons (0),
           keymodifiers (0);
@@ -127,6 +125,21 @@ WindowList::MouseDown (BPoint myPoint)
     // -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
     if ((myPoint.x > 10.0) || Superitem(ItemAt(selected)) != NULL)
       Select (selected);
+    else
+    {
+      // since Expand/Collapse are not virtual, override them by taking over processing
+      // the collapse triangle logic manually
+      WindowListItem *item ((WindowListItem *)FullListItemAt (selected));
+      {
+        if (item && (item->Type() == WIN_SERVER_TYPE))
+        {
+          if (item->IsExpanded())
+            Collapse (item);
+          else
+            Expand (item);
+        }
+      }
+    }
 
     if ((keymodifiers & B_SHIFT_KEY)  == 0
     && (keymodifiers & B_OPTION_KEY)  == 0
@@ -355,6 +368,22 @@ WindowList::SelectLast (void)
 }
 
 void
+WindowList::Collapse (BListItem *collapseItem)
+{
+      WindowListItem *citem ((WindowListItem *)collapseItem),
+                       *item (NULL);
+      int32 substatus (0);
+      int32 itemcount (CountItemsUnder (citem, true));
+      for (int32 i = 0; i < itemcount; i++)
+      {
+        if (substatus < (item = (WindowListItem *)ItemUnderAt(citem, true, i))->Status())
+          substatus = item->Status();
+      }
+      citem->SetSubStatus (substatus);
+      BOutlineListView::Collapse (collapseItem);
+}
+
+void
 WindowList::CollapseCurrentServer (void)
 {
   int32 currentsel (CurrentSelection());
@@ -372,6 +401,13 @@ WindowList::CollapseCurrentServer (void)
     if (citem->IsExpanded())
       Collapse (citem);
   }
+}
+
+void
+WindowList::Expand (BListItem *expandItem)
+{
+  ((WindowListItem *)expandItem)->SetSubStatus (-1);
+  BOutlineListView::Expand (expandItem);  
 }
 
 void
@@ -556,9 +592,9 @@ WindowList::Agent (int32 serverId, const char *aName)
 {
   ClientAgent *agent (NULL);
 
-  for (int32 i = 0; i < CountItems(); ++i)
+  for (int32 i = 0; i < FullListCountItems(); ++i)
   {
-    WindowListItem *item ((WindowListItem *)ItemAt (i));
+    WindowListItem *item ((WindowListItem *)FullListItemAt (i));
     if (item->Sid() == serverId)
     {
       if (dynamic_cast<ClientAgent *>(item->pAgent()))
@@ -619,7 +655,8 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     newagentitem->SetSid (newsid);
     serverId = newsid;
   }
-  itemindex = IndexOf (newagentitem);
+  
+  itemindex = FullListIndexOf (newagentitem);
 
   // give the agent its own pointer to its WinListItem,
   // so it can quickly update it's status entry
@@ -631,6 +668,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       if ((strcasecmp (name, item->Name().String()) == 0)
       &&  (item->Sid() == serverId)) 
       {
+        printf("found it\n");
         dynamic_cast<ClientAgent *>(newagent)->agentWinItem = item;
         break;      
       }
@@ -644,7 +682,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
   {
      for (int32 i = 0; i < CountItems(); ++i)
      {
-       WindowListItem *item = (WindowListItem *)ItemAt (i);
+       WindowListItem *item = (WindowListItem *)FullListItemAt (i);
        if ((item->Sid() == serverId) && (item->Name().ICompare("Channels") == 0))
        {
          dynamic_cast<ListAgent *>(newagent)->agentWinItem = item;
@@ -673,8 +711,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     else
       Activate (itemindex);
   else
-    Select (IndexOf (currentitem));
-
+    Select (FullListIndexOf (currentitem));
 }
 
 void
@@ -838,6 +875,7 @@ WindowListItem::WindowListItem (
     mySid (serverId),
     myStatus (winStatus),
     myType (winType),
+    subStatus (-1),
     myAgent (agent)
 {
 
@@ -858,6 +896,12 @@ int32
 WindowListItem::Status() const
 {
   return myStatus;
+}
+
+int32
+WindowListItem::SubStatus() const
+{
+  return subStatus;
 }
 
 int32
@@ -898,6 +942,16 @@ WindowListItem::SetSid (int32 newSid)
 }
 
 void
+WindowListItem::SetSubStatus (int32 winStatus)
+{
+  vision_app->pClientWin()->Lock();
+  subStatus = winStatus;
+  int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
+  vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
+  vision_app->pClientWin()->Unlock();
+}
+
+void
 WindowListItem::SetStatus (int32 winStatus)
 {
   vision_app->pClientWin()->Lock();
@@ -918,7 +972,19 @@ void
 WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
 {
   WindowList *father (static_cast<WindowList *>(passedFather));
-
+  if (subStatus > WIN_NORMAL_BIT)
+  {
+    rgb_color color;
+    if ((subStatus & WIN_NEWS_BIT) != 0)
+      color = father->GetColor (C_WINLIST_NEWS);
+    else if ((subStatus & WIN_PAGESIX_BIT) != 0)
+      color = father->GetColor (C_WINLIST_PAGESIX);
+    else if ((subStatus & WIN_NICK_BIT) != 0)
+      color = father->GetColor (C_WINLIST_NICK);
+    
+    father->SetHighColor (color);
+    father->StrokeRect (BRect (0.0, 0.0, 10.0, frame.Height()));
+  }
   if (IsSelected())
   {
     father->SetHighColor (father->GetColor (C_WINLIST_SELECTION));

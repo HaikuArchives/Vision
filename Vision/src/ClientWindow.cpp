@@ -256,7 +256,8 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_UPDATE_STATUS:
       {
-         WindowListItem *item;
+         WindowListItem *item (NULL),
+                         *superItem (NULL);
          int32 newstatus;
       
          if ((msg->FindPointer ("item", reinterpret_cast<void **>(&item)) != B_OK)
@@ -265,7 +266,15 @@ ClientWindow::MessageReceived (BMessage *msg)
            printf (":ERROR: no valid pointer and int found in M_UPDATE_STATUS, bailing...\n");
            return;
          }
-       
+         
+         superItem = (WindowListItem *)pWindowList()->Superitem(item);
+         if (superItem && (!superItem->IsExpanded()))
+         {
+           int32 srvstatus ((superItem->SubStatus()));
+           if (srvstatus < newstatus)
+             superItem->SetSubStatus (newstatus);
+         }
+         
          if (!pWindowList()->FullListHasItem (item))
            return;
        

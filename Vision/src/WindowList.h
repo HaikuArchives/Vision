@@ -57,11 +57,13 @@ class WindowListItem : public BListItem
     int32                           Sid (void) const;
     int32                           Type (void) const;
     int32                           Status (void) const;
+    int32                           SubStatus (void) const;
     BView                           *pAgent (void) const;
 
     void                            SetName (const char *);
     void                            SetSid (int32);
     void                            SetStatus (int32);
+    void                            SetSubStatus (int32);
     void                            ActivateItem (void);
 
     virtual void                    DrawItem (BView *,
@@ -73,6 +75,7 @@ class WindowListItem : public BListItem
     int32							mySid;
     int32                           myStatus;
     int32                           myType;
+    int32                           subStatus; // servers only -- status of collapsed children
     BView                           *myAgent;
 };
 
@@ -108,6 +111,8 @@ class WindowList : public BOutlineListView
     
     void                            AddAgent (BView *, int32, const char *, int32, bool);
     void                            RemoveAgent (BView *, WindowListItem *);
+    void                            Expand (BListItem *);
+    void                            Collapse (BListItem *);
 	
   private:
 
