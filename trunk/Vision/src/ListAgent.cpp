@@ -112,18 +112,18 @@ ListAgent::ListAgent (
   bgView->AddChild (listView);
   listView->MakeFocus (true);
   listView->SetTarget(this);
-  BStringColumn *channel (new BStringColumn ("Channel", be_plain_font->StringWidth ("Channel") * 2,
-    0, frame.Width(), 0));
-  listView->AddColumn (channel, 0);
-  BIntegerColumn *users (new BIntegerColumn ("Users", be_plain_font->StringWidth ("Users") * 2, 0, frame.Width(), B_ALIGN_CENTER));
-  listView->AddColumn (users, 1);
-  BStringColumn *topic (new BStringColumn ("Topic", frame.Width() / 2,
-    0, frame.Width(), 0));
-  listView->AddColumn (topic, 2);
+  channelColumn = new BStringColumn ("Channel", be_plain_font->StringWidth ("Channel") * 2,
+    0, frame.Width(), 0);
+  listView->AddColumn (channelColumn, 0);
+  usersColumn = new BIntegerColumn ("Users", be_plain_font->StringWidth ("Users") * 2, 0, frame.Width(), B_ALIGN_CENTER);
+  listView->AddColumn (usersColumn, 1);
+  topicColumn = new BStringColumn ("Topic", frame.Width() / 2,
+    0, frame.Width(), 0);
+  listView->AddColumn (topicColumn, 2);
   listView->SetSelectionMode (B_SINGLE_SELECTION_LIST);
   listView->SetSortingEnabled (true);
-  listView->SetSortColumn (channel, true, true);
-  listView->SetColumnFlags (B_ALLOW_COLUMN_RESIZE);
+  listView->SetSortColumn (channelColumn, true, true);
+//  listView->SetColumnFlags (B_ALLOW_COLUMN_RESIZE | B_ALLOW_COLUMN_MOVE);
   activeTheme->ReadLock();
   listView->SetColor (B_COLOR_BACKGROUND, activeTheme->ForegroundAt (C_BACKGROUND));
   listView->SetColor (B_COLOR_TEXT, activeTheme->ForegroundAt (C_TEXT));
@@ -310,9 +310,9 @@ ListAgent::MessageReceived (BMessage *msg)
         BIntegerField *userField (new BIntegerField (atoi(users)));
         BStringField *topicField (new BStringField (topic));
         
-        row->SetField (channelField, 0);
-        row->SetField (userField, 1);
-        row->SetField (topicField, 2);
+        row->SetField (channelField, channelColumn->LogicalFieldNum());
+        row->SetField (userField, usersColumn->LogicalFieldNum());
+        row->SetField (topicField, topicColumn->LogicalFieldNum());
         listView->AddRow (row);
 		
         if (!IsHidden())
