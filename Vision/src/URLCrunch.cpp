@@ -71,6 +71,7 @@ URLCrunch::Crunch (BString *url)
 			||     buffer[url_length] == '-'
 			||     buffer[url_length] == '/'
 			||     buffer[url_length] == ':'
+			||     buffer[url_length] == ';'
 			||     buffer[url_length] == '~'
 			||     buffer[url_length] == '%'
 			||     buffer[url_length] == '+'
