@@ -73,31 +73,12 @@ SetupWindow::InitServerStartup (void)
   // iterates through servers that have connect on startup enabled
   // and adds them to ClientWindow
   
-  // temp
 	BMessage newserver (M_MAKE_NEW_SERVER);
 	newserver.AddBool   ("enidentd", true);
 	
-#if ALAN_BUILD
-		newserver.AddString ("hostname", "127.0.0.1");
-		newserver.AddString ("port", "8686");
-		newserver.AddString ("autoexec", "/join #roofdisposal,#apps-team");
-		vision_app->pClientWin()->PostMessage (&newserver);
-	
-		newserver.ReplaceString ("hostname", "irc.sorcery.net");
-		newserver.ReplaceString ("port", "6667");
-		newserver.ReplaceString ("autoexec", "/nick voidref\n/msg NickServ IDENTIFY hrbav\n/join #bedev,#mneptok,#vision\n/part NickServ");
-#elif BE_INC_BUILD
-		newserver.AddString ("hostname", "bugnow.be.com");
-		newserver.AddString ("port", "8686");
-	#if DIANNE_BUILD
-		newserver.AddString ("autoexec", "/nick Dianne\n/join #apps-team");
-	#endif
-		
-#else
-		newserver.AddString ("hostname", "irc.elric.net");
-		newserver.AddString ("port", "6667");
-		newserver.AddString ("autoexec", "/join #BeDev");
-#endif	
+	newserver.AddString ("hostname", "irc.sorcery.net");
+	newserver.AddString ("port", "6667");
+	newserver.AddString ("autoexec", "/join #BeDev,#Vision");
 	
 	vision_app->pClientWin()->PostMessage (&newserver);
 
