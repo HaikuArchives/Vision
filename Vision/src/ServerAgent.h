@@ -41,6 +41,7 @@
 #include "ClientAgent.h"
 
 class BNetEndpoint;
+class BMessageRunner;
 
 class ServerAgent : public ClientAgent
 {
@@ -73,6 +74,7 @@ class ServerAgent : public ClientAgent
 	void						ParseCTCP (BString theNick, BString theTarget, BString theMsg);
 	void						ParseCTCPResponse (BString theNick, BString theMsg);
 
+    void                        HandleReconnect (void);
 	void                        PrivateIPCheck (void);
 	
  	ClientAgent					*Client (const char *);
@@ -84,6 +86,8 @@ class ServerAgent : public ClientAgent
 	BLocker						endPointLock;
 
 	static int32				ServerSeed;
+
+    BMessageRunner              *lagRunner;
 	
 	const char                  *localip;           // our local ip
 	bool                        localip_private;    // if localip is private
@@ -101,7 +105,7 @@ class ServerAgent : public ClientAgent
 	
 	BString						myNick;
 	BString						quitMsg;
-	BString						myLag;
+	BString                     myLag;
 
 	bool						isConnected,		// were done connecting
 									isConnecting,		// in process
@@ -146,7 +150,7 @@ class ServerAgent : public ClientAgent
 	bool						initialMotd,
 									identd;
 	BString						cmds;
-	int32 s; 				// socket
+	int32 s;  // socket
 	
 	BList                       timers;
     

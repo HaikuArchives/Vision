@@ -60,10 +60,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       return false;
     
     case ERR_UNKNOWNCOMMAND:   // 421
-      {
-        
-        ParseENums (":irc.elric.net 329 kurros2 #haha -1000", "329");
-        
+      {     
         BString tempString (RestOfString (data, 4)),
                 badCmd (GetWord (data, 4));
 		
@@ -89,7 +86,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           Display (tempString.String(), 0);
         }  
       }
-      return true;  
+      return true;
   
   
     case RPL_WELCOME:          // 001
@@ -101,13 +98,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         isConnecting = false;
         initialMotd = true;
         retry = 0;
-
+        
         myLag = "0.000";
         msgr.SendMessage (M_LAG_CHANGED);
-
-        //BMessage msg (M_SERVER_CONNECTED);
-        //msg.AddString ("server", serverName.String());
-        //bowser_app->msgr.SendMessage (&msg);
 
         BString theNick (GetWord (data, 3));
         myNick = theNick;
@@ -856,11 +849,11 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       		
         if (reconnecting)
         {
-          BString reString;
-          reString += "[@] Successful reconnect\n";
-          Display (reString.String(), &errorColor);
-          DisplayAll (reString.String(), &errorColor, &serverFont);
-          // msgr.SendMessage (M_REJOIN_ALL);
+          const char *reString;
+          reString = "[@] Successful reconnect\n";
+          Display (reString, &errorColor);
+          DisplayAll (reString, &errorColor, &serverFont);
+          msgr.SendMessage (M_REJOIN_ALL);
           reconnecting = false;
         }
 

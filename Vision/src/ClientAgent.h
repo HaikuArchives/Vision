@@ -155,7 +155,8 @@ class ClientAgent : public BView
     BString                         id;
     const int32                     sid;
     const BString                   serverName;
-    BString                         myNick;
+    BString                         myNick,
+                                      myLag;
 
     rgb_color                       textColor,
                                       ctcpReqColor,

@@ -183,6 +183,7 @@ const uint32 M_CLIENT_SHUTDOWN						= 0x1703;
 const uint32 M_IGNORED_PRIVMSG						= 0x1704;
 const uint32 M_OPEN_MSGAGENT   						= 0x1705;
 const uint32 M_SLASH_RECONNECT						= 0x1708;
+const uint32 M_REJOIN                               = 0x1709;
 
 const uint32 M_USER_QUIT							= 0x1600;
 const uint32 M_USER_ADD								= 0x1601;

@@ -33,6 +33,7 @@
 #  include <UTF8.h>
 #  include <Autolock.h>
 #  include <netdb.h>
+#  include <MessageRunner.h>
 #endif
 
 #include <ctype.h>
@@ -40,6 +41,7 @@
 #include <stdlib.h>
 
 #include "ServerAgent.h"
+#include "ChannelAgent.h"
 #include "Vision.h"
 #include "ClientWindow.h"
 #include "MessageAgent.h"
@@ -79,7 +81,7 @@ ServerAgent::ServerAgent (
     isQuitting (false),
     checkingLag (false),
     retry (0),
-    retryLimit (25),
+    retryLimit (47),
     lagCheck (0),
     lagCount (0),
     lEndpoint (0),
@@ -93,7 +95,7 @@ ServerAgent::ServerAgent (
     identd (identd_),
     cmds (cmds_)
 {
-  
+
 }
 
 ServerAgent::~ServerAgent (void)
@@ -133,9 +135,12 @@ ServerAgent::Init (void)
   Display (temp.String(), &nickColor);
   Display ("\nHave fun!\n", 0);
 
-  BMessage *msg (new BMessage);
-  msg->AddPointer ("server", this);
-
+  lagRunner = new BMessageRunner (
+    this,       // target ServerAgent
+    new BMessage (M_LAG_CHECK),
+    10000000,   // 10 seconds
+    -1);        // forever
+    
   loginThread = spawn_thread (
     Establish,
     vision_app->GetThreadName(),
@@ -216,7 +221,7 @@ ServerAgent::Establish (void *arg)
   if (server->reconnecting)
   {
     if (server->retry > 0)
-      snooze (2000000); // wait 2 seconds
+      snooze (1000000); // wait 1 second
 
     server->retry++;
     statString = "[@] Attempting to reconnect (Retry ";
@@ -495,8 +500,7 @@ ServerAgent::Establish (void *arg)
         
         if (vision_app->debugrecv)
         {
-          // print interesting info
-          
+          // print interesting info          
           printf ("Negative from endpoint receive! (%ld)\n", length);
           printf ("(%d) %s\n", endPoint->Error(), endPoint->ErrorStr());
 
@@ -504,11 +508,11 @@ ServerAgent::Establish (void *arg)
             FD_ISSET (endPoint->Socket(), &eset) ? "true" : "false",
             FD_ISSET (endPoint->Socket(), &rset) ? "true" : "false",
             FD_ISSET (endPoint->Socket(), &wset) ? "true" : "false");
-
-          // tell the user all about it
-          sMsgrE->SendMessage (M_SERVER_DISCONNECT);
-          break;
-        }
+		}
+		
+        // tell the user all about it
+        sMsgrE->SendMessage (M_SERVER_DISCONNECT);
+        break;
       }
     }
     
@@ -750,6 +754,47 @@ ServerAgent::FilterCrap (const char *data)
   return outData;
 }
 
+void
+ServerAgent::HandleReconnect (void)
+{
+  /*
+   * Function purpose: Setup the environment and attempt a new connection to the server 
+   */
+   
+  if (isConnected)
+  {
+    // what's going on here?!
+    printf (":ERROR: HandleReconnect() called when we're already connected! Whats up with that?!");
+    return;
+  }
+
+  if (retry < retryLimit)
+  {
+    // we are go for main engine start
+    reconnecting = true;
+    isConnecting = true;
+    nickAttempt = 0;
+
+    loginThread = spawn_thread (
+      Establish,
+      vision_app->GetThreadName(),
+      B_NORMAL_PRIORITY,
+      new BMessenger(this));
+	
+    resume_thread (loginThread);
+  }
+  else
+  {
+    // we've hit our retry limit. throw in the towel
+    reconnecting = false;
+    retry = 0;
+    const char *soSorry;
+    soSorry = "[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n";
+    Display (soSorry, &errorColor);
+    DisplayAll (soSorry, &errorColor, &serverFont);    
+  }
+}
+
 
 void
 ServerAgent::PrivateIPCheck (void)
@@ -806,6 +851,7 @@ ServerAgent::PrivateIPCheck (void)
    }
 
   // if we got this far, its a public IP address
+  localip_private = false;
    
 }
 
@@ -854,6 +900,27 @@ ServerAgent::MessageReceived (BMessage *msg)
       }
       break;
 
+    case M_SERVER_DISCONNECT:
+      {
+        // let the user know
+        if (isConnected)
+        {
+          BString sAnnounce;
+          sAnnounce += "[@] Disconnected from ";
+          sAnnounce += serverName;
+          sAnnounce += "\n";
+          Display (sAnnounce.String(), &errorColor);
+          DisplayAll (sAnnounce.String(), &errorColor, &serverFont);
+        }
+			
+        isConnected = false;
+        isConnecting = false;		      
+      
+        // attempt a reconnect
+        HandleReconnect();
+      }
+      break;
+      
     case M_STATUS_ADDITEMS:
       {
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
@@ -875,14 +942,71 @@ ServerAgent::MessageReceived (BMessage *msg)
         // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
         // We send true on the last SetItemValue().
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverHostName.String(), false);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
       }
       break;
 
     case M_LAG_CHECK:
       {
-        printf ("M_LAG_CHECK %s\n", id.String());
+        if (isConnected)
+	    {
+	      if (!checkingLag)
+          {
+            lagCheck = system_time();
+            lagCount = 1;
+            checkingLag = true;
+            BMessage lagSend (M_SERVER_SEND);
+            AddSend (&lagSend, "VISION_LAG_CHECK");
+            AddSend (&lagSend, endl);
+          }
+          else
+          {
+            if (lagCount > 4)
+            {
+              // we've waited 50 seconds
+              // connection problems?
+              myLag = "CONNECTION PROBLEM";
+              msgr.SendMessage (M_LAG_CHANGED);
+            }
+            else
+            {
+              // wait some more
+              char lag[15] = "";
+              sprintf (lag, "%ld0.000+", lagCount);  // assuming a 10 second runner
+              myLag = lag;
+              ++lagCount;
+              msgr.SendMessage (M_LAG_CHANGED);
+            }
+          }	
+        }
+      }
+      break;
+      
+    case M_LAG_CHANGED:
+      {
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), true);
+          
+        BMessage newmsg (M_LAG_CHANGED);
+        newmsg.AddString ("lag", myLag);
+        Broadcast (&newmsg);        
+      }
+      break;
+
+    case M_REJOIN_ALL:
+      {
+        for (int32 i = 0; i < clients.CountItems(); ++i)
+        {
+          ClientAgent *client ((ClientAgent *)clients.ItemAt (i));
+          
+          if (dynamic_cast<ChannelAgent *>(client))
+          {
+            BMessage rejoinMsg (M_REJOIN);
+            rejoinMsg.AddString ("nickname", myNick.String());
+            client->msgr.SendMessage (&rejoinMsg);
+          }        
+        }    
       }
       break;
 

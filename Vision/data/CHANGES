@@ -1,6 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0419]
+ 2001-04-19
+   * Auto reconnect is working
+   * Lag meter is working
+   * Removed a debuging line from the ERR_UNKNOWNCOMMAND numeric
+
 [0.2.0418]
  2001-04-18
    * Establish() always thought your IP was private, no matter what it actually
