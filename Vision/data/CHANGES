@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.3.0802]
+2001-08-02
+        * fixed status view nick update bug, thanks to EnochRoot
+
 [0.3.07026]
 2001-07-26
         * fixed crash bug in message agent
