@@ -3,6 +3,16 @@ http://vision.sourceforge.net
 
 [0.1.0322]
  2001-03-22
+   * Added support for !channels to /j|/join (the ID is still shown everywhere
+     though--todo for later) 
+   * Fixed a shadowing BMessage I overlooked when I added /msg (it was actually
+     declaring x but using msg y (declared somewhere else!) oops!
+   * Add support for numeric 437 -- nick/channel unavailable. Vision can
+     now catch it on connect as well and try an alternate nickname (ala nick
+     in use)
+   * PageUp/PageDn/Home/End work without Alt now
+   * Fix a bug with WindowList::AddAgent where an item loses selection
+     if the new agent isn't immedietly activated
    * Add keyboard nav shortcuts
    * MessageAgent does what it needs to with M_NICK_CHANGE msgs now
    * Forgot to update Makefile :)
