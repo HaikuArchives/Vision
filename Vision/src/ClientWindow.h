@@ -67,20 +67,24 @@ class ClientWindow : public BWindow
     virtual bool          QuitRequested (void);
     virtual void          ScreenChanged (BRect, color_space);
     
-    void                  UpdateAgentRect (void);
-
-    WindowList            *winList;  
-    StatusView            *status;
-    BScrollView           *winListScroll;
-    WindowListItem        *winListI;
+    void                  ServerBroadcast (BMessage *);
+      
+    BRect                 *AgentRect (void);
+    WindowList            *pWindowList (void);
+    StatusView            *pStatusView (void);
     
-    BRect                 *agentrect;
     BView                 *bgView;
 
   private:
     void                  Init (void);
     bool                  shutdown_in_progress;
     bool                  wait_for_quits;
+    BRect                 *agentrect;
+    
+    WindowList            *winList;
+    WindowListItem        *winListI;
+    BScrollView           *winListScroll;
+    StatusView            *status;
 
 };
 
