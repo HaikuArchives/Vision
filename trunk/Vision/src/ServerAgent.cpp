@@ -176,7 +176,7 @@ ServerAgent::Establish (void *arg)
 {
 	BMessenger *sMsgrE (reinterpret_cast<BMessenger *>(arg));
 	ServerAgent *server;
-	thread_id establishThread = find_thread(NULL);
+	thread_id establishThread = find_thread(NULL); 
 	BMessage getMsg;
 	if (sMsgrE->IsValid())
 		sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg);
@@ -195,7 +195,17 @@ ServerAgent::Establish (void *arg)
     
     BMessage statMsg (M_DISPLAY);
     BString statString;
-
+	
+	server->Window()->Lock();
+	BString connectId = server->id;
+	BString connectPort = server->lport;
+	BString ident = server->lident;
+	BString name = server->lname;
+	BString connectNick = server->myNick;
+	server->Window()->Unlock();
+	
+	bool useIdent = server->identd;
+	
 	if (server->reconnecting)
 	{
 		if (server->retry > 0)
@@ -214,16 +224,16 @@ ServerAgent::Establish (void *arg)
 		
 	
 	statString = "[@] Attempting a connection to ";
-	statString << server->id;
+	statString << connectId;
 	statString += ":";
-	statString << server->lport;
+	statString << connectPort;
 	statString += "...\n";	
 	server->PackDisplay (&statMsg, statString.String(), &(server->errorColor));
 	sMsgrE->SendMessage (&statMsg);
 	
 	BNetAddress address;
 
-	if (address.SetTo (server->id.String(), atoi (server->lport.String())) != B_NO_ERROR)
+	if (address.SetTo (connectId.String(), atoi (connectPort.String())) != B_NO_ERROR)
 	{
 		server->PackDisplay (&statMsg, "[@] The address and port seem to be invalid. Make sure your Internet connection is operational.\n", &(server->errorColor));
 		sMsgrE->SendMessage (&statMsg);
@@ -280,12 +290,21 @@ ServerAgent::Establish (void *arg)
 		// Here we save off the local address for DCC and stuff
 		// (Need to make sure that the address we use to connect
 		//  is the one that we use to accept on)
-		server->Window()->Lock();
-		getsockname (endPoint->Socket(), (struct sockaddr *)&sockin, &namelen);
-		server->localuIP = sockin.sin_addr.s_addr;
-		server->Window()->Unlock();
-				
-		if (server->identd)
+		if (sMsgrE->IsValid() && sMsgrE->LockTarget())
+		{
+			getsockname (endPoint->Socket(), (struct sockaddr *)&sockin, &namelen);
+			server->localuIP = sockin.sin_addr.s_addr;
+			server->Window()->Unlock();
+		}
+		else
+		{
+			endPoint->Close();
+			delete endPoint;
+			delete sMsgrE;
+			return B_ERROR;
+		}
+		
+		if (useIdent)
 		{
 			server->PackDisplay (&statMsg, "[@] Spawning Ident daemon (10 sec timeout)\n", &(server->errorColor));
 			sMsgrE->SendMessage (&statMsg);
@@ -314,7 +333,7 @@ ServerAgent::Establish (void *arg)
 
 				string.Append (received);
 				string.Append (" : USERID : BeOS : ");
-				string.Append (server->lident);
+				string.Append (ident);
 				string.Append ("\r\n");
 
 				output.AppendString (string.String());
@@ -334,22 +353,30 @@ ServerAgent::Establish (void *arg)
 		
 		BString string;
 		string = "USER ";
-		string.Append (server->lident);
+		string.Append (ident);
 		string.Append (" localhost ");
-		string.Append (server->id);
+		string.Append (connectId);
 		string.Append (" :");
-		string.Append (server->lname);
+		string.Append (name);
 		
-		if (sMsgrE->LockTarget())
+		if (sMsgrE->IsValid() && sMsgrE->LockTarget())
 		{
 			server->lEndpoint = endPoint;
 			server->SendData (string.String());
 		
 			string = "NICK ";
-			string.Append (server->myNick);
+			string.Append (connectNick);
 			server->SendData (string.String());
 			server->Window()->Unlock();
 		}
+		else
+		{
+			endPoint->Close();
+			delete endPoint;
+			delete sMsgrE;
+			return B_ERROR;
+		}
+		
 		identLock.Unlock();
 	}
 	
