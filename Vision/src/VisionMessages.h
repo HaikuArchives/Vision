@@ -201,22 +201,23 @@ const uint32 M_CONNECT_NETWORK                      = 0x2233;
 // general prefs
 
 const uint32 M_APPWINDOWPREFS_SETTING_CHANGED       = 0x2300;
-const uint32 M_REVERT_COLOR_SELECTIONS              = 0x2301;
-const uint32 M_COMMAND_MODIFIED                     = 0x2302;
-const uint32 M_BLOCK_SIZE_CHANGED                   = 0x2303;
-const uint32 M_DEFAULT_PATH_CHANGED                 = 0x2304;
-const uint32 M_AUTO_ACCEPT_CHANGED                  = 0x2305;
-const uint32 M_DCC_MIN_PORT_CHANGED                 = 0x2306;
-const uint32 M_DCC_MAX_PORT_CHANGED                 = 0x2307;
-const uint32 M_EVENT_MODIFIED                       = 0x2308;
-const uint32 M_FONT_ELEMENT_CHANGE                  = 0x2309;
-const uint32 M_FONT_CHANGE                          = 0x2310;
-const uint32 M_FONT_SIZE_CHANGE                     = 0x2311;
-const uint32 M_GENERALPREFS_SELECTION_CHANGED       = 0x2312;
-const uint32 M_PREFLOG_CHECKBOX_CHANGED             = 0x2313;
-const uint32 M_PREFLOG_LOGPATH_CHANGED              = 0x2314;
-const uint32 M_PREFLOG_TS_FORMAT_CHANGED            = 0x2315;
-const uint32 M_DCC_PRIVATE_CHANGED                  = 0x2316;
+const uint32 M_APPWINDOWPREFS_ENCODING_CHANGED      = 0x2301;
+const uint32 M_REVERT_COLOR_SELECTIONS              = 0x2302;
+const uint32 M_COMMAND_MODIFIED                     = 0x2303;
+const uint32 M_BLOCK_SIZE_CHANGED                   = 0x2304;
+const uint32 M_DEFAULT_PATH_CHANGED                 = 0x2305;
+const uint32 M_AUTO_ACCEPT_CHANGED                  = 0x2306;
+const uint32 M_DCC_MIN_PORT_CHANGED                 = 0x2307;
+const uint32 M_DCC_MAX_PORT_CHANGED                 = 0x2308;
+const uint32 M_EVENT_MODIFIED                       = 0x2309;
+const uint32 M_FONT_ELEMENT_CHANGE                  = 0x2310;
+const uint32 M_FONT_CHANGE                          = 0x2311;
+const uint32 M_FONT_SIZE_CHANGE                     = 0x2312;
+const uint32 M_GENERALPREFS_SELECTION_CHANGED       = 0x2313;
+const uint32 M_PREFLOG_CHECKBOX_CHANGED             = 0x2314;
+const uint32 M_PREFLOG_LOGPATH_CHANGED              = 0x2315;
+const uint32 M_PREFLOG_TS_FORMAT_CHANGED            = 0x2316;
+const uint32 M_DCC_PRIVATE_CHANGED                  = 0x2317;
 
 // misc
 

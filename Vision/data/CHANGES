@@ -1,10 +1,11 @@
 Vision
 http://vision.sourceforge.net
-[0.9.4-0818]
+[0.9.4-0821]
          * fixed deadlock in DCC Transfers window
          * fixed memleak in logger
          * fixed some shutdown/cleanups that weren't happening
          * added /voice and /devoice
+         * added text encoding support (Preferences, App)  -- not really tested much yet
 
 [0.9.3-0817]
          * unbroke auto-rejoin on disconnect

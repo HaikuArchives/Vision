@@ -88,6 +88,9 @@ class VisionApp : public BApplication
     bool                    GetBool (const char *);
     status_t                SetBool (const char *, bool);
     
+    int32                   GetInt32 (const char *);
+    status_t                SetInt32 (const char *, int32);
+    
     BMessage                GetNetwork (const char *);
     BMessage				GetNetwork (int32);
     status_t                SetNetwork (const char *, BMessage *);

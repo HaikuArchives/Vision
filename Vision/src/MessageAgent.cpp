@@ -642,7 +642,7 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
           state (0);
 
     convert_from_utf8 (
-      B_ISO1_CONVERSION,
+      vision_app->GetInt32("encoding"),
       outTemp.String(), 
       &length,
       convBuffer,
@@ -697,7 +697,7 @@ MessageAgent::Parser (const char *buffer)
           state (0);
 
     convert_from_utf8 (
-      B_ISO1_CONVERSION,
+      vision_app->GetInt32("encoding"),
       outTemp.String(), 
       &length,
       convBuffer,
