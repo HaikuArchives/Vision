@@ -87,6 +87,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_CREATED:          // 003
     case RPL_MYINFO:           // 004
       {
+        isConnecting = false;
         initialMotd = true;
         retry = 0;
         

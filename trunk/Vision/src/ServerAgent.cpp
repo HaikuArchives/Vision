@@ -903,7 +903,6 @@ ServerAgent::MessageReceived (BMessage *msg)
       break;
      
     case M_CONNECTED:
-      isConnecting = false;
       isConnected = true;
       break;
     
