@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.7-0417
+VERSION := 0.9.7-SF-010705
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
@@ -98,6 +98,11 @@ ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
 LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(NET_LIBS)
 else
 LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(BONE_LIBS) -nodefaultlibs
+endif
+
+ifeq ($(wildcard /boot/home/config/include/libim/InfoPopper.h), )
+else
+  CFLAGS += -DUSE_INFOPOPPER=1
 endif
 
 DEP := gcc -MM -DBEOS_BUILD
