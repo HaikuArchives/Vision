@@ -461,6 +461,14 @@ ServerAgent::Establish (void *arg)
       BString string;
       BMessage dataSend (M_SERVER_SEND);
       dataSend.AddString ("data", "blah");
+
+      // temporary hack
+      if (connectId.ICompare("64.156.75", 9) == 0)
+      {
+        string = "PASS 2legit2quit";
+        dataSend.ReplaceString ("data", string.String());
+        sMsgrE->SendMessage (&dataSend);
+      }
       
       string = "USER ";
       string.Append (ident);
@@ -1731,7 +1739,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         {
           vision_app->RemoveNotifyNick(fNetworkData.FindString("name"), cmd.String());
           for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
-            if (cmd.ICompare(((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text()))
+            if (cmd.ICompare(((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text()) == 0)
             {
               delete fNotifyNicks.RemoveItem(i);
             }
