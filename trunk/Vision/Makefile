@@ -16,19 +16,20 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.8.5-0415
+VERSION := 0.8.5-0418
 BUILDDATE := $(shell date +%b_%d_%Y)
 
+BUILD_DEBUG := false
 CHECK_MEM := false
 
 # system libs
 REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker
 
 # net_server libs
-NET_LIBS := -lnet -lnetapi
+NET_LIBS := -lnet 
 
 # bone libs
-BONE_LIBS := -lroot -lsocket -lbnetapi -lbind
+BONE_LIBS := -lroot -lsocket -lbind
 
 # lua
 LUA_LIBS := -L./src/lua/lib -llua -llualib

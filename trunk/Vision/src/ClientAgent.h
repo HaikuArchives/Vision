@@ -90,12 +90,13 @@ class ClientAgent : public BView
     
     BMessenger                  fMsgr;
     
-    void                        ChannelMessage (
+    virtual void                ChannelMessage (
                                   const char *,
                                   const char * = 0,
                                   const char * = 0,
                                   const char * = 0);
-    virtual void                        ActionMessage (
+    
+    virtual void                ActionMessage (
                                   const char *,
                                   const char *);
 
@@ -182,9 +183,11 @@ class ClientAgent : public BView
 };
 
 // constants for multiline paste handler
-
-const uint32 PASTE_CANCEL = 0;
-const uint32 PASTE_MULTI = 1;
-const uint32 PASTE_SINGLE = 2;
+enum {
+  PASTE_CANCEL = 0,
+  PASTE_MULTI = 1,
+  PASTE_SINGLE = 2,
+  PASTE_MULTI_NODELAY = 3
+};
 
 #endif

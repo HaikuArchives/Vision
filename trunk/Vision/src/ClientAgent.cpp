@@ -685,6 +685,7 @@ ClientAgent::MessageReceived (BMessage *msg)
               break;
             
             case PASTE_MULTI:
+            case PASTE_MULTI_NODELAY:
             {
               BMessage *buffer (new BMessage (*msg));
               thread_id tid;
@@ -699,7 +700,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
               buffer->AddPointer ("agent", this);
               buffer->AddPointer ("window", Window());
-              if (which == 3)
+              if (which == PASTE_MULTI_NODELAY)
                 buffer->AddBool ("delay", false);
               tid = spawn_thread (
                 TimedSubmit,
