@@ -21,6 +21,7 @@
  *                 Todd Lair
  *                 Andrew Bazan
  *                 Jamie Wilkinson
+ *                 Alan Ellis <void@be.com>
  */
 
 #define MAX_BYTES           196000
@@ -205,6 +206,47 @@ IRCView::BuildPopUp (void)
   myPopUp->SetFont (be_plain_font);
 }
 
+bool
+IRCView::IsAnUpperOrLowerOrUnderbarOrNumericDigit(const char thedigit)
+{	
+  bool result = true;
+
+  if (thedigit < '0')
+    result = false;
+  else
+  {
+    if (thedigit > 'z')
+      result = false;
+    else
+    {
+      // I know this could be turned into one of those huuuge
+      // if (!() || () && () && ()), but I feel that this is
+      // infinitely more ledgable (and the compiler should
+      // spit out the same binary regardless.)
+      if (thedigit < 'a')
+        if (thedigit > '9')
+          if(thedigit < 'A')
+              result = false;
+    }
+  }
+  return result;
+}
+
+
+int32
+IRCView::CreateSelection(int32 &start)
+{
+  int32 end = start;
+
+  while(IsAnUpperOrLowerOrUnderbarOrNumericDigit(ByteAt(start - 1)))
+    start--;	
+	
+  while(IsAnUpperOrLowerOrUnderbarOrNumericDigit(ByteAt(end)))
+    end++;
+		
+  return (end - start);	
+}
+
 void 
 IRCView::MouseDown (BPoint myPoint) 
 { 
@@ -225,6 +267,12 @@ IRCView::MouseDown (BPoint myPoint)
   && (keymodifiers & B_COMMAND_KEY) == 0
   && (keymodifiers & B_CONTROL_KEY) == 0)
   {
+    selstart = OffsetAt(myPoint);
+    Select(selstart, selstart);
+    int32 length = CreateSelection (selstart);
+    if (length)
+      Select(selstart, selstart + length);
+
     MakeFocus (true);
     BuildPopUp();
     myPopUp->Go (

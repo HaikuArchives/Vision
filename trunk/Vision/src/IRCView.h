@@ -71,6 +71,8 @@ class IRCView : public BTextView
     void                    BuildPopUp (void);
     int32                   URLLength (const char *);
     int32                   FirstURLMarker (const char *);
+    bool                    IsAnUpperOrLowerOrUnderbarOrNumericDigit(const char thedigit);
+    int32                   CreateSelection(int32 &start);
     bool     tracking;
     float    lasty;
 
