@@ -1203,7 +1203,6 @@ ServerAgent::MessageReceived (BMessage *msg)
     case M_CONNECTED:
       fIsConnected = true;
       fIsConnecting = false;
-      fReconnecting = false;
       break;
     
     case M_INC_RECONNECT:

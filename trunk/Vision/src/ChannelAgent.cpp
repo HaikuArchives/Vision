@@ -625,8 +625,6 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
     case M_CHANNEL_NAMES:
       {
-        bool hit (false);
-
         for (i = 0; msg->HasString ("nick", i); ++i)
         {
           const char *nick (NULL);
@@ -667,13 +665,12 @@ ChannelAgent::MessageReceived (BMessage *msg)
             fUserCount++;
  
             fNamesList->AddItem (new NameItem (nick, iStatus));
-            hit = true;
           }
         }
       
         fNamesList->SortItems (SortNames);
 
-        if (hit && !IsHidden())
+        if (!IsHidden())
         {
           BString buffer;
           buffer << fOpsCount;
@@ -711,17 +708,19 @@ ChannelAgent::MessageReceived (BMessage *msg)
           printf("Error: ChannelAgent::MessageReceived, M_REJOIN: invalid pointer\n");
           break;
         }
-        fMyNick = newNick;  // update nickname (might have changed on reconnect)
-        if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String());
-			                    
-        Display (S_CHANNEL_RECON_REJOIN B_UTF8_ELLIPSIS "\n", C_ERROR, C_BACKGROUND, F_SERVER);
-		
-		// clean up
+
+        // clear out nick list
         fNamesList->ClearList();
         fOpsCount = 0;
         fUserCount = 0;
         
+        fMyNick = newNick;  // update nickname (might have changed on reconnect)
+        
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String());
+			                    
+        Display (S_CHANNEL_RECON_REJOIN B_UTF8_ELLIPSIS "\n", C_ERROR, C_BACKGROUND, F_SERVER);
+
         // send join cmd		
         BMessage send (M_SERVER_SEND);	
         AddSend (&send, "JOIN ");
@@ -801,6 +800,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         buffer += rest;
         buffer += ")\n";
         PackDisplay (&wegotkicked, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
+
         // clean up
         fNamesList->ClearList();
         fOpsCount = 0;
