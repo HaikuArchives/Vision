@@ -38,7 +38,7 @@
 ServerEntryWindow::ServerEntryWindow (BHandler *handler, BMessage *invoked, const ServerData *data)
   : BWindow (
         BRect (50, 50, 350, 250), 
-        "Add Server", 
+        S_SERVERWIN_TITLE, 
         B_TITLED_WINDOW,
 		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS)
 {
@@ -61,28 +61,28 @@ ServerEntryView::ServerEntryView (BRect bounds, BHandler *handler, BMessage *inv
 {
 	ASSERT (handler != NULL);
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-	serverName = new VTextControl (BRect (0,0,0,0), "serverName", "Server: ",
+	serverName = new VTextControl (BRect (0,0,0,0), "serverName", S_SERVERWIN_SERVER,
 		(data) ? data->serverName : "", new BMessage (M_SERVER_NAME_CHANGED),
 		B_FOLLOW_LEFT | B_FOLLOW_TOP);
 	BString strPort ("");
 	if (data) strPort << data->port;
 	else strPort << 6667;
-	port = new VTextControl (BRect (0,0,0,0), "portVal", "Port: ",
+	port = new VTextControl (BRect (0,0,0,0), "portVal", S_SERVERWIN_PORT,
 		strPort.String(), new BMessage (M_SERVER_PORT_CHANGED),
 		B_FOLLOW_LEFT | B_FOLLOW_TOP);
     port->SetDivider (be_plain_font->StringWidth ("Port: ") + 5);
 
-    BMenu *stateMenu = new BMenu ("Choose status");
-    stateMenu->AddItem (new BMenuItem ("Primary", new BMessage (M_SERVER_STATE)));
-    stateMenu->AddItem (new BMenuItem ("Secondary", new BMessage (M_SERVER_STATE)));
-    stateMenu->AddItem (new BMenuItem ("Disabled" , new BMessage (M_SERVER_STATE)));
-    statusField = new BMenuField (BRect (0,0,0,0), "states", "State: ", stateMenu,
+    BMenu *stateMenu = new BMenu (S_SERVERWIN_MENU1);
+    stateMenu->AddItem (new BMenuItem (S_SERVERWIN_MENU_PRI, new BMessage (M_SERVER_STATE)));
+    stateMenu->AddItem (new BMenuItem (S_SERVERWIN_MENU_SEC, new BMessage (M_SERVER_STATE)));
+    stateMenu->AddItem (new BMenuItem (S_SERVERWIN_MENU_DIS , new BMessage (M_SERVER_STATE)));
+    statusField = new BMenuField (BRect (0,0,0,0), "states", S_SERVERWIN_STATE, stateMenu,
       B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
 
-    okButton = new BButton (BRect (0,0,0,0), "serverOk", "Done",
+    okButton = new BButton (BRect (0,0,0,0), "serverOk", S_SERVERWIN_DONE_BUTTON,
       new BMessage (M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
     
-    cancelButton = new BButton (BRect (0,0,0,0), "serverCancel", "Cancel",
+    cancelButton = new BButton (BRect (0,0,0,0), "serverCancel", S_SERVERWIN_CANCEL_BUTTON,
       new BMessage (M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
 
   AddChild (statusField);
@@ -103,7 +103,7 @@ ServerEntryView::AttachedToWindow (void)
 {
   BView::AttachedToWindow();
 
-  serverName->SetDivider (be_plain_font->StringWidth ("Server:") + 5);
+  serverName->SetDivider (be_plain_font->StringWidth (S_SERVERWIN_SERVER) + 5);
   serverName->ResizeToPreferred();
   serverName->ResizeTo (Bounds().Width() / 2, serverName->Bounds().Height());
   serverName->MoveTo (10,10);
