@@ -67,9 +67,9 @@ URLCrunch::Crunch (BString *url)
 		if (markers[i] != B_ERROR
 		&&  markers[i] < marker)
 		{
-			url_length = markers[i];
+			url_length = markers[i] + strlen(tags[i]);
 			
-			url_length += strcspn (buffer.String() + url_length, " \t\n|\\<>");
+			url_length += strcspn (buffer.String() + url_length, " \t\n|\\<>\")(][}{:;'*^");
 
 
 			int len (strlen (tags[i]));
