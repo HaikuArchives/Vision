@@ -2108,11 +2108,14 @@ Line::FigureEdges (
     // but BFont::GetEdges doesn't seem to work as we'd like
 
     int16 i;
-
+    
+    float incrementor = (fEdge_count > 0) ? fEdges[fEdge_count - 1] : 0;
+    
     for (i = 0; i < ccount; ++i)
     {
-      fEdges[fEdge_count + i] = (int16) ((float)((fEdge_count + i > 0) ? fEdges[fEdge_count + i - 1] : 0) +
-        (eshift[i] * f.Size()));
+      incrementor += eshift[i] * f.Size();
+
+      fEdges[fEdge_count+i] = (int16) incrementor;
       
       // this little backfTracking routine is necessary in the case where an fFcs change
       // comes immediately after a UTF8-char, since all but the first edge will be 0
