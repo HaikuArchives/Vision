@@ -26,8 +26,8 @@ TSpeedButton::TSpeedButton(BRect Frame, const char *Name, const char* Label,
                            uint32 ResizingMask,
                            uint32 Flags)
         :BControl(Frame, Name, Label, Message, ResizingMask, Flags),
-        FDisabledBitmap(0),
-        FEnabledBitmap(0),
+        FDisabledBitmap(NULL),
+        FEnabledBitmap(NULL),
         FBitmapDestinationRect(0, 0, 0, 0),
         FBorder(Bounds()),
         FStyle(Style),
@@ -43,12 +43,12 @@ TSpeedButton::TSpeedButton(BRect Frame, const char *Name, const char* Label,
         FHighlighted(false)
 {
     // make a copy of the disabled bitmap if needed.
-    if (DisabledBitmap != 0)
+    if (DisabledBitmap != NULL)
     {
         FDisabledBitmap = new BBitmap(DisabledBitmap);
     }
 
-    if (EnabledBitmap != 0)
+    if (EnabledBitmap != NULL)
     {
         FEnabledBitmap = new BBitmap(EnabledBitmap);
         SetupBitmaps(FEnabledBitmap);
@@ -68,8 +68,8 @@ TSpeedButton::TSpeedButton(BMessage *Archive)
 
     FBorder = Bounds();
 
-    BMessage *BitmapArchiveD = 0;
-    BMessage *BitmapArchiveE = 0;
+    BMessage *BitmapArchiveD = NULL;
+    BMessage *BitmapArchiveE = NULL;
 
     Archive->FindMessage("DCL::TSpeedButton:FDisabledBitmap", BitmapArchiveD);
     Archive->FindMessage("DCL::TSpeedButton:FEnabledBitmap", BitmapArchiveE);
@@ -77,7 +77,7 @@ TSpeedButton::TSpeedButton(BMessage *Archive)
     FDisabledBitmap = dynamic_cast<BBitmap *>(BBitmap::Instantiate(BitmapArchiveD));
     FEnabledBitmap = dynamic_cast<BBitmap *>(BBitmap::Instantiate(BitmapArchiveE));
 
-    if (0 != FEnabledBitmap)
+    if (NULL != FEnabledBitmap)
         SetupBitmaps(FEnabledBitmap);
 
     FActive = false;
@@ -89,7 +89,7 @@ TSpeedButton *TSpeedButton::Instantiate(BMessage *Archive)
     if ( validate_instantiation(Archive, "TSpeedButton"))
         return new TSpeedButton(Archive);
 
-    return 0;
+    return NULL;
 }
 //-------------------------------------------------------------------------------
 status_t TSpeedButton::Archive(BMessage *Archive, bool Deep)
@@ -100,13 +100,13 @@ status_t TSpeedButton::Archive(BMessage *Archive, bool Deep)
     BMessage BitmapArchiveD;
     BMessage BitmapArchiveE;
 
-    if (FDisabledBitmap != 0)
+    if (FDisabledBitmap != NULL)
     {
         FDisabledBitmap->Archive(&BitmapArchiveD);
         Archive->AddMessage("DCL::TSpeedButton:FDisabledBitmap", &BitmapArchiveD);
     }
 
-    if (FEnabledBitmap != 0)
+    if (FEnabledBitmap != NULL)
     {
         FEnabledBitmap->Archive(&BitmapArchiveE);
         Archive->AddMessage("DCL::TSpeedButton:FDisabledBitmap", &BitmapArchiveE);
@@ -225,6 +225,7 @@ void TSpeedButton::AttachedToWindow()
 		{
 			rgb_color* color = (rgb_color*)(&((uint32*)(FDisabledBitmap->Bits()))[i]);
 
+			// todo: Should we use right shift by one to speed up this loop?
 			color->red += ((FEnabledViewColor.red - color->red) / 2); 
 			color->blue += ((FEnabledViewColor.blue - color->blue) / 2);
 			color->green += ((FEnabledViewColor.green - color->green) / 2);
@@ -232,46 +233,20 @@ void TSpeedButton::AttachedToWindow()
     }
 
     FAttachedToWindow = true;
-
-    if (true == FSelected)
-    {
-//        ScrollBy(-1.0, -1.0);
-//        FBorder.OffsetBy(-1.0, -1.0);
-    }
-    else
-    {
-        // Button was unselected while not attached to the window.
-        if ( FBorder != Bounds() )
-        {
-//            FBorder.OffsetBy( -1.0, -1.0 );
-        }
-    }
     
     BControl::AttachedToWindow();
 }
 //-------------------------------------------------------------------------------
 void TSpeedButton::DetachedFromWindow()
 {
-    if (true == FSelected)
-    {
-//        ScrollBy(1.0, 1.0);
-//	      FBorder.OffsetBy(1.0, 1.0);
-    }
-    
     BControl::DetachedFromWindow();
 }
 //-------------------------------------------------------------------------------
 TSpeedButton::~TSpeedButton()
 {
-    if (0 != FDisabledBitmap)
-    {
-        delete FDisabledBitmap;
-    }
-
-    if (0 != FEnabledBitmap)
-    {
-        delete FEnabledBitmap;
-    }
+	// It's safe to delete NULL pointers
+	delete FDisabledBitmap;
+	delete FEnabledBitmap;
 }
 //-------------------------------------------------------------------------------
 void TSpeedButton::Draw(BRect UpdateRect)
@@ -289,7 +264,7 @@ void TSpeedButton::Draw(BRect UpdateRect)
     drawing_mode mode = DrawingMode();
     SetDrawingMode(B_OP_ALPHA);
 
-    if (FEnabledBitmap != 0)
+    if (FEnabledBitmap != NULL)
     {
         if (true == BControl::IsEnabled())
         {
@@ -297,7 +272,7 @@ void TSpeedButton::Draw(BRect UpdateRect)
         }
         else
         {
-            if (FDisabledBitmap != 0)
+            if (FDisabledBitmap != NULL)
             {
                 DrawBitmapAsync(FDisabledBitmap, FBitmapSourceRect, FBitmapDestinationRect);
             }
@@ -406,9 +381,6 @@ void TSpeedButton::MouseDown(BPoint where)
                 StrokeLine(FBorder.InsetByCopy(1, 1).LeftTop(), FBorder.InsetByCopy(1, 1).RightTop());
             }
 
-//            ScrollBy(-1.0, -1.0);
-//            FBorder.OffsetBy(-1.0, -1.0);
-
             if ( Window()->Lock() )
             {
                 Draw(FBorder);
@@ -453,9 +425,6 @@ void TSpeedButton::MouseUp(BPoint where)
                         StrokeLine(FBorder.InsetByCopy(1, 1).RightTop(), FBorder.InsetByCopy(1, 1).RightBottom());
                     }
 
-//                    ScrollBy(1.0, 1.0);
-//                    FBorder.OffsetBy(1.0, 1.0);
-
                     FMouseDown = false;
                     Draw(FBorder);
                     BControl::SetValue(0);
@@ -488,8 +457,8 @@ void TSpeedButton::MouseUp(BPoint where)
                             // group index and they are not of the latching type.
                             // Todo: determine if this should be different in terms of the latching state ...
                             if((true == sibling->FSelected) &&
-                                    (sibling->FGroupIndex == FGroupIndex) &&
-                                    (false == sibling->FLatching) )
+                               (sibling->FGroupIndex == FGroupIndex) &&
+                               (false == sibling->FLatching) )
                             {
                                 sibling->Selected(false);
                             }
@@ -512,8 +481,6 @@ void TSpeedButton::MouseUp(BPoint where)
                             StrokeLine(FBorder.InsetByCopy(1, 1).LeftBottom(), FBorder.InsetByCopy(1, 1).RightBottom());
                             StrokeLine(FBorder.InsetByCopy(1, 1).RightTop(), FBorder.InsetByCopy(1, 1).RightBottom());
                         }
-//                        ScrollBy(1.0, 1.0);
-//                        FBorder.OffsetBy(1.0, 1.0);
                     }
                 }
                 BControl::Invoke();
@@ -570,12 +537,6 @@ void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage *Message
                    StrokeLine(FBorder.InsetByCopy(1, 1).LeftTop(), FBorder.InsetByCopy(1, 1).LeftBottom());
                }
 
-               // The button may already be selected, therefore not popped back up
-               if (!FSelected)
-               {
-//                   ScrollBy(-1, -1);
-//                   FBorder.OffsetBy(-1, -1);
-               }
            }
 
            FOutside = false;
@@ -605,12 +566,6 @@ void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage *Message
                {
                    StrokeLine(FBorder.InsetByCopy(1, 1).LeftBottom(), FBorder.InsetByCopy(1, 1).RightBottom());
                    StrokeLine(FBorder.InsetByCopy(1, 1).RightTop(), FBorder.InsetByCopy(1, 1).RightBottom());
-               }
-
-               if(false == FSelected)
-               {
-//                   ScrollBy(1.0, 1.0);
-//                   FBorder.OffsetBy(1.0, 1.0);
                }
            }
 
@@ -671,8 +626,6 @@ void TSpeedButton::Selected(bool Selected)
         AddLine(FBorder.RightTop(), FBorder.RightBottom(), Parent()->ViewColor());
         AddLine(FBorder.LeftBottom(), FBorder.RightBottom(), Parent()->ViewColor());
         EndLineArray();
-//        ScrollBy(scroller, scroller);
-//        FBorder.OffsetBy(scroller, scroller);
         Draw(FBorder);
     }
 }
