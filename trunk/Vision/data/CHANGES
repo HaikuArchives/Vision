@@ -27,7 +27,7 @@ http://vision.sourceforge.net
          * changed dis/reconnect messages to only get posted to server and active agent
          * fixed broken /me in DCC chat
          * collapsed servers show indicator of status of collapsed items
-         * URL clicking in RunView now works (URLs aren't colored differently yet)
+         * URL clicking in RunView now works
          
 [0.3.0828]
 2001-08-28

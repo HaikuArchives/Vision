@@ -666,6 +666,7 @@ RunView::Append (
 	unsigned long lcount (0);
 	int32 place (0);
 
+
 	assert (fore != Theme::TimestampFore);
 	assert (back != Theme::TimestampBack);
 	assert (font != Theme::TimestampFont);
@@ -687,6 +688,34 @@ RunView::Append (
 
 		if (working)
 		{
+			URLCrunch crunch (buffer + place, end - place);
+			BString temp;
+			int32 url_offset (0);
+			
+			while ((url_offset = crunch.Crunch (&temp)) != B_ERROR)
+			{
+				working->Append  (buffer + place,
+									url_offset,
+									&boxbuf,
+									&boxbuf_size,
+									width,
+									theme,
+									fore,
+									back,
+									font);
+
+				working->Append  (buffer + place + url_offset,
+									url_offset + temp.Length(),
+									&boxbuf,
+									&boxbuf_size,
+									width,
+									theme,
+									C_URL,
+									back,
+									F_URL);
+				place += url_offset + temp.Length();
+			}
+			
 			working->Append (
 				buffer + place,
 				end - place,
@@ -705,9 +734,10 @@ RunView::Append (
 			if (line_count > 0)
 				top = lines[line_count - 1]->bottom + 1.0;
 
+			
 			working = new Line (
 				buffer + place,
-				end - place,
+				0,
 				top,
 				&boxbuf,
 				&boxbuf_size,
@@ -717,6 +747,45 @@ RunView::Append (
 				fore,
 				back,
 				font);
+			
+			URLCrunch crunch (buffer + place, end - place);
+			BString temp;
+			int32 url_offset (0);
+			
+			while ((url_offset = crunch.Crunch (&temp)) != B_ERROR)
+			{
+				working->Append  (buffer + place,
+									url_offset,
+									&boxbuf,
+									&boxbuf_size,
+									width,
+									theme,
+									fore,
+									back,
+									font);
+
+				working->Append  (buffer + place + url_offset,
+									temp.Length(),
+									&boxbuf,
+									&boxbuf_size,
+									width,
+									theme,
+									C_URL,
+									back,
+									F_URL);
+									
+				place += url_offset + temp.Length();
+			}
+			
+			working->Append (buffer + place,
+								end - place,
+								&boxbuf,
+								&boxbuf_size,
+								width,
+								theme,
+								fore,
+								back,
+								font);
 		}
 
 		if (working->length
@@ -1154,7 +1223,7 @@ Line::FigureFontColors (
 			{
 				fcs[fc_count].which = FONT_WHICH;
 				fcs[fc_count].offset = pos;
-				fcs[fc_count].index = back;
+				fcs[fc_count].index = font;
 				++fc_count;
 			}
 		}
