@@ -387,7 +387,7 @@ ClientWindow::MessageReceived (BMessage *msg)
           BPoint point;
           msg->FindPoint ("loc", &point);
           resize->MoveTo (point.x, resize->Frame().top);
-          cwDock->ResizeTo (point.x, cwDock->Frame().Height());
+          cwDock->ResizeTo (point.x - 1, cwDock->Frame().Height());
           BRect *agRect (AgentRect());
           for (int32 i = 0; i < agentCount; i++)
           {
