@@ -21,7 +21,7 @@ BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
 # system libs
-REG_LIBS := -lzeta -lbe -ltranslation -ltextencoding -ltracker
+REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker
 
 # net_server libs
 NET_LIBS := -lnet 
