@@ -33,6 +33,8 @@
 #  include <Path.h>
 #endif
 
+class BFile;
+
 struct attr_info;
 
 class SettingsFile : public BMessage {

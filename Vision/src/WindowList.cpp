@@ -241,6 +241,49 @@ WindowList::SetColor (int32 which, rgb_color color)
          }
        }
        break;
+
+    case C_WINLIST_NORMAL:
+      {
+         textColor = color;
+
+         for (int32 i = 0; i < CountItems(); ++i)
+         {
+           WindowListItem *item ((WindowListItem *)ItemAt (i));
+           int32 mask (WIN_NICK_BIT | WIN_PAGESIX_BIT | WIN_NEWS_BIT);
+           if ((item->Status() & mask) == 0)
+             InvalidateItem (i);
+         }
+       }
+       break;
+       
+    case C_WINLIST_PAGESIX:
+      {
+         sixColor = color;
+
+         for (int32 i = 0; i < CountItems(); ++i)
+         {
+           WindowListItem *item ((WindowListItem *)ItemAt (i));
+
+           if ((item->Status() & WIN_PAGESIX_BIT) != 0)
+             InvalidateItem (i);
+         }
+       }
+       break;
+
+    case C_WINLIST_SELECTION:
+      {
+         selColor = color;
+         InvalidateItem (CurrentSelection());
+      }
+      break;
+
+    case C_WINLIST_BACKGROUND:
+      {
+         bgColor = color;
+         SetViewColor (bgColor);
+         Invalidate();
+      }
+      break;    
   }
 }
 
@@ -271,7 +314,7 @@ WindowList::GetColor (int32 which) const
 void
 WindowList::SetFont (int32 which, const BFont *font)
 {
-  if (which == F_NAMES)
+  if (which == F_WINLIST)
   {
     BListView::SetFont (font);
     Invalidate();

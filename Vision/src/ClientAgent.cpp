@@ -496,7 +496,121 @@ ClientAgent::MessageReceived (BMessage *msg)
           logger->isQuitting = shuttingdown;
       }
       break;
-
+    case M_STATE_CHANGE:
+      {
+        int32 which (msg->FindInt32 ("which"));
+        if (msg->HasBool ("color"))
+        {
+          switch (which)
+          {
+            case C_TEXT:
+              textColor = vision_app->GetColor (C_TEXT);
+              break;
+            
+            case C_BACKGROUND:
+              text->SetViewColor (vision_app->GetColor (C_BACKGROUND));
+              text->Invalidate();
+              break;
+              
+            case C_NICK:
+              nickColor = vision_app->GetColor (C_NICK);
+              break;
+            
+            case C_CTCP_REQ:
+              ctcpReqColor = vision_app->GetColor (C_CTCP_REQ);
+              break;
+            
+            case C_QUIT:
+              quitColor = vision_app->GetColor (C_QUIT);
+              break;
+              
+            case C_ERROR:
+              errorColor = vision_app->GetColor (C_ERROR);
+              break;
+            
+            case C_WHOIS:
+              whoisColor = vision_app->GetColor (C_WHOIS);
+              break;
+            
+            case C_JOIN:
+              joinColor = vision_app->GetColor (C_JOIN);
+              break;
+            
+            case C_MYNICK:
+              myNickColor = vision_app->GetColor (C_MYNICK);
+              break;
+            
+            case C_NICKDISPLAY:
+              nickdisplayColor = vision_app->GetColor (C_NICKDISPLAY);
+              break;
+            
+            case C_ACTION:
+              actionColor = vision_app->GetColor (C_ACTION);
+              break;
+            
+            case C_OP:
+              opColor = vision_app->GetColor (C_OP);
+              break;
+            
+            case C_INPUT:
+              inputColor = vision_app->GetColor (C_INPUT);
+              input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
+                &inputColor);
+              input->TextView()->Invalidate();
+              break;
+            
+            case C_INPUT_BACKGROUND:
+              input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
+              input->TextView()->Invalidate();
+              break;
+                
+            default:
+              break;
+          }
+          Invalidate();
+        }
+        else if (msg->HasBool ("font"))
+        {
+          switch (which)
+          {
+            case F_TEXT:
+              myFont = *(vision_app->GetClientFont (F_TEXT));
+              break;
+              
+            case F_SERVER:
+              serverFont = *(vision_app->GetClientFont (F_SERVER));
+              if (dynamic_cast<ServerAgent *>(this))
+                myFont = serverFont;
+              break;
+            
+            case F_INPUT:
+              inputFont = *(vision_app->GetClientFont (F_INPUT));
+              input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
+                &inputColor);
+              break;
+              
+            default:
+              break;
+          }
+        }
+        else if (msg->HasBool ("bool"))
+        {
+          bool logging (vision_app->GetBool ("log_enabled"));
+          if (logging != isLogging)
+          {
+            if (isLogging)
+            {
+              isLogging = false;
+              delete logger;
+              logger = 0;
+            }
+            else
+              logger = new ClientAgentLogger (id, serverName);
+          }
+        }
+      }
+      break;
+     
     case M_SUBMIT_INPUT:
       {
         bool lines (false);

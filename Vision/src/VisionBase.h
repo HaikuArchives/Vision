@@ -32,6 +32,15 @@
 #  include <GraphicsDefs.h>
 #endif
 
+// horizontal resize cursor taken from OpenTracker, see www.opentracker.org for license
+
+const unsigned char kHorizontalResizeCursor[] = {
+	16, 1, 7, 7,
+	0, 0, 1, 0, 1, 0, 1, 0, 9, 32, 25, 48, 57, 56, 121, 60,
+	57, 56, 25, 48, 9, 32, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
+	3, 128, 3, 128, 3, 128, 15, 224, 31, 240, 63, 248, 127, 252, 255, 254,
+	127, 252, 63, 248, 31, 240, 15, 224, 3, 128, 3, 128, 3, 128, 0, 0
+};
 
   // keycodes can be viewed at
   // http://www.be.com/documentation/be_book/Keyboard/KeyboardKeyCodes.html
@@ -98,36 +107,36 @@ enum {
 
 #define C_TEXT											0
 #define C_BACKGROUND									1
-#define C_NAMES											2
-#define C_NAMES_BACKGROUND								3
-#define C_URL											4
-#define C_SERVER										5
-#define C_NOTICE										6
-#define C_ACTION										7
-#define C_QUIT											8
-#define C_ERROR											9
-#define C_NICK											10
-#define C_MYNICK										11
-#define C_JOIN											12
-#define C_KICK											13
-#define C_WHOIS											14
+#define C_URL											2
+#define C_SERVER										3
+#define C_NOTICE										4
+#define C_ACTION										5
+#define C_QUIT											6
+#define C_ERROR											7
+#define C_NICK											8
+#define C_MYNICK										9
+#define C_NICKDISPLAY                                   10
+#define C_JOIN										    11
+#define C_KICK											12
+#define C_WHOIS											13
+#define C_NAMES											14
 #define C_OP											15
 #define C_HELPER										16
 #define C_VOICE											17
-#define C_CTCP_REQ										18
-#define C_CTCP_RPY										19
-#define C_IGNORE										20
-#define C_INPUT_BACKGROUND								21
-#define C_INPUT											22
-#define C_WINLIST_BACKGROUND                            23
-#define C_WINLIST_NORMAL                                24
-#define C_WINLIST_NEWS                                  25
-#define C_WINLIST_NICK                                  26
-#define C_WINLIST_SELECTION                             27
-#define C_WINLIST_PAGESIX                               28
-#define C_NAMES_SELECTION                               29
-#define C_WALLOPS                                       30
-#define C_NICKDISPLAY                                   31
+#define C_NAMES_SELECTION                               18
+#define C_NAMES_BACKGROUND								19
+#define C_CTCP_REQ										20
+#define C_CTCP_RPY										21
+#define C_IGNORE										22
+#define C_INPUT											23
+#define C_INPUT_BACKGROUND								24
+#define C_WINLIST_NORMAL                                25
+#define C_WINLIST_NEWS                                  26
+#define C_WINLIST_NICK                                  27
+#define C_WINLIST_SELECTION                             28
+#define C_WINLIST_PAGESIX                               29
+#define C_WINLIST_BACKGROUND                            30
+#define C_WALLOPS                                       31
 
 #define MAX_COLORS										32
 

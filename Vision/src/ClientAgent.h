@@ -37,6 +37,7 @@
 class BScrollView;
 class VTextControl;
 
+class BPopUpMenu;
 class ClientAgentInputFilter;
 class ClientAgentLogger;
 class IRCView;

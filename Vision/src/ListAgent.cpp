@@ -215,6 +215,30 @@ ListAgent::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
   {
+    case M_STATE_CHANGE:
+      {
+        if (msg->HasBool ("color"))
+        {
+          int32 which (msg->FindInt32 ("which"));
+          switch (which)
+          {
+            case C_BACKGROUND:
+              SetViewColor (vision_app->GetColor (C_BACKGROUND));
+              break;
+          }
+          Invalidate();
+        }
+        else if (msg->HasBool ("font"))
+        {
+          int32 which (msg->FindInt32 ("which"));
+          switch (which)
+          {
+            case F_LISTAGENT:
+              listView->Invalidate();
+              break;
+          }
+        }
+      }
     case M_STATUS_ADDITEMS:
       {
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem ("Count: ", ""), true);
