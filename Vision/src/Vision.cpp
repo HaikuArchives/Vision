@@ -37,6 +37,7 @@ class VisionApp * vision_app;
 #include <Autolock.h>
 #include <Roster.h>
 #include <NetworkKit.h>
+#include <Beep.h>
 
 #include <algorithm>
 #include <stdio.h>
@@ -58,6 +59,9 @@ class VisionApp * vision_app;
 #include "PrefsWindow.h"
 
 #include "TestScript.h"
+
+// sound event name definitions
+const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
 
 // And so it begins....
 int
@@ -249,6 +253,12 @@ VisionApp::InitDefaults (void)
   commands[CMD_AWAY]        = "is idle: $R";
   commands[CMD_BACK]        = "has returned";
   commands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
+  
+  uint32 i = 0;
+  
+  for( const char* eventName = kSoundEventNames[i]; eventName != NULL; i++,
+    eventName = kSoundEventNames[i] )
+    add_system_beep_event(eventName);
 }
 
 void

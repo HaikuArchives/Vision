@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.3.07022]
+2001-07-22
+       * added support for sound events when nick is said or private message received, thanks to Alan Ellis. Event sound can be configured from Be's sound preferences.
+
 [0.3.07020]
 2001-07-20
        * fixed bug in appearance prefs (winlist event status incorrect)
