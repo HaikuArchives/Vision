@@ -49,7 +49,7 @@ Subject: $subject
     exit 0;
 }
 
-$last_directory = <LD_FD>
+$last_directory = <LD_FD>;
 chop($last_directory);
 close(LD_FD);
 
