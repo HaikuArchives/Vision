@@ -1,13 +1,14 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.5-0905]
+[0.9.5-0906]
          * fix stupid crash bug
          * fix crash bug in PPC rev
+         * fix empty color menu (PPC)
          * fix bug where items would get attached to the wrong server
          * fixed bug where font changes would update the font size but not spacing of list items
          * altered some semantics in how reconnects are handled, should fix some ping timeout issues that would happen now and then on reconnect.
-         * redoing menus 
+         * redid menus 
            - added IconMenu, thanks to Alan Ellis
            - rearranged locations of some items, renamed others
            - filled in Edit, Window menus

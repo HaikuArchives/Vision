@@ -128,9 +128,6 @@ ServerAgent::~ServerAgent (void)
 
   delete_sem (fSendSyncSem);
   
-  status_t result;
-  wait_for_thread (fSenderThread, &result);
-
   if (fSocket >= 0)
   {
 #ifdef BONE_BUILD
@@ -1316,13 +1313,21 @@ ServerAgent::MessageReceived (BMessage *msg)
       
     case M_CHOSE_FILE: // DCC send
       {
-        const char *nick;
+        const char *nick (NULL);
         entry_ref ref;
         off_t size;
         msg->FindString ("nick", &nick);
         msg->FindRef ("refs", &ref); // get file
-			
+
         BEntry entry (&ref);
+
+/* // TODO: resolve if symlink
+			
+        if (entry.IsSymLink())
+        {
+          BSymLink link (&entry);
+        }
+*/
         BPath path (&entry);
         // PRINT(("file path: %s\n", path.Path()));
         entry.GetSize (&size);
@@ -1330,13 +1335,6 @@ ServerAgent::MessageReceived (BMessage *msg)
         BString ssize;
         ssize << size;
 
-        // because of a bug in the be library
-        // we have to get the sockname on this
-        // socket, and not the one that DCCSend
-        // binds.  calling getsockname on a
-        // a binded socket will return the
-        // LAN ip over the DUN one 
-			
         DCCSend *view;
 
         view = new DCCSend (
