@@ -339,7 +339,7 @@ WindowList::BlinkNotifyChange(int32 changeState, ServerAgent *victim)
   if (victim != NULL)
   {
     WindowListItem *item (victim->fAgentWinItem);
-    if (item != NULL)
+    if (HasItem(item))
       item->SetNotifyBlinker(changeState);
   }
 }
