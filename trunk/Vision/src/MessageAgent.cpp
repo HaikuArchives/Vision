@@ -9,7 +9,7 @@
  * implied. See the License for the specific language governing 
  * rights and limitations under the License. 
  * 
- * The Original Code is Vision. 
+ * The Original Code is Vision.
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
@@ -74,10 +74,10 @@ MessageAgent::Init (void)
 
 void
 MessageAgent::ChannelMessage (
-	const char *msgz,
-	const char *nick,
-	const char *ident,
-	const char *address)
+  const char *msgz,
+  const char *nick,
+  const char *ident,
+  const char *address)
 {
 //  agentWinItem->SetName (nick);
 
@@ -90,109 +90,107 @@ MessageAgent::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     case M_CHANNEL_MSG:
-    {
-      const char *nick;
-
-      if (msg->HasString ("nick"))
-        msg->FindString ("nick", &nick);
-      else
       {
-        nick = chatee.String();
-        msg->AddString ("nick", nick);
+        const char *nick;
+
+        if (msg->HasString ("nick"))
+          msg->FindString ("nick", &nick);
+        else
+        {
+          nick = chatee.String();
+          msg->AddString ("nick", nick);
+        }
+      
+        if (myNick.ICompare (nick) != 0)
+          agentWinItem->SetName (nick);      
+      
+        // Send the rest of processing up the chain
+        ClientAgent::MessageReceived (msg);
       }
-      
-      if (myNick.ICompare (nick) != 0)
-        agentWinItem->SetName (nick);      
-      
-      // Send the rest of processing up the chain
-      ClientAgent::MessageReceived (msg);
       break;
 
-    }
-    
     case M_MSG_WHOIS:
-    {
-      BMessage send (M_SERVER_SEND);
+      {
+        BMessage send (M_SERVER_SEND);
 
-      AddSend (&send, "WHOIS ");
-      AddSend (&send, chatee.String());
-      AddSend (&send, " ");
-      AddSend (&send, chatee.String());
-      AddSend (&send, endl);      
-    }
+        AddSend (&send, "WHOIS ");
+        AddSend (&send, chatee.String());
+        AddSend (&send, " ");
+        AddSend (&send, chatee.String());
+        AddSend (&send, endl);      
+      }
 
     case M_CHANGE_NICK:
-    {
-      const char *oldNick, *newNick;
-
-      msg->FindString ("oldnick", &oldNick);
-      msg->FindString ("newnick", &newNick);
-
-      if (chatee.ICompare (oldNick) == 0)
       {
-        const char *address;
-        const char *ident;
+        const char *oldNick, *newNick;
 
-        msg->FindString ("address", &address);
-        msg->FindString ("ident", &ident);
+        msg->FindString ("oldnick", &oldNick);
+        msg->FindString ("newnick", &newNick);
 
-        BString oldId (id);
-        chatee = id = newNick;
+        if (chatee.ICompare (oldNick) == 0)
+        {
+          const char *address;
+          const char *ident;
+
+          msg->FindString ("address", &address);
+          msg->FindString ("ident", &ident);
+
+          BString oldId (id);
+          chatee = id = newNick;
         
-        agentWinItem->SetName (id.String());
+          agentWinItem->SetName (id.String());
 
-        if (dChat)
-          id.Append(" [DCC]");
+          if (dChat)
+            id.Append(" [DCC]");
        
-        ClientAgent::MessageReceived (msg);
-      }
+          ClientAgent::MessageReceived (msg);
+        }
       
-      else if (myNick.ICompare (oldNick) == 0 && !IsHidden())
-      {
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
-        ClientAgent::MessageReceived (msg);
+        else if (myNick.ICompare (oldNick) == 0 && !IsHidden())
+        {
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
+          ClientAgent::MessageReceived (msg);
+        }
       }
-
       break;
-    }
 
-	case M_CLIENT_QUIT:
-	{
-	  BMessage deathchant (M_OBITUARY);
-	  deathchant.AddPointer ("agent", this);
-	  deathchant.AddPointer ("item", agentWinItem);
-	  vision_app->pClientWin()->PostMessage (&deathchant);
-	  
-	  deathchant.what = M_CLIENT_SHUTDOWN;
-	  sMsgr.SendMessage (&deathchant);
-	  break;
-	}
+    case M_CLIENT_QUIT:
+      {
+        BMessage deathchant (M_OBITUARY);
+        deathchant.AddPointer ("agent", this);
+        deathchant.AddPointer ("item", agentWinItem);
+        vision_app->pClientWin()->PostMessage (&deathchant);
+  
+        deathchant.what = M_CLIENT_SHUTDOWN;
+        sMsgr.SendMessage (&deathchant);
+      }
+      break;
      
     case M_STATUS_ADDITEMS:
-    {
-      vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-          0, ""),
-        true);
+      {
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+            0, ""),
+          true);
       
-      vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-          "Lag: ",
-          "",
-          STATUS_ALIGN_LEFT),
-        true);
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+            "Lag: ",
+            "",
+            STATUS_ALIGN_LEFT),
+          true);
       
-      vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-          0,
-          "",
-          STATUS_ALIGN_LEFT),
-        true);
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+            0,
+            "",
+            STATUS_ALIGN_LEFT),
+          true);
 
-      // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
-      // We send true on the last SetItemValue().		
-      vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String(), false);
-      vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
-      vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
-            
-    }
+        // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
+        // We send true on the last SetItemValue().
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String(), false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
+      }        
+      break;
     
     default:
       ClientAgent::MessageReceived (msg);
@@ -232,7 +230,7 @@ MessageAgent::Parser (const char *buffer)
   Display ("<", &myNickColor, &msgFont, vision_app->GetBool ("timestamp"));
   Display (myNick.String(), &nickdisplayColor);
   Display ("> ", &myNickColor);
-	
+
   BString sBuffer (buffer);
   Display (sBuffer.String(), 0);
   
@@ -262,7 +260,7 @@ MessageAgent::TabExpansion (void)
                   input->TextView()->Text()
                   + input->TextView()->TextLength());
     const char *place (inputText);
-		
+
 
     while (place > input->TextView()->Text())
     {
@@ -270,7 +268,7 @@ MessageAgent::TabExpansion (void)
         break;
       --place;
     }
-		
+
     BString insertion;
 
     if (!id.ICompare (place, strlen (place)))
@@ -280,7 +278,7 @@ MessageAgent::TabExpansion (void)
     }
     else if (!myNick.ICompare (place, strlen (place)))
       insertion = myNick;
-		
+
     if (insertion.Length())
     {
       input->TextView()->Delete (

@@ -5,7 +5,7 @@
  * the License at http://www.mozilla.org/MPL/ 
  * 
  * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
  * implied. See the License for the specific language governing 
  * rights and limitations under the License.
  * 
@@ -333,463 +333,459 @@ ChannelAgent::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     case M_USER_QUIT:
-    {
-      const char *nick;
-
-      msg->FindString ("nick", &nick);
-
-      if (RemoveUser (nick))
       {
-        BMessage display;
+        const char *nick;
 
+        msg->FindString ("nick", &nick);
+ 
+        if (RemoveUser (nick))
+        {
+          BMessage display;
+ 
+          if (msg->FindMessage ("display", &display) == B_NO_ERROR)
+            ClientAgent::MessageReceived (&display);
+        }
+      }
+      break;
+
+    case M_USER_ADD:
+      {
+        const char *nick;
+        bool ignore;
+        int32 iStatus (STATUS_NORMAL_BIT);
+
+        msg->FindString ("nick", &nick);
+        msg->FindBool ("ignore", &ignore);
+
+        if (ignore) iStatus |= STATUS_IGNORE_BIT;
+ 
+        namesList->AddItem (new NameItem (nick, iStatus));
+        namesList->SortItems (SortNames);
+
+        ++userCount;
+        BString buffer;
+        buffer << userCount;
+  
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
+
+        BMessage display;
         if (msg->FindMessage ("display", &display) == B_NO_ERROR)
           ClientAgent::MessageReceived (&display);
       }
-
       break;
-    }
-
-    case M_USER_ADD:
-    {
-      const char *nick;
-      bool ignore;
-      int32 iStatus (STATUS_NORMAL_BIT);
-
-      msg->FindString ("nick", &nick);
-      msg->FindBool ("ignore", &ignore);
-
-      if (ignore) iStatus |= STATUS_IGNORE_BIT;
-
-      namesList->AddItem (new NameItem (nick, iStatus));
-      namesList->SortItems (SortNames);
-
-      ++userCount;
-      BString buffer;
-      buffer << userCount;
-
-      if (!IsHidden())
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
-
-      BMessage display;
-      if (msg->FindMessage ("display", &display) == B_NO_ERROR)
-        ClientAgent::MessageReceived (&display);
-
-      break;
-    }
 
     case M_CHANGE_NICK:
-    {
-      const char *oldNick, *newNick;
-      NameItem *item;
-      int32 thePos;
+      {
+        const char *oldNick, *newNick;
+        NameItem *item;
+        int32 thePos;
 
-      msg->FindString ("oldnick", &oldNick);
-      msg->FindString ("newnick", &newNick);
+        msg->FindString ("oldnick", &oldNick);
+        msg->FindString ("newnick", &newNick);
 
-      if ((thePos = FindPosition (oldNick)) < 0
-      ||  (item = (static_cast<NameItem *>(namesList->ItemAt (thePos)))) == 0)
-        return;
+        if ((thePos = FindPosition (oldNick)) < 0
+        ||  (item = (static_cast<NameItem *>(namesList->ItemAt (thePos)))) == 0)
+          return;
 
-      item->SetName (newNick);
-      namesList->SortItems (SortNames);
+        item->SetName (newNick);
+        namesList->SortItems (SortNames);
 
-      if (myNick.ICompare (oldNick) == 0 && !IsHidden())
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
+        if (myNick.ICompare (oldNick) == 0 && !IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
 
-      ClientAgent::MessageReceived (msg);
+        ClientAgent::MessageReceived (msg);
+      }
       break;
-    }
 
     case M_CHANNEL_NAMES:
-    {
-      bool hit (false);
-
-      for (i = 0; msg->HasString ("nick", i); ++i)
       {
-        const char *nick;
-        bool op, voice, helper, ignored;
+        bool hit (false);
 
-        msg->FindString ("nick", i, &nick);
-        msg->FindBool ("op", i, &op);
-        msg->FindBool ("voice", i, &voice);
-        msg->FindBool ("helper", i, &helper);
-        msg->FindBool ("ignored", i, &ignored);
-
-        if (FindPosition (nick) < 0)
+        for (i = 0; msg->HasString ("nick", i); ++i)
         {
-          int32 iStatus (ignored ? STATUS_IGNORE_BIT : 0);
+          const char *nick;
+          bool op, voice, helper, ignored;
 
-          if (op)
+          msg->FindString ("nick", i, &nick);
+          msg->FindBool ("op", i, &op);
+          msg->FindBool ("voice", i, &voice);
+          msg->FindBool ("helper", i, &helper);
+          msg->FindBool ("ignored", i, &ignored);
+  
+          if (FindPosition (nick) < 0)
           {
-            ++nick;
-            ++opsCount;
-            iStatus |= STATUS_OP_BIT;
-          }
-          else if (voice)
-          {
-            ++nick;
-            iStatus |= STATUS_VOICE_BIT;
-          }
-          else if (helper)
-          {
-            ++nick;
-            iStatus |= STATUS_HELPER_BIT;
-          }
-          else
-            iStatus |= STATUS_NORMAL_BIT;
+            int32 iStatus (ignored ? STATUS_IGNORE_BIT : 0);
 
-          userCount++;
+            if (op)
+            {
+              ++nick;
+              ++opsCount;
+              iStatus |= STATUS_OP_BIT;
+            }
+            else if (voice)
+            {
+              ++nick;
+              iStatus |= STATUS_VOICE_BIT;
+            }
+            else if (helper)
+            {
+              ++nick;
+              iStatus |= STATUS_HELPER_BIT;
+            }
+            else
+              iStatus |= STATUS_NORMAL_BIT;
+ 
+            userCount++;
+ 
+            namesList->AddItem (new NameItem (nick, iStatus));
+            hit = true;
+          }
+        }
+      
+        namesList->SortItems (SortNames);
 
-          namesList->AddItem (new NameItem (nick, iStatus));
-          hit = true;
+        if (hit && !IsHidden())
+        {
+          BString buffer;
+          buffer << opsCount;
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
+
+          buffer = "";
+          buffer << userCount;
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
         }
       }
-      
-      namesList->SortItems (SortNames);
-
-      if (hit && !IsHidden())
-      {
-        BString buffer;
-        buffer << opsCount;
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
-
-        buffer = "";
-        buffer << userCount;
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
-      }
-      
       break;
-    }
 
     case M_CHANNEL_TOPIC:
-    {
-      const char *theTopic;
-      BString buffer;
+      {
+        const char *theTopic;
+        BString buffer;
 
-      msg->FindString ("topic", &theTopic);
-      topic = theTopic;
+        msg->FindString ("topic", &theTopic);
+        topic = theTopic;
       
-      if (!IsHidden())
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, theTopic);
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, theTopic);
 
-      BMessage display;
-      
-      if (msg->FindMessage ("display", &display) == B_NO_ERROR)
-        ClientAgent::MessageReceived (&display);
-
+        BMessage display;
+       
+        if (msg->FindMessage ("display", &display) == B_NO_ERROR)
+          ClientAgent::MessageReceived (&display);
+      }
       break;
-    }
 
     case M_OPEN_MSGAGENT:
-    {
-      const char *theNick;
-      msg->FindString("nick", &theNick);
-      
-      if (theNick == NULL)
       {
-        NameItem *myUser;
-        int32 pos = namesList->CurrentSelection();
-        if (pos >= 0)
-        {
-          myUser = static_cast<NameItem *>(namesList->ItemAt (pos));
-          BString targetNick = myUser->Name();
-          msg->AddString ("nick", targetNick.String());
-        }
-      }
+        const char *theNick;
+        msg->FindString("nick", &theNick);
       
-      sMsgr.SendMessage (msg);
+        if (theNick == NULL)
+        {
+          NameItem *myUser;
+          int32 pos = namesList->CurrentSelection();
+          if (pos >= 0)
+          {
+            myUser = static_cast<NameItem *>(namesList->ItemAt (pos));
+            BString targetNick = myUser->Name();
+            msg->AddString ("nick", targetNick.String());
+          }
+        }
+      
+        sMsgr.SendMessage (msg);
+      }
       break;
-    }
 
     case M_CHANNEL_GOT_KICKED:
-    {
-      const char *theChannel, *kicker, *rest;
-      msg->FindString ("channel", &theChannel);
-      msg->FindString ("kicker", &kicker);
-      msg->FindString ("rest", &rest);    
-
-      BMessage wegotkicked (M_DISPLAY); // "you were kicked"
-      BString buffer;
-      buffer << "*** You have been kicked from "
-      << " by " << kicker << " (" << rest << ")\n";
-      PackDisplay (&wegotkicked, buffer.String(), &quitColor, 0, true);
-      msgr.SendMessage (&wegotkicked);
-
-      BMessage attemptrejoin (M_DISPLAY); // "you were kicked"
-      buffer = "*** Attempting to rejoin ";
-      buffer << theChannel << "...\n";
-      PackDisplay (&attemptrejoin, buffer.String(), &quitColor, 0, true);
-      msgr.SendMessage (&attemptrejoin);
-
-      BMessage send (M_SERVER_SEND);
-      AddSend (&send, "JOIN ");
-      AddSend (&send, theChannel);
-      if (chanKey != "")
       {
-        AddSend (&send, " ");
-        AddSend (&send, chanKey);
-      }     
-      AddSend (&send, endl);
+        const char *theChannel, *kicker, *rest;
+        msg->FindString ("channel", &theChannel);
+        msg->FindString ("kicker", &kicker);
+        msg->FindString ("rest", &rest);    
+
+        BMessage wegotkicked (M_DISPLAY); // "you were kicked"
+        BString buffer;
+        buffer += "*** You have been kicked from ";
+        buffer += theChannel;
+        buffer += " by ";
+        buffer += kicker;
+        buffer += " (";
+        buffer += rest;
+        buffer += ")\n";
+        PackDisplay (&wegotkicked, buffer.String(), &quitColor, 0, true);
+        msgr.SendMessage (&wegotkicked);
+
+        BMessage attemptrejoin (M_DISPLAY); // "you were kicked"
+        buffer = "*** Attempting to rejoin ";
+        buffer += theChannel;
+        buffer += "...\n";
+        PackDisplay (&attemptrejoin, buffer.String(), &quitColor, 0, true);
+        msgr.SendMessage (&attemptrejoin);
+
+        BMessage send (M_SERVER_SEND);
+        AddSend (&send, "JOIN ");
+        AddSend (&send, theChannel);
+        if (chanKey != "")
+        {
+          AddSend (&send, " ");
+          AddSend (&send, chanKey);
+        }     
+        AddSend (&send, endl);
+      }
       break;
-    }
 
     case M_CHANNEL_MODE:
-    {
-      ModeEvent (msg);
+      {
+        ModeEvent (msg);
+      }
       break;
-    }
 
     case M_CHANNEL_MODES:
-    {
-      const char *mode, *chan, *msgz;
-      msg->FindString ("mode", &mode);
-      msg->FindString ("chan", &chan);
-      msg->FindString ("msgz", &msgz);
-
-      if (id.ICompare (chan) == 0)
       {
-        BString realMode (GetWord (mode, 1));
-        int32 place (2);
+        const char *mode, *chan, *msgz;
+        msg->FindString ("mode", &mode);
+        msg->FindString ("chan", &chan);
+        msg->FindString ("msgz", &msgz);
 
-        if (realMode.FindFirst ("l") >= 0)
-          chanLimit = GetWord (mode, place++);
+        if (id.ICompare (chan) == 0)
+        {
+          BString realMode (GetWord (mode, 1));
+          int32 place (2);
+ 
+          if (realMode.FindFirst ("l") >= 0)
+            chanLimit = GetWord (mode, place++);
 
-        if (realMode.FindFirst ("k") >= 0)
-          chanKey = GetWord (mode, place++);
+          if (realMode.FindFirst ("k") >= 0)
+            chanKey = GetWord (mode, place++);
 
-        chanMode = mode;
-        if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
-        
-      }
+          chanMode = mode;
+          if (!IsHidden())
+            vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());  
+        }
       
-      BMessage dispMsg (M_DISPLAY);
-      PackDisplay (&dispMsg, msgz, &opColor, 0, vision_app->GetBool ("timestamp"));
-      BMessenger display (this);
-      display.SendMessage (&dispMsg);
+        BMessage dispMsg (M_DISPLAY);
+        PackDisplay (&dispMsg, msgz, &opColor, 0, vision_app->GetBool ("timestamp"));
+        BMessenger display (this);
+        display.SendMessage (&dispMsg);
+      }
       break;
-    }
 
     case POPUP_MODE:
-    {
-      const char *inaction;
-      msg->FindString ("action", &inaction);
+      {
+        const char *inaction;
+        msg->FindString ("action", &inaction);
 
-      int32 count (0), index (0);
+        int32 count (0), index (0);
       
-      BString victims,
-              targetNick,
-              action (inaction),
-              modechar,
-              polarity;
+        BString victims,
+                targetNick,
+                action (inaction),
+                modechar,
+                polarity;
       
-      NameItem *myUser;
+        NameItem *myUser;
 
-      /// action ///
-      if (action.FindFirst ("voice") >= 0)
-        modechar = "v";
-      else if (action.FindFirst ("op") >= 0)
-        modechar = "o";
-      else
-        break;
+        /// action ///
+        if (action.FindFirst ("voice") >= 0)
+          modechar = "v";
+        else if (action.FindFirst ("op") >= 0)
+          modechar = "o";
+        else
+          break;
 
-      /// polarity ///
-      if (action.FindFirst ("de") >= 0)
-        polarity += " -";
-      else
-        polarity += " +";
+        /// polarity ///
+        if (action.FindFirst ("de") >= 0)
+          polarity += " -";
+        else
+          polarity += " +";
 
-      /// iterate ///
-      while ((i = namesList->CurrentSelection (index++)) >= 0)
-      { 
-        myUser = static_cast<NameItem *>(namesList->ItemAt (i));
-        targetNick = myUser->Name();
+        /// iterate ///
+        while ((i = namesList->CurrentSelection (index++)) >= 0)
+        { 
+          myUser = static_cast<NameItem *>(namesList->ItemAt (i));
+          targetNick = myUser->Name();
 
-        victims += " ";
-        victims += targetNick;
-        count++;
+          victims += " ";
+          victims += targetNick;
+          count++;
+        }
+
+
+        BString command ("/mode ");
+        command += id;
+        command += polarity;
+
+        for (i = 0; i < count; i++)
+          command += modechar;
+
+        command += victims;
+ 
+        ParseCmd (command.String());
       }
-
-
-      BString command ("/mode ");
-      command += id;
-      command += polarity;
-
-      for(i = 0; i < count; i++)
-        command += modechar;
-
-      command += victims;
-
-      ParseCmd (command.String());
-
       break;
-    }
 
     case POPUP_CTCP:
-    {
-      const char *inaction;
-      msg->FindString ("action", &inaction);
+      {
+        const char *inaction;
+        msg->FindString ("action", &inaction);
 
-      int32 index (0);
-      BString victims,
-              targetNick,
-              action (inaction);
-      NameItem *myUser;
-      action.ToUpper();
+        int32 index (0);
+        BString victims,
+                targetNick,
+                action (inaction);
+        NameItem *myUser;
+        action.ToUpper();
 
-      /// iterate ///
-      while ((i = namesList->CurrentSelection (index++)) >= 0)
-      { 
-        myUser = static_cast<NameItem *>(namesList->ItemAt (i));
-        targetNick = myUser->Name();
+        /// iterate ///
+        while ((i = namesList->CurrentSelection (index++)) >= 0)
+        { 
+          myUser = static_cast<NameItem *>(namesList->ItemAt (i));
+          targetNick = myUser->Name();
 
-        victims += targetNick;
-        victims += ",";
+          victims += targetNick;
+          victims += ",";
+        }
+ 
+        victims.RemoveLast (",");
+
+        BString command ("/ctcp ");
+        command += victims;
+        command += " ";
+        command += action;
+
+        ParseCmd (command.String());
       }
-
-      victims.RemoveLast (",");
-
-      BString command ("/ctcp ");
-      command += victims;
-      command += " ";
-      command += action;
-
-      ParseCmd (command.String());
-
       break;
-    }
 
     case POPUP_WHOIS:
-    {
-      int32 index (0);
-      BString victims,
-              targetNick;
-      NameItem *myUser;
+      {
+        int32 index (0);
+        BString victims,
+                targetNick;
+        NameItem *myUser;
 
-      /// iterate ///
-      while ((i = namesList->CurrentSelection (index++)) >= 0)
-      { 
-        myUser = static_cast<NameItem *>(namesList->ItemAt (i));
-        targetNick = myUser->Name();
+        /// iterate ///
+        while ((i = namesList->CurrentSelection (index++)) >= 0)
+        { 
+          myUser = static_cast<NameItem *>(namesList->ItemAt (i));
+          targetNick = myUser->Name();
 
-        victims += targetNick;
-        victims += ",";
+          victims += targetNick;
+          victims += ",";
+        }
+
+        victims.RemoveLast (",");
+  
+        BString command ("/whois ");
+        command += victims;
+
+        ParseCmd (command.String());
       }
-
-      victims.RemoveLast (",");
-
-      BString command ("/whois ");
-      command += victims;
-
-      ParseCmd (command.String());
-
       break;
-    }
 
     case POPUP_KICK:
-    {
-      int32 index (0);
-      BString targetNick,
-              kickMsg (vision_app->GetCommand (CMD_KICK));
-      NameItem *myUser;
+      {
+        int32 index (0);
+        BString targetNick,
+                kickMsg (vision_app->GetCommand (CMD_KICK));
+        NameItem *myUser;
 
-      /// iterate ///
-      while ((i = namesList->CurrentSelection(index++)) >= 0)
-      { 
-        myUser = static_cast<NameItem *>(namesList->ItemAt(i));
-        targetNick = myUser->Name();
+        /// iterate ///
+        while ((i = namesList->CurrentSelection(index++)) >= 0)
+        { 
+          myUser = static_cast<NameItem *>(namesList->ItemAt(i));
+          targetNick = myUser->Name();
+ 
+           BString command ("/kick ");
+           command += targetNick;
+           command += " ";
+           command += kickMsg;
 
-         BString command ("/kick ");
-         command += targetNick;
-         command += " ";
-         command += kickMsg;
-
-         ParseCmd (command.String());
+           ParseCmd (command.String());
+         }
        }
-
        break;
-     }
 
      case M_STATUS_ADDITEMS:
-     {
-       vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-         0, ""), true);
+       {
+         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+           0, ""), true);
        
-       vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-         "Lag: ", "", STATUS_ALIGN_LEFT), true);
+         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+           "Lag: ", "", STATUS_ALIGN_LEFT), true);
 
-       vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-         0, "", STATUS_ALIGN_LEFT), true);
+         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+           0, "", STATUS_ALIGN_LEFT), true);
 
-       vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-         "Users: ", ""), true);
+         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+           "Users: ", ""), true);
 
-       vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-         "Ops: ", ""), true);
+         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+           "Ops: ", ""), true);
 
-       vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-         "Modes: ", ""), true);
+         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+           "Modes: ", ""), true);
 
-       vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-         "", "", STATUS_ALIGN_LEFT), true);
+         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+           "", "", STATUS_ALIGN_LEFT), true);
 
-       // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
-       // We send true on the last SetItemValue().
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String(), false);
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), false);
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String(), false);
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, topic.String(), false);
+         // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
+         // We send true on the last SetItemValue().
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String(), false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String(), false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, topic.String(), false);
 
-       BString buffer;
-       buffer << userCount;
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String(), false);
-       buffer = "";
-       buffer << opsCount;
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String(), true);
-
+         BString buffer;
+         buffer << userCount;
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String(), false);
+         buffer = "";
+         buffer << opsCount;
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String(), true);
+       }
        break;
-     }
 
      case M_CHANNEL_OPTIONS_SHOW:
-     {
-       if (chanOpt)
-         chanOpt->Activate();
-       else
        {
-         chanOpt = new ChannelOptions (id.String(), this);
-         chanOpt->Show();
+         if (chanOpt)
+           chanOpt->Activate();
+         else
+         {
+           chanOpt = new ChannelOptions (id.String(), this);
+           chanOpt->Show();
+         }
        }
-       
        break;
-     }
 
      case M_CHANNEL_OPTIONS_CLOSE:
-     {
-       chanOpt = 0;
+       {
+         chanOpt = 0;
+       }
        break;
-     }
+
 
      case M_CLIENT_QUIT:
-     {
-       if ((msg->HasBool ("vision:part") && msg->FindBool ("vision:part"))
-       ||  (msg->HasBool ("vision:winlist") && msg->FindBool ("vision:winlist")))
        {
-         BMessage send (M_SERVER_SEND);
-         AddSend (&send, "PART ");
-         AddSend (&send, id);
-         AddSend (&send, endl);
-       }  
+         if ((msg->HasBool ("vision:part") && msg->FindBool ("vision:part"))
+         ||  (msg->HasBool ("vision:winlist") && msg->FindBool ("vision:winlist")))
+         {
+           BMessage send (M_SERVER_SEND);
+           AddSend (&send, "PART ");
+           AddSend (&send, id);
+           AddSend (&send, endl);
+         }  
   
-       BMessage deathchant (M_OBITUARY);
-       deathchant.AddPointer ("agent", this);
-       deathchant.AddPointer ("item", agentWinItem);
-       vision_app->pClientWin()->PostMessage (&deathchant);
+         BMessage deathchant (M_OBITUARY);
+         deathchant.AddPointer ("agent", this);
+         deathchant.AddPointer ("item", agentWinItem);
+         vision_app->pClientWin()->PostMessage (&deathchant);
   
-       deathchant.what = M_CLIENT_SHUTDOWN;
-       sMsgr.SendMessage (&deathchant);
+         deathchant.what = M_CLIENT_SHUTDOWN;
+         sMsgr.SendMessage (&deathchant);
+       }
        break;
-     }
 
      default:
       ClientAgent::MessageReceived (msg);

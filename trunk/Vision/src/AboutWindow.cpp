@@ -249,7 +249,7 @@ AboutWindow::QuitRequested (void)
   /*
    * Function purpose: Tell vision_app about our death
    */
-   
+  
   vision_app->PostMessage (M_ABOUT_CLOSE);
   
   return true;

@@ -68,40 +68,39 @@ class ClientAgent : public BView
                                   
     virtual                     ~ClientAgent (void);
 
-	virtual void				MessageReceived (BMessage *);
-	virtual void			AttachedToWindow (void);
-	virtual void			AllAttached (void);
-	virtual void            Show (void);
-	
-	void                            AddMenuItems (BPopUpMenu *);
+    virtual void                MessageReceived (BMessage *);
+    virtual void                AttachedToWindow (void);
+    virtual void                AllAttached (void);
+    virtual void                Show (void);
 
-	float                       ScrollPos(void);
-	void                        SetScrollPos(float);
+    void                        AddMenuItems (BPopUpMenu *);
+
+    float                       ScrollPos(void);
+    void                        SetScrollPos(float);
     void                        ScrollRange(float *, float *);
     
-    bool						ParseCmd (const char *);
-    virtual void				TabExpansion (void);
-	static int32				DNSLookup (void *);
-	static int32				ExecPipe (void *);
+    bool                        ParseCmd (const char *);
+    virtual void                TabExpansion (void);
+    static int32                DNSLookup (void *);
+    static int32                ExecPipe (void *);
 
     virtual void                DroppedFile (BMessage *);
     
-    const BString					&Id (void) const;
-    int32                           Sid (void) const;
+    const BString               &Id (void) const;
+    int32                       Sid (void) const;
     
     BMessenger              msgr;
     
-	void								ChannelMessage (
-											const char *,
-											const char * = 0,
-											const char * = 0,
-											const char * = 0);
-	void								ActionMessage (
-											const char *,
-											const char *);
+    void                        ChannelMessage (
+                                  const char *,
+                                  const char * = 0,
+                                  const char * = 0,
+                                  const char * = 0);
+    void                        ActionMessage (
+                                  const char *,
+                                  const char *);
 
-	void								CTCPAction (BString theTarget, BString
-											theMsg);
+    void                        CTCPAction (BString theTarget, BString theMsg);
 
     WindowListItem                 *agentWinItem;
     
@@ -115,73 +114,73 @@ class ClientAgent : public BView
     BScrollView                 *textScroll;
     VTextControl                *input;
     
-    //AgentSettings					*settings;
+    //AgentSettings             *settings;
 
-	static const char				*endl;
+    static const char               *endl;
 
 
-	friend							ClientInputFilter;
-	
+    friend                          ClientInputFilter;
+ 
+    virtual void                    Display (
+                                      const char *,
+                                      const rgb_color *,
+                                      const BFont * = 0,
+                                      bool = false);
 
-	virtual void					Display (
-											const char *,
-											const rgb_color *,
-											const BFont * = 0,
-											bool = false);
+    virtual void                    Submit (const char *, bool = true, bool = true);
 
-	virtual void					Submit (const char *, bool = true, bool = true);
-	
-	static int32					TimedSubmit (void *);
-	void								PackDisplay (BMessage *,
-											const char *,
-											const rgb_color * = 0,
-											const BFont * = 0,
-											bool = false);
+    static int32                    TimedSubmit (void *);
+    void                            PackDisplay (BMessage *,
+                                      const char *,
+                                      const rgb_color * = 0,
+                                      const BFont * = 0,
+                                      bool = false);
 
-	int32								FirstKnownAs (
-											const BString &,
-											BString &,
-											bool *);
-	int32								FirstSingleKnownAs (
-											const BString &,
-											const BString &);
+    int32                           FirstKnownAs (
+                                      const BString &,
+                                      BString &,
+                                      bool *);
+    int32                           FirstSingleKnownAs (
+                                      const BString &,
+                                      const BString &);
 
-	virtual void					Parser (const char *);
-	virtual bool					SlashParser (const char *);
-	//virtual void					StateChange (BMessage *);
+    virtual void                    Parser (const char *);
+    virtual bool                    SlashParser (const char *);
+    //virtual void                  StateChange (BMessage *);
     
-	void							AddSend (BMessage *, const char *);
-	void							AddSend (BMessage *, const BString &);
-	void							AddSend (BMessage *, int32);
+    void                            AddSend (BMessage *, const char *);
+    void                            AddSend (BMessage *, const BString &);
+    void                            AddSend (BMessage *, int32);
 
-	BString							id;
-	const int32						sid;
-	const BString					serverName;
-	BString							myNick;
-	
-	rgb_color						textColor,
-										ctcpReqColor,
-										nickColor,
-										quitColor,
-										errorColor,
-										joinColor,
-										whoisColor,
-										myNickColor,
-										actionColor,
-										opColor,
-										inputbgColor,
-										inputColor,
-										nickdisplayColor;
+    BString                         id;
+    const int32                     sid;
+    const BString                   serverName;
+    BString                         myNick;
 
-	BFont								myFont,
-										serverFont,
-										inputFont;
-	bool								timeStampState,
-										canNotify,
-										scrolling,
-										isLogging;
-	    BRect                       	frame;
-	BMessenger						sMsgr;
+    rgb_color                       textColor,
+                                      ctcpReqColor,
+                                      nickColor,
+                                      quitColor,
+                                      errorColor,
+                                      joinColor,
+                                      whoisColor,
+                                      myNickColor,
+                                      actionColor,
+                                      opColor,
+                                      inputbgColor,
+                                      inputColor,
+                                      nickdisplayColor;
+
+    BFont                            myFont,
+                                      serverFont,
+                                      inputFont;
+    bool                             timeStampState,
+                                       canNotify,
+                                       scrolling,
+                                       isLogging;
+                                       
+    BRect                            frame;
+    BMessenger                       sMsgr;
 
 };
 

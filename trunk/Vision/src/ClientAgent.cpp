@@ -382,7 +382,7 @@ ClientAgent::Display (
       printbuf += TimeStamp().String();
 
     printbuf << buffer;
-		
+
     off_t len = strlen (printbuf.String());
     logFile.Write (printbuf.String(), len);
   }
@@ -400,7 +400,7 @@ ClientAgent::Display (
     buffer,
     color ? color : &textColor,
     font  ? font  : &myFont);
-		
+
   if (IsHidden())
   {
     BMessage statusMsg (M_UPDATE_STATUS);
@@ -435,7 +435,7 @@ bool
 ClientAgent::SlashParser (const char *data)
 {
   BString first (GetWord (data, 1).ToUpper());
-	
+
   if (ParseCmd (data))
     return true;
 
@@ -446,274 +446,270 @@ ClientAgent::SlashParser (const char *data)
 void
 ClientAgent::MessageReceived (BMessage *msg)
 {
-	switch (msg->what)
-	{
-		// 22/8/99: this will now look for "text" to add to the
-		// input view. -jamie
-		case M_INPUT_FOCUS:
-		{
-			if (msg->HasString ("text"))
-			{
-			    BString newtext;
-				newtext = input->Text();
-				newtext.Append (msg->FindString("text"));
-				input->SetText (newtext.String());
-			}	
-			input->MakeFocus (true);
-			// We don't like your silly selecting-on-focus.
-			input->TextView()->Select (input->TextView()->TextLength(),
-				input->TextView()->TextLength()); 
-
-			break;
-		}
-
-
-		// This could probably be used for some scripting
-		// capability -- oooh, neato!
-		case M_SUBMIT_RAW:
-		{
-			bool lines;
-
-			msg->FindBool ("lines", &lines);
-
-			if (lines)
-			{
-				BMessage *buffer (new BMessage (*msg));
-				thread_id tid;
-
-				buffer->AddPointer ("agent", this);
-				buffer->AddPointer ("window", Window());
-
-				tid = spawn_thread (
-					TimedSubmit,
-					"Timed Submit",
-					B_LOW_PRIORITY,
-					buffer);
-
-				resume_thread (tid);
-			}
-			else
-			{
-				BString buffer;
-				for (int32 i = 0; msg->HasString ("data", i); ++i)
-				{
-					const char *data;
-
-					msg->FindString ("data", i, &data);
-					buffer += (i ? " " : "");
-					buffer += data;
-				}
-				int32 start, finish;
-				if (msg->FindInt32 ("selstart", &start) == B_OK)
-				{
-					
-					msg->FindInt32 ("selend", &finish);
-					if (start != finish)
-					{
-						input->TextView()->Delete (start, finish);
-					}
-					
-					
-					if ((start == 0) && (finish == 0))
-					{
-						input->TextView()->Insert (input->TextView()->TextLength(), buffer.String(), buffer.Length());
-						input->TextView()->Select (input->TextView()->TextLength(),
-							input->TextView()->TextLength());
-					}
-					else
-					{				
-						input->TextView()->Insert (start, buffer.String(), buffer.Length());
-						input->TextView()->Select (start + buffer.Length(), start + buffer.Length()); 				
-					}
-				}
-				else
-				{
-					input->TextView()->Insert (buffer.String());
-					input->TextView()->Select (input->TextView()->TextLength(),
-						input->TextView()->TextLength());
-				}
-				
-				
-				input->TextView()->ScrollToSelection();
-			}
-
-			break;
-		}
-
-		case M_PREVIOUS_INPUT:
-			history->PreviousBuffer (input);
-			break;
-
-		case M_NEXT_INPUT:
-			history->NextBuffer (input);
-			break;
-
-		case M_SUBMIT:
-		{
-			const char *buffer;
-			bool clear (true),
-				 add2history (true);
-			
-			msg->FindString ("input", &buffer);
-
-			if (msg->HasBool ("clear"))
-				msg->FindBool ("clear", &clear);
-
-			if (msg->HasBool ("history"))
-				msg->FindBool ("history", &add2history);
-
-			Submit (buffer, clear, add2history);
-			break;
-		}
-
-		case M_DISPLAY:
-		{
-			const char *buffer;
-
-			for (int32 i = 0; msg->HasMessage ("packed", i); ++i)
-			{
-				BFont *font (&myFont);
-				const rgb_color *color (&textColor); 
-				ssize_t size (sizeof (rgb_color));
-				bool timeStamp (false);
-				BMessage packed;
-
-				msg->FindMessage ("packed", i, &packed);
-
-				if (packed.HasPointer ("font"))
-					packed.FindPointer ("font", reinterpret_cast<void **>(&font));
-
-				if (packed.HasData ("color", B_RGB_COLOR_TYPE))
-					packed.FindData ("color",
-						B_RGB_COLOR_TYPE,
-						reinterpret_cast<const void **>(&color),
-						&size);
-
-				if (packed.HasBool ("timestamp"))
-					packed.FindBool ("timestamp", &timeStamp);
-
-				packed.FindString ("msgz", &buffer);
-				Display (buffer, color, font, timeStamp);
-			}
-			break;
-		}
-		
-		case M_CHANNEL_MSG:
-		{
-			const char *theNick;
-			const char *theMessage;
-			bool hasNick (false);
-			bool me;
-			BString knownAs;
-
-			msg->FindString("nick", &theNick);
-			msg->FindString("msgz", &theMessage);
-
-			if (theMessage[0] == '\1')
-			{
-				BString aMessage (theMessage);
-
-				aMessage.Truncate (aMessage.Length() - 1);
-				aMessage.RemoveFirst ("\1ACTION ");
-				aMessage.RemoveLast ("\1");	// JAVirc appends an illegal space at
-											// the end, so .Truncate doesn't remove
-											// the \1
-				
-				BString tempString("* ");
-				tempString += theNick;
-				tempString += " ";
-				tempString += aMessage;
-				tempString += '\n';
-				Display (tempString.String(), &actionColor, 0, true);
-			}
-			else
-			{
-				Display ("<", theNick == myNick ? &myNickColor : &nickColor, 0, true);
-
-				Display (
-					theNick,
-					&nickdisplayColor);
-					
-				Display (">", theNick == myNick ? &myNickColor : &nickColor);
-				
-				BString tempString;
-				tempString += " ";
-				tempString += theMessage;
-				tempString += '\n';
+  switch (msg->what)
+  {
+    // 22/8/99: this will now look for "text" to add to the
+    // input view. -jamie
+    case M_INPUT_FOCUS:
+      {
+        if (msg->HasString ("text"))
+        {
+          BString newtext;
+          newtext = input->Text();
+          newtext.Append (msg->FindString("text"));
+          input->SetText (newtext.String());
+        }
+        input->MakeFocus (true);
+        // We don't like your silly selecting-on-focus.
+        input->TextView()->Select (input->TextView()->TextLength(),
+        input->TextView()->TextLength()); 
+      }
+      break;
 
 
-				// soley for the purpose of iterating through the words
-				int32 place;
-				BString tempString2 (tempString);
-				while ((place = FirstKnownAs (tempString2, knownAs, &me)) != B_ERROR)
-				{
-					BString buffer;
+    // This could probably be used for some scripting
+    // capability -- oooh, neato!
+    case M_SUBMIT_RAW:
+      {
+        bool lines;
 
-					if (place)
-						tempString2.MoveInto (buffer, 0, place);
+        msg->FindBool ("lines", &lines);
 
-					tempString2.MoveInto (buffer, 0, knownAs.Length());
+        if (lines)
+        {
+          BMessage *buffer (new BMessage (*msg));
+          thread_id tid;
 
-					if (me)
-						hasNick = true;
-				}
+          buffer->AddPointer ("agent", this);
+          buffer->AddPointer ("window", Window());
 
-				Display (tempString.String(), 0);
-			}
+          tid = spawn_thread (
+            TimedSubmit,
+            "Timed Submit",
+            B_LOW_PRIORITY,
+            buffer);
 
-			if (IsHidden())
-			{
-				if (hasNick)
-				{ 
-    				BMessage statusMsg (M_UPDATE_STATUS);
-    				statusMsg.AddPointer ("item", agentWinItem);
-    				statusMsg.AddInt32 ("status", WIN_NICK_BIT);
-    				Window()->PostMessage (&statusMsg);
-				}
-			}
-			
-			break;
-		}
-		
-		case M_CHANGE_NICK:
-		{
-			const char *oldNick;
+          resume_thread (tid);
+        }
+        else
+        {
+          BString buffer;
+          for (int32 i = 0; msg->HasString ("data", i); ++i)
+          {
+            const char *data;
 
-			msg->FindString ("oldnick", &oldNick);
+            msg->FindString ("data", i, &data);
+            buffer += (i ? " " : "");
+            buffer += data;
+          }
 
-			if (myNick.ICompare (oldNick) == 0)
-				myNick = msg->FindString ("newnick");
+          int32 start, finish;
+          
+          if (msg->FindInt32 ("selstart", &start) == B_OK)
+          {
+            msg->FindInt32 ("selend", &finish);
+            if (start != finish)
+              input->TextView()->Delete (start, finish);
 
-			BMessage display;
-			if (msg->FindMessage ("display", &display) == B_NO_ERROR)
-				ClientAgent::MessageReceived (&display);
+            if ((start == 0) && (finish == 0))
+            {
+              input->TextView()->Insert (input->TextView()->TextLength(),
+                buffer.String(), buffer.Length());
+              input->TextView()->Select (input->TextView()->TextLength(),
+                input->TextView()->TextLength());
+            }
+            else
+            {
+              input->TextView()->Insert (start, buffer.String(), buffer.Length());
+              input->TextView()->Select (start + buffer.Length(),
+                start + buffer.Length());
+            }
+          }
+          else
+          {
+            input->TextView()->Insert (buffer.String());
+            input->TextView()->Select (input->TextView()->TextLength(),
+            input->TextView()->TextLength());
+          }
+        
+          input->TextView()->ScrollToSelection();
+        }
+      }
+      break;
 
-			break;
-		}
-		
-		case M_LOOKUP_WEBSTER:
-		{
-		  BString lookup;
-		  msg->FindString ("string", &lookup);
-		  lookup = StringToURI (lookup.String());
-		  lookup.Prepend ("http://www.dictionary.com/cgi-bin/dict.pl?term=");	  		  		  
-		  vision_app->LoadURL (lookup.String());
-		  break;
-		}
+    case M_PREVIOUS_INPUT:
+      {
+        history->PreviousBuffer (input);
+      }
+      break;
 
-		case M_LOOKUP_GOOGLE:
-		{
-		  BString lookup;
-		  msg->FindString ("string", &lookup);
-		  lookup = StringToURI (lookup.String());
-		  lookup.Prepend ("http://www.google.com/search?q=");	  		  		  
-		  vision_app->LoadURL (lookup.String());
-		  break;
-		}
-		
-		default:
-			BView::MessageReceived (msg);
-	}
+    case M_NEXT_INPUT:
+      {
+        history->NextBuffer (input);
+      }
+      break;
+
+    case M_SUBMIT:
+      {
+        const char *buffer;
+        bool clear (true),
+        add2history (true);
+    
+        msg->FindString ("input", &buffer);
+    
+        if (msg->HasBool ("clear"))
+          msg->FindBool ("clear", &clear);
+
+        if (msg->HasBool ("history"))
+          msg->FindBool ("history", &add2history);
+
+        Submit (buffer, clear, add2history);
+      } 
+      break;
+
+    case M_DISPLAY:
+      {
+        const char *buffer;
+
+        for (int32 i = 0; msg->HasMessage ("packed", i); ++i)
+        {
+          BFont *font (&myFont);
+          const rgb_color *color (&textColor); 
+          ssize_t size (sizeof (rgb_color));
+          bool timeStamp (false);
+          BMessage packed;
+
+          msg->FindMessage ("packed", i, &packed);
+
+          if (packed.HasPointer ("font"))
+            packed.FindPointer ("font", reinterpret_cast<void **>(&font));
+
+          if (packed.HasData ("color", B_RGB_COLOR_TYPE))
+            packed.FindData ("color",
+              B_RGB_COLOR_TYPE,
+              reinterpret_cast<const void **>(&color),
+              &size);
+
+          if (packed.HasBool ("timestamp"))
+            packed.FindBool ("timestamp", &timeStamp);
+
+          packed.FindString ("msgz", &buffer);
+          Display (buffer, color, font, timeStamp);
+        }
+      }
+      break;
+
+    case M_CHANNEL_MSG:
+      {
+        const char *theNick;
+        const char *theMessage;
+        bool hasNick (false);
+        bool me;
+        BString knownAs;
+
+        msg->FindString("nick", &theNick);
+        msg->FindString("msgz", &theMessage);
+
+        if (theMessage[0] == '\1')
+        {
+          BString aMessage (theMessage);
+
+          int32 theChars (aMessage.Length());
+          aMessage.Truncate (theChars - 1);
+                   
+          if (aMessage[theChars - 1] == '\1')
+            aMessage.Truncate (theChars - 1);
+      
+          aMessage.RemoveFirst ("\1ACTION ");
+          
+          BString tempString("* ");
+          tempString += theNick;
+          tempString += " ";
+          tempString += aMessage;
+          tempString += '\n';
+          Display (tempString.String(), &actionColor, 0, true);
+        }
+        else
+        {
+          Display ("<", theNick == myNick ? &myNickColor : &nickColor, 0, true);
+          Display (theNick, &nickdisplayColor);
+          Display (">", theNick == myNick ? &myNickColor : &nickColor);
+
+          BString tempString;
+          tempString += " ";
+          tempString += theMessage;
+          tempString += '\n';
+
+          // soley for the purpose of iterating through the words
+          int32 place;
+          BString tempString2 (tempString);
+          while ((place = FirstKnownAs (tempString2, knownAs, &me)) != B_ERROR)
+          {
+            BString buffer;
+
+            if (place)
+              tempString2.MoveInto (buffer, 0, place);
+
+            tempString2.MoveInto (buffer, 0, knownAs.Length());
+
+            if (me)
+              hasNick = true;
+          }
+
+          Display (tempString.String(), 0);
+        }
+
+        if (IsHidden())
+        {
+          if (hasNick)
+          { 
+            BMessage statusMsg (M_UPDATE_STATUS);
+            statusMsg.AddPointer ("item", agentWinItem);
+            statusMsg.AddInt32 ("status", WIN_NICK_BIT);
+            Window()->PostMessage (&statusMsg);
+          }
+        }
+      }
+      break;
+
+    case M_CHANGE_NICK:
+      {
+        const char *oldNick;
+
+        msg->FindString ("oldnick", &oldNick);
+
+        if (myNick.ICompare (oldNick) == 0)
+          myNick = msg->FindString ("newnick");
+
+        BMessage display;
+        if (msg->FindMessage ("display", &display) == B_NO_ERROR)
+          ClientAgent::MessageReceived (&display);
+      }
+      break;
+
+    case M_LOOKUP_WEBSTER:
+      {
+        BString lookup;
+        msg->FindString ("string", &lookup);
+        lookup = StringToURI (lookup.String());
+        lookup.Prepend ("http://www.dictionary.com/cgi-bin/dict.pl?term=");      
+        vision_app->LoadURL (lookup.String());
+      }
+      break;
+
+    case M_LOOKUP_GOOGLE:
+      {
+        BString lookup;
+        msg->FindString ("string", &lookup);
+        lookup = StringToURI (lookup.String());
+        lookup.Prepend ("http://www.google.com/search?q=");      
+        vision_app->LoadURL (lookup.String());
+      }
+      break;
+
+    default:
+      BView::MessageReceived (msg);
+  }
 }
 
 
@@ -732,12 +728,12 @@ ClientAgent::Sid (void) const
 
 int32
 ClientAgent::FirstKnownAs (
-	const BString &data,
-	BString &result,
-	bool *me)
+  const BString &data,
+  BString &result,
+  bool *me)
 {
   BString myAKA (vision_app->GetString ("alsoKnownAs"));
-	
+
   int32 hit (data.Length()),
         i,
         place;
@@ -760,7 +756,7 @@ ClientAgent::FirstKnownAs (
       *me = true;
     }
   }
-			
+
   return hit < data.Length() ? hit : B_ERROR;
 }
 
@@ -817,20 +813,25 @@ ClientAgent::AddSend (BMessage *msg, int32 value)
 
 void
 ClientAgent::ChannelMessage (
-	const char *msgz,
-	const char *nick,
-	const char *ident,
-	const char *address)
+  const char *msgz,
+  const char *nick,
+  const char *ident,
+  const char *address)
 {
-	BMessage msg (M_CHANNEL_MSG);
+  BMessage msg (M_CHANNEL_MSG);
 
-	msg.AddString ("msgz", msgz);
+  msg.AddString ("msgz", msgz);
 
-	if (nick)    msg.AddString ("nick", nick);
-	if (ident)   msg.AddString ("ident", ident);
-	if (address) msg.AddString ("address", address);
+  if (nick)
+    msg.AddString ("nick", nick);
+  
+  if (ident)
+    msg.AddString ("ident", ident);
+  
+  if (address)
+    msg.AddString ("address", address);
 
-	msgr.SendMessage (&msg);
+  msgr.SendMessage (&msg);
 }
 
 void
@@ -858,13 +859,14 @@ ClientAgent::ActionMessage (
 void
 ClientAgent::CTCPAction (BString theTarget, BString theMsg)
 {
-  BString theCTCP = GetWord(theMsg.String(), 1).ToUpper();
-  BString theRest = RestOfString(theMsg.String(), 2);
-	
-  BString tempString ("[CTCP->");
-	
-  tempString << theTarget << "] " << theCTCP;
-	
+  BString theCTCP (GetWord (theMsg.String(), 1).ToUpper()),
+          theRest (RestOfString (theMsg.String(), 2)),
+          tempString ("[CTCP->");
+
+  tempString += theTarget;
+  tempString += "] ";
+  tempString += theCTCP;
+
   if (theRest != "-9z99")
   {
     tempString += " ";
@@ -875,5 +877,4 @@ ClientAgent::CTCPAction (BString theTarget, BString theMsg)
     tempString += '\n';
 
   Display (tempString.String(), &ctcpReqColor, &serverFont);
-	
 }

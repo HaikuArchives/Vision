@@ -1,6 +1,19 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0417]
+ 2001-04-17
+   * Code audit time!
+     - Removed the last of those nasty tab characters from the code.
+     - Changed the scopes in all switch()'s to result in better memory
+       management and smaller binary size.
+     - Changed some BString <<'s to BString += that I missed in the last audit
+       (+= is faster)
+     - Cut down on duplicate code in some switch cases.
+   * /dns <nick> will work in MessageAgents now
+   * Added Local IP lookup, along with a check to see if it's a private IP.
+   * We qualify for version 0.2 now.
+
 [0.1.0414]
  2001-04-14
    * Fix regression from yesterday's myNick fix; all nick changes were showing in
@@ -28,8 +41,8 @@ http://vision.sourceforge.net
 [0.1.0409]
  2001-04-10
    * Fix an issue where joining multiple channels quickly would cause NickList sorting
-     issues (/join #chan1,#chan2 for example). This a couple other theoretical cases,
-     too.
+     issues (/join #chan1,#chan2 for example). This fixes a couple other theoretical
+     cases, too.
    * Change the default action color to purple. Who picked red variations for just
      about every event anyway!? This makes it easier to see actions among quits
  2001-04-09

@@ -79,25 +79,25 @@ NamesView::KeyDown (const char * bytes, int32 numBytes)
 void NamesView::AttachedToWindow (void)
 {
   myPopUp = new BPopUpMenu("User selection", false, false);
-	
+
 
   BMessage *myMessage = new BMessage (POPUP_WHOIS);
   myPopUp->AddItem(new BMenuItem("Whois", myMessage));
-	
+
   myMessage = new BMessage (M_OPEN_MSGAGENT);
   myPopUp->AddItem(new BMenuItem("Query", myMessage));
-	
+
   myPopUp->AddSeparatorItem();
-	
+
 //  myMessage = new BMessage(SEND_ACTION);
 //  myPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
 
 //  myMessage = new BMessage(CHAT_ACTION);
 //  myPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
-		
+
   CTCPPopUp = new BMenu("CTCP");
   myPopUp->AddItem( CTCPPopUp );
-		
+
   myMessage = new BMessage(POPUP_CTCP);
   myMessage->AddString("action", "ping");
   CTCPPopUp->AddItem(new BMenuItem("PING", myMessage));
@@ -105,9 +105,9 @@ void NamesView::AttachedToWindow (void)
   myMessage = new BMessage(POPUP_CTCP);
   myMessage->AddString("action", "version");
   CTCPPopUp->AddItem(new BMenuItem("VERSION", myMessage));
-	
+
   CTCPPopUp->AddSeparatorItem();
-	
+
   myMessage = new BMessage(POPUP_CTCP);
   myMessage->AddString("action", "finger");
   CTCPPopUp->AddItem(new BMenuItem("FINGER", myMessage));
@@ -125,7 +125,7 @@ void NamesView::AttachedToWindow (void)
   CTCPPopUp->AddItem(new BMenuItem("USERINFO", myMessage));
 
   myPopUp->AddSeparatorItem();
-	
+
   myMessage = new BMessage(POPUP_MODE);
   myMessage->AddString("action", "op");
   myPopUp->AddItem(new BMenuItem("Op", myMessage));
@@ -133,7 +133,7 @@ void NamesView::AttachedToWindow (void)
   myMessage = new BMessage(POPUP_MODE);
   myMessage->AddString("action", "deop");
   myPopUp->AddItem(new BMenuItem("Deop", myMessage));
-	
+
   myMessage = new BMessage(POPUP_MODE);
   myMessage->AddString("action", "voice");
   myPopUp->AddItem(new BMenuItem("Voice", myMessage));
@@ -145,11 +145,11 @@ void NamesView::AttachedToWindow (void)
   myMessage = new BMessage(POPUP_KICK);
   myPopUp->AddItem(new BMenuItem("Kick", myMessage));
 
-	
+
   // PopUp Menus tend to have be_plain_font
   myPopUp->SetFont (be_plain_font);
   CTCPPopUp->SetFont (be_plain_font);
-	
+
   myPopUp->SetTargetForItems (this);
   CTCPPopUp->SetTargetForItems (this);
 }
@@ -183,19 +183,19 @@ NamesView::MouseDown (BPoint myPoint)
       
       BListItem *item (ItemAt (IndexOf(myPoint)));
       if (item && !item->IsSelected())
-	  {
-	    // "double" clicked away from another selection
-	    Select (IndexOf (myPoint), false);
-	    currentindex = IndexOf (myPoint);
-	    _tracking = true;
-	  }
-	  else if (item && item->IsSelected())
+      {
+        // "double" clicked away from another selection
+        Select (IndexOf (myPoint), false);
+        currentindex = IndexOf (myPoint);
+        _tracking = true;
+      }
+      else if (item && item->IsSelected())
       {
         // double clicking on a single item
         NameItem *myItem (reinterpret_cast<NameItem *>(item));
         BString theNick (myItem->Name());
         BMessage msg (M_OPEN_MSGAGENT);
-	
+
         msg.AddString ("nick", theNick.String());
         reinterpret_cast<ChannelAgent *>(Parent()->Parent())->msgr.SendMessage (&msg);
       }
@@ -238,7 +238,7 @@ NamesView::MouseDown (BPoint myPoint)
       currentindex = IndexOf (myPoint);
       handled = true;
     }
-	
+
     if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
     && (keymodifiers & B_SHIFT_KEY)   == 0
     && (keymodifiers & B_OPTION_KEY)  == 0
@@ -335,83 +335,83 @@ NamesView::SetColor (int32 which, rgb_color color)
   switch (which)
   {
     case C_OP:
-    {
-      opColor = color;
-
-      // We try to be nice and only Invalidate Op's
-      for (i = 0; i < CountItems(); ++i)
       {
-        NameItem *item ((NameItem *)ItemAt (i));
+        opColor = color;
 
-        if ((item->Status() & STATUS_OP_BIT) != 0)
-          InvalidateItem (i);
+        // We try to be nice and only Invalidate Op's
+        for (i = 0; i < CountItems(); ++i)
+        {
+          NameItem *item ((NameItem *)ItemAt (i));
+
+          if ((item->Status() & STATUS_OP_BIT) != 0)
+            InvalidateItem (i);
+        }
       }
       break;
-    }
 
     case C_VOICE:
-    {
-      voiceColor = color;
-
-      // Again.. nice.
-      for (i = 0; i < CountItems(); ++i)
       {
-        NameItem *item ((NameItem *)ItemAt (i));
+        voiceColor = color;
 
-        if ((item->Status() & STATUS_VOICE_BIT) != 0)
-          InvalidateItem (i);
+        // Again.. nice.
+        for (i = 0; i < CountItems(); ++i)
+        {
+          NameItem *item ((NameItem *)ItemAt (i));
+
+          if ((item->Status() & STATUS_VOICE_BIT) != 0)
+            InvalidateItem (i);
+        }
       }
       break;
-    }
     
     case C_HELPER:
-    {
-     helperColor = color;
+      {
+        helperColor = color;
      
-     for (i = 0; i < CountItems(); ++i)
-     {
-       NameItem *item((NameItem *)ItemAt (i));
+        for (i = 0; i < CountItems(); ++i)
+        {
+          NameItem *item((NameItem *)ItemAt (i));
        
-       if ((item->Status() & STATUS_HELPER_BIT) != 0)
-         InvalidateItem (i);
+          if ((item->Status() & STATUS_HELPER_BIT) != 0)
+            InvalidateItem (i);
+        }
      }
      break;
-    }
 
     case C_NAMES:
-    {
-      textColor = color;
-
-      for (i = 0; i < CountItems(); ++i)
       {
-        NameItem *item ((NameItem *)ItemAt (i));
+        textColor = color;
 
-        if ((item->Status() & (STATUS_VOICE_BIT | STATUS_HELPER_BIT | STATUS_OP_BIT)) == 0)
-          InvalidateItem (i);
+        for (i = 0; i < CountItems(); ++i)
+        {
+          NameItem *item ((NameItem *)ItemAt (i));
+
+          if ((item->Status() & (STATUS_VOICE_BIT | STATUS_HELPER_BIT | STATUS_OP_BIT)) == 0)
+            InvalidateItem (i);
+        }
       }
       break;
-    }
 
     case C_NAMES_BACKGROUND:
-    {
-      SetViewColor (bgColor = color);
-      Invalidate();
-      break;
-    }
-
-    case C_IGNORE:
-    {
-      ignoreColor = color;
-
-      for (i = 0; i < CountItems(); ++i)
       {
-        NameItem *item ((NameItem *)ItemAt (i));
-
-        if ((item->Status() & (STATUS_IGNORE_BIT)) != 0)
-          InvalidateItem (i);
+        SetViewColor (bgColor = color);
+        Invalidate();
       }
       break;
-    }
+
+    case C_IGNORE:
+      {
+        ignoreColor = color;
+
+        for (i = 0; i < CountItems(); ++i)
+        {
+          NameItem *item ((NameItem *)ItemAt (i));
+
+          if ((item->Status() & (STATUS_IGNORE_BIT)) != 0)
+            InvalidateItem (i);
+        }
+      }
+      break;
   }
 }
 

@@ -84,10 +84,10 @@ WindowList::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     case M_MENU_NUKE:
-    {
-      CloseActive();
+      {
+        CloseActive();
+      }
       break;
-    }
     
     default:
       BListView::MessageReceived (msg);
@@ -208,32 +208,32 @@ WindowList::SetColor (int32 which, rgb_color color)
   switch (which)
   {
     case C_WINLIST_NEWS:
-    {
-       newsColor = color;
+      {
+         newsColor = color;
 
-       for (int32 i = 0; i < CountItems(); ++i)
-       {
-         WindowListItem *item ((WindowListItem *)ItemAt (i));
+         for (int32 i = 0; i < CountItems(); ++i)
+         {
+           WindowListItem *item ((WindowListItem *)ItemAt (i));
 
-         if ((item->Status() & WIN_NEWS_BIT) != 0)
-           InvalidateItem (i);
+           if ((item->Status() & WIN_NEWS_BIT) != 0)
+             InvalidateItem (i);
+         }
        }
        break;
-    }
 
     case C_WINLIST_NICK:
-    {
-       nickColor = color;
+      {
+         nickColor = color;
 
-       for (int32 i = 0; i < CountItems(); ++i)
-       {
-         WindowListItem *item ((WindowListItem *)ItemAt (i));
+         for (int32 i = 0; i < CountItems(); ++i)
+         {
+           WindowListItem *item ((WindowListItem *)ItemAt (i));
 
-         if ((item->Status() & WIN_NICK_BIT) != 0)
-           InvalidateItem (i);
+           if ((item->Status() & WIN_NICK_BIT) != 0)
+             InvalidateItem (i);
+         }
        }
        break;
-    }
   }
 }
 

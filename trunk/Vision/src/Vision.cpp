@@ -79,6 +79,7 @@ VisionApp::VisionApp (void)
   debugrecv = false;
   debugsend = false;
   debugsettings = false;
+  ShuttingDown = false;
   
   // :TODO: wade 013101 move colors to settings class
   const rgb_color myBlack             = {0,0,0, 255};
@@ -167,6 +168,83 @@ VisionApp::VisionApp (void)
 }
 
 void
+VisionApp::ThreadStates (void)
+{
+  thread_id team (Team());
+  int32 cookie (0);
+  thread_info info;
+	
+  BString buffer;
+  int32 count (0);
+
+  while (get_next_thread_info (team, &cookie, &info) == B_NO_ERROR)
+  {
+    buffer << "thread: " << info.thread;
+    buffer << " name:  " << info.name;
+    buffer << " state: ";
+			
+    switch ((int32)info.state)
+    {
+      case B_THREAD_RUNNING:
+        {
+          buffer << "running\n";
+        }
+        break;
+        
+      case B_THREAD_READY:
+        {
+          buffer << "ready\n";
+        }
+        break;
+        
+      case B_THREAD_RECEIVING:
+        {
+          buffer << "receiving\n";
+        }
+        break;
+        
+      case B_THREAD_ASLEEP:
+        {
+          buffer << "asleep\n";
+        }
+        break;
+        
+      case B_THREAD_SUSPENDED:
+        {
+          buffer << "suspended\n";
+        }
+        break;
+        
+      case B_THREAD_WAITING:
+        {
+          buffer << "waiting\n";
+        }
+        break;
+        
+      default:
+        {
+          buffer << "???\n";
+        }
+    }								
+    ++count;
+  }
+	
+  if (buffer.Length())
+  {
+    BAlert *alert (new BAlert (
+      "Too many threads",
+      buffer.String(),
+      count > 1 ? "Damn" : "Cool",
+      0,
+      0,
+      B_WIDTH_AS_USUAL,
+      count > 1 ? B_STOP_ALERT : B_INFO_ALERT));
+      alert->Go();
+  }
+    
+}
+
+void
 VisionApp::InitSettings (void)
 {
     if (debugsettings)
@@ -201,59 +279,55 @@ VisionApp::LoadDefaults (int32 section)
   switch (section)
   {
     case SET_SERVER:
-    {
-      if (!visionSettings->HasString ("nickname1"))
-        visionSettings->AddString ("nickname1", "vision");
+      {
+        if (!visionSettings->HasString ("nickname1"))
+          visionSettings->AddString ("nickname1", "vision");
 
-      if (!visionSettings->HasString ("nickname2"))
-        visionSettings->AddString ("nickname2", "vision2");
+        if (!visionSettings->HasString ("nickname2"))
+          visionSettings->AddString ("nickname2", "vision2");
 
-      if (!visionSettings->HasString ("realname"))
-        visionSettings->AddString ("realname", "Heisenberg may have slept here");
+        if (!visionSettings->HasString ("realname"))
+          visionSettings->AddString ("realname", "Heisenberg may have slept here");
 
-      if (!visionSettings->HasString ("username"))
-        visionSettings->AddString ("username", "vision");
-    
+        if (!visionSettings->HasString ("username"))
+          visionSettings->AddString ("username", "vision");
+      }
       break;
-    }
     
     case SET_GENERAL:
-    {
-      if (!visionSettings->HasBool ("versionParanoid"))
-        visionSettings->AddBool ("versionParanoid", false);
+      {
+        if (!visionSettings->HasBool ("versionParanoid"))
+          visionSettings->AddBool ("versionParanoid", false);
 
-      if (!visionSettings->HasBool ("timestamp"))
-        visionSettings->AddBool ("timestamp", false);
-
+        if (!visionSettings->HasBool ("timestamp"))
+          visionSettings->AddBool ("timestamp", false);
+      }
       break;
-    }
     
     case SET_WINDOW:
-    {
-      if (!visionSettings->HasBool ("catchAltW"))
-        visionSettings->AddBool ("catchAltW", false);
+      {
+        if (!visionSettings->HasBool ("catchAltW"))
+          visionSettings->AddBool ("catchAltW", false);
 
-      if (!visionSettings->HasRect ("clientWinRect"))
-        visionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
-    
+        if (!visionSettings->HasRect ("clientWinRect"))
+          visionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
+      }
       break;
-    }
 
     case SET_NOTIFY:
-    {
-      if (!visionSettings->HasString ("alsoKnownAs"))
-        visionSettings->AddString ("alsoKnownAs", "-9y99");
-    
+      {
+        if (!visionSettings->HasString ("alsoKnownAs"))
+          visionSettings->AddString ("alsoKnownAs", "-9y99");
+      }
       break;
-    }
-
   }
 }
 
 bool
 VisionApp::QuitRequested (void)
 {
-
+  ShuttingDown = true;
+  
   BMessage *quitRequest (CurrentMessage());
 
   if ((clientWin) && (!quitRequest->HasBool ("real_thing")))
@@ -265,7 +339,12 @@ VisionApp::QuitRequested (void)
   if (settingsloaded)
     if ((visionSettings->Save() == B_OK) && debugsettings)
       printf (":SETTINGS: saved to file\n");
-      
+  
+  // give our child threads a chance to die gracefully
+  snooze (500000);  // 0.5 seconds
+  
+  //ThreadStates();
+  
   return true;
 }
 
@@ -361,31 +440,30 @@ VisionApp::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     case M_ABOUT_CLOSE:
-    {
-      aboutWin = 0;
+      {
+        aboutWin = 0;
+        if (ShuttingDown)
+          PostMessage (B_QUIT_REQUESTED);
+      }    
       break;
-    }
     
     case M_SETUP_SHOW:
-    {
-      if (setupWin)
       {
-        setupWin->Activate();
-      }
-      else
-      {
-        setupWin = new SetupWindow(false);
-        setupWin->Show();
-      }
-      
+        if (setupWin)
+          setupWin->Activate();
+        else
+        {
+          setupWin = new SetupWindow(false);
+          setupWin->Show();
+        }
+      }      
       break;
-    }
     
     case M_SETUP_CLOSE:
-    {
-      setupWin = 0;
+      {
+        setupWin = 0;
+      }
       break;
-    }
 
     default:
       BApplication::MessageReceived (msg);
@@ -413,10 +491,10 @@ VisionApp::VisionVersion (int typebit)
   switch (typebit)
   {
     case VERSION_VERSION:
-    {
-      static BString version_version (VERSION_STRING);
-      return version_version;
-    }
+      {
+        static BString version_version (VERSION_STRING);
+        return version_version;
+      }
     case VERSION_DATE:
     {
       static BString version_builddate (BUILD_DATE);

@@ -48,142 +48,143 @@
 bool
 ServerAgent::ParseENums (const char *data, const char *sWord)
 {
-  //BMessenger msgr (this);
-  BString secondWord (sWord);
-  int num (atoi (secondWord.String()));
+  int num (atoi (sWord));
 	
   
   switch (num)
   {
     case ZERO:                 // 0
-    {
-      // wasn't a numeric, or the server is playing tricks on us
+      {
+        // wasn't a numeric, or the server is playing tricks on us
+      }
       return false;
-    }
     
     case ERR_UNKNOWNCOMMAND:   // 421
-    {
-      BString tempString (RestOfString (data, 4)),
-              badCmd (GetWord (data, 4));
-		
-      if (badCmd == "VISION_LAG_CHECK")
       {
-        int32 difference (system_time() - lagCheck);
-        if (difference > 0)
+        
+        ParseENums (":irc.elric.net 329 kurros2 #haha -1000", "329");
+        
+        BString tempString (RestOfString (data, 4)),
+                badCmd (GetWord (data, 4));
+		
+        if (badCmd == "VISION_LAG_CHECK")
         {
-          int32 secs (difference / 1000000);
-          int32 milli (difference / 1000 - secs * 1000);
-          char lag[15] = "";
-          sprintf (lag, "%ld.%03ld", secs, milli);
-          myLag = lag;
-          lagCount = 0;
-          checkingLag = false;
-          msgr.SendMessage (M_LAG_CHANGED);
-        }			
+          int32 difference (system_time() - lagCheck);
+          if (difference > 0)
+          {
+            int32 secs (difference / 1000000);
+            int32 milli (difference / 1000 - secs * 1000);
+            char lag[15] = "";
+            sprintf (lag, "%ld.%03ld", secs, milli);
+            myLag = lag;
+            lagCount = 0;
+            checkingLag = false;
+            msgr.SendMessage (M_LAG_CHANGED);
+          }			
+        }
+        else
+        {
+          tempString.RemoveFirst (":");
+          tempString.Append ("\n");
+          Display (tempString.String(), 0);
+        }  
       }
-      else
-      {
-        tempString.RemoveFirst (":");
-        tempString.Append ("\n");
-        Display (tempString.String(), 0);
-      }
-		
-      return true;    
-    }
+      return true;  
   
   
     case RPL_WELCOME:          // 001
     case RPL_YOURHOST:         // 002
     case RPL_CREATED:          // 003
-    case RPL_MYINFO:          // 004
-    {
-      isConnected  = true;
-      isConnecting = false;
-      initialMotd = true;
-      retry = 0;
-
-      myLag = "0.000";
-      msgr.SendMessage (M_LAG_CHANGED);
-
-      //BMessage msg (M_SERVER_CONNECTED);
-      //msg.AddString ("server", serverName.String());
-      //bowser_app->msgr.SendMessage (&msg);
-
-      BString theNick (GetWord (data, 3));
-      myNick = theNick;
-      
-      if (!IsHidden())
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, theNick.String());
-
-      BString theMsg (RestOfString (data, 4));
-      theMsg.RemoveFirst (":");
-      theMsg.Prepend ("* ");
-      theMsg.Append ("\n");
-      Display (theMsg.String(), 0);
-      
-      
-      if (num == RPL_MYINFO)
+    case RPL_MYINFO:           // 004
       {
-        // set "real" hostname
-        serverHostName = (GetWord (data, 1));
-        serverHostName.RemoveFirst (":");
-        
-        agentWinItem->SetName (serverHostName.String());
-        
+        isConnected  = true;
+        isConnecting = false;
+        initialMotd = true;
+        retry = 0;
+
+        myLag = "0.000";
+        msgr.SendMessage (M_LAG_CHANGED);
+
+        //BMessage msg (M_SERVER_CONNECTED);
+        //msg.AddString ("server", serverName.String());
+        //bowser_app->msgr.SendMessage (&msg);
+
+        BString theNick (GetWord (data, 3));
+        myNick = theNick;
+      
         if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverHostName.String());
-        
-        
-        // detect IRCd
-        ircdtype = IRCD_STANDARD;
-        
-        if (theMsg.FindFirst("hybrid") > 0)
-          ircdtype = IRCD_HYBRID;
-        else if (theMsg.FindFirst("UltimateIRCd") > 0)
-          ircdtype = IRCD_ULTIMATE;
-        else if (theMsg.FindFirst("comstud") > 0)
-          ircdtype = IRCD_COMSTUD;
-        else if (theMsg.FindFirst("Fuckoff") > 0)
-          ircdtype = IRCD_FUCKOFF;
-        else if (theMsg.FindFirst("u2.") > 0)
-          ircdtype = IRCD_UNDERNET;
-        else if (theMsg.FindFirst("PTlink") > 0)
-          ircdtype = IRCD_PTLINK;
-        else if (theMsg.FindFirst ("CR") > 0)
-          ircdtype = IRCD_CONFERENCEROOM;
-        else if (theMsg.FindFirst ("nn-") > 0)
-          ircdtype = IRCD_NEWNET;
-      } 
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK,
+            theNick.String());
+
+        BString theMsg (RestOfString (data, 4));
+        theMsg.RemoveFirst (":");
+        theMsg.Prepend ("* ");
+        theMsg.Append ("\n");
+        Display (theMsg.String(), 0);
       
       
+        if (num == RPL_MYINFO)
+        {
+          // set "real" hostname
+          serverHostName = (GetWord (data, 1));
+          serverHostName.RemoveFirst (":");
+        
+          agentWinItem->SetName (serverHostName.String());
+        
+          if (!IsHidden())
+            vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER,
+              serverHostName.String());
+        
+        
+          // detect IRCd
+          ircdtype = IRCD_STANDARD;
+        
+          if (theMsg.FindFirst("hybrid") > 0)
+            ircdtype = IRCD_HYBRID;
+          else if (theMsg.FindFirst("UltimateIRCd") > 0)
+            ircdtype = IRCD_ULTIMATE;
+          else if (theMsg.FindFirst("comstud") > 0)
+            ircdtype = IRCD_COMSTUD;
+          else if (theMsg.FindFirst("Fuckoff") > 0)
+            ircdtype = IRCD_FUCKOFF;
+          else if (theMsg.FindFirst("u2.") > 0)
+            ircdtype = IRCD_UNDERNET;
+          else if (theMsg.FindFirst("PTlink") > 0)
+            ircdtype = IRCD_PTLINK;
+          else if (theMsg.FindFirst ("CR") > 0)
+            ircdtype = IRCD_CONFERENCEROOM;
+          else if (theMsg.FindFirst ("nn-") > 0)
+            ircdtype = IRCD_NEWNET;
+        } 
+      }
       return true;
-    }
     
         
     case RPL_PROTOCTL:         // 005
-    {
-      // this numeric also serves as RPL_NNMAP on Newnet
-
-      BString theMsg (RestOfString (data, 4));
-      theMsg.RemoveFirst (":");
-      theMsg.Append ("\n");      
-      
-      switch (ircdtype)
       {
-        case IRCD_NEWNET:
+        // this numeric also serves as RPL_NNMAP on Newnet
+
+        BString theMsg (RestOfString (data, 4));
+        theMsg.RemoveFirst (":");
+        theMsg.Append ("\n");      
+      
+        switch (ircdtype)
         {
-          Display (theMsg.String(), 0);          
-          return true;
-        }
+          case IRCD_NEWNET:
+            {
+              Display (theMsg.String(), 0);          
+            }
+            break;
         
-        default:
-        {
-          theMsg.Prepend ("* ");
-          Display (theMsg.String(), 0);
-          return true;
-        }
-      }                 
-    }
+          default:
+            {
+              theMsg.Prepend ("* ");
+              Display (theMsg.String(), 0);
+            }
+        }                 
+      }
+      return true;
+      
     
 	   
     case RPL_LUSERHIGHESTCONN: // 250
@@ -194,14 +195,14 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_LUSERME:          // 255
     case RPL_LUSERLOCAL:       // 265
     case RPL_LUSERGLOBAL:      // 266
-    {
-      BString theMsg (RestOfString (data, 4));
-      theMsg.RemoveFirst (":");
-      theMsg.Prepend ("* ");
-      theMsg.Append ("\n");
-      Display (theMsg.String(), 0);      
+      {
+        BString theMsg (RestOfString (data, 4));
+        theMsg.RemoveFirst (":");
+        theMsg.Prepend ("* ");
+        theMsg.Append ("\n");
+        Display (theMsg.String(), 0);
+      }
       return true;
-	}
   
   
     /// strip and send to server agent  ///
@@ -291,26 +292,26 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_DCCALLOWLIST:      // 618
     case RPL_DCCALLOWEND:       // 619
     case RPL_DCCALLOW:          // 620
-    {
-      BString tempString (RestOfString (data, 4));
-      tempString.RemoveFirst (":");
-      tempString.Append ("\n");
-      Display (tempString.String(), 0);     
+      {
+        BString tempString (RestOfString (data, 4));
+        tempString.RemoveFirst (":");
+        tempString.Append ("\n");
+        Display (tempString.String(), 0);
+      }
       return true;
-    }
     
     case RPL_UMODEIS:           // 221
-    {
-      BString theMode (GetWord (data, 4)),
-              tempString ("[x] Your current mode is: ");
-      tempString += theMode;
-      tempString += '\n';
+      {
+        BString theMode (GetWord (data, 4)),
+                tempString ("[x] Your current mode is: ");
+        tempString += theMode;
+        tempString += '\n';
       
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &whoisColor);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &whoisColor);
+        PostActive (&msg);
+      }
+      return true;
     
     /// strip and send to active agent  ///
     case RPL_TRYAGAIN:          // 263
@@ -326,119 +327,111 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_NOCOLORSONCHAN:    // 408
     case ERR_YOUCANTDOTHAT:     // 460
     case ERR_CHANOPRIVSNEEDED:  // 482
-    {
-      BString tempString ("[x] ");
-      if (num == ERR_CHANOPRIVSNEEDED)
-        tempString += RestOfString (data, 5);
-      else
-        tempString += RestOfString (data, 4);
-      tempString.RemoveFirst (":");
-      tempString.Append ("\n");
+      {
+        BString tempString ("[x] ");
+        if (num == ERR_CHANOPRIVSNEEDED)
+          tempString += RestOfString (data, 5);
+        else
+          tempString += RestOfString (data, 4);
+        tempString.RemoveFirst (":");
+        tempString.Append ("\n");
 		
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &errorColor, &serverFont);
-      PostActive (&msg);
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &errorColor, &serverFont);
+        PostActive (&msg);
+      }
       return true;
-    }
-    
-    case RPL_AWAY:             // 301
-    {
-      BString tempString ("[x] "),
-	          theReason (RestOfString(data, 5));
-      theReason.RemoveFirst(":");
-      tempString += "Away: ";
-      tempString += theReason;
-      tempString += '\n';
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
-      PostActive (&msg);     
-      return true;    
-    }
+    case RPL_AWAY:             // 301
+      {
+        BString tempString ("[x] "),
+	            theReason (RestOfString(data, 5));
+        theReason.RemoveFirst(":");
+        tempString += "Away: ";
+        tempString += theReason;
+        tempString += '\n';
+
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+        PostActive (&msg);
+      }
+      return true;
     
     case RPL_USERHOST:        // 302
-    {
-      BString theHost (GetWord (data, 4)),
-              theHostname (GetAddress (theHost.String()));
-      theHost.RemoveFirst (":");
+      {
+        BString theHost (GetWord (data, 4)),
+                theHostname (GetAddress (theHost.String()));
+        theHost.RemoveFirst (":");
 				
-      if (hostnameLookup)
-      {
-        localAddress = theHostname.String();
-        hostnameLookup = false;
-        return true;
-      }
+        printf ("%s\n", theHostname.String());
       
-      printf ("%s\n", theHostname.String());
-      
-      BString tempString (RestOfString (data, 4));
-      tempString.RemoveFirst (":");
-      tempString.Append ("\n");
-      Display (tempString.String(), 0);
-						
-      if (theHost != "-9z99" && theHost != "")
-      {
-        BMessage *dnsmsg (new BMessage);
-        dnsmsg->AddString ("lookup", theHostname.String());
-        ClientAgent *client (ActiveClient());
-        
-        if (client)
-          dnsmsg->AddPointer("agent", client);
-        else
-          dnsmsg->AddPointer("agent", this);
-		 
-        thread_id lookupThread = spawn_thread (
-          DNSLookup,
-          "dns_lookup",
-          B_LOW_PRIORITY,
-          dnsmsg);
-
-        resume_thread (lookupThread);
-      }
-		
-      return true;    
-    }
-    
-    case RPL_ISON:           // 303
-    {
-      BString nick (GetWord (data, 4));
-
-      nick.RemoveFirst (":");
-
-      BMessage msg (M_NOTIFY_END);
-
-      msg.AddString ("nick", nick.String());
-      msg.AddString ("server", serverName.String());
-      vision_app->PostMessage (&msg);
-      return true;
-    }
-    
-    case RPL_WHOISIDENTIFIED:   // 307
-    {
-      BString theInfo (RestOfString (data, 5));
-      theInfo.RemoveFirst (":");
-      
-      if (theInfo == "-9z99")
-      {
-        // USERIP reply? (RPL_U2USERIP)
         BString tempString (RestOfString (data, 4));
         tempString.RemoveFirst (":");
         tempString.Append ("\n");
-        Display (tempString.String(), 0);     
-        return true;        
-      }
-      
-      BMessage display (M_DISPLAY);
-      BString buffer;
-		
-      buffer += "[x] ";
-      buffer += theInfo;
-      buffer += "\n";
-      PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
-      PostActive (&display);      
-      return true;    
-    }
+        Display (tempString.String(), 0);
+						
+        if (theHost != "-9z99" && theHost != "")
+        {
+          BMessage *dnsmsg (new BMessage);
+          dnsmsg->AddString ("lookup", theHostname.String());
+          ClientAgent *client (ActiveClient());
+        
+          if (client)
+            dnsmsg->AddPointer("agent", client);
+          else
+            dnsmsg->AddPointer("agent", this);
+		 
+          thread_id lookupThread = spawn_thread (
+            DNSLookup,
+            "dns_lookup",
+            B_LOW_PRIORITY,
+            dnsmsg);
+
+          resume_thread (lookupThread);
+        }
+      }		
+      return true;
     
+    case RPL_ISON:           // 303
+      {
+        BString nick (GetWord (data, 4));
+
+        nick.RemoveFirst (":");
+ 
+        BMessage msg (M_NOTIFY_END);
+
+        msg.AddString ("nick", nick.String());
+        msg.AddString ("server", serverName.String());
+        vision_app->PostMessage (&msg);
+      }
+      return true;
+    
+    case RPL_WHOISIDENTIFIED:   // 307
+      {
+        BString theInfo (RestOfString (data, 5));
+        theInfo.RemoveFirst (":");
+      
+        if (theInfo == "-9z99")
+        {
+          // USERIP reply? (RPL_U2USERIP)
+          BString tempString (RestOfString (data, 4));
+          tempString.RemoveFirst (":");
+          tempString.Append ("\n");
+          Display (tempString.String(), 0);     
+          return true;
+        }
+      
+        BMessage display (M_DISPLAY);
+        BString buffer;
+		
+        buffer += "[x] ";
+        buffer += theInfo;
+        buffer += "\n";
+        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PostActive (&display);
+      }
+      return true;
+          
     case RPL_WHOISADMIN:          // 308
     case RPL_WHOISSERVICESADMIN:  // 309
     case RPL_WHOISHELPOP:         // 310
@@ -446,720 +439,708 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_WHOISACTUALLY:       // 338
     case RPL_WHOISUSERMODES:      // 615
     case RPL_WHOISREALHOSTNAME:   // 616
-    {
-      BString theInfo (RestOfString (data, 5));
-      theInfo.RemoveFirst (":");
+      {
+        BString theInfo (RestOfString (data, 5));
+        theInfo.RemoveFirst (":");
 
-      BMessage display (M_DISPLAY);
-      BString buffer;
+        BMessage display (M_DISPLAY);
+        BString buffer;
 		
-      buffer += "[x] ";
-      buffer += theInfo;
-      buffer += "\n";
-      PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
-      PostActive (&display);      
+        buffer += "[x] ";
+        buffer += theInfo;
+        buffer += "\n";
+        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PostActive (&display);
+      }
       return true;
-    }
     
     case RPL_WHOISUSER:        // 311
-    {
-      BString theNick (GetWord (data, 4)),
-              theIdent (GetWord (data, 5)),
-              theAddress (GetWord (data, 6)),
-              theName (RestOfString (data, 8));
-      theName.RemoveFirst (":");
+      {
+        BString theNick (GetWord (data, 4)),
+                theIdent (GetWord (data, 5)),
+                theAddress (GetWord (data, 6)),
+                theName (RestOfString (data, 8));
+        theName.RemoveFirst (":");
 		
-      BMessage display (M_DISPLAY);
-      BString buffer;
+        BMessage display (M_DISPLAY);
+        BString buffer;
 
-      buffer += "[x] ";
-      buffer += theNick;
-      buffer += " (";
-      buffer += theIdent;
-      buffer += "@";
-      buffer += theAddress;
-      buffer += ")\n";
-      buffer += "[x] ";
-      buffer += theName;
-      buffer += "\n";
+        buffer += "[x] ";
+        buffer += theNick;
+        buffer += " (";
+        buffer += theIdent;
+        buffer += "@";
+        buffer += theAddress;
+        buffer += ")\n";
+        buffer += "[x] ";
+        buffer += theName;
+        buffer += "\n";
       
-      PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
-      PostActive (&display);
-	  return true;    
-    }
+        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PostActive (&display);
+      }
+	  return true;
     
     case RPL_WHOISSERVER:   // 312
-    {
-      BString theNick (GetWord (data, 4)),
-              theServer (GetWord (data, 5)),
-              theInfo (RestOfString (data, 6));
-      theInfo.RemoveFirst (":");
+      {
+        BString theNick (GetWord (data, 4)),
+                theServer (GetWord (data, 5)),
+                theInfo (RestOfString (data, 6));
+        theInfo.RemoveFirst (":");
+ 
+        BMessage display (M_DISPLAY);
+        BString buffer;
 
-      BMessage display (M_DISPLAY);
-      BString buffer;
-
-      buffer += "[x] Server: ";
-      buffer += theServer;
-      buffer += " (";
-      buffer += theInfo;
-      buffer += ")\n";
-      PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
-      PostActive (&display);
-      return true;    
-    }
+        buffer += "[x] Server: ";
+        buffer += theServer;
+        buffer += " (";
+        buffer += theInfo;
+        buffer += ")\n";
+        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PostActive (&display);
+      }
+      return true;
     
     case RPL_WHOWASUSER:     // 314
-    {
-      BString theNick (GetWord (data, 4)),
-              theIdent (GetWord (data, 5)),
-              theAddress (GetWord (data, 6)),
-              theName (RestOfString (data, 8)),
-              tempString ("[x] ");
-      theName.RemoveFirst (":");
-      tempString += theNick;
-      tempString += " [was] (";
-      tempString += theIdent;
-      tempString += "@";
-      tempString += theAddress;
-      tempString += ")\n";
+      {
+        BString theNick (GetWord (data, 4)),
+                theIdent (GetWord (data, 5)),
+                theAddress (GetWord (data, 6)),
+                theName (RestOfString (data, 8)),
+                tempString ("[x] ");
+        theName.RemoveFirst (":");
+        tempString += theNick;
+        tempString += " [was] (";
+        tempString += theIdent;
+        tempString += "@";
+        tempString += theAddress;
+        tempString += ")\n";
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+        PostActive (&msg);
+      }
+      return true;
     
     case RPL_WHOISIDLE:       // 317
-    {
-      BString theNick (GetWord (data, 4)),
-              tempString ("[x] "),
-              tempString2 ("[x] "),
-              theTime (GetWord (data, 5)),
-              signOnTime (GetWord (data, 6));
+      {
+        BString theNick (GetWord (data, 4)),
+                tempString ("[x] "),
+                tempString2 ("[x] "),
+                theTime (GetWord (data, 5)),
+                signOnTime (GetWord (data, 6));
 				
-      int64 idleTime (strtoul(theTime.String(), NULL, 0));
-      tempString += "Idle: ";
-      tempString += DurationString(idleTime * 1000 * 1000);
-      tempString += "\n";
+        int64 idleTime (strtoul(theTime.String(), NULL, 0));
+        tempString += "Idle: ";
+        tempString += DurationString(idleTime * 1000 * 1000);
+        tempString += "\n";
 		
-      int32 serverTime = strtoul(signOnTime.String(), NULL, 0);
-      struct tm *ptr; 
-      time_t st;
-      char str[80];    
-      st = serverTime; 
-      ptr = localtime(&st);
-      strftime (str,80,"%A %b %d %Y %I:%M %p %Z",ptr);
-      BString signOnTimeParsed (str);
-      signOnTimeParsed.RemoveAll ("\n");
+        int32 serverTime = strtoul(signOnTime.String(), NULL, 0);
+        struct tm *ptr; 
+        time_t st;
+        char str[80];    
+        st = serverTime; 
+        ptr = localtime(&st);
+        strftime (str,80,"%A %b %d %Y %I:%M %p %Z",ptr);
+        BString signOnTimeParsed (str);
+        signOnTimeParsed.RemoveAll ("\n");
 		
-      tempString2 += "Signon: ";
-      tempString2 += signOnTimeParsed;
-      tempString2 += "\n";
-		
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
-      PostActive (&msg);
-      PackDisplay (&msg, tempString2.String(), &whoisColor, &serverFont);
-      PostActive (&msg);
-      return true;   
-    }
+        tempString2 += "Signon: ";
+        tempString2 += signOnTimeParsed;
+        tempString2 += "\n";
+	 	
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+        PostActive (&msg);
+        PackDisplay (&msg, tempString2.String(), &whoisColor, &serverFont);
+        PostActive (&msg);
+      }
+      return true;
     
     case RPL_ENDOFWHOIS:   // 318
     case RPL_ENDOFNAMES:   // 366
     case RPL_ENDOFWHOWAS:  // 369
-    {
+      {
+        // nothing
+      }
       return true;
-    }
     
     case RPL_WHOISCHANNELS:   // 319
-    {
-      BString theChannels (RestOfString (data, 5));
-      theChannels.RemoveFirst(":");
+      {
+        BString theChannels (RestOfString (data, 5));
+        theChannels.RemoveFirst(":");
 
-      BMessage display (M_DISPLAY);
-      BString buffer;
+        BMessage display (M_DISPLAY);
+        BString buffer;
 
-      buffer += "[x] Channels: ";
-      buffer += theChannels;
-      buffer += "\n";
-      PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
-      PostActive (&display);
-      return true;    
-    }
+        buffer += "[x] Channels: ";
+        buffer += theChannels;
+        buffer += "\n";
+        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PostActive (&display);
+      }
+      return true;
     
     case RPL_LISTSTART:       // 321
-    {
-      BMessage msg (M_LIST_BEGIN);
+      {
+        BMessage msg (M_LIST_BEGIN);
 
-      msg.AddString ("server", serverName.String());
-      vision_app->PostMessage (&msg);      
-      return true;    
-    }
+        msg.AddString ("server", serverName.String());
+        vision_app->PostMessage (&msg);
+      }
+      return true;
     
     case RPL_LIST:            // 322
-    {
-      BMessage msg (M_LIST_EVENT);
-      BString channel (GetWord (data, 4)),
-              users (GetWord (data, 5)),
-              topic (RestOfString (data, 6));
-      topic.RemoveFirst (":");
+      {
+        BMessage msg (M_LIST_EVENT);
+        BString channel (GetWord (data, 4)),
+                users (GetWord (data, 5)),
+                topic (RestOfString (data, 6));
+        topic.RemoveFirst (":");
 		
-      msg.AddString ("server", serverName.String());
-      msg.AddString ("channel", channel.String());
-      msg.AddString ("users", users.String());
-      msg.AddString ("topic", topic.String());
+        msg.AddString ("server", serverName.String());
+        msg.AddString ("channel", channel.String());
+        msg.AddString ("users", users.String());
+        msg.AddString ("topic", topic.String());
 
-      vision_app->PostMessage (&msg);
+        vision_app->PostMessage (&msg);
+      }
       return true;    
-    }
     
     case RPL_LISTEND:         // 323
-    {
-      BMessage msg (M_LIST_DONE);
+      {
+        BMessage msg (M_LIST_DONE);
 
-      msg.AddString ("server", serverName.String());
-      vision_app->PostMessage (&msg);
-      return true;    
-    }
+        msg.AddString ("server", serverName.String());
+        vision_app->PostMessage (&msg);
+      }
+      return true;
     
     case RPL_CHANNELMODEIS:   // 324
-    {
-      BString theChan (GetWord (data, 4)),
-              theMode (GetWord (data, 5)),
-              tempStuff (RestOfString (data, 6));
-
-      if (tempStuff != "-9z99")
       {
-        theMode.Append(" ");
-        theMode.Append(tempStuff); // avoid extra space w/o params
-      }
+        BString theChan (GetWord (data, 4)),
+                theMode (GetWord (data, 5)),
+                tempStuff (RestOfString (data, 6));
 
-      ClientAgent *aClient (ActiveClient()), 
-                  *theClient (Client (theChan.String())); 
-
-      BString tempString("*** Channel mode for ");
-      tempString += theChan;
-      tempString += ": ";
-      tempString += theMode;
-      tempString += '\n';
-		
-      BMessage msg (M_CHANNEL_MODES);
-
-      msg.AddString ("msgz", tempString.String());
-      msg.AddString ("chan", theChan.String());
-      msg.AddString ("mode", theMode.String());
-
-      if (theClient)
-        theClient->msgr.SendMessage (&msg);
-      else if (aClient)
-        aClient->msgr.SendMessage (&msg);
-      else
-        Display (tempString.String(), &opColor);
-        			
-      return true;    
-    }
-    
-    case RPL_CHANNELCREATED:       // 329
-    {
-      BString theChan (GetWord (data, 4)),
-              theTime (GetWord (data, 5)),
-              tempString;
-				
-      int32 serverTime (strtoul(theTime.String(), NULL, 0));
-      struct tm *ptr; 
-      time_t st;
-      char str[80];    
-      st = serverTime; 
-      ptr = localtime (&st);
-      strftime (str,80,"%a %b %d %Y %I:%M %p %Z",ptr);
-      BString theTimeParsed (str);
-      theTimeParsed.RemoveAll ("\n");
-    	
-      tempString += theChan;
-      tempString += " created ";
-      tempString += theTimeParsed;
-      tempString += '\n';
-      Display (tempString.String(), 0);		
-      return true;    
-    }
-    
-    case RPL_NOTOPIC:             // 331
-    {
-      BString theChan (GetWord (data, 4)),
-              tempString ("[x] No topic set in ");
-      tempString += theChan;
-      tempString += '\n';
-
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &errorColor);
-      PostActive (&msg);
-      return true;	    
-    }
-    
-    case RPL_TOPIC:               // 332
-    {
-      BString theChannel (GetWord (data, 4)),
-              theTopic (RestOfString (data, 5));
-      ClientAgent *client (Client (theChannel.String()));
-
-      theTopic.RemoveFirst (":");
-
-      if (client)
-      {
-        BMessage display (M_DISPLAY);
-        BString buffer;
-
-        buffer += "*** Topic: ";
-        buffer += theTopic;
-        buffer += '\n';
-        PackDisplay (&display, buffer.String(), &whoisColor, 0, vision_app->GetBool ("timestamp"));
-
-        BMessage msg (M_CHANNEL_TOPIC);
-        msg.AddString ("topic", theTopic.String());
-        msg.AddMessage ("display", &display);
-
-        if (client->msgr.IsValid())
-          client->msgr.SendMessage (&msg);
-      }
-      
-      return true;    
-    }
-    
-    case RPL_TOPICSET:            // 333
-    {
-      BString channel (GetWord (data, 4)),
-              user (GetWord (data, 5)),
-              theTime (GetWord (data, 6));
-		
-      int32 serverTime (strtoul(theTime.String(), NULL, 0));
-      struct tm *ptr; 
-      time_t st;
-      char str[80];    
-      st = serverTime; 
-      ptr = localtime (&st);
-      strftime (str,80,"%A %b %d %Y %I:%M %p %Z",ptr);
-      BString theTimeParsed (str);
-      theTimeParsed.RemoveAll ("\n");
-		
-      ClientAgent *client (Client (channel.String()));
-
-      if (client)
-      {
-        BMessage display (M_DISPLAY);
-        BString buffer;
-
-        buffer += "*** Topic set by ";
-        buffer += user;
-        buffer += " @ ";
-        buffer += theTimeParsed;
-        buffer += '\n';
-        PackDisplay (&display, buffer.String(), &whoisColor, 0, vision_app->GetBool ("timestamp"));
-        if (client->msgr.IsValid())
-          client->msgr.SendMessage (&display);
-      }
-
-      return true;    
-    }
-    
-    case RPL_NAMEREPLY:             // 353
-    {
-      BString channel (GetWord (data, 5)),
-              names (RestOfString (data, 6));
-      ClientAgent *client (Client (channel.String()));
-      names.RemoveFirst (":");
-
-      if (client) // in the channel
-      {
-        BString tempString ("*** Users in ");
-        tempString += channel;
-        tempString += ": ";
-        tempString += names;
-        tempString += '\n';
-        Display (tempString.String(), &textColor);
-			
-        BMessage msg (M_CHANNEL_NAMES);
-        BString nick;
-        int32 place (1);
-
-        while ((nick = GetWord (names.String(), place)) != "-9z99")
+        if (tempStuff != "-9z99")
         {
-          const char *sNick (nick.String());
-          bool op (false),
-               voice (false),
-               helper (false),
-	           ignored;
-
-          if (nick[0] == '@')
-          {
-            ++sNick;
-            op = true;
-          }
-          else if (nick[0] == '+')
-          {
-            ++sNick;
-            voice = true;
-          }
-          else if (nick[0] == '%')
-          {
-            ++sNick;
-            helper = true;
-          }
-
-          ignored = false;
-          // BMessage aMsg (M_IS_IGNORED), reply;
-          // aMsg.AddString ("server", serverName.String());
-          // aMsg.AddString ("nick", sNick);
-
-          // be_app_messenger.SendMessage (&aMsg, &reply);
-          // reply.FindBool ("ignored", &ignored);
-					
-          msg.AddString ("nick", nick.String());
-          msg.AddBool ("op", op);
-          msg.AddBool ("voice", voice);
-          msg.AddBool ("helper", helper);
-          msg.AddBool ("ignored", ignored);
-          ++place;
+          theMode.Append(" ");
+          theMode.Append(tempStuff); // avoid extra space w/o params
         }
 
-        if (client->msgr.IsValid())
-          client->msgr.SendMessage (&msg);
-        return true;
-      }
-      else // not in the channel
-      {
-        BString tempString ("*** Users in ");
-        tempString += channel;
+        ClientAgent *aClient (ActiveClient()), 
+                    *theClient (Client (theChan.String())); 
+ 
+        BString tempString("*** Channel mode for ");
+        tempString += theChan;
         tempString += ": ";
-        tempString += names;
+        tempString += theMode;
         tempString += '\n';
-        Display (tempString.String(), &textColor);
-        return true;
-      }    
-    }
+		
+        BMessage msg (M_CHANNEL_MODES);
+
+        msg.AddString ("msgz", tempString.String());
+        msg.AddString ("chan", theChan.String());
+        msg.AddString ("mode", theMode.String());
+
+        if (theClient)
+          theClient->msgr.SendMessage (&msg);
+        else if (aClient)
+          aClient->msgr.SendMessage (&msg);
+        else
+          Display (tempString.String(), &opColor);
+      }
+      return true;
+    
+    case RPL_CHANNELCREATED:       // 329
+      {
+        BString theChan (GetWord (data, 4)),
+                theTime (GetWord (data, 5)),
+                tempString;
+				
+        int32 serverTime (strtoul(theTime.String(), NULL, 0));
+        struct tm *ptr; 
+        time_t st;
+        char str[80];    
+        st = serverTime; 
+        ptr = localtime (&st);
+        strftime (str,80,"%a %b %d %Y %I:%M %p %Z",ptr);
+        BString theTimeParsed (str);
+        theTimeParsed.RemoveAll ("\n");
+    	
+        tempString += theChan;
+        tempString += " created ";
+        tempString += theTimeParsed;
+        tempString += '\n';
+        Display (tempString.String(), 0);
+      }
+      return true;
+    
+    case RPL_NOTOPIC:             // 331
+      {
+        BString theChan (GetWord (data, 4)),
+                tempString ("[x] No topic set in ");
+        tempString += theChan;
+        tempString += '\n';
+
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &errorColor);
+        PostActive (&msg);
+      }
+      return true;
+    
+    case RPL_TOPIC:               // 332
+      {
+        BString theChannel (GetWord (data, 4)),
+                theTopic (RestOfString (data, 5));
+        ClientAgent *client (Client (theChannel.String()));
+
+        theTopic.RemoveFirst (":");
+
+        if (client)
+        {
+          BMessage display (M_DISPLAY);
+          BString buffer;
+
+          buffer += "*** Topic: ";
+          buffer += theTopic;
+          buffer += '\n';
+          PackDisplay (&display, buffer.String(), &whoisColor, 0,
+            vision_app->GetBool ("timestamp"));
+
+          BMessage msg (M_CHANNEL_TOPIC);
+          msg.AddString ("topic", theTopic.String());
+          msg.AddMessage ("display", &display);
+
+          if (client->msgr.IsValid())
+            client->msgr.SendMessage (&msg);
+        }
+      }
+      return true;
+    
+    case RPL_TOPICSET:            // 333
+      {
+        BString channel (GetWord (data, 4)),
+                user (GetWord (data, 5)),
+                theTime (GetWord (data, 6));
+		
+        int32 serverTime (strtoul(theTime.String(), NULL, 0));
+        struct tm *ptr; 
+        time_t st;
+        char str[80];    
+        st = serverTime; 
+        ptr = localtime (&st);
+        strftime (str,80,"%A %b %d %Y %I:%M %p %Z",ptr);
+        BString theTimeParsed (str);
+        theTimeParsed.RemoveAll ("\n");
+		
+        ClientAgent *client (Client (channel.String()));
+
+        if (client)
+        {
+          BMessage display (M_DISPLAY);
+          BString buffer;
+
+          buffer += "*** Topic set by ";
+          buffer += user;
+          buffer += " @ ";
+          buffer += theTimeParsed;
+          buffer += '\n';
+          PackDisplay (&display, buffer.String(), &whoisColor, 0,
+            vision_app->GetBool ("timestamp"));
+          if (client->msgr.IsValid())
+            client->msgr.SendMessage (&display);
+        }
+      }
+      return true;
+    
+    case RPL_NAMEREPLY:             // 353
+      {
+        BString channel (GetWord (data, 5)),
+                names (RestOfString (data, 6));
+        ClientAgent *client (Client (channel.String()));
+        names.RemoveFirst (":");
+
+        if (client) // in the channel
+        {
+          BString tempString ("*** Users in ");
+          tempString += channel;
+          tempString += ": ";
+          tempString += names;
+          tempString += '\n';
+          Display (tempString.String(), &textColor);
+			
+          BMessage msg (M_CHANNEL_NAMES);
+          BString nick;
+          int32 place (1);
+  
+          while ((nick = GetWord (names.String(), place)) != "-9z99")
+          {
+            const char *sNick (nick.String());
+            bool op (false),
+                 voice (false),
+                 helper (false),
+	             ignored;
+
+            if (nick[0] == '@')
+            {
+              ++sNick;
+              op = true;
+            }
+            else if (nick[0] == '+')
+            {
+              ++sNick;
+              voice = true;
+            }
+            else if (nick[0] == '%')
+            {
+              ++sNick;
+              helper = true;
+            }
+
+            ignored = false;
+            // BMessage aMsg (M_IS_IGNORED), reply;
+            // aMsg.AddString ("server", serverName.String());
+            // aMsg.AddString ("nick", sNick);
+
+            // be_app_messenger.SendMessage (&aMsg, &reply);
+            // reply.FindBool ("ignored", &ignored);
+					
+            msg.AddString ("nick", nick.String());
+            msg.AddBool ("op", op);
+            msg.AddBool ("voice", voice);
+            msg.AddBool ("helper", helper);
+            msg.AddBool ("ignored", ignored);
+            ++place;
+          }
+
+          if (client->msgr.IsValid())
+            client->msgr.SendMessage (&msg);
+        }
+        else // not in the channel
+        {
+          BString tempString ("*** Users in ");
+          tempString += channel;
+          tempString += ": ";
+          tempString += names;
+          tempString += '\n';
+          Display (tempString.String(), &textColor);
+        }
+      }
+      return true;
     
     case RPL_MOTD:            // 372
     case RPL_MOTDALT:         // 378
-    {
-      BString tempString (RestOfString(data, 4));
-      tempString.RemoveFirst (":");
-      tempString.Append ("\n");
-      Display (tempString.String(), 0);
-      return true;    
-    }
+      {
+        BString tempString (RestOfString(data, 4));
+        tempString.RemoveFirst (":");
+        tempString.Append ("\n");
+        Display (tempString.String(), 0);
+      }
+      return true;
     
     case RPL_MOTDSTART:        // 375
-    {
-      BString tempString ("- Server Message Of The Day:\n");
-      Display (tempString.String(), 0);
+      {
+        BString tempString ("- Server Message Of The Day:\n");
+        Display (tempString.String(), 0);
+      }
       return true;
-    }
     
     case RPL_ENDOFMOTD:        // 376
     case ERR_NOMOTD:           // 422
-    {
-      BString tempString (RestOfString (data, 4));
-	  tempString.RemoveFirst (":");
-	  tempString.Append ("\n");
-	  Display (tempString.String(), 0);
+      {
+        BString tempString (RestOfString (data, 4));
+	    tempString.RemoveFirst (":");
+	    tempString.Append ("\n");
+	    Display (tempString.String(), 0);
       		
-      if (reconnecting)
-      {
-        BString reString;
-        reString += "[@] Successful reconnect\n";
-        Display (reString.String(), &errorColor);
-        DisplayAll (reString.String(), &errorColor, &serverFont);
-        // msgr.SendMessage (M_REJOIN_ALL);
-        reconnecting = false;
-      }
-
-      if (initialMotd)
-      {
-        BString command ("USERHOST ");
-        command += myNick;
-        command += '\n';
-        SendData (command.String());
-        hostnameLookup = true;
-      }
-		
-      if (initialMotd && cmds.Length())
-      {
-        BMessage msg (M_SUBMIT_RAW);
-        const char *place (cmds.String()), *eol;
-
-        msg.AddBool ("lines", true);
-
-        while ((eol = strchr (place, '\n')) != 0)
+        if (reconnecting)
         {
-          BString line;
-				
-          line.Append (place, eol - place);
-          msg.AddString ("data", line.String());
-
-          place = eol + 1;
+          BString reString;
+          reString += "[@] Successful reconnect\n";
+          Display (reString.String(), &errorColor);
+          DisplayAll (reString.String(), &errorColor, &serverFont);
+          // msgr.SendMessage (M_REJOIN_ALL);
+          reconnecting = false;
         }
 
-        if (*place)
-          msg.AddString ("data", place);
+        if (initialMotd && cmds.Length())
+        {
+          BMessage msg (M_SUBMIT_RAW);
+          const char *place (cmds.String()), *eol;
 
-        msgr.SendMessage (&msg);
+          msg.AddBool ("lines", true);
+ 
+          while ((eol = strchr (place, '\n')) != 0)
+          {
+            BString line;
+				
+            line.Append (place, eol - place);
+            msg.AddString ("data", line.String());
+
+            place = eol + 1;
+          }
+
+          if (*place)
+            msg.AddString ("data", place);
+
+          msgr.SendMessage (&msg);
+        }
+
+        initialMotd = false;
       }
-
-      initialMotd = false;
-      return true;    
-    }
+      return true;
     
     case RPL_USERSSTART:       // 392
-    {
-      BMessage msg (M_NOTIFY_START);
+      {
+        BMessage msg (M_NOTIFY_START);
 
-      msg.AddString ("server", serverName.String());
-      vision_app->PostMessage (&msg);
-		
-      return true;   
-    }
+        msg.AddString ("server", serverName.String());
+        vision_app->PostMessage (&msg);
+	  }	
+      return true;
     
     case RPL_USERS:            // 393
-    {
-      BMessage msg (M_NOTIFY_USER);
-      BString buffer (RestOfString (data, 4));
+      {
+        BMessage msg (M_NOTIFY_USER);
+        BString buffer (RestOfString (data, 4));
 
-      msg.AddString ("server", serverName.String());
-      msg.AddString ("user", buffer.String());
-      vision_app->PostMessage (&msg);
-      return true;    
-    }
-
+        msg.AddString ("server", serverName.String());
+        msg.AddString ("user", buffer.String());
+        vision_app->PostMessage (&msg);
+      }
+      return true;
+      
     case ERR_NICKNAMEINUSE:        // 433
     case ERR_RESOURCEUNAVAILABLE:  // 437
-    {
-      BString theNick (GetWord (data, 4));
-      
-      if (isConnecting)
       {
-        if (theNick == lnick1)
+        BString theNick (GetWord (data, 4));
+      
+        if (isConnecting)
         {
-          Display ("* Nickname \"", 0);
-          Display (lnick1.String(), 0);
-          Display ("\" in use or unavailable.. trying \"", 0);
-          Display (lnick2.String(), 0);
-          Display ("\"\n", 0);
+          if (theNick == lnick1)
+          {
+            Display ("* Nickname \"", 0);
+            Display (lnick1.String(), 0);
+            Display ("\" in use or unavailable.. trying \"", 0);
+            Display (lnick2.String(), 0);
+            Display ("\"\n", 0);
 
-          BString tempString ("NICK ");
-          tempString += lnick2;
-          SendData (tempString.String());
-          return true;
-        }
-        else if (theNick == lnick2)
-        {
-          Display ("* Nickname \"", 0);
-          Display (lnick2.String(), 0);
-          Display ("\" in use.. trying \"_", 0);
-          Display (lnick1.String(), 0);
-          Display ("\"\n", 0);
+            BString tempString ("NICK ");
+            tempString += lnick2;
+            SendData (tempString.String());
+            return true;
+          }
+          else if (theNick == lnick2)
+          {
+            Display ("* Nickname \"", 0);
+            Display (lnick2.String(), 0);
+            Display ("\" in use.. trying \"_", 0);
+            Display (lnick1.String(), 0);
+            Display ("\"\n", 0);
 
-          BString tempString ("NICK _");
-          tempString += lnick1;
-          SendData (tempString.String());
-          return true;
+            BString tempString ("NICK _");
+            tempString += lnick1;
+            SendData (tempString.String());
+            return true;
+          }
+          else
+          {
+            Display ("* All your pre-selected nicknames are in use.\n", 0);
+            Display ("* Please type /NICK <NEWNICK> to try another.\n", 0);
+            return true;
+          }                         
         }
-        else
-        {
-          Display ("* All your pre-selected nicknames are in use.\n", 0);
-          Display ("* Please type /NICK <NEWNICK> to try another.\n", 0);
-          return true;
-        }                         
+
+        BString tempString;
+        tempString += "[x] Nickname/Channel ";
+        tempString += theNick;
+        tempString += " is already in use or unavailable.\n";
+ 
+        BMessage display (M_DISPLAY);
+        PackDisplay (&display, tempString.String(), &nickColor);
+        PostActive (&display);
       }
-
-      BString tempString;
-      tempString += "[x] Nickname/Channel ";
-      tempString += theNick;
-      tempString += " is already in use or unavailable.\n";
-
-      BMessage display (M_DISPLAY);
-      PackDisplay (&display, tempString.String(), &nickColor);
-      PostActive (&display);
-      return true;    
-    }
+      return true;
     
     case ERR_USERNOTINCHANNEL:    // 441
-    {
-      BString theChannel (GetWord (data, 5)),
-              theNick (GetWord (data, 4)),
-              tempString ("[x] ");
-      tempString += theNick;
-      tempString += " is not in ";
-      tempString += theChannel;
-      tempString += ".\n";
+      {
+        BString theChannel (GetWord (data, 5)),
+                theNick (GetWord (data, 4)),
+                tempString ("[x] ");
+        tempString += theNick;
+        tempString += " is not in ";
+        tempString += theChannel;
+        tempString += ".\n";
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &errorColor);
-      PostActive (&msg);
-      return true;   
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &errorColor);
+        PostActive (&msg);
+      }
+      return true;
     
     case ERR_NOTONCHANNEL:       // 442
-    {
-      BString theChannel (GetWord (data, 4)),
-              tempString ("[x] You're not in ");
-      tempString += theChannel;
-      tempString += ".\n";
+      {
+        BString theChannel (GetWord (data, 4)),
+                tempString ("[x] You're not in ");
+        tempString += theChannel;
+        tempString += ".\n";
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &errorColor);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &errorColor);
+        PostActive (&msg);
+      }
+      return true;
     
     case ERR_USERONCHANNEL:     // 443
-    {
-      BString theChannel (GetWord (data, 5)),
-              theNick (GetWord (data, 4)),
-      tempString ("[x] ");
-      tempString += theNick;
-      tempString += " is already in ";
-      tempString += theChannel;
-      tempString += ".\n";
+      {
+        BString theChannel (GetWord (data, 5)),
+                theNick (GetWord (data, 4)),
+        tempString ("[x] ");
+        tempString += theNick;
+        tempString += " is already in ";
+        tempString += theChannel;
+        tempString += ".\n";
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &errorColor);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &errorColor);
+        PostActive (&msg);
+      }
+      return true;
     
     case ERR_KEYSET:            // 467
-    {
-      BString theChannel (GetWord (data, 4)),
-              tempString ("[x] Channel key already set in ");
-      tempString += theChannel;
-      tempString += ".\n";
+      {
+        BString theChannel (GetWord (data, 4)),
+                tempString ("[x] Channel key already set in ");
+        tempString += theChannel;
+        tempString += ".\n";
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &errorColor);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &errorColor);
+        PostActive (&msg);
+      }
+      return true;
     
     case ERR_UNKNOWNMODE:        // 472
-    {
-      BString theMode (GetWord (data, 4)),
-              tempString ("[x] Unknown channel mode: '");
-      tempString += theMode;
-      tempString += "'\n";
+      {
+        BString theMode (GetWord (data, 4)),
+                tempString ("[x] Unknown channel mode: '");
+        tempString += theMode;
+        tempString += "'\n";
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &quitColor);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &quitColor);
+        PostActive (&msg);
+      }
+      return true;
     
     case ERR_INVITEONLYCHAN:     // 473
-    {
-      BString theChan (GetWord (data, 4)),
-              tempString ("[x] "),
-              theReason (RestOfString (data, 5));
-      theReason.RemoveFirst(":");
-      theReason.ReplaceLast("channel", theChan.String());
-      tempString += theReason;
-      tempString += " (invite only)\n";
+      {
+        BString theChan (GetWord (data, 4)),
+                tempString ("[x] "),
+                theReason (RestOfString (data, 5));
+        theReason.RemoveFirst(":");
+        theReason.ReplaceLast("channel", theChan.String());
+        tempString += theReason;
+        tempString += " (invite only)\n";
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
+        PostActive (&msg);
+      }
+      return true;
     
     case ERR_BANNEDFROMCHAN:     // 474
-    {
-      BString theChan (GetWord (data, 4)),
-              tempString ("[x] "),
-              theReason (RestOfString (data, 5));
-      theReason.RemoveFirst(":");
-      theReason.ReplaceLast("channel", theChan.String());
+      {
+        BString theChan (GetWord (data, 4)),
+                tempString ("[x] "),
+                theReason (RestOfString (data, 5));
+        theReason.RemoveFirst(":");
+        theReason.ReplaceLast("channel", theChan.String());
+ 
+        tempString += theReason;
+        tempString += " (you're banned)\n";
 
-      tempString += theReason;
-      tempString += " (you're banned)\n";
-
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
+        PostActive (&msg);
+      }
+      return true;
     
     case ERR_BADCHANNELKEY:      // 475
-    {
-      BString theChan (GetWord(data, 4)),
-              theReason (RestOfString(data, 5)),
-              tempString("[x] ");
-      theReason.RemoveFirst(":");
-      theReason.ReplaceLast("channel", theChan.String());
-      tempString += theReason;
-      tempString += " (bad channel key)\n";
+      {
+        BString theChan (GetWord(data, 4)),
+                theReason (RestOfString(data, 5)),
+                tempString("[x] ");
+        theReason.RemoveFirst(":");
+        theReason.ReplaceLast("channel", theChan.String());
+        tempString += theReason;
+        tempString += " (bad channel key)\n";
 
-      BMessage msg (M_DISPLAY);
-      PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
-      PostActive (&msg);
-      return true;    
-    }
+        BMessage msg (M_DISPLAY);
+        PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
+        PostActive (&msg);
+      }
+      return true;
     
     case ERR_UMODEUNKNOWNFLAG:    // 501
-    {
-      BMessage msg (M_DISPLAY);
-      BString buffer;
+      {
+        BMessage msg (M_DISPLAY);
+        BString buffer;
 		
-      buffer += "[x] Unknown MODE flag.\n";
-      PackDisplay (&msg, buffer.String(), &quitColor);
-      PostActive (&msg);
-      return true;    
-    }
+        buffer += "[x] Unknown MODE flag.\n";
+        PackDisplay (&msg, buffer.String(), &quitColor);
+        PostActive (&msg);
+      }
+      return true;
     
     // not sure what these numerics are,
     // but they are usually on-connect messages
     case RPL_290:                 // 290
     case RPL_291:                 // 291
-    {
-      BString tempString (RestOfString(data, 4));
-      tempString.RemoveFirst (":");
-      tempString.Append ("\n");
-      tempString.Prepend ("- ");
-      Display (tempString.String(), 0);
-      return true;    
-    }
+      {
+        BString tempString (RestOfString(data, 4));
+        tempString.RemoveFirst (":");
+        tempString.Append ("\n");
+        tempString.Prepend ("- ");
+        Display (tempString.String(), 0);
+      }
+      return true;
 
     case RPL_WHOISREGISTEREDBOT:  // 617
-    {
-      // conflicts with RPL_DCCALLOWCHANGE
-      BString theNick (GetWord (data, 4)),
-              theMessage (RestOfString (data, 5)),
-              tempString;
-      theNick.RemoveFirst (":");
-      theMessage.RemoveFirst (":");
-      theMessage.Append ("\n");
-      
-      switch (ircdtype)
       {
-        case IRCD_ULTIMATE:
+        // conflicts with RPL_DCCALLOWCHANGE
+        BString theNick (GetWord (data, 4)),
+                theMessage (RestOfString (data, 5)),
+                tempString;
+        theNick.RemoveFirst (":");
+        theMessage.RemoveFirst (":");
+        theMessage.Append ("\n");
+      
+        switch (ircdtype)
         {
-          tempString += "[@] ";
-          tempString += theMessage;
-          BMessage msg (M_DISPLAY);
-          PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
-          PostActive (&msg);
-          return true;    
-        }
-        default:
-        {
-          tempString += theNick;
-          tempString += " ";
-          tempString += theMessage;
-          Display (tempString.String(), 0);
-          return true;
+          case IRCD_ULTIMATE:
+            {
+              tempString += "[@] ";
+              tempString += theMessage;
+              BMessage msg (M_DISPLAY);
+              PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+              PostActive (&msg);  
+            }
+            break;
+          
+          default:
+            {
+              tempString += theNick;
+              tempString += " ";
+              tempString += theMessage;
+              Display (tempString.String(), 0);
+            }
         }
       }
-    }
-
-    
+      return true;
   }
-
+  
   return false;
 }
 

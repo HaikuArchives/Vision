@@ -93,12 +93,15 @@ class VisionApp : public BApplication
     bool                    debugsend;
     bool                    debugrecv;
     bool                    settingsloaded;
-	
-
-	ClientWindow            *pClientWin (void) const;
+    
+    ClientWindow            *pClientWin (void) const;
 
   private:
-	void					InitSettings(void);
+	void					InitSettings (void);
+    void                    ThreadStates (void);
+
+    bool                    ShuttingDown;
+
     AboutWindow             *aboutWin;
     SetupWindow             *setupWin;
     ClientWindow            *clientWin;

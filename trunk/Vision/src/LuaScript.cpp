@@ -35,19 +35,19 @@ extern "C"
 static int
 Script_LOG(lua_State* state)
 {
-	Script script(state);
-	Script::Object obj = script.GetObject(script.GetTop());
+  Script script(state);
+  Script::Object obj = script.GetObject(script.GetTop());
 
-	printf("%s\n", obj.GetString());
+  printf("%s\n", obj.GetString());
 
-	return 0;
+  return 0;
 }
 
 
 static void
 FatalError()
 {
-	throw -1;
+  throw -1;
 }
 
 static const char*
@@ -68,7 +68,7 @@ LuaScript_CopyTable =
 /**
 **/
 Script::Script (bool initStandardLibrary) :
-	m_ownState(false)
+  m_ownState(false)
 {
 	m_state = lua_open(0);
 	m_ownState = true;

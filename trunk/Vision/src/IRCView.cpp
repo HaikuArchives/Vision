@@ -199,7 +199,7 @@ IRCView::BuildPopUp (void)
   item->SetTarget (this);
   myPopUp->AddItem (item);
   
-  myPopUp->SetFont (be_plain_font); 
+  myPopUp->SetFont (be_plain_font);
 }
 
 void 
