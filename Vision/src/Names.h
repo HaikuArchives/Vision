@@ -96,6 +96,7 @@ const uint32 POPUP_MODE               = 'pumo';
 const uint32 POPUP_CTCP               = 'puct';
 const uint32 POPUP_WHOIS              = 'puwh';
 const uint32 POPUP_KICK               = 'puki';
-const uint32 POPUP_DCCCHAT            = 'pudc'; 
+const uint32 POPUP_DCCCHAT            = 'pudc';
+const uint32 POPUP_DCCSEND            = 'puds';
 
 #endif
