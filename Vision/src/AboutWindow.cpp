@@ -99,6 +99,7 @@ AboutWindow::AboutWindow (void)
     "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
     "Unit A\n[Vision]\n"
     "{A-Z}\n"
+    "Alan Ellis (voidref)\n"
     "Rene Gollent (AnEvilYak)\n"
     "Todd Lair (tlair)\n"
     "Wade Majors (kurros)\n\n\n\n"
