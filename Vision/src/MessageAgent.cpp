@@ -130,7 +130,11 @@ MessageAgent::Init (void)
 void
 MessageAgent::DCCServerSetup(void)
 {
-  int32 myPort (1500 + (rand() % 5000));
+  int32 myPort (atoi(vision_app->GetString ("dccMinPort")));
+  int32 diff (atoi(vision_app->GetString ("dccMaxPort")) - myPort);
+  if (diff > 0)
+    myPort += rand() % diff;
+    
   BString outNick (chatee);
   outNick.RemoveFirst (" [DCC]");
   struct sockaddr_in sa;
@@ -180,7 +184,8 @@ MessageAgent::DCCServerSetup(void)
   buffer << myPort << "\1";
   sendMsg.AddString ("data", buffer.String());
   sMsgr.SendMessage (&sendMsg);
-	
+  
+  vision_app->AcquireDCCLock();	
   listen (mySocket, 1);
 
   BString dataBuffer;
@@ -212,7 +217,9 @@ MessageAgent::DCCIn (void *arg)
   int theLen (sizeof (struct sockaddr_in));
 
   dccAcceptSocket = accept(dccSocket, (struct sockaddr*)&remoteAddy, &theLen);
-
+  
+  vision_app->ReleaseDCCLock();
+  
   if (dccAcceptSocket < 0)
     return B_ERROR;
     

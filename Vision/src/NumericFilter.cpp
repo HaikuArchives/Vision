@@ -26,6 +26,8 @@
 #include <ctype.h>
 #include "NumericFilter.h"
 
+#include <stdio.h>
+
 NumericFilter::NumericFilter (void)
     : BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE)
 {
@@ -45,15 +47,29 @@ NumericFilter::Filter (BMessage *msg, BHandler **)
     {
       uint32 modifier (msg->FindInt32 ("modifiers"));
       const char *bytes (msg->FindString ("bytes"));
-      
-      if (!modifier)
+
+      if ((modifier & B_SHIFT_KEY) == 0
+        && (modifier & B_CONTROL_KEY) == 0
+        && (modifier & B_OPTION_KEY) == 0
+        && (modifier & B_COMMAND_KEY) == 0)
       {
-        if (bytes[0] != B_ENTER
-        &&  bytes[0] != B_BACKSPACE
-        &&  !isdigit (bytes[0]))
-          result = B_SKIP_MESSAGE;
+        switch (bytes[0])
+        {
+          case B_ENTER:
+          case B_BACKSPACE:
+          case B_LEFT_ARROW:
+          case B_RIGHT_ARROW:
+          case B_HOME:
+          case B_END:
+            break;
+            
+          default:
+            if (!isdigit(bytes[0]))
+              result = B_SKIP_MESSAGE;
+            break;
+        }
       }
-      else if (modifier & B_SHIFT_KEY)
+      else if ((modifier & B_SHIFT_KEY) != 0)
       {
         if (bytes[0] == B_LEFT_ARROW
         ||  bytes[0] == B_RIGHT_ARROW
