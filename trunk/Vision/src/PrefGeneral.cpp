@@ -17,6 +17,7 @@
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
+                   Alan Ellis
  */
 
 #include "PrefGeneral.h"
@@ -34,17 +35,18 @@
 #include <ListView.h>
 #include <ScrollView.h>
 
+
 GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redraw, uint32 flags)
   : BView (frame, title, redraw, flags),
               fLastindex (0)
 {
   SetViewColor (ui_color(B_PANEL_BACKGROUND_COLOR));
-  fPrefsItems[0] = new AppWindowPrefsView (BRect(0,0,0,0));
-  fPrefsItems[1] = new ColorPrefsView (BRect (0,0,0,0));
-  fPrefsBox = new BBox (BRect (0.0, 0.0, fPrefsItems[1]->Bounds().right + 10 + be_plain_font->StringWidth("W"), fPrefsItems[0]->Bounds().bottom + be_plain_font->Size() / 2), "Bleat", B_FOLLOW_ALL_SIDES);
-  fPrefsBox->AddChild(fPrefsItems[0]);
-  fPrefsBox->AddChild(fPrefsItems[1]);
-  fPrefsList = new BListView (BRect (0.0, 0.0, fPrefsItems[0]->Bounds().right / 2, fPrefsItems[0]->Bounds().bottom), "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
+  fPrefsItems[piWindow] = new AppWindowPrefsView (BRect(0,0,0,0));
+  fPrefsItems[piColor] = new ColorPrefsView (BRect (0,0,0,0));
+  fPrefsBox = new BBox (BRect (0.0, 0.0, fPrefsItems[piColor]->Bounds().right + 10 + be_plain_font->StringWidth("W"), fPrefsItems[piWindow]->Bounds().bottom + be_plain_font->Size() / 2), "Bleat", B_FOLLOW_ALL_SIDES);
+  fPrefsBox->AddChild(fPrefsItems[piWindow]);
+  fPrefsBox->AddChild(fPrefsItems[piColor]);
+  fPrefsList = new BListView (BRect (0.0, 0.0, fPrefsItems[piWindow]->Bounds().right / 2, fPrefsItems[piWindow]->Bounds().bottom), "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
   fPrefsList->MoveTo(5, 5);
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_APP_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_COLOR_ITEM));
@@ -65,29 +67,29 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   bounds.top += 12;
   bounds.bottom -= 5;
 
-  fPrefsItems[0]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
-  fPrefsItems[0]->ResizeBy(be_plain_font->StringWidth("i") * 3, -1.2 * (be_plain_font->Size()));
-  fPrefsItems[1]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
-  fPrefsItems[1]->ResizeTo(bounds.Width() - 3, bounds.Height() - 3);
+  fPrefsItems[piWindow]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
+  fPrefsItems[piWindow]->ResizeBy(be_plain_font->StringWidth("i") * 3, -1.2 * (be_plain_font->Size()));
+  fPrefsItems[piColor]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
+  fPrefsItems[piColor]->ResizeTo(bounds.Width() - 3, bounds.Height() - 3);
 
-  fPrefsItems[1]->Hide();
-  fPrefsItems[2] = new FontPrefsView (bounds);
-  fPrefsBox->AddChild (fPrefsItems[2]);
-  fPrefsItems[2]->Hide();
-  fPrefsItems[3] = new CommandPrefsView (bounds);
-  fPrefsBox->AddChild (fPrefsItems[3]);
-  fPrefsItems[3]->Hide();
-  fPrefsItems[4] = new EventPrefsView (bounds);
-  fPrefsBox->AddChild (fPrefsItems[4]);
-  fPrefsItems[4]->Hide();
+  fPrefsItems[piColor]->Hide();
+  fPrefsItems[piFonts] = new FontPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[piFonts]);
+  fPrefsItems[piFonts]->Hide();
+  fPrefsItems[piCommands] = new CommandPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[piCommands]);
+  fPrefsItems[piCommands]->Hide();
+  fPrefsItems[piEvents] = new EventPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[piEvents]);
+  fPrefsItems[piEvents]->Hide();
   
-  fPrefsItems[5] = new DCCPrefsView (bounds);
-  fPrefsBox->AddChild (fPrefsItems[5]);
-  fPrefsItems[5]->Hide();
+  fPrefsItems[piDCC] = new DCCPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[piDCC]);
+  fPrefsItems[piDCC]->Hide();
   
-  fPrefsItems[6] = new LogPrefsView (bounds);
-  fPrefsBox->AddChild (fPrefsItems[6]);
-  fPrefsItems[6]->Hide();
+  fPrefsItems[piLog] = new LogPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[piLog]);
+  fPrefsItems[piLog]->Hide();
 }
 
 GeneralPrefsView::~GeneralPrefsView (void)
@@ -108,6 +110,7 @@ GeneralPrefsView::AllAttached (void)
   BView::AllAttached();
   fPrefsList->SetTarget(this);
   fPrefsList->Select(0);
+  fPrefsList->MakeFocus();
 }
 
 void
@@ -129,7 +132,6 @@ GeneralPrefsView::MessageReceived (BMessage *msg)
       BStringItem *item ((BStringItem *)fPrefsList->ItemAt(index));
       fPrefsBox->SetLabel (item->Text());
       fPrefsItems[index]->Show();
-      fPrefsList->MakeFocus (false);
       fLastindex = index;
       Invalidate();
     }

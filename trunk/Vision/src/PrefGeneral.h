@@ -24,13 +24,24 @@
 
 #include <View.h>
 
-const int32 C_PREFS_COUNT = 7;
 
 class BListView;
 class BBox;
 
 class GeneralPrefsView : public BView
 {
+  enum PrefsItems
+  {
+    piWindow = 0,
+    piColor,
+    piFonts,
+    piCommands,
+    piEvents,
+    piDCC,
+    piLog,
+    piEND
+  };
+
   public:
     GeneralPrefsView (BRect, const char *, uint32, uint32);
     virtual ~GeneralPrefsView (void);
@@ -42,7 +53,7 @@ class GeneralPrefsView : public BView
   private:
     BListView *fPrefsList;
     BBox *fPrefsBox;
-    BView *fPrefsItems[C_PREFS_COUNT];
+    BView *fPrefsItems[piEND];
     int32 fLastindex;
 };
 
