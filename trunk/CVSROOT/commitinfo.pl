@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/perl
 # to call this script, add in you CVSROOT/commitinfo :
 # module_to_match THE_GOOF/PATH/commitinfo.pl
 
