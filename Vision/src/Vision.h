@@ -63,8 +63,7 @@ class VisionApp : public BApplication
     
     status_t                SetRect (const char *, BRect);
     
-    BString                 GetString (const char *) const;
-    status_t                SetString (const char *, BString); 
+    const char              *GetString (const char *) const; 
     status_t                SetString (const char *, const char *); 
     
     rgb_color               GetColor (int32) const;

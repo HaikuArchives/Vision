@@ -358,7 +358,7 @@ ServerAgent::ParseEvents (const char *data)
 		Broadcast (&msg);
 		
 		// see if it was our first nickname. if so, change
-		firstNick = (const char *)lnicks->ItemAt (0);
+		firstNick = lnick1;
 		if (theNick == firstNick)
 		{
 			BString tempCmd ("/nick ");

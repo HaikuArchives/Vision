@@ -42,12 +42,8 @@ BLocker ServerAgent::identLock;
 
 ServerAgent::ServerAgent (
   const char *id_,
-  BList *nicks,
   const char *port,
-  const char *name,
-  const char *ident,
   BString *events_,
-  bool motd_,
   bool identd_,
   const char *cmds_,
   BRect frame_)
@@ -56,15 +52,16 @@ ServerAgent::ServerAgent (
     id_,
     ServerSeed++,
     id_,
-    (const char *)nicks->FirstItem(),
+    vision_app->GetString ("nickname1"),
     frame_),
     
-    	lnicks (nicks),
+    	lnick1 (vision_app->GetString ("nickname1")),
+    	lnick2 (vision_app->GetString ("nickname2")),
 		lport (port),
-		lname (name),
-		lident (ident),
+		lname (vision_app->GetString ("realname")),
+		lident (vision_app->GetString ("username")),
 		nickAttempt (0),
-		myNick ((const char *)nicks->FirstItem()),
+		myNick (lnick1),
 		myLag ("0.000"),
 		isConnected (false),
 		isConnecting (true),
@@ -81,7 +78,6 @@ ServerAgent::ServerAgent (
 		parse_buffer (0),
 		parse_size (0),
 		events (events_),
-		motd (motd_),
 		initialMotd (true),
 		identd (identd_),
 		hostnameLookup (false),
@@ -99,13 +95,6 @@ ServerAgent::~ServerAgent (void)
   
   if (send_buffer)  delete [] send_buffer;
   if (parse_buffer) delete [] parse_buffer;
-
-  char *nick;
-  while ((nick = (char *)lnicks->RemoveItem (0L)) != 0)
-    delete [] nick;
-  delete lnicks;
-  
-
 }
 
 void
