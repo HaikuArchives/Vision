@@ -327,6 +327,8 @@ VisionApp::InitSettings (void)
   else
     printf(":ERROR: Error Loading /Vision/VisionSettings\n");
 
+  int32 i (0);
+  
   LoadDefaults (SET_SERVER);
   LoadDefaults (SET_GENERAL);
   LoadDefaults (SET_WINDOW);
@@ -334,13 +336,9 @@ VisionApp::InitSettings (void)
   LoadDefaults (SET_FONT);
   LoadDefaults (SET_COLOR);
   LoadDefaults (SET_STRINGS);
-  settingsloaded = true;  
-  if (debugsettings)
-    printf (":SETTINGS: done loading\n");
-  
+
   // initialize theme, TODO: move to separate function
-  int32 i (0);
-  
+
   for (i = 0; i < MAX_COLORS; i++)
   {
     activeTheme->SetForeground (i, colors[i]);
@@ -354,8 +352,14 @@ VisionApp::InitSettings (void)
   activeTheme->SetBackground (MAX_COLORS, colors[C_BACKGROUND]);
   activeTheme->SetForeground (MAX_COLORS, colors[C_TEXT]);
   activeTheme->SetFont (MAX_FONTS, client_font[F_TEXT]);
+
   for (i = 0; i < MAX_FONTS; i++)
     activeTheme->SetFont (i, client_font[i]);
+
+  settingsloaded = true;  
+  if (debugsettings)
+    printf (":SETTINGS: done loading\n");
+  
   
 }
 
