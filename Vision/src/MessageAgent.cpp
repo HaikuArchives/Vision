@@ -296,6 +296,7 @@ MessageAgent::DCCIn (void *arg)
       if (tempBuffer[0] == '\n')
         {
           inputBuffer.RemoveLast ("\r");
+          inputBuffer = FilterCrap (inputBuffer.String(), false);
           agent->ChannelMessage (inputBuffer.String());
           inputBuffer = "";
         }
@@ -440,6 +441,7 @@ MessageAgent::DCCOut (void *arg)
       if (tempBuffer[0] == '\n')
       {
       	inputBuffer.RemoveLast ("\r");
+      	inputBuffer = FilterCrap (inputBuffer.String(), false);
         agent->ChannelMessage (inputBuffer.String());
         inputBuffer = "";
       }
