@@ -1,11 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8.7-0427]
+[0.8.8-0429]
          * changed list agent to not sort channels until done receiving for improved performance
-         * experimental rewrite that moves server data sending into its own thread in an attempt
-           to resolve dial-up locking issues (NOTE: this code has not been tested thoroughly yet. I make          
-           absolutely no guarantees of correct behavior with this at the moment.)
+         * rewrote network code to move server data sending into its own thread in an attempt
+           to resolve dial-up locking issues
+         * fixed some tab navigation problems in the server entry window
+         * hopefully fixed some race condition/crash issues on shutdown
 
 [0.8.7-0424]
          * fixed another crash bug in tab completion

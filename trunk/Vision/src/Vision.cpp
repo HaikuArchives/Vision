@@ -64,7 +64,7 @@ class VisionApp * vision_app;
 #include "SetupWindow.h"
 #include "PrefsWindow.h"
 #include "Theme.h"
-
+#include "WindowList.h"
 #include "TestScript.h"
 
 // sound event name definitions
@@ -581,15 +581,18 @@ VisionApp::QuitRequested (void)
     closesocket (fIdentSocket);
 #endif
   
-  if(fClientWin)
+  BMessenger msgr (fClientWin);
+  if (msgr.IsValid() && msgr.LockTarget())
   {
-    fClientWin->PostMessage (B_QUIT_REQUESTED);
-    //hang out here until ClientWindow::QuitRequested is really done
-    acquire_sem_etc(fShutdownSem, 1, B_RELATIVE_TIMEOUT, 500000);
+    volatile thread_id winThread (fClientWin->Thread());
+    fClientWin->Unlock();
+    msgr.SendMessage (B_QUIT_REQUESTED);
+    status_t result;
+    wait_for_thread (winThread, &result);
   }
-  
+
   // give our child threads a chance to die gracefully
-  snooze (500000);  // 0.5 seconds
+  //  snooze (500000);  // 0.5 seconds
 
   //ThreadStates();
 
@@ -713,10 +716,6 @@ VisionApp::ReadyToRun (void)
   if (fIdentThread >= B_OK)
     resume_thread (fIdentThread);
 
-  fShutdownSem = create_sem(0, "ShutdownSem");
-  if(fShutdownSem < B_OK) //that's an error
-  	vision_app->Quit();
-  
   if (!CheckStartupNetworks())
   {  
     fSetupWin = new SetupWindow ();
@@ -1339,12 +1338,6 @@ Theme *
 VisionApp::ActiveTheme (void)
 {
   return fActiveTheme;
-}
-
-sem_id
-VisionApp::GetShutdownSem (void)
-{
-  return fShutdownSem;
 }
 
 void

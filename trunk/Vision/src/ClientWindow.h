@@ -108,8 +108,6 @@ class ClientWindow : public BWindow
     
     ResizeView            *fResize;
     
-    sem_id                fShutdownSem;
-
 };
 
 #endif

@@ -78,34 +78,21 @@ ClientWindow::QuitRequested (void)
 {
   vision_app->SetRect ("windowDockRect", fCwDock->Bounds());
   vision_app->SetRect ("clientWinRect", Frame());
+
   if (!fShutdown_in_progress)
   {
     fShutdown_in_progress = true;
     BMessage killMsg (M_CLIENT_QUIT);
     killMsg.AddBool ("vision:winlist", true);
-    killMsg.AddBool ("vision:fShutdown_in_progress", fShutdown_in_progress);
+    killMsg.AddBool ("vision:shutdown_in_progress", fShutdown_in_progress);
     if (ServerBroadcast (&killMsg))
       fWait_for_quits = true;
       
     if (fWait_for_quits)
       return false;
   }
-  else
-  {
-    for (int32 o (1); o <= pWindowList()->CountItems(); ++o)
-    { 
-      WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (o - 1));
-      if (aitem->Type() == WIN_SERVER_TYPE)
-      {
-        // wait some more
-        return false;
-      }
-    }
-  }
-
 
   vision_app->PostMessage (B_QUIT_REQUESTED);
-  delete_sem(fShutdownSem);
 
   return true;
 }
@@ -320,11 +307,11 @@ ClientWindow::MessageReceived (BMessage *msg)
           return;
         } 
        
-        int32 agentType (agentitem->Type());
         pWindowList()->RemoveAgent (agentview, agentitem);
-        
-        if ((fShutdown_in_progress) && (agentType == WIN_SERVER_TYPE))
+
+        if (fShutdown_in_progress && pWindowList()->CountItems() == 0)
           PostMessage (B_QUIT_REQUESTED);
+          
       }  
       break;
  
@@ -519,9 +506,9 @@ ClientWindow::Init (void)
   fShutdown_in_progress = false;
   fWait_for_quits = false;
   fAltw_catch = false;
-  fShutdownSem = vision_app->GetShutdownSem();
 
   AddShortcut ('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
+  AddShortcut ('Q', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
   
   BRect frame (Bounds());
   menubar = new BMenuBar (frame, "menu_bar");
