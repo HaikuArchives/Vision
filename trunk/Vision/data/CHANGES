@@ -3,6 +3,12 @@ http://vision.sourceforge.net
 
 [0.1.0325]
  2001-03-25
+   * Fixed a crash on quit that resulted from adding the Alt+Arrow shortcuts
+     (JBQ saves the day again)
+   * Alt+/ works, brings you to the ServerAgent "parent" for the active Agent
+   * Make VisionVersion BString static
+   * Move M_MOVE_UP/M_MOVE_DOWN uint declarations to ClientWindow where they
+     should be instead of ClientAgent
    * Bring back Alt+P to close the active window
    * Move Alt+Up/Down shortcuts back to the Window menu
    * Double clicking on a NickListItem opens a query window

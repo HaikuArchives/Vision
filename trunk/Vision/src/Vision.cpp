@@ -382,7 +382,7 @@ VisionApp::pClientWin() const
 BString
 VisionApp::VisionVersion (void)
 {
-  BString output (VERSION_STRING);
+  static BString output (VERSION_STRING);
   return output;
 }
 
