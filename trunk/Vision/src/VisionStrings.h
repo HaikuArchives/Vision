@@ -164,7 +164,7 @@
 #define S_NOTIFYLIST_QUERY_ITEM     "Query"
 #define S_NOTIFYLIST_WHOIS_ITEM     "Whois"
 #define S_NOTIFYLIST_REMOVE_ITEM    "Remove"
-
+#define S_NOTIFYLIST_DCC_ITEM       "DCC Chat"
 // command parser
 
 #define S_PCMD_PARAMETER_ERROR      "Error: Invalid parameters"

@@ -43,7 +43,7 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   SetViewColor (ui_color(B_PANEL_BACKGROUND_COLOR));
   fPrefsItems[piWindow] = new AppWindowPrefsView (BRect(0,0,0,0));
   fPrefsItems[piColor] = new ColorPrefsView (BRect (0,0,0,0));
-  fPrefsBox = new BBox (BRect (0.0, 0.0, fPrefsItems[piColor]->Bounds().right + 10 + be_plain_font->StringWidth("W"), fPrefsItems[piWindow]->Bounds().bottom + be_plain_font->Size() / 2), "Bleat", B_FOLLOW_ALL_SIDES);
+  fPrefsBox = new BBox (BRect (0.0, 0.0, fPrefsItems[piColor]->Bounds().right + 10 + be_plain_font->StringWidth("W"), fPrefsItems[piColor]->Bounds().bottom + be_plain_font->Size() / 2), "Bleat", B_FOLLOW_ALL_SIDES);
   fPrefsBox->AddChild(fPrefsItems[piWindow]);
   fPrefsBox->AddChild(fPrefsItems[piColor]);
   fPrefsList = new BListView (BRect (0.0, 0.0, fPrefsItems[piWindow]->Bounds().right / 2, fPrefsItems[piWindow]->Bounds().bottom), "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
