@@ -59,6 +59,9 @@ ServerAgent::ParseEvents (const char *data)
     ClientAgent *client (0);
 
     theMsg.RemoveFirst(":");
+    
+    if (theMsg.Length() == 0)
+      return true;
 
     if (theMsg[0] == '\1' && GetWord (theMsg.String(), 1) != "\1ACTION")
     {
