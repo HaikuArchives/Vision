@@ -297,9 +297,15 @@ ServerAgent::Sender (void *arg)
     sendDataLock->Lock();
     data = (BString *)pendingSends->RemoveItem (0L);
     sendDataLock->Unlock();
-    agent->AsyncSendData (data->String());
-    delete data;
-    data = NULL;
+    // this could happen if there are several queued data items and the server
+    // simultaneously disconnects, thus clearing the send queue, but not the semaphore
+    // releases
+    if (data != NULL)
+    {
+      agent->AsyncSendData (data->String());
+      delete data;
+      data = NULL;
+    }
   }
   return B_OK;
 }
@@ -677,6 +683,13 @@ ServerAgent::AsyncSendData (const char *cData)
 #ifdef NETSERVER_BUILD
   fEndPointLock->Lock();
 #endif
+  if (fServerSocket <= 0)
+  {
+    if (!fReconnecting && !fIsConnecting)
+      fMsgr.SendMessage (M_SERVER_DISCONNECT);
+      // doh, we aren't even connected.
+      return;
+  }
   struct fd_set eset, wset;
   FD_ZERO (&wset);
   FD_ZERO (&eset);
@@ -698,7 +711,7 @@ ServerAgent::AsyncSendData (const char *cData)
 #elif NETSERVER_BUILD
       (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
 #endif
-      || fServerSocket <= 0)
+      )
     {
       if (!fReconnecting && !fIsConnecting)
         fMsgr.SendMessage (M_SERVER_DISCONNECT);

@@ -321,17 +321,28 @@ ClientAgent::Submit (
   bool fHistoryAdd)
 {
   BString cmd;
-
+  
   if (fHistoryAdd)
     cmd = fHistory->Submit (buffer);
   else
     cmd = buffer;
 
+
   if (clear) fInput->SetText ("");
+
   if (cmd.Length()
   && !SlashParser (cmd.String())
   &&   cmd[0] != '/')
-    Parser (cmd.String());
+  {
+    BString tmp;
+    // break strings up by 440 lens to ensure user doesn't lose data
+    while (cmd.Length() > 0)
+    {
+      cmd.MoveInto (tmp, 0, Get440Len(cmd.String()));
+      Parser (tmp.String());
+      tmp = "";
+    }
+  }
 }
 
 int32
