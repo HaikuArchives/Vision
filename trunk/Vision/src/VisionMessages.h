@@ -57,11 +57,11 @@ const uint32 M_LIST_INVOKE                          = 0x1033;
 const uint32 M_LIST_UPDATE                          = 0x1034;
 
 const uint32 M_IS_IGNORED							= 0x1035;
-const uint32 M_IGNORE_COMMAND						= 0x1036;
-const uint32 M_IGNORE_SHUTDOWN						= 0x1037;
-const uint32 M_UNIGNORE_COMMAND  					= 0x1038;
-const uint32 M_EXCLUDE_COMMAND						= 0x1039;
-const uint32 M_IGNORE_WINDOW						= 0x1040;
+const uint32 M_IGNORE_ADD							= 0x1036;
+const uint32 M_IGNORE_LIST							= 0x1037;
+const uint32 M_IGNORE_REMOVE	  					= 0x1038;
+const uint32 M_EXCLUDE_ADD							= 0x1039;
+const uint32 M_EXCLUDE_REMOVE						= 0x1040;
 
 const uint32 M_STATE_CHANGE							= 0x1041;
 const uint32 M_SERVER_STARTUP						= 0x1042;
