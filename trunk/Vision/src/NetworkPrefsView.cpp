@@ -286,7 +286,9 @@ NetworkPrefsView::UpdateNetworkData (BMessage &msg)
 	startupBox->SetEnabled (true);
 	serverButton->SetEnabled (true);
 	textView->MakeEditable (true);
-	execButton->SetEnabled (true);
+//	execButton->SetEnabled (true);
+	SetConnectServer ("<N/A>");
+	SetAlternateCount (0);
 
 	bool startup (false);
 	if (msg.FindBool ("connectOnStartup", &startup) == B_OK)
@@ -564,7 +566,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 			break;
 		
 		case M_EXEC_COMMAND_DIALOG:
-			printf("autoexec command dialog\n");
+//			printf("autoexec command dialog\n");
 			break;
 		
 		case M_CONNECT_ON_STARTUP:

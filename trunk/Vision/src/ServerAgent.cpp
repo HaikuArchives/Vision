@@ -1118,14 +1118,14 @@ ServerAgent::MessageReceived (BMessage *msg)
       {
         if (isConnected)
         {
+          BMessage lagSend (M_SERVER_SEND);
+          AddSend (&lagSend, "VISION_LAG_CHECK");
+          AddSend (&lagSend, endl);
           if (!checkingLag)
           {
             lagCheck = system_time();
             lagCount = 1;
             checkingLag = true;
-            BMessage lagSend (M_SERVER_SEND);
-            AddSend (&lagSend, "VISION_LAG_CHECK");
-            AddSend (&lagSend, endl);
           }
           else
           {
