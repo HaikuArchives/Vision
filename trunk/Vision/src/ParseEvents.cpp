@@ -213,7 +213,7 @@ ServerAgent::ParseEvents (const char *data)
 		if (nick == myNick)
 		{
 			if (!client)
-			{				
+			{
 				vision_app->pClientWin()->pWindowList()->AddAgent (
    					new ChannelAgent (
       					channel.String(),

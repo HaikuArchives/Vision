@@ -59,8 +59,8 @@ class NameItem : public BListItem
 	private:
 
 	BString							myName,
-										myAddress;
-	int32								myStatus;
+									myAddress;
+	int32							myStatus;
 };
 
 class NamesView : public BListView
