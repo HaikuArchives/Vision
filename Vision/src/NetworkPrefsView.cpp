@@ -129,7 +129,7 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
   fServerButton = new BButton (boundsRect, NULL, S_NETPREFS_CHANGE_SERVER B_UTF8_ELLIPSIS,
 			      new BMessage (M_SERVER_DIALOG));
   fServerButton->ResizeToPreferred ();
-  fServerButton->MoveTo (fAlternates->Frame ().left + fAlternates->Frame ().Width () / 2,
+  fServerButton->MoveTo (fNetDetailsBox->Frame().right - (fServerButton->Frame().Width() + 20),
 			fAlternates->Frame ().bottom + 10);
   fNetDetailsBox->AddChild (fServerButton);
   BStringView *stringView4 (new BStringView (boundsRect, NULL, S_NETPREFS_AUTOEXEC));
