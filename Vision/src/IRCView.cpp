@@ -38,6 +38,7 @@
 
 #include "VTextControl.h"
 #include "Vision.h"
+#include "ChannelAgent.h"
 #include "ClientAgent.h"
 #include "IRCView.h"
 
@@ -161,6 +162,15 @@ IRCView::BuildPopUp (void)
 
   BMenuItem *item;
   BMessage *lookup;
+  
+  ChannelAgent *channel;
+  if ((channel = dynamic_cast<ChannelAgent *>(settings->parentAgent)))
+  {
+    item = new BMenuItem("Channel Options", new BMessage (M_CHANNEL_OPTIONS_SHOW));
+    item->SetTarget (settings->parentAgent);
+    myPopUp->AddItem (item);    
+    myPopUp->AddSeparatorItem(); 
+  }
   
   lookup = new BMessage (M_LOOKUP_WEBSTER);
   lookup->AddString ("string", querystring);

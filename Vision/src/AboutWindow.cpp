@@ -226,32 +226,6 @@ AboutWindow::Pulse (void)
 
 
 void
-AboutWindow::MessageReceived (BMessage *msg)
-{
-  switch (msg->what)
-  {
-    case M_ABOUT_ORGY:
-    {
-      if (EasterEggOn)
-        AboutImage ("bits", false);  // bowser logo
-      else
-        AboutImage ("Gummi Orgy", true);
-      break;
-    }
-    
-    case M_ABOUT_BUDDYJ:
-    {
-      if (EasterEggOn)
-        AboutImage ("bits", false);  // bowser logo
-      else
-        AboutImage ("Buddy Jesus", true);
-      break;
-    }
-  }
-}
-
-
-void
 AboutWindow::AboutImage (const char *eggName, bool egg)
 {
   BBitmap *bmp;

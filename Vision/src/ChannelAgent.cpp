@@ -35,6 +35,7 @@
 #include "ClientWindow.h"
 #include "StringManip.h"
 #include "VTextControl.h"
+#include "ChannelOptions.h"
 
 
 ChannelAgent::ChannelAgent (
@@ -60,7 +61,8 @@ ChannelAgent::ChannelAgent (
 	chanKeyOld (""),
 	lastExpansion (""),
 	userCount (0),
-	opsCount (0)
+	opsCount (0),
+	chanOpt (0)
 
 {
   //Init();
@@ -697,6 +699,24 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			vision_app->pClientWin()->status->SetItemValue (STATUS_OPS, buffer.String());
 			
 			break;
+		}
+		
+		case M_CHANNEL_OPTIONS_SHOW:
+		{
+		  if (chanOpt)
+		    chanOpt->Activate();
+		  else
+		  {
+		    chanOpt = new ChannelOptions (id, this);
+		    chanOpt->Show();
+		  }
+		  break;		
+		}
+		
+		case M_CHANNEL_OPTIONS_CLOSE:
+		{
+		  chanOpt = 0;
+		  break;
 		}
 		
 		case M_CLIENT_QUIT:

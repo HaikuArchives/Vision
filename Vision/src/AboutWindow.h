@@ -38,7 +38,6 @@ class AboutWindow : public BWindow
                           AboutWindow (void);
     virtual               ~AboutWindow (void);
   
-    virtual void          MessageReceived (BMessage *);
     virtual bool          QuitRequested (void);
     virtual void          DispatchMessage (BMessage *, BHandler *);
     void                  Pulse (void);
@@ -52,7 +51,5 @@ class AboutWindow : public BWindow
 
 
 const uint32 M_ABOUT_CLOSE           = 'abcl'; // The party has to stop sometime
-const uint32 M_ABOUT_ORGY            = 'abor'; // Gummy Orgy
-const uint32 M_ABOUT_BUDDYJ          = 'abbj'; // Buddy Jesus!
 
 #endif
