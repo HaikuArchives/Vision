@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.5-0906
+VERSION := 0.9.6-0923
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 

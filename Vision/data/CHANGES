@@ -1,6 +1,9 @@
 Vision
 http://vision.sourceforge.net
 
+[0.9.6-0923]
+         * fixed crash bug during shutdown with notify blinkers
+
 [0.9.5-0906]
          * fix stupid crash bug
          * fix crash bug in PPC rev
