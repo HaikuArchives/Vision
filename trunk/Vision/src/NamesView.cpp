@@ -164,19 +164,65 @@ NamesView::MouseDown (BPoint myPoint)
     inputMsg->FindInt32 ("modifiers", &keymodifiers);
     inputMsg->FindInt32 ("clicks",  &mouseclicks);
 
-    if (mouseclicks > 1 
+    if (mouseclicks > 1
+    && CurrentSelection(1) <= 0
     &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
     && (keymodifiers & B_SHIFT_KEY)   == 0
     && (keymodifiers & B_OPTION_KEY)  == 0
     && (keymodifiers & B_COMMAND_KEY) == 0
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
-      NameItem *myItem (reinterpret_cast<NameItem *>(ItemAt (selected)));
-      BString theNick (myItem->Name());
-      BMessage msg (M_OPEN_MSGAGENT);
+      BListItem *item (ItemAt (IndexOf(myPoint)));
+      if (item && !item->IsSelected())
+	  {
+	    Select (IndexOf (myPoint), false);
+	    currentindex = IndexOf (myPoint);
+	    _tracking = true;
+	  }
+	  else if (item && item->IsSelected())
+      {
+        NameItem *myItem (reinterpret_cast<NameItem *>(item));
+        BString theNick (myItem->Name());
+        BMessage msg (M_OPEN_MSGAGENT);
 	
-      msg.AddString ("nick", theNick.String());
-      Window()->PostMessage (&msg);
+        msg.AddString ("nick", theNick.String());
+        Window()->PostMessage (&msg);
+      }
+      
+      handled = true;
+    }
+    
+    if (mouseclicks == 1
+    &&  CurrentSelection(1) <= 0
+    &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
+    && (keymodifiers & B_SHIFT_KEY)   == 0
+    && (keymodifiers & B_OPTION_KEY)  == 0
+    && (keymodifiers & B_COMMAND_KEY) == 0
+    && (keymodifiers & B_CONTROL_KEY) == 0)
+    {
+      BListItem *item (ItemAt (IndexOf(myPoint)));
+      if (item && !item->IsSelected())
+        Select (IndexOf (myPoint), false);
+      
+      _tracking = true;
+      currentindex = IndexOf (myPoint);
+      handled = true;
+    }
+    
+    if (mouseclicks >= 1
+    &&  CurrentSelection(1) >= 0
+    &&  mousebuttons == B_PRIMARY_MOUSE_BUTTON
+    && (keymodifiers & B_SHIFT_KEY)   == 0
+    && (keymodifiers & B_OPTION_KEY)  == 0
+    && (keymodifiers & B_COMMAND_KEY) == 0
+    && (keymodifiers & B_CONTROL_KEY) == 0)
+    {
+      BListItem *item (ItemAt (IndexOf(myPoint)));
+      if (item)
+        Select (IndexOf (myPoint), false);
+      
+      _tracking = true;
+      currentindex = IndexOf (myPoint);
       handled = true;
     }
 	
@@ -187,9 +233,9 @@ NamesView::MouseDown (BPoint myPoint)
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
 
-      BListItem *item = ItemAt(IndexOf(myPoint));
+      BListItem *item (ItemAt (IndexOf(myPoint)));
       if (item && !item->IsSelected())
-        Select(IndexOf(myPoint), false);
+        Select (IndexOf (myPoint), false);
 
       myPopUp->Go (
         ConvertToScreen (myPoint),
@@ -203,6 +249,86 @@ NamesView::MouseDown (BPoint myPoint)
   lastSelected = selected; 
   if (!handled)
     BListView::MouseDown (myPoint);
+}
+
+void
+NamesView::MouseUp (BPoint myPoint)
+{
+ if (_tracking)
+   _tracking = false;
+ 
+ BListView::MouseUp (myPoint);
+}
+
+void
+NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg)
+{
+ if (_tracking)
+ {
+   if (transitcode == B_INSIDE_VIEW)
+   {
+     BListItem *item = ItemAt (IndexOf(myPoint));
+     if (item && !item->IsSelected())
+     {
+       // user is sweeping
+       int32 first (CurrentSelection (0)),
+             last (IndexOf (myPoint));
+                   
+       if (currentindex != last)
+       {
+             
+         Select (last, true);
+
+         // MouseMoved messages might not get sent if the user moves real fast
+         // fill in any possible blank areas.     
+         if (last > first)
+         {
+           // sweeping down
+           Select (first, last, true);
+         }
+         else if (last < first)
+         {
+           // sweeping up
+           Select (last, first, true);
+         }
+       }
+       currentindex = last;
+     }
+     else if (item && item->IsSelected())
+     {
+       // user is backtracking
+       int32 last (IndexOf (myPoint));
+       
+       if (currentindex != last)
+       {
+         DeselectExcept (CurrentSelection (0), last);
+
+         #if 0
+         // MouseMoved messages might not get sent if the user moves real fast
+         // fill in any possible blank areas.     
+         if (currentindex > last)
+         {
+           // backtracking up
+           Deselect (last+1, currentindex);
+         }
+         else if (currentindex < last)
+         {
+           // backtracking down
+           Deselect (currentindex, last-1);
+         }
+         #endif
+       }
+          
+       currentindex = last;
+     }       
+       
+     
+   }
+   if (transitcode == B_EXITED_VIEW)
+     _tracking = false;
+ }
+ else
+   BListView::MouseMoved (myPoint, transitcode, mmMsg);
 }
 
 void

@@ -47,8 +47,8 @@ class NameItem : public BListItem
 	void								SetAddress (const char *);
 	void								SetStatus (int32);
 
-	virtual void					DrawItem (BView *father, BRect frame,
-										bool complete = false);
+	virtual void					DrawItem (BView *, BRect ,
+										bool = false);
 
 	private:
 
@@ -61,10 +61,12 @@ class NamesView : public BListView
 {
   public:
 
-										NamesView (BRect frame);
+										NamesView (BRect);
 	virtual							~NamesView (void);
 	virtual void					AttachedToWindow (void);
-	virtual void					MouseDown(BPoint myPoint);
+	virtual void					MouseDown (BPoint);
+	virtual void					MouseMoved (BPoint, uint32, const BMessage *);
+	virtual void					MouseUp (BPoint);
 	virtual void                    KeyDown (const char *, int32);
 
 	void								SetColor (int32, rgb_color);
@@ -80,6 +82,7 @@ class NamesView : public BListView
 	BMenu 							*CTCPPopUp;
 	int32								lastSelected;
 	int32								lastButton;
+	int32                           currentindex;
 
 	rgb_color						opColor,
 										voiceColor,
