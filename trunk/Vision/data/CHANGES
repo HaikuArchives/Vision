@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.1-0706]
+[0.9.1-0711]
          * added dcc chat option to notify context menu
          * adjusted default prefs sizing logic
          * modified sender threads so they can't deadlock (fixes lock on closing servers that would intermittently crop up)
@@ -11,6 +11,7 @@ http://vision.sourceforge.net
          * fixed multiple simultaneous network threads bug
          * fixed font prefs bug where changes wouldn't always get recognized in R5
          * made nick notification sound trigger if window is not active
+         * fixed bug in settings file
 
 [0.9-0630]
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
