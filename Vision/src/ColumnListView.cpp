@@ -249,95 +249,102 @@ public:
 	OutlineView(BRect, BList *visibleColumns, BList *sortColumns, BColumnListView *listView);
 	~OutlineView();
 
-	virtual void Draw(BRect);
-	void RedrawColumn(BColumn *column, float leftEdge, bool isFirstColumn);
-	void AddRow(BRow*, int32 index, BRow *parent);
-	const BRect& VisibleRect() const;
-	BRow* CurrentSelection(BRow *lastSelected) const;
-	void ToggleFocusRowSelection(bool selectRange);
-	void ToggleFocusRowOpen();
-	void ChangeFocusRow(bool up, bool updateSelection, bool addToCurrentSelection);
-	void MoveFocusToVisibleRect();
-	void StartSorting();
-	void ExpandOrCollapse(BRow *parent, bool expand);
-	void RemoveRow(BRow*);
-	BRowContainer* RowList();
-	void UpdateRow(BRow*);
-	bool FindParent(BRow *row, BRow **out_parent, bool *out_isVisible);
-	int32 IndexOf(BRow *row);
-	void Clear();
-	void SetSelectionMode(list_view_type);
-	list_view_type SelectionMode() const;
-	void Deselect(BRow*);
-	void AddToSelection(BRow*);
-	void DeselectAll();
-	BRow *FocusRow() const;
-	void SetFocusRow(BRow *row, bool select);
-	BRow* FindRow(float ypos, int32 *out_indent, float *out_top);
-	void SetMouseTrackingEnabled(bool);
-	bool FindRect(const BRow *row, BRect *out_rect);
-	void FixScrollBar(bool scrollToFit);
-	void SetEditMode(bool state) { fEditMode = state; }
+	virtual void				Draw(BRect);
+	const 	BRect&				VisibleRect() const;
 
-	virtual void FrameResized(float width, float height);
-	virtual void ScrollTo(BPoint pt);
-	virtual void MouseDown(BPoint);
-	virtual void MouseMoved(BPoint, uint32, const BMessage*);
-	virtual void MouseUp(BPoint);
-	virtual void MessageReceived(BMessage*);
+			void				RedrawColumn(BColumn *column, float leftEdge, bool isFirstColumn);
+			void 				StartSorting();
+	
+			void				AddRow(BRow*, int32 index, BRow *parent);
+			BRow*				CurrentSelection(BRow *lastSelected) const;
+			void 				ToggleFocusRowSelection(bool selectRange);
+			void 				ToggleFocusRowOpen();
+			void 				ChangeFocusRow(bool up, bool updateSelection, bool addToCurrentSelection);
+			void 				MoveFocusToVisibleRect();
+			void 				ExpandOrCollapse(BRow *parent, bool expand);
+			void 				RemoveRow(BRow*);
+			BRowContainer*		RowList();
+			void				UpdateRow(BRow*);
+			bool				FindParent(BRow *row, BRow **out_parent, bool *out_isVisible);
+			int32				IndexOf(BRow *row);
+			void				Deselect(BRow*);
+			void				AddToSelection(BRow*);
+			void				DeselectAll();
+			BRow*				FocusRow() const;
+			void				SetFocusRow(BRow *row, bool select);
+			BRow*				FindRow(float ypos, int32 *out_indent, float *out_top);
+			bool				FindRect(const BRow *row, BRect *out_rect);
+			void				ScrollTo(const BRow* Row);
+
+			void				Clear();
+			void				SetSelectionMode(list_view_type);
+			list_view_type		SelectionMode() const;
+			void				SetMouseTrackingEnabled(bool);
+			void				FixScrollBar(bool scrollToFit);
+			void				SetEditMode(bool state) { fEditMode = state; }
+
+	virtual void				FrameResized(float width, float height);
+	virtual void				ScrollTo(BPoint pt);
+	virtual void				MouseDown(BPoint);
+	virtual void				MouseMoved(BPoint, uint32, const BMessage*);
+	virtual void				MouseUp(BPoint);
+	virtual void				MessageReceived(BMessage*);
 
 private:
-	bool SortList(BRowContainer *list, bool isVisible);
-	static int32 DeepSortThreadEntry(void *outlineView);
-	void DeepSort();
-	void SelectRange(BRow *start, BRow *end);
-	int32 CompareRows(BRow *row1, BRow *row2);
-	void AddSorted(BRowContainer *list, BRow *row);
-	void RecursiveDeleteRows(BRowContainer *list, bool owner);
-	void InvalidateCachedPositions();
-	bool FindVisibleRect(BRow *row, BRect *out_rect);
+			bool				SortList(BRowContainer *list, bool isVisible);
+	static	int32				DeepSortThreadEntry(void *outlineView);
+			void				DeepSort();
+			void				SelectRange(BRow *start, BRow *end);
+			int32				CompareRows(BRow *row1, BRow *row2);
+			void				AddSorted(BRowContainer *list, BRow *row);
+			void				RecursiveDeleteRows(BRowContainer *list, bool owner);
+			void				InvalidateCachedPositions();
+			bool				FindVisibleRect(BRow *row, BRect *out_rect);
 
-	BList *fColumns;
-	BList *fSortColumns;
-	float fItemsHeight;
-	BRowContainer fRows;
-	BRect fVisibleRect;
+	BList*			fColumns;
+	BList*			fSortColumns;
+	float			fItemsHeight;
+	BRowContainer	fRows;
+	BRect			fVisibleRect;
 
 #if DOUBLE_BUFFERED_COLUMN_RESIZE
-	BBitmap *fDrawBuffer;
-	BView *fDrawBufferView;
+	BBitmap*		fDrawBuffer;
+	BView*			fDrawBufferView;
 #endif
 
-	BRow *fFocusRow;
-	BRect fFocusRowRect;
-	BRow *fRollOverRow;
+	BRow*			fFocusRow;
+	BRect			fFocusRowRect;
+	BRow*			fRollOverRow;
 
-	BRow fSelectionListDummyHead;
-	BRow *fLastSelectedItem;
-	BRow *fFirstSelectedItem;
+	BRow			fSelectionListDummyHead;
+	BRow*			fLastSelectedItem;
+	BRow*			fFirstSelectedItem;
 
-	thread_id fSortThread;
-	int32 fNumSorted;
-	bool fSortCancelled;
+	thread_id		fSortThread;
+	int32			fNumSorted;
+	bool			fSortCancelled;
 
-	enum {
+	enum CurrentState
+	{
 		INACTIVE,
 		LATCH_CLICKED,
 		ROW_CLICKED,
 		DRAGGING_ROWS
-	} fCurrentState;
+	};
+	
+	CurrentState fCurrentState;
 	
 
-	BColumnListView *fMasterView;
-	list_view_type fSelectionMode;
-	bool fTrackMouse;
-	BField *fCurrentField;
-	BRow *fCurrentRow;
-	BColumn *fCurrentColumn;
-	bool fMouseDown;
-	BRect fFieldRect;
-	int32 fCurrentCode;
-	bool fEditMode;
+	BColumnListView*	fMasterView;
+	list_view_type		fSelectionMode;
+	bool				fTrackMouse;
+	BField*				fCurrentField;
+	BRow*				fCurrentRow;
+	BColumn*			fCurrentColumn;
+	bool				fMouseDown;
+	BRect				fFieldRect;
+	int32				fCurrentCode;
+	bool				fEditMode;
 
 	// State information for mouse/keyboard interaction
 	BPoint fClickPoint;
@@ -1057,6 +1064,11 @@ void BColumnListView::RemoveRow(BRow *row)
 void BColumnListView::UpdateRow(BRow *row)
 {
 	fOutlineView->UpdateRow(row);
+}
+
+void BColumnListView::ScrollTo(const BRow* Row)
+{
+	fOutlineView->ScrollTo(Row);
 }
 
 void BColumnListView::Clear()
@@ -3717,6 +3729,17 @@ bool OutlineView::FindRect(const BRow *row, BRect *out_rect)
 
 	return false;
 }
+
+
+void OutlineView::ScrollTo(const BRow* Row)
+{
+	BRect rect;
+	if( true == FindRect(Row, &rect) )
+	{
+		ScrollTo(BPoint(rect.left, rect.top));
+	}
+}
+
 
 void OutlineView::DeselectAll()
 {
