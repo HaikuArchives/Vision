@@ -148,9 +148,13 @@ ServerAgent::Init (void)
     10000000,   // 10 seconds
     -1);        // forever
   
+  BString name;
+  
+  vision_app->GetThreadName(THREAD_S, name);
+  
   loginThread = spawn_thread (
     Establish,
-    vision_app->GetThreadName(THREAD_S),
+    name.String(),
     B_NORMAL_PRIORITY,
     new BMessenger(this));
 
@@ -737,6 +741,8 @@ ServerAgent::HandleReconnect (void)
 
   if (retry < retryLimit)
   {
+    BString name;
+    vision_app->GetThreadName(THREAD_S, name);
     // we are go for main engine start
     reconnecting = true;
     isConnecting = true;
@@ -747,7 +753,7 @@ ServerAgent::HandleReconnect (void)
 #endif
     loginThread = spawn_thread (
       Establish,
-      vision_app->GetThreadName(THREAD_S),
+      name.String(),
       B_NORMAL_PRIORITY,
       new BMessenger(this));
     

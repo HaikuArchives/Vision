@@ -97,7 +97,7 @@ class VisionApp : public BApplication
     
     Theme *                 ActiveTheme(void);
     
-    const char              *GetThreadName (int);
+    void                    GetThreadName (int, BString &);
     
     void                    BenchOut (const char *);
 

@@ -7,6 +7,7 @@ http://vision.sourceforge.net
          * fixed bug in control code stripper where too many digits would get removed
          * tweaked textview drawing performance
          * began moving program strings to a common header file for easier localization 
+         * fixed thread-safety issue in thread name generator
 
 [0.7.8-0113]
          * fixed crash bug in ParseEvents

@@ -1332,11 +1332,11 @@ VisionApp::GetShutdownSem (void)
   return shutdownSem;
 }
 
-const char *
-VisionApp::GetThreadName (int thread_type)
+void
+VisionApp::GetThreadName (int thread_type, BString &output)
 {
   // random names for the connection thread
-  static BString tnames[54] = {
+  static const char *tnames[] = {
     /*  0 */ "gummi_bear_orgy",
     /*  1 */ "complimentary_tote_bag",
     /*  2 */ "cheating_at_solitaire", 
@@ -1396,8 +1396,6 @@ VisionApp::GetThreadName (int thread_type)
   
   int rnd (rand() % 54);
  
-  static BString output;
-  
   switch (thread_type)
   {
     case THREAD_S:
@@ -1410,8 +1408,6 @@ VisionApp::GetThreadName (int thread_type)
   }
   
   output += tnames[rnd];
-  
-  return output.String();
 }
 
 void
