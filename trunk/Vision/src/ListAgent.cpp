@@ -63,6 +63,7 @@ ListAgent::ListAgent (
       B_FOLLOW_ALL_SIDES,
       B_WILL_DRAW | B_FRAME_EVENTS),
    sMsgr (sMsgr_),
+   listUpdateTrigger (NULL),
   filter (""),
   find (""),
   processing (false),
@@ -152,7 +153,8 @@ ListAgent::ListAgent (
 ListAgent::~ListAgent (void)
 {
   BListItem *item;
-
+  if (listUpdateTrigger)
+    delete listUpdateTrigger;
   showing.MakeEmpty();
   listView->MakeEmpty();
   while ((item = (BListItem *)list.RemoveItem (0L)) != 0)
@@ -250,14 +252,33 @@ ListAgent::MessageReceived (BMessage *msg)
       break;
 
     case M_LIST_BEGIN:
-      statusStr = "Loading";
-      if (!IsHidden())
-        vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
-      channelWidth = 0.0;
+      {
+        BMessage message (M_LIST_UPDATE);
+        listUpdateTrigger = new BMessageRunner (BMessenger(this), &message, 3000000); 
+        statusStr = "Loading";
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
+        channelWidth = 0.0;
+      }
       break;
-
+    
+    case M_LIST_UPDATE:
+      {
+        sChannelWidth = channelWidth;
+        sTopicWidth = topicWidth;
+        listView->AddList(&nextbatch);
+        nextbatch.MakeEmpty();
+        if (scroller->IsHidden())
+          scroller->Show();
+        else
+          scroller->Invalidate();
+      }
+      break;
+      
     case M_LIST_DONE:
       {
+        delete listUpdateTrigger;
+        listUpdateTrigger = 0;
         statusStr = "Sorting";
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
@@ -340,8 +361,10 @@ ListAgent::MessageReceived (BMessage *msg)
         msg->FindString ("channel", &channel);
         msg->FindString ("users", &users);
         msg->FindString ("topic", &topic);
-
-        list.AddItem (new ChannelItem (channel, users, topic));
+		
+		ChannelItem *nextItem (new ChannelItem (channel, users, topic));
+        list.AddItem (nextItem);
+        nextbatch.AddItem (nextItem);
 
         float width (listView->StringWidth (channel));
 
