@@ -659,7 +659,8 @@ DCCSend::Transfer (void *arg)
         break;
       }
 
-      uint32 confirm;
+      uint32 confirm (0),
+             newSize (bytes_sent + count);
       fd_set rset, eset;
       FD_ZERO (&rset);
       FD_ZERO (&eset);
@@ -667,18 +668,10 @@ DCCSend::Transfer (void *arg)
       t.tv_sec = 0;
       t.tv_usec = 10;
 
-      while ((select (dccSock + 1, &rset, NULL, NULL, &t) >= 0)
-        && FD_ISSET (dccSock, &rset)
-        && !FD_ISSET (dccSock, &eset))
-      {
-        recv (dccSock, &confirm, sizeof (confirm), 0);
-        FD_ZERO (&rset);
-        FD_ZERO (&eset);
-        FD_SET (dccSock, &rset);
-        FD_SET (dccSock, &eset);
-      }
+      while ((confirm < newSize)
+          && (recv(dccSock, &confirm, sizeof (confirm), 0) > 0))
+        bytes_sent = confirm;
       
-      bytes_sent += sent;
       BMessage msg (M_DCC_UPDATE_TRANSFERRED);
       msg.AddInt32 ("transferred", bytes_sent);
       msgr.SendMessage (&msg);
