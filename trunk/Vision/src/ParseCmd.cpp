@@ -327,14 +327,31 @@ ClientAgent::ParseCmd (const char *data)
   {
     {
       BString theNick (RestOfString (data, 2));
-
+      int32 current (2),
+            last (2);
       if (theNick != "-9z99")
       {
-        AddSend (&sendMsg, "MODE ");
-        AddSend (&sendMsg, id);
-        AddSend (&sendMsg, " -oooo ");
-        AddSend (&sendMsg, theNick);
-        AddSend (&sendMsg, endl);
+        BString command ("MODE ");
+        command += id;
+        command += " -";
+        while (GetWord(data, current) != "-9z99")
+        {
+          AddSend (&sendMsg, command.String());
+          for (; GetWord(data, current) != "-9z99" && (current - last != 4); current++)
+            AddSend (&sendMsg, "o");
+          AddSend (&sendMsg, " ");
+          for (; last < current; last++)
+          {
+            BString curNick (GetWord(data, last));
+            if (curNick != "-9z99")
+            {
+              AddSend (&sendMsg, curNick);
+              AddSend (&sendMsg, " ");
+            }
+          }
+          AddSend (&sendMsg, endl);
+          sendMsg.MakeEmpty();
+        }
       }
       else
         Display ("[x] /deop: Error: Invalid parameters\n", &errorColor);
@@ -817,21 +834,38 @@ ClientAgent::ParseCmd (const char *data)
   {
     {
       BString theNick (RestOfString (data, 2));
-
+      int32 current (2),
+            last (2);
       if (theNick != "-9z99")
       {
-        // TODO only applies to a channel
-        // TODO wade 020501: make work with more than 4 nicks
-        AddSend (&sendMsg, "MODE ");
-        AddSend (&sendMsg, id);
-        AddSend (&sendMsg, " +oooo ");
-        AddSend (&sendMsg, theNick);
-        AddSend (&sendMsg, endl);
+        BString command ("MODE ");
+        command += id;
+        command += " +";
+        while (GetWord(data, current) != "-9z99")
+        {
+          AddSend (&sendMsg, command.String());
+          for (; GetWord(data, current) != "-9z99" && (current - last != 4); current++)
+            AddSend (&sendMsg, "o");
+          AddSend (&sendMsg, " ");
+          for (; last < current; last++)
+          {
+            BString curNick (GetWord(data, last));
+            if (curNick != "-9z99")
+            {
+              AddSend (&sendMsg, curNick);
+              AddSend (&sendMsg, " ");
+            }
+          }
+          AddSend (&sendMsg, endl);
+          sendMsg.MakeEmpty();
+        }
       }
+      else
+        Display ("[x] /deop: Error: Invalid parameters\n", &errorColor);
     }
     return true;
   }
-
+  
   if (firstWord == "/PART")
   {
     {

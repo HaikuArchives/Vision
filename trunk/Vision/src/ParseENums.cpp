@@ -570,18 +570,14 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     
     case RPL_LISTSTART:       // 321
       {
-        printf("RPL_LISTSTART\n");
+        BMessage msg (M_LIST_BEGIN);
         if (pListAgent)
-        {
-          BMessenger listMsgr ((BView *)pListAgent);
-          listMsgr.SendMessage (M_LIST_BEGIN);
-        }
+          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)pListAgent);
       }
       return true;
     
     case RPL_LIST:            // 322
       {
-        printf("RPL_LIST\n");
         BMessage msg (M_LIST_EVENT);
         BString channel (GetWord (data, 4)),
                 users (GetWord (data, 5)),
@@ -593,23 +589,16 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         msg.AddString ("topic", topic.String());
 
         if (pListAgent)
-        {
-          BMessenger listMsgr ((BView *)pListAgent);
-          listMsgr.SendMessage (&msg);
-        }
+          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)pListAgent);
       }
       return true;    
     
     case RPL_LISTEND:         // 323
       {
-        printf("RPL_LISTEND\n");
         BMessage msg (M_LIST_DONE);
 
         if (pListAgent)
-        {
-          BMessenger listMsgr ((BView *)pListAgent);
-          listMsgr.SendMessage (&msg);
-        }
+          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)pListAgent);
       }
       return true;
     

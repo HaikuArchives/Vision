@@ -135,8 +135,11 @@ ServerAgent::Init (void)
   noticeColor  = vision_app->GetColor (C_NOTICE);
   textColor    = vision_app->GetColor (C_SERVER);
   wallColor    = vision_app->GetColor (C_WALLOPS);
-  
+
+#ifdef NETSERVER_BUILD  
   endPointLock = new BLocker();
+#endif
+  
   Display ("Vision ", 0);
   Display (vision_app->VisionVersion(VERSION_VERSION).String(), &myNickColor);
   Display (" built on ", 0);
@@ -211,6 +214,7 @@ ServerAgent::Establish (void *arg)
   BLocker *endpointLock (NULL);
   BString remoteIP;
   int32 serverSid;
+  bool identRegistered (false);
   if (sMsgrE->IsValid())
     sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg);
   else
@@ -288,10 +292,13 @@ ServerAgent::Establish (void *arg)
     struct sockaddr_in remoteAddr;
     address.GetAddr (remoteAddr);
     remoteIP = inet_ntoa (remoteAddr.sin_addr);
+    
 
     if (useIdent)
+    {
+      identRegistered = true;
       vision_app->AddIdent (remoteIP.String(), ident.String());      
-    
+    }
     endPoint = new BNetEndpoint;
 
     if (!endPoint || endPoint->InitCheck() != B_NO_ERROR)
@@ -389,11 +396,13 @@ ServerAgent::Establish (void *arg)
       endPoint->Close();
       delete endPoint;
     }
-    
+    /*
     if (endpointLock)
       delete endpointLock;
+    */
     delete sMsgrE;
-    vision_app->RemoveIdent (remoteIP.String());
+    if (identRegistered)
+      vision_app->RemoveIdent (remoteIP.String());
     return B_ERROR;
   }  
   // Don't need this anymore
@@ -418,10 +427,10 @@ ServerAgent::Establish (void *arg)
     if (select (endPoint->Socket() + 1, &rset, 0, &eset, &tv) > 0
     &&  FD_ISSET (endPoint->Socket(), &rset))
     {
-      endpointLock->Lock();
+      // endpointLock->Lock();
       if ((length = endPoint->Receive (inbuffer, 1024)) > 0)
       {
-        endpointLock->Unlock();
+        // endpointLock->Unlock();
         BString temp;
         int32 index;
 
@@ -458,7 +467,7 @@ ServerAgent::Establish (void *arg)
          sMsgrE->SendMessage (&msg);
        }
      }
-     else endpointLock->Unlock();
+     // else endpointLock->Unlock();
      
      if (FD_ISSET (endPoint->Socket(), &eset)
      || (FD_ISSET (endPoint->Socket(), &rset) && length == 0)
@@ -491,7 +500,7 @@ ServerAgent::Establish (void *arg)
   endPoint->Close();
   vision_app->RemoveIdent (remoteIP.String());
   delete endPoint;
-  delete endpointLock;
+  // delete endpointLock;
   delete sMsgrE;
   return B_OK;
 }
@@ -527,8 +536,11 @@ ServerAgent::SendData (const char *cData)
     send_buffer,
     &dest_length,
     &state);
-
+    
+#ifdef NETSERVER_BUILD
   endPointLock->Lock();
+#endif
+
   if ((lEndpoint != 0 && (length = lEndpoint->Send (send_buffer, strlen (send_buffer))) < 0)
   || lEndpoint == 0)
   {
@@ -536,8 +548,9 @@ ServerAgent::SendData (const char *cData)
     if (!reconnecting && !isConnecting)
       msgr.SendMessage (M_SERVER_DISCONNECT);
   }
-  
+#ifdef NETSERVER_BUILD  
   endPointLock->Unlock();
+#endif
 
   if (vision_app->debugsend)
   {
@@ -758,7 +771,10 @@ ServerAgent::HandleReconnect (void)
     isConnecting = true;
     nickAttempt = 0;
     establishHasLock = false;
+
+#ifdef NETSERVER_BUILD
     endPointLock = new BLocker();
+#endif
 
     loginThread = spawn_thread (
       Establish,
@@ -873,7 +889,11 @@ ServerAgent::MessageReceived (BMessage *msg)
         reply.AddString  ("name", lname.String());
         reply.AddString  ("nick", myNick.String());
         reply.AddBool    ("identd", identd);
+
+#ifdef NETSERVER_BUILD
         reply.AddPointer ("lock", endPointLock);
+#endif
+
         reply.AddInt32   ("sid", sid);
         msg->SendReply (&reply);
         establishHasLock = true;
@@ -929,6 +949,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           msg->FindString ("data", i, &str);
           buffer << str;
         }
+        
 
         SendData (buffer.String());
         if (msg->IsSourceWaiting())

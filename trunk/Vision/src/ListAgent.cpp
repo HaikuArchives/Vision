@@ -4,7 +4,7 @@
 #include <ListView.h>
 #include <ScrollView.h>
 #include <stdio.h>
-//#include "Prompt.h"
+#include "Prompt.h"
 #include "StatusView.h"
 //#include "Settings.h"
 #include "Vision.h"
@@ -68,47 +68,42 @@ ListAgent::ListAgent (
   processing (false),
   channelWidth (0.0)
 {
-
   frame = Bounds();
 
-  BMenuBar *bar (new BMenuBar (frame, "menubar"));
+  mBar = new BMenuBar (frame, "menubar");
 
   BMenu *menu (new BMenu ("Channel"));
 
   menu->AddItem (mFind = new BMenuItem (
     "Find" B_UTF8_ELLIPSIS, 
-    new BMessage (M_LIST_FIND),
-    'F'));
+    new BMessage (M_LIST_FIND)));
   menu->AddItem (mFindAgain = new BMenuItem (
     "Find Next", 
-    new BMessage (M_LIST_FAGAIN),
-    'G'));
+    new BMessage (M_LIST_FAGAIN)));
 
-  bar->AddItem (menu);
+  mBar->AddItem (menu);
 
   menu = new BMenu ("View");
   menu->AddItem (mChannelSort = new BMenuItem (
     "Channel Sort",
-    new BMessage (M_LIST_SORT_CHANNEL),
-    'C'));
+    new BMessage (M_LIST_SORT_CHANNEL)));
   mChannelSort->SetMarked (true);
   menu->AddItem (mUserSort    = new BMenuItem (
     "User Sort",
-    new BMessage (M_LIST_SORT_USERS),
-    'U'));
+    new BMessage (M_LIST_SORT_USERS)));
   menu->AddSeparatorItem();
   menu->AddItem (mFilter = new BMenuItem (
     "Filter" B_UTF8_ELLIPSIS,
-    new BMessage (M_LIST_FILTER),
-    'L'));
-
+    new BMessage (M_LIST_FILTER)));
+  
   mChannelSort->SetMarked (true);
+  
+  mBar->AddItem (menu);
 
-  bar->AddItem (menu);
-
-  AddChild (bar);
-
-  frame.top = bar->Frame().bottom + 1;
+  AddChild (mBar);
+  mBar->ResizeToPreferred();
+  
+  frame.top = mBar->Frame().bottom + 1;
   BView *bgView (new BView (
     frame,
     "background",
@@ -142,7 +137,7 @@ ListAgent::ListAgent (
     frame.left,
     frame.top,
     frame.right - B_V_SCROLL_BAR_WIDTH,
-    frame.bottom - 1),
+    frame.bottom),
     "list",
     B_SINGLE_SELECTION_LIST,
     B_FOLLOW_ALL_SIDES,
@@ -164,6 +159,8 @@ ListAgent::ListAgent (
   sBar->SetRange (0.0, 0.0);
   sBar->SetValue (0);
   listView->MakeFocus (true);
+  listView->SetTarget(this);
+
 
   memset (&re, 0, sizeof (re));
   memset (&fre, 0, sizeof (fre));
@@ -193,18 +190,27 @@ ListAgent::AttachedToWindow (void)
   msgr = BMessenger (this);
 }
 
-//bool
-//ListWindow::QuitRequested (void)
-//{
-//	BMessage aMsg (M_LIST_SHUTDOWN);
-//	BString serverName (GetWord (Title(), 2));
-//
-//	aMsg.AddString ("server", serverName.String());
-//	bowser_app->PostMessage (&aMsg);
-//	//settings->Save();
-//	
-//	return true;
-//}
+void
+ListAgent::AllAttached (void)
+{
+  listView->SetTarget(this);
+
+  // target all menu items at the list agent
+  // from here since SetTarget(this) fails until
+  // AllAttached
+  for (int32 i = 0; i < mBar->CountItems(); i++)
+  {
+    BMenuItem *superitem = (BMenuItem *)mBar->ItemAt(i);
+    superitem->SetTarget(this);
+    BMenu *submenu (superitem->Submenu());
+    for (int32 j = 0; j < submenu->CountItems(); j++)
+    {
+      BMenuItem *item = (BMenuItem *)submenu->ItemAt(j);
+      if (item != NULL)
+        item->SetTarget(this);
+    }    
+  }
+}
 
 void
 ListAgent::MessageReceived (BMessage *msg)
@@ -223,7 +229,7 @@ ListAgent::MessageReceived (BMessage *msg)
           processing = true;
           mFind->SetEnabled (false);
           mFindAgain->SetEnabled (false);
-          mChannelSort->SetEnabled (false);
+          // mChannelSort->SetEnabled (false);
           mUserSort->SetEnabled (false);
           mFilter->SetEnabled (false);
 
@@ -301,7 +307,7 @@ ListAgent::MessageReceived (BMessage *msg)
         //status->SetItemValue (1, "Done");
         mFind->SetEnabled (true);
         mFindAgain->SetEnabled (true);
-        mChannelSort->SetEnabled (true);
+        // mChannelSort->SetEnabled (true);
         mUserSort->SetEnabled (true);
         mFilter->SetEnabled (true);
         processing = false;
@@ -341,7 +347,6 @@ ListAgent::MessageReceived (BMessage *msg)
 
 		case M_LIST_SORT_CHANNEL:
 		case M_LIST_SORT_USERS:
-
 			mFind->SetEnabled (false);
 			mFindAgain->SetEnabled (false);
 			mChannelSort->SetEnabled (false);
@@ -402,16 +407,16 @@ ListAgent::MessageReceived (BMessage *msg)
 			}
 			else
 			{
-//				PromptWindow *prompt (new PromptWindow (
-//					BPoint (Frame().right - 100, Frame().top + 50),
-//					"  Filter:",
-//					"List Filter",
-//					filter.String(),
-//					this,
-//					new BMessage (M_FILTER_LIST),
-//					new RegExValidate ("Filter"),
-//					true));
-//				prompt->Show();
+				PromptWindow *prompt (new PromptWindow (
+					BPoint ((Window()->Frame().right/2) - 100, (Window()->Frame().bottom/2) - 50),
+					"  Filter:",
+					"List Filter",
+					filter.String(),
+					this,
+					new BMessage (M_LIST_FILTER),
+					new RegExValidate ("Filter"),
+					true));
+				prompt->Show();
 			}
 			break;
 
@@ -473,16 +478,16 @@ ListAgent::MessageReceived (BMessage *msg)
 			}
 			else
 			{
-//				PromptWindow *prompt (new PromptWindow (
-//					BPoint (Frame().right - 100, Frame().top + 50),
-//					"    Find:",
-//					"Find",
-//					find.String(),
-//					this,
-//					new BMessage (M_LIST_FIND),
-//					new RegExValidate ("Find:"),
-//					true));
-//				prompt->Show();
+				PromptWindow *prompt (new PromptWindow (
+					BPoint ((Window()->Frame().right / 2) - 100, (Window()->Frame().bottom/2) - 50),
+					"    Find:",
+					"Find",
+					find.String(),
+					this,
+					new BMessage (M_LIST_FIND),
+					new RegExValidate ("Find:"),
+					true));
+				prompt->Show();
 			}
 			break;
 
@@ -637,7 +642,8 @@ ChannelItem::Topic (void) const
 void
 ChannelItem::DrawItem (BView *owner, BRect frame, bool)
 {
-	ListAgent *listAgent ((ListAgent *)owner->Parent());
+	// have to traverse past scroller and bgView to get to ListAgent itself
+	ListAgent *listAgent ((ListAgent *)owner->Parent()->Parent()->Parent());
 
 	if (IsSelected())
 	{
