@@ -577,6 +577,8 @@ VisionApp::MessageReceived (BMessage *msg)
     
     case M_SETUP_CLOSE:
       {
+        // save settings here since user has closed prefs and changes are done.
+        visionSettings->Save();
         prefsWin = 0;
       }
       break;
