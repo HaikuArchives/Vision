@@ -25,7 +25,10 @@
 
 #include <ListView.h> 
 
+#include "ObjectList.h"
+
 class BPopUpMenu;
+class NotifyListItem;
 class Theme;
 
 class NotifyList : public BListView
@@ -34,7 +37,7 @@ class NotifyList : public BListView
     NotifyList (BRect);
     virtual ~NotifyList (void);
     
-    void                            UpdateList (BList *);
+    void                            UpdateList (BObjectList<NotifyListItem> *);
     
     virtual void                    AttachedToWindow (void);
     virtual void                    DetachedFromWindow (void);

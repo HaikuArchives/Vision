@@ -53,19 +53,19 @@ NotifyList::NotifyList (BRect _frame)
 NotifyList::~NotifyList (void)
 {
   while (CountItems() > 0)
-    delete static_cast<NotifyListItem *>(RemoveItem (0L));
+    delete RemoveItem (0L);
   delete fMyPopUp;
 }
 
 void
-NotifyList::UpdateList(BList *newList)
+NotifyList::UpdateList(BObjectList<NotifyListItem> *newList)
 {
   while (CountItems() > 0)
-    delete static_cast<NotifyListItem *>(RemoveItem (0L));
+    delete RemoveItem (0L);
   BList updateList;
   // make private copy of list items otherwise things go bad
   for (int32 i = 0; i < newList->CountItems(); i++)
-    updateList.AddItem (new NotifyListItem (*((NotifyListItem *)newList->ItemAt(i))));
+    updateList.AddItem (new NotifyListItem (*newList->ItemAt(i)));
   AddList(&updateList);
 }
 

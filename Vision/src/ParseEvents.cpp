@@ -197,9 +197,9 @@ ServerAgent::ParseEvents (const char *data)
       if ((chanCount = fStartupChannels.CountItems()) > 0)
       {
         for (int32 i = 0; i < chanCount; i++)
-          if (((BString *)fStartupChannels.ItemAt (i))->ICompare (channel) == 0)
+          if ((fStartupChannels.ItemAt (i)->ICompare (channel)) == 0)
           {
-             delete static_cast<BString *>(fStartupChannels.RemoveItem (i));
+             delete fStartupChannels.RemoveItemAt (i);
              activateChan = false;
              break;
           }

@@ -413,7 +413,7 @@ ClientWindow::MessageReceived (BMessage *msg)
 
     case M_NOTIFYLIST_UPDATE:
     {
-      BList *nickList (NULL);
+      BObjectList<NotifyListItem> *nickList (NULL);
       BView *msgSource (NULL);
       int32 hasChanged (0);
       

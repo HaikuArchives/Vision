@@ -26,12 +26,13 @@
 #ifndef _LISTAGENT_H_
 #define _LISTAGENT_H_
 
-#include <List.h>
 #include <View.h>
 #include <String.h>
 #include <Messenger.h>
 #include <MessageRunner.h>
 #include <regex.h>
+
+#include "ObjectList.h"
 
 class BColumnListView;
 class BColumn;
@@ -40,6 +41,7 @@ class BMenuItem;
 class StatusView;
 class WindowListItem;
 class Theme;
+class BRow;
 
 class ListAgent : public BView
 {
@@ -76,7 +78,7 @@ class ListAgent : public BView
                               
     bool                    processing;
     
-    BList                   hiddenItems,
+    BObjectList<BRow>       hiddenItems,
                               fBuildList;
 
     BMenuItem               *mFilter,

@@ -63,7 +63,7 @@ ClientAgentLogger::StartLogging (void)
 
   // the file, BList and Locker are taken over by fLogThread as soon as SetupLogging
   // is done. From there it will take care of cleaning them up on destruct.
-  fLogBuffer = new BList();
+  fLogBuffer = new BObjectList<BString>();
   fLogBufferLock = new BLocker();
   fIsLogging = true;
   
@@ -165,8 +165,8 @@ ClientAgentLogger::UnregisterLogger (const char *name)
         if (((currentLog = (BString *)fLogBuffer->ItemAt(i)) != NULL)
         && (currentLog->ICompare (name) == 0))
         {
-          delete static_cast<BString *>(fLogBuffer->RemoveItem (i));
-          currentLog = (BString *)fLogBuffer->RemoveItem (i);
+          delete fLogBuffer->RemoveItemAt (i);
+          currentLog = fLogBuffer->RemoveItemAt (i);
           logFile->Write (currentLog->String(), currentLog->Length());
           delete currentLog;
         }
@@ -265,7 +265,7 @@ ClientAgentLogger::AsyncLogger (void *arg)
   BString *currentLogger (NULL);
   BString *currentString (NULL);
   BLocker *myLogBufferLock ((logger->fLogBufferLock));
-  BList *myLogBuffer ((logger->fLogBuffer));
+  BObjectList<BString> *myLogBuffer ((logger->fLogBuffer));
   BFile *myLogFile (NULL);  
   
   // initialize the log file if it doesn't already exist
@@ -279,8 +279,8 @@ ClientAgentLogger::AsyncLogger (void *arg)
     if (!myLogBuffer->IsEmpty())
     {
       // grab next string from list and write to file
-      currentLogger = (BString *)(myLogBuffer->RemoveItem (0L));
-      currentString = (BString *)(myLogBuffer->RemoveItem (0L));
+      currentLogger = myLogBuffer->RemoveItemAt (0L);
+      currentString = myLogBuffer->RemoveItemAt (0L);
       myLogBufferLock->Unlock();
       myLogFile = logger->fLogFiles[*currentLogger];
       if (myLogFile && myLogFile->InitCheck() != B_NO_INIT)
@@ -294,8 +294,8 @@ ClientAgentLogger::AsyncLogger (void *arg)
   // on shutdown empty out all remaining data (if any) and write to file
   while (!myLogBuffer->IsEmpty())
   {
-    currentLogger = (BString *)(myLogBuffer->RemoveItem (0L));
-    currentString = (BString *)(myLogBuffer->RemoveItem(0L));
+    currentLogger = (BString *)(myLogBuffer->RemoveItemAt (0L));
+    currentString = (BString *)(myLogBuffer->RemoveItemAt (0L));
     myLogFile = logger->fLogFiles[*currentLogger];
     if (myLogFile && myLogFile->InitCheck() != B_NO_INIT)
       myLogFile->Write (currentString->String(), currentString->Length());

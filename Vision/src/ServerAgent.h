@@ -32,7 +32,9 @@
 #include <Locker.h>
 
 #include "ClientAgent.h"
+#include "ObjectList.h"
 
+class NotifyListItem;
 class ClientAgentLogger;
 class BMessageRunner;
 class ListAgent;
@@ -85,7 +87,7 @@ class ServerAgent : public ClientAgent
     void                        ParseCTCP (BString, BString, BString);
     void                        ParseCTCPResponse (BString, BString);
 
-    static int                  SortNotifyItems (const void *, const void *);
+    static int                  SortNotifyItems (const NotifyListItem *, const NotifyListItem *);
 
     bool                        ServerThreadValid(thread_id);
 
@@ -163,11 +165,10 @@ class ServerAgent : public ClientAgent
     BString                     fCmds;
     int32                       fSocket;  // socket
 	
-    BList                       fTimers,
-                                  fStartupChannels,
-                                  *fPendingSends,
-                                  fNotifyNicks,
-                                  fIgnoreNicks;
+    BObjectList<BString>        fStartupChannels,
+                                *fPendingSends;
+    BObjectList<NotifyListItem> fNotifyNicks;
+//                                fIgnoreNicks;
     
     static int32                Establish (void *);
     static int32                Sender (void *);
