@@ -101,8 +101,7 @@ def calculate_diff(filespec):
     else:
         # This /has/ to happen in the background, otherwise we'll run into CVS
         # lock contention.  What a crock.
-        diffcmd = '/usr/bin/cvs -f diff -kk -C 2 -r %s -r %s %s' % (
-            oldrev, newrev, file)
+        diffcmd = '/usr/bin/echo use CVSWeb for diffs)
         fp = os.popen(diffcmd)
         lines = fp.readlines()
         sts = fp.close()
