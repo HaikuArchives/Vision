@@ -4,6 +4,7 @@ http://vision.sourceforge.net
 [0.2.0611]
  2001-06-11
    * made ListAgent font configurable
+   * BONE optimizations to ServerAgent::Establish (does not affect net_server users)
 
 [0.2.0609]
  2001-06-09

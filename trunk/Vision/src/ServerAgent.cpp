@@ -211,7 +211,9 @@ ServerAgent::Establish (void *arg)
   BNetEndpoint *endPoint (NULL);
   BMessage getMsg;
   rgb_color errorColor (vision_app->GetColor (C_ERROR));
+#ifdef NETSERVER_BUILD
   BLocker *endpointLock (NULL);
+#endif
   BString remoteIP;
   int32 serverSid;
   bool identRegistered (false);
@@ -239,7 +241,9 @@ ServerAgent::Establish (void *arg)
     getMsg.FindString ("ident", &ident);
     getMsg.FindString ("name", &name);
     getMsg.FindString ("nick", &connectNick);
+#ifdef NETSERVER_BUILD
     getMsg.FindPointer ("lock", reinterpret_cast<void **>(&endpointLock));
+#endif
     serverSid = getMsg.FindInt32 ("sid");
     bool useIdent (getMsg.FindBool ("identd"));
       
@@ -396,10 +400,10 @@ ServerAgent::Establish (void *arg)
       endPoint->Close();
       delete endPoint;
     }
-    /*
+#ifdef NETSERVER_BUILD
     if (endpointLock)
       delete endpointLock;
-    */
+#endif
     delete sMsgrE;
     if (identRegistered)
       vision_app->RemoveIdent (remoteIP.String());
@@ -407,30 +411,33 @@ ServerAgent::Establish (void *arg)
   }  
   // Don't need this anymore
   struct fd_set eset, rset, wset;
+#ifdef NETSERVER_BUILD
   struct timeval tv = {0, 0};
+#endif
 
   FD_ZERO (&eset);
   FD_ZERO (&rset);
   FD_ZERO (&wset);
 
   BString buffer;
+
+  FD_SET (endPoint->Socket(), &eset);
+  FD_SET (endPoint->Socket(), &rset);
+  FD_SET (endPoint->Socket(), &wset);
  
   BLooper *looper;
-  while (sMsgrE->Target (&looper) != NULL)
+  
+#ifdef BONE_BUILD
+  while ( (sMsgrE->Target (&looper) != NULL)
+     && select (endPoint->Socket() + 1, &rset, 0, &eset, NULL) > 0)
   {
     BNetBuffer inbuffer (1024);
     int32 length (0);
 
-    FD_SET (endPoint->Socket(), &eset);
-    FD_SET (endPoint->Socket(), &rset);
-    FD_SET (endPoint->Socket(), &wset);
-    if (select (endPoint->Socket() + 1, &rset, 0, &eset, &tv) > 0
-    &&  FD_ISSET (endPoint->Socket(), &rset))
+    if (FD_ISSET (endPoint->Socket(), &rset))
     {
-      // endpointLock->Lock();
       if ((length = endPoint->Receive (inbuffer, 1024)) > 0)
       {
-        // endpointLock->Unlock();
         BString temp;
         int32 index;
 
@@ -467,7 +474,62 @@ ServerAgent::Establish (void *arg)
          sMsgrE->SendMessage (&msg);
        }
      }
-     // else endpointLock->Unlock();
+#endif
+
+#ifdef NETSERVER_BUILD
+  while (sMsgrE->Target (&looper) != NULL)
+  {
+    BNetBuffer inbuffer (1024);
+    int32 length (0);
+
+    FD_SET (endPoint->Socket(), &eset);
+    FD_SET (endPoint->Socket(), &rset);
+    FD_SET (endPoint->Socket(), &wset);
+    if (select (endPoint->Socket() + 1, &rset, 0, &eset, &tv) > 0
+    &&  FD_ISSET (endPoint->Socket(), &rset))
+    {
+      endpointLock->Lock();
+      if ((length = endPoint->Receive (inbuffer, 1024)) > 0)
+      {
+        endpointLock->Unlock();
+        BString temp;
+        int32 index;
+
+        temp.SetTo ((char *)inbuffer.Data(), inbuffer.Size());
+        buffer += temp;
+
+        while ((index = buffer.FindFirst ('\n')) != B_ERROR)
+        {
+          temp.SetTo (buffer, index);
+          buffer.Remove (0, index + 1);
+    
+          temp.RemoveLast ("\r");
+
+          if (vision_app->debugrecv)
+          {
+            printf ("RECEIVED: (%ld:%03ld) \"", serverSid, temp.Length());
+            for (int32 i = 0; i < temp.Length(); ++i)
+            {
+              if (isprint (temp[i]))
+                printf ("%c", temp[i]);
+              else
+                printf ("[0x%02x]", temp[i]);
+            }
+            printf ("\"\n");
+          }
+
+
+          // We ship it off this way because
+          // we want this thread to loop relatively
+          // quickly.  Let ServerWindow's main thread
+          // handle the processing of incoming data!
+         BMessage msg (M_PARSE_LINE);
+         msg.AddString ("line", temp.String());
+         sMsgrE->SendMessage (&msg);
+       }
+     }
+     else endpointLock->Unlock();
+#endif
      
      if (FD_ISSET (endPoint->Socket(), &eset)
      || (FD_ISSET (endPoint->Socket(), &rset) && length == 0)
@@ -494,13 +556,23 @@ ServerAgent::Establish (void *arg)
       }
     }
     
-    // take a nap, so the ServerAgent can do things
-    snooze (20000);
+  // take a nap, so the ServerAgent can do things
+#ifdef BONE_BUILD
+    FD_SET (endPoint->Socket(), &eset);
+    FD_SET (endPoint->Socket(), &rset);
+    FD_SET (endPoint->Socket(), &wset);
+#endif
+
+#ifdef NETSERVER_BUILD
+    snooze(20000);
+#endif
   }
   endPoint->Close();
   vision_app->RemoveIdent (remoteIP.String());
   delete endPoint;
-  // delete endpointLock;
+#ifdef NETSERVER_BUILD
+  delete endpointLock;
+#endif
   delete sMsgrE;
   return B_OK;
 }
