@@ -44,6 +44,34 @@
 #include "SpeedButton.h"
 #include "Vision.h"
 
+
+class InvokingTextView : public BTextView, public BInvoker
+{
+  public:
+    InvokingTextView(BRect, const char *, BMessage *, BHandler *, uint32, uint32);
+    virtual ~InvokingTextView (void);
+
+    virtual void KeyDown(const char *, int32);
+};
+
+InvokingTextView::InvokingTextView(BRect frame, const char *name, BMessage *msg, BHandler *target, uint32 resize, uint32 flags)
+ : BTextView(frame, name, BRect(0.0, 0.0, frame.Width(), frame.Height()), resize, flags),
+   BInvoker(msg, target)
+{
+}
+
+InvokingTextView::~InvokingTextView(void)
+{
+}
+
+void
+InvokingTextView::KeyDown(const char *bytes, int32 numBytes)
+{
+  BTextView::KeyDown(bytes, numBytes);
+  Invoke();
+}
+
+
 NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
   : BView (
 	    bounds,
@@ -112,7 +140,7 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
   boundsRect.right -= (20 + B_V_SCROLL_BAR_WIDTH);;
   boundsRect.top = stringView4->Frame ().bottom + 5;
   boundsRect.bottom -= 65;
-  fTextView = new BTextView (boundsRect, NULL, BRect (0, 0, boundsRect.Width (), boundsRect.Height ()), B_FOLLOW_NONE, B_WILL_DRAW);
+  fTextView = new InvokingTextView (boundsRect, NULL, new BMessage(M_NETPREFS_TEXT_INVOKE), this, B_FOLLOW_NONE, B_WILL_DRAW);
   BScrollView *scrollView (new BScrollView (NULL, fTextView, B_FOLLOW_LEFT | B_FOLLOW_TOP,
 					    0, false, true));
   fTextView->MakeEditable (true);
@@ -209,6 +237,7 @@ NetworkPrefsView::AttachedToWindow (void)
   fNickRemoveButton->SetTarget (this);
   fRealName->SetTarget (this);
   fListView->SetTarget (this);
+  dynamic_cast<BInvoker *>(fTextView)->SetTarget(this);
   // for some unknown reason the bmp doesn't seem to get retrieved right on
   // some people's systems...if this is the case the up and down buttons will
   // not get created, hence this check
@@ -414,12 +443,6 @@ NetworkPrefsView::SaveCurrentNetwork (void)
 	}
   }
 
-  const char *autoexec = fTextView->Text ();
-  if (!fActiveNetwork.HasString ("autoexec"))
-    fActiveNetwork.AddString ("autoexec", autoexec);
-  else
-    fActiveNetwork.ReplaceString ("autoexec", autoexec);
-
   const char *name (fActiveNetwork.FindString ("name"));
 
   if (!strcmp (fActiveNetwork.FindString ("name"), "defaults"))
@@ -597,6 +620,15 @@ NetworkPrefsView::MessageReceived (BMessage * msg)
         else
           fActiveNetwork.AddBool ("useDefaults", value);
         UpdatePersonalData (fActiveNetwork);
+      }
+      break;
+
+    case M_NETPREFS_TEXT_INVOKE:
+      {
+        if (fActiveNetwork.HasString("autoexec"))
+          fActiveNetwork.ReplaceString("autoexec", fTextView->Text());
+        else
+          fActiveNetwork.AddString("autoexec", fTextView->Text());
       }
       break;
 

@@ -43,11 +43,6 @@ class WindowListItem;
 class ClientAgent : public BView
 {
   public:
-//                                ClientAgent (BRect,
-//                                             const char *,
-//                                             uint32,
-//                                             uint32);
-
                                 // used by ServerAgent
                                 ClientAgent (
                                   const char *,         // id_  (window name)
@@ -93,6 +88,13 @@ class ClientAgent : public BView
                                   const char * = 0,
                                   const char * = 0,
                                   const char * = 0);
+
+    static void                 PackDisplay (BMessage *,
+                                  const char *,
+                                  const uint32 = 0,
+                                  const uint32 = 0,
+                                  const uint32 = 0);
+
     
     virtual void                ActionMessage (
                                   const char *,
@@ -142,11 +144,6 @@ class ClientAgent : public BView
     virtual void                    Submit (const char *, bool = true, bool = true);
 
     static int32                    TimedSubmit (void *);
-    static void                     PackDisplay (BMessage *,
-                                      const char *,
-                                      const uint32 = 0,
-                                      const uint32 = 0,
-                                      const uint32 = 0);
 
     int32                           FirstKnownAs (
                                       const BString &,
