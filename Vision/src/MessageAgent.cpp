@@ -371,13 +371,15 @@ MessageAgent::MessageReceived (BMessage *msg)
   {
     case M_CHANNEL_MSG:
       {
-        const char *nick;
-
+        const char *nick (NULL);
+ 
         if (msg->HasString ("nick"))
         {
           msg->FindString ("nick", &nick);
           BString outNick (nick);
           outNick.RemoveFirst (" [DCC]");
+          if (myNick.ICompare (outNick) != 0 && !dChat)
+            agentWinItem->SetName (outNick.String());      
           msg->ReplaceString ("nick", outNick.String());
         }
         else
@@ -386,10 +388,7 @@ MessageAgent::MessageReceived (BMessage *msg)
           outNick.RemoveFirst (" [DCC]");
           msg->AddString ("nick", outNick.String());
         }
-      
-        if (myNick.ICompare (nick) != 0 && !dChat)
-          agentWinItem->SetName (nick);      
-      
+        
         // Send the rest of processing up the chain
         ClientAgent::MessageReceived (msg);
       }
