@@ -101,7 +101,7 @@ VisionApp::VisionApp (void)
       fIdentThread (-1),
       fWinThread (-1),
       fIdentSocket (-1),
-      fActiveTheme (new Theme ("current", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
+      fActiveTheme (new Theme ("active theme", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
 {
   // some setup
   fSettingsLoaded = false;

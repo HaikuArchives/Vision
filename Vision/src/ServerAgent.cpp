@@ -544,12 +544,16 @@ ServerAgent::Establish (void *arg)
   FD_SET (serverSock, &eset);
   FD_SET (serverSock, &rset);
   FD_SET (serverSock, &wset);
-  ServerAgent *agent (dynamic_cast<ServerAgent *>(sMsgrE->Target(NULL)));
-  while ((agent != NULL) && (sMsgrE->LockTarget() == true))
+  
+  BMessage threadCheck (M_SERVER_THREAD_VALID),
+           reply;
+  threadCheck.AddInt32 ("thread", currentThread);
+  while (sMsgrE->IsValid())
   {
-    if (!agent->ServerThreadValid (currentThread))
+    sMsgrE->SendMessage (&threadCheck, &reply);
+    
+    if (!reply.FindBool("valid"))
       break;
-    agent->Looper()->Unlock();
     
     char indata[1024];
     int32 length (0);
@@ -558,11 +562,7 @@ ServerAgent::Establish (void *arg)
     FD_SET (serverSock, &rset);
     FD_SET (serverSock, &wset);
     memset (indata, 0, 1024);
-#ifdef BONE_BUILD
     if (select (serverSock + 1, &rset, 0, &eset, NULL) > 0
-#elif NETSERVER_BUILD
-    if (select (serverSock + 1, &rset, 0, &eset, &tv) > 0
-#endif
     &&  FD_ISSET (serverSock, &rset) && !FD_ISSET (serverSock, &eset))
     {
 #ifdef NETSERVER_BUILD
@@ -636,9 +636,6 @@ ServerAgent::Establish (void *arg)
     }
     
   // take a nap, so the ServerAgent can do things
-#ifdef NETSERVER_BUILD
-    snooze(20000);
-#endif
   }
   vision_app->RemoveIdent (remoteIP.String());
 // if the serverAgent has been destroyed, let Establish destroy the endpoint, otherwise
@@ -1154,6 +1151,13 @@ ServerAgent::MessageReceived (BMessage *msg)
       }
       break;
     
+    case M_SERVER_THREAD_VALID:
+      {
+        BMessage reply (B_REPLY);
+        reply.AddBool ("valid", ServerThreadValid(msg->FindInt32("thread")));
+        msg->SendReply(&reply);
+      }
+      break;
       
     case M_SEND_RAW:
       {

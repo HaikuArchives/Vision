@@ -7,7 +7,10 @@ http://vision.sourceforge.net
          * modified sender threads so they can't deadlock (fixes lock on closing servers that would intermittently crop up)
          * made notify list always use blinkers regardless of current server (handy if notify list is collapsed and as general attention grabber that notify state's changed)
          * fixed 440 length bug
-         
+         * fixed some more crash bugs in network code
+         * fixed multiple simultaneous network threads bug
+         * fixed font prefs bug where changes wouldn't always get recognized in R5
+
 [0.9-0630]
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
          * changed the PrefGeneral keyboard nav to be more standard. (Alan Ellis)

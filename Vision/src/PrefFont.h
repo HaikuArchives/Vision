@@ -42,7 +42,7 @@ class FontPrefsView : public BView
   private:
   	BMenuField *fFontMenuField;
   	BMenuField *fFontElementField;
-  	BTextControl *fTextControl;
+  	VTextControl *fTextControl;
   	int32 fActiveFont;
 };
 
