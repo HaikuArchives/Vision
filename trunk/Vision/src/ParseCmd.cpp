@@ -1134,34 +1134,28 @@ ClientAgent::ExecPipe (void *arg)
     return B_ERROR;
   }
 
-  delete msg;
+  // re use message
+  msg->MakeEmpty();
+  msg->what = M_SUBMIT;
+  msg->AddString("input", "");
+  msg->AddBool("clear", false);
+  msg->AddBool("add2history", false);
+  BMessenger self_destruct_in_15_seconds(agent);
 
   FILE *fp = popen (exec->String(), "r");
-
-  char data[768]; // should be long enough for any line...
   
-  // read one less just in case we need to offset by a char (prepended '/')
-  while (fgets(data, 767, fp))
+  if( (0 == (int)fp) || (-1 == (int)fp) )
   {
-    data[strlen(data)-1] = '\0'; // strip termination
-    if (data[0] == '/')
-    {
-      memmove(data + 1, data, strlen(data));
-      data[0] = ' ';      
-    }
-    // ship off to agent
-    agent->LockLooper();
-    agent->Submit (data);
-    agent->UnlockLooper();
+      // l43m error handling
+//      msg->ReplaceString("input", "Error from 'popen'" );
+//      self_destruct_in_15_seconds.SendMessage(msg);
   }
-
-  pclose(fp);
-  
-//  fp = fopen(stderr, "r");
-  
-  if( stderr != 0 )
+  else
   {
-    while (fgets(data, 767, stderr))
+    char data[768]; // should be long enough for any line...
+  
+    // read one less just in case we need to offset by a char (prepended '/')
+    while (fgets(data, 767, fp))
     {
       data[strlen(data)-1] = '\0'; // strip termination
       if (data[0] == '/')
@@ -1169,14 +1163,17 @@ ClientAgent::ExecPipe (void *arg)
         memmove(data + 1, data, strlen(data));
         data[0] = ' ';      
       }
+      
       // ship off to agent
-      agent->LockLooper();
-      agent->Submit (data);
-      agent->UnlockLooper();
+      msg->ReplaceString("input", data);
+      self_destruct_in_15_seconds.SendMessage(msg);
     }
-  }
+
+    pclose(fp);
+  }  
 
   delete exec;
+  delete msg;
 
   return B_OK;
 }
