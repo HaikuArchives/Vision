@@ -131,11 +131,14 @@ ServerAgent::~ServerAgent (void)
   status_t result;
   wait_for_thread (fSenderThread, &result);
 
+  if (fSocket >= 0)
+  {
 #ifdef BONE_BUILD
-  close (fSocket);
+    close (fSocket);
 #elif NETSERVER_BUILD
-  closesocket (fSocket);
+    closesocket (fSocket);
 #endif
+  }
 //  wait_for_thread (fLoginThread, &result);
   
 /*
@@ -338,9 +341,7 @@ ServerAgent::Establish (void *arg)
   BString remoteIP;
   int32 serverSid;
   int32 serverSock (-1);
-  if (sMsgrE->IsValid())
-    sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg);
-  else
+  if (!(sMsgrE->IsValid() && (sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg) == B_OK)));
   {
     printf (":ERROR: sMsgr not valid in Establish() -- bailing\n");
     return B_ERROR;
@@ -358,6 +359,7 @@ ServerAgent::Establish (void *arg)
             connectNick;
     const ServerData *serverData (NULL);
     int32 size;
+    
     getMsg.FindData ("server", B_ANY_TYPE, reinterpret_cast<const void **>(&serverData), &size);
     connectId = serverData->serverName;
     connectPort << serverData->port;
@@ -949,14 +951,14 @@ ServerAgent::GetNextServer ()
   int32 count,
     size;
   fNetworkData.GetInfo ("server", &type, &count);
-  uint32 state = (fReconnecting) ? 1 : 0;
+  uint32 state = (fReconnecting) ? SERVER_SECONDARY : SERVER_PRIMARY;
 
   for (;;)
   {
     if (fServerIndex >= count)
     {
       fServerIndex = 0;
-      state = 0;
+      state = SERVER_PRIMARY;
     }
     
     const ServerData *server (NULL);
@@ -964,9 +966,9 @@ ServerAgent::GetNextServer ()
       reinterpret_cast<const void **>(&server), &size) == B_OK; fServerIndex++)
         if (server->state == state)
         {
-          memset(&currentServer, 0, sizeof(ServerData));
-          memcpy(&currentServer, server, size);
-          return &currentServer;
+          memset(&fCurrentServer, 0, sizeof(ServerData));
+          memcpy(&fCurrentServer, server, size);
+          return &fCurrentServer;
         }
   }
 }
