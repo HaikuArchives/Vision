@@ -351,7 +351,6 @@ VisionApp::LoadDefaults (int32 section)
        size = be_plain_font->Size();
        if (!visionSettings->HasString ("family"))
        {
-          printf("no family data\n");
           for (int32 i = 0; i < MAX_FONTS; i++)
           {
             visionSettings->AddString ("family", default_family);
