@@ -41,6 +41,7 @@
 #include "Vision.h"
 #include "SettingsFile.h"
 #include "ClientWindow.h"
+#include "ChannelAgent.h"
 #include "ClientAgent.h"
 #include "ClientWindowDock.h"
 #include "Names.h"
@@ -206,7 +207,6 @@ ClientWindow::HandleKey (BMessage *keyMsg)
 void
 ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
 {
-//  msg->PrintToStream();
   switch (msg->what)
   {
     case M_SEND_TO_AGENT:
@@ -377,9 +377,10 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_RESIZE_VIEW:
       {
-        int32 agentCount (pWindowList()->CountItems());
         BView *view (NULL);
         msg->FindPointer ("view", reinterpret_cast<void **>(&view));
+        WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (pWindowList()->CurrentSelection()));
+        BView *agent (item->pAgent());
         if (dynamic_cast<ClientWindowDock *>(view))
         {
           BPoint point;
@@ -387,31 +388,14 @@ ClientWindow::MessageReceived (BMessage *msg)
           resize->MoveTo (point.x, resize->Frame().top);
           cwDock->ResizeTo (point.x - 1, cwDock->Frame().Height());
           BRect *agRect (AgentRect());
-          for (int32 i = 0; i < agentCount; i++)
+          if (agent)
           {
-            WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
-            BView *agent (item->pAgent());
-            if (agent && !agent->IsHidden())
-            {
-              agent->ResizeTo (agRect->Width(), agRect->Height());
-              agent->MoveTo (agRect->left, agRect->top);
-              break;
-            }
-          } 
-        }
-        else if (dynamic_cast<NamesView *>(view))
-        {
-          for (int32 i = 0; i < agentCount; i++)
-          {
-            WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
-            BView *agent (item->pAgent());
-            if (agent && !agent->IsHidden())
-            {
-              DispatchMessage (msg, agent);
-              break;
-            }
+            agent->ResizeTo (agRect->Width(), agRect->Height());
+            agent->MoveTo (agRect->left, agRect->top);
           }
-        } 
+        }
+        else
+            DispatchMessage (msg, agent);
       }
       break;
     

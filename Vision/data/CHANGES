@@ -15,7 +15,9 @@ http://vision.sourceforge.net
          * sped up RunView's line wrapping function
          * fixed some stack corruption bugs, hopefully this will fix the
            bizarre disappearing window thread bug that was cropping up now and again.
-         * added Connect... submenu to main window   
+         * added Connect... submenu to main window
+         * fixed some major resize-related bugs...should be much faster at resizing the
+           window and names list now
 
 [0.5-1103]
          * added option to disable the spam flood dialog (thanks to Alan Ellis)

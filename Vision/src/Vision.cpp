@@ -543,6 +543,11 @@ VisionApp::QuitRequested (void)
 #elif NETSERVER_BUILD
   closesocket (identSocket);
 #endif
+  
+  settingsLock.Lock();
+  if ((visionSettings->Save() == B_OK) && debugsettings)
+    printf (":SETTINGS: saved to file\n");
+  settingsLock.Unlock();
 
   if(clientWin)
   {
@@ -791,7 +796,6 @@ VisionApp::MessageReceived (BMessage *msg)
       {
         BRect clientWinRect;
         visionSettings->FindRect ("clientWinRect", &clientWinRect);
-
         BMessage netData = GetNetwork (msg->FindString ("network"));
         if (netData.FindBool ("useDefaults"))
         {
@@ -911,12 +915,9 @@ VisionApp::SetRect (const char *settingName, BRect value)
  
  if (!rectLock.IsLocked())
    return B_ERROR;
-  
+     
  if (visionSettings->ReplaceRect (settingName, value) == B_OK)
- {
-   visionSettings->Save();
    return B_OK;
- }
  
  return B_ERROR;
 }
