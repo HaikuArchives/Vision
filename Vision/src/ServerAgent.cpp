@@ -95,8 +95,6 @@ ServerAgent::ServerAgent (
     fLagCount (0),
     fNickAttempt (0),
     fServerSocket (-1),
-    fParse_buffer (NULL),
-    fParse_size (0),
     fEvents (vision_app->fEvents),
     fServerHostName (id_),
     fInitialMotd (true),
@@ -112,10 +110,6 @@ ServerAgent::ServerAgent (
 
 ServerAgent::~ServerAgent (void)
 {
-//  if (fSend_buffer)
-//    delete [] fSend_buffer;
-  if (fParse_buffer)
-    delete [] fParse_buffer;
   if (fLagRunner)
     delete fLagRunner;
 
@@ -604,24 +598,18 @@ void
 ServerAgent::ParseLine (const char *cData)
 {
   BString data = FilterCrap (cData);
-  int32 length (data.Length() + 1);
-
-  if (fParse_size < length * 3UL)
-  {
-    if (fParse_buffer)
-      delete [] fParse_buffer;
-    fParse_buffer = new char [length * 3];
-    fParse_size = length * 3;
-  }
-
-  int32 dest_length (fParse_size), state (0);
-
+  int32 length (data.Length()),
+        destLength (2048),
+        state (0);
+  
+  memset (fParse_buffer, 0, sizeof (fParse_buffer));
+  
   convert_to_utf8 (
     B_ISO1_CONVERSION,
     data.String(), 
     &length,
     fParse_buffer,
-    &dest_length,
+    &destLength,
     &state);
   
   if (vision_app->fNumBench)

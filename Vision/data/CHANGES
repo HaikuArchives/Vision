@@ -1,7 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8-exp-0204]
+[0.8.1-0207]
+         * fixed a few crash bugs in event parser
+
+[0.8-0207]
          * cleaned up message constants
          * fixed crash bug in mirc color parser
          * fixed bug in control code stripper where too many digits would get removed
