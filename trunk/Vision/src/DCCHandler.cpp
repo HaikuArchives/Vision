@@ -87,17 +87,19 @@ ServerAgent::DCCGetDialog (
 	msg.AddString ("vision:port", port.String());
 
 
-	//bool handled (false);
+	bool handled (false);
 
 // ignore this part until some minor details with DCC Prefs are worked out
-/*
-		const char *directory = "/boot/home/";
-		entry_ref ref;
-		BEntry entry;
+
+    
+    if (vision_app->GetBool ("dccAutoAccept"))
+    {
+      const char *directory = vision_app->GetString ("dccDefPath");
+      entry_ref ref;
+      BEntry entry;
 
 		create_directory (directory, 0777);
-		if (entry.SetTo (directory) == B_NO_ERROR 
-		if (entry.GetRef (&ref)     == B_NO_ERROR)
+		if (entry.SetTo (directory) == B_NO_ERROR && entry.GetRef (&ref) == B_NO_ERROR)
 		{
 			BDirectory dir (&ref);
 			BEntry file_entry; 
@@ -155,35 +157,38 @@ ServerAgent::DCCGetDialog (
 			handled = true;
 		}
 	}
-*/
-	BFilePanel *panel;
-	BString text;
 
-	text << nick
-		<< ": "
-		<< file
-		<< " ("
-		<< size
-		<< " bytes)";
+    if (!handled)
+    {
+      BFilePanel *panel;
+	  BString text;
 
-	panel = new BFilePanel (
-		B_SAVE_PANEL,
-		&sMsgr,
-		0,
-		0,
-		false,
-		&msg);
-	panel->SetButtonLabel (B_DEFAULT_BUTTON, "Accept");
-	panel->SetButtonLabel (B_CANCEL_BUTTON, "Refuse");
-	panel->SetSaveText (file.String());
+	  text << nick
+        << ": "
+        << file
+        << " ("
+        << size
+        << " bytes)";
 
-	if (panel->Window()->Lock())
-	{
-		panel->Window()->SetTitle (text.String());
-		panel->Window()->AddFilter (new DCCFileFilter (panel, msg));
-		panel->Window()->Unlock();
-	}
-	panel->Show();
+	  panel = new BFilePanel (
+        B_SAVE_PANEL,
+        &sMsgr,
+        0,
+        0,
+        false,
+        &msg);
+      panel->SetButtonLabel (B_DEFAULT_BUTTON, "Accept");
+      panel->SetButtonLabel (B_CANCEL_BUTTON, "Refuse");
+      panel->SetSaveText (file.String());
+
+      if (panel->Window()->Lock())
+      {
+        panel->Window()->SetTitle (text.String());
+        panel->Window()->AddFilter (new DCCFileFilter (panel, msg));
+        panel->Window()->Unlock();
+      }
+      panel->Show();
+    }
 }
 
 DCCFileFilter::DCCFileFilter (BFilePanel *p, const BMessage &msg)

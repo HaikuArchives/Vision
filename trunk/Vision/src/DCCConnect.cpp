@@ -1,3 +1,25 @@
+/* 
+ * The contents of this file are subject to the Mozilla Public 
+ * License Version 1.1 (the "License"); you may not use this file 
+ * except in compliance with the License. You may obtain a copy of 
+ * the License at http://www.mozilla.org/MPL/ 
+ * 
+ * Software distributed under the License is distributed on an "AS 
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * rights and limitations under the License. 
+ * 
+ * The Original Code is Vision. 
+ * 
+ * The Initial Developer of the Original Code is The Vision Team.
+ * Portions created by The Vision Team are
+ * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Reserved.
+ * 
+ * Contributor(s): Rene Gollent
+ *                 Wade Majors
+ *                 Todd Lair
+ */
 
 #include <StatusBar.h>
 #include <StringView.h>
@@ -16,30 +38,24 @@ const uint32 M_STOP_BUTTON				= 'stop';
 const uint32 M_UPDATE_STATUS			= 'stat';
 const uint32 M_GET_CONNECT_DATA         = 'dccd';
 const uint32 M_GET_RESUME_POS           = 'dcrp';
-const uint32 M_SUCCESS                  = 'dccs';
 const uint32 M_UPDATE_TRANSFERRED       = 'dcut';
 const uint32 M_UPDATE_AVERAGE           = 'dcua';
 
-
-#ifdef BONE_BUILD
-#define DCC_BLOCK_SIZE 8192
-#elif NETSERVER_BUILD
-#define DCC_BLOCK_SIZE 1400
-#endif
 
 DCCConnect::DCCConnect (
 	const char *n,
 	const char *fn,
 	const char *sz,
 	const char *i,
-	const char *p)
+	const char *p,
+	const BMessenger &c)
 
 	: BView (
 		BRect (0.0, 0.0, 275.0, 150.0),
 		"dcc connect",
 		B_FOLLOW_LEFT | B_FOLLOW_TOP,
 		B_WILL_DRAW),
-
+		caller (c),
 		nick (n),
 		file_name (fn),
 		size (sz),
@@ -47,7 +63,6 @@ DCCConnect::DCCConnect (
 		port (p),
 		finalRateAverage (0),
 		tid (-1),
-		success (false),
 		isStopped (false)
 {
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
@@ -188,13 +203,6 @@ DCCConnect::MessageReceived (BMessage *msg)
 		}
 		break;
 		
-		case M_SUCCESS:
-		{
-		   success = true;
-		   Stopped();
-		}
-		break;
-
 		default:
 			BView::MessageReceived (msg);
 	}
@@ -223,13 +231,12 @@ DCCConnect::Stopped (void)
  			xfermsg.AddString("type", "SEND");	
  		}
  	
- 		vision_app->PostMessage(&xfermsg);
+ 		caller.SendMessage(&xfermsg);
  	}
  	
 
 	BMessage msg (M_DCC_FINISH);
 
-	msg.AddBool ("success", success);
 	msg.AddPointer ("source", this);
 	msg.AddBool ("stopped", true);
 	Window()->PostMessage (&msg);
@@ -283,9 +290,10 @@ DCCReceive::DCCReceive (
 	const char *sz,
 	const char *i,
 	const char *p,
+	const BMessenger &c,
 	bool cont)
 
-	: DCCConnect (n, fn, sz, i, p),
+	: DCCConnect (n, fn, sz, i, p, c),
 	  resume (cont)
 {
 }
@@ -429,8 +437,7 @@ DCCReceive::Transfer (void *arg)
 
 	if (msgr.IsValid())
 	{
-	    BMessage msg (M_SUCCESS);
-	    msg.AddBool ("success", bytes_received == size);
+	    BMessage msg (M_STOP_BUTTON);
 	    msgr.SendMessage (&msg);
 	}
 
@@ -456,8 +463,7 @@ DCCSend::DCCSend (
 	const BMessenger &c,
 	struct in_addr a)
 
-	: DCCConnect (n, fn, sz, "", ""),
-	  caller (c),
+	: DCCConnect (n, fn, sz, "", "", c),
 	  pos (0LL),
 	  addr (a)
 {
@@ -634,6 +640,7 @@ DCCSend::Transfer (void *arg)
 	if (file.InitCheck() == B_NO_ERROR)
 	{
 		bigtime_t last (system_time()), now;
+		const uint32 DCC_BLOCK_SIZE (atoi(vision_app->GetString ("dccBlockSize")));
 		char buffer[DCC_BLOCK_SIZE];
 		int period (0);
 		ssize_t count;
@@ -649,24 +656,28 @@ DCCSend::Transfer (void *arg)
 				UpdateStatus (msgr, "Error writing data.");
 				break;
 			}
-
 			bytes_sent += sent;
 			BMessage msg (M_UPDATE_TRANSFERRED);
 			msg.AddInt32 ("transferred", bytes_sent);
 			msgr.SendMessage (&msg);
 	
 			uint32 confirm;
-			fd_set rset;
+			fd_set rset, eset;
 			FD_ZERO (&rset);
+			FD_ZERO (&eset);
 			FD_SET (dccSock, &rset);
 			t.tv_sec = 0;
 			t.tv_usec = 10;
 			
-			while (select (dccSock + 1, &rset, NULL, NULL, &t) > 0 && FD_ISSET (dccSock, &rset))
+			while ((select (dccSock + 1, &rset, NULL, NULL, &t) > 0)
+			  && FD_ISSET (dccSock, &rset)
+			  && !FD_ISSET (dccSock, &eset))
 			{
   			  recv (dccSock, &confirm, sizeof (confirm), 0);
   			  FD_ZERO (&rset);
+  			  FD_ZERO (&eset);
   			  FD_SET (dccSock, &rset);
+  			  FD_SET (dccSock, &eset);
   			}
 
 			now = system_time();
@@ -694,8 +705,7 @@ DCCSend::Transfer (void *arg)
 
 	if (msgr.IsValid())
 	{
-	    BMessage msg (M_SUCCESS);
-	    msg.AddBool ("success", bytes_sent == size);
+	    BMessage msg (M_STOP_BUTTON);
 	    msgr.SendMessage (&msg);
 	}
 

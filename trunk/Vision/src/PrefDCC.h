@@ -17,29 +17,31 @@
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Wade Majors
- *                 Todd Lair
  */
 
-#ifndef DCCFILEWINDOW_H_
-#define DCCFILEWINDOW_H_
+#ifndef _PREFDCC_H
+#define _PREFDCC_H
 
-#include <Window.h>
+#include <View.h>
 
-class DCCConnect;
-class WindowSettings;
+class VTextControl;
+class BMenuField;
+class BCheckBox;
 
-class DCCFileWindow : public BWindow
+class DCCPrefsView : public BView
 {
-	public:
-
-								DCCFileWindow (DCCConnect *);
-	virtual						~DCCFileWindow (void);
-
-	virtual bool				QuitRequested (void);
-	virtual void				MessageReceived (BMessage *);
-	virtual void				Hide (void);
-	virtual void				Show (void);
+  public:
+    DCCPrefsView (BRect);
+    virtual ~DCCPrefsView (void);
+    virtual void MessageReceived (BMessage *);
+    virtual void AttachedToWindow (void);
+    virtual void AllAttached (void);
+    virtual void FrameResized (float, float);
+  
+  private:
+    BMenuField *blockSize;
+    VTextControl *defDir;
+    BCheckBox *autoAccept;
 };
 
-#endif
+#endif // _PREFDCC_H

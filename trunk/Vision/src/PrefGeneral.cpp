@@ -22,14 +22,15 @@
 #include "PrefGeneral.h"
 #include "PrefApp.h"
 #include "PrefColor.h"
+#include "PrefDCC.h"
 #include "PrefFont.h"
 #include "PrefCommand.h"
 #include "PrefEvent.h"
 
 #include <stdio.h>
 
-#include <ListView.h>
 #include <Box.h>
+#include <ListView.h>
 #include <ScrollView.h>
 
 GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redraw, uint32 flags)
@@ -49,6 +50,7 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   prefsList->AddItem (new BStringItem ("Fonts"));
   prefsList->AddItem (new BStringItem ("Commands"));
   prefsList->AddItem (new BStringItem ("Events"));
+  prefsList->AddItem (new BStringItem ("DCC"));
   prefsList->SetSelectionMessage (new BMessage (M_GENERALPREFS_SELECTION_CHANGED));
   BScrollView *scroller (new BScrollView("list scroller", prefsList, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, 0, false, true));
   AddChild(scroller);
@@ -77,8 +79,9 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   prefsBox->AddChild (prefsItems[4]);
   prefsItems[4]->Hide();
   
-  for (int32 i = 5; i < C_PREFS_COUNT; i++)
-    prefsItems[i] = NULL;
+  prefsItems[5] = new DCCPrefsView (bounds);
+  prefsBox->AddChild (prefsItems[5]);
+  prefsItems[5]->Hide();
 }
 
 GeneralPrefsView::~GeneralPrefsView (void)
