@@ -237,22 +237,16 @@ ClientAgent::ParseCmd (const char *data)
     {
       BMessage *msg (new BMessage (M_CHOSE_FILE));
       msg->AddString ("nick", theNick.String());
+      BPath sendPath;
       if (theFile != "-9z99")
       {
-        char filePath[B_PATH_NAME_LENGTH] = "\0";
-        
         if (theFile.ByteAt (0) != '/')
         {
-          find_directory (B_USER_DIRECTORY, 0, false, filePath, B_PATH_NAME_LENGTH);
-          filePath[strlen (filePath)] = '/';
-        }
-          
-        strcat (filePath, theFile.LockBuffer (0));
-        theFile.UnlockBuffer();
-
-        // use BPath to resolve relative pathnames, above code forces it
-        // to use /boot/home as a working dir as opposed to the app path
-        BPath sendPath (filePath, NULL, true);
+          find_directory (B_USER_DIRECTORY, &sendPath, false);
+          sendPath.Append (theFile.String(), true);
+        } 
+        else
+          sendPath.SetTo (theFile.String(), NULL, true);
 
         // the BFile is used to verify if the file exists
         // based off the documentation get_ref_for_path *should*

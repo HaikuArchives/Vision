@@ -115,7 +115,7 @@ ServerAgent::ParseEvents (const char *data)
 
   if (firstWord == "NOTICE")
   {
-    BString theNotice (RestOfString(data, 4));
+    BString theNotice (RestOfString(data, 3));
     theNotice.RemoveFirst(":");
     
     BString tempString;

@@ -162,7 +162,7 @@
 // command parser
 
 #define S_PCMD_PARAMETER_ERROR      "Error: Invalid parameters"
-#define S_PCMD_SEND_TITLE           "Sending a file to"
+#define S_PCMD_SEND_TITLE           "Sending a file to "
 #define S_PCMD_SEND_BUTTON          "Send"
 #define S_PCMD_TRY_NEW_NICK         "*** Trying new nick "
 #define S_PCMD_SET_BOOL_SUCCESS     "Bool has been set"
@@ -360,6 +360,7 @@
 #define S_SERVER_DISCON_STATUS      "Disconnected"
 #define S_SERVER_CONN_PROBLEM       "CONNECTION PROBLEM"
 #define S_SERVER_LAG_DISABLED       "Disabled"
+#define S_SERVER_DCC_CHAT_PROMPT    " wants to begin a DCC chat with you."
 
 // server entry window
 

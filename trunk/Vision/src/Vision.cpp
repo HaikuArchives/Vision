@@ -92,22 +92,22 @@ main (void)
 
 VisionApp::VisionApp (void)
   : BApplication ("application/x-vnd.Ink-Vision"),
-      aboutWin (0),
-      setupWin (0),
-      clientWin (0),
-      prefsWin (0),
-      netWin (0),
-      dccFileWin (0),
-      identSocket (-1),
-      activeTheme (new Theme ("current", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
+      fAboutWin (0),
+      fSetupWin (0),
+      fClientWin (0),
+      fPrefsWin (0),
+      fNetWin (0),
+      fDccFileWin (0),
+      fIdentSocket (-1),
+      fActiveTheme (new Theme ("current", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
 {
   // some setup
-  settingsloaded = false;
-  debugrecv = false;
-  debugsend = false;
-  debugsettings = false;
-  numBench = false;
-  ShuttingDown = false;
+  fSettingsLoaded = false;
+  fDebugRecv = false;
+  fDebugSend = false;
+  fDebugSettings = false;
+  fNumBench = false;
+  fShuttingDown = false;
 }
 
 void
@@ -217,84 +217,84 @@ VisionApp::InitDefaults (void)
   const rgb_color MIRC_GREY           = { 127, 127, 127, 255};
   const rgb_color MIRC_SILVER         = { 192, 192, 192, 255};
 
-  colors[C_TEXT]                      = myBlack;
-  colors[C_BACKGROUND]                = myWhite;
-  colors[C_NAMES]                     = myBlack;
-  colors[C_NAMES_BACKGROUND]          = myWhite;
-  colors[C_URL]                       = URL_COLOR;
-  colors[C_SERVER]                    = myBlack;
-  colors[C_NOTICE]                    = NOTICE_COLOR;
-  colors[C_ACTION]                    = ACTION_COLOR;
-  colors[C_QUIT]                      = QUIT_COLOR;
-  colors[C_ERROR]                     = ERROR_COLOR;
-  colors[C_NICK]                      = NICK_COLOR;
-  colors[C_MYNICK]                    = MYNICK_COLOR;
-  colors[C_JOIN]                      = JOIN_COLOR;
-  colors[C_KICK]                      = KICK_COLOR;
-  colors[C_WHOIS]                     = WHOIS_COLOR;
-  colors[C_OP]                        = OP_COLOR;
-  colors[C_HELPER]                    = OP_COLOR;
-  colors[C_VOICE]                     = VOICE_COLOR;
-  colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
-  colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
-  colors[C_IGNORE]                    = IGNORE_COLOR;
-  colors[C_INPUT]                     = INPUT_COLOR;
-  colors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
-  colors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
-  colors[C_WINLIST_NORMAL]            = myBlack;
-  colors[C_WINLIST_NEWS]              = JOIN_COLOR;
-  colors[C_WINLIST_NICK]              = QUIT_COLOR;
-  colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
-  colors[C_WINLIST_PAGESIX]           = WINLIST_PAGE6_COLOR;
-  colors[C_WALLOPS]                   = WALLOPS_COLOR;
-  colors[C_NICKDISPLAY]               = NICK_DISPLAY;
-  colors[C_TIMESTAMP]                 = myBlack;
-  colors[C_TIMESTAMP_BACKGROUND]      = myWhite;
-  colors[C_SELECTION]                 = myBlack;
-  colors[C_MIRC_WHITE]                = myWhite;
-  colors[C_MIRC_BLACK]                = myBlack;
-  colors[C_MIRC_BLUE]                 = MIRC_BLUE;
-  colors[C_MIRC_GREEN]                = MIRC_GREEN;
-  colors[C_MIRC_RED]                  = MIRC_RED;
-  colors[C_MIRC_BROWN]                = MIRC_BROWN;
-  colors[C_MIRC_PURPLE]               = MIRC_PURPLE;
-  colors[C_MIRC_ORANGE]               = MIRC_ORANGE;
-  colors[C_MIRC_YELLOW]               = MIRC_YELLOW;
-  colors[C_MIRC_LIME]                 = MIRC_LIME;
-  colors[C_MIRC_TEAL]                 = MIRC_TEAL;
-  colors[C_MIRC_AQUA]                 = MIRC_AQUA;
-  colors[C_MIRC_LT_BLUE]              = MIRC_LT_BLUE;
-  colors[C_MIRC_PINK]                 = MIRC_PINK;
-  colors[C_MIRC_GREY]                 = MIRC_GREY;
-  colors[C_MIRC_SILVER]               = MIRC_SILVER;
+  fColors[C_TEXT]                      = myBlack;
+  fColors[C_BACKGROUND]                = myWhite;
+  fColors[C_NAMES]                     = myBlack;
+  fColors[C_NAMES_BACKGROUND]          = myWhite;
+  fColors[C_URL]                       = URL_COLOR;
+  fColors[C_SERVER]                    = myBlack;
+  fColors[C_NOTICE]                    = NOTICE_COLOR;
+  fColors[C_ACTION]                    = ACTION_COLOR;
+  fColors[C_QUIT]                      = QUIT_COLOR;
+  fColors[C_ERROR]                     = ERROR_COLOR;
+  fColors[C_NICK]                      = NICK_COLOR;
+  fColors[C_MYNICK]                    = MYNICK_COLOR;
+  fColors[C_JOIN]                      = JOIN_COLOR;
+  fColors[C_KICK]                      = KICK_COLOR;
+  fColors[C_WHOIS]                     = WHOIS_COLOR;
+  fColors[C_OP]                        = OP_COLOR;
+  fColors[C_HELPER]                    = OP_COLOR;
+  fColors[C_VOICE]                     = VOICE_COLOR;
+  fColors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
+  fColors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
+  fColors[C_IGNORE]                    = IGNORE_COLOR;
+  fColors[C_INPUT]                     = INPUT_COLOR;
+  fColors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
+  fColors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
+  fColors[C_WINLIST_NORMAL]            = myBlack;
+  fColors[C_WINLIST_NEWS]              = JOIN_COLOR;
+  fColors[C_WINLIST_NICK]              = QUIT_COLOR;
+  fColors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
+  fColors[C_WINLIST_PAGESIX]           = WINLIST_PAGE6_COLOR;
+  fColors[C_WALLOPS]                   = WALLOPS_COLOR;
+  fColors[C_NICKDISPLAY]               = NICK_DISPLAY;
+  fColors[C_TIMESTAMP]                 = myBlack;
+  fColors[C_TIMESTAMP_BACKGROUND]      = myWhite;
+  fColors[C_SELECTION]                 = myBlack;
+  fColors[C_MIRC_WHITE]                = myWhite;
+  fColors[C_MIRC_BLACK]                = myBlack;
+  fColors[C_MIRC_BLUE]                 = MIRC_BLUE;
+  fColors[C_MIRC_GREEN]                = MIRC_GREEN;
+  fColors[C_MIRC_RED]                  = MIRC_RED;
+  fColors[C_MIRC_BROWN]                = MIRC_BROWN;
+  fColors[C_MIRC_PURPLE]               = MIRC_PURPLE;
+  fColors[C_MIRC_ORANGE]               = MIRC_ORANGE;
+  fColors[C_MIRC_YELLOW]               = MIRC_YELLOW;
+  fColors[C_MIRC_LIME]                 = MIRC_LIME;
+  fColors[C_MIRC_TEAL]                 = MIRC_TEAL;
+  fColors[C_MIRC_AQUA]                 = MIRC_AQUA;
+  fColors[C_MIRC_LT_BLUE]              = MIRC_LT_BLUE;
+  fColors[C_MIRC_PINK]                 = MIRC_PINK;
+  fColors[C_MIRC_GREY]                 = MIRC_GREY;
+  fColors[C_MIRC_SILVER]               = MIRC_SILVER;
   
-  client_font[F_TEXT]    = new BFont (be_plain_font);
-  client_font[F_SERVER]  = new BFont (be_plain_font);
-  client_font[F_URL]     = new BFont (be_plain_font);
-  client_font[F_NAMES]   = new BFont (be_plain_font);
-  client_font[F_INPUT]   = new BFont (be_plain_font);
-  client_font[F_WINLIST] = new BFont (be_plain_font);
-  client_font[F_LISTAGENT] = new BFont (be_plain_font);
-  client_font[F_TIMESTAMP] = new BFont (be_plain_font);
+  fClientFont[F_TEXT]    = new BFont (be_plain_font);
+  fClientFont[F_SERVER]  = new BFont (be_plain_font);
+  fClientFont[F_URL]     = new BFont (be_plain_font);
+  fClientFont[F_NAMES]   = new BFont (be_plain_font);
+  fClientFont[F_INPUT]   = new BFont (be_plain_font);
+  fClientFont[F_WINLIST] = new BFont (be_plain_font);
+  fClientFont[F_LISTAGENT] = new BFont (be_plain_font);
+  fClientFont[F_TIMESTAMP] = new BFont (be_plain_font);
   
-  events[E_JOIN]            = "*** $N ($I@$A) has joined the channel.";
-  events[E_PART]            = "*** $N has left the channel.";
-  events[E_NICK]            = "*** $N is now known as $n.";
-  events[E_QUIT]            = "*** $N ($I@$A) has quit IRC ($R)";
-  events[E_KICK]            = "*** $N has been kicked from $C by $n ($R)";
-  events[E_TOPIC]           = "*** $C Topic changed by $N: $T";
-  events[E_SNOTICE]         = "-$N- $R";
-  events[E_UNOTICE]         = "-$N- $R";
-  events[E_NOTIFY_ON]       = "*** $N has joined IRC.";
-  events[E_NOTIFY_OFF]      = "*** $N has left IRC.";
+  fEvents[E_JOIN]            = "*** $N ($I@$A) has joined the channel.";
+  fEvents[E_PART]            = "*** $N has left the channel.";
+  fEvents[E_NICK]            = "*** $N is now known as $n.";
+  fEvents[E_QUIT]            = "*** $N ($I@$A) has quit IRC ($R)";
+  fEvents[E_KICK]            = "*** $N has been kicked from $C by $n ($R)";
+  fEvents[E_TOPIC]           = "*** $C Topic changed by $N: $T";
+  fEvents[E_SNOTICE]         = "-$N- $R";
+  fEvents[E_UNOTICE]         = "-$N- $R";
+  fEvents[E_NOTIFY_ON]       = "*** $N has joined IRC.";
+  fEvents[E_NOTIFY_OFF]      = "*** $N has left IRC.";
 
-  commands[CMD_KICK]        = "Ouch!";
-  commands[CMD_QUIT]        = "Vision[$V]: i've been blurred!";
-  commands[CMD_IGNORE]      = "*** $N is now ignored ($i).";
-  commands[CMD_UNIGNORE]    = "*** $N is no longer ignored.";
-  commands[CMD_AWAY]        = "is idle: $R";
-  commands[CMD_BACK]        = "has returned";
-  commands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
+  fCommands[CMD_KICK]        = "Ouch!";
+  fCommands[CMD_QUIT]        = "Vision[$V]: i've been blurred!";
+  fCommands[CMD_IGNORE]      = "*** $N is now ignored ($i).";
+  fCommands[CMD_UNIGNORE]    = "*** $N is no longer ignored.";
+  fCommands[CMD_AWAY]        = "is idle: $R";
+  fCommands[CMD_BACK]        = "has returned";
+  fCommands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
   
   uint32 i = 0;
   
@@ -320,13 +320,13 @@ VisionApp::InitSettings (void)
   Theme::NormalFont = F_TEXT;
   Theme::SelectionBack = C_SELECTION;
   
-  if (debugsettings)
+  if (fDebugSettings)
     printf (":SETTINGS: loading...\n");
       
-  visionSettings = new SettingsFile ("VisionSettings", "Vision");
+  fVisionSettings = new SettingsFile ("VisionSettings", "Vision");
     
-  if (visionSettings->InitCheck() == B_OK)
-    visionSettings->Load();
+  if (fVisionSettings->InitCheck() == B_OK)
+    fVisionSettings->Load();
   else
     printf(":ERROR: Error Loading /Vision/VisionSettings\n");
 
@@ -345,35 +345,35 @@ VisionApp::InitSettings (void)
 
   for (i = 0; i < MAX_COLORS; i++)
   {
-    activeTheme->SetForeground (i, colors[i]);
-    activeTheme->SetBackground (i, colors[C_BACKGROUND]);
+    fActiveTheme->SetForeground (i, fColors[i]);
+    fActiveTheme->SetBackground (i, fColors[C_BACKGROUND]);
   }
   for (i = C_MIRC_WHITE; i < MAX_COLORS; i++)
-    activeTheme->SetBackground (i, colors[i]);
+    fActiveTheme->SetBackground (i, fColors[i]);
    
-  activeTheme->SetBackground (C_SELECTION, colors [C_SELECTION]); 
-  activeTheme->SetBackground (C_TIMESTAMP, colors[C_TIMESTAMP_BACKGROUND]);
-  activeTheme->SetBackground (MAX_COLORS, colors[C_BACKGROUND]);
-  activeTheme->SetForeground (MAX_COLORS, colors[C_TEXT]);
-  activeTheme->SetFont (MAX_FONTS, client_font[F_TEXT]);
+  fActiveTheme->SetBackground (C_SELECTION, fColors [C_SELECTION]); 
+  fActiveTheme->SetBackground (C_TIMESTAMP, fColors[C_TIMESTAMP_BACKGROUND]);
+  fActiveTheme->SetBackground (MAX_COLORS, fColors[C_BACKGROUND]);
+  fActiveTheme->SetForeground (MAX_COLORS, fColors[C_TEXT]);
+  fActiveTheme->SetFont (MAX_FONTS, fClientFont[F_TEXT]);
 
   for (i = 0; i < MAX_FONTS; i++)
-    activeTheme->SetFont (i, client_font[i]);
+    fActiveTheme->SetFont (i, fClientFont[i]);
 
-  settingsloaded = true;  
-  if (debugsettings)
+  fSettingsLoaded = true;  
+  if (fDebugSettings)
     printf (":SETTINGS: done loading\n");
 }
 
 bool
 VisionApp::SaveSettings (void)
 {
-  BAutolock saveLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock saveLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!saveLock.IsLocked())
     return false;
     
-  if ((visionSettings->Save() == B_OK) && debugsettings)
+  if ((fVisionSettings->Save() == B_OK) && fDebugSettings)
   {
     printf (":SETTINGS: saved to file\n");
     return true;
@@ -390,7 +390,7 @@ VisionApp::LoadDefaults (int32 section)
   {
     case SET_SERVER:
       {
-        if (!visionSettings->HasMessage ("defaults"))
+        if (!fVisionSettings->HasMessage ("defaults"))
         {
           BMessage defaults (VIS_NETWORK_DEFAULTS);
           defaults.AddString ("name", "defaults");
@@ -398,7 +398,7 @@ VisionApp::LoadDefaults (int32 section)
           defaults.AddString ("nick", "vision2");
           defaults.AddString ("ident", "vision");
           defaults.AddString ("realname", "Heisenberg may have slept here");
-          visionSettings->AddMessage ("defaults", &defaults);
+          fVisionSettings->AddMessage ("defaults", &defaults);
         }
         // remove this eventually, stupid bug
         else
@@ -414,57 +414,57 @@ VisionApp::LoadDefaults (int32 section)
     
     case SET_GENERAL:
       {
-        if (!visionSettings->HasBool ("versionParanoid"))
-          visionSettings->AddBool ("versionParanoid", false);
+        if (!fVisionSettings->HasBool ("versionParanoid"))
+          fVisionSettings->AddBool ("versionParanoid", false);
 
-        if (!visionSettings->HasBool ("timestamp"))
-          visionSettings->AddBool ("timestamp", false);
+        if (!fVisionSettings->HasBool ("timestamp"))
+          fVisionSettings->AddBool ("timestamp", false);
           
-        if (!visionSettings->HasString ("timestamp_format"))
-          visionSettings->AddString ("timestamp_format", "[%H:%M]");
+        if (!fVisionSettings->HasString ("timestamp_format"))
+          fVisionSettings->AddString ("timestamp_format", "[%H:%M]");
         else
-          visionSettings->ReplaceString ("timestamp_format", "[%H:%M]");
+          fVisionSettings->ReplaceString ("timestamp_format", "[%H:%M]");
         
-        if (!visionSettings->HasBool ("log_enabled"))
-          visionSettings->AddBool ("log_enabled", false);
+        if (!fVisionSettings->HasBool ("log_enabled"))
+          fVisionSettings->AddBool ("log_enabled", false);
 
-        if (!visionSettings->HasBool ("log_filetimestamp"))
-          visionSettings->AddBool ("log_filetimestamp", false);
+        if (!fVisionSettings->HasBool ("log_filetimestamp"))
+          fVisionSettings->AddBool ("log_filetimestamp", false);
         
-        if (!visionSettings->HasBool ("stripcolors"))
-          visionSettings->AddBool ("stripcolors", true);
+        if (!fVisionSettings->HasBool ("stripcolors"))
+          fVisionSettings->AddBool ("stripcolors", true);
           
-        if (!visionSettings->HasBool ("Newbie Spam Mode"))
-          visionSettings->AddBool("Newbie Spam Mode", true);  
+        if (!fVisionSettings->HasBool ("Newbie Spam Mode"))
+          fVisionSettings->AddBool("Newbie Spam Mode", true);  
       }
       break;
     
     case SET_WINDOW:
       {
-        if (!visionSettings->HasBool ("catchAltW"))
-          visionSettings->AddBool ("catchAltW", false);
+        if (!fVisionSettings->HasBool ("catchAltW"))
+          fVisionSettings->AddBool ("catchAltW", false);
 
-        if (!visionSettings->HasRect ("clientWinRect"))
-          visionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
+        if (!fVisionSettings->HasRect ("clientWinRect"))
+          fVisionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
         
-        if (!visionSettings->HasRect ("windowDockRect"))
-          visionSettings->AddRect ("windowDockRect", BRect (0, 0, 0, 0));
+        if (!fVisionSettings->HasRect ("windowDockRect"))
+          fVisionSettings->AddRect ("windowDockRect", BRect (0, 0, 0, 0));
           
-        if (!visionSettings->HasRect ("NetPrefWinRect"))
-          visionSettings->AddRect ("NetPrefWinRect", BRect (0, 0, 0, 0));
+        if (!fVisionSettings->HasRect ("NetPrefWinRect"))
+          fVisionSettings->AddRect ("NetPrefWinRect", BRect (0, 0, 0, 0));
         
-        if (!visionSettings->HasRect ("namesListRect"))
-          visionSettings->AddRect ("namesListRect", BRect (0, 0, 100, 0));
+        if (!fVisionSettings->HasRect ("namesListRect"))
+          fVisionSettings->AddRect ("namesListRect", BRect (0, 0, 100, 0));
         
-        if (!visionSettings->HasRect ("GenPrefWinRect"))
-          visionSettings->AddRect ("GenPrefWinRect", BRect (0,0,0,0));
+        if (!fVisionSettings->HasRect ("GenPrefWinRect"))
+          fVisionSettings->AddRect ("GenPrefWinRect", BRect (0,0,0,0));
       }
       break;
 
     case SET_NOTIFY:
       {
-        if (!visionSettings->HasString ("alsoKnownAs"))
-          visionSettings->AddString ("alsoKnownAs", "-9y99");
+        if (!fVisionSettings->HasString ("alsoKnownAs"))
+          fVisionSettings->AddString ("alsoKnownAs", "-9y99");
       }
       break;
       
@@ -479,11 +479,11 @@ VisionApp::LoadDefaults (int32 section)
        
        for (i = 0; i < MAX_FONTS; i++)
        {
-         if (!visionSettings->HasString ("family", i))
+         if (!fVisionSettings->HasString ("family", i))
          {
-           visionSettings->AddString ("family", default_family);
-           visionSettings->AddString ("style", default_style);
-           visionSettings->AddFloat ("size", size);
+           fVisionSettings->AddString ("family", default_family);
+           fVisionSettings->AddString ("style", default_style);
+           fVisionSettings->AddFloat ("size", size);
          }
          else
          {
@@ -491,9 +491,9 @@ VisionApp::LoadDefaults (int32 section)
            BString style;
            size = 0.0;
                   
-           visionSettings->FindString ("family", i, &family);
-           visionSettings->FindString ("style", i, &style);
-           visionSettings->FindFloat ("size", i, &size);
+           fVisionSettings->FindString ("family", i, &family);
+           fVisionSettings->FindString ("style", i, &style);
+           fVisionSettings->FindFloat ("size", i, &size);
            
            ClientFontFamilyAndStyle (i, family.String(), style.String());
            ClientFontSize (i, size); 
@@ -506,60 +506,60 @@ VisionApp::LoadDefaults (int32 section)
      {
        // load defaults from color array into settings file
        for (int32 i = 0; i < MAX_COLORS; i++)
-         if (!visionSettings->HasData ("color", B_RGB_COLOR_TYPE, i))
+         if (!fVisionSettings->HasData ("color", B_RGB_COLOR_TYPE, i))
          {
-           visionSettings->AddData ("color", B_RGB_COLOR_TYPE, &colors[i], sizeof (rgb_color));
+           fVisionSettings->AddData ("color", B_RGB_COLOR_TYPE, &fColors[i], sizeof (rgb_color));
          }
          else
          {
            const rgb_color *color;
            ssize_t size (0);
-           if (visionSettings->FindData ("color", B_RGB_COLOR_TYPE, i, reinterpret_cast<const void **>(&color), &size) == B_OK)
-             colors[i] = *color;
+           if (fVisionSettings->FindData ("color", B_RGB_COLOR_TYPE, i, reinterpret_cast<const void **>(&color), &size) == B_OK)
+             fColors[i] = *color;
          }
      }
      break;
    
    case SET_STRINGS:
      {
-       // events
-       if (!visionSettings->HasString ("event"))
+       // fEvents
+       if (!fVisionSettings->HasString ("event"))
        {
          for (int32 i = 0; i < MAX_EVENTS; i++)
-           visionSettings->AddString ("event", events[i]);
+           fVisionSettings->AddString ("event", fEvents[i]);
        }
        else
        {
          for (int32 i = 0; i < MAX_EVENTS; i++)
-           visionSettings->FindString ("event", i, &events[i]);
+           fVisionSettings->FindString ("event", i, &fEvents[i]);
        }
        
-       // commands
-       if (!visionSettings->HasString ("command"))
+       // fCommands
+       if (!fVisionSettings->HasString ("command"))
        {
          for (int32 i = 0; i < MAX_COMMANDS; i++)
-           visionSettings->AddString ("command", commands[i]);
+           fVisionSettings->AddString ("command", fCommands[i]);
        }
        else
        {
          for (int32 i = 0; i < MAX_COMMANDS; i++)
-           visionSettings->FindString ("command", i, &commands[i]);
+           fVisionSettings->FindString ("command", i, &fCommands[i]);
        }
      }
      break;
      
    case SET_DCC:
      {
-       if (!visionSettings->HasString ("dccDefPath"))
-         visionSettings->AddString ("dccDefPath", "/boot/home");
-       if (!visionSettings->HasBool ("dccAutoAccept"))
-         visionSettings->AddBool ("dccAutoAccept", false);
-       if (!visionSettings->HasString ("dccBlockSize"))
-         visionSettings->AddString ("dccBlockSize", "2048");
-       if (!visionSettings->HasString ("dccMinPort"))
-         visionSettings->AddString ("dccMinPort", "40000");
-       if (!visionSettings->HasString ("dccMaxPort"))
-         visionSettings->AddString ("dccMaxPort", "45000");
+       if (!fVisionSettings->HasString ("dccDefPath"))
+         fVisionSettings->AddString ("dccDefPath", "/boot/home");
+       if (!fVisionSettings->HasBool ("dccAutoAccept"))
+         fVisionSettings->AddBool ("dccAutoAccept", false);
+       if (!fVisionSettings->HasString ("dccBlockSize"))
+         fVisionSettings->AddString ("dccBlockSize", "2048");
+       if (!fVisionSettings->HasString ("dccMinPort"))
+         fVisionSettings->AddString ("dccMinPort", "40000");
+       if (!fVisionSettings->HasString ("dccMaxPort"))
+         fVisionSettings->AddString ("dccMaxPort", "45000");
      }
      break;  
   }
@@ -568,20 +568,20 @@ VisionApp::LoadDefaults (int32 section)
 bool
 VisionApp::QuitRequested (void)
 {
-  ShuttingDown = true;
+  fShuttingDown = true;
 
-  if (identSocket >= 0)
+  if (fIdentSocket >= 0)
 #ifdef BONE_BUILD
-    close (identSocket);
+    close (fIdentSocket);
 #elif NETSERVER_BUILD
-    closesocket (identSocket);
+    closesocket (fIdentSocket);
 #endif
   
-  if(clientWin)
+  if(fClientWin)
   {
-    clientWin->PostMessage (B_QUIT_REQUESTED);
+    fClientWin->PostMessage (B_QUIT_REQUESTED);
     //hang out here until ClientWindow::QuitRequested is really done
-    acquire_sem_etc(shutdownSem, 1, B_RELATIVE_TIMEOUT, 500000);
+    acquire_sem_etc(fShutdownSem, 1, B_RELATIVE_TIMEOUT, 500000);
   }
   
   // give our child threads a chance to die gracefully
@@ -598,14 +598,14 @@ VisionApp::QuitRequested (void)
 void
 VisionApp::AboutRequested (void)
 {
-  if (aboutWin)
+  if (fAboutWin)
   {
-    aboutWin->Activate();
+    fAboutWin->Activate();
   }
   else
   {
-    aboutWin = new AboutWindow();
-    aboutWin->Show();
+    fAboutWin = new AboutWindow();
+    fAboutWin->Show();
   }
 }
 
@@ -618,23 +618,23 @@ VisionApp::ArgvReceived (int32 ac, char **av)
     
     if (strcmp (av[i], "-!") == 0)
     {
-      debugrecv = true;
-      debugsend = true;
-      debugsettings = true;
-      numBench = true;
+      fDebugRecv = true;
+      fDebugSend = true;
+      fDebugSettings = true;
+      fNumBench = true;
     }
     
     else if (strcmp (av[i], "-r") == 0)
-      debugrecv = true;
+      fDebugRecv = true;
 
     else if (strcmp (av[i], "-s") == 0)
-      debugsend = true;
+      fDebugSend = true;
         
     else if (strcmp (av[i], "-S") == 0)
-      debugsettings = true;
+      fDebugSettings = true;
       
     else if (strcmp (av[i], "-n") == 0)
-      numBench = true;
+      fNumBench = true;
     
     else if (strcmp (av[i], "-T") == 0)
     {
@@ -705,18 +705,18 @@ VisionApp::ReadyToRun (void)
 {
   InitSettings();
 
-  identThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
-  if (identThread >= B_OK)
-    resume_thread (identThread);
+  fIdentThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
+  if (fIdentThread >= B_OK)
+    resume_thread (fIdentThread);
 
-  shutdownSem = create_sem(0, "ShutdownSem");
-  if(shutdownSem < B_OK) //that's an error
+  fShutdownSem = create_sem(0, "ShutdownSem");
+  if(fShutdownSem < B_OK) //that's an error
   	vision_app->Quit();
   
   if (!CheckStartupNetworks())
   {  
-    setupWin = new SetupWindow ();
-    setupWin->Show();
+    fSetupWin = new SetupWindow ();
+    fSetupWin->Show();
   }
 }
 
@@ -747,20 +747,20 @@ VisionApp::MessageReceived (BMessage *msg)
   {
     case M_ABOUT_CLOSE:
       {
-        aboutWin = 0;
-        if (ShuttingDown)
+        fAboutWin = 0;
+        if (fShuttingDown)
           PostMessage (B_QUIT_REQUESTED);
       }    
       break;
     
     case M_SETUP_SHOW:
       {
-        if (setupWin)
-          setupWin->Activate();
+        if (fSetupWin)
+          fSetupWin->Activate();
         else
         {
-          setupWin = new SetupWindow ();
-          setupWin->Show();
+          fSetupWin = new SetupWindow ();
+          fSetupWin->Show();
         }
       }
       break;
@@ -768,8 +768,8 @@ VisionApp::MessageReceived (BMessage *msg)
     case M_SETUP_CLOSE:
       {
         SaveSettings();
-        setupWin = 0;
-        if (clientWin == NULL)
+        fSetupWin = 0;
+        if (fClientWin == NULL)
           PostMessage (B_QUIT_REQUESTED);
       }
       break;
@@ -777,12 +777,12 @@ VisionApp::MessageReceived (BMessage *msg)
       
     case M_PREFS_SHOW:
       {
-        if (prefsWin)
-          prefsWin->Activate();
+        if (fPrefsWin)
+          fPrefsWin->Activate();
         else
         {
-          prefsWin = new PrefsWindow();
-          prefsWin->Show();
+          fPrefsWin = new PrefsWindow();
+          fPrefsWin->Show();
         }
       }      
       break;
@@ -790,18 +790,18 @@ VisionApp::MessageReceived (BMessage *msg)
     case M_PREFS_CLOSE:
       {
         SaveSettings();
-        prefsWin = 0;
+        fPrefsWin = 0;
       }
       break;
     
     case M_NETWORK_SHOW:
       {
-        if (netWin)
-          netWin->Activate();
+        if (fNetWin)
+          fNetWin->Activate();
         else
         {
-          netWin = new NetworkWindow();
-          netWin->Show();
+          fNetWin = new NetworkWindow();
+          fNetWin->Show();
           
         }
       }      
@@ -810,14 +810,14 @@ VisionApp::MessageReceived (BMessage *msg)
     case M_NETWORK_CLOSE:
       {
         SaveSettings();
-        netWin = 0;
+        fNetWin = 0;
       }
       break;
     
     case M_CONNECT_NETWORK:
       {
         BRect clientWinRect;
-        visionSettings->FindRect ("clientWinRect", &clientWinRect);
+        fVisionSettings->FindRect ("clientWinRect", &clientWinRect);
         BMessage netData = GetNetwork (msg->FindString ("network"));
 
         if (netData.FindBool ("useDefaults"))
@@ -832,30 +832,30 @@ VisionApp::MessageReceived (BMessage *msg)
           for (int32 i = 0; (nick = netDefaults.FindString ("nick", i)) != NULL; i++)
             netData.AddString ("nick", nick);
         }
-        if (clientWin == NULL)
+        if (fClientWin == NULL)
         {
-          clientWin = new ClientWindow (clientWinRect);
-          clientWin->Show();
+          fClientWin = new ClientWindow (clientWinRect);
+          fClientWin->Show();
         }
         BMessage connMsg (M_MAKE_NEW_NETWORK);
         connMsg.AddMessage ("network", &netData);
-        clientWin->PostMessage (&connMsg);
+        fClientWin->PostMessage (&connMsg);
       }
       break;
 
     case M_DCC_FILE_WIN:
     {
-      if (dccFileWin)
+      if (fDccFileWin)
       {
-        dccFileWin->PostMessage (msg);
+        fDccFileWin->PostMessage (msg);
       }
       else
       {
         DCCConnect *view;
 				
         msg->FindPointer ("view", reinterpret_cast<void **>(&view));
-        dccFileWin = new DCCFileWindow (view);
-        dccFileWin->Show();
+        fDccFileWin = new DCCFileWindow (view);
+        fDccFileWin->Show();
       }
     }
     break;
@@ -863,7 +863,7 @@ VisionApp::MessageReceived (BMessage *msg)
     case M_DCC_MESSENGER:
     if (msg->IsSourceWaiting())
     {
-      BMessenger msgr (dccFileWin);
+      BMessenger msgr (fDccFileWin);
       BMessage reply;
       reply.AddMessenger ("msgr", msgr);
       msg->SendReply (&reply);
@@ -872,7 +872,7 @@ VisionApp::MessageReceived (BMessage *msg)
 
     case M_DCC_FILE_WIN_DONE:
     {
-      dccFileWin = 0;
+      fDccFileWin = 0;
     }
     break;
 
@@ -899,7 +899,7 @@ VisionApp::MessageReceived (BMessage *msg)
 ClientWindow *
 VisionApp::pClientWin() const
 {
-  return clientWin;
+  return fClientWin;
 }
 
 BString
@@ -923,21 +923,21 @@ VisionApp::VisionVersion (int typebit)
 const char *
 VisionApp::GetString (const char *stringName) const
 {
-  BAutolock stringLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock stringLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!stringLock.IsLocked())
     return "";
   
-  if (debugsettings)
+  if (fDebugSettings)
     printf (":SETTINGS: looking up String \"%s\"... ", stringName);
     
   const char *value;
   
-  if (visionSettings->FindString (stringName, &value) == B_OK)
-    if (debugsettings)
+  if (fVisionSettings->FindString (stringName, &value) == B_OK)
+    if (fDebugSettings)
       printf ("found; returning %s\n", value);
   else
-    if (debugsettings)
+    if (fDebugSettings)
       printf (" not found; returning NULL\n");
       
   return value;
@@ -947,12 +947,12 @@ VisionApp::GetString (const char *stringName) const
 status_t
 VisionApp::SetString (const char *stringName, int32 index, const char *value)
 {
-  BAutolock stringLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock stringLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!stringLock.IsLocked())
     return B_ERROR;
   
-  if (visionSettings->ReplaceString (stringName, index, value) == B_OK)
+  if (fVisionSettings->ReplaceString (stringName, index, value) == B_OK)
     return B_OK;
   
   return B_ERROR;  
@@ -963,8 +963,8 @@ VisionApp::GetRect (const char *settingName)
 {
   BRect rect (0.0, 0.0, 0.0, 0.0);
   
-  if (visionSettings->HasRect (settingName))
-    visionSettings->FindRect (settingName, &rect);
+  if (fVisionSettings->HasRect (settingName))
+    fVisionSettings->FindRect (settingName, &rect);
   
   return rect;
 }
@@ -972,13 +972,13 @@ VisionApp::GetRect (const char *settingName)
 status_t
 VisionApp::SetRect (const char *settingName, BRect value)
 {
- BAutolock rectLock(const_cast<BLocker *>(&settingsLock));
+ BAutolock rectLock(const_cast<BLocker *>(&fSettingsLock));
  
  
  if (!rectLock.IsLocked())
    return B_ERROR;
      
- if (visionSettings->ReplaceRect (settingName, value) == B_OK)
+ if (fVisionSettings->ReplaceRect (settingName, value) == B_OK)
    return B_OK;
  
  return B_ERROR;
@@ -990,14 +990,14 @@ VisionApp::GetColor (int32 which) const
 {
   rgb_color color = {0, 0, 0, 255};
 
-  BAutolock colorLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock colorLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!colorLock.IsLocked())
     return color;
     
   
   if (which < MAX_COLORS && which >= 0)
-    color = colors[which];
+    color = fColors[which];
 
   return color;
 }
@@ -1007,42 +1007,42 @@ void
 VisionApp::SetColor (int32 which, const rgb_color color)
 {
 
-  BAutolock colorLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock colorLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!colorLock.IsLocked())
     return;
     
   if (which < MAX_COLORS &&  which >= 0
-  && (colors[which].red   != color.red
-  ||  colors[which].green != color.green
-  ||  colors[which].blue  != color.blue
-  ||  colors[which].alpha != color.alpha))
+  && (fColors[which].red   != color.red
+  ||  fColors[which].green != color.green
+  ||  fColors[which].blue  != color.blue
+  ||  fColors[which].alpha != color.alpha))
   {
-    colors[which] = color;
-    visionSettings->ReplaceData ("color", B_RGB_COLOR_TYPE, which,
+    fColors[which] = color;
+    fVisionSettings->ReplaceData ("color", B_RGB_COLOR_TYPE, which,
       reinterpret_cast<void * const *>(&color), sizeof(rgb_color));
     
     if (which == C_BACKGROUND)
     {
       // update regular background color on all other text
       for (int32 i = 0; i < C_TIMESTAMP; i++)
-        activeTheme->SetBackground (i , color);
-       activeTheme->SetBackground (MAX_COLORS, color);
+        fActiveTheme->SetBackground (i , color);
+       fActiveTheme->SetBackground (MAX_COLORS, color);
     }
     
     // update timestamp bg color
     else if (which == C_TIMESTAMP_BACKGROUND)
-      activeTheme->SetBackground (C_TIMESTAMP, color);
+      fActiveTheme->SetBackground (C_TIMESTAMP, color);
     else if (which == C_SELECTION)
-      activeTheme->SetBackground (C_SELECTION, color);
-    // mirc colors need to be updated on both fore and back
+      fActiveTheme->SetBackground (C_SELECTION, color);
+    // mirc fColors need to be updated on both fore and back
     else if (which >= C_MIRC_WHITE)
     {
-      activeTheme->SetForeground (which, color);
-      activeTheme->SetBackground (which, color);
+      fActiveTheme->SetForeground (which, color);
+      fActiveTheme->SetBackground (which, color);
     }
     else
-      activeTheme->SetForeground (which, color);
+      fActiveTheme->SetForeground (which, color);
   }
 }
 
@@ -1055,18 +1055,18 @@ VisionApp::ClientFontFamilyAndStyle (
   const char *style)
 {
 
-  BAutolock fontLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock fontLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!fontLock.IsLocked())
     return;
     
   if (which < MAX_FONTS && which >= 0)
   {
-    client_font[which]->SetFamilyAndStyle (family, style);
-    activeTheme->SetFont (which, client_font[which]);
+    fClientFont[which]->SetFamilyAndStyle (family, style);
+    fActiveTheme->SetFont (which, fClientFont[which]);
     
     if (which == F_TEXT)
-      activeTheme->SetFont (MAX_FONTS, client_font[which]);
+      fActiveTheme->SetFont (MAX_FONTS, fClientFont[which]);
     
     SetString ("family", which, family);
     SetString ("style", which, style);
@@ -1077,18 +1077,18 @@ VisionApp::ClientFontFamilyAndStyle (
 void
 VisionApp::ClientFontSize (int32 which, float size)
 {
-  BAutolock fontLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock fontLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!fontLock.IsLocked())
     return;
 
   if (which < MAX_FONTS && which >= 0)
   {
-    client_font[which]->SetSize (size);
+    fClientFont[which]->SetSize (size);
     
-    activeTheme->SetFont (which, client_font[which]);
+    fActiveTheme->SetFont (which, fClientFont[which]);
     
-    if (visionSettings->ReplaceFloat ("size", which, size) != B_OK)
+    if (fVisionSettings->ReplaceFloat ("size", which, size) != B_OK)
       printf("error, could not set font size\n");
   }
 }
@@ -1096,13 +1096,13 @@ VisionApp::ClientFontSize (int32 which, float size)
 const BFont *
 VisionApp::GetClientFont (int32 which) const
 {
-  BAutolock fontLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock fontLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!fontLock.IsLocked())
     return NULL;
 
   return which < MAX_FONTS && which >= 0 
-    ? client_font[which] : be_plain_font;
+    ? fClientFont[which] : be_plain_font;
 }
 /// end font prefs ///
 
@@ -1110,7 +1110,7 @@ VisionApp::GetClientFont (int32 which) const
 BString
 VisionApp::GetEvent (int32 which) const
 {
-  BAutolock eventLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock eventLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!eventLock.IsLocked())
     return "";
@@ -1118,7 +1118,7 @@ VisionApp::GetEvent (int32 which) const
   BString buffer;
 
   if (which < MAX_EVENTS && which >= 0)
-    buffer = events[which];
+    buffer = fEvents[which];
 
   return buffer;
 }
@@ -1127,17 +1127,17 @@ VisionApp::GetEvent (int32 which) const
 void
 VisionApp::SetEvent (int32 which, const char *event)
 {
-  BAutolock eventLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock eventLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!eventLock.IsLocked())
     return;
 
   if (which < MAX_EVENTS && which >= 0
-  &&  events[which].Compare (event))
+  &&  fEvents[which].Compare (event))
   {
-    events[which] = event;
+    fEvents[which] = event;
 
-    visionSettings->ReplaceString ("event", which, event);
+    fVisionSettings->ReplaceString ("event", which, event);
   }
 }
 
@@ -1145,7 +1145,7 @@ VisionApp::SetEvent (int32 which, const char *event)
 BString
 VisionApp::GetCommand (int32 which)
 {
-  BAutolock commandLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock commandLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!commandLock.IsLocked())
     return "";
@@ -1153,7 +1153,7 @@ VisionApp::GetCommand (int32 which)
   BString buffer;
 
   if (which < MAX_COMMANDS && which >= 0)
-    buffer = commands[which];
+    buffer = fCommands[which];
 
   return buffer;
 }
@@ -1162,16 +1162,16 @@ VisionApp::GetCommand (int32 which)
 void
 VisionApp::SetCommand (int32 which, const char *command)
 {
-  BAutolock commandLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock commandLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!commandLock.IsLocked())
     return;
 
   if (which < MAX_EVENTS && which >= 0)
   {
-    commands[which] = command;
+    fCommands[which] = command;
     
-    visionSettings->ReplaceString ("command", which, command);
+    fVisionSettings->ReplaceString ("command", which, command);
   }
 }
 
@@ -1179,21 +1179,21 @@ VisionApp::SetCommand (int32 which, const char *command)
 bool
 VisionApp::GetBool (const char *settingName)
 {
-  BAutolock boolLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock boolLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!boolLock.IsLocked())
     return B_ERROR;
 
-  if (debugsettings)
+  if (fDebugSettings)
     printf (":SETTINGS: looking up bool \"%s\"... ", settingName);
     
   bool value (false);
   
-  if (visionSettings->FindBool (settingName, &value) == B_OK)
-    if (debugsettings)
+  if (fVisionSettings->FindBool (settingName, &value) == B_OK)
+    if (fDebugSettings)
       printf ("found; returning %s\n", (value)? "true" : "false");
   else
-    if (debugsettings)
+    if (fDebugSettings)
       printf (" not found; returning false\n");
       
   return value;
@@ -1203,12 +1203,12 @@ VisionApp::GetBool (const char *settingName)
 status_t
 VisionApp::SetBool (const char *settingName, bool value)
 {
-  BAutolock boolLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock boolLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!boolLock.IsLocked())
     return B_ERROR;
   
- if (visionSettings->ReplaceBool (settingName, value) == B_OK)
+ if (fVisionSettings->ReplaceBool (settingName, value) == B_OK)
  {
    BMessage msg (M_STATE_CHANGE);
    msg.AddBool ("bool", true);
@@ -1223,22 +1223,22 @@ VisionApp::GetNetwork (const char *network)
 {
   BMessage msg (VIS_NETWORK_DATA);
 
-  BAutolock netLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock netLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (netLock.IsLocked())
   {
     if (!strcmp (network, "defaults"))
     {
-      visionSettings->FindMessage ("defaults", &msg);
+      fVisionSettings->FindMessage ("defaults", &msg);
       return msg;
     }
     type_code type;
-    int32 count (0);
-    visionSettings->GetInfo ("network", &type, &count);
-    for (int32 i = 0; i < count; i++)
+    int32 netCount (0);
+    fVisionSettings->GetInfo ("network", &type, &netCount);
+    for (int32 i = 0; i < netCount; i++)
     {
        BMessage tempMsg;
-       visionSettings->FindMessage ("network", i, &tempMsg);
+       fVisionSettings->FindMessage ("network", i, &tempMsg);
        if (!strcmp (tempMsg.FindString ("name"), network))
        {
          msg = tempMsg;
@@ -1254,10 +1254,10 @@ VisionApp::GetNetwork (int32 index)
 {
   BMessage msg (VIS_NETWORK_DATA);
 
-  BAutolock netLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock netLock (const_cast<BLocker *>(&fSettingsLock));
 
   if (netLock.IsLocked())
-    if (visionSettings->FindMessage ("network", index, &msg) != B_OK)
+    if (fVisionSettings->FindMessage ("network", index, &msg) != B_OK)
       msg.AddBool ("error", true);
   return msg;
 }
@@ -1265,32 +1265,32 @@ VisionApp::GetNetwork (int32 index)
 status_t
 VisionApp::SetNetwork (const char *network, BMessage *data)
 {
-  BAutolock netLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock netLock (const_cast<BLocker *>(&fSettingsLock));
 
   if (!netLock.IsLocked())
     return B_ERROR;
   
   if (!strcmp (network, "defaults"))
   {
-    visionSettings->ReplaceMessage ("defaults", data);
+    fVisionSettings->ReplaceMessage ("defaults", data);
     return B_OK;
   }
 
   type_code type;
-  int32 count (0);
-  visionSettings->GetInfo ("network", &type, &count);
-  for (int32 i = 0; i < count;)
+  int32 netCount (0);
+  fVisionSettings->GetInfo ("network", &type, &netCount);
+  for (int32 i = 0; i < netCount;)
   {
      BMessage tempMsg;
-     visionSettings->FindMessage ("network", i, &tempMsg);
+     fVisionSettings->FindMessage ("network", i, &tempMsg);
      if (strcmp (tempMsg.FindString ("name"), network) == 0)
      {
-       visionSettings->ReplaceMessage ("network", i, data);
+       fVisionSettings->ReplaceMessage ("network", i, data);
        return B_OK;
      }
      else ++i;
   }
-  visionSettings->AddMessage ("network", data);
+  fVisionSettings->AddMessage ("network", data);
   return B_OK;
 
 }
@@ -1300,21 +1300,21 @@ VisionApp::RemoveNetwork (const char *network)
 {
   BMessage msg (VIS_NETWORK_DATA);
 
-  BAutolock netLock (const_cast<BLocker *>(&settingsLock));
+  BAutolock netLock (const_cast<BLocker *>(&fSettingsLock));
 
   if (!netLock.IsLocked())
     return B_ERROR;
 
   type_code type;
-  int32 count (0);
-  visionSettings->GetInfo ("network", &type, &count);
-  for (int32 i = 0; i < count;)
+  int32 netCount (0);
+  fVisionSettings->GetInfo ("network", &type, &netCount);
+  for (int32 i = 0; i < netCount;)
   {
      BMessage tempMsg;
-     visionSettings->FindMessage ("network", i, &tempMsg);
+     fVisionSettings->FindMessage ("network", i, &tempMsg);
      if (!strcmp (tempMsg.FindString ("name"), network))
      {
-       visionSettings->RemoveData ("network", i);
+       fVisionSettings->RemoveData ("network", i);
        break;
      }
      else ++i;
@@ -1325,13 +1325,13 @@ VisionApp::RemoveNetwork (const char *network)
 Theme *
 VisionApp::ActiveTheme (void)
 {
-  return activeTheme;
+  return fActiveTheme;
 }
 
 sem_id
 VisionApp::GetShutdownSem (void)
 {
-  return shutdownSem;
+  return fShutdownSem;
 }
 
 void
@@ -1419,7 +1419,7 @@ VisionApp::BenchOut (const char *ts)
   // output won't look right with more than 0.999s differences.
 
   int32 bench0;
-  bench0 = bench2 - bench1;
+  bench0 = fBench2 - fBench1;
   bench0 = bench0 / 100;
   
   printf ("%s: 0.%04lds\n", ts, bench0);
@@ -1474,7 +1474,7 @@ VisionApp::Identity (void *)
   if ((identSock = socket (AF_INET, SOCK_STREAM, 0)) >= 0 
   &&  bind (identSock, (struct sockaddr *)&localAddr, sizeof (localAddr)) == 0) 
   {
-      vision_app->identSocket = identSock;
+      vision_app->fIdentSocket = identSock;
 
 #ifdef BONE_BUILD
     struct linger lng = { 0, 0 }; 
@@ -1482,18 +1482,18 @@ VisionApp::Identity (void *)
 #endif
     listen (identSock, 1);
 
-    while (!vision_app->ShuttingDown) 
+    while (!vision_app->fShuttingDown) 
     {
       struct fd_set rset, eset;
       struct sockaddr_in remoteSock;
-      struct timeval tv = { 10, 0};
       int size (sizeof (sockaddr_in));
+      struct timeval tv = { 10, 0};
       FD_ZERO (&rset);
       FD_ZERO (&eset);
       FD_SET (identSock, &rset);
       FD_SET (identSock, &eset);
 
-      if (select (identSock + 1, &rset, 0, &eset, &tv) < 0 || FD_ISSET (identSock, &eset))
+      if (select (identSock + 1, &rset, 0, &eset, NULL) < 0 || FD_ISSET (identSock, &eset))
          break;
       else if (FD_ISSET (identSock, &rset))
       {
@@ -1505,9 +1505,7 @@ VisionApp::Identity (void *)
         
           BString remoteIP (inet_ntoa (remoteSock.sin_addr));
           ident = vision_app->GetIdent (remoteIP.String());
-#ifdef BONE_BUILD
-        setsockopt (accepted, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
-#endif 
+
           if (ident) 
           {
             memset (received, 0, 64);
@@ -1551,8 +1549,8 @@ VisionApp::Identity (void *)
       }
     }
   }
+
 #ifdef BONE_BUILD
-  shutdown(identSock, SHUTDOWN_BOTH);
   close (identSock);
 #elif NETSERVER_BUILD
   closesocket (identSock);
@@ -1563,27 +1561,27 @@ VisionApp::Identity (void *)
 void 
 VisionApp::AddIdent (const char *server, const char *serverIdent) 
 { 
-  identLock.Lock(); 
-  idents.AddString (server, serverIdent); 
-  identLock.Unlock();
+  fIdentLock.Lock(); 
+  fIdents.AddString (server, serverIdent); 
+  fIdentLock.Unlock();
 } 
  
 void 
 VisionApp::RemoveIdent (const char *server) 
 { 
-  identLock.Lock(); 
-  idents.RemoveName (server); 
-  identLock.Unlock(); 
+  fIdentLock.Lock(); 
+  fIdents.RemoveName (server); 
+  fIdentLock.Unlock(); 
 } 
  
 const char * 
 VisionApp::GetIdent (const char *server) 
 { 
   const char *ident (NULL); 
-  identLock.Lock(); 
-  if (idents.HasString (server)) 
-    ident = idents.FindString (server); 
-  identLock.Unlock();
+  fIdentLock.Lock(); 
+  if (fIdents.HasString (server)) 
+    ident = fIdents.FindString (server); 
+  fIdentLock.Unlock();
   
   return ident; 
 }
@@ -1591,13 +1589,13 @@ VisionApp::GetIdent (const char *server)
 void
 VisionApp::AcquireDCCLock (void)
 {
-  dccLock.Lock();
+  fDccLock.Lock();
 }
 
 void
 VisionApp::ReleaseDCCLock (void)
 {
-  dccLock.Unlock();
+  fDccLock.Unlock();
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -53,12 +53,13 @@ URLCrunch::Crunch (BString *url)
 	int32 marker (buffer.Length());
 	int32 pos (current_pos);
 	int32 url_length (0);
-	int32 markers[5];
+	int32 markers[5],
+	      i (0);
 
-	for (int32 i = 0; i < 5; ++i)
+	for (i = 0; i < 5; ++i)
 		markers[i] = buffer.IFindFirst (tags[i], pos);
 
-	for (int32 i = 0; i < 5; ++i)
+	for (i = 0; i < 5; ++i)
 	
 		if (markers[i] != B_ERROR
 		&&  markers[i] < marker)
