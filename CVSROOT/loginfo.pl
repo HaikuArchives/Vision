@@ -7,6 +7,19 @@
 
 system("echo running loginfo.pl");
 
+my $last_dir_file;
+my $summary_file;
+my $cvsroot;
+my $my_pgrp_id;
+my $MAILER;
+my $subject;
+my $mailfrom;
+my $mailto;
+my $user;
+my $cvsdirectory;
+
+
+
 $last_dir_file = "/tmp/#cvs.files.lastdir";
 $summary_file  = "/tmp/#cvs.files.summary";
 
@@ -22,9 +35,9 @@ $mailfrom = shift;
 $mailto   = shift;
 $user     = shift;
 
-$directory = shift;
+$cvsdirectory = shift;
 
-system("echo directory: $directory");
+system("echo directory: $cvsdirectory");
 
 if (!open(LD_FD, "$last_dir_file.$my_pgrp_id")) {
     # last_dir file does not exist -> cvs add directory
@@ -57,7 +70,7 @@ close(LD_FD);
 
 $last_directory =~ s/^$cvsroot//;
 
-if($last_directory ne $directory) {
+if($last_directory ne $cvsdirectory) {
   # This is not last directory of commit
   open(S_FD, ">>$summary_file.$my_pgrp_id") || die "cannot open summary file $summary.$my_pgrp_id";
   while (<STDIN>) {
