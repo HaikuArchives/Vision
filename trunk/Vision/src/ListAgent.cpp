@@ -628,12 +628,9 @@ ListAgent::FrameResized (float width, float)
 int
 ListAgent::SortChannels (const void *arg1, const void *arg2)
 {
-	void **interim1 ((void **)const_cast<void *>(arg1));
-	void **interim2 ((void **)const_cast<void *>(arg2));
-
 	const ChannelItem
-		*firstItem ((const ChannelItem *)*interim1),
-		*secondItem ((const ChannelItem *)*interim2);
+		*firstItem (*((ChannelItem * const *)arg1)),
+		*secondItem (*((ChannelItem * const *)arg2));
 
 	return strcasecmp ((firstItem)->Channel(), (secondItem)->Channel());
 }
