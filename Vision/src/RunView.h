@@ -102,6 +102,12 @@ class RunView : public BView
 	bool					RecalcScrollBar (bool constrain);
 	void					ResizeRecalc (void);
 	void					FontChangeRecalc (void);
+	void					ExtendTrackingSelect (BPoint);
+	void					ShiftTrackingSelect (BPoint, bool, bigtime_t);
+	void					CheckURLCursor (BPoint);
+	void					BuildPopUp (void);
+	uint16				CheckClickCount (BPoint);
+	bool				CheckClickBounds (const SelectPos &, const BPoint &) const;
 	
 	public:
 
@@ -125,16 +131,11 @@ class RunView : public BView
 	void					SetViewColor (uchar red, uchar green, uchar blue, uchar alpha = 255)
 							{ rgb_color color = {red, green, blue, alpha}; SetViewColor (color); }
 
-	void					CheckURLCursor (BPoint);
-	void					BuildPopUp (void);
-	uint16				CheckClickCount (BPoint);
 	
 	virtual void		MouseDown (BPoint);
 	virtual void		MouseMoved (BPoint, uint32, const BMessage *);
 	virtual void		MouseUp (BPoint);
 	
-	void					ExtendTrackingSelect (BPoint);
-	void					ShiftTrackingSelect (BPoint, bool, bigtime_t);
 
 	void					Append (const char *, int32, int16, int16, int16);
 	void					Append (const char *, int16, int16, int16);
