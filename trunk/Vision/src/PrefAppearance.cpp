@@ -223,7 +223,7 @@ AppearancePrefsView::AttachedToWindow (void)
           fontBox->AddChild(fontSize[i]);
 
 #if B_BEOS_VERSION_DANO
-          fontSize[i]->MoveTo(be_plain_font->StringWidth(" gP ") + clientFont[i]->Bounds().Width(), be_plain_font->Size() * 3);
+          fontSize[i]->MoveTo(be_plain_font->StringWidth(" gP Font:") + clientFont[i]->Bounds().Width(), be_plain_font->Size() * 3);
 #else
           fontSize[i]->MoveTo(be_plain_font->StringWidth("gP") + name_width * 1.7, be_plain_font->Size() * 3);
 #endif
