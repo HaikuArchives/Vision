@@ -64,7 +64,7 @@ ClientWindow::~ClientWindow (void)
 bool
 ClientWindow::QuitRequested (void)
 {
-  vision_app->visionSettings->ReplaceRect ("clientWinRect", Frame());
+  vision_app->SetRect ("clientWinRect", Frame());
 
   vision_app->PostMessage (B_QUIT_REQUESTED);
 
@@ -193,7 +193,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_MAKE_NEW_SERVER:
     {
-      
+      const char *hostname, *port, *realname, *identname, *autoexec;
       break;
     }
         
@@ -237,7 +237,7 @@ ClientWindow::Init (void)
   // Server menu
   mServer = new BMenu ("Server");
   mServer->AddItem (item = new BMenuItem ("Setup" B_UTF8_ELLIPSIS,
-                    new BMessage (B_ABOUT_REQUESTED), '/', B_SHIFT_KEY));
+                    new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
   mServer->AddItem (item = new BMenuItem ("Options" B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), 'O'));
@@ -326,7 +326,7 @@ ClientWindow::Init (void)
     Bounds().Width() - 1,
     winListScroll->Frame().Height());
     
-    
+#if 0
   // :TODO: wade 020201: make dynamic
   // most of this stuff is temporary, to get us going.
   // eventually we will have setupwindow which will pass all
@@ -359,6 +359,8 @@ ClientWindow::Init (void)
     serverhost->String(),
     WIN_SERVER_TYPE,
     true); // activate
+
+#endif
     
     
   

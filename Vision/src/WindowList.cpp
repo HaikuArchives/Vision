@@ -120,8 +120,6 @@ WindowList::CloseActive (void)
     if ((killTarget = dynamic_cast<ClientAgent *>(killTarget)))
       dynamic_cast<ClientAgent *>(killTarget)->msgr.SendMessage (&killMsg);
   }
-  else
-    printf (":ERROR: error creating pointer to active agent in WindowList::CloseActive()\n");
 }
 
 void
