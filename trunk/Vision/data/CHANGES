@@ -1,5 +1,7 @@
 Vision
 http://vision.sourceforge.net
+[0.8.7-0423]
+         * fixed another crash bug in tab completion
 
 [0.8.6-0421]
          * more tab completion fixes
