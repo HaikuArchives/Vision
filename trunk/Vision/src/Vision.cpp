@@ -1252,10 +1252,10 @@ VisionApp::SetNetwork (const char *network, BMessage *data)
   {
      BMessage tempMsg;
      visionSettings->FindMessage ("network", i, &tempMsg);
-     if (!strcmp (tempMsg.FindString ("name"), network))
+     if (strcmp (tempMsg.FindString ("name"), network) == 0)
      {
-       visionSettings->RemoveData ("network", i);
-       break;
+       visionSettings->ReplaceMessage ("network", i, data);
+       return B_OK;
      }
      else ++i;
   }
