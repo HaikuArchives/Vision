@@ -925,7 +925,7 @@ ClientAgent::ParseCmd (const char *data)
 		
 		if (!caught || value == "-9z99")
 		{
-			Display ("[x] /setbool: Error: Invalid parmameters\n", &errorColor);
+			Display ("[x] /setbool: Error: Invalid parameters\n", &errorColor);
 			return true;
 		}
 		

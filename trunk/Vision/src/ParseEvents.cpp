@@ -28,6 +28,7 @@
 #include "StatusView.h"
 #include "ServerAgent.h"
 #include "ChannelAgent.h"
+#include "MessageAgent.h"
 #include "ClientWindow.h"
 #include "WindowList.h"
 
@@ -86,32 +87,43 @@ ServerAgent::ParseEvents (const char *data)
 
 		if (theTarget[0] == '#')
 			client = Client (theTarget.String());
-//		else if (!(client = Client (theNick.String())))
-//		{
-//			BString ident = GetIdent(data);
-//			BString address = GetAddress(data);
-//			BString addyString;
-//			addyString << ident << "@" << address;
-//
-//			client = new MessageWindow (
-//				theNick.String(),
-//				sid,
-//				serverName.String(),
-//				sMsgr,
-//				myNick.String(),
-//				addyString.String(),
-//				false, // not a dcc chat
-//				true); // initated by server
-//
-//			clients.AddItem (client);
-//			client->Show();
-//		}
+		else if (!(client = Client (theNick.String())))
+		{
+			BString msgident (GetIdent (data)),
+			        msgaddress (GetAddress (data)),
+			        addyString;
+			addyString += ident;
+			addyString += "@";
+			addyString += address;
 
-		if (client) client->ChannelMessage (
-			theMsg.String(),
-			theNick.String(),
-			ident.String(),
-			address.String());
+			vision_app->pClientWin()->pWindowList()->AddAgent (
+				new MessageAgent (
+					*vision_app->pClientWin()->AgentRect(),
+					theNick.String(),
+					sid,
+					serverName.String(),
+					sMsgr,
+					myNick.String(),
+					addyString.String()),
+				sid,
+				theNick.String(),
+				WIN_MESSAGE_TYPE,
+				false);
+
+			client = (vision_app->pClientWin()->pWindowList()->Agent (sid, theNick.String()));
+			clients.AddItem (client);
+		}
+
+		if (client) {
+			BString msgident (GetIdent (data)),
+		         	msgaddress (GetAddress (data));
+			
+			client->ChannelMessage (
+			  theMsg.String(),
+			  theNick.String(),
+			  msgident.String(),
+			  msgaddress.String());
+		}
 
 		return true;
 	}

@@ -439,6 +439,25 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			break;
 		}
 
+		case M_OPEN_MSGAGENT:
+		{
+			const char *theNick;
+			msg->FindString("nick", &theNick);
+			if (theNick == NULL)
+			{
+				NameItem *myUser;
+				int32 pos = namesList->CurrentSelection();
+				if(pos >= 0)
+				{
+					myUser = static_cast<NameItem *>(namesList->ItemAt(pos));
+					BString targetNick = myUser->Name();
+					msg->AddString ("nick", targetNick.String());
+				}
+			}
+			sMsgr.SendMessage (msg);
+			break;
+		}
+		
 		case M_CHANNEL_GOT_KICKED:
 		{
 		    

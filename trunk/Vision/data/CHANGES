@@ -1,6 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0322]
+ 2001-03-22
+   * MessageAgent is working for the most part, still needs some more
+     tweaks and clean up
+   * Added some more random Establish() thread names
+
 [0.1.0315]
  2001-03-18
    * Added support for +h (helper/subops) chanmode
