@@ -468,7 +468,12 @@ DCCSend::DCCSend (
 	  pos (0LL),
 	  addr (a)
 {
-	port << (40000 + (rand() % 5000)); // baxter's way of getting a port
+    int32 dccPort (atoi (vision_app->GetString ("dccMinPort")));
+    int32 diff (atoi (vision_app->GetString ("dccMaxPort")) - dccPort);
+    if (diff > 0)
+      dccPort += rand() % diff;
+      
+	port << dccPort;
 }
 
 DCCSend::~DCCSend (void)
@@ -523,9 +528,15 @@ DCCSend::Transfer (void *arg)
 	reply.FindData ("addr", B_RAW_TYPE, reinterpret_cast<const void **>(&sendaddr), (ssize_t *)&sin_size);
 	sin_size = (sizeof (struct sockaddr_in));
 		
+	UpdateStatus (msgr, "Acquiring DCC lock...");
+	
+	vision_app->AcquireDCCLock();
+    
 	if (!msgr.IsValid() || bind (sd, (sockaddr *)&sin, sin_size) < 0)
 	{
 		UpdateStatus (msgr, "Unable to establish connection.");
+		vision_app->ReleaseDCCLock();
+
 #ifdef BONE_BUILD
 		close (sd);
 #elif NETSERVER_BUILD
@@ -559,6 +570,7 @@ DCCSend::Transfer (void *arg)
 		if (listen (sd, 1) < 0)
 		{
 			UpdateStatus (msgr, "Unable to establish connection.");
+			vision_app->ReleaseDCCLock();
 #ifdef BONE_BUILD
 		close (sd);
 #elif NETSERVER_BUILD
@@ -584,6 +596,7 @@ DCCSend::Transfer (void *arg)
 		if (select (sd + 1, &rset, 0, 0, &t) < 0)
 		{
 			UpdateStatus (msgr, "Unable to establish connection.");
+			vision_app->ReleaseDCCLock();
 #ifdef BONE_BUILD
 		close (sd);
 #elif NETSERVER_BUILD
@@ -604,6 +617,8 @@ DCCSend::Transfer (void *arg)
 		status << try_count << ".";
 		UpdateStatus (msgr, status.String());
 	};
+	vision_app->ReleaseDCCLock();
+
 	char set[4];
 	memset(set, 1, sizeof(set));
 #ifdef BONE_BUILD

@@ -6,6 +6,7 @@ http://vision.sourceforge.net
            known to have several different crash problems)
          * added packet size configuration for DCC
          * added auto-accept options for DCC
+         * added configurable DCC port ranges (not heavily tested yet)
 
 [0.6.5-1125]
          * really fixed nick = network bug

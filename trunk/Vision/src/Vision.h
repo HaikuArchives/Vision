@@ -108,7 +108,10 @@ class VisionApp : public BApplication
     void                    RemoveIdent (const char *);
     const char *            GetIdent (const char *);
     static int32            Identity (void *);
-
+    
+    void                    AcquireDCCLock (void);
+    void                    ReleaseDCCLock (void);
+    
     BString                 events[MAX_EVENTS];
 
     bool                    debugsettings;
@@ -146,7 +149,8 @@ class VisionApp : public BApplication
 	BString					commands[MAX_COMMANDS];
 	BMessage                idents;
 	BLocker                 identLock,
-	                          settingsLock;
+	                          settingsLock,
+	                        dccLock;
 	thread_id               identThread;
 	int32                   identSocket;
 	Theme                   *activeTheme;

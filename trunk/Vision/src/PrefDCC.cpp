@@ -20,10 +20,12 @@
  *                 Todd Lair
  */
 
+#include "NumericFilter.h"
 #include "PrefDCC.h"
 #include "Vision.h"
 #include "VTextControl.h"
 
+#include <Box.h>
 #include <CheckBox.h>
 #include <Menu.h>
 #include <MenuField.h>
@@ -35,6 +37,8 @@
 const uint32 M_BLOCK_SIZE_CHANGED   = 'mdsc';
 const uint32 M_DEFAULT_PATH_CHANGED = 'mdpc';
 const uint32 M_AUTO_ACCEPT_CHANGED  = 'mdac';
+const uint32 M_DCC_MIN_PORT_CHANGED = 'mdmp';
+const uint32 M_DCC_MAX_PORT_CHANGED = 'mdmc';
  
 DCCPrefsView::DCCPrefsView (BRect frame)
   : BView (frame, "DCC prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
@@ -52,7 +56,20 @@ DCCPrefsView::DCCPrefsView (BRect frame)
   AddChild (autoAccept);
   defDir = new VTextControl (BRect (0,0,0,0), NULL, "Default path: ", "", new BMessage (M_DEFAULT_PATH_CHANGED));
   defDir->SetDivider (defDir->StringWidth ("Default path: " + 5));
-  AddChild (defDir);  
+  AddChild (defDir);
+  box = new BBox (BRect (0,0,0,0), NULL);
+  box->SetLabel ("DCC Port Range");
+  AddChild (box);
+  dccPortMin = new VTextControl (BRect (0,0,0,0), NULL, "Min: ", "",
+    new BMessage (M_DCC_MIN_PORT_CHANGED));
+  dccPortMin->TextView()->AddFilter (new NumericFilter());
+  dccPortMin->SetDivider (dccPortMin->StringWidth ("Min: ") + 5);
+  box->AddChild (dccPortMin);
+  dccPortMax = new VTextControl (BRect (0,0,0,0), NULL, "Max: ", "",
+    new BMessage (M_DCC_MAX_PORT_CHANGED));
+  dccPortMax->SetDivider (dccPortMax->StringWidth ("Max: ") + 5);
+  dccPortMax->TextView()->AddFilter (new NumericFilter());
+  box->AddChild (dccPortMax);
 }
 
 DCCPrefsView::~DCCPrefsView (void)
@@ -85,6 +102,22 @@ DCCPrefsView::AttachedToWindow (void)
   
   else
     defDir->SetEnabled (false);
+  
+  dccPortMin->ResizeToPreferred();
+  dccPortMax->ResizeToPreferred();
+  dccPortMin->SetTarget (this);
+  dccPortMax->SetTarget (this);
+  
+  box->ResizeTo (Bounds().Width() - 20, dccPortMin->Bounds().Height()+30);
+  box->MoveTo (blockSize->Frame().left, blockSize->Frame().bottom + 5);
+  dccPortMin->ResizeTo ((box->Bounds().Width() / 2.0) - 15, dccPortMin->Bounds().Height());
+  dccPortMax->ResizeTo (dccPortMin->Bounds().Width(), dccPortMin->Bounds().Height());
+
+  dccPortMin->MoveTo (5,20);
+  dccPortMax->MoveTo (dccPortMin->Frame().right + 5, dccPortMin->Frame().top);
+    
+  dccPortMin->SetText (vision_app->GetString ("dccMinPort"));
+  dccPortMax->SetText (vision_app->GetString ("dccMaxPort"));
   
   const char *dccBlock (vision_app->GetString ("dccBlockSize"));
   
@@ -132,6 +165,21 @@ DCCPrefsView::MessageReceived (BMessage *msg)
         int32 val (autoAccept->Value());
         defDir->SetEnabled (val == B_CONTROL_ON);
         vision_app->SetBool ("dccAutoAccept", val);
+      }
+      break;
+    
+    case M_DCC_MIN_PORT_CHANGED:
+      {
+        const char *portMin (dccPortMin->Text());
+        if (portMin != NULL)
+          vision_app->SetString ("dccMinPort", 0, portMin);
+      }
+      break;
+    case M_DCC_MAX_PORT_CHANGED:
+      {
+        const char *portMax (dccPortMax->Text());
+        if (portMax != NULL)
+          vision_app->SetString ("dccMaxPort", 0, portMax);
       }
       break;
       

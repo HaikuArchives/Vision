@@ -27,6 +27,7 @@
 class VTextControl;
 class BMenuField;
 class BCheckBox;
+class BBox;
 
 class DCCPrefsView : public BView
 {
@@ -40,8 +41,11 @@ class DCCPrefsView : public BView
   
   private:
     BMenuField *blockSize;
-    VTextControl *defDir;
+    VTextControl *defDir,
+                 *dccPortMin,
+                 *dccPortMax;
     BCheckBox *autoAccept;
+    BBox *box;
 };
 
 #endif // _PREFDCC_H

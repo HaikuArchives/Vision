@@ -555,6 +555,10 @@ VisionApp::LoadDefaults (int32 section)
          visionSettings->AddBool ("dccAutoAccept", false);
        if (!visionSettings->HasString ("dccBlockSize"))
          visionSettings->AddString ("dccBlockSize", "2048");
+       if (!visionSettings->HasString ("dccMinPort"))
+         visionSettings->AddString ("dccMinPort", "40000");
+       if (!visionSettings->HasString ("dccMaxPort"))
+         visionSettings->AddString ("dccMaxPort", "45000");
      }
      break;  
   }
@@ -1615,7 +1619,19 @@ VisionApp::GetIdent (const char *server)
   identLock.Unlock();
   
   return ident; 
-} 
+}
+
+void
+VisionApp::AcquireDCCLock (void)
+{
+  dccLock.Lock();
+}
+
+void
+VisionApp::ReleaseDCCLock (void)
+{
+  dccLock.Unlock();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 /// End Public Functions
