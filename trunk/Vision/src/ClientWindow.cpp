@@ -190,6 +190,12 @@ ClientWindow::MessageReceived (BMessage *msg)
       winList->CloseActive();
       break;
     }
+    
+    case M_MAKE_NEW_SERVER:
+    {
+      
+      break;
+    }
         
     default:
       BWindow::MessageReceived (msg);
