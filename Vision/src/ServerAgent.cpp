@@ -130,6 +130,7 @@ ServerAgent::~ServerAgent (void)
   
   status_t result;
   wait_for_thread (fSenderThread, &result);
+  
 /*
   while (fIgnoreNicks.CountItems() > 0)
     delete fIgnoreNicks.RemoveItem(0L);
@@ -212,7 +213,7 @@ ServerAgent::Init (void)
   BString name;
 
   vision_app->GetThreadName(THREAD_S, name);
-  
+
   fLoginThread = spawn_thread (
     Establish,
     name.String(),
@@ -577,7 +578,8 @@ ServerAgent::Establish (void *arg)
     FD_SET (serverSock, &rset);
     FD_SET (serverSock, &wset);
     memset (indata, 0, 1024);
-    if (select (serverSock + 1, &rset, 0, &eset, NULL) > 0
+    struct timeval tv = { 0, 0 };
+    if (select (serverSock + 1, &rset, 0, &eset, &tv) > 0
     &&  FD_ISSET (serverSock, &rset) && !FD_ISSET (serverSock, &eset))
     {
 #ifdef NETSERVER_BUILD
@@ -619,19 +621,19 @@ ServerAgent::Establish (void *arg)
           // we want this thread to loop relatively
           // quickly.  Let ServerWindow's main thread
           // handle the processing of incoming data!
-         BMessage msg (M_PARSE_LINE);
-         msg.AddString ("line", temp.String());
-         sMsgrE->SendMessage (&msg);
-       }
-     }
+          BMessage msg (M_PARSE_LINE);
+          msg.AddString ("line", temp.String());
+          sMsgrE->SendMessage (&msg);
+        }
+      }
 #ifdef NETSERVER_BUILD
-     else endpointLock->Unlock();
+      else endpointLock->Unlock();
 #endif
-     if (FD_ISSET (serverSock, &eset)
-     || (FD_ISSET (serverSock, &rset) && length == 0)
-     || !FD_ISSET (serverSock, &wset)
-     || length < 0)
-     {
+      if (FD_ISSET (serverSock, &eset)
+      || (FD_ISSET (serverSock, &rset) && length == 0)
+      || !FD_ISSET (serverSock, &wset)
+      || length < 0)
+      {
         // we got disconnected :(
         
         if (vision_app->fDebugRecv)
@@ -651,6 +653,7 @@ ServerAgent::Establish (void *arg)
     }
     
   // take a nap, so the ServerAgent can do things
+    snooze(20000);
   }
   vision_app->RemoveIdent (remoteIP.String());
 // if the serverAgent has been destroyed, let Establish destroy the endpoint, otherwise
