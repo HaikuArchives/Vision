@@ -849,7 +849,7 @@ VisionApp::MessageReceived (BMessage *msg)
         DCCConnect *view;
 				
         msg->FindPointer ("view", reinterpret_cast<void **>(&view));
-        dccFileWin = new DCCFileWindow (view, 1);
+        dccFileWin = new DCCFileWindow (view);
         dccFileWin->Show();
       }
     }

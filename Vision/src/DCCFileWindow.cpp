@@ -6,20 +6,14 @@
 #include "DCCConnect.h"
 #include "DCCFileWindow.h"
 
-DCCFileWindow::DCCFileWindow (DCCConnect *view, bool windowfollows)
-	: ObserverWindow (
+DCCFileWindow::DCCFileWindow (DCCConnect *view)
+	: BWindow (
 		BRect (50, 50, 100, 100),
 		"DCC Transfers",
-		windowfollows,
-		B_TITLED_WINDOW_LOOK)
+		B_TITLED_WINDOW,
+		B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_NOT_MINIMIZABLE |
+		B_NOT_CLOSABLE | B_ASYNCHRONOUS_CONTROLS)
 {
-	SetFlags (Flags()
-		| B_NOT_ZOOMABLE
-		| B_NOT_RESIZABLE
-		| B_NOT_MINIMIZABLE
-		| B_NOT_CLOSABLE
-		| B_ASYNCHRONOUS_CONTROLS);
-
 	AddChild (view);
 	ResizeTo (
 		view->Bounds().Width(),
@@ -144,7 +138,7 @@ DCCFileWindow::MessageReceived (BMessage *msg)
 		}
 
 		default:
-			ObserverWindow::MessageReceived (msg);
+			BWindow::MessageReceived (msg);
 	}
 }
 
@@ -153,7 +147,7 @@ DCCFileWindow::Hide (void)
 {
 	// we do this to keep it out of the deskbar
 	SetFlags (Flags() | B_AVOID_FOCUS);
-	ObserverWindow::Hide();
+	BWindow::Hide();
 }
 
 void
@@ -161,5 +155,5 @@ DCCFileWindow::Show (void)
 {
 	SetFlags (Flags() & ~(B_AVOID_FOCUS));
 	SetWorkspaces (B_CURRENT_WORKSPACE);
-	ObserverWindow::Show();
+	BWindow::Show();
 }
