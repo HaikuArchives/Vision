@@ -3,7 +3,9 @@ http://vision.sourceforge.net
 
 [0.2.0420]
  2001-04-20
-   * Identd socket is properly closed before being deleted.
+   * Fixed a crasher when pasting multiple lines and parting a channel
+   * Added a u2-kludge fix regarding chankeys, which the u2 ircd may ommit
+     from the chanmode request reply.
 
 [0.2.0419]
  2001-04-19

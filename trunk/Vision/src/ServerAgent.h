@@ -64,6 +64,8 @@ class ServerAgent : public ClientAgent
 	void						Broadcast (BMessage *);
 	void						RepliedBroadcast (BMessage *);
 	status_t                    NewTimer (const char *, int32, int32);
+	
+	int                         IRCDType (void);
     
   private:
     virtual void                Init (void);

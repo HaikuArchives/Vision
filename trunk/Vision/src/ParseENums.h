@@ -242,16 +242,7 @@ const int RPL_DCCALLOW                = 620;
 /// IRCDS
 /// an effort to properly support conflicting numeric meanings
 
-const int IRCD_STANDARD               =  1;
-const int IRCD_HYBRID                 =  2;  // "hybrid"    
-const int IRCD_ULTIMATE               =  3;  // "UltimateIRCd"
-const int IRCD_COMSTUD                =  4;  // "comstud"
-const int IRCD_FUCKOFF                =  5;  // "Fuckoff"
-const int IRCD_UNDERNET               =  6;  // "u2."
-const int IRCD_BAHAMUT                =  7;  // "bahamut"
-const int IRCD_PTLINK                 =  8;  // "PTlink"
-const int IRCD_CONFERENCEROOM         =  9;  // "CR"
-const int IRCD_NEWNET                 = 10;  // "nn-"
+/// (moved to ClientAgent.h)
 
 
 #endif

@@ -302,6 +302,34 @@ ClientWindow::MessageReceived (BMessage *msg)
   }
 }
 
+ServerAgent *
+ClientWindow::GetTopServer (WindowListItem *request)
+{
+  int32 requestindex;
+  int32 requestsid;
+
+  if (winList->HasItem (request))
+  {
+    requestindex = winList->IndexOf (request);
+    requestsid = request->Sid();
+  }
+  else
+  {
+    // can't find requesting agent in the Window List!
+    // make sure you check for this NULL your calls to GetTopServer!
+    return NULL;
+  }
+  
+  for (int32 i (1); i <= winList->CountItems(); ++i)
+  { 
+    WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
+    if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == requestsid))
+    {
+      return (ServerAgent *)aitem->pAgent();
+    }
+  }
+}
+
 BRect *
 ClientWindow::AgentRect (void)
 {

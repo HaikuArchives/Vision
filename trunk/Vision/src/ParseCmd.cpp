@@ -528,6 +528,7 @@ ClientAgent::ParseCmd (const char *data)
 
   if (firstWord == "/JOIN" || firstWord == "/J")
   {
+    // Bugs: Will not handle passing more than one channel key
     {
       BString channel (GetWord (data, 2));
 
@@ -547,6 +548,22 @@ ClientAgent::ParseCmd (const char *data)
         }
 
         AddSend (&sendMsg, endl);
+        
+        
+        if (key != "-9z99")
+        {
+          // used for keeping track of channel keys on u2 ircds
+          // (not included as part of the mode reply on join)
+          ServerAgent *fatherServer (vision_app->pClientWin()->GetTopServer (agentWinItem));
+          if (fatherServer != NULL)
+          {
+            if (fatherServer->IRCDType() == IRCD_UNDERNET)
+            {
+              vision_app->pClientWin()->joinStrings.Append (",");
+              vision_app->pClientWin()->joinStrings.Append (data);
+            }
+          }
+        }
       }
       else
         Display ("[x] /join: Error: Invalid parameters\n", &errorColor);
