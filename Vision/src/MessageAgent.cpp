@@ -241,9 +241,9 @@ MessageAgent::Parser (const char *buffer)
 }
 
 void
-MessageAgent::DroppedFile (BMessage *drop)
+MessageAgent::DroppedFile (BMessage *)
 {
-  //
+  // TODO: implement this when DCC's ready
 }
 
 void

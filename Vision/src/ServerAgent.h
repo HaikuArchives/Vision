@@ -79,7 +79,8 @@ class ServerAgent : public ClientAgent
 	void						DisplayAll (const char *, const rgb_color * = 0, const BFont * = 0);
 	BString						FilterCrap (const char *);
 	
-	BLocker						*endPointLock;
+	BLocker						*endPointLock,
+								loginLock;
 
 	static int32				ServerSeed;
 

@@ -235,22 +235,24 @@ AboutWindow::Pulse (void)
 
 
 void
-AboutWindow::AboutImage (const char *eggName, bool egg)
+AboutWindow::AboutImage (const char *, bool)
 {
   /*
    * Function purpose: Read image resource bits::{eggName} and display
    */
-//   
-//  BBitmap *bmp;
-//
-//  if ((bmp = BTranslationUtils::GetBitmap ('bits', eggName)) != 0)
-//  {
-//    BRect bmp_bounds (bmp->Bounds());
-//    graphic->ResizeTo (bmp_bounds.Width(), bmp_bounds.Height());
-//    graphic->SetViewBitmap (bmp);
-//    credits->MoveTo (0.0, graphic->Frame().bottom + 1);
-//    graphic->Invalidate();
-//    EasterEggOn = egg;
-//    delete bmp;
-//  }
+
+/* TODO : get this working  
+  BBitmap *bmp;
+
+  if ((bmp = BTranslationUtils::GetBitmap ('bits', eggName)) != 0)
+  {
+    BRect bmp_bounds (bmp->Bounds());
+    graphic->ResizeTo (bmp_bounds.Width(), bmp_bounds.Height());
+    graphic->SetViewBitmap (bmp);
+    credits->MoveTo (0.0, graphic->Frame().bottom + 1);
+    graphic->Invalidate();
+    EasterEggOn = egg;
+    delete bmp;
+  }
+*/
 }

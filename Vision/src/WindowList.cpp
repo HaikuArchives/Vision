@@ -172,9 +172,9 @@ WindowList::MouseDown (BPoint myPoint)
 }
 
 void 
-WindowList::KeyDown (const char * bytes, int32 numBytes) 
+WindowList::KeyDown (const char *, int32) 
 {
-  // WindowList never gets keyboard focus (?)
+  // TODO: WindowList never gets keyboard focus (?)
   // if you have to uncomment this, either fix WindowList so it
   // doesn't retain keyboard focus, or update this code to work
   // like IRCView::KeyDown()  --wade 20010506
@@ -654,8 +654,10 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
 int
 WindowList::SortListItems (const void *name1, const void *name2)
 {
-  WindowListItem **firstPtr = (WindowListItem **)name1;
-  WindowListItem **secondPtr = (WindowListItem **)name2;
+  void **interim1 ((void **)const_cast<void *>(name1));
+  void **interim2 ((void **)const_cast<void *>(name2));
+  WindowListItem *firstPtr = (WindowListItem *)*interim1;
+  WindowListItem *secondPtr = (WindowListItem *)*interim2;
 
   /* Not sure if this can happen, and we
    * are assuming that if one is NULL
@@ -663,9 +665,7 @@ WindowList::SortListItems (const void *name1, const void *name2)
    * is NULL, and the other isn't?
    */
   if (!firstPtr
-  ||  !secondPtr
-  ||  !(*firstPtr)
-  ||  !(*secondPtr))
+  ||  !secondPtr)
   {
     return 0;
   }
@@ -673,20 +673,20 @@ WindowList::SortListItems (const void *name1, const void *name2)
   int32 firstSid, secondSid;
   BString firstName, secondName;
   
-  firstSid = (*firstPtr)->Sid();
-  secondSid = (*secondPtr)->Sid();
+  firstSid = (firstPtr)->Sid();
+  secondSid = (secondPtr)->Sid();
   
-  firstName = (*firstPtr)->Name();
-  secondName = (*secondPtr)->Name();
+  firstName = (firstPtr)->Name();
+  secondName = (secondPtr)->Name();
  
   if (firstSid < secondSid)
     return -1;
-  else if ((*firstPtr)->Sid() > (*secondPtr)->Sid())
+  else if ((firstPtr)->Sid() > (secondPtr)->Sid())
     return 1;
   else
   {
     // same sid, sort by name
-    if ((*firstPtr)->Type() == WIN_SERVER_TYPE)
+    if ((firstPtr)->Type() == WIN_SERVER_TYPE)
       return -1;
     return firstName.ICompare (secondName);
   } 

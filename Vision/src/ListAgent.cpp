@@ -257,8 +257,8 @@ ListAgent::MessageReceived (BMessage *msg)
 
     case M_LIST_BEGIN:
       {
-        BMessage message (M_LIST_UPDATE);
-        listUpdateTrigger = new BMessageRunner (BMessenger(this), &message, 3000000); 
+        BMessage msg (M_LIST_UPDATE);
+        listUpdateTrigger = new BMessageRunner (BMessenger(this), &msg, 3000000); 
         statusStr = "Loading";
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
@@ -628,29 +628,35 @@ ListAgent::FrameResized (float width, float)
 int
 ListAgent::SortChannels (const void *arg1, const void *arg2)
 {
-	const ChannelItem
-		**firstItem ((const ChannelItem **)arg1),
-		**secondItem ((const ChannelItem **)arg2);
+	void **interim1 ((void **)const_cast<void *>(arg1));
+	void **interim2 ((void **)const_cast<void *>(arg2));
 
-	return strcasecmp ((*firstItem)->Channel(), (*secondItem)->Channel());
+	const ChannelItem
+		*firstItem ((const ChannelItem *)*interim1),
+		*secondItem ((const ChannelItem *)*interim2);
+
+	return strcasecmp ((firstItem)->Channel(), (secondItem)->Channel());
 }
 
 int
 ListAgent::SortUsers (const void *arg1, const void *arg2)
 {
+	void **interim1 ((void **)const_cast<void *>(arg1));
+	void **interim2 ((void **)const_cast<void *>(arg2));
+
 	const ChannelItem
-		**firstItem ((const ChannelItem **)arg1),
-		**secondItem ((const ChannelItem **)arg2);
+		*firstItem ((ChannelItem *)*interim1),
+		*secondItem ((ChannelItem *)*interim2);
 	BString users[2];
 
-	users[0] = (*firstItem)->Users();
-	users[1] = (*secondItem)->Users();
+	users[0] = (firstItem)->Users();
+	users[1] = (secondItem)->Users();
 
 	users[0].Prepend ('0', 10 - users[0].Length());
 	users[1].Prepend ('0', 10 - users[1].Length());
 
-	users[0] << (*firstItem)->Channel();
-	users[1] << (*secondItem)->Channel();
+	users[0] << (firstItem)->Channel();
+	users[1] << (secondItem)->Channel();
 
 	return users[0].ICompare (users[1]);
 }

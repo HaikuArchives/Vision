@@ -92,6 +92,7 @@ TestScript::DoScriptIniReadTest()
 	float windSpeed = script.ConfigGetReal("Environment", "WindSpeed", 0.0);
 	const char* typeStr = script.ConfigGetString("Environment", "TypeStr", "Clear");
 	int integerValue = script.ConfigGetInteger("AnotherGroup", "IntegerValue");
+	printf("windSpeed: %f, typeStr: %s, intValue: %d\n", windSpeed, typeStr, integerValue);
 }
 
 

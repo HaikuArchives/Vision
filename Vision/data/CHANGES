@@ -1,9 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
-[0.2.0630]
- 2001-06-30
-   * yet another ident fix *sigh*
+[0.2.0701]
+ 2001-07-01
+   * experimental network code changes
+   * miscellaneous code cleanups
 
 [0.2.0628]
  2001-06-28
