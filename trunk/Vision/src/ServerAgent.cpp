@@ -462,17 +462,17 @@ ServerAgent::Establish (void *arg)
       BMessage dataSend (M_SERVER_SEND);
       dataSend.AddString ("data", "blah");
 
+      BMessage endpointMsg (M_SET_ENDPOINT);
+      endpointMsg.AddInt32 ("socket", serverSock);
+      if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
+        throw failToLock();
+
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
       string.Append (connectId);
       string.Append (" :");
       string.Append (name);
-
-      BMessage endpointMsg (M_SET_ENDPOINT);
-      endpointMsg.AddInt32 ("socket", serverSock);
-      if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
-        throw failToLock();
 
       dataSend.ReplaceString ("data", string.String());
       if (sMsgrE->SendMessage (&dataSend) != B_OK)
@@ -677,17 +677,33 @@ ServerAgent::AsyncSendData (const char *cData)
 #ifdef NETSERVER_BUILD
   fEndPointLock->Lock();
 #endif
-  if (fServerSocket > 0 &&
-#ifdef BONE_BUILD  
-  (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
-#elif NETSERVER_BUILD
-  (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
-#endif
-  || fServerSocket < 0)
+  struct fd_set eset, wset;
+  FD_ZERO (&wset);
+  FD_ZERO (&eset);
+  FD_SET (fServerSocket, &wset);
+  FD_SET (fServerSocket, &eset);
+  struct timeval tv = { 5 , 0 };
+  // do a select to prevent the writer thread from deadlocking in the send call
+  if (select(fServerSocket + 1, NULL, &wset, &eset, &tv) <= 0 || FD_ISSET(fServerSocket, &eset)
+    || !FD_ISSET(fServerSocket, &wset))
   {
-    // doh, we aren't even connected.
     if (!fReconnecting && !fIsConnecting)
       fMsgr.SendMessage (M_SERVER_DISCONNECT);
+  }
+  else
+  {
+    if (
+#ifdef BONE_BUILD  
+      (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
+#elif NETSERVER_BUILD
+      (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
+#endif
+      || fServerSocket <= 0)
+    {
+      if (!fReconnecting && !fIsConnecting)
+        fMsgr.SendMessage (M_SERVER_DISCONNECT);
+      // doh, we aren't even connected.
+    }
   }
 
 #ifdef NETSERVER_BUILD

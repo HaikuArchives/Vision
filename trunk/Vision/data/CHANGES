@@ -1,9 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.1-0701]
+[0.9.1-0704]
          * added dcc chat option to notify context menu
          * adjusted default prefs sizing logic
+         * modified sender threads so they can't deadlock (fixes lock on closing servers that would intermittently crop up)
+         * made notify list always use blinkers regardless of current server (handy if notify list is collapsed and as general attention grabber that notify state's changed)
          
 [0.9-0630]
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
