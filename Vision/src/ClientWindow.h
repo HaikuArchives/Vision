@@ -69,7 +69,6 @@ class ClientWindow : public BWindow
     virtual void          FrameMoved (BPoint);
     virtual void          FrameResized (float width, float height);
     virtual void          MessageReceived (BMessage *);
-    virtual void          DispatchMessage (BMessage *, BHandler *);
     virtual bool          QuitRequested (void);
     virtual void          ScreenChanged (BRect, color_space);
     virtual void          Show (void);
@@ -96,7 +95,6 @@ class ClientWindow : public BWindow
 
   private:
     void                  Init (void);
-    void                  HandleKey (BMessage *);
     
     bool                  fShutdown_in_progress;
     bool                  fWait_for_quits;

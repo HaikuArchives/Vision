@@ -38,6 +38,7 @@
 #include "Vision.h"
 #include "VisionBase.h"
 #include "VTextControl.h"
+#include "WindowList.h"
 
 ClientAgentInputFilter::ClientAgentInputFilter (ClientAgent *agent)
 		: BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE),
@@ -53,9 +54,6 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 	switch (msg->what)
 	{
 	case B_MOUSE_MOVED:
-		break;
-	case B_KEY_UP:
-  		vision_app->pClientWin()->SetEditStates();
 		break;
 
 	case B_COPY:
@@ -219,6 +217,8 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 
 	BMessenger msgr (fWindow);
 
+    WindowList *winList (vision_app->pClientWin()->pWindowList());
+
 	msg->FindString ("bytes", &keyStroke);
 	msg->FindInt32 ("modifiers", &keymodifiers);
 	
@@ -262,6 +262,100 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		break;
 	}
 
+	if ((keymodifiers & B_OPTION_KEY)  == 0
+	        &&  (keymodifiers & B_COMMAND_KEY) != 0
+	        &&  (keymodifiers & B_CONTROL_KEY) == 0
+	        &&  (keymodifiers & B_SHIFT_KEY) != 0)
+	{
+	  switch (keyStroke[0])
+      {
+        case '0':
+        case B_INSERT:
+          // switch to last active agent
+          winList->SelectLast();
+		  result = B_SKIP_MESSAGE;
+          break;
+      
+        case B_UP_ARROW:
+        case B_LEFT_ARROW: // baxter muscle memory
+        case ',': // bowser muscle memory
+          winList->ContextSelectUp();
+		  result = B_SKIP_MESSAGE;
+          break;
+      
+        case B_DOWN_ARROW: //
+        case B_RIGHT_ARROW: // baxter muscle memory
+        case '.': // bowser muscle memory
+          winList->ContextSelectDown();
+		  result = B_SKIP_MESSAGE;
+          break;
+      
+        case 'U':
+          winList->MoveCurrentUp();
+		  result = B_SKIP_MESSAGE;
+          break;
+        
+        case 'D':
+          winList->MoveCurrentDown();
+		  result = B_SKIP_MESSAGE;
+          break;
+      }
+    }
+
+  else if ((keymodifiers & B_OPTION_KEY)  == 0
+       &&  (keymodifiers & B_COMMAND_KEY) != 0
+       &&  (keymodifiers & B_CONTROL_KEY) == 0
+       &&  (keymodifiers & B_SHIFT_KEY) == 0)
+  {
+    ///////////////
+    /// Command ///
+    ///////////////
+    switch (keyStroke[0])
+    {
+      case B_UP_ARROW:
+      case ',': // bowser muscle memory
+        {
+        // move up one agent
+        winList->Select (winList->CurrentSelection() - 1);
+        winList->ScrollToSelection();
+	    result = B_SKIP_MESSAGE;
+	    }
+        break;
+
+      case B_DOWN_ARROW:
+      case '.': // bowser muscle memory
+        {
+        // move down one agent
+        winList->Select (winList->CurrentSelection() + 1);
+        winList->ScrollToSelection();
+	    result = B_SKIP_MESSAGE;
+	    }
+        break;
+        
+      case B_LEFT_ARROW: // collapse current server (if expanded)
+        {
+        winList->CollapseCurrentServer();
+	    result = B_SKIP_MESSAGE;
+	    }
+        break;
+
+      case B_RIGHT_ARROW: // expand current server (if collapsed)
+        {
+        winList->ExpandCurrentServer();
+	    result = B_SKIP_MESSAGE;
+	    }
+        break;
+      
+      case '/': // bowser muscle memory
+        // move to the agents parent ServerAgent
+        // XXX move to WindowList ?
+        {
+        winList->SelectServer();
+	    result = B_SKIP_MESSAGE;
+	    }
+        break;
+    }
+  }
 
 	if ((keymodifiers & B_OPTION_KEY)  == 0
 	        &&  (keymodifiers & B_COMMAND_KEY) == 0
@@ -421,7 +515,6 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 
 		}
 	}
-
 	return result;
 }
 

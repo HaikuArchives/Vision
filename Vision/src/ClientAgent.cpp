@@ -24,6 +24,7 @@
  */
 
 #include <Beep.h>
+#include <Clipboard.h>
 #include <File.h>
 #include <MenuItem.h>
 #include <Path.h>
@@ -254,6 +255,64 @@ ClientAgent::SetServerName (const char *name)
   fServerName = name;
 }
 
+void
+ClientAgent::SetEditStates (BMenu *menu)
+{
+  if (menu != NULL)
+  {
+    BMenuItem *menuItem (menu->FindItem(S_CW_EDIT_CUT));
+    int32 start (0), finish (0);
+    fInput->TextView()->GetSelection(&start, &finish);
+    if (start == finish)
+    {
+      menuItem->SetEnabled (false);
+    }
+    else
+    {
+      menuItem->SetEnabled (true);
+      menuItem->SetTarget (fInput->TextView());
+    }
+    menuItem = menu->FindItem(S_CW_EDIT_COPY);
+    if (start == finish)
+    {
+      BString string;
+      // check text display
+      fText->GetSelectionText(string);
+      if (string.Length() > 0)
+      {
+        menuItem->SetTarget (fInput->TextView());
+        menuItem->SetEnabled (true);
+      }
+      else
+      {
+        menuItem->SetEnabled (false);
+      }
+    }
+    else
+    {
+      menuItem->SetTarget (fInput->TextView());
+      menuItem->SetEnabled (true);
+    }
+    menuItem = menu->FindItem(S_CW_EDIT_PASTE);
+    menuItem->SetTarget (fInput->TextView());
+    BClipboard clipboard("system");
+    BMessage *clip ((BMessage *)NULL);
+    if (clipboard.Lock()) {
+      if ((clip = clipboard.Data()))
+      if (clip->HasData ("text/plain", B_MIME_TYPE))
+        menuItem->SetEnabled(true);
+      else
+        menuItem->SetEnabled(false);
+      clipboard.Unlock();
+    }
+    menuItem = menu->FindItem(S_CW_EDIT_SELECT_ALL);
+    if (fInput->TextView()->TextLength() == 0)
+      menuItem->SetTarget (fText);
+    else
+      menuItem->SetTarget (fInput->TextView());
+  }
+}
+
 BString
 ClientAgent::FilterCrap (const char *data, bool force)
 {
@@ -411,12 +470,6 @@ ClientAgent::TimedSubmit (void *arg)
 
   delete msg;
   return 0;
-}
-
-VTextControl *
-ClientAgent::pInput(void) const
-{
-  return fInput;
 }
 
 void
