@@ -1,7 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8.1-0207]
+[0.8.2-0209]
+         * fixed bug where parameters to /list would get ignored
+
+[0.8.1-0208]
          * fixed a few crash bugs in event parser
 
 [0.8-0207]
