@@ -1,11 +1,13 @@
 Vision
 http://vision.sourceforge.net
 
-[0.1.0411]
- 2001-04-13
+[0.1.0412]
+ 2001-04-12
    * Fix myNick changes so they update the MessageAgent's StatusView immedietly
    * Slightly darker action color, you won't notice it really... but it looks
      less like shit on a low-bpp display
+
+[0.1.0411]
  2001-04-11
    * Update the StatusView's nickname on connect, so it uses the new nick if
      its changed (e.g.: your alt. nick)

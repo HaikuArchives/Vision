@@ -17,7 +17,7 @@
 # the file name, ...
 
 BINARY := Vision
-VERSION := 0.1.0411
+VERSION := 0.1.0412
 BUILDDATE := $(shell date +%b_%d_%Y)
 
 # system libs
