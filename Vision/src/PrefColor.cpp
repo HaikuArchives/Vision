@@ -104,13 +104,14 @@ static const char *ColorLabels[] =
 ColorPrefsView::ColorPrefsView (BRect frame)
   : BView (frame, "Color Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW)
 {
+  int32 i (0);
   SetViewColor (ui_color(B_PANEL_BACKGROUND_COLOR));
-  for (int32 i = 0 ; i < MAX_COLORS ; i++)
+  for (i = 0 ; i < MAX_COLORS ; i++)
     fColors[i] = vision_app->GetColor (i);
   
   BMessage mycolors, labels;
 
-  for (int32 i = 0 ; i < MAX_COLORS; i++)
+  for (i = 0 ; i < MAX_COLORS; i++)
   {
   	mycolors.AddData ("color", B_RGB_COLOR_TYPE, &fColors[i], sizeof(rgb_color));
   	labels.AddString ("color", ColorLabels[i]);

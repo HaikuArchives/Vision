@@ -101,6 +101,8 @@ ClientAgent::ClientAgent (
 {
   fMyLag = "0.000";
   Init();
+  // force server agent to post a lag meter update immediately
+  fSMsgr.SendMessage (M_LAG_CHANGED);
 }
 
 ClientAgent::~ClientAgent (void)
@@ -228,9 +230,9 @@ ClientAgent::Init (void)
 }
 
 void
-ClientAgent::ScrollRange (float *min, float *max)
+ClientAgent::ScrollRange (float *scrollMin, float *scrollMax)
 {
-  fTextScroll->ScrollBar(B_VERTICAL)->GetRange (min, max);
+  fTextScroll->ScrollBar(B_VERTICAL)->GetRange (scrollMin, scrollMax);
 }
 
 
@@ -259,8 +261,9 @@ ClientAgent::FilterCrap (const char *data, bool force)
   BString outData ("");
   int32 theChars (strlen (data));
   bool ViewCodes (false);
+  int32 i (0), j(0);
 
-  for (int32 i = 0; i < theChars; ++i)
+  for (i = 0; i < theChars; ++i)
   {
     if (data[i] == 3 && !force && !vision_app->GetBool ("stripcolors"))
       outData << data[i];
@@ -274,7 +277,7 @@ ClientAgent::FilterCrap (const char *data, bool force)
         ++i;
         
         // filter foreground
-        for (int32 j = 0; j < 2; j++)
+        for (j = 0; j < 2; j++)
           if (data[i] >= '0' && data[i] <= '9')
           {
             if (ViewCodes)
@@ -288,7 +291,7 @@ ClientAgent::FilterCrap (const char *data, bool force)
             if (ViewCodes)
               outData << data[i];
               ++i;
-            for (int32 j = 0; j < 2; j++)
+            for (j = 0; j < 2; j++)
             if (data[i] >= '0' && data[i] <= '9')
             {
               if (ViewCodes)

@@ -324,8 +324,9 @@ NetworkPrefsView::UpdatePersonalData (BMessage & msg)
   const char *curIdent (NULL);
   const char *curRname (NULL);
   const char *curNick (NULL);
-  int32 count (fListView->CountItems ());
-  for (int32 i = 0; i < count; i++)
+  int32 count (fListView->CountItems ()),
+        i (0);
+  for (i = 0; i < count; i++)
     delete (fListView->RemoveItem (0L));
 
   if ((msg.HasBool ("useDefaults") && msg.FindBool ("useDefaults")))
@@ -333,7 +334,7 @@ NetworkPrefsView::UpdatePersonalData (BMessage & msg)
     BMessage defaults (vision_app->GetNetwork ("defaults"));
     defaults.FindString ("ident", &curIdent);
     defaults.FindString ("realname", &curRname);
-    for (int32 i = 0; defaults.FindString ("nick", i, &curNick) == B_OK; i++)
+    for (i = 0; defaults.FindString ("nick", i, &curNick) == B_OK; i++)
       fListView->AddItem (new BStringItem (curNick));
     fIdent->SetEnabled (false);
     fRealName->SetEnabled (false);
@@ -345,7 +346,7 @@ NetworkPrefsView::UpdatePersonalData (BMessage & msg)
   {
     msg.FindString ("ident", &curIdent);
     msg.FindString ("realname", &curRname);
-    for (int32 i = 0; msg.FindString ("nick", i, &curNick) == B_OK; i++)
+    for (i = 0; msg.FindString ("nick", i, &curNick) == B_OK; i++)
       fListView->AddItem (new BStringItem (curNick));
     fIdent->SetEnabled (true);
     fRealName->SetEnabled (true);
