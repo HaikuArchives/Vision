@@ -151,6 +151,27 @@ ServerAgent::AllAttached (void)
 {
   fSMsgr = BMessenger (this);
   ClientAgent::AllAttached ();
+
+  // build notify list here since we can't send a message to ourselves sooner
+
+  type_code type;
+  int32 attrCount (0);
+  
+  BMessage updatemsg (M_NOTIFYLIST_ADD);
+  BString data = "";
+  
+  fNetworkData.GetInfo ("notify", &type, &attrCount);
+
+  for (int32 i = 0; i < attrCount; i++)
+  {
+    data += fNetworkData.FindString("notify", i);
+    data += " ";
+  }
+  if (attrCount > 0)
+  {
+    updatemsg.AddString("cmd", data.String());
+    fSMsgr.SendMessage(&updatemsg);
+  }
 }
 
 // do nothing for now
@@ -1636,13 +1657,14 @@ ServerAgent::MessageReceived (BMessage *msg)
         BString cmd (msg->FindString("cmd"));
         BString curNick;
         int32 idx (-1);
-        
+
         // TODO: print notification message to user
         while ((idx = cmd.IFindFirst(" ")) > 0)
         {
           cmd.MoveInto(curNick, 0, cmd.IFindFirst(" "));
           // remove leading space
           cmd.Remove(0, 1);
+          vision_app->AddNotifyNick(fNetworkData.FindString("name"), curNick.String());
           NotifyListItem *item (new NotifyListItem (curNick.String(), false));
           fNotifyNicks.AddItem (item);
           curNick = "";
@@ -1651,6 +1673,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         if (cmd.Length() > 0)
         {
           NotifyListItem *item (new NotifyListItem (cmd.String(), false));
+          vision_app->AddNotifyNick(fNetworkData.FindString("name"), cmd.String());
           fNotifyNicks.AddItem (item);
         }
         BMessage updMsg (M_NOTIFYLIST_UPDATE);
@@ -1660,15 +1683,41 @@ ServerAgent::MessageReceived (BMessage *msg)
       }
       break;
     
-    case M_IGNORE_ADD:
+    case M_NOTIFYLIST_REMOVE:
       {
         BString cmd (msg->FindString("cmd"));
-        for (int32 i = 0; i < fIgnoreNicks.CountItems(); i++)
+        BString curNick;
+        int32 idx (-1);
+
+        // TODO: print notification message to user
+        while ((idx = cmd.IFindFirst(" ")) > 0)
         {
-          if (cmd == *((BString *)fIgnoreNicks.ItemAt(i)))
-            break;
+          cmd.MoveInto(curNick, 0, cmd.IFindFirst(" "));
+          // remove leading space
+          cmd.Remove(0, 1);
+          vision_app->RemoveNotifyNick(fNetworkData.FindString("name"), curNick.String());
+          for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
+            if (curNick ==((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text())
+            {
+              delete fNotifyNicks.RemoveItem(i);
+            }
+          curNick = "";
         }
-        fIgnoreNicks.AddItem (new BString(cmd));
+        // catch last one
+        if (cmd.Length() > 0)
+        {
+          vision_app->RemoveNotifyNick(fNetworkData.FindString("name"), cmd.String());
+          for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
+            if (cmd ==((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text())
+            {
+              delete fNotifyNicks.RemoveItem(i);
+            }
+        }
+        BMessage updMsg (M_NOTIFYLIST_UPDATE);
+        updMsg.AddPointer ("list", &fNotifyNicks);
+        updMsg.AddPointer ("source", this);
+        Window()->PostMessage (&updMsg);
+        
       }
       break;
     
@@ -1681,9 +1730,19 @@ ServerAgent::MessageReceived (BMessage *msg)
         Window()->PostMessage(&newMsg);
       }
       break;
-    
-    
 
+    case M_IGNORE_ADD:
+      {
+        BString cmd (msg->FindString("cmd"));
+        for (int32 i = 0; i < fIgnoreNicks.CountItems(); i++)
+        {
+          if (cmd == *((BString *)fIgnoreNicks.ItemAt(i)))
+            break;
+        }
+        fIgnoreNicks.AddItem (new BString(cmd));
+      }
+      break;
+    
     default:
       ClientAgent::MessageReceived (msg);
   }

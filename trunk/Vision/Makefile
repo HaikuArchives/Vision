@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9-exp-0625
+VERSION := 0.9-exp-0626
 BUILDDATE := $(shell date +%b_%d_%Y)
 
 BUILD_DEBUG := false

@@ -1615,7 +1615,10 @@ VisionApp::GetIdent (const char *server)
 void
 VisionApp::AddNotifyNick (const char *network, const char *nick)
 {
+  // in case user has deleted the network in question, unlikely but better safe than sorry
   BMessage netMsg (GetNetwork (network));
+  if (!netMsg.HasString("name"))
+    return;
   
   type_code type;
   int32 attrCount;
@@ -1627,6 +1630,7 @@ VisionApp::AddNotifyNick (const char *network, const char *nick)
     if (!strcmp(netMsg.FindString ("notify", i), nick))
       return;
   }
+
   netMsg.AddString ("notify", nick);
   SetNetwork (network, &netMsg);
 }
