@@ -165,7 +165,7 @@ ClientWindow::HandleKey (BMessage *keyMsg)
       case B_RIGHT_ARROW: // baxter muscle memory
       case '.': // bowser muscle memory
         pWindowList()->ContextSelectDown();
-        break;      
+        break;
     }
   }
 
@@ -180,7 +180,6 @@ ClientWindow::HandleKey (BMessage *keyMsg)
     switch (bytes[0])
     {
       case B_UP_ARROW:
-      case B_LEFT_ARROW: // baxter muscle memory
       case ',': // bowser muscle memory
         // move up one agent
         pWindowList()->Select (pWindowList()->CurrentSelection() - 1);
@@ -188,13 +187,20 @@ ClientWindow::HandleKey (BMessage *keyMsg)
         break;
 
       case B_DOWN_ARROW:
-      case B_RIGHT_ARROW: // baxter muscle memory
       case '.': // bowser muscle memory
         // move down one agent
         pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
         pWindowList()->ScrollToSelection();
         break;
         
+      case B_LEFT_ARROW: // collapse current server (if expanded)
+        pWindowList()->CollapseCurrentServer();
+        break;
+
+      case B_RIGHT_ARROW: // expand current server (if collapsed)
+        pWindowList()->ExpandCurrentServer();
+        break;
+
       case '/': // bowser muscle memory
         // move to the agents parent ServerAgent
         // XXX move to WindowList ?
