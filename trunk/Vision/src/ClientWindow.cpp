@@ -23,11 +23,19 @@
  *                 Jamie Wilkinson
  */
 
-#include <ScrollView.h>
-#include <Menu.h>
-#include <MenuItem.h>
-#include <MenuBar.h>
-#include <Rect.h>
+#ifdef GNOME_BUILD
+#  include "gnome/ScrollView.h"
+#  include "gnome/Menu.h"
+#  include "gnome/MenuItem.h"
+#  include "gnome/MenuBar.h"
+#  include "gnome/Rect.h"
+#elif BEOS_BUILD
+#  include <ScrollView.h>
+#  include <Menu.h>
+#  include <MenuItem.h>
+#  include <MenuBar.h>
+#  include <Rect.h>
+#endif
 
 #include <stdio.h>
 

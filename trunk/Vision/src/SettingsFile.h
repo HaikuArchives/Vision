@@ -23,9 +23,15 @@
 #ifndef _SETTINGSFILE_H_
 #define _SETTINGSFILE_H_
 
-#include <Message.h>
-#include <FindDirectory.h>
-#include <Path.h>
+#ifdef GNOME_BUILD
+#  include "gnome/Message.h"
+#  include "gnome/FindDirectory.h"
+#  include "gnome/Path.h"
+#elif BEOS_BUILD
+#  include <Message.h>
+#  include <FindDirectory.h>
+#  include <Path.h>
+#endif
 
 struct attr_info;
 

@@ -24,9 +24,15 @@
  *                 Seth Flaxman
  */
 
-#include <PopUpMenu.h>
-#include <MenuItem.h>
-#include <List.h>
+#ifdef GNOME_BUILD
+#  include "gnome/PopUpMenu.h"
+#  include "gnome/MenuItem.h"
+#  include "gnome/List.h"
+#elif BEOS_BUILD
+#  include <PopUpMenu.h>
+#  include <MenuItem.h>
+#  include <List.h>
+#endif
 
 #include "Vision.h"
 #include "WindowList.h"

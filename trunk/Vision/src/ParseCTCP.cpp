@@ -23,7 +23,11 @@
  *                 Jamie Wilkinson
  */
 
-#include <AppFileInfo.h>
+#ifdef GNOME_BUILD
+#  include "gnome/AppFileInfo.h"
+#elif BEOS_BUILD
+#  include <AppFileInfo.h>
+#endif
 
 #include <stdlib.h>
 

@@ -27,8 +27,13 @@
 #define MELTDOWN_BYTES      500000
 #define REMOVE_BYTES        1024
 
-#include <PopUpMenu.h>
-#include <MenuItem.h>
+#ifdef GNOME_BUILD
+#  include "gnome/PopUpMenu.h"
+#  include "gnome/MenuItem.h"
+#elif BEOS_BUILD
+#  include <PopUpMenu.h>
+#  include <MenuItem.h>
+#endif
 
 #include <Window.h>
 

@@ -26,8 +26,13 @@
 #ifndef _CLIENTAGENT_H_
 #define _CLIENTAGENT_H_
 
-#include <View.h>
-#include <Messenger.h>
+#ifdef GNOME_BUILD
+#  include "gnome/View.h"
+#  include "gnome/Messenger.h"
+#elif BEOS_BUILD
+#  include <View.h>
+#  include <Messenger.h>
+#endif
 
 class BScrollView;
 class VTextControl;

@@ -24,9 +24,15 @@
  *                 John Robinson
  */
 
-#include <NetEndpoint.h>
-#include <UTF8.h>
-#include <Autolock.h>
+#ifdef GNOME_BUILD
+#  include "gnome/NetEndpoint.h"
+#  include "gnome/UTF8.h"
+#  include "gnome/Autolock.h"
+#elif BEOS_BUILD
+#  include <NetEndpoint.h>
+#  include <UTF8.h>
+#  include <Autolock.h>
+#endif
 
 #include <ctype.h>
 #include <stdio.h>

@@ -26,8 +26,13 @@
 #ifndef _MESSAGEWINDOW_H_
 #define _MESSAGEWINDOW_H_
 
-#include <Rect.h>
-#include <String.h>
+#ifdef GNOME_BUILD
+#  include "gnome/Rect.h"
+#  include "gnome/CString.h"
+#elif BEOS_BUILD
+#  include <Rect.h>
+#  include <String.h>
+#endif
 
 #include "ClientAgent.h"
 

@@ -22,16 +22,25 @@
  
 #include "SettingsFile.h"
 
+#ifdef GNOME_BUILD
+#  include "gnome/Path.h"
+#  include "gnome/File.h"
+#  include "gnome/Directory.h"
+#  include "gnome/Roster.h"
+#  include "gnome/Application.h"
+#elif BEOS_BUILD
+#  include <Path.h>
+#  include <File.h>
+#  include <Directory.h>
+#  include <Roster.h>
+#  include <Application.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
-#include <Path.h>
-#include <File.h>
-#include <Directory.h>
 #include <fs_attr.h>
 #include <stdio.h>
 #include <errno.h>
-#include <Roster.h>
-#include <Application.h>
 
 SettingsFile::SettingsFile(char const*lname,char const*bname,directory_which d) {
 	check=B_OK;

@@ -31,8 +31,13 @@
 #ifndef _VTEXTCONTROL_H_
 #define _VTEXTCONTROL_H_
 
-#include <TextControl.h>
-#include <MessageFilter.h>
+#ifdef GNOME_BUILD
+#  include "gnome/TextControl.h"
+#  include "gnome/MessageFilter.h"
+#elif BEOS_BUILD
+#  include <TextControl.h>
+#  include <MessageFilter.h>
+#ifdef
 
 class BPopUpMenu;
 class BMenu;

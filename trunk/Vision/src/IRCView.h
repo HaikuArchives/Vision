@@ -26,7 +26,11 @@
 #ifndef _IRCVIEW_H_
 #define _IRCVIEW_H_
 
-#include <TextView.h>
+#ifdef GNOME_BUILD
+#  include "gnome/TextView.h"
+#elif BEOS_BUILD
+#  include <TextView.h>
+#endif
 
 class VTextControl;
 class BFont;

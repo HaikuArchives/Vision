@@ -26,10 +26,17 @@
 #ifndef _SERVERAGENT_H_
 #define _SERVERAGENT_H_
 
-#include <Rect.h>
-#include <String.h>
-#include <List.h>
-#include <Locker.h>
+#ifdef GNOME_BUILD
+#  include "gnome/Rect.h"
+#  include "gnome/CString.h"
+#  include "gnome/List.h"
+#  include "gnome/Locker.h"
+#elif BEOS_BUILD
+#  include <Rect.h>
+#  include <String.h>
+#  include <List.h>
+#  include <Locker.h>
+#endif
 
 #include "ClientAgent.h"
 

@@ -23,8 +23,13 @@
 #ifndef _CHANNELOPTIONS_H_
 #define _CHANNELOPTIONS_H_
 
-#include <String.h>
-#include <Window.h>
+#ifdef GNOME_BUILD
+#  include "gnome/CString.h"
+#  include "gnome/Window.h"
+#elif BEOS_BUILD
+#  include <String.h>
+#  include <Window.h>
+#endif
 
 class ChannelAgent;
 class BView;

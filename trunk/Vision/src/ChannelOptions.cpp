@@ -23,7 +23,11 @@
 #include "ChannelAgent.h"
 #include "ChannelOptions.h"
 
-#include <StringView.h>
+#ifdef GNOME_BUILD
+#  include "gnome/StringView.h"
+#elif BEOS_BUILD
+#  include <StringView.h>
+#endif
 
 #include <stdio.h>
 

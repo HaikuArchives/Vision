@@ -23,9 +23,15 @@
  *                 Jamie Wilkinson
  */
 
-#include <ScrollView.h>
-#include <PopUpMenu.h>
-#include <MenuItem.h>
+#ifdef GNOME_BUILD
+#  include "gnome/ScrollView.h"
+#  include "gnome/PopUpMenu.h"
+#  include "gnome/MenuItem.h"
+#elif BEOS_BUILD
+#  include <ScrollView.h>
+#  include <PopUpMenu.h>
+#  include <MenuItem.h>
+#endif
 
 #include <stdio.h>
 #include <ctype.h>

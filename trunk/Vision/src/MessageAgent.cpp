@@ -23,7 +23,6 @@
  *                 Jamie Wilkinson
  */
  
- 
 #include "MessageAgent.h"
 #include "WindowList.h"
 #include "ServerAgent.h"
