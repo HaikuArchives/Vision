@@ -34,6 +34,7 @@
 
 class VTextControl;
 class BFont;
+class BPopUpMenu;
 class ClientAgent;
 
 struct IRCViewSettings;

@@ -55,6 +55,7 @@ class VisionApp * vision_app;
 #include "ClientWindow.h"
 #include "SettingsFile.h"
 #include "SetupWindow.h"
+#include "PrefsWindow.h"
 
 #include "TestScript.h"
 
@@ -81,6 +82,7 @@ main (void)
 VisionApp::VisionApp (void)
   : BApplication ("application/x-vnd.Ink-Vision"),
       aboutWin (0),
+      prefsWin (0),
       identEndpoint (0)
 {
   // some setup
@@ -90,155 +92,6 @@ VisionApp::VisionApp (void)
   debugsettings = false;
   numBench = false;
   ShuttingDown = false;
-  
-  // :TODO: wade 013101 move colors to settings class
-#if 1
-// default Vision color scheme
-  const rgb_color myBlack             = {0,0,0, 255};
-  const rgb_color myWhite             = {255, 255, 255, 255};
-  const rgb_color NOTICE_COLOR        = {10,90,170, 255};
-  const rgb_color ACTION_COLOR        = {128,0,128, 255};
-  const rgb_color QUIT_COLOR          = {180,10,10, 255};
-  const rgb_color ERROR_COLOR         = {210,5,5, 255};
-  const rgb_color URL_COLOR           = {5,5,150, 255};
-  const rgb_color NICK_COLOR          = {10,10,190, 255};
-  const rgb_color MYNICK_COLOR        = {200,10,20, 255};
-  const rgb_color JOIN_COLOR          = {10,130,10, 255};
-  const rgb_color KICK_COLOR          = {250,130,10, 255};
-  const rgb_color WHOIS_COLOR         = {10,30,170, 255};
-  const rgb_color OP_COLOR            = {140,10,40, 255};
-  const rgb_color VOICE_COLOR         = {160, 20, 20, 255};
-  const rgb_color CTCP_REQ_COLOR      = {10,10,180, 255};
-  const rgb_color CTCP_RPY_COLOR      = {10,40,180, 255};
-  const rgb_color IGNORE_COLOR        = {100, 100, 100, 255};
-  const rgb_color INPUT_COLOR         = {0, 0, 0, 255};
-  const rgb_color INPUT_BG_COLOR      = {255, 255, 255, 255};
-  const rgb_color WINLIST_BG_COLOR    = {238, 242, 242, 255};
-  const rgb_color WINLIST_PAGE6_COLOR = {100, 100, 100, 255};
-  const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
-  const rgb_color WALLOPS_COLOR       = {10,30,170, 255};
-  const rgb_color NICK_DISPLAY        = {47, 47, 47, 255};
-
-  colors[C_TEXT]                      = myBlack;
-  colors[C_BACKGROUND]                = myWhite;
-  colors[C_NAMES]                     = myBlack;
-  colors[C_NAMES_BACKGROUND]          = myWhite;
-  colors[C_URL]                       = URL_COLOR;
-  colors[C_SERVER]                    = myBlack;
-  colors[C_NOTICE]                    = NOTICE_COLOR;
-  colors[C_ACTION]                    = ACTION_COLOR;
-  colors[C_QUIT]                      = QUIT_COLOR;
-  colors[C_ERROR]                     = ERROR_COLOR;
-  colors[C_NICK]                      = NICK_COLOR;
-  colors[C_MYNICK]                    = MYNICK_COLOR;
-  colors[C_JOIN]                      = JOIN_COLOR;
-  colors[C_KICK]                      = KICK_COLOR;
-  colors[C_WHOIS]                     = WHOIS_COLOR;
-  colors[C_OP]                        = OP_COLOR;
-  colors[C_HELPER]                    = OP_COLOR;
-  colors[C_VOICE]                     = VOICE_COLOR;
-  colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
-  colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
-  colors[C_IGNORE]                    = IGNORE_COLOR;
-  colors[C_INPUT]                     = INPUT_COLOR;
-  colors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
-  colors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
-  colors[C_WINLIST_NORMAL]            = myBlack;
-  colors[C_WINLIST_NEWS]              = JOIN_COLOR;
-  colors[C_WINLIST_NICK]              = QUIT_COLOR;
-  colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
-  colors[C_WINLIST_PAGESIX]           = WINLIST_PAGE6_COLOR;
-  colors[C_WALLOPS]                   = WALLOPS_COLOR;
-  colors[C_NICKDISPLAY]               = NICK_DISPLAY;
-#endif
-
-#if 0
-  // alternate color scheme <kart@hal-pc.org>
-  const rgb_color myBlack             = {32,   32,  64, 255};
-  const rgb_color myWhite             = {224, 192, 128, 255};
-  const rgb_color NOTICE_COLOR        = {102, 215, 215, 255};
-  const rgb_color ACTION_COLOR        = {101, 225, 116, 255};
-  const rgb_color QUIT_COLOR          = {224,  96,  64, 255};
-  const rgb_color ERROR_COLOR         = {255,  92,   0, 255};
-  const rgb_color URL_COLOR           = {123, 150, 255, 255};
-  const rgb_color NICK_COLOR          = {102, 215, 215, 255}; // for angle brackets around nick
-  const rgb_color MYNICK_COLOR        = {122, 255, 237, 255}; // when anyone says your name
-  const rgb_color JOIN_COLOR          = {192, 255, 192, 255};
-  const rgb_color KICK_COLOR          = {255, 213,  88, 255};
-  const rgb_color WHOIS_COLOR         = {180, 224, 221, 255};
-  const rgb_color OP_COLOR            = {255,  64, 128, 255};
-  const rgb_color VOICE_COLOR         = {255, 213,  88, 255};
-  const rgb_color CTCP_REQ_COLOR      = {213, 180, 224, 255};
-  const rgb_color CTCP_RPY_COLOR      = {180, 191, 224, 255};
-  const rgb_color IGNORE_COLOR        = {106, 106, 173, 255};
-  const rgb_color INPUT_COLOR         = {222, 255, 222, 255};
-  const rgb_color INPUT_BG_COLOR      = {  0,   0,   0, 255};
-  const rgb_color WINLIST_PAGE6_COLOR = {192, 192, 255, 255};
-  const rgb_color WINLIST_BG_COLOR    = {32,   32,  64, 255};
-  const rgb_color WINLIST_SEL_COLOR   = { 64,  92,  64, 255};  
-  const rgb_color WALLOPS_COLOR       = {255, 135,  87, 255};
-  const rgb_color NICK_DISPLAY        = {224, 207, 128, 255};
-
-
-  colors[C_TEXT]                      = myWhite;   // this stuff is important
-  colors[C_BACKGROUND]                = myBlack;   // pay attention to myBlack and myWhite
-  colors[C_NAMES]                     = myWhite;
-  colors[C_NAMES_BACKGROUND]          = myBlack;
-  colors[C_URL]                       = URL_COLOR;
-  colors[C_SERVER]                    = myWhite;
-  colors[C_NOTICE]                    = NOTICE_COLOR;
-  colors[C_ACTION]                    = ACTION_COLOR;
-  colors[C_QUIT]                      = QUIT_COLOR;
-  colors[C_ERROR]                     = ERROR_COLOR;
-  colors[C_NICK]                      = NICK_COLOR;
-  colors[C_MYNICK]                    = MYNICK_COLOR;
-  colors[C_JOIN]                      = JOIN_COLOR;
-  colors[C_KICK]                      = KICK_COLOR;
-  colors[C_WHOIS]                     = WHOIS_COLOR;
-  colors[C_OP]                        = OP_COLOR;
-  colors[C_HELPER]                    = OP_COLOR;
-  colors[C_VOICE]                     = VOICE_COLOR;
-  colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
-  colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
-  colors[C_IGNORE]                    = IGNORE_COLOR;
-  colors[C_INPUT]                     = INPUT_COLOR;
-  colors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
-  colors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
-  colors[C_WINLIST_NORMAL]            = myWhite;
-  colors[C_WINLIST_NEWS]              = JOIN_COLOR;
-  colors[C_WINLIST_NICK]              = QUIT_COLOR;
-  colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
-  colors[C_WINLIST_PAGESIX]           = WINLIST_PAGE6_COLOR;
-  colors[C_WALLOPS]                   = WALLOPS_COLOR;
-  colors[C_NICKDISPLAY]               = NICK_DISPLAY;
-#endif
-
-  client_font[F_TEXT]    = new BFont (be_fixed_font);
-  client_font[F_SERVER]  = new BFont (be_fixed_font);
-  client_font[F_URL]     = new BFont (be_fixed_font);
-  client_font[F_NAMES]   = new BFont (be_plain_font);
-  client_font[F_INPUT]   = new BFont (be_fixed_font);
-  client_font[F_WINLIST] = new BFont (be_plain_font);
-  client_font[F_LISTAGENT] = new BFont (be_plain_font);
-  
-  events[E_JOIN]            = "*** $N ($I@$A) has joined the channel.";
-  events[E_PART]            = "*** $N has left the channel.";
-  events[E_NICK]            = "*** $N is now known as $n.";
-  events[E_QUIT]            = "*** $N ($I@$A) has quit IRC ($R)";
-  events[E_KICK]            = "*** $N has been kicked from $C by $n ($R)";
-  events[E_TOPIC]           = "*** $C Topic changed by $N: $T";
-  events[E_SNOTICE]         = "-$N- $R";
-  events[E_UNOTICE]         = "-$N- $R";
-  events[E_NOTIFY_ON]       = "*** $N has joined IRC.";
-  events[E_NOTIFY_OFF]      = "*** $N has left IRC.";
-
-  commands[CMD_KICK]        = "Ouch!";
-  commands[CMD_QUIT]        = "Vision[$V]: i've been blurred!";
-  commands[CMD_IGNORE]      = "*** $N is now ignored ($i).";
-  commands[CMD_UNIGNORE]    = "*** $N is no longer ignored.";
-  commands[CMD_AWAY]        = "is idle: $R";
-  commands[CMD_BACK]        = "has returned";
-  commands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
   
   identThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
   if (identThread >= B_OK)
@@ -311,8 +164,99 @@ VisionApp::ThreadStates (void)
 }
 
 void
+VisionApp::InitDefaults (void)
+{
+  const rgb_color myBlack             = {0,0,0, 255};
+  const rgb_color myWhite             = {255, 255, 255, 255};
+  const rgb_color NOTICE_COLOR        = {10,90,170, 255};
+  const rgb_color ACTION_COLOR        = {128,0,128, 255};
+  const rgb_color QUIT_COLOR          = {180,10,10, 255};
+  const rgb_color ERROR_COLOR         = {210,5,5, 255};
+  const rgb_color URL_COLOR           = {5,5,150, 255};
+  const rgb_color NICK_COLOR          = {10,10,190, 255};
+  const rgb_color MYNICK_COLOR        = {200,10,20, 255};
+  const rgb_color JOIN_COLOR          = {10,130,10, 255};
+  const rgb_color KICK_COLOR          = {250,130,10, 255};
+  const rgb_color WHOIS_COLOR         = {10,30,170, 255};
+  const rgb_color OP_COLOR            = {140,10,40, 255};
+  const rgb_color VOICE_COLOR         = {160, 20, 20, 255};
+  const rgb_color CTCP_REQ_COLOR      = {10,10,180, 255};
+  const rgb_color CTCP_RPY_COLOR      = {10,40,180, 255};
+  const rgb_color IGNORE_COLOR        = {100, 100, 100, 255};
+  const rgb_color INPUT_COLOR         = {0, 0, 0, 255};
+  const rgb_color INPUT_BG_COLOR      = {255, 255, 255, 255};
+  const rgb_color WINLIST_BG_COLOR    = {238, 242, 242, 255};
+  const rgb_color WINLIST_PAGE6_COLOR = {100, 100, 100, 255};
+  const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
+  const rgb_color WALLOPS_COLOR       = {10,30,170, 255};
+  const rgb_color NICK_DISPLAY        = {47, 47, 47, 255};
+
+  colors[C_TEXT]                      = myBlack;
+  colors[C_BACKGROUND]                = myWhite;
+  colors[C_NAMES]                     = myBlack;
+  colors[C_NAMES_BACKGROUND]          = myWhite;
+  colors[C_URL]                       = URL_COLOR;
+  colors[C_SERVER]                    = myBlack;
+  colors[C_NOTICE]                    = NOTICE_COLOR;
+  colors[C_ACTION]                    = ACTION_COLOR;
+  colors[C_QUIT]                      = QUIT_COLOR;
+  colors[C_ERROR]                     = ERROR_COLOR;
+  colors[C_NICK]                      = NICK_COLOR;
+  colors[C_MYNICK]                    = MYNICK_COLOR;
+  colors[C_JOIN]                      = JOIN_COLOR;
+  colors[C_KICK]                      = KICK_COLOR;
+  colors[C_WHOIS]                     = WHOIS_COLOR;
+  colors[C_OP]                        = OP_COLOR;
+  colors[C_HELPER]                    = OP_COLOR;
+  colors[C_VOICE]                     = VOICE_COLOR;
+  colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
+  colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
+  colors[C_IGNORE]                    = IGNORE_COLOR;
+  colors[C_INPUT]                     = INPUT_COLOR;
+  colors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
+  colors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
+  colors[C_WINLIST_NORMAL]            = myBlack;
+  colors[C_WINLIST_NEWS]              = JOIN_COLOR;
+  colors[C_WINLIST_NICK]              = QUIT_COLOR;
+  colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
+  colors[C_WINLIST_PAGESIX]           = WINLIST_PAGE6_COLOR;
+  colors[C_WALLOPS]                   = WALLOPS_COLOR;
+  colors[C_NICKDISPLAY]               = NICK_DISPLAY;
+
+  client_font[F_TEXT]    = new BFont (be_plain_font);
+  client_font[F_SERVER]  = new BFont (be_plain_font);
+  client_font[F_URL]     = new BFont (be_plain_font);
+  client_font[F_NAMES]   = new BFont (be_plain_font);
+  client_font[F_INPUT]   = new BFont (be_plain_font);
+  client_font[F_WINLIST] = new BFont (be_plain_font);
+  client_font[F_LISTAGENT] = new BFont (be_plain_font);
+  
+  events[E_JOIN]            = "*** $N ($I@$A) has joined the channel.";
+  events[E_PART]            = "*** $N has left the channel.";
+  events[E_NICK]            = "*** $N is now known as $n.";
+  events[E_QUIT]            = "*** $N ($I@$A) has quit IRC ($R)";
+  events[E_KICK]            = "*** $N has been kicked from $C by $n ($R)";
+  events[E_TOPIC]           = "*** $C Topic changed by $N: $T";
+  events[E_SNOTICE]         = "-$N- $R";
+  events[E_UNOTICE]         = "-$N- $R";
+  events[E_NOTIFY_ON]       = "*** $N has joined IRC.";
+  events[E_NOTIFY_OFF]      = "*** $N has left IRC.";
+
+  commands[CMD_KICK]        = "Ouch!";
+  commands[CMD_QUIT]        = "Vision[$V]: i've been blurred!";
+  commands[CMD_IGNORE]      = "*** $N is now ignored ($i).";
+  commands[CMD_UNIGNORE]    = "*** $N is no longer ignored.";
+  commands[CMD_AWAY]        = "is idle: $R";
+  commands[CMD_BACK]        = "has returned";
+  commands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
+}
+
+void
 VisionApp::InitSettings (void)
 {
+  // initialize arrays with Vision's default settings in case of new user
+  InitDefaults();
+  
   if (debugsettings)
     printf (":SETTINGS: loading...\n");
       
@@ -327,6 +271,9 @@ VisionApp::InitSettings (void)
   LoadDefaults (SET_GENERAL);
   LoadDefaults (SET_WINDOW);
   LoadDefaults (SET_NOTIFY);
+  LoadDefaults (SET_FONT);
+  LoadDefaults (SET_COLOR);
+  LoadDefaults (SET_STRINGS);
   
   settingsloaded = true;  
   if (debugsettings)
@@ -394,6 +341,93 @@ VisionApp::LoadDefaults (int32 section)
           visionSettings->AddString ("alsoKnownAs", "-9y99");
       }
       break;
+      
+    case SET_FONT:
+     {
+       font_family default_family;
+       font_style default_style;
+       float  size (0.0);
+       be_plain_font->GetFamilyAndStyle (&default_family, &default_style);
+       size = be_plain_font->Size();
+       if (!visionSettings->HasString ("family"))
+       {
+          printf("no family data\n");
+          for (int32 i = 0; i < MAX_FONTS; i++)
+          {
+            visionSettings->AddString ("family", default_family);
+            visionSettings->AddString ("style", default_style);
+            visionSettings->AddFloat ("size", size);
+          }
+       }
+       else
+       {
+         for (int32 i = 0; i < MAX_FONTS; i++)
+         {
+           BString family;
+           BString style;
+                  
+           visionSettings->FindString ("family", i, &family);
+           visionSettings->FindString ("style", i, &style);
+           visionSettings->FindFloat ("size", &size);
+           
+           ClientFontFamilyAndStyle (i, family.String(), style.String());
+           ClientFontSize (i, size); 
+         }
+       }
+     }
+     break;
+     
+   case SET_COLOR:
+     {
+       if (!visionSettings->HasData ("color", B_RGB_COLOR_TYPE))
+       {
+         // load defaults from color array into settings file
+         for (int32 i = 0; i < MAX_COLORS; i++)
+         {
+           visionSettings->AddData ("color", B_RGB_COLOR_TYPE, &colors[i], sizeof (rgb_color));
+         }
+       }
+       else
+       {
+         for (int32 i = 0; i < MAX_COLORS; i++)
+         {
+           // overwrite color array with data loaded from settings file
+           const rgb_color *color;
+           ssize_t size (0);
+           if (visionSettings->FindData ("color", B_RGB_COLOR_TYPE, i, reinterpret_cast<const void **>(&color), &size) == B_OK)
+             colors[i] = *color;
+         }
+       }
+     }
+     break;
+   
+   case SET_STRINGS:
+     {
+       // events
+       if (!visionSettings->HasString ("event"))
+       {
+         for (int32 i = 0; i < MAX_EVENTS; i++)
+           visionSettings->AddString ("event", events[i]);
+       }
+       else
+       {
+         for (int32 i = 0; i < MAX_EVENTS; i++)
+           visionSettings->FindString ("event", i, &events[i]);
+       }
+       
+       // commands
+       if (!visionSettings->HasString ("command"))
+       {
+         for (int32 i = 0; i < MAX_COMMANDS; i++)
+           visionSettings->AddString ("command", commands[i]);
+       }
+       else
+       {
+         for (int32 i = 0; i < MAX_COMMANDS; i++)
+           visionSettings->FindString ("command", i, &commands[i]);
+       }
+     }
+     break;
   }
 }
 
@@ -530,19 +564,21 @@ VisionApp::MessageReceived (BMessage *msg)
     
     case M_SETUP_SHOW:
       {
-        if (setupWin)
-          setupWin->Activate();
+        if (prefsWin)
+          prefsWin->Activate();
         else
         {
-          setupWin = new SetupWindow(false);
-          setupWin->Show();
+          prefsWin = new PrefsWindow();
+          prefsWin->MoveTo ( clientWin->Frame().left + (clientWin->Frame().Width() / 2) - (prefsWin->Frame().Width() / 2),
+            clientWin->Frame().top + (clientWin->Frame().Height() / 2) - (prefsWin->Frame().Height() / 2)); 
+          prefsWin->Show();
         }
       }      
       break;
     
     case M_SETUP_CLOSE:
       {
-        setupWin = 0;
+        prefsWin = 0;
       }
       break;
 
@@ -604,10 +640,10 @@ VisionApp::GetString (const char *stringName) const
 
 
 status_t
-VisionApp::SetString (const char *stringName, const char *value)
+VisionApp::SetString (const char *stringName, int32 index, const char *value)
 {
   BString temp (value);
-  if (visionSettings->ReplaceString (stringName, temp) == B_OK)
+  if (visionSettings->ReplaceString (stringName, index, temp) == B_OK)
     return B_OK;
   
   return B_ERROR;  
@@ -626,6 +662,7 @@ VisionApp::SetRect (const char *settingName, BRect value)
 rgb_color
 VisionApp::GetColor (int32 which) const
 {
+  BAutolock colorLock (Looper());
   rgb_color color = {0, 0, 0, 255};
 
   if (which < MAX_COLORS && which >= 0)
@@ -638,6 +675,7 @@ VisionApp::GetColor (int32 which) const
 void
 VisionApp::SetColor (int32 which, const rgb_color color)
 {
+  BAutolock colorLock (Looper());
   if (which < MAX_COLORS &&  which >= 0
   && (colors[which].red   != color.red
   ||  colors[which].green != color.green
@@ -645,15 +683,14 @@ VisionApp::SetColor (int32 which, const rgb_color color)
   ||  colors[which].alpha != color.alpha))
   {
     colors[which] = color;
-
+    visionSettings->ReplaceData ("color", B_RGB_COLOR_TYPE, which,
+      reinterpret_cast<void * const *>(&color), sizeof(rgb_color));
+    
     BMessage msg (M_STATE_CHANGE);
 
     msg.AddInt32 ("which", which);
-    msg.AddData (
-      "color",
-      B_RGB_COLOR_TYPE,
-      colors + which,
-      sizeof (rgb_color));
+    msg.AddBool ("color", true);
+    Broadcast (&msg);
   }
 }
 
@@ -670,10 +707,13 @@ VisionApp::ClientFontFamilyAndStyle (
     client_font[which]->SetFamilyAndStyle (family, style);
 
     BMessage msg (M_STATE_CHANGE);
-
+    
+    SetString ("family", which, family);
+    SetString ("style", which, style);
+    
+    msg.AddBool ("font", true);
     msg.AddInt32 ("which", which);
-    msg.AddPointer ("font", client_font[which]);
-    //Broadcast (&msg);
+    Broadcast (&msg);
   }
 }
 
@@ -684,12 +724,14 @@ VisionApp::ClientFontSize (int32 which, float size)
   if (which < MAX_FONTS && which >= 0)
   {
     client_font[which]->SetSize (size);
-
     BMessage msg (M_STATE_CHANGE);
-
+    
+    if (visionSettings->ReplaceFloat ("size", which, size) != B_OK)
+      printf("error, could not set font size\n");
+    
+    msg.AddBool ("font", true);
     msg.AddInt32 ("which", which);
-    msg.AddPointer ("font", client_font[which]);
-    //Broadcast (&msg);
+    Broadcast (&msg);
   }
 }
 
@@ -706,6 +748,8 @@ VisionApp::GetClientFont (int32 which) const
 BString
 VisionApp::GetEvent (int32 which) const
 {
+  BAutolock GetEventLock (Looper());
+  
   BString buffer;
 
   if (which < MAX_EVENTS && which >= 0)
@@ -718,15 +762,19 @@ VisionApp::GetEvent (int32 which) const
 void
 VisionApp::SetEvent (int32 which, const char *event)
 {
+  BAutolock SetEventLock (this);
+
   if (which < MAX_EVENTS && which >= 0
   &&  events[which].Compare (event))
   {
     events[which] = event;
 
+    visionSettings->ReplaceString ("event", which, event);
+    
     BMessage msg (M_STATE_CHANGE);
-
+    
+    msg.AddBool ("event", true);
     msg.AddInt32 ("which", which);
-    msg.AddString ("event", events[which].String());
 
     Broadcast (&msg);
   }
@@ -752,7 +800,19 @@ VisionApp::SetCommand (int32 which, const char *command)
   BAutolock SetCommandLock (this);
 
   if (which < MAX_EVENTS && which >= 0 && SetCommandLock.IsLocked())
+  {
     commands[which] = command;
+    
+    visionSettings->ReplaceString ("command", which, command);
+    
+    BMessage msg (M_STATE_CHANGE);
+    
+    msg.AddBool ("command", true);
+    msg.AddInt32 ("which", which);
+    
+    Broadcast (&msg);
+
+  }
 }
 
 
@@ -779,11 +839,14 @@ status_t
 VisionApp::SetBool (const char *settingName, bool value)
 {
  if (visionSettings->ReplaceBool (settingName, value) == B_OK)
+ {
+   BMessage msg (M_STATE_CHANGE);
+   msg.AddBool ("bool", true);
+   Broadcast (&msg);
    return B_OK;
- 
+ }
  return B_ERROR;
 }
-
 
 const char *
 VisionApp::GetThreadName (int thread_type)

@@ -738,6 +738,8 @@ ServerAgent::Broadcast (BMessage *msg)
     if (client != this)
       client->msgr.SendMessage (msg);
   }
+  if (pListAgent)
+    vision_app->pClientWin()->DispatchMessage(msg, (BView *)pListAgent);
 }
 
 void
@@ -951,6 +953,13 @@ ServerAgent::MessageReceived (BMessage *msg)
         const char *buffer;
         msg->FindString ("line", &buffer);
         ParseLine (buffer);
+      }
+      break;
+    
+    case M_STATE_CHANGE:
+      {
+        Broadcast(msg);
+        ClientAgent::MessageReceived (msg);
       }
       break;
       

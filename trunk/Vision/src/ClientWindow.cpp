@@ -353,6 +353,22 @@ ClientWindow::MessageReceived (BMessage *msg)
       }
       break;
     
+    case M_STATE_CHANGE:
+      {
+        ServerBroadcast (msg);
+        if (msg->HasBool ("color"))
+        {
+          int32 which (msg->FindInt32 ("which"));
+          pWindowList()->SetColor (which, vision_app->GetColor (which));
+        }
+        else if (msg->HasBool ("font"))
+        {
+          int32 which (msg->FindInt32 ("which"));
+          pWindowList()->SetFont (which, vision_app->GetClientFont (which));
+        }
+      }
+      break;
+      
     case M_MAKE_NEW_SERVER:
       {
         const char *hostname, *port, *autoexec;
@@ -502,7 +518,7 @@ ClientWindow::Init (void)
   
   // Server menu
   mServer = new BMenu ("Server");
-  mServer->AddItem (item = new BMenuItem ("Setup" B_UTF8_ELLIPSIS,
+  mServer->AddItem (item = new BMenuItem ("Preferences" B_UTF8_ELLIPSIS,
                     new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
   mServer->AddItem (item = new BMenuItem ("Options" B_UTF8_ELLIPSIS,

@@ -1,7 +1,13 @@
 Vision
 http://vision.sourceforge.net
 
+[0.3.07014]
+2001-07-14
+   * 0.3 is here.....basic preferences implemented
+   * minor bugfixes
+
 [0.2.07012]
+2001-07-12
    * text control properly retrieves its color/font settings now
 
 [0.2.07011]

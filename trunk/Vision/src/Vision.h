@@ -39,6 +39,7 @@
 class BFont;
 class AboutWindow;
 class SetupWindow;
+class PrefsWindow;
 class ClientWindow;
 class SettingsFile;
 class BLocker;
@@ -61,6 +62,8 @@ class VisionApp : public BApplication
 
     BString                 VisionVersion (int);
     
+    void                    InitDefaults (void);
+    
     void                    LoadDefaults (int32);
 
     void                    ClientFontFamilyAndStyle (int32, const char *,
@@ -71,7 +74,7 @@ class VisionApp : public BApplication
     status_t                SetRect (const char *, BRect);
     
     const char              *GetString (const char *) const; 
-    status_t                SetString (const char *, const char *); 
+    status_t                SetString (const char *, int32 index, const char *); 
     
     rgb_color               GetColor (int32) const;
     void                    SetColor (int32, const rgb_color);
@@ -121,6 +124,8 @@ class VisionApp : public BApplication
     AboutWindow             *aboutWin;
     SetupWindow             *setupWin;
     ClientWindow            *clientWin;
+    PrefsWindow             *prefsWin;
+    
     SettingsFile			*visionSettings;
     
     rgb_color               colors[MAX_COLORS];
@@ -139,6 +144,9 @@ const int SET_SERVER    = 1;
 const int SET_GENERAL   = 2;
 const int SET_WINDOW    = 3;
 const int SET_NOTIFY    = 4;
+const int SET_FONT      = 5;
+const int SET_COLOR     = 6;
+const int SET_STRINGS   = 7;
 
 const int VERSION_VERSION = 1;
 const int VERSION_DATE    = 2;

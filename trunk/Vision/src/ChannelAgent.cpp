@@ -384,6 +384,40 @@ ChannelAgent::MessageReceived (BMessage *msg)
           ClientAgent::MessageReceived (&display);
       }
       break;
+      
+    case M_STATE_CHANGE:
+      {
+        int32 which (msg->FindInt32 ("which"));
+        if (msg->HasBool ("color"))
+        {
+          switch (which)
+          {
+            case C_JOIN:
+              joinColor  = vision_app->GetColor (C_JOIN);
+              break;
+              
+            case C_QUIT:
+              quitColor = vision_app->GetColor (C_QUIT);
+              break;
+              
+            case C_ERROR:
+             errorColor = vision_app->GetColor (C_ERROR);
+             break;
+            
+            // all of these color consts belong to NamesView 
+            case C_OP:
+            case C_VOICE:
+            case C_HELPER:
+            case C_NAMES:
+            case C_NAMES_BACKGROUND:
+            case C_IGNORE:
+             namesList->SetColor (which, vision_app->GetColor (which));
+             break;
+          }
+        }  
+        ClientAgent::MessageReceived (msg);
+      }
+      break;
 
     case M_CHANGE_NICK:
       {

@@ -37,6 +37,7 @@
 #endif
 
 class BPopUpMenu;
+class BMenu;
 
 class NameItem : public BListItem
 {

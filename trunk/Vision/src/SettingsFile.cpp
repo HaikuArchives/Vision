@@ -297,7 +297,11 @@ status_t SettingsFile::Save() const {
 }
 
 status_t SettingsFile::_StoreAttributes(BMessage const*m,BFile*f,const char*basename) {
+#if B_BEOS_VERSION_DANO
+    const char *namefound;
+#else
 	char* namefound;
+#endif
 	type_code typefound;
 	int32 countfound;
 	status_t ret;
