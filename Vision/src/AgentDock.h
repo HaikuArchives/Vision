@@ -27,21 +27,36 @@
 #  include "gnome/View.h"
 #elif BEOS_BUILD
 #  include <View.h>
+#  include <StringView.h>
 #endif
 
 class WindowList;
 class BScrollView;
-class BStringView;
+
+class AgentDockHeaderString : public BStringView
+{
+  public:
+                           AgentDockHeaderString (BRect, const char *);
+    virtual                ~AgentDockHeaderString (void);
+    
+    virtual void           MouseMoved (BPoint, uint32, const BMessage *);
+    virtual void           MouseDown (BPoint);
+    virtual void           MouseUp (BPoint);
+};
 
 class AgentDockHeader : public BView
 {
   public:
                            AgentDockHeader (BRect, const char *, uint32);
     virtual                ~AgentDockHeader (void);
+    
+    virtual void           MouseMoved (BPoint, uint32, const BMessage *);
+    virtual void           MouseDown (BPoint);
+    virtual void           MouseUp (BPoint);
   
   private:
     
-    BStringView           *headerView;
+    AgentDockHeaderString  *headerView;
 
 };
 
@@ -91,7 +106,6 @@ class AgentDock : public BView
     AgentDockNotifyList     *notifyAgent;
     
 };
-
 
 
 #endif
