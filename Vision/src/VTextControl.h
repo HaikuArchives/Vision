@@ -37,7 +37,7 @@
 #elif BEOS_BUILD
 #  include <TextControl.h>
 #  include <MessageFilter.h>
-#ifdef
+#endif
 
 class BPopUpMenu;
 class BMenu;
