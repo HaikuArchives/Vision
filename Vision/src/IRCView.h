@@ -63,9 +63,9 @@ class IRCView : public BTextView
   private:
     IRCViewSettings         *settings;
     BPopUpMenu              *myPopUp;
-    void                    BuildPopUp();
+    void                    BuildPopUp (void);
     int32                   URLLength (const char *);
-    int32                   FirstMarker (const char *);
+    int32                   FirstURLMarker (const char *);
     bool     tracking;
     float    lasty;
 

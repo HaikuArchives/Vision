@@ -171,6 +171,7 @@ VisionApp::InitSettings(void)
     LoadDefaults (SET_SERVER);
     LoadDefaults (SET_GENERAL);
     LoadDefaults (SET_WINDOW);
+    LoadDefaults (SET_NOTIFY);
  
     settingsloaded = true;
     if (debugsettings)
@@ -224,6 +225,15 @@ VisionApp::LoadDefaults (int32 section)
     
       break;
     }
+
+    case SET_NOTIFY:
+    {
+      if (!visionSettings->HasString ("alsoKnownAs"))
+        visionSettings->AddString ("alsoKnownAs", "-9y99");
+    
+      break;
+    }
+
   }
 }
 

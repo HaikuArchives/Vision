@@ -91,9 +91,11 @@ struct IRCViewSettings
   VTextControl  *parentInput;
   ClientAgent *parentAgent;
 
-  BFont  urlFont; 
+  BFont  urlFont;
   rgb_color  urlColor; 
-  list<URL>  urls; 
+  list<URL>  urls;
+  
+  rgb_color  myNick_color; 
 };
 
 
@@ -115,7 +117,8 @@ IRCView::IRCView (
   settings->parentAgent = fatherAgent;
   settings->parentInput = inputControl; 
   settings->urlFont     = *(vision_app->GetClientFont (F_URL)); 
-  settings->urlColor    = vision_app->GetColor (C_URL); 
+  settings->urlColor    = vision_app->GetColor (C_URL);
+  settings->myNick_color    = vision_app->GetColor (C_MYNICK);
 
   tracking = false;
   MakeEditable (false); 
@@ -157,20 +160,14 @@ IRCView::BuildPopUp (void)
     querystring.UnlockBuffer(-1);
   }
   
-  myPopUp = new BPopUpMenu ("Context Menu", false, false); 
+  myPopUp = new BPopUpMenu ("IRCView Context Menu", false, false); 
 
   BMenuItem *item;
-  BMessage *lookup;
+
+  // get dynamic entries from ClientAgent
+  settings->parentAgent->AddMenuItems (myPopUp);
   
-  ChannelAgent *channel;
-  if ((channel = dynamic_cast<ChannelAgent *>(settings->parentAgent)))
-  {
-    item = new BMenuItem("Channel Options", new BMessage (M_CHANNEL_OPTIONS_SHOW));
-    item->SetTarget (settings->parentAgent);
-    myPopUp->AddItem (item);    
-    myPopUp->AddSeparatorItem(); 
-  }
-  
+  BMessage *lookup;  
   lookup = new BMessage (M_LOOKUP_WEBSTER);
   lookup->AddString ("string", querystring);
   item = new BMenuItem("Lookup (Dictionary)", lookup);
@@ -304,7 +301,7 @@ IRCView::DisplayChunk (
    * all your coloring)
    */
 
-   while ((urlMarker = FirstMarker (data.String())) >= 0) 
+   while ((urlMarker = FirstURLMarker (data.String())) >= 0) 
    { 
      int32 theLength (URLLength (data.String() + urlMarker)); 
      BString buffer; 
@@ -412,7 +409,7 @@ IRCView::URLLength (const char *outTemp)
 
 
 int32
-IRCView::FirstMarker (const char *cData) 
+IRCView::FirstURLMarker (const char *cData) 
 { 
   BString data (cData); 
   int32 urlMarkers[6], 

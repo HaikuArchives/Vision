@@ -111,5 +111,6 @@ const uint32 M_SETUP_SHOW            = 'vass';
 const int SET_SERVER    = 1;
 const int SET_GENERAL   = 2;
 const int SET_WINDOW    = 3;
+const int SET_NOTIFY    = 4;
 
 #endif

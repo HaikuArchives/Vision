@@ -24,6 +24,8 @@
  */
 
 #include <ScrollView.h>
+#include <PopUpMenu.h>
+#include <MenuItem.h>
 
 #include <stdio.h>
 #include <ctype.h>
@@ -32,6 +34,8 @@
 #include "Vision.h"
 #include "HistoryMenu.h"
 #include "IRCView.h"
+#include "MessageAgent.h"
+#include "ChannelAgent.h"
 #include "ClientWindow.h"
 #include "ClientAgent.h"
 #include "ClientInputFilter.h"
@@ -53,7 +57,7 @@ ClientAgent::ClientAgent (
     frame_,
     id_,
     B_FOLLOW_ALL_SIDES,
-    /*B_PULSE_NEEDED |*/ B_WILL_DRAW | B_FRAME_EVENTS),
+    B_WILL_DRAW | B_FRAME_EVENTS),
     
   id (id_),
   sid (sid_),
@@ -77,7 +81,7 @@ ClientAgent::ClientAgent (
     frame_,
     id_,
     B_FOLLOW_ALL_SIDES,
-    /*B_PULSE_NEEDED |*/ B_WILL_DRAW | B_FRAME_EVENTS),
+    B_WILL_DRAW | B_FRAME_EVENTS),
     
   id (id_),
   sid (sid_),
@@ -222,6 +226,38 @@ void
 ClientAgent::SetScrollPos (float value)
 {
   textScroll->ScrollBar (B_VERTICAL)->SetValue(value);
+}
+
+void
+ClientAgent::AddMenuItems (BPopUpMenu *pmenu)
+{
+  BMenuItem *item;
+  
+  ChannelAgent *channel;
+  MessageAgent *message;
+  
+  if ((channel = dynamic_cast<ChannelAgent *>(this)))
+  {
+    // Channel Options
+    item = new BMenuItem("Channel Options", new BMessage (M_CHANNEL_OPTIONS_SHOW));
+    item->SetTarget (this);
+    pmenu->AddItem (item);
+    
+    pmenu->AddSeparatorItem();
+  }
+
+  if ((message = dynamic_cast<MessageAgent *>(this)))
+  {
+    // Whois
+    item = new BMenuItem("Whois", new BMessage (M_MSG_WHOIS));
+    item->SetTarget (this);
+    if (message->Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
+      item->SetEnabled (false);
+    pmenu->AddItem (item);
+    
+    pmenu->AddSeparatorItem();
+  }
+
 }
 
 
@@ -559,15 +595,12 @@ ClientAgent::MessageReceived (BMessage *msg)
 		{
 			const char *theNick;
 			const char *theMessage;
-			bool me (false), gotOther (false), gotNick (false);
+			bool hasNick (false);
+			bool me;
 			BString knownAs;
 
 			msg->FindString("nick", &theNick);
 			msg->FindString("msgz", &theMessage);
-
-			if (FirstKnownAs (theNick, knownAs, &me) != B_ERROR && !me)
-				gotOther = true;
-
 
 			if (theMessage[0] == '\1')
 			{
@@ -599,31 +632,21 @@ ClientAgent::MessageReceived (BMessage *msg)
 				tempString += theMessage;
 				tempString += '\n';
 
-				int32 place;
 
-				while ((place = FirstKnownAs (tempString, knownAs, &me)) !=
-					B_ERROR)
+				// soley for the purpose of iterating through the words
+				int32 place;
+				BString tempString2 (tempString);
+				while ((place = FirstKnownAs (tempString2, knownAs, &me)) != B_ERROR)
 				{
 					BString buffer;
 
 					if (place)
-					{
-						tempString.MoveInto (buffer, 0, place);
-						Display (buffer.String(), 0);
-					}
+						tempString2.MoveInto (buffer, 0, place);
 
-					tempString.MoveInto (buffer, 0, knownAs.Length());
+					tempString2.MoveInto (buffer, 0, knownAs.Length());
 
 					if (me)
-					{
-						Display (buffer.String(), &myNickColor);
-						gotNick = true;
-					}
-					else
-					{
-						Display (buffer.String(), &nickColor);
-						gotOther = true;
-					}
+						hasNick = true;
 				}
 
 				Display (tempString.String(), 0);
@@ -631,7 +654,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
 			if (IsHidden())
 			{
-				if (gotNick || gotOther)
+				if (hasNick)
 				{ 
     				BMessage statusMsg (M_UPDATE_STATUS);
     				statusMsg.AddPointer ("item", agentWinItem);
@@ -703,10 +726,7 @@ ClientAgent::FirstKnownAs (
 	BString &result,
 	bool *me)
 {
-  // :TODO: wade 020401: make also known as work...
-  BString alsoKnownAs ("-9z99");
-  BString otherNick ("-9z99");
-  //
+  BString myAKA (vision_app->GetString ("alsoKnownAs"));
 	
   int32 hit (data.Length()),
         i,
@@ -720,7 +740,7 @@ ClientAgent::FirstKnownAs (
     *me = true;
   }
 
-  for (i = 1; (target = GetWord (alsoKnownAs.String(), i)) != "-9z99"; ++i)
+  for (i = 1; (target = GetWord (myAKA.String(), i)) != "-9z99"; ++i)
   {
     if ((place = FirstSingleKnownAs (data, target)) != B_ERROR
     &&   place < hit)
@@ -728,17 +748,6 @@ ClientAgent::FirstKnownAs (
       result = target;
       hit = place;
       *me = true;
-    }
-  }
-
-  for (i = 1; (target = GetWord (otherNick.String(), i)) != "-9z99"; ++i)
-  {
-    if ((place = FirstSingleKnownAs (data, target)) != B_ERROR
-    &&   place < hit)
-    {
-      result = target;
-      hit = place;
-      *me = false;
     }
   }
 			

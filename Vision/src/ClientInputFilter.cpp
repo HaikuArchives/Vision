@@ -162,7 +162,9 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 	// Must check modifiers -- things like control-tab must work!
 	if ((keymodifiers & B_OPTION_KEY)  == 0
 	&&  (keymodifiers & B_COMMAND_KEY) == 0
-	&&  (keymodifiers & B_CONTROL_KEY) == 0)
+	&&  (keymodifiers & B_CONTROL_KEY) == 0
+	&&  (keymodifiers & B_SHIFT_KEY) == 0)
+	{
 		switch(keyStroke)
 		{
 			case B_UP_ARROW:
@@ -193,15 +195,13 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 			case B_PAGE_UP:
 			{
 				BRect myrect (window->text->Bounds());
-				float height = myrect.bottom - myrect.top;
+				float height (myrect.bottom - myrect.top);
 				
-				if ( window->textScroll->ScrollBar(B_VERTICAL)->Value() > height)
-				{
-					window->text->ScrollBy(0.0, 
-						-1 * height);
-				}
+				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() > height)
+					window->text->ScrollBy (0.0, -1 * height);
 				else
-					window->text->ScrollTo(0.0, 0.0);
+					window->text->ScrollTo (0.0, 0.0);
+				
 				result = B_SKIP_MESSAGE;
 				break;
 			}
@@ -209,12 +209,13 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 			case B_PAGE_DOWN:
 			{
 				BRect myrect (window->text->Bounds());
-				float height = myrect.bottom - myrect.top;
+				float height (myrect.bottom - myrect.top);
 			
 				float min, max;
-				window->textScroll->ScrollBar(B_VERTICAL)->GetRange(&min, &max);
-				if ( window->textScroll->ScrollBar(B_VERTICAL)->Value() != max)
-					window->text->ScrollBy(0.0, height);
+				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
+					window->text->ScrollBy (0.0, height);
+				
 				result = B_SKIP_MESSAGE;
 				break;
 			}
@@ -226,7 +227,12 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 				break;
 			}
 		}
-	if (keymodifiers & B_COMMAND_KEY)
+	}
+		
+	else if ((keymodifiers & B_OPTION_KEY)  == 0
+	&&  (keymodifiers & B_COMMAND_KEY) != 0
+	&&  (keymodifiers & B_CONTROL_KEY) == 0
+	&&  (keymodifiers & B_SHIFT_KEY) == 0)
 	{
 		switch (keyStroke)
 		{
@@ -239,7 +245,7 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 				BMessage *clip ((BMessage *)NULL);
 				if (clipboard.Lock()) {
 				   if ((clip = clipboard.Data()))
-	    			if (clip->FindData("text/plain", B_MIME_TYPE, 
+	    			if (clip->FindData ("text/plain", B_MIME_TYPE, 
 	    				(const void **)&text, &textLen) != B_OK)
 	 				{
 	 	  				clipboard.Unlock();
@@ -255,7 +261,7 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 
 			case B_HOME:
 			{
-				window->text->ScrollTo(0.0, 0.0);
+				window->text->ScrollTo (0.0, 0.0);
 				result = B_SKIP_MESSAGE;
 				break;
 			}
@@ -263,13 +269,63 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 			case B_END:
 			{
 				float min, max;
-				window->textScroll->ScrollBar(B_VERTICAL)->GetRange(&min, &max);
-				window->text->ScrollTo(0.0, max);
+				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+				window->text->ScrollTo (0.0, max);
 				result = B_SKIP_MESSAGE;
 				break;
 			}
+			
+			case B_UP_ARROW:
+				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != 0)
+				{
+					window->text->ScrollBy (0.0, window->text->LineHeight() * -1);
+					result = B_SKIP_MESSAGE;
+				}
+				break;
+			
+			case B_DOWN_ARROW:
+			{
+				float min, max;
+				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
+				{ 
+					window->text->ScrollBy (0.0, window->text->LineHeight());
+					result = B_SKIP_MESSAGE;
+				}
+				break;
+			}
+
+			case B_PAGE_UP:
+			{
+				BRect myrect (window->text->Bounds());
+				float height (myrect.bottom - myrect.top);
+				
+				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() > height)
+					window->text->ScrollBy (0.0, -1 * height);
+				else
+					window->text->ScrollTo (0.0, 0.0);
+				
+				result = B_SKIP_MESSAGE;
+				break;
+			}
+			
+			case B_PAGE_DOWN:
+			{
+				BRect myrect (window->text->Bounds());
+				float height (myrect.bottom - myrect.top);
+			
+				float min, max;
+				window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
+				if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
+					window->text->ScrollBy (0.0, height);
+				
+				result = B_SKIP_MESSAGE;
+				break;
+			}
+
 		}
 	}
+
 	return result;
 }
 	

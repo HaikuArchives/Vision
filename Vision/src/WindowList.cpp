@@ -47,14 +47,6 @@ WindowList::WindowList (BRect frame)
     B_SINGLE_SELECTION_LIST,
     B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM)
 {
-//  myPopUp = new BPopUpMenu("Window Selection", false, false);
-//
-//  BMenuItem *item;
-//  myPopUp->AddItem (item = new BMenuItem("Close", new BMessage (M_MENU_NUKE)));
-//  item->SetTarget (this);
-//  
-//  myPopUp->SetFont (be_plain_font);
-  
   textColor   = vision_app->GetColor (C_WINLIST_TEXT);
   newsColor   = vision_app->GetColor (C_WINLIST_NEWS);
   nickColor   = vision_app->GetColor (C_WINLIST_NICK);
@@ -70,21 +62,13 @@ WindowList::WindowList (BRect frame)
 
 WindowList::~WindowList (void)
 {
-  delete myPopUp;
+  //
 }
 
 void
 WindowList::AllAttached (void)
 {
-  myPopUp = new BPopUpMenu("Window Selection", false, false);
-
-  BMenuItem *item;
-  myPopUp->AddItem (item = new BMenuItem("Close", new BMessage (M_MENU_NUKE)));
-//  item->SetTarget (this);
-  
-  myPopUp->SetFont (be_plain_font);
-  myPopUp->SetTargetForItems (this);
-
+  //
 }
 
 void
@@ -147,6 +131,7 @@ WindowList::MouseDown (BPoint myPoint)
       if (item && !item->IsSelected())
         Select (IndexOf (myPoint));
 
+      BuildPopUp();
       myPopUp->Go (
         ConvertToScreen (myPoint),
         true,
@@ -471,6 +456,26 @@ WindowList::SortListItems (const void *name1, const void *name2)
   } 
 }
 
+void
+WindowList::BuildPopUp (void)
+{
+  myPopUp = new BPopUpMenu("Window Selection", false, false);
+  BMenuItem *item;
+  
+  WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (CurrentSelection())));
+  if (myItem)
+  {
+    ClientAgent *activeagent (dynamic_cast<ClientAgent *>(myItem->pAgent()));
+    if (activeagent)
+      activeagent->AddMenuItems (myPopUp);
+  }
+  
+  item = new BMenuItem("Close", new BMessage (M_MENU_NUKE));
+  item->SetTarget (this);
+  myPopUp->AddItem (item);
+  
+  myPopUp->SetFont (be_plain_font);
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
