@@ -1,8 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.2-0712]
+[0.9.2-0714]
          * fixed name item color drawing
+         * fixed logging bug (if a user changed nicks, subsequent log lines sent by that user in a query would get lost)
+         * fixed sweep selection in names list (was broken in some cases)
+         * fixed case where duplicate names could appear in names list
 
 [0.9.1-0711]
          * added dcc chat option to notify context menu

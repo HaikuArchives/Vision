@@ -294,44 +294,45 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg
    if (transitcode == B_INSIDE_VIEW)
    {
      BListItem *item = ItemAt (IndexOf(myPoint));
-     if (item && !item->IsSelected())
+     if (item)
      {
-       // user is sweeping
-       int32 first (CurrentSelection (0)),
-             last (IndexOf (myPoint));
-                   
-       if (fCurrentindex != last)
-       {
-             
-         Select (last, true);
+       BListItem *lastitem (NULL);
+       int32 first (CurrentSelection (0));
+       int32 last (first);
+       int32 i (1);
+       while ((last = CurrentSelection(i++)) != -1)
+         lastitem = ItemAt(last);
+       if (lastitem)
+         last = IndexOf(lastitem);
+       else
+         last = first;
+       int32 current (IndexOf (myPoint));
 
-         // MouseMoved messages might not get sent if the user moves real fast
-         // fill in any possible blank areas.     
-         if (last > first)
+       if (current >= 0)
+       {
+         if (current < first)
          {
-           // sweeping down
-           Select (first, last, true);
+           // sweep up
+           Select (current, last, true);
          }
-         else if (last < first)
+         else if (current > last)
          {
-           // sweeping up
-           Select (last, first, true);
+           // sweep down
+           Select (first, current, true);
          }
+         else if (fCurrentindex > current)
+         {
+           // backtrack up 
+           DeselectExcept (first, current);
+         }
+         else if (fCurrentindex < current)
+         {
+           // backtrack down
+           DeselectExcept (current, last);
+         }
+         fCurrentindex = current;
        }
-       fCurrentindex = last;
      }
-     else if (item && item->IsSelected())
-     {
-       // user is backtracking
-       int32 last (IndexOf (myPoint));
-       
-       if (fCurrentindex != last)
-         DeselectExcept (CurrentSelection (0), last);
-          
-       fCurrentindex = last;
-     }       
-       
-     
    }
    if (transitcode == B_EXITED_VIEW)
      fTracking = false;
