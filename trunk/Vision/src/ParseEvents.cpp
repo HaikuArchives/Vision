@@ -525,7 +525,6 @@ ServerAgent::ParseEvents (const char *data)
 		// so we send this one, too.
 		tempString = "";
 		tempString += "PONG ";
-		tempString += " ";
 		tempString += theServer;
 		SendData (tempString.String());
 		return true;
