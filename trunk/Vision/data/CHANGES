@@ -1,6 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
+[0.3.07016]
+2001-07-16
+    * fixed lockups on startup
+    * fixed a few other minor crash bugs
+    * fixed crash related to disconnecting network while Vision was running
+
 [0.3.07015]
 2001-07-15
     * save settings data on prefs window close.    

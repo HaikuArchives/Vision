@@ -266,7 +266,7 @@ VisionApp::InitSettings (void)
     visionSettings->Load();
   else
     printf(":ERROR: Error Loading /Vision/VisionSettings\n");
-      
+  
   LoadDefaults (SET_SERVER);
   LoadDefaults (SET_GENERAL);
   LoadDefaults (SET_WINDOW);
@@ -274,7 +274,6 @@ VisionApp::InitSettings (void)
   LoadDefaults (SET_FONT);
   LoadDefaults (SET_COLOR);
   LoadDefaults (SET_STRINGS);
-  
   settingsloaded = true;  
   if (debugsettings)
     printf (":SETTINGS: done loading\n");
@@ -368,7 +367,6 @@ VisionApp::LoadDefaults (int32 section)
            visionSettings->FindString ("family", i, &family);
            visionSettings->FindString ("style", i, &style);
            visionSettings->FindFloat ("size", &size);
-           
            ClientFontFamilyAndStyle (i, family.String(), style.String());
            ClientFontSize (i, size); 
          }
@@ -382,9 +380,7 @@ VisionApp::LoadDefaults (int32 section)
        {
          // load defaults from color array into settings file
          for (int32 i = 0; i < MAX_COLORS; i++)
-         {
            visionSettings->AddData ("color", B_RGB_COLOR_TYPE, &colors[i], sizeof (rgb_color));
-         }
        }
        else
        {
@@ -573,9 +569,10 @@ VisionApp::MessageReceived (BMessage *msg)
     
     case M_SETUP_CLOSE:
       {
-        // save settings here since user has closed prefs and changes are done.
+        settingsLock.Lock();
         if ((visionSettings->Save() == B_OK) && debugsettings)
           printf (":SETTINGS: saved to file\n");
+        settingsLock.Unlock();
         prefsWin = 0;
       }
       break;
@@ -621,6 +618,11 @@ VisionApp::VisionVersion (int typebit)
 const char *
 VisionApp::GetString (const char *stringName) const
 {
+  BAutolock stringLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!stringLock.IsLocked())
+    return "";
+  
   if (debugsettings)
     printf (":SETTINGS: looking up String \"%s\"... ", stringName);
     
@@ -640,6 +642,11 @@ VisionApp::GetString (const char *stringName) const
 status_t
 VisionApp::SetString (const char *stringName, int32 index, const char *value)
 {
+  BAutolock stringLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!stringLock.IsLocked())
+    return B_ERROR;
+    
   BString temp (value);
   if (visionSettings->ReplaceString (stringName, index, temp) == B_OK)
     return B_OK;
@@ -650,6 +657,12 @@ VisionApp::SetString (const char *stringName, int32 index, const char *value)
 status_t
 VisionApp::SetRect (const char *settingName, BRect value)
 {
+ BAutolock rectLock(const_cast<BLocker *>(&settingsLock));
+ 
+ 
+ if (!rectLock.IsLocked())
+   return B_ERROR;
+  
  if (visionSettings->ReplaceRect (settingName, value) == B_OK)
    return B_OK;
  
@@ -660,9 +673,14 @@ VisionApp::SetRect (const char *settingName, BRect value)
 rgb_color
 VisionApp::GetColor (int32 which) const
 {
-  BAutolock colorLock (Looper());
   rgb_color color = {0, 0, 0, 255};
 
+  BAutolock colorLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!colorLock.IsLocked())
+    return color;
+    
+  
   if (which < MAX_COLORS && which >= 0)
     color = colors[which];
 
@@ -673,7 +691,12 @@ VisionApp::GetColor (int32 which) const
 void
 VisionApp::SetColor (int32 which, const rgb_color color)
 {
-  BAutolock colorLock (Looper());
+
+  BAutolock colorLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!colorLock.IsLocked())
+    return;
+    
   if (which < MAX_COLORS &&  which >= 0
   && (colors[which].red   != color.red
   ||  colors[which].green != color.green
@@ -700,6 +723,12 @@ VisionApp::ClientFontFamilyAndStyle (
   const char *family,
   const char *style)
 {
+
+  BAutolock fontLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!fontLock.IsLocked())
+    return;
+    
   if (which < MAX_FONTS && which >= 0)
   {
     client_font[which]->SetFamilyAndStyle (family, style);
@@ -719,6 +748,11 @@ VisionApp::ClientFontFamilyAndStyle (
 void
 VisionApp::ClientFontSize (int32 which, float size)
 {
+  BAutolock fontLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!fontLock.IsLocked())
+    return;
+
   if (which < MAX_FONTS && which >= 0)
   {
     client_font[which]->SetSize (size);
@@ -737,6 +771,11 @@ VisionApp::ClientFontSize (int32 which, float size)
 const BFont *
 VisionApp::GetClientFont (int32 which) const
 {
+  BAutolock fontLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!fontLock.IsLocked())
+    return NULL;
+
   return which < MAX_FONTS && which >= 0 
     ? client_font[which] : be_plain_font;
 }
@@ -746,7 +785,10 @@ VisionApp::GetClientFont (int32 which) const
 BString
 VisionApp::GetEvent (int32 which) const
 {
-  BAutolock GetEventLock (Looper());
+  BAutolock eventLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!eventLock.IsLocked())
+    return "";
   
   BString buffer;
 
@@ -760,7 +802,10 @@ VisionApp::GetEvent (int32 which) const
 void
 VisionApp::SetEvent (int32 which, const char *event)
 {
-  BAutolock SetEventLock (this);
+  BAutolock eventLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!eventLock.IsLocked())
+    return;
 
   if (which < MAX_EVENTS && which >= 0
   &&  events[which].Compare (event))
@@ -782,10 +827,14 @@ VisionApp::SetEvent (int32 which, const char *event)
 BString
 VisionApp::GetCommand (int32 which)
 {
-  BAutolock GetCommandLock (this);
+  BAutolock commandLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!commandLock.IsLocked())
+    return "";
+
   BString buffer;
 
-  if (which < MAX_COMMANDS && which >= 0 && GetCommandLock.IsLocked())
+  if (which < MAX_COMMANDS && which >= 0)
     buffer = commands[which];
 
   return buffer;
@@ -795,9 +844,12 @@ VisionApp::GetCommand (int32 which)
 void
 VisionApp::SetCommand (int32 which, const char *command)
 {
-  BAutolock SetCommandLock (this);
+  BAutolock commandLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!commandLock.IsLocked())
+    return;
 
-  if (which < MAX_EVENTS && which >= 0 && SetCommandLock.IsLocked())
+  if (which < MAX_EVENTS && which >= 0)
   {
     commands[which] = command;
     
@@ -817,6 +869,11 @@ VisionApp::SetCommand (int32 which, const char *command)
 bool
 VisionApp::GetBool (const char *settingName)
 {
+  BAutolock boolLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!boolLock.IsLocked())
+    return B_ERROR;
+
   if (debugsettings)
     printf (":SETTINGS: looking up bool \"%s\"... ", settingName);
     
@@ -836,6 +893,11 @@ VisionApp::GetBool (const char *settingName)
 status_t
 VisionApp::SetBool (const char *settingName, bool value)
 {
+  BAutolock boolLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (!boolLock.IsLocked())
+    return B_ERROR;
+
  if (visionSettings->ReplaceBool (settingName, value) == B_OK)
  {
    BMessage msg (M_STATE_CHANGE);

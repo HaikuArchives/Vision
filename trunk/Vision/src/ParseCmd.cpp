@@ -1309,7 +1309,7 @@ ClientAgent::DNSLookup (void *arg)
   delete msg;
 
   BMessage dnsMsg (M_DISPLAY);
-  agent->PackDisplay (&dnsMsg, output.String(), &(agent->whoisColor));
+  agent->PackDisplay (&dnsMsg, output.String(), C_WHOIS);
   agent->msgr.SendMessage (&dnsMsg);
 
   return B_OK;

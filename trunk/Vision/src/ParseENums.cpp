@@ -300,7 +300,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += '\n';
       
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &whoisColor);
+        PackDisplay (&msg, tempString.String(), C_WHOIS);
         PostActive (&msg);
       }
       return true;
@@ -329,7 +329,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString.Append ("\n");
 		
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &errorColor, &serverFont);
+        PackDisplay (&msg, tempString.String(), C_WHOIS, &serverFont);
         PostActive (&msg);
       }
       return true;
@@ -344,7 +344,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += '\n';
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+        PackDisplay (&msg, tempString.String(), C_WHOIS, &serverFont);
         PostActive (&msg);
       }
       return true;
@@ -419,7 +419,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         buffer += "[x] ";
         buffer += theInfo;
         buffer += "\n";
-        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PackDisplay (&display, buffer.String(), C_WHOIS, &serverFont);
         PostActive (&display);
       }
       return true;
@@ -441,7 +441,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         buffer += "[x] ";
         buffer += theInfo;
         buffer += "\n";
-        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PackDisplay (&display, buffer.String(), C_WHOIS, &serverFont);
         PostActive (&display);
       }
       return true;
@@ -468,7 +468,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         buffer += theName;
         buffer += "\n";
       
-        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PackDisplay (&display, buffer.String(), C_WHOIS, &serverFont);
         PostActive (&display);
       }
 	  return true;
@@ -488,7 +488,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         buffer += " (";
         buffer += theInfo;
         buffer += ")\n";
-        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PackDisplay (&display, buffer.String(), C_WHOIS, &serverFont);
         PostActive (&display);
       }
       return true;
@@ -509,7 +509,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += ")\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+        PackDisplay (&msg, tempString.String(), C_WHOIS, &serverFont);
         PostActive (&msg);
       }
       return true;
@@ -542,9 +542,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString2 += "\n";
 	 	
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+        PackDisplay (&msg, tempString.String(), C_WHOIS, &serverFont);
         PostActive (&msg);
-        PackDisplay (&msg, tempString2.String(), &whoisColor, &serverFont);
+        PackDisplay (&msg, tempString2.String(), C_WHOIS, &serverFont);
         PostActive (&msg);
       }
       return true;
@@ -568,7 +568,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         buffer += "[x] Channels: ";
         buffer += theChannels;
         buffer += "\n";
-        PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+        PackDisplay (&display, buffer.String(), C_WHOIS, &serverFont);
         PostActive (&display);
       }
       return true;
@@ -675,7 +675,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += '\n';
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &errorColor);
+        PackDisplay (&msg, tempString.String(), C_ERROR);
         PostActive (&msg);
       }
       return true;
@@ -696,7 +696,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           buffer += "*** Topic: ";
           buffer += theTopic;
           buffer += '\n';
-          PackDisplay (&display, buffer.String(), &whoisColor, 0,
+          PackDisplay (&display, buffer.String(), C_WHOIS, 0,
             vision_app->GetBool ("timestamp"));
 
           BMessage msg (M_CHANNEL_TOPIC);
@@ -737,7 +737,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           buffer += " @ ";
           buffer += theTimeParsed;
           buffer += '\n';
-          PackDisplay (&display, buffer.String(), &whoisColor, 0,
+          PackDisplay (&display, buffer.String(), C_WHOIS, 0,
             vision_app->GetBool ("timestamp"));
           if (client->msgr.IsValid())
             client->msgr.SendMessage (&display);
@@ -759,7 +759,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         
         BMessage display (M_DISPLAY);
         
-        PackDisplay (&display, tempString.String(), &whoisColor, 0,
+        PackDisplay (&display, tempString.String(), C_WHOIS, 0,
           vision_app->GetBool ("timestamp"));
         PostActive (&display);
       }
@@ -884,7 +884,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           const char *reString;
           reString = "[@] Successful reconnect\n";
           Display (reString, &errorColor);
-          DisplayAll (reString, &errorColor, &serverFont);
+          DisplayAll (reString, C_ERROR, &serverFont);
           msgr.SendMessage (M_REJOIN_ALL);
           reconnecting = false;
         }
@@ -984,7 +984,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += " is already in use or unavailable.\n";
  
         BMessage display (M_DISPLAY);
-        PackDisplay (&display, tempString.String(), &nickColor);
+        PackDisplay (&display, tempString.String(), C_NICK);
         PostActive (&display);
       }
       return true;
@@ -1000,7 +1000,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += ".\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &errorColor);
+        PackDisplay (&msg, tempString.String(), C_ERROR);
         PostActive (&msg);
       }
       return true;
@@ -1013,7 +1013,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += ".\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &errorColor);
+        PackDisplay (&msg, tempString.String(), C_ERROR);
         PostActive (&msg);
       }
       return true;
@@ -1029,7 +1029,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += ".\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &errorColor);
+        PackDisplay (&msg, tempString.String(), C_ERROR);
         PostActive (&msg);
       }
       return true;
@@ -1042,7 +1042,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += ".\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &errorColor);
+        PackDisplay (&msg, tempString.String(), C_ERROR);
         PostActive (&msg);
       }
       return true;
@@ -1055,7 +1055,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += "'\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &quitColor);
+        PackDisplay (&msg, tempString.String(), C_QUIT);
         PostActive (&msg);
       }
       return true;
@@ -1071,7 +1071,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += " (invite only)\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
+        PackDisplay (&msg, tempString.String(), C_QUIT, &serverFont);
         PostActive (&msg);
       }
       return true;
@@ -1088,7 +1088,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += " (you're banned)\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
+        PackDisplay (&msg, tempString.String(), C_QUIT, &serverFont);
         PostActive (&msg);
       }
       return true;
@@ -1104,7 +1104,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += " (bad channel key)\n";
 
         BMessage msg (M_DISPLAY);
-        PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
+        PackDisplay (&msg, tempString.String(), C_QUIT, &serverFont);
         PostActive (&msg);
       }
       return true;
@@ -1115,7 +1115,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BString buffer;
 		
         buffer += "[x] Unknown MODE flag.\n";
-        PackDisplay (&msg, buffer.String(), &quitColor);
+        PackDisplay (&msg, buffer.String(), C_QUIT);
         PostActive (&msg);
       }
       return true;
@@ -1151,7 +1151,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
               tempString += "[@] ";
               tempString += theMessage;
               BMessage msg (M_DISPLAY);
-              PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+              PackDisplay (&msg, tempString.String(), C_WHOIS, &serverFont);
               PostActive (&msg);  
             }
             break;

@@ -133,7 +133,7 @@ class ClientAgent : public BView
     static int32                    TimedSubmit (void *);
     static void                     PackDisplay (BMessage *,
                                       const char *,
-                                      const rgb_color * = 0,
+                                      const int32 = -1,
                                       const BFont * = 0,
                                       bool = false);
 
