@@ -227,7 +227,7 @@ MessageAgent::DCCIn (void *arg)
           agent->ChannelMessage (inputBuffer.String());
           inputBuffer = "";
         }
-        else
+        else if (tempBuffer[0] != '\r')
           inputBuffer.Append(tempBuffer[0],1);
     }
   }
@@ -525,7 +525,7 @@ MessageAgent::Parser (const char *buffer)
   {
     BString outTemp (buffer);
 
-    outTemp << "\n";
+    outTemp << "\r\n";
     if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
     {
       dConnected = false;
