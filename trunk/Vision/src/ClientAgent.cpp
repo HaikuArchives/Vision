@@ -713,7 +713,7 @@ ClientAgent::MessageReceived (BMessage *msg)
           BMessage statusMsg (M_UPDATE_STATUS);
           statusMsg.AddPointer ("item", agentWinItem);
 
-          if (hasNick)
+          if (hasNick || dynamic_cast<MessageAgent *>(this))
             statusMsg.AddInt32 ("status", WIN_NICK_BIT);
           else
             statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
