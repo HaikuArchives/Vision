@@ -228,6 +228,7 @@ ClientAgent::ParseCmd (const char *data)
       msg.AddBool("history", false); 
       currentserver->Broadcast(&msg);
     }
+    return true;
   }
  
   if (firstWord == "/ACLEAR")
@@ -237,6 +238,7 @@ ClientAgent::ParseCmd (const char *data)
     msg.AddBool("clear", true);
     msg.AddBool("history", true);
     vision_app->pClientWin()->ServerBroadcast(&msg);
+    return true;
   }
 
 

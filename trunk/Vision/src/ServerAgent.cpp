@@ -876,6 +876,7 @@ ServerAgent::Broadcast (BMessage *msg)
     if (client != this)
       client->fMsgr.SendMessage (msg);
   }
+  fSMsgr.SendMessage(msg);
 }
 
 void
