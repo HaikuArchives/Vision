@@ -48,7 +48,7 @@ class ListAgent : public BView
     virtual void            MessageReceived (BMessage *);
     virtual void            FrameResized (float, float);
     virtual void            AttachedToWindow (void);
-
+	virtual void			AllAttached (void);
     static int              SortChannels (const void *, const void *);
     static int              SortUsers (const void *, const void *);
 
@@ -58,7 +58,7 @@ class ListAgent : public BView
     
   private:
     BMessenger              *sMsgr;
-
+	BMenuBar				*mBar;
     BListView               *listView;
     BScrollView             *scroller;
     StatusView              *status;

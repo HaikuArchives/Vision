@@ -864,14 +864,21 @@ VisionApp::Identity (void *)
     { 
       accepted = identPoint.Accept (-1); 
       if (accepted) 
-      { 
+      {
         BNetAddress remoteAddr (accepted->RemoteAddr()); 
         struct sockaddr_in remoteSock; 
         remoteAddr.GetAddr (remoteSock); 
         BString remoteIP (inet_ntoa (remoteSock.sin_addr)); 
         ident = vision_app->GetIdent (remoteIP.String()); 
         if (ident) 
-        { 
+        {
+#ifdef BONE_BUILD
+          accepted->SetTimeout(5);
+#endif
+
+#ifdef NETSERVER_BUILD
+          accepted->SetNonBlocking(true);
+#endif
           accepted->Receive (buffer, 64); 
           buffer.RemoveString (received, 64); 
           int32 len; 
