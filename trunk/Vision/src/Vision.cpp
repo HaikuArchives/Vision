@@ -169,24 +169,61 @@ VisionApp::InitSettings(void)
 		visionSettings->Load();	
 	else
       printf(":ERROR: Error Loading /Vision/VisionSettings\n");
+      
+    LoadDefaults (SET_SERVER);
+    LoadDefaults (SET_GENERAL);
+    LoadDefaults (SET_WINDOW);
  
-    if (!visionSettings->HasRect ("clientWinRect"))
-      visionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
-    
-    if (!visionSettings->HasBool ("timestamp"))
-      visionSettings->AddBool ("timestamp", false);
-    
-    if (!visionSettings->HasBool ("versionParanoid"))
-      visionSettings->AddBool ("versionParanoid", false);
-    
-    if (!visionSettings->HasBool ("catchAltW"))
-      visionSettings->AddBool ("catchAltW", false);
-    
     settingsloaded = true;
     if (debugsettings)
       printf (":SETTINGS: done loading\n");
       
 
+}
+
+void
+VisionApp::LoadDefaults (int32 section)
+{
+  // sets defaults for various states in vision
+
+  switch (section)
+  {
+    case SET_SERVER:
+    {
+      if (!visionSettings->HasString ("nickname1"))
+        visionSettings->AddString ("nickname1", "vision");
+
+      if (!visionSettings->HasString ("nickname2"))
+        visionSettings->AddString ("nickname2", "vision2");
+
+      if (!visionSettings->HasString ("realname"))
+        visionSettings->AddString ("realname", "Heisenberg may have slept here");
+    
+      break;
+    }
+    
+    case SET_GENERAL:
+    {
+      if (!visionSettings->HasBool ("versionParanoid"))
+        visionSettings->AddBool ("versionParanoid", false);
+
+      if (!visionSettings->HasBool ("timestamp"))
+        visionSettings->AddBool ("timestamp", false);
+
+      break;
+    }
+    
+    case SET_WINDOW:
+    {
+      if (!visionSettings->HasBool ("catchAltW"))
+        visionSettings->AddBool ("catchAltW", false);
+
+      if (!visionSettings->HasRect ("clientWinRect"))
+        visionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
+    
+      break;
+    }
+  }
 }
 
 bool
@@ -346,6 +383,43 @@ VisionApp::VisionVersion (void)
   return output;
 }
 
+BString
+VisionApp::GetString (const char *stringName) const
+{
+  if (debugsettings)
+    printf (":SETTINGS: looking up String \"%s\"... ", stringName);
+    
+  BString value;
+  
+  if (visionSettings->FindString (stringName, &value) == B_OK)
+    if (debugsettings)
+      printf ("found; returning %s\n", value.String());
+  else
+    if (debugsettings)
+      printf (" not found; returning NULL\n");
+      
+  return value;
+}
+
+
+status_t
+VisionApp::SetString (const char *stringName, BString value)
+{
+  if (visionSettings->ReplaceString (stringName, value) == B_OK)
+    return B_OK;
+  
+  return B_ERROR;
+}
+
+status_t
+VisionApp::SetString (const char *stringName, const char *value)
+{
+  BString temp (value);
+  if (visionSettings->ReplaceString (stringName, temp) == B_OK)
+    return B_OK;
+  
+  return B_ERROR;  
+}
 
 status_t
 VisionApp::SetRect (const char *settingName, BRect value)
