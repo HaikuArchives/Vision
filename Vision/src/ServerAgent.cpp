@@ -84,8 +84,7 @@ ServerAgent::ServerAgent (
 		localAddress (""),
 		localIP ("")
 {
- //
- 
+  
 }
 
 ServerAgent::~ServerAgent (void)
@@ -176,7 +175,7 @@ ServerAgent::Establish (void *arg)
 		statString += ")\n";
 		server->PackDisplay (&statMsg, statString.String(), &(server->errorColor));
 		sMsgrE->SendMessage (&statMsg);
-		//server->DisplayAll (tempStringR.String(), false, &(server->errorColor), &(server->serverFont));
+		server->DisplayAll (statString.String(), &(server->errorColor), &(server->serverFont));
 	}
 		
 	
@@ -328,9 +327,9 @@ ServerAgent::Establish (void *arg)
 		server->PackDisplay (&statMsg, "[@] Could not establish a connection to the server. Sorry.\n", &(server->errorColor));
 		sMsgrE->SendMessage (&statMsg);
 		sMsgrE->SendMessage (M_SERVER_DISCONNECT);
+		server->lEndpoint = 0;
 		endPoint->Close();
 		delete endPoint;
-		endPoint = 0;
 		delete sMsgrE;		
 		return B_ERROR;
 	}
@@ -426,9 +425,9 @@ ServerAgent::Establish (void *arg)
 		server->Window()->Unlock();
 		snooze (20000);
 	}
+	server->lEndpoint = 0;
 	endPoint->Close();
 	delete endPoint;
-	endPoint = 0;
 	
 	delete sMsgrE;
 	return B_OK;
@@ -737,17 +736,12 @@ ServerAgent::MessageReceived (BMessage *msg)
 				SendData (quitMsg.String());
 			}
 			
-			//BMessage abortchildren (M_CLIENT_QUIT);
 			Broadcast (new BMessage (M_CLIENT_QUIT));
 
 		  	BMessage deathchant (M_OBITUARY);
 		  	deathchant.AddPointer ("agent", this);
 		  	deathchant.AddPointer ("item", agentWinItem);
-		  	vision_app->pClientWin()->PostMessage (&deathchant);						
-						
-//			BMessage aMsg (M_SERVER_SHUTDOWN);
-//			aMsg.AddString ("server", serverName.String());
-//			Window()->PostMessage (&aMsg);
+		  	vision_app->pClientWin()->PostMessage (&deathchant);
 			
 			break;
 		}

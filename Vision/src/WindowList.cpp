@@ -76,7 +76,6 @@ WindowList::~WindowList (void)
 void
 WindowList::AllAttached (void)
 {
-  parent = dynamic_cast<ClientWindow *>(Window());
   myPopUp = new BPopUpMenu("Window Selection", false, false);
 
   BMenuItem *item;
@@ -350,12 +349,11 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       }
     }
   }
-  
-  parent->Lock();
-  parent->bgView->AddChild (newagent);
+  vision_app->pClientWin()->Lock();
+  vision_app->pClientWin()->bgView->AddChild (newagent);
   newagent->Hide(); // get it out of the way
   newagent->Sync(); // clear artifacts
-  parent->Unlock();
+  vision_app->pClientWin()->Unlock();
   
   if (activate)  // if activate is true, show the new view now.
     if (CurrentSelection() == -1)
@@ -388,7 +386,7 @@ WindowList::Activate (int32 index)
    
   if ((activeagent != newagent) && (activeagent != 0))
   {
-    parent->Lock();
+    vision_app->pClientWin()->Lock();
     
     if (activeagent)
     {
@@ -398,13 +396,13 @@ WindowList::Activate (int32 index)
   
     newagent->Show();
     
-    parent->Unlock();
+    vision_app->pClientWin()->Unlock();
   }
   if (activeagent == 0)
   {
-    parent->Lock();
+    vision_app->pClientWin()->Lock();
     newagent->Show();
-    parent->Unlock();
+    vision_app->pClientWin()->Unlock();
   }
  
   // activate the input box (if it has one)
@@ -418,14 +416,14 @@ void
 WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
 {
   printf ("ho!\n");
-  parent->Lock();
+  vision_app->pClientWin()->Lock();
   agent->Hide();
   agent->RemoveSelf();
   RemoveItem (agentitem);
   SortItems (SortListItems);
   delete agent;
   Select (0); // TODO select something more intelligently
-  parent->Unlock();
+  vision_app->pClientWin()->Unlock();
 }
 
 
