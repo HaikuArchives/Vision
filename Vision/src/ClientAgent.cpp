@@ -92,7 +92,7 @@ ClientAgent::ClientAgent (
 
 ClientAgent::~ClientAgent (void)
 {
-  //
+  delete agentWinItem;
 }
 
 

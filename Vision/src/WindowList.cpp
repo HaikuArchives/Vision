@@ -342,12 +342,12 @@ WindowList::Activate (int32 index)
     }
   }
   
-  
-  if (activeagent != newagent)
+   
+  if ((activeagent != newagent) && (activeagent != 0))
   {
     parent->Lock();
     
-    if (activeagent)
+    if (activeagent != 0)
     {
       activeagent->Hide(); // you arent wanted anymore!
       activeagent->Sync(); // and take your damned pixels with you!
@@ -357,12 +357,32 @@ WindowList::Activate (int32 index)
     
     parent->Unlock();
   }
+  if (activeagent == 0)
+  {
+    parent->Lock();
+    newagent->Show();
+    parent->Unlock();
+  }
  
   // activate the input box (if it has one)
   if ((newagent = dynamic_cast<ClientAgent *>(newagent)))
     reinterpret_cast<ClientAgent *>(newagent)->msgr.SendMessage (M_INPUT_FOCUS);
   
   Select (index);
+}
+
+void
+WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
+{
+  printf ("ho!\n");
+  parent->Lock();
+  agent->Hide();
+  agent->RemoveSelf();
+  RemoveItem (agentitem);
+  SortItems (SortListItems);
+  delete agent;
+  Select (0); // TODO select something more intelligently
+  parent->Unlock();
 }
 
 

@@ -70,6 +70,7 @@ ChannelAgent::ChannelAgent (
 ChannelAgent::~ChannelAgent (void)
 {
   namesList->ClearList();
+  
 }
 
 void
@@ -687,8 +688,22 @@ ChannelAgent::MessageReceived (BMessage *msg)
 		
 		case M_CLIENT_QUIT:
 		{
-		  // TODO
-		  printf ("FIXME: do something with this M_CLIENT_QUIT msg\n");
+			if (msg->HasBool ("vision:part") && msg->FindBool ("vision:part"))
+			{
+				BMessage send (M_SERVER_SEND);	
+				AddSend (&send, "PART ");
+				AddSend (&send, id);	
+				AddSend (&send, endl);
+			}		  			
+		  		
+		  	ClientWindow *window ((ClientWindow *)Window());
+		  	BMessage deathchant (M_OBITUARY);
+		  	deathchant.AddPointer ("agent", this);
+		  	deathchant.AddPointer ("item", agentWinItem);
+		  	window->PostMessage (&deathchant);
+		  
+		  	deathchant.what = M_CLIENT_SHUTDOWN;
+		  	sMsgr.SendMessage (&deathchant);
 		  break;
 		}
 						

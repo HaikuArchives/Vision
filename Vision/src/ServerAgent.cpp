@@ -747,6 +747,27 @@ ServerAgent::MessageReceived (BMessage *msg)
 			BMessage aMsg (M_SERVER_SHUTDOWN);
 			aMsg.AddString ("server", serverName.String());
 			Window()->PostMessage (&aMsg);
+			
+			break;
+		}
+		
+		case M_CLIENT_SHUTDOWN:
+		{
+		    printf ("m_client_shutdown\n");
+			ClientAgent *deadagent;
+			
+			if (msg->FindPointer ("agent", reinterpret_cast<void **>(&deadagent)) != B_OK)
+			{
+				printf (":ERROR: error getting valid pointer from M_CLIENT_SHUTDOWN -- bailing\n");
+	  			break;
+    		}
+    		
+    		clients.RemoveItem (deadagent);
+			
+			if (isQuitting && clients.CountItems() <= 1)
+				sMsgr.SendMessage (M_CLIENT_QUIT);
+			
+			break;
 		}
 		
 		default:
