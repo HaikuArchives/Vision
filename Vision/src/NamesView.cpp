@@ -258,6 +258,8 @@ NamesView::MouseDown (BPoint myPoint)
         ConvertToScreen (ItemFrame (selected)));
       handled = true;
     }
+    if (mousebuttons == B_TERTIARY_MOUSE_BUTTON)
+      BListView::MouseDown (myPoint);
   }
 
   lastSelected = selected; 

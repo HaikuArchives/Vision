@@ -1,6 +1,13 @@
 Vision
 http://vision.sourceforge.net
 
+[0.5-exp]
+         * rewriting general preferences
+            -- prefs window is now resizable
+            -- Appearance prefs replaced by Color prefs (*HUGE* thanks to Be, Inc. for
+                 contributing the ColorSelector control!)
+            -- rewritten Font prefs still in progress, to be added soon
+
 [0.4-1001]
 2001-10-01
          * replaced IRCView with RunView (*HUGE* thanks to Todd Lair!)

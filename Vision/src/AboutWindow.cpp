@@ -107,6 +107,7 @@ AboutWindow::AboutWindow (void)
     "Unit A\n[Vision]\n"
     "{A-Z}\n"
     "Rene Gollent (AnEvilYak)\n"
+    "Todd Lair (tlair)\n"
     "Wade Majors (kurros)\n\n\n\n"
 
     "\n\n\n\nUnit B\n[Bowser]\n"

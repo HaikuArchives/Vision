@@ -627,7 +627,7 @@ ClientWindow::Init (void)
   bgView->AddChild (cwDock);
   
   resize = new ResizeView (cwDock, BRect (cwDock->Frame().right + 1,
-    Bounds().top + 1, cwDock->Frame().right + 3, cwDock->Frame().Height()));
+    Bounds().top + 1, cwDock->Frame().right + 3, status->Frame().top - 1));
   
   bgView->AddChild (resize);
 

@@ -19,47 +19,28 @@
  * Contributor(s): Rene Gollent
  */
  
-#ifndef _PREFAPPEARANCE_H
-#define _PREFAPPEARANCE_H
+#ifndef _PREFCOLOR_H
+#define _PREFCOLOR_H
 
 #include <View.h>
 #include <Messenger.h>
 #include "VisionBase.h"
 
-const uint32 M_ELEMENT_SELECTION_CHANGED = 'aesc';
-const uint32 M_FONT_CHANGE = 'fpfc';
-const uint32 M_FONT_SIZE_CHANGE = 'fpsc';
-const uint32 M_COLOR_INVOKED = 'cpci';
-const uint32 M_COLOR_CHANGED = 'cpcc';
+class ColorSelector;
+class BButton;
 
-class BMenuField;
-class BaseColorControl;
-class BStringView;
-class ColorLabel;
-
-class AppearancePrefsView : public BView
+class ColorPrefsView : public BView
 {
   public:
-    AppearancePrefsView (BRect);
-    virtual ~AppearancePrefsView (void);
+    ColorPrefsView (BRect);
+    virtual ~ColorPrefsView (void);
     virtual void MessageReceived (BMessage *);
     virtual void AttachedToWindow (void);
     virtual void AllAttached (void);
   private:
-    void UpdateSampleFont(int32);
-    void SetSampleColors (int32);
-    void SetFontControlState (int32);
-
-    BMenuField  *clientFont[8],
-                *fontSize[8],
-                *fontMenu;
-    BaseColorControl *sample;
-    BStringView *sampleText;
-    ColorLabel *label;
     rgb_color colors [MAX_COLORS];
-    BMessenger picker;
-    int32      lastwhich;
-
+    ColorSelector *selector;
+    BButton *revert;
 };
 
-#endif // _PREFAPPEARANCE_H
+#endif // _PREFCOLOR_H
