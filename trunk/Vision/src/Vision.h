@@ -86,8 +86,8 @@ class VisionApp : public BApplication
 
     void                    Broadcast (BMessage *);
     void                    Broadcast (BMessage *, const char *, bool = false);
-    	
-	BString					events[MAX_EVENTS];
+    
+    BString					events[MAX_EVENTS];
 	
 	bool                    debugsettings;
 	bool                    debugsend;
