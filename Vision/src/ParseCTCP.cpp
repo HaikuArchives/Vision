@@ -141,6 +141,21 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     tempString += '\1';
     SendData (tempString.String());
   }
+  
+  else if ((theCTCP == "TIME") || (theCTCP == "DATE"))
+  {
+    time_t st (time (0));
+    struct tm curTime (*localtime (&st)); 
+    char str[47];
+    strftime (str,47,"%A %b %d %Y %I:%M %p %Z",&curTime);
+
+    BString tempString ("NOTICE ");
+    tempString += theNick;
+    tempString += " :\1TIME "; 
+    tempString += str;
+    tempString += '\1';
+    SendData (tempString.String());
+  }
 
   #if 0
   else if(theCTCP == "DCC")

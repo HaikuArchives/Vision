@@ -128,9 +128,6 @@ ClientWindow::HandleKey (BMessage *keyMsg)
   keyMsg->FindInt32 ("key", &key);
   keyMsg->FindInt32 ("modifiers", &mod);
 
-  // keycodes can be viewed at
-  // http://www.be.com/documentation/be_book/Keyboard/KeyboardKeyCodes.html
-  
   if ((mod & B_OPTION_KEY)  == 0
   &&  (mod & B_COMMAND_KEY) != 0
   &&  (mod & B_CONTROL_KEY) == 0
@@ -141,20 +138,20 @@ ClientWindow::HandleKey (BMessage *keyMsg)
     /////////////////////
     switch (key)
     {
-      case '\x64': // numpad 0
+      case VK_NUMPAD0:
         // switch to last active agent
         pWindowList()->SelectLast();
         break;
       
-      case '\x57': // up arrow
-      case '\x61': // left arrow (baxter muscle memory)
-      case '\x53': // comma (bowser muscle memory)
+      case VK_UP:
+      case VK_LEFT: // baxter muscle memory
+      case VK_COMMA: // bowser muscle memory
         pWindowList()->ContextSelectUp();
         break;
       
-      case '\x62': // down arrow
-      case '\x63': // right arrow (baxter muscle memory)
-      case '\x54': // period (bowser muscle memory)
+      case VK_DOWN: //
+      case VK_RIGHT: // baxter muscle memory
+      case VK_PERIOD: // bowser muscle memory
         pWindowList()->ContextSelectDown();
         break;      
     }
@@ -170,7 +167,7 @@ ClientWindow::HandleKey (BMessage *keyMsg)
     //////////////////////
     switch (key)
     {
-      case '\x2b': // T - TermHire muscle memory :)
+      case VK_T: // TermHire muscle memory :)
         // open Terminal
         be_roster->Launch ("application/x-vnd.Be-SHEL", 0, NULL);
         break;
@@ -187,34 +184,34 @@ ClientWindow::HandleKey (BMessage *keyMsg)
     ///////////////
     switch (key)
     {
-      case '\x57': // up arrow
-      case '\x61': // left arrow (baxter muscle memory)
-      case '\x53': // comma (bowser muscle memory)
+      case VK_UP:
+      case VK_LEFT: // baxter muscle memory
+      case VK_COMMA: // bowser muscle memory
         // move up one agent
         pWindowList()->Select (pWindowList()->CurrentSelection() - 1);
         pWindowList()->ScrollToSelection();
         break;
 
-      case '\x62': // down arrow
-      case '\x63': // right arrow (baxter muscle memory)
-      case '\x54': // period (bowser muscle memory)
+      case VK_DOWN:
+      case VK_RIGHT: // baxter muscle memory
+      case VK_PERIOD: // bowser muscle memory
         // move down one agent
         pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
         pWindowList()->ScrollToSelection();
         break;
         
-      case '\x55': // forward slash (/) (bowser muscle memory)
+      case VK_SLASH: // bowser muscle memory
         // move to the agents parent ServerAgent
         // XXX move to WindowList ?
         pWindowList()->SelectServer();
         break;
       
-      case '\x30': // P
+      case VK_P: // P
         // close agent
         PostMessage (M_CW_ALTP);
         break;
       
-      case '\x28': // W
+      case VK_W: // W
         // close window/quit vision
         PostMessage (M_CW_ALTW);
         break;      

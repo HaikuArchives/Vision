@@ -199,23 +199,52 @@ filter_result
 ClientAgentInputFilter::HandleKeys (BMessage *msg)
 {
   filter_result result (B_DISPATCH_MESSAGE);
-  int8 keyStroke;
+  int32 keyStroke;
   int32 keymodifiers;
 
   BMessenger msgr (window);
 
-  msg->FindInt8 ("byte", &keyStroke);
+  msg->FindInt32 ("key", &keyStroke);
   msg->FindInt32 ("modifiers", &keymodifiers);
 
-  // Must check modifiers -- things like control-tab must work!
+  switch (keyStroke)
+  {
+    /////////////////
+    /// catch all ///
+    /////////////////
+    
+    case VK_RETURN:
+    case VK_NUMPADRETURN:
+      {
+        // we dont want Shift+B_RETURN to select all the text
+        // treat keypress like we would a normal B_RETURN
+        if (window->input->TextView()->TextLength())
+        {
+          BMessage msg (M_SUBMIT);
+          msg.AddString ("input", window->input->TextView()->Text());
+          msgr.SendMessage (&msg);
+        }
+        result = B_SKIP_MESSAGE;
+      }
+      break;
+        
+    case VK_ESCAPE:
+      result = B_SKIP_MESSAGE;
+      break;
+  }
+
+
   if ((keymodifiers & B_OPTION_KEY)  == 0
   &&  (keymodifiers & B_COMMAND_KEY) == 0
   &&  (keymodifiers & B_CONTROL_KEY) == 0
   &&  (keymodifiers & B_SHIFT_KEY) == 0)
   {
+    ////////////////////
+    /// no modifiers ///
+    ////////////////////
     switch (keyStroke)
     {
-      case B_UP_ARROW:
+      case VK_UP:
         {
           // used for input history
           msgr.SendMessage (M_PREVIOUS_INPUT);
@@ -223,7 +252,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case B_DOWN_ARROW:
+      case VK_DOWN:
         {
           // used for input history
           msgr.SendMessage (M_NEXT_INPUT);
@@ -231,22 +260,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case B_RETURN:
-        {
-          // send the text off for processing
-          if (window->input->TextView()->TextLength())
-          {
-            BMessage msg (M_SUBMIT);
-
-            msg.AddString ("input", window->input->TextView()->Text());
-            msgr.SendMessage (&msg);
-          }
-          
-          result = B_SKIP_MESSAGE;
-        }
-        break;
-
-      case B_PAGE_UP:
+      case VK_PAGE_UP:
         {
           // scroll the IRCView
           BRect myrect (window->text->Bounds());
@@ -261,7 +275,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case B_PAGE_DOWN:
+      case VK_PAGE_DOWN:
         {
           // scroll the IRCView
           BRect myrect (window->text->Bounds());
@@ -271,16 +285,11 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
           window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
           if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
             window->text->ScrollBy (0.0, height);
-
           result = B_SKIP_MESSAGE;
         }
         break;
       
-      case B_ESCAPE:
-        result = B_SKIP_MESSAGE;
-        break;
-
-      case '\t': // tab key
+      case VK_TAB: // tab key
         {
           // used for tabcompletion for nickname/channelname/etc
           window->TabExpansion();
@@ -291,43 +300,17 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
     }
   }
 
-  if ((keymodifiers & B_OPTION_KEY)  == 0
-  &&  (keymodifiers & B_COMMAND_KEY) == 0
-  &&  (keymodifiers & B_CONTROL_KEY) == 0
-  &&  (keymodifiers & B_SHIFT_KEY) != 0)
-  {
-    switch (keyStroke)
-    {
-      case B_RETURN:
-        {
-          // we dont want Shift+B_RETURN to select all the text
-          // treat keypress like we would a normal B_RETURN
-          if (window->input->TextView()->TextLength())
-          {
-            BMessage msg (M_SUBMIT);
-
-            msg.AddString ("input", window->input->TextView()->Text());
-            msgr.SendMessage (&msg);
-          }
-
-          result = B_SKIP_MESSAGE;
-        }
-        break;
-        
-      case B_ESCAPE:
-        result = B_SKIP_MESSAGE;
-        break;
-    }
-  }
-
   else if ((keymodifiers & B_OPTION_KEY)  == 0
   &&  (keymodifiers & B_COMMAND_KEY) == 0
   &&  (keymodifiers & B_CONTROL_KEY) != 0
   &&  (keymodifiers & B_SHIFT_KEY) == 0)
   {
+    ////////////
+    /// Ctrl ///
+    ////////////
     switch (keyStroke)
     {
-      case B_UP_ARROW:
+      case VK_UP:
         {
           // scroll the IRCView up by 1 line
           if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != 0)
@@ -338,7 +321,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case B_DOWN_ARROW:
+      case VK_DOWN:
         {
           // scroll the IRCView down by 1 line
           float min, max;
@@ -351,7 +334,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case B_HOME:
+      case VK_HOME:
         {
           // scroll to the beginning of the IRCView
           window->text->ScrollTo (0.0, 0.0);
@@ -359,7 +342,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case B_END:
+      case VK_END:
         {
           // scroll to the end of the IRCView
           float min, max;
@@ -369,8 +352,8 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
 
-      case B_PAGE_UP:
-      case B_PAGE_DOWN:
+      case VK_PAGE_UP:
+      case VK_PAGE_DOWN:
         {
           // scroll the IRCView
           BRect myrect (window->text->Bounds());
@@ -395,9 +378,19 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
       
-      case B_ESCAPE:
-        result = B_SKIP_MESSAGE;
+      case VK_U:
+        {
+          if (window->input->TextView()->TextLength())
+          {
+            int32 selstart, selfinish;
+            window->input->TextView()->GetSelection (&selstart, &selfinish);
+            window->input->TextView()->Delete (0,
+                                               selfinish);
+          }
+          result = B_SKIP_MESSAGE;
+        }
         break;
+          
     }
   }
 

@@ -40,8 +40,7 @@ ClientAgentLogger::ClientAgentLogger (BString currentLog, BString server)
   logFile = new BFile();
   logBuffer = new BList();
   logBufferLock = new BLocker();
-  // initialize the log file if it doesn't already exist
-  SetupLogging();
+
   // semaphore used to synchronize the log thread and newly incoming log requests
   logSyncherLock = create_sem (0, "logSynchLock_sem");
   logThread = spawn_thread (AsyncLogger,
@@ -149,6 +148,10 @@ int32
 ClientAgentLogger::AsyncLogger (void *arg)
 {
   ClientAgentLogger *logger ((ClientAgentLogger *)arg);
+  
+  // initialize the log file if it doesn't already exist
+  logger->SetupLogging();
+
   BString *currentString (NULL);
   BLocker *myLogBufferLock ((logger->logBufferLock));
   BList *myLogBuffer ((logger->logBuffer));
