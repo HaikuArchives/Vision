@@ -514,7 +514,7 @@ RunView::Draw (BRect frame)
         if (drawSelection)
           SetHighColor (sel_fText);
 
-        SetDrawingMode (B_OP_COPY);
+        SetDrawingMode (B_OP_OVER);
 
         DrawString (
           line->fText + place,

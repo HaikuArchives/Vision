@@ -164,12 +164,13 @@ MessageAgent::DCCServerSetup(void)
     myPort = atoi (fDPort.String());
 
   fMySocket = socket (AF_INET, SOCK_STREAM, 0);
+  
+  BMessage statMsg (M_DISPLAY);
 
   if (fMySocket < 0)
   {
-    LockLooper();
-    Display (S_DCC_SOCKET_ERROR);
-    UnlockLooper();
+    ClientAgent::PackDisplay (&statMsg, S_DCC_SOCKET_ERROR, C_ERROR);
+    fMsgr.SendMessage (&statMsg);
     return;
   }
 
@@ -181,10 +182,9 @@ MessageAgent::DCCServerSetup(void)
   
   if (bind (fMySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
   {
-      LockLooper();
-      Display (S_DCC_BIND_ERROR);
-      UnlockLooper();
-      return;
+    ClientAgent::PackDisplay (&statMsg, S_DCC_BIND_ERROR, C_ERROR);
+    fMsgr.SendMessage (&statMsg);
+    return;
   }
   
   BMessage sendMsg (M_SERVER_SEND);
@@ -207,9 +207,9 @@ MessageAgent::DCCServerSetup(void)
   addr.s_addr = inet_addr (address.String());
   dataBuffer << S_DCC_CHAT_LISTEN 
     << address.String() << S_DCC_CHAT_PORT << myPort << "\n";
-  LockLooper();
-  Display (dataBuffer.String());
-  UnlockLooper();
+  ClientAgent::PackDisplay (&statMsg, dataBuffer.String(), C_TEXT);
+  fMsgr.SendMessage (&statMsg);
+  return;
 }
 
 status_t

@@ -273,12 +273,6 @@ ServerAgent::Establish (void *arg)
       statString += ")\n";
       ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
       sMsgrE->SendMessage (&statMsg);
-      
-      BMessage data (M_DISPLAY);
-      data.AddString ("data", statString.String());
-      data.AddInt32 ("fore", C_ERROR);
-      sMsgrE->SendMessage (&data);
-
     }
     else
       throw failToLock();

@@ -489,6 +489,7 @@ ClientAgent::ParsemIRCColors (
         mircFore = fore;
         mircBack = back;
         mircFont = font;
+        break;
       }
       else
       {
@@ -1014,9 +1015,10 @@ ClientAgent::FirstSingleKnownAs (const BString &data, const BString &target)
   &&  (place == 0
   ||   isspace (data[place - 1])
   ||   ispunct (data[place - 1]))
-  &&  (place + target.Length() + 1 == data.Length()
+  &&  (place + target.Length() == data.Length()
   ||   isspace (data[place + target.Length()])
-  ||   ispunct (data[place + target.Length()])))
+  ||   ispunct (data[place + target.Length()])
+  ||   (int)data[place + target.Length()] <= 0xa)) // null or newline
     return place;
 
   return B_ERROR;
