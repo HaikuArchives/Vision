@@ -18,9 +18,7 @@
 BINARY := Vision
 VERSION := 0.9.3-0812
 BUILDDATE := $(shell date +%b_%d_%Y)
-
-BUILD_DEBUG := false
-CHECK_MEM := false
+BUILD_TYPE := Release
 
 # system libs
 REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker
@@ -58,15 +56,26 @@ else
 CFLAGS += -DBONE_BUILD
 endif
 
-ifeq ($(CHECK_MEM), true)
+# These can be set from the shell to change the build type
+ifeq ($(CHECK_MEM),true)
 	CFLAGS += -fcheck-memory-usage -D_NO_INLINE_ASM=1
 	BUILD_DEBUG=true
 endif
 
 ifeq ($(BUILD_DEBUG),true)
-	CFLAGS += -g
+	CFLAGS += -g -O0
+	
+	ifeq ($(shell uname -r), 5.1)
+		CFLAGS += -fno-debug-opt
+	endif
+
+	BUILD_TYPE = Debug
 else
 	CFLAGS += -O1
+endif
+
+ifeq ($(CHECK_MEM),true)
+	BUILD_TYPE = MemCheck
 endif
 
 CFLAGS += -DBEOS_BUILD
@@ -158,7 +167,7 @@ endif
 	@mimeset -f $@
 	
 $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
-	@echo compiling : $@
+	@echo compiling [$(BUILD_TYPE) Build] : $@
 	@$(CC) $< $(CFLAGS) -o $@
 
 $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
