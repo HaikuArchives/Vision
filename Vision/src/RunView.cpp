@@ -118,7 +118,7 @@ struct Line
 	time_t					stamp;
 	urllist					*urls;
 	int16					*spaces;
-	int16					*edges;
+	float					*edges;
 	FontColor				*fcs;
 	SoftBreak				*softies;
 	float					top;
@@ -135,8 +135,6 @@ struct Line
 								const char *buffer,
 								int16 length,
 								float top,
-								BRect **boxbuf,
-								int16 *boxbuf_size,
 								float width,
 								Theme *theme,
 								const char *stamp_format,
@@ -149,8 +147,6 @@ struct Line
 	void					Append (
 								const char *buffer,
 								int16 len,
-								BRect **boxbuf,
-								int16 *boxbuf_size,
 								float width,
 								Theme *theme,
 								int16 fore,
@@ -166,8 +162,6 @@ struct Line
 								int16 font);
 
 	void					FigureEdges (
-								BRect **boxbuf,
-								int16 *boxbuf_size,
 								Theme *theme,
 								float width);
 
@@ -200,8 +194,6 @@ RunView::RunView (
 			flags | B_WILL_DRAW | B_FRAME_EVENTS),
 		scroller (NULL),
 		theme (theme),
-		boxbuf (NULL),
-		boxbuf_size (0),
 		working (NULL),
 		line_count (0),
 		stamp_format (NULL),
@@ -230,7 +222,6 @@ RunView::~RunView (void)
 	for (int16 i = 0; i < line_count; ++i)
 		delete lines[i];
 
-	delete [] boxbuf;
 	delete working;
 }
 
@@ -452,63 +443,17 @@ RunView::Draw (BRect frame)
 							drawSelection = false;
 						}
 						// we're at the selection, switch drawing color mode
-						else if (place >= sp_start.offset && place < sp_end.offset)
+						else if (place >= sp_start.offset && place < (sp_end.offset - 1))
 						{
-							if (place == sp_start.offset && place > 0)
-							{
-								BFont f;
-								GetFont (&f);
-
-								BString s;
-								s += line->text[place-1];
-								
-								if (line->text[place-1] == ' ')
-								{
-							
-									float escapement;
-									f.GetEscapements (s.String(), 1, &escapement);
-									
-									left += escapement * f.Size();
-								}
-								s = "";
-								s += line->text[place];
-								edge_info e;
-								f.GetEdges (s.String(), 1, &e);
-								
-								left += e.left * f.Size();
-							}
 							if (sp_end.line == sp_start.line)
 								if (sp_end.offset - place < length)
-									length = sp_end.offset - place;
+									length = (sp_end.offset - place) - 1;
 															
 							drawSelection = true;
 							
 						}
-						else if (place == sp_end.offset)
-						{
+						else
 							drawSelection = false;
-							if (place > 0)
-							{
-								BFont f;
-								GetFont (&f);
-
-								BString s;
-								s += line->text[place-1];
-								
-								if (line->text[place-1] == ' ')
-								{
-
-									float escapement;
-									f.GetEscapements (s.String(), 1, &escapement);
-									left += escapement * f.Size();
-								}
-								s = "";
-								s += line->text[place];
-								edge_info e;
-								f.GetEdges (s.String(), 1, &e);
-								left += ABS(e.left) * f.Size();
-							}
-						}							
 
 					}
 					// case 2: line in between beginning and end of selection,
@@ -518,37 +463,14 @@ RunView::Draw (BRect frame)
 					// case 3: last line of selection, with multiple lines in between
 					else if (i == sp_end.line && i != sp_start.line)
 					{
-						if (place < sp_end.offset)
+						if (place < (sp_end.offset - 1))
 						{
-							length = sp_end.offset;
+							if (sp_end.offset - place < length)
+								length = (sp_end.offset - place) - 1;
 							drawSelection = true;
 						}
 						else
-						{
-							if (place > 0)
-							{
-								BFont f;
-								GetFont (&f);
-
-								BString s;
-								s += line->text[place];
-
-								if (line->text[place] == ' ')
-								{
-									float escapement;
-									f.GetEscapements (s.String(), 1, &escapement);
-									left += escapement * f.Size();
-								}
-								else
-								{
-									edge_info e;
-									f.GetEdges (s.String(), 1, &e);
-									left += e.left;
-								}
-							}							
-
 							drawSelection = false;
-						}
 					}
 					else
 						drawSelection = false;
@@ -1147,7 +1069,7 @@ RunView::FontChangeRecalc (void)
 		lines[i]->top = top;
 
 		lines[i]->FigureSpaces();
-		lines[i]->FigureEdges (&boxbuf, &boxbuf_size, theme, width);
+		lines[i]->FigureEdges (theme, width);
 
 		top = lines[i]->bottom + 1.0;
 	}
@@ -1268,8 +1190,6 @@ RunView::Append (
 			{
 				working->Append  (buffer + place,
 									(url_offset - last_offset),
-									&boxbuf,
-									&boxbuf_size,
 									width,
 									theme,
 									fore,
@@ -1278,8 +1198,6 @@ RunView::Append (
 
 				working->Append  (temp.String(),
 									temp.Length(),
-									&boxbuf,
-									&boxbuf_size,
 									width,
 									theme,
 									C_URL,
@@ -1294,8 +1212,6 @@ RunView::Append (
 				working->Append (
 				buffer + place,
 				end - place,
-				&boxbuf,
-				&boxbuf_size,
 				width,
 				theme,
 				fore,
@@ -1314,8 +1230,6 @@ RunView::Append (
 				buffer + place,
 				0,
 				top,
-				&boxbuf,
-				&boxbuf_size,
 				width,
 				theme,
 				stamp_format,
@@ -1332,8 +1246,6 @@ RunView::Append (
 			{
 				working->Append  (buffer + place,
 									(url_offset - last_offset),
-									&boxbuf,
-									&boxbuf_size,
 									width,
 									theme,
 									fore,
@@ -1342,8 +1254,6 @@ RunView::Append (
 
 				working->Append  (temp.String(),
 									temp.Length(),
-									&boxbuf,
-									&boxbuf_size,
 									width,
 									theme,
 									C_URL,
@@ -1357,8 +1267,6 @@ RunView::Append (
 			if (place < end)
 				working->Append (buffer + place,
 									end - place,
-									&boxbuf,
-									&boxbuf_size,
 									width,
 									theme,
 									fore,
@@ -1478,7 +1386,7 @@ RunView::SetTimeStampFormat (const char *format)
 
 		lines[i]->SetStamp (stamp_format, was_on);
 		lines[i]->FigureSpaces();
-		lines[i]->FigureEdges(&boxbuf, &boxbuf_size, theme, width);
+		lines[i]->FigureEdges(theme, width);
 
 		top = lines[i]->bottom + 1.0;
 	}
@@ -1716,8 +1624,6 @@ Line::Line (
 	const char *buffer,
 	int16 len,
 	float top,
-	BRect **boxbuf,
-	int16 *boxbuf_size,
 	float width,
 	Theme *theme,
 	const char *stamp_format,
@@ -1754,7 +1660,7 @@ Line::Line (
 	if (text[length - 1] == '\n')
 	{
 		FigureSpaces();
-		FigureEdges (boxbuf, boxbuf_size, theme, width);
+		FigureEdges (theme, width);
 	}
 }
 
@@ -1778,8 +1684,6 @@ void
 Line::Append (
 	const char *buffer,
 	int16 len,
-	BRect **boxbuf,
-	int16 *boxbuf_size,
 	float width,
 	Theme *theme,
 	int16 fore,
@@ -1817,7 +1721,7 @@ Line::Append (
 			urls->sort();
 			
 		FigureSpaces();
-		FigureEdges (boxbuf, boxbuf_size, theme, width);
+		FigureEdges (theme, width);
 	}
 
 }
@@ -1940,13 +1844,11 @@ Line::FigureFontColors (
 
 void
 Line::FigureEdges (
-	BRect **boxbuf,
-	int16 *boxbuf_size,
 	Theme *theme,
 	float width)
 {
 	delete [] edges;
-	edges = new int16 [length];
+	edges = new float [length];
 
 	int16 cur_fcs (0), next_fcs (0), cur_font (0);
 	escapement_delta delta = {0.0, 0.0};
@@ -2004,42 +1906,24 @@ Line::FigureEdges (
 			seglen = fcs[next_fcs].offset - fcs[cur_fcs].offset;
 		}
 
-		if (ccount >= *boxbuf_size)
-		{
-			delete [] *boxbuf;
-			*boxbuf = new BRect [*boxbuf_size = ccount];
-		}
-
 		const BFont &f (theme->FontAt (fcs[cur_font].index));
 
-		f.GetBoundingBoxesAsString (
+		float eshift[ccount];
+		f.GetEscapements (
 			text + fcs[cur_fcs].offset,
 			ccount,
-			B_SCREEN_METRIC,
-			&delta,
-			*boxbuf);
-
-		float eshift;
-		f.GetEscapements (
-			text + fcs[cur_fcs].offset + (seglen - 1),
-			1,
-			&eshift);
+			eshift);
 
 		// This is not perfect, because we are including the left edge,
 		// but BFont::GetEdges doesn't seem to work as we'd like
-		BRect &lastbox (*((*boxbuf) + (ccount - 1)));
-		lastbox.right += eshift * f.Size() - lastbox.Width();
-
-		int16 shift (0);
-
-		if (fcs[cur_fcs].offset)
-			shift = edges[edge_count - 1];
 
 		int16 i;
 
 		for (i = 0; i < ccount; ++i)
-			edges[edge_count + i] = (int16)(((*boxbuf) + i)->right) + shift;
-		//edges[edge_count + ccount - 1] += (int16) einfo.right;
+		{
+			edges[edge_count + i] = ((edge_count + i > 0) ? edges[edge_count + i - 1] : 0) +
+				(eshift[i] * f.Size());
+		}
 
 		for (i = fcs[cur_fcs].offset; i < fcs[cur_fcs].offset + seglen;)
 		{
