@@ -24,7 +24,7 @@
 
 #include <View.h>
 
-const int32 C_PREFS_COUNT = 6;
+const int32 C_PREFS_COUNT = 7;
 
 class BListView;
 class BBox;
