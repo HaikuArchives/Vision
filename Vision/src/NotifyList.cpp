@@ -41,8 +41,14 @@ NotifyList::NotifyList (BRect _frame)
 NotifyList::~NotifyList (void)
 {
   // empty for now
-  while (!IsEmpty())
-    delete RemoveItem (0L);
+  MakeEmpty();
+}
+
+void
+NotifyList::UpdateList(BList *newList)
+{
+  MakeEmpty();
+  AddList(newList);
 }
 
 void
@@ -87,12 +93,50 @@ NotifyListItem::SetState (bool newState)
   fNotifyState = newState;
 }
 
-void
-NotifyListItem::DrawItem (BView *owner, BRect frame, bool drawEverything)
+bool
+NotifyListItem::GetState(void)
 {
-  rgb_color notifyGray = { 128, 128, 128, 255 };
-  rgb_color notifyWhite = { 255, 255, 255, 255 };
-  owner->SetHighColor (
-    (fNotifyState) ? notifyWhite : notifyGray);
-  BStringItem::DrawItem (owner, frame, drawEverything);
+  return fNotifyState;
+}
+
+void
+NotifyListItem::DrawItem (BView *father, BRect frame, bool complete)
+{
+  Theme *fActiveTheme (vision_app->ActiveTheme());
+  
+  fActiveTheme->ReadLock();
+
+  if (IsSelected())
+  {
+    father->SetHighColor (fActiveTheme->ForegroundAt (C_WINLIST_SELECTION));
+    father->SetLowColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));    
+    father->FillRect (frame);
+  }
+  else if (complete)
+  {
+    father->SetLowColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+    father->FillRect (frame, B_SOLID_LOW);
+  }
+
+  rgb_color color = fActiveTheme->ForegroundAt ((fNotifyState) ? C_NOTIFY_ON : C_NOTIFY_OFF);
+
+  font_height fh;
+  father->GetFontHeight (&fh);
+
+  father->MovePenTo (
+    frame.left + 4,
+    frame.bottom - fh.descent);
+
+  BString drawString (Text());
+
+  if (IsSelected())
+    color = fActiveTheme->ForegroundAt (C_NOTIFY_OFF);
+  
+  fActiveTheme->ReadUnlock();
+  
+  father->SetHighColor (color);
+
+  father->SetDrawingMode (B_OP_OVER);
+  father->DrawString (drawString.String());
+  father->SetDrawingMode (B_OP_COPY);
 }

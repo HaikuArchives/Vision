@@ -161,7 +161,9 @@ class ServerAgent : public ClientAgent
 	
     BList                       fTimers,
                                   fStartupChannels,
-                                  fPendingSends;
+                                  fPendingSends,
+                                  fNotifyNicks,
+                                  fIgnoreNicks;
     
     static int32                Establish (void *);
     static int32                Sender (void *);

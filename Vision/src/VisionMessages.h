@@ -38,10 +38,7 @@ const uint32 M_NOTIFYLIST_REMOVE					= 0x1018;
 const uint32 M_NOTIFYLIST_CHANGE					= 0x1019;
 const uint32 M_NOTIFYLIST_UPDATE					= 0x1020;
 const uint32 M_NOTIFYLIST_RESIZE					= 0x1021;
-
-/* reserved for future use */
-
-//const uint32 M_NOTIFY_								= 0x1022;
+const uint32 M_WINLIST_NOTIFY_BLINKER				= 0x1022;
 //const uint32 M_NOTIFY_WINDOW						= 0x1023;
 //const uint32 M_NOTIFY_SHUTDOWN						= 0x1024;
 

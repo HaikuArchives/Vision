@@ -240,6 +240,7 @@ ColorSelector::ColorSelector(	BRect frame, const char* name,
 									  true);
 #if B_BEOS_VERSION_DANO
 	fColorPalette->SetModeFlags(B_CC_32BIT_MODE | B_CC_SHOW_SWATCH);
+	fColorPalette->SetDoubleBuffering (B_UPDATE_INVALIDATED | B_UPDATE_RESIZED | B_UPDATE_EXPOSED);
 #else
     rgb_color *color (NULL);
     int32 size (0);

@@ -67,11 +67,9 @@ DCCFileWindow::MessageReceived (BMessage *msg)
       }
 						
       msg->FindPointer ("view", reinterpret_cast<void **>(&view));
-      Lock();
       view->MoveTo (point);
       AddChild (view);
       ResizeTo (bounds.Width(), view->Frame().bottom);
-      Unlock();
       if (IsHidden())
       {
         Show();
