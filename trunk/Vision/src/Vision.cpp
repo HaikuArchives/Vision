@@ -592,44 +592,43 @@ VisionApp::GetThreadName (void)
 {
   // random names for the connection thread
   static BString tnames[] = {
-    "gummi_bear_orgy", // pictures will be taken and uploaded
-                                  // via the personal_info_uploader thread.
-    "complimentary_tote_bag", // mmmm... free stuff
-    "cheating_at_solitaire", 
-    "impatient",
-    "personal_info_uploader",
-    "keystroke_logger",
-    "rc5_cracker",
-    "seti_at_home",
-    "stare_girl", // can you out stare stare girl?
-    "baron_arnold", // ba owns j00
-    "nsa_pingflood",
-    "random_death_threat_emailer",
-    "marketing_research_assistant",
-    "beos_stock_monitor",
-    "stack_underflow",
-    "the_matrix_has_you",
-    "follow_the_white_rabbit",
-    "psycho psycho_killer killer",
-    "a_s_l_check_msg_on_join",
-    "wudan_training", // http://us.imdb.com/Title?0190332
-    "peer_reset_thread",
-    "chocoak_is_my_hero",
-    "blossom",   // commander and the leader
-    "bubbles",   // the joy and the laughter 
-    "buttercup", // shes the toughest fighter
-                 // Powerpuffs save the day!
-    "youlooklikeyouneedamonkey",
-    "wegotdeathstar",   // we got def star! we got def star!
-    "whatcha_gonna_do",  // uh oh!
-    "lookit! a ball!",
-    "5038",
-    "talk_to_the_hand",
-    "manah, manah!",
-    "magic 8-nipple"
+    /*  0 */ "gummi_bear_orgy",
+    /*  1 */ "complimentary_tote_bag",
+    /*  2 */ "cheating_at_solitaire", 
+    /*  3 */ "impatient",
+    /*  4 */ "personal_info_uploader",
+    /*  5 */ "keystroke_logger",
+    /*  6 */ "rc5_cracker",
+    /*  7 */ "seti_at_home",
+    /*  8 */ "stare_girl",
+    /*  9 */ "baron_arnold",
+    /* 10 */ "nsa_pingflood",
+    /* 11 */ "random_death_threat_emailer",
+    /* 12 */ "marketing_research_assistant",
+    /* 13 */ "beos_stock_monitor",
+    /* 14 */ "stack_underflow",
+    /* 15 */ "the_matrix_has_you",
+    /* 16 */ "follow_the_white_rabbit",
+    /* 17 */ "psycho psycho_killer killer",
+    /* 18 */ "a_s_l_check_msg_on_join",
+    /* 19 */ "wudan_training", // http://us.imdb.com/Title?0190332
+    /* 20 */ "peer_reset_thread",
+    /* 21 */ "chocoak_is_my_hero",
+    /* 22 */ "blossom",   // commander and the leader
+    /* 23 */ "bubbles",   // the joy and the laughter 
+    /* 24 */ "buttercup", // shes the toughest fighter
+                          // Powerpuffs save the day!
+    /* 25 */ "youlooklikeyouneedamonkey",
+    /* 26 */ "wegotdeathstar",    // we got def star! we got def star!
+    /* 27 */ "whatcha_gonna_do",  // uh oh!
+    /* 28 */ "lookit! a ball!",
+    /* 29 */ "5038",
+    /* 30 */ "talk_to_the_hand",
+    /* 31 */ "manah, manah!",
+    /* 32 */ "magic 8-nipple"
   };
   
-  int rnd (rand() % 31);
+  int rnd (rand() % 32);
  
   return tnames[rnd].String();
 }

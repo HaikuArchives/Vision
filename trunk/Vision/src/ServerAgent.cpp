@@ -331,21 +331,20 @@ ServerAgent::Establish (void *arg)
 		
 		server->PackDisplay (&statMsg, "[@] Handshaking\n", &(server->errorColor));
 		sMsgrE->SendMessage (&statMsg);
+		
 		BString string;
-
 		string = "USER ";
 		string.Append (server->lident);
 		string.Append (" localhost ");
 		string.Append (server->id);
 		string.Append (" :");
 		string.Append (server->lname);
-
-
+		
 		if (sMsgrE->LockTarget())
 		{
 			server->lEndpoint = endPoint;
 			server->SendData (string.String());
-
+		
 			string = "NICK ";
 			string.Append (server->myNick);
 			server->SendData (string.String());
@@ -353,7 +352,7 @@ ServerAgent::Establish (void *arg)
 		}
 		identLock.Unlock();
 	}
-
+	
 	else // No endpoint->connect
 	{
 		identLock.Unlock();

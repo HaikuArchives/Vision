@@ -3,6 +3,9 @@ http://vision.sourceforge.net
 
 [0.1.0326]
  2001-03-26
+   * Add support for misc numerics: 245, 246, 227, 271, 272, 334, 338, 408,
+     429
+   * Add support for numeric 460 (halfops cant do that)
    * Enable window position saving again
    * Rename WELCOME2/3/4/5 numerics to their proper names
    * Fix a WindowList selection bug which happens when a new agent is added and
