@@ -751,27 +751,27 @@ VisionApp::GetThreadName (int thread_type)
     /* 32 */ "magic 8-nipple",
     /* 33 */ "threat_mode",
     /* 34 */ "dark_and_mysterious",
-    /* 35 */ "I AM A GOLDEN GOD!"
+    /* 35 */ "I AM A GOLDEN GOD!",
   };
   
-  int rnd (rand() % 35);
+  int rnd (rand() % 36);
  
-  BString output (tnames[rnd]);
+  static BString output;
   
   switch (thread_type)
   {
     case THREAD_S:
-      output.Prepend ("s>");
+      output = "s>";
       break;
+    
     case THREAD_L:
-      output.Prepend ("l>");
+      output = "l>";
       break;
   }
   
-  return output.String();
+  output += tnames[rnd];
   
-  snooze (2250); // bad hack so the pointer doesnt get deleted (most of the time)
-                 // before spawn_thread is done. FIXME!
+  return output.String();
 }
 
 void
