@@ -208,7 +208,7 @@ static void populate_colors(BMenu* dest, const BMessage& src,
 				*init_col = *col;
 
 			ColorMenuItem* ci = new ColorMenuItem(label, msg, *col, *init_col);
-			dest->AddItem(ci, i);
+			dest->AddItem(ci);
 		}
 	}
 }
