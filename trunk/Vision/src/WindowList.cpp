@@ -129,17 +129,20 @@ WindowList::MouseDown (BPoint myPoint)
       // since Expand/Collapse are not virtual, override them by taking over processing
       // the collapse triangle logic manually
       WindowListItem *item ((WindowListItem *)ItemAt (selected));
+      if (item)
       {
-        if (item && (item->Type() == WIN_SERVER_TYPE))
+        if (item->Type() == WIN_SERVER_TYPE)
         {
           if (item->IsExpanded())
             Collapse (item);
           else
             Expand (item);
         }
+        // if a non-server item was double-clicked, treat it as a regular click
+        else
+          Select (selected);
       }
     }
-    
     else if (mousebuttons == B_PRIMARY_MOUSE_BUTTON)
       Select (selected);
 
