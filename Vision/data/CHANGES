@@ -7,6 +7,7 @@ http://vision.sourceforge.net
          * fixed sweep selection in names list (was broken in some cases)
          * fixed case where duplicate names could appear in names list
          * added option to disable private ip/firewall check (prefs, DCC) to deal with broken NATs that manually mangle the dcc send string
+         * added parsing for numeric 320
 
 [0.9.1-0711]
          * added dcc chat option to notify context menu

@@ -119,6 +119,7 @@ const int RPL_WHOISCHANOP             = 216;
 const int RPL_WHOISIDLE               = 317;
 const int RPL_ENDOFWHOIS              = 318;
 const int RPL_WHOISCHANNELS           = 319;
+const int RPL_WHOISREGNICK            = 320;
 const int RPL_LISTSTART               = 321;
 const int RPL_LIST                    = 322;
 const int RPL_LISTEND                 = 323;
