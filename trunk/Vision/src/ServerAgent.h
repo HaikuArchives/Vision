@@ -162,6 +162,7 @@ const uint32 M_GET_ESTABLISH_DATA           = 'saed'; // used by Establish()
 const uint32 M_SET_ENDPOINT                 = 'sase'; // used by Establish()
 const uint32 M_GET_RECONNECT_STATUS         = 'sars'; // used by Establish()
 const uint32 M_NOT_CONNECTING               = 'sanc'; // used by Establish()
+const uint32 M_CONNECTED                    = 'sacs'; // used by Establish()
 const uint32 M_INC_RECONNECT                = 'sair'; // used by Establish()
 const uint32 M_INIT_LAG                     = 'sail'; // used by Establish()
 const uint32 M_DISPLAY_ALL                  = 'sada'; // display to all clients
