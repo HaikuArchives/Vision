@@ -175,6 +175,15 @@ ClientInputFilter::Filter (BMessage *msg, BHandler **)
       }
       break;
 
+    case B_MOUSE_WHEEL_CHANGED:
+      {
+        // pass this msg to IRCView
+        window->text->MessageReceived (msg);
+        result = B_SKIP_MESSAGE;
+      }
+      break;
+        
+
     default:
       {
         //printf ("FILTER UNHANDLED: ");

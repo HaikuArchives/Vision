@@ -2,6 +2,9 @@ Vision
 http://vision.sourceforge.net
 
 [0.2.0421]
+ 2001-04-23
+   * Mousewheel messages are redirected to the IRCView if the input control is
+     active.
  2001-04-21
    * Logging support
      - /setbool log_enabled true and restart any agents you want logging
