@@ -50,7 +50,7 @@ class VTextControl : public BTextControl
     virtual void           AllAttached (void);
     void                   BuildPopUp (void);
 
-    BPopUpMenu                      *myPopUp;
+    BPopUpMenu             *myPopUp;
 };
 
 class VTextControlFilter : public BMessageFilter
