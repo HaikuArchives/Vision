@@ -792,17 +792,15 @@ ClientAgent::ParseCmd (const char *data)
 		return true;
 	}
 	
-    #if 0
 	if (firstWord == "/PART")
 	{
-		BMessage msg (B_QUIT_REQUESTED);
+		BMessage msg (M_CLIENT_QUIT);
 
 		msg.AddBool ("vision:part", true);
 		PostMessage (&msg);
 
 		return true;
 	}	
-	#endif
 	
 	if (firstWord == "/PING")
 	{
