@@ -170,7 +170,7 @@ ClientAgent::Init (void)
                 BRect (
                   0,
                   frame.top, // tmp. will be moved
-                  frame.right - 115,
+                  frame.right - frame.left,
                   frame.bottom),
                 "Input", 0, 0,
                 0,
@@ -181,7 +181,7 @@ ClientAgent::Init (void)
   input->ResizeToPreferred(); 
   input->MoveTo (
            0,
-           frame.bottom - input->Frame().Height());
+           frame.bottom - input->Frame().Height() + 1);
 
   input->TextView()->AddFilter (new ClientInputFilter (this));
   AddChild (input);
@@ -196,9 +196,9 @@ ClientAgent::Init (void)
     input->Frame().bottom - 1));
 
   BRect textrect (
-    0,
+    1,
     frame.top - 2,
-    frame.right - 117 - B_V_SCROLL_BAR_WIDTH,
+    frame.right - frame.left - 1 - B_V_SCROLL_BAR_WIDTH,
     frame.bottom - input->Frame().Height() - 1);
 
   text = new IRCView (
@@ -216,7 +216,7 @@ ClientAgent::Init (void)
     0,
     false,
     true,
-    B_NO_BORDER);
+    B_PLAIN_BORDER);
   AddChild (textScroll);
 
   if (isLogging)
@@ -650,7 +650,10 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           int32 theChars (aMessage.Length());
           aMessage.Truncate (theChars - 1);
-                   
+          
+          // this next if() is a quirk fix for JAVirc.
+          // it appends an (illegal) space to actions, so the last
+          // truncate doesn't remove the \1
           if (aMessage[theChars - 2] == '\1')
             aMessage.Truncate (theChars - 2);
       

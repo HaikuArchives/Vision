@@ -1091,6 +1091,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     // but they are usually on-connect messages
     case RPL_290:                 // 290
     case RPL_291:                 // 291
+    case RPL_292:                 // 292
       {
         BString tempString (RestOfString(data, 4));
         tempString.RemoveFirst (":");

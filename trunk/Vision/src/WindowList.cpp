@@ -338,11 +338,11 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       }
     }
   }
-  vision_app->pClientWin()->Lock();
+  LockLooper();
   vision_app->pClientWin()->bgView->AddChild (newagent);
   newagent->Hide(); // get it out of the way
   newagent->Sync(); // clear artifacts
-  vision_app->pClientWin()->Unlock();
+  UnlockLooper();
   
   if (activate)  // if activate is true, show the new view now.
     if (CurrentSelection() == -1)
@@ -377,7 +377,7 @@ WindowList::Activate (int32 index)
    
   if ((activeagent != newagent) && (activeagent != 0))
   {
-    vision_app->pClientWin()->Lock();
+    LockLooper();
     
     if (activeagent)
     {
@@ -387,13 +387,13 @@ WindowList::Activate (int32 index)
   
     newagent->Show();
     
-    vision_app->pClientWin()->Unlock();
+    UnlockLooper();
   }
   if (activeagent == 0)
   {
-    vision_app->pClientWin()->Lock();
+    LockLooper();
     newagent->Show();
-    vision_app->pClientWin()->Unlock();
+    UnlockLooper();
   }
  
   // activate the input box (if it has one)
@@ -406,7 +406,7 @@ WindowList::Activate (int32 index)
 void
 WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
 {
-  vision_app->pClientWin()->Lock();
+  LockLooper();
   agent->Hide();
   agent->RemoveSelf();
   RemoveItem (agentitem);
@@ -418,7 +418,7 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
     Select (lastInt);
   else
     Select (0);
-  vision_app->pClientWin()->Unlock();
+  UnlockLooper();
 }
 
 

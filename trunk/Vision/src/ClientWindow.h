@@ -51,6 +51,7 @@ class ServerAgent;
 class StatusView;
 class WindowList;
 class WindowListItem;
+class AgentDock;
 
 
 class ClientWindow : public BWindow
@@ -98,10 +99,12 @@ class ClientWindow : public BWindow
     
     BRect                 *agentrect;
     
-    WindowList            *winList;
-    WindowListItem        *winListI;
-    BScrollView           *winListScroll;
+    //WindowList            *winList;
+    //WindowListItem        *winListI;
+    //BScrollView           *winListScroll;
     StatusView            *status;
+    
+    AgentDock             *aDock;
 
 };
 

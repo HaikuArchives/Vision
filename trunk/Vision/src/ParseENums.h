@@ -97,6 +97,7 @@ const int RPL_SILELIST                = 271;
 const int RPL_ENDOFSILELIST           = 272;
 const int RPL_290                     = 290;
 const int RPL_291                     = 291;
+const int RPL_292                     = 292;
 
 const int RPL_NONE                    = 300;
 const int RPL_AWAY                    = 301;

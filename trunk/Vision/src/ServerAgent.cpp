@@ -214,13 +214,13 @@ ServerAgent::Establish (void *arg)
   BMessage statMsg (M_DISPLAY);
   BString statString;
 
-  server->Window()->Lock();
+  server->LockLooper();
   BString connectId (server->id),
           connectPort (server->lport),
           ident (server->lident),
           name (server->lname),
           connectNick (server->myNick);
-  server->Window()->Unlock();
+  server->UnlockLooper();
 
   bool useIdent (server->identd);
 
@@ -262,12 +262,12 @@ ServerAgent::Establish (void *arg)
 
   if (!endPoint || endPoint->InitCheck() != B_NO_ERROR)
   {
-    if (server->Window()->Lock())
+    if (server->LockLooper())
     {
       server->PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", &(server->errorColor));
       sMsgrE->SendMessage (&statMsg);
       server->isConnecting = false;
-      server->Window()->Unlock();
+      server->UnlockLooper();
     }
 
     if (endPoint)
@@ -332,8 +332,8 @@ ServerAgent::Establish (void *arg)
     server->PackDisplay (&statMsg, "[@] Established\n", &(server->errorColor));
     sMsgrE->SendMessage (&statMsg);
 
-    if (sMsgrE->IsValid() && server->Window()->Lock())
-      server->Window()->Unlock();
+    if (sMsgrE->IsValid() && server->LockLooper())
+      server->UnlockLooper();
     else
     {
       endPoint->Close();
@@ -398,7 +398,7 @@ ServerAgent::Establish (void *arg)
     string.Append (" :");
     string.Append (name);
 
-    if (sMsgrE->IsValid() && server->Window()->Lock())
+    if (sMsgrE->IsValid() && server->LockLooper())
     {
       server->lEndpoint = endPoint;
       server->SendData (string.String());
@@ -406,7 +406,7 @@ ServerAgent::Establish (void *arg)
       string = "NICK ";
       string.Append (connectNick);
       server->SendData (string.String());
-      server->Window()->Unlock();
+      server->UnlockLooper();
     }
     else
     {
