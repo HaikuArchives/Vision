@@ -26,6 +26,8 @@
 #ifndef _SERVERAGENT_H_
 #define _SERVERAGENT_H_
 
+#include <map>
+
 #include <Rect.h>
 #include <String.h>
 #include <List.h>
@@ -184,6 +186,7 @@ class ServerAgent : public ClientAgent
     
     sem_id                      fSendSyncSem; // synchronization semaphore for data sends
     ServerData                  fCurrentServer;
+    map<BString, BString>		fRemoteAwayMessages;
 };
 
 #endif

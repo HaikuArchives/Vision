@@ -16,12 +16,12 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.7-022904
+VERSION := 0.9.7-0410
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
 # system libs
-REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker
+REG_LIBS := -lzeta -lbe -ltranslation -ltextencoding -ltracker
 
 # net_server libs
 NET_LIBS := -lnet 
@@ -49,7 +49,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 
 CC := gcc -c -pipe
 
-CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
+CFLAGS := -DVERSION_STRING=\"$(VERSION)\" -D_ZETA_USING_DEPRECATED_API_
 ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
 CFLAGS += -DNETSERVER_BUILD
 else
