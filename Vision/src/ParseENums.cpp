@@ -1163,6 +1163,33 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         }
       }
       return true;
+      
+    default:
+      {
+        BString theTarget (GetWord (data, 4)),
+                  theMessage (RestOfString (data, 5)),
+                  tempString;
+        
+        theMessage.RemoveFirst (":");
+        
+        tempString += "*** ";
+        tempString += theMessage;
+        tempString += "\n";
+        
+        ClientAgent *client (Client (theTarget.String()));
+
+        BMessage display (M_DISPLAY);
+        PackDisplay (&display, tempString.String(), C_OP);
+
+        if (client)
+        {
+          if (client->msgr.IsValid())
+            client->msgr.SendMessage (&display);
+        }
+        else
+          PostActive (&display);
+      }
+      return true;
   }
   
   return false;
