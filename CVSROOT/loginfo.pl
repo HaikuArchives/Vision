@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/perl
 # to call this script, add in you CVSROOT/loginfo
 # module_to_match THE_GOOD_PATH/loginfo.pl sender_mail recipient_mail subject %{}
 
@@ -24,13 +24,8 @@ $mailto   = shift;
 $subject  = shift;
 $cvsdirectory = shift;
 
-system("echo mailfrom: $mailfrom");
-system("echo mailto: $mailto");
-
-system("echo user: $user");
-system("echo subject: $subject");
-
-system("echo directory: $cvsdirectory");
+system("echo loginfo.pl: user: $user");
+system("echo loginfo.pl: cvsdirectory: $cvsdirectory");
 
 if (!open(LD_FD, "$last_dir_file.$my_pgrp_id")) {
     # last_dir file does not exist -> cvs add directory
@@ -51,8 +46,8 @@ Subject: $subject
     
     open(MAIL, "| $MAILER -t");
     print MAIL $mail;
-    close(MAIL);
     system("echo mail sent");
+    close(MAIL);
 	
     exit 0;
 }
@@ -107,8 +102,8 @@ Subject: $subject
 
   open(MAIL, "| $MAILER -t");
   print MAIL $mail;
-  close(MAIL);
   system("echo mail sent");
+  close(MAIL);
 
 # make a bit cleanup here.
   unlink("$summary_file.$my_pgrp_id");
