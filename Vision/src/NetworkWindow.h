@@ -16,40 +16,36 @@
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
  * 
- * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Todd Lair
- *                 Rene Gollent
+ * Contributor(s): Rene Gollent
  */
 
-#ifndef _SETUPWINDOW_H_
-#define _SETUPWINDOW_H_
+#ifndef _NETWORKWINDOW_H
+#define _NETWORKWINDOW_H
 
 #include <Window.h>
 
 class BView;
-class BButton;
-class BMenuField;
-class BMenu;
-class BMessage;
+class NetPrefsServerView;
 
-class SetupWindow : public BWindow
+class NetworkWindow : public BWindow
 {
   public:
-                              SetupWindow (void);
-    virtual                   ~SetupWindow (void);
+                              NetworkWindow ();
+    virtual                   ~NetworkWindow (void);
     virtual bool              QuitRequested (void);
-    virtual void              MessageReceived (BMessage *);
-    
-  private:
-    void                      InitServerStartup (void);
-    void                      BuildNetworkMenu (void);
-    BView                     *bgView;
-    BButton                   *connectButton,
-                              *netPrefsButton,
-                              *prefsButton;
-    BMenuField                *netList;
-    
 };
 
+class NetPrefServerWindow : public BWindow
+{
+  public:
+                              NetPrefServerWindow ();
+    virtual                   ~NetPrefServerWindow (void);
+    void                      SetNetworkData (BMessage *);                
+    virtual bool              QuitRequested (void);
+   
+  private:
+  
+  	NetPrefsServerView        *serverView;
+};
 
 #endif

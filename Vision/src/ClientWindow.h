@@ -114,7 +114,7 @@ const uint32 M_CW_ALTW                      = 'cwaw';
 const uint32 M_CW_ALTW_RESET                = 'cwwr';
 const uint32 M_CW_ALTP                      = 'cwap';
 const uint32 M_OPEN_TERM                    = 'cwot';
-const uint32 M_MAKE_NEW_SERVER              = 'cwms';
+const uint32 M_MAKE_NEW_NETWORK             = 'cwmn';
 
 const uint32 M_STATUS_CLEAR                 = 'cwsc';
 const uint32 M_STATUS_ADDITEMS              = 'cwsa';

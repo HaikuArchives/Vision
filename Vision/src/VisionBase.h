@@ -29,6 +29,7 @@
 #include <GraphicsDefs.h>
 
 #include <Debug.h>
+#include <String.h>
 
 #define C_TEXT											0
 #define C_BACKGROUND									1
@@ -217,7 +218,6 @@ const uint32 M_CHANNEL_GOT_KICKED					= 0x1606;
 const uint32 M_LOOKUP_WEBSTER                       = 0x1607;
 const uint32 M_LOOKUP_GOOGLE                        = 0x1608;
 
-
 // Sound event identifiers
 enum SoundEvent
 {
@@ -226,4 +226,13 @@ enum SoundEvent
 };
 
 extern const char *kSoundEventNames[];
+
+// network data structure:
+struct ServerData
+{
+	char serverName[255];
+	uint32 port;
+	uint32 state;
+};
+
 #endif

@@ -58,26 +58,21 @@ int32 ServerAgent::ServerSeed = 0;
 
 ServerAgent::ServerAgent (
   const char *id_,
-  const char *port,
-  bool identd_,
-  const char *cmds_,
+  BMessage &net,
   BRect frame_)
 
   : ClientAgent (
     id_,
     ServerSeed++,
     id_,
-    vision_app->GetString ("nickname1"),
+    net.FindString ("nick"),
     frame_),
     localip (""),
     localip_private (false),
-    lnick1 (vision_app->GetString ("nickname1")),
-    lnick2 (vision_app->GetString ("nickname2")),
-    lport (port),
-    lname (vision_app->GetString ("realname")),
-    lident (vision_app->GetString ("username")),
+    lname (net.FindString ("realname")),
+    lident (net.FindString ("ident")),
     nickAttempt (0),
-    myNick (lnick1),
+    myNick (net.FindString ("nick")),
     myLag ("0.000"),
     isConnected (false),
     isConnecting (true),
@@ -98,9 +93,11 @@ ServerAgent::ServerAgent (
     events (vision_app->events),
     serverHostName (id_),
     initialMotd (true),
-    identd (identd_),
-    cmds (cmds_),
-    pListAgent (NULL)
+    cmds (net.FindString ("autoexec")),
+    pListAgent (NULL),
+    networkData (net),
+    serverIndex (0),
+    nickIndex (1)
 {
 
 }
@@ -202,11 +199,9 @@ ServerAgent::Establish (void *arg)
 #ifdef NETSERVER_BUILD
   BLocker *endpointLock (NULL);
 #endif
-  BLocker *establishLock (NULL);
   BString remoteIP;
   int32 serverSid;
   int32 serverSock (-1);
-  bool identRegistered (false);
   if (sMsgrE->IsValid())
     sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg);
   else
@@ -226,22 +221,19 @@ ServerAgent::Establish (void *arg)
             ident,
             name,
             connectNick;
-    getMsg.FindString ("id", &connectId);
-    getMsg.FindString ("port", &connectPort);
+    const ServerData *serverData (NULL);
+    int32 size;
+    getMsg.FindData ("server", B_ANY_TYPE, reinterpret_cast<const void **>(&serverData), &size);
+    connectId = serverData->serverName;
+    connectPort << serverData->port;
     getMsg.FindString ("ident", &ident);
     getMsg.FindString ("name", &name);
     getMsg.FindString ("nick", &connectNick);
 #ifdef NETSERVER_BUILD
     getMsg.FindPointer ("lock", reinterpret_cast<void **>(&endpointLock));
 #endif
-    getMsg.FindPointer ("establish lock", reinterpret_cast<void **>(&establishLock));
     serverSid = getMsg.FindInt32 ("sid");
-    bool useIdent (getMsg.FindBool ("identd"));
     
-    BAutolock autoLock (establishLock);
-    if (!autoLock.IsLocked())
-       throw failToLock();
-      
     if (sMsgrE->SendMessage (M_GET_RECONNECT_STATUS, &reply) == B_OK)
     {
       int retrycount (reply.FindInt32 ("retries"));
@@ -303,11 +295,7 @@ ServerAgent::Establish (void *arg)
     remoteAddr.sin_port = htons(atoi (connectPort.String()));
     remoteIP = inet_ntoa (remoteAddr.sin_addr);
 
-    if (useIdent)
-    {
-      identRegistered = true;
-      vision_app->AddIdent (remoteIP.String(), ident.String());      
-    }
+    vision_app->AddIdent (remoteIP.String(), ident.String());      
 
     if ((serverSock = socket (AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -407,8 +395,7 @@ ServerAgent::Establish (void *arg)
       delete endpointLock;
 #endif
     delete sMsgrE;
-    if (identRegistered)
-      vision_app->RemoveIdent (remoteIP.String());
+    vision_app->RemoveIdent (remoteIP.String());
     return B_ERROR;
   }
   
@@ -785,6 +772,45 @@ ServerAgent::HandleReconnect (void)
   }
 }
 
+const ServerData *
+ServerAgent::GetNextServer ()
+{
+  type_code type;
+  int32 count,
+    size;
+  networkData.GetInfo ("server", &type, &count);
+  uint32 state = (reconnecting) ? 1 : 0;
+
+  for (;;)
+  {
+    if (serverIndex >= count)
+    {
+      serverIndex = 0;
+      state = 0;
+    }
+    
+    const ServerData *server (NULL);
+    for (; networkData.FindData ("server", B_RAW_TYPE, serverIndex, 
+      reinterpret_cast<const void **>(&server), &size) == B_OK; serverIndex++)
+        if (server->state == state)
+          return server;
+  }
+}
+
+const char *
+ServerAgent::GetNextNick ()
+{
+  type_code type;
+  int32 count;
+  networkData.GetInfo ("nick", &type, &count);
+  if (nickIndex < count)
+    return networkData.FindString ("nick", nickIndex++);
+  else
+  {
+    nickIndex = 0;
+    return "";
+  }
+}
 
 bool
 ServerAgent::PrivateIPCheck (const char *ip)
@@ -877,18 +903,15 @@ ServerAgent::MessageReceived (BMessage *msg)
     case M_GET_ESTABLISH_DATA:
       {
         BMessage reply (B_REPLY);
-        reply.AddString  ("id", id.String());
-        reply.AddString  ("port", lport.String());
+        reply.AddData ("server", B_RAW_TYPE, GetNextServer(), sizeof (ServerData));
         reply.AddString  ("ident", lident.String());
         reply.AddString  ("name", lname.String());
         reply.AddString  ("nick", myNick.String());
-        reply.AddBool    ("identd", identd);
 #ifdef NETSERVER_BUILD
         reply.AddPointer ("lock", endPointLock);
 #endif
-		reply.AddPointer ("establish lock", &loginLock);
         reply.AddInt32   ("sid", sid);
-        msg->SendReply (&reply);
+        msg->SendReply (&reply); 
         establishHasLock = true;
       }
       break;
@@ -980,7 +1003,7 @@ ServerAgent::MessageReceived (BMessage *msg)
             *vision_app->pClientWin()->AgentRect(),
             theNick.String(),
             sid,
-            serverHostName.String(),
+            id.String(),
             sMsgr,
             myNick.String(),
             "",
@@ -1016,7 +1039,7 @@ ServerAgent::MessageReceived (BMessage *msg)
               *vision_app->pClientWin()->AgentRect(),
               theId.String(),
               sid,
-              serverHostName.String(),
+              id.String(),
               sMsgr,
               myNick.String(),
               "",
@@ -1093,7 +1116,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 
         // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
         // We send true on the last SetItemValue().
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverHostName.String(), false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, id.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
       }
@@ -1176,7 +1199,7 @@ ServerAgent::MessageReceived (BMessage *msg)
               *vision_app->pClientWin()->AgentRect(),
               theNick,
               sid,
-              serverHostName.String(),
+              id.String(),
               sMsgr,
               myNick.String(),
               ""),

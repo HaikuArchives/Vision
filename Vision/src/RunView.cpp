@@ -2186,7 +2186,7 @@ Line::SoftBreaks (Theme *theme, float start_width)
 		{
 			while (space_place < space_count)
 			{
-				if ((float)edges[spaces[space_place]] - start > width)
+				if (edges[spaces[space_place]] - start > width)
 					break;
 
 				++space_place;
