@@ -690,47 +690,20 @@ ClientAgent::ParseCmd (const char *data)
 	
 	if (firstWord == "/NEWSERVER")
 	{
-	  #if 0
 	  BString newServer (GetWord (data, 2)),
 	          newPort (GetWord (data, 3));
 	  if (newPort == "-9z99")
 	    newPort = "6667";	  	  
-	  
-	  BList *nicklist (new BList);
-	  BString nick ("vision");
-	  nicklist->AddItem (strcpy (new char [nick.Length() + 1], nick.String()));
-  
-	  BString *serverhost (new BString (newServer)),
-	          *serverport (new BString (newPort)),
-	          *username (new BString ("Vision User")),
-	          *userident (new BString ("vision")),
-	          *servercmds (new BString ("")),
-	          *events (vision_app->events);
-	          
-	  
-	  ClientWindow *window ((ClientWindow *)Window());
-	  window->UpdateAgentRect();
-	  
-	  window->winList->AddAgent (
-	    new ServerAgent (
-	      serverhost->String(),
-	      nicklist,
-	      serverport->String(),
-	      username->String(),
-	      userident->String(),
-	      events,
-	      true,  // show motd
-	      true, // enable identd
-	      servercmds->String(),
-	      *window->agentrect),
-	    ID_SERVER,
-	    serverhost->String(),
-	    WIN_SERVER_TYPE,
-	    true); // activate
-	    
-	    return true;
-	 #endif
-	}
+
+      BMessage newserver (M_MAKE_NEW_SERVER);
+      newserver.AddString ("hostname", newServer);
+      newserver.AddString ("port", newPort);
+      newserver.AddString ("autoexec", "");
+      newserver.AddBool   ("enidentd", true);
+      vision_app->pClientWin()->PostMessage (&newserver);
+     
+      return true;     
+    }
 	
 
 	if (firstWord == "/NICK")
