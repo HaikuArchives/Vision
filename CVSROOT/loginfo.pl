@@ -7,23 +7,12 @@
 
 system("echo running loginfo.pl");
 
-my $last_dir_file;
-my $summary_file;
-my $cvsroot;
-my $my_pgrp_id;
-my $MAILER;
-my $subject;
-my $mailfrom;
-my $mailto;
-my $user;
-my $cvsdirectory;
-
-
 
 $last_dir_file = "/tmp/#cvs.files.lastdir";
 $summary_file  = "/tmp/#cvs.files.summary";
 
 $cvsroot    = $ENV{CVSROOT}."/";
+$user       = $ENV{USER};
 
 
 $my_pgrp_id = getpgrp();
@@ -32,7 +21,6 @@ $MAILER = "/usr/sbin/sendmail";
 
 $mailfrom = shift;
 $mailto   = shift;
-$user     = shift;
 $subject  = shift;
 $cvsdirectory = shift;
 
