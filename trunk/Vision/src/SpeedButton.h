@@ -143,24 +143,24 @@ class TSpeedButton : public BControl
 	private:
 	    enum TSBDrawState { sbSDown, sbSFlat, sbSUp };
 	
-	    BBitmap*	FDisabledBitmap;
-	    BBitmap*	FEnabledBitmap;
-	    BRect		FBitmapSourceRect;
-	    BRect		FBitmapDestinationRect;
-	    BRect		FBorder;
-	    TSBStyle	FStyle;
-	    int32		FGroupIndex;
-	    rgb_color	FHighlightColor;
-	    rgb_color	FEnabledViewColor;
-	    BPoint		FLabelPos;
+	    BBitmap*	fDisabledBitmap;
+	    BBitmap*	fEnabledBitmap;
+	    BRect		fBitmapSourceRect;
+	    BRect		fBitmapDestinationRect;
+	    BRect		fBorder;
+	    TSBStyle	fStyle;
+	    int32		fGroupIndex;
+	    rgb_color	fHighlightColor;
+	    rgb_color	fEnabledViewColor;
+	    BPoint		fLabelPos;
 	
-	    bool      FActive;
-	    bool      FMouseDown;
-	    bool      FOutside;
-	    bool	  FAttachedToWindow;
-	    bool      FSelected;
-	    bool      FLatching;
-	    bool      FHighlighted;	
+	    bool      fActive;
+	    bool      fMouseDown;
+	    bool      fOutside;
+	    bool	  fAttachedToWindow;
+	    bool      fSelected;
+	    bool      fLatching;
+	    bool      fHighlighted;	
 };
 
 #endif

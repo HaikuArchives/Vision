@@ -19,39 +19,39 @@
 #include "SpeedButton.h"
 
 //-------------------------------------------------------------------------------
-TSpeedButton::TSpeedButton(BRect Frame, const char *Name, const char* Label,
-                           BMessage *Message, BBitmap *EnabledBitmap,
-                           TSBStyle Style,
-                           BBitmap *DisabledBitmap,
+TSpeedButton::TSpeedButton(BRect FrameRect, const char* NameStr, const char* LabelStr,
+                           BMessage* InvokeMsg, BBitmap* EnabledBitmap,
+                           TSBStyle BtnStyle,
+                           BBitmap* DisabledBitmap,
                            uint32 ResizingMask,
-                           uint32 Flags)
-        :BControl(Frame, Name, Label, Message, ResizingMask, Flags),
-        FDisabledBitmap(NULL),
-        FEnabledBitmap(NULL),
-        FBitmapDestinationRect(0, 0, 0, 0),
-        FBorder(Bounds()),
-        FStyle(Style),
-        FGroupIndex(-1),
-        FHighlightColor(keyboard_navigation_color()),
-        FLabelPos(0, 0),
-        FActive(false),
-        FMouseDown(false),
-        FOutside(true),
-        FAttachedToWindow(false),
-        FSelected(false),
-        FLatching(false),
-        FHighlighted(false)
+                           uint32 BtnFlags)
+        :BControl(FrameRect, NameStr, LabelStr, InvokeMsg, ResizingMask, BtnFlags),
+        fDisabledBitmap(NULL),
+        fEnabledBitmap(NULL),
+        fBitmapDestinationRect(0, 0, 0, 0),
+        fBorder(Bounds()),
+        fStyle(BtnStyle),
+        fGroupIndex(-1),
+        fHighlightColor(keyboard_navigation_color()),
+        fLabelPos(0, 0),
+        fActive(false),
+        fMouseDown(false),
+        fOutside(true),
+        fAttachedToWindow(false),
+        fSelected(false),
+        fLatching(false),
+        fHighlighted(false)
 {
     // make a copy of the disabled bitmap if needed.
     if (DisabledBitmap != NULL)
     {
-        FDisabledBitmap = new BBitmap(DisabledBitmap);
+        fDisabledBitmap = new BBitmap(DisabledBitmap);
     }
 
     if (EnabledBitmap != NULL)
     {
-        FEnabledBitmap = new BBitmap(EnabledBitmap);
-        SetupBitmaps(FEnabledBitmap);
+        fEnabledBitmap = new BBitmap(EnabledBitmap);
+        SetupBitmaps(fEnabledBitmap);
     }
     
     if( NULL != BControl::Label() )
@@ -60,60 +60,60 @@ TSpeedButton::TSpeedButton(BRect Frame, const char *Name, const char* Label,
     }
 }
 //-------------------------------------------------------------------------------
-TSpeedButton::TSpeedButton(BMessage *Archive)
-        :BControl(Archive)
+TSpeedButton::TSpeedButton(BMessage* Arch)
+        :BControl(Arch)
 {
-    Archive->FindBool("Deco::TSpeedButton:FSelected", &FSelected);
-    Archive->FindInt32("Deco::TSpeedButton:FGroupIndex", &FGroupIndex);
+    Arch->FindBool("Deco::TSpeedButton:fSelected", &fSelected);
+    Arch->FindInt32("Deco::TSpeedButton:fGroupIndex", &fGroupIndex);
 
-    FBorder = Bounds();
+    fBorder = Bounds();
 
     BMessage *BitmapArchiveD = NULL;
     BMessage *BitmapArchiveE = NULL;
 
-    Archive->FindMessage("DCL::TSpeedButton:FDisabledBitmap", BitmapArchiveD);
-    Archive->FindMessage("DCL::TSpeedButton:FEnabledBitmap", BitmapArchiveE);
+    Arch->FindMessage("DCL::TSpeedButton:fDisabledBitmap", BitmapArchiveD);
+    Arch->FindMessage("DCL::TSpeedButton:fEnabledBitmap", BitmapArchiveE);
 
-    FDisabledBitmap = dynamic_cast<BBitmap *>(BBitmap::Instantiate(BitmapArchiveD));
-    FEnabledBitmap = dynamic_cast<BBitmap *>(BBitmap::Instantiate(BitmapArchiveE));
+    fDisabledBitmap = dynamic_cast<BBitmap *>(BBitmap::Instantiate(BitmapArchiveD));
+    fEnabledBitmap = dynamic_cast<BBitmap *>(BBitmap::Instantiate(BitmapArchiveE));
 
-    if (NULL != FEnabledBitmap)
-        SetupBitmaps(FEnabledBitmap);
+    if (NULL != fEnabledBitmap)
+        SetupBitmaps(fEnabledBitmap);
 
-    FActive = false;
-    FAttachedToWindow = false;
+    fActive = false;
+    fAttachedToWindow = false;
 }
 //-------------------------------------------------------------------------------
-TSpeedButton *TSpeedButton::Instantiate(BMessage *Archive)
+TSpeedButton *TSpeedButton::Instantiate(BMessage* Archie)
 {
-    if ( validate_instantiation(Archive, "TSpeedButton"))
-        return new TSpeedButton(Archive);
+    if ( validate_instantiation(Archie, "TSpeedButton"))
+        return new TSpeedButton(Archie);
 
     return NULL;
 }
 //-------------------------------------------------------------------------------
-status_t TSpeedButton::Archive(BMessage *Archive, bool Deep) const
+status_t TSpeedButton::Archive(BMessage *Archie, bool Deep) const
 {
-    BView::Archive(Archive, Deep);
-    Archive->AddString("class", "TSpeedButton");
+    BView::Archive(Archie, Deep);
+    Archie->AddString("class", "TSpeedButton");
 
     BMessage BitmapArchiveD;
     BMessage BitmapArchiveE;
 
-    if (FDisabledBitmap != NULL)
+    if (fDisabledBitmap != NULL)
     {
-        FDisabledBitmap->Archive(&BitmapArchiveD);
-        Archive->AddMessage("DCL::TSpeedButton:FDisabledBitmap", &BitmapArchiveD);
+        fDisabledBitmap->Archive(&BitmapArchiveD);
+        Archie->AddMessage("DCL::TSpeedButton:fDisabledBitmap", &BitmapArchiveD);
     }
 
-    if (FEnabledBitmap != NULL)
+    if (fEnabledBitmap != NULL)
     {
-        FEnabledBitmap->Archive(&BitmapArchiveE);
-        Archive->AddMessage("DCL::TSpeedButton:FDisabledBitmap", &BitmapArchiveE);
+        fEnabledBitmap->Archive(&BitmapArchiveE);
+        Archie->AddMessage("DCL::TSpeedButton:fDisabledBitmap", &BitmapArchiveE);
     }
 
-    Archive->AddBool("DCL::TSpeedButton:FSelected", FSelected);
-    Archive->AddInt32("DCL::TSpeedButton:FGroupIndex", FGroupIndex);
+    Archie->AddBool("DCL::TSpeedButton:fSelected", fSelected);
+    Archie->AddInt32("DCL::TSpeedButton:fGroupIndex", fGroupIndex);
 
     // todo: Forward error checking on?
     return B_OK;
@@ -122,48 +122,48 @@ status_t TSpeedButton::Archive(BMessage *Archive, bool Deep) const
 void TSpeedButton::SetupBitmaps(BBitmap* SourceBitmap)
 {
     // We need EDGE_SPACE pixels clear on every side for the various button functions
-    FBitmapDestinationRect = Bounds().InsetByCopy(EDGE_SPACE, EDGE_SPACE);
+    fBitmapDestinationRect = Bounds().InsetByCopy(EDGE_SPACE, EDGE_SPACE);
 
     // setup the Source and Destination bitmap rects, clipping when necessary.
     BRect workRect(SourceBitmap->Bounds());
 
     // Determine if any work needs to be done, the offset is for easy comparison
-    if (workRect.OffsetByCopy(EDGE_SPACE, EDGE_SPACE) != FBitmapDestinationRect)
+    if (workRect.OffsetByCopy(EDGE_SPACE, EDGE_SPACE) != fBitmapDestinationRect)
     {
         // The source may be taller
-        if (workRect.IntegerHeight() > FBitmapDestinationRect.IntegerHeight())
+        if (workRect.IntegerHeight() > fBitmapDestinationRect.IntegerHeight())
         {
             // Move the source down by half the difference and clip.
-            workRect.OffsetBy(0, (workRect.IntegerHeight() - FBitmapDestinationRect.IntegerHeight()) / 2);
-            workRect.bottom = workRect.top + FBitmapDestinationRect.IntegerHeight();
+            workRect.OffsetBy(0, (workRect.IntegerHeight() - fBitmapDestinationRect.IntegerHeight()) / 2);
+            workRect.bottom = workRect.top + fBitmapDestinationRect.IntegerHeight();
         }
 
         // The source may be wider
-        if (workRect.IntegerWidth() > FBitmapDestinationRect.IntegerWidth())
+        if (workRect.IntegerWidth() > fBitmapDestinationRect.IntegerWidth())
         {
             // Move the source over by half the difference and clip.
-            workRect.OffsetBy((workRect.IntegerWidth() - FBitmapDestinationRect.IntegerWidth()) / 2, 0);
-            workRect.right = workRect.left + FBitmapDestinationRect.IntegerWidth();
+            workRect.OffsetBy((workRect.IntegerWidth() - fBitmapDestinationRect.IntegerWidth()) / 2, 0);
+            workRect.right = workRect.left + fBitmapDestinationRect.IntegerWidth();
         }
 
         // The source may be shorter
-        if (workRect.IntegerHeight() < FBitmapDestinationRect.IntegerHeight())
+        if (workRect.IntegerHeight() < fBitmapDestinationRect.IntegerHeight())
         {
             // Move the destination right by half the difference and clip
-            FBitmapDestinationRect.OffsetBy(0, (FBitmapDestinationRect.IntegerHeight() - workRect.IntegerHeight()) / 2);
-            FBitmapDestinationRect.bottom = FBitmapDestinationRect.top + workRect.IntegerHeight();
+            fBitmapDestinationRect.OffsetBy(0, (fBitmapDestinationRect.IntegerHeight() - workRect.IntegerHeight()) / 2);
+            fBitmapDestinationRect.bottom = fBitmapDestinationRect.top + workRect.IntegerHeight();
         }
 
         // The source may be narrower
-        if (workRect.IntegerWidth() < FBitmapDestinationRect.IntegerWidth())
+        if (workRect.IntegerWidth() < fBitmapDestinationRect.IntegerWidth())
         {
             // Move the destination right by half the difference and clip
-            FBitmapDestinationRect.OffsetBy((FBitmapDestinationRect.IntegerWidth() - workRect.IntegerWidth()) / 2, 0);
-            FBitmapDestinationRect.right = FBitmapDestinationRect.left + workRect.IntegerWidth();
+            fBitmapDestinationRect.OffsetBy((fBitmapDestinationRect.IntegerWidth() - workRect.IntegerWidth()) / 2, 0);
+            fBitmapDestinationRect.right = fBitmapDestinationRect.left + workRect.IntegerWidth();
         }
     }
 
-    FBitmapSourceRect = workRect;
+    fBitmapSourceRect = workRect;
 }
 //-------------------------------------------------------------------------------
 void TSpeedButton::SetupLabel()
@@ -171,68 +171,68 @@ void TSpeedButton::SetupLabel()
 	// This will look real funny if the button is not made large enough for the label.
 
 	// Figure out where the label lives.
-	FLabelPos.y = Bounds().bottom - EDGE_SPACE;
+	fLabelPos.y = Bounds().bottom - EDGE_SPACE;
 	
-	FLabelPos.x = (Bounds().Width() / 2.0) - (StringWidth(Label()) / 2.0 );
+	fLabelPos.x = (Bounds().Width() / 2.0) - (StringWidth(Label()) / 2.0 );
 	
 	// Move the destination accordingly.
-	FBitmapDestinationRect = FBitmapSourceRect;
+	fBitmapDestinationRect = fBitmapSourceRect;
 	
-	font_height fheight;
-	GetFontHeight(&fheight);
+	font_height fontheight;
+	GetFontHeight(&fontheight);
 	
-	float availHeight = Bounds().Height() - (fheight.ascent +
-	                    fheight.descent + fheight.leading +
+	float availHeight = Bounds().Height() - (fontheight.ascent +
+	                    fontheight.descent + fontheight.leading +
 	                    (2 * EDGE_SPACE));
 	
-	float top = (availHeight / 2.0) - (FBitmapSourceRect.Height() / 2.0) + EDGE_SPACE;
-	float left = ( Bounds().Width() / 2.0 ) - (FBitmapSourceRect.Width() / 2.0);
+	float top = (availHeight / 2.0) - (fBitmapSourceRect.Height() / 2.0) + EDGE_SPACE;
+	float left = ( Bounds().Width() / 2.0 ) - (fBitmapSourceRect.Width() / 2.0);
 	
-	FBitmapDestinationRect.OffsetTo(left, top);	
+	fBitmapDestinationRect.OffsetTo(left, top);	
 }
 //-------------------------------------------------------------------------------
 void TSpeedButton::AttachedToWindow()
 {
     SetViewColor(Parent()->ViewColor());
 
-    FEnabledViewColor = Parent()->ViewColor();
+    fEnabledViewColor = Parent()->ViewColor();
     SetBlendingMode( B_PIXEL_ALPHA, B_ALPHA_OVERLAY );
     
-    if( (NULL == FDisabledBitmap) && (NULL != FEnabledBitmap))
+    if( (NULL == fDisabledBitmap) && (NULL != fEnabledBitmap))
     {
-		if ( FEnabledBitmap && (B_RGB32 != FEnabledBitmap->ColorSpace() ))
+		if ( fEnabledBitmap && (B_RGB32 != fEnabledBitmap->ColorSpace() ))
 		{
 			// translate to 32 bit image ...
-			BBitmap* temp = new BBitmap(FEnabledBitmap->Bounds(), B_RGB32, true);
-			BView aView(FEnabledBitmap->Bounds(), "", 0, B_WILL_DRAW);
+			BBitmap* temp = new BBitmap(fEnabledBitmap->Bounds(), B_RGB32, true);
+			BView aView(fEnabledBitmap->Bounds(), "", 0, B_WILL_DRAW);
 			temp->AddChild(&aView);
 			aView.Window()->Lock();
-			aView.DrawBitmap(FEnabledBitmap);
+			aView.DrawBitmap(fEnabledBitmap);
 			aView.Window()->Unlock();
 			temp->RemoveChild(&aView);
-			FDisabledBitmap = temp;
+			fDisabledBitmap = temp;
 		}
 		else
 		{
-			if (FEnabledBitmap)
-				FDisabledBitmap = new BBitmap(FEnabledBitmap);
+			if (fEnabledBitmap)
+				fDisabledBitmap = new BBitmap(fEnabledBitmap);
 		}
 		
-		uint32 bitend = FDisabledBitmap->BitsLength() / 4;
+		uint32 bitend = fDisabledBitmap->BitsLength() / 4;
 		
 		// shade the image
 		for( uint32 i = 0; i < bitend; i++ )
 		{
-			rgb_color* color = (rgb_color*)(&((uint32*)(FDisabledBitmap->Bits()))[i]);
+			rgb_color* color = (rgb_color*)(&((uint32*)(fDisabledBitmap->Bits()))[i]);
 
 			// todo: Should we use right shift by one to speed up this loop?
-			color->red += ((FEnabledViewColor.red - color->red) / 2); 
-			color->blue += ((FEnabledViewColor.blue - color->blue) / 2);
-			color->green += ((FEnabledViewColor.green - color->green) / 2);
+			color->red += ((fEnabledViewColor.red - color->red) / 2); 
+			color->blue += ((fEnabledViewColor.blue - color->blue) / 2);
+			color->green += ((fEnabledViewColor.green - color->green) / 2);
 		}    
     }
 
-    FAttachedToWindow = true;
+    fAttachedToWindow = true;
     
     BControl::AttachedToWindow();
 }
@@ -245,14 +245,14 @@ void TSpeedButton::DetachedFromWindow()
 TSpeedButton::~TSpeedButton()
 {
 	// It's safe to delete NULL pointers
-	delete FDisabledBitmap;
-	delete FEnabledBitmap;
+	delete fDisabledBitmap;
+	delete fEnabledBitmap;
 }
 //-------------------------------------------------------------------------------
 void TSpeedButton::Draw(BRect UpdateRect)
 {
     BControl::Draw(UpdateRect);
-    FBorder = Bounds();
+	fBorder = Bounds();
 
     rgb_color viewcolour = Parent()->ViewColor();
     rgb_color highlight  = tint_color(viewcolour, B_LIGHTEN_MAX_TINT);
@@ -264,17 +264,17 @@ void TSpeedButton::Draw(BRect UpdateRect)
     drawing_mode mode = DrawingMode();
     SetDrawingMode(B_OP_ALPHA);
 
-    if (FEnabledBitmap != NULL)
+    if (fEnabledBitmap != NULL)
     {
         if (true == BControl::IsEnabled())
         {
-            DrawBitmapAsync(FEnabledBitmap, FBitmapSourceRect, FBitmapDestinationRect);
+            DrawBitmapAsync(fEnabledBitmap, fBitmapSourceRect, fBitmapDestinationRect);
         }
         else
         {
-            if (FDisabledBitmap != NULL)
+            if (fDisabledBitmap != NULL)
             {
-                DrawBitmapAsync(FDisabledBitmap, FBitmapSourceRect, FBitmapDestinationRect);
+                DrawBitmapAsync(fDisabledBitmap, fBitmapSourceRect, fBitmapDestinationRect);
             }
         }
     }
@@ -292,64 +292,64 @@ void TSpeedButton::Draw(BRect UpdateRect)
 			SetHighColor(132, 130, 132);	// Damn, no ui_color() for this ...
 		}
 		
-		DrawString(Label(), FLabelPos);
+		DrawString(Label(), fLabelPos);
 	}
 
     TSBDrawState state = sbSFlat;
 
     if (true == BControl::IsEnabled())
-        if (!FOutside)
-            if (FMouseDown)
+        if (!fOutside)
+            if (fMouseDown)
                 state = sbSDown;
 
-    if (FStyle == sbUp)
-        if (!FMouseDown || FOutside)
+    if (fStyle == sbUp)
+        if (!fMouseDown || fOutside)
             state = sbSUp;
 
-    if (FActive)
-        if (!FMouseDown && (true == IsEnabled()))
+    if (fActive)
+        if (!fMouseDown && (true == IsEnabled()))
             state = sbSUp;
 
-    if (FSelected)
+    if (fSelected)
         state = sbSDown;
 
-    BeginLineArray((FHighlighted ? 8 : 4));
+    BeginLineArray((fHighlighted ? 8 : 4));
 
     switch (state)
     {
         // Draw Down
 	    case sbSDown:
-	        AddLine(FBorder.LeftTop(), FBorder.LeftBottom(), shadow);
-	        AddLine(FBorder.LeftBottom(), FBorder.RightBottom(), highlight);
-	        AddLine(FBorder.RightTop(), FBorder.RightBottom(), highlight);
-	        AddLine(FBorder.LeftTop(), FBorder.RightTop(), shadow);
+	        AddLine(fBorder.LeftTop(), fBorder.LeftBottom(), shadow);
+	        AddLine(fBorder.LeftBottom(), fBorder.RightBottom(), highlight);
+	        AddLine(fBorder.RightTop(), fBorder.RightBottom(), highlight);
+	        AddLine(fBorder.LeftTop(), fBorder.RightTop(), shadow);
 	        break;
 	
         // Draw Flat
 	    case sbSFlat:
-	        AddLine(FBorder.LeftTop(), FBorder.LeftBottom(), viewcolour);
-	        AddLine(FBorder.LeftBottom(), FBorder.RightBottom(), viewcolour);
-	        AddLine(FBorder.RightTop(), FBorder.RightBottom(), viewcolour);
-	        AddLine(FBorder.LeftTop(), FBorder.RightTop(), viewcolour);
+	        AddLine(fBorder.LeftTop(), fBorder.LeftBottom(), viewcolour);
+	        AddLine(fBorder.LeftBottom(), fBorder.RightBottom(), viewcolour);
+	        AddLine(fBorder.RightTop(), fBorder.RightBottom(), viewcolour);
+	        AddLine(fBorder.LeftTop(), fBorder.RightTop(), viewcolour);
 	        break;
 
         // Draw Up
 	    case sbSUp:
-	        AddLine(FBorder.LeftTop(), FBorder.LeftBottom(), highlight);
-	        AddLine(FBorder.LeftBottom(), FBorder.RightBottom(), shadow);
-	        AddLine(FBorder.RightTop(), FBorder.RightBottom(), shadow);
-	        AddLine(FBorder.LeftTop(), FBorder.RightTop(), highlight);
+	        AddLine(fBorder.LeftTop(), fBorder.LeftBottom(), highlight);
+	        AddLine(fBorder.LeftBottom(), fBorder.RightBottom(), shadow);
+	        AddLine(fBorder.RightTop(), fBorder.RightBottom(), shadow);
+	        AddLine(fBorder.LeftTop(), fBorder.RightTop(), highlight);
 	        break;
     }
 
-    if (true == FHighlighted)
+    if (true == fHighlighted)
     {
-        BRect highlightRect(FBorder);
+        BRect highlightRect(fBorder);
         highlightRect.InsetBy(1, 1);
-        AddLine(highlightRect.LeftTop(),    highlightRect.LeftBottom(),  FHighlightColor);
-        AddLine(highlightRect.LeftBottom(), highlightRect.RightBottom(), FHighlightColor);
-        AddLine(highlightRect.RightTop(),   highlightRect.RightBottom(), FHighlightColor);
-        AddLine(highlightRect.LeftTop(),    highlightRect.RightTop(),    FHighlightColor);
+        AddLine(highlightRect.LeftTop(),    highlightRect.LeftBottom(),  fHighlightColor);
+        AddLine(highlightRect.LeftBottom(), highlightRect.RightBottom(), fHighlightColor);
+        AddLine(highlightRect.RightTop(),   highlightRect.RightBottom(), fHighlightColor);
+        AddLine(highlightRect.LeftTop(),    highlightRect.RightTop(),    fHighlightColor);
     }
 
     EndLineArray();
@@ -361,25 +361,25 @@ void TSpeedButton::MouseDown(BPoint Where)
     if (true == BControl::IsEnabled())
     {
         SetMouseEventMask(B_POINTER_EVENTS);
-        FMouseDown = true;
+        fMouseDown = true;
 
-        if (false == FSelected)
+        if (false == fSelected)
         {
         	rgb_color color = HighColor();
             SetHighColor(ViewColor());
-            StrokeLine(FBorder.LeftTop(), FBorder.LeftBottom());
-            StrokeLine(FBorder.LeftTop(), FBorder.RightTop());
+            StrokeLine(fBorder.LeftTop(), fBorder.LeftBottom());
+            StrokeLine(fBorder.LeftTop(), fBorder.RightTop());
 
             // clean up highlight drawing.
-            if (true == FHighlighted)
+            if (true == fHighlighted)
             {
-                StrokeLine(FBorder.InsetByCopy(1, 1).LeftTop(), FBorder.InsetByCopy(1, 1).LeftBottom());
-                StrokeLine(FBorder.InsetByCopy(1, 1).LeftTop(), FBorder.InsetByCopy(1, 1).RightTop());
+                StrokeLine(fBorder.InsetByCopy(1, 1).LeftTop(), fBorder.InsetByCopy(1, 1).LeftBottom());
+                StrokeLine(fBorder.InsetByCopy(1, 1).LeftTop(), fBorder.InsetByCopy(1, 1).RightTop());
             }
 
             if ( Window()->Lock() )
             {
-                Draw(FBorder);
+                Draw(fBorder);
                 Window()->Unlock();
             }
             
@@ -393,38 +393,38 @@ void TSpeedButton::MouseDown(BPoint Where)
 void TSpeedButton::MouseUp(BPoint Where)
 {
     // Save some clock cycles
-    if ((!IsEnabled()) || (FSelected && (FGroupIndex > -1) && !FLatching))
+    if ((!IsEnabled()) || (fSelected && (fGroupIndex > -1) && !fLatching))
     {
-		FMouseDown = false;
+		fMouseDown = false;
         return;
     }
 
     // check to see if we clicked down on this one.
-    if (FMouseDown)
+    if (fMouseDown)
     {
         // mouse might have moved off of us
-        if (FOutside == false)
+        if (fOutside == false)
         {
             // we may not be enabled
             if (true == BControl::IsEnabled())
             {
-                if (FLatching && FSelected)
+                if (fLatching && fSelected)
                 {
-                    FSelected = false;
+                    fSelected = false;
                     SetHighColor(ViewColor());
-                    StrokeLine(FBorder.LeftBottom(), FBorder.RightBottom());
-                    StrokeLine(FBorder.RightTop(), FBorder.RightBottom());
+                    StrokeLine(fBorder.LeftBottom(), fBorder.RightBottom());
+                    StrokeLine(fBorder.RightTop(), fBorder.RightBottom());
 
 
                     // clean up highlight drawing.
-                    if (true == FHighlighted)
+                    if (true == fHighlighted)
                     {
-                        StrokeLine(FBorder.InsetByCopy(1, 1).LeftBottom(), FBorder.InsetByCopy(1, 1).RightBottom());
-                        StrokeLine(FBorder.InsetByCopy(1, 1).RightTop(), FBorder.InsetByCopy(1, 1).RightBottom());
+                        StrokeLine(fBorder.InsetByCopy(1, 1).LeftBottom(), fBorder.InsetByCopy(1, 1).RightBottom());
+                        StrokeLine(fBorder.InsetByCopy(1, 1).RightTop(), fBorder.InsetByCopy(1, 1).RightBottom());
                     }
 
-                    FMouseDown = false;
-                    Draw(FBorder);
+                    fMouseDown = false;
+                    Draw(fBorder);
                     BControl::SetValue(0);
                     BControl::Invoke();
                     return;
@@ -433,13 +433,13 @@ void TSpeedButton::MouseUp(BPoint Where)
                 // todo: Check for impossible(?) situation where the button is not
                 // attached to a window?
 
-                if (FLatching)
+                if (fLatching)
                 {
-                    FSelected = true;
+                    fSelected = true;
                     BControl::SetValue(1);
                 }
 
-                if (FGroupIndex > -1)
+                if (fGroupIndex > -1)
                 {
                     // De-select all, then select this one.
                     BView* sibView = Parent()->ChildAt(0);
@@ -454,30 +454,30 @@ void TSpeedButton::MouseUp(BPoint Where)
                             // Only pop other buttons up if they are selected and they are of the same
                             // group index and they are not of the latching type.
                             // Todo: determine if this should be different in terms of the latching state ...
-                            if((true == sibling->FSelected) &&
-                               (sibling->FGroupIndex == FGroupIndex) &&
-                               (false == sibling->FLatching) )
+                            if((true == sibling->fSelected) &&
+                               (sibling->fGroupIndex == fGroupIndex) &&
+                               (false == sibling->fLatching) )
                             {
                                 sibling->Selected(false);
                             }
                         }
                         sibView = sibView->NextSibling();
                     }
-                    FSelected = true;
+                    fSelected = true;
                 }
                 else
                 {
-                    if (false == FLatching)
+                    if (false == fLatching)
                     {
                         SetHighColor(ViewColor());
-                        StrokeLine(FBorder.LeftBottom(), FBorder.RightBottom());
-                        StrokeLine(FBorder.RightTop(), FBorder.RightBottom());
+                        StrokeLine(fBorder.LeftBottom(), fBorder.RightBottom());
+                        StrokeLine(fBorder.RightTop(), fBorder.RightBottom());
 
                         // clean up highlight drawing.
-                        if (true == FHighlighted)
+                        if (true == fHighlighted)
                         {
-                            StrokeLine(FBorder.InsetByCopy(1, 1).LeftBottom(), FBorder.InsetByCopy(1, 1).RightBottom());
-                            StrokeLine(FBorder.InsetByCopy(1, 1).RightTop(), FBorder.InsetByCopy(1, 1).RightBottom());
+                            StrokeLine(fBorder.InsetByCopy(1, 1).LeftBottom(), fBorder.InsetByCopy(1, 1).RightBottom());
+                            StrokeLine(fBorder.InsetByCopy(1, 1).RightTop(), fBorder.InsetByCopy(1, 1).RightBottom());
                         }
                     }
                 }
@@ -485,26 +485,26 @@ void TSpeedButton::MouseUp(BPoint Where)
             }
         }
 
-        FMouseDown = false;
-        if (false == FSelected)
+        fMouseDown = false;
+        if (false == fSelected)
         {
-            Draw(FBorder);
+            Draw(fBorder);
         }
     }
     else
     {
         // We had the button down when we entered, but we are now
         // lifting up, so lets activate it.
-        FOutside = false;
-        FActive  = true;
+        fOutside = false;
+        fActive  = true;
 
-        Draw(FBorder);
+        Draw(fBorder);
     }
     
     BControl::MouseUp(Where);
 }
 //-------------------------------------------------------------------------------
-void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage* Message)
+void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage* Msg)
 {
     switch(Code)
     {
@@ -518,33 +518,33 @@ void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage* Message
 
            GetMouse(&pt, &buttons);
 
-           if (buttons && !FMouseDown)
+           if (buttons && !fMouseDown)
            {
                return;
            }
 
            // We left the button with the mouse down, but are comming back now.
-           if (FMouseDown && FOutside)
+           if (fMouseDown && fOutside)
            {
                SetHighColor(ViewColor());
-               StrokeLine(FBorder.LeftTop(), FBorder.RightTop());
-               StrokeLine(FBorder.LeftTop(), FBorder.LeftBottom());
+               StrokeLine(fBorder.LeftTop(), fBorder.RightTop());
+               StrokeLine(fBorder.LeftTop(), fBorder.LeftBottom());
 
                // clean up highlight drawing.
-               if (true == FHighlighted)
+               if (true == fHighlighted)
                {
-                   StrokeLine(FBorder.InsetByCopy(1, 1).LeftTop(), FBorder.InsetByCopy(1, 1).RightTop());
-                   StrokeLine(FBorder.InsetByCopy(1, 1).LeftTop(), FBorder.InsetByCopy(1, 1).LeftBottom());
+                   StrokeLine(fBorder.InsetByCopy(1, 1).LeftTop(), fBorder.InsetByCopy(1, 1).RightTop());
+                   StrokeLine(fBorder.InsetByCopy(1, 1).LeftTop(), fBorder.InsetByCopy(1, 1).LeftBottom());
                }
 
            }
 
-           FOutside = false;
-           FActive = true;
+           fOutside = false;
+           fActive = true;
 
            if ( Window()->Lock() )
            {
-               Draw(FBorder);
+               Draw(fBorder);
                Window()->Unlock();
            }
            break;
@@ -552,26 +552,26 @@ void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage* Message
 
 	   case B_EXITED_VIEW :
        {
-           FActive = false;
-           FOutside = true;
+           fActive = false;
+           fOutside = true;
 
-           if (true == FMouseDown)
+           if (true == fMouseDown)
            {
                // Left the button with the mouse down, need to put it back to neutral.
                SetHighColor(ViewColor());
-               StrokeLine(FBorder.LeftBottom(), FBorder.RightBottom());
-               StrokeLine(FBorder.RightTop(), FBorder.RightBottom());
+               StrokeLine(fBorder.LeftBottom(), fBorder.RightBottom());
+               StrokeLine(fBorder.RightTop(), fBorder.RightBottom());
 
-               if (true == FHighlighted)
+               if (true == fHighlighted)
                {
-                   StrokeLine(FBorder.InsetByCopy(1, 1).LeftBottom(), FBorder.InsetByCopy(1, 1).RightBottom());
-                   StrokeLine(FBorder.InsetByCopy(1, 1).RightTop(), FBorder.InsetByCopy(1, 1).RightBottom());
+                   StrokeLine(fBorder.InsetByCopy(1, 1).LeftBottom(), fBorder.InsetByCopy(1, 1).RightBottom());
+                   StrokeLine(fBorder.InsetByCopy(1, 1).RightTop(), fBorder.InsetByCopy(1, 1).RightBottom());
                }
            }
 
            if ( Window()->Lock() )
            {
-               Draw(FBorder);
+               Draw(fBorder);
                Window()->Unlock();
            }
 
@@ -579,92 +579,92 @@ void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage* Message
        }
     }
     
-    BControl::MouseMoved(Where, Code, Message);
+    BControl::MouseMoved(Where, Code, Msg);
 }
 //-------------------------------------------------------------------------------
 void TSpeedButton::FrameResized(float Width, float Height)
 {
     BControl::FrameResized(Width, Height);
 
-    if ( FEnabledBitmap )
+    if ( fEnabledBitmap )
     {
-        SetupBitmaps(FEnabledBitmap);
+        SetupBitmaps(fEnabledBitmap);
     }
 }
 //-------------------------------------------------------------------------------
 TSBStyle TSpeedButton::Style()
 {
-    return FStyle;
+    return fStyle;
 }
 //-------------------------------------------------------------------------------
-void TSpeedButton::Style(TSBStyle Style)
+void TSpeedButton::Style(TSBStyle BtnStyle)
 {
-    FStyle = Style;
+    fStyle = BtnStyle;
 }
 //-------------------------------------------------------------------------------
 void TSpeedButton::GroupIndex(int32 Index)
 {
-    FGroupIndex = Index;
+    fGroupIndex = Index;
 }
 //-------------------------------------------------------------------------------
 int32 TSpeedButton::GroupIndex()
 {
-    return FGroupIndex;
+    return fGroupIndex;
 }
 //-------------------------------------------------------------------------------
-void TSpeedButton::Selected(bool Selected)
+void TSpeedButton::Selected(bool SetSelected)
 {
-    if (FSelected != Selected)
+    if (fSelected != SetSelected)
 	{
-	    FSelected = Selected;
+	    fSelected = SetSelected;
 
 	    // Reflect the state of the button appropriately
-	    if (true == FAttachedToWindow)
+	    if (true == fAttachedToWindow)
 	    {
 	        BeginLineArray(2);
-	        AddLine(FBorder.RightTop(), FBorder.RightBottom(), Parent()->ViewColor());
-	        AddLine(FBorder.LeftBottom(), FBorder.RightBottom(), Parent()->ViewColor());
+	        AddLine(fBorder.RightTop(), fBorder.RightBottom(), Parent()->ViewColor());
+	        AddLine(fBorder.LeftBottom(), fBorder.RightBottom(), Parent()->ViewColor());
 	        EndLineArray();
-	        Draw(FBorder);
+	        Draw(fBorder);
 	    }
 	}
 }
 //-------------------------------------------------------------------------------
 bool TSpeedButton::Selected()
 {
-    return FSelected;
+    return fSelected;
 }
 //-------------------------------------------------------------------------------
-void TSpeedButton::Latching(bool Latching)
+void TSpeedButton::Latching(bool SetLatching)
 {
-    FLatching = Latching;
+    fLatching = SetLatching;
 }
 //-------------------------------------------------------------------------------
 bool TSpeedButton::Latching()
 {
-    return FLatching;
+    return fLatching;
 }
 //-------------------------------------------------------------------------------
-void TSpeedButton::Highlighted(bool Highlighted)
+void TSpeedButton::Highlighted(bool SetHighlighted)
 {
-    FHighlighted = Highlighted;
+    fHighlighted = SetHighlighted;
     Invalidate();
-    Draw(FBorder);
+    Draw(fBorder);
 }
 //-------------------------------------------------------------------------------
 bool TSpeedButton::Highlighted()
 {
-    return FHighlighted;
+    return fHighlighted;
 }
 //-------------------------------------------------------------------------------
-void TSpeedButton::HighlightColor(rgb_color HighlightColor)
+void TSpeedButton::HighlightColor(rgb_color BtnHighlightColor)
 {
-    FHighlightColor = HighlightColor;
-    Draw(FBorder);
+    fHighlightColor = BtnHighlightColor;
+    Draw(fBorder);
 }
 //-------------------------------------------------------------------------------
 rgb_color TSpeedButton::HighlightColor()
 {
-    return FHighlightColor;
+    return fHighlightColor;
 }
 //-------------------------------------------------------------------------------
