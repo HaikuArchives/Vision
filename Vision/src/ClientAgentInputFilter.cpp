@@ -476,9 +476,12 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 		}
 	}
 
-	msg.AddBool ("lines", result == 1);
-	msgr.SendMessage (&msg);
-	window->input->MakeFocus(false);
-	window->input->MakeFocus(true);
+	if ((result > 0) || lines == 1)
+	{
+		msg.AddBool ("lines", result == 1);
+		msgr.SendMessage (&msg);
+		window->input->MakeFocus(false);
+		window->input->MakeFocus(true);
+	}
 }
 
