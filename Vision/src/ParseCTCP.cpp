@@ -36,7 +36,6 @@
 void
 ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 {
-	printf ("here\n");
 	BString theCTCP (GetWord(theMsg.String(), 1).ToUpper()),
 	        theRest (RestOfString(theMsg.String(), 2));
 	theCTCP.RemoveFirst("\1");
@@ -54,7 +53,6 @@ ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 	}
 	else if ((theCTCP == "VERSION") || (theCTCP == "CLIENTINFO"))
 	{
-		printf ("here too\n");
 		BString sysInfoString;
 		if(!vision_app->GetBool ("versionParanoid"))
 		{
@@ -71,7 +69,7 @@ ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 			system_info myInfo;
 			get_system_info(&myInfo);
 			
-			sysInfoString = "BeOS/";
+			sysInfoString = " : BeOS/";
 			sysInfoString += librootversion;
 			
 			if ((librootversion.FindFirst("5.0") == 0) || (librootversion == "5"))
@@ -101,26 +99,22 @@ ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 				
 			}
 			
-			sysInfoString += " : ";
+			sysInfoString += " (";
 						
 			sysInfoString << myInfo.cpu_count;
-			sysInfoString += " CPU";
-			if (myInfo.cpu_count > 1)
-				sysInfoString += "s";
-			
-			sysInfoString += " @ ~";
+			sysInfoString += "x";
 			sysInfoString << myInfo.cpu_clock_speed / 1000000;
-			sysInfoString += "MHz";
+			sysInfoString += "MHz) : ";
 		}
 		else
-			sysInfoString = "BeOS : Because you don't eat cereal with a fork.";
+			sysInfoString = " : A bird in the bush usually has a friend in there with him : ";
 		
 		BString tempString("NOTICE ");
 		tempString += theNick;
-		tempString += " :\1VERSION Vision["; 
+		tempString += " :\1VERSION Vision : v"; 
 		tempString += vision_app->VisionVersion();
-		tempString += "] : http://vision.sourceforge.net : ";
 		tempString += sysInfoString;
+		tempString += "http://vision.sourceforge.net";
 			
 
 		tempString += '\1';
