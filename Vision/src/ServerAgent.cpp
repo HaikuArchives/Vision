@@ -239,20 +239,15 @@ ServerAgent::Timer (void *arg)
 int32
 ServerAgent::Sender (void *arg)
 {
-  printf("initiating sender\n");
   ServerAgent *agent ((ServerAgent *)arg);
   BMessenger msgr (agent);
   sem_id sendSyncLock (-1);
   BLocker *sendDataLock (NULL);
   BList *pendingSends (NULL);
   
-  printf("created messenger, agent pointer: %x\n", agent);
-  printf("messenger validity: %d\n", msgr.IsValid());
-  
   
   if (msgr.IsValid() && msgr.LockTarget())
   {
-    printf("grabbing pointers\n");
     sendSyncLock = agent->fSendSyncSem;
     sendDataLock = &(agent->fSendLock);
     pendingSends = &(agent->fPendingSends);
@@ -261,26 +256,20 @@ ServerAgent::Sender (void *arg)
   }
   else
   {
-    printf("what, no agent?! sender thread aborting.\n");
     return B_ERROR;
   }
     
-  printf("unlocked window, going into transmit loop\n");
-  
   BString *data (NULL);
   
   while (acquire_sem (sendSyncLock) == B_NO_ERROR)
   {
-    printf("acquiring send lock\n");
     sendDataLock->Lock();
     data = (BString *)pendingSends->RemoveItem (0L);
     sendDataLock->Unlock();
-    printf("sending data: %s\n", data->String());
     agent->AsyncSendData (data->String());
     delete data;
     data = NULL;
   }
-  printf("server agent shutting down, exiting sender thread\n");  
   return B_OK;
 }
 
