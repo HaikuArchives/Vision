@@ -1204,13 +1204,6 @@ ChannelAgent::MessageReceived (BMessage *msg)
            AddSend (&send, endl);
          }  
          ClientAgent::MessageReceived(msg);
-         BMessage deathchant (M_OBITUARY);
-         deathchant.AddPointer ("agent", this);
-         deathchant.AddPointer ("item", fAgentWinItem);
-         vision_app->pClientWin()->PostMessage (&deathchant);
-
-         deathchant.what = M_CLIENT_SHUTDOWN;
-         fSMsgr.SendMessage(&deathchant);
        }
        break;
 

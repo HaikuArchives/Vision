@@ -70,6 +70,11 @@ class SelectPos
 								return ((fLine == rhs.fLine) && (fOffset == rhs.fOffset));
 							}
 	
+	inline int          operator != (const SelectPos &rhs) const
+	                        {
+	                            return (!(*this == rhs));
+	                        }
+	
 
 };
 
