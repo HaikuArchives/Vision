@@ -4,6 +4,7 @@ http://vision.sourceforge.net
 [0.3.07025]
 2001-07-25
         * minor bugfixes
+        * cached timestamp variable for improved performance
 
 [0.3.07024]
 2001-07-24
