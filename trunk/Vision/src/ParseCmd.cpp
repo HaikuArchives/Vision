@@ -1227,8 +1227,6 @@ ClientAgent::DNSLookup (void *arg)
     return B_ERROR;
   } 
 
-  delete msg;
-
   BString resolve (lookup),
           output ("[x] ");
 
@@ -1274,6 +1272,8 @@ ClientAgent::DNSLookup (void *arg)
   }
 
   output += "\n";
+
+  delete msg;
 
   BMessage dnsMsg (M_DISPLAY);
   agent->PackDisplay (&dnsMsg, output.String(), &(agent->whoisColor));
