@@ -390,6 +390,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 		
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
+      PostActive (&msg);
       PackDisplay (&msg, tempString2.String(), &whoisColor, &serverFont);
       PostActive (&msg);
       return true;   

@@ -302,8 +302,7 @@ void
 VisionApp::ReadyToRun (void)
 {
   printf ("# START # TestScript::RunTestScripts()\n"); 
-  TestScript *tscript;
-  tscript->RunTestScripts();
+  TestScript *tscript = new TestScript(); 
   printf ("# END   # TestScript::RunTestScripts()\n"); 
   
   InitSettings();

@@ -99,11 +99,13 @@ AboutWindow::AboutWindow (void)
   background->AddChild (credits);
 
   const char *unita =
+    "{A-Z}\n"
     "Rene Gollent (AnEvilYak)\n"
     "Wade Majors (kurros)\n\n\n\n"
   ;
   
   const char *unitb =
+    "{A-Z}\n"
     "Andrew Bazan (Hiisi)\n"
     "Rene Gollent (AnEvilYak)\n"
     "Todd Lair (tlair)\n"
@@ -120,20 +122,30 @@ AboutWindow::AboutWindow (void)
     "Nude Scenes: Natalie Portman\n"
     "Counselors: regurg and helix\n\n\n"
     "No animals were injured during the production of this IRC client\n\n\n"
-    "Soundtrack available on Catastrophe Records\n\n\n"
+    "Soundtrack available on Catastrophe Records\n\n\n\n"
   ;
+  
+  const char *contrib =
+    "{A-Z}\n"
+    "Seth Flaxman (Flax)\n"
+    "Joshua Jensen\n"
+    "Gord McLeod (G_McLeod)\n"
+    "John Robinson ([geo])\n"
+    "Bjorn Oksholen (GuinessM)\n"
+    "Jean-Baptiste M. Quéru (jbq)\n"
+    "\n\n\n"
+  ;
+
   
   const char *thanks =
     "Olathe\n"
     "Terminus\n"
     "Bob Maple\n"
-    "Gord McLeod\n"
     "Ted Stodgell\n"
     "Seth Flaxman\n"
     "David Aquilina\n"
     "Kurt von Finck\n"
     "Kristine Gouveia\n"
-    "Jean-Baptiste Quéru\n"
     "Be, Inc., Menlo Park, CA\n"
     "Pizza Hut, Winter Haven, FL (now give me that free pizza Mike)\n\n\n"
     "^^^ Click The Logo ^^^\nhttp://vision.sourceforge.net\n^^^ Click The Logo ^^^\n\n\n\n\n\n"
@@ -168,7 +180,7 @@ AboutWindow::AboutWindow (void)
   run.runs[0].font   = font;
   run.runs[0].color  = myBlue;
 
-  credits->Insert ("\n\n\n\n\n\n\n\nVision ", &run);
+  credits->Insert ("\n\n\n\n\n\n\nVision-", &run);
   credits->Insert (vision_app->VisionVersion().String(), &run);
   credits->Insert ("\n\n\n", &run);
   
@@ -193,8 +205,10 @@ AboutWindow::AboutWindow (void)
   credits->Insert (unita, &run);
   credits->Insert ("\n\n\n\nUnit B\n[Bowser]\n", &runhead);      
   credits->Insert (unitb, &run);
-  credits->Insert ("\n\n\n\nUnit C\n[Support Crew]\n", &runhead);      
-  credits->Insert (unitc, &run);  
+  credits->Insert ("\n\n\n\nBrought To You In Part By Contributions From\n", &runhead);
+  credits->Insert (contrib, &run); 
+  credits->Insert ("\n\n\n\nUnit C\n[Support Crew]\n", &runhead);
+  credits->Insert (unitc, &run);        
   credits->Insert ("\n\n\n\nSpecial Thanks\n\n", &runhead);      
   credits->Insert (thanks, &run);
   
