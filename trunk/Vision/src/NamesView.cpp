@@ -92,8 +92,8 @@ void NamesView::AttachedToWindow (void)
 //  myMessage = new BMessage(SEND_ACTION);
 //  myPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
 
-//  myMessage = new BMessage(CHAT_ACTION);
-//  myPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
+  myMessage = new BMessage(POPUP_DCCCHAT);
+  myPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
 
   CTCPPopUp = new BMenu("CTCP");
   myPopUp->AddItem( CTCPPopUp );
