@@ -56,7 +56,7 @@ URLCrunch::Crunch (BString *url)
 	int32 markers[5];
 
 	for (int32 i = 0; i < 5; ++i)
-		markers[i] = buffer.FindFirst (tags[i], pos);
+		markers[i] = buffer.IFindFirst (tags[i], pos);
 
 	for (int32 i = 0; i < 5; ++i)
 	
@@ -64,27 +64,9 @@ URLCrunch::Crunch (BString *url)
 		&&  markers[i] < marker)
 		{
 			url_length = markers[i];
-
-			while (url_length < buffer.Length()
-			&&    (isdigit (buffer[url_length])
-			||     isalpha (buffer[url_length])
-			||     buffer[url_length] == '.'
-			||     buffer[url_length] == '-'
-			||     buffer[url_length] == '/'
-			||     buffer[url_length] == ':'
-			||     buffer[url_length] == ';'
-			||     buffer[url_length] == '~'
-			||     buffer[url_length] == '%'
-			||     buffer[url_length] == '+'
-			||     buffer[url_length] == '&'
-			||     buffer[url_length] == '_'
-			||     buffer[url_length] == '?'
-			||     buffer[url_length] == '='
-			||     buffer[url_length] == ','
-			||     buffer[url_length] == '#' 
-			||     buffer[url_length] == '@'))
-				++url_length;
 			
+			url_length += strcspn (buffer.String() + url_length, " \t\n|\\<>");
+
 			while (!isalpha(buffer[url_length-1]) && !isdigit(buffer[url_length-1])
 				&& buffer[url_length-1] != '/')
 				--url_length; 
