@@ -52,12 +52,6 @@ ClientAgentLogger::~ClientAgentLogger (void)
   // fLogThread finish up in the background
   if (fIsQuitting)
     wait_for_thread (fLogThread, &result);
-  for (filemap::iterator it = fLogFiles.begin(); it != fLogFiles.end(); ++it)
-  {
-  	BFile *file = (it->second);
-  	CloseSession(file);
-  	delete file;
-  }
 }
 
 void
