@@ -169,11 +169,17 @@ VisionApp::InitSettings(void)
 	else
       printf(":ERROR: Error Loading /Vision/VisionSettings\n");
  
-    visionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
+    if (!visionSettings->HasRect ("clientWinRect"))
+      visionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
     
-    visionSettings->AddBool ("timestamp", false);
-    visionSettings->AddBool ("versionParanoid", false);
-    visionSettings->AddBool ("catchAltW", true);
+    if (!visionSettings->HasBool ("timestamp"))
+      visionSettings->AddBool ("timestamp", false);
+    
+    if (!visionSettings->HasBool ("versionParanoid"))
+      visionSettings->AddBool ("versionParanoid", false);
+    
+    if (!visionSettings->HasBool ("catchAltW"))
+      visionSettings->AddBool ("catchAltW", false);
     
     settingsloaded = true;
     if (debugsettings)
