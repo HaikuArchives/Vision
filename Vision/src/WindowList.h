@@ -79,7 +79,8 @@ class WindowList : public BOutlineListView
    public:
                                     WindowList (BRect);
     virtual                         ~WindowList (void);
-    virtual void                    AllAttached (void);
+    virtual void                    AttachedToWindow (void);
+    virtual void                    DetachedFromWindow (void);
     virtual void                    MouseDown (BPoint);
     virtual void                    MessageReceived (BMessage *);
     virtual void 					SelectionChanged (void);

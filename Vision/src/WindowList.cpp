@@ -69,9 +69,21 @@ WindowList::~WindowList (void)
 }
 
 void
-WindowList::AllAttached (void)
+WindowList::AttachedToWindow (void)
 {
-  //
+  BView::AttachedToWindow ();
+  fActiveTheme->WriteLock();
+  fActiveTheme->AddView (this);
+  fActiveTheme->WriteUnlock();
+}
+
+void
+WindowList::DetachedFromWindow (void)
+{
+  BView::DetachedFromWindow ();
+  fActiveTheme->WriteLock();
+  fActiveTheme->RemoveView (this);
+  fActiveTheme->WriteUnlock();
 }
 
 void
@@ -102,11 +114,12 @@ WindowList::MessageReceived (BMessage *msg)
       {
         int16 which (msg->FindInt16 ("which"));
         bool refresh (false);
-        fActiveTheme->ReadLock();
         switch (which)
         {
           case C_WINLIST_BACKGROUND:
+            fActiveTheme->ReadLock();
             SetViewColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+            fActiveTheme->ReadUnlock();
             refresh = true;
             break;
           
@@ -118,7 +131,6 @@ WindowList::MessageReceived (BMessage *msg)
             refresh = true;
             break;
         }
-        fActiveTheme->ReadUnlock();
         if (refresh)
           Invalidate();
       }

@@ -236,7 +236,6 @@ void
 RunView::AttachedToWindow (void)
 {
   BView::AttachedToWindow();
-
   RecalcScrollBar (false);
   fTheme->WriteLock();
   fTheme->AddView (this);

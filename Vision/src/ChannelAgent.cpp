@@ -119,8 +119,6 @@ ChannelAgent::Init (void)
   
   fNamesList = new NamesView (fFrame);
   
-  fActiveTheme->AddView (fNamesList);
-  
   fNamesScroll = new BScrollView(
     "scroll_names",
     fNamesList,
