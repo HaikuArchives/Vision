@@ -3,7 +3,12 @@ http://vision.sourceforge.net
 
 [0.3.07017]
 2001-07-17
+     * Window size is correctly saved.
+
+[0.3.07017]
+2001-07-17
      * color picker now comes to front if color control is clicked while picker is in the background (appearance prefs)
+
 [0.3.07017]
 2001-07-17
      * workaround for BTextView colorspace bug (thanks adi!)

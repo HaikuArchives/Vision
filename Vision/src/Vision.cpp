@@ -664,7 +664,10 @@ VisionApp::SetRect (const char *settingName, BRect value)
    return B_ERROR;
   
  if (visionSettings->ReplaceRect (settingName, value) == B_OK)
+ {
+   visionSettings->Save();
    return B_OK;
+ }
  
  return B_ERROR;
 }
