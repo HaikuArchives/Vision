@@ -107,7 +107,6 @@ class WindowList : public BListView
                                     nickColor,
                                     selColor,
                                     bgColor;
-    ClientWindow                    *parent;
                                     
     static int                      SortListItems (const void *, const void *);
     
