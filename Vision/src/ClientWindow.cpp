@@ -191,7 +191,6 @@ ClientWindow::MessageReceived (BMessage *msg)
     {
        WindowListItem *item;
        int32 newstatus;
-       bool hidden (true);
       
        if ((msg->FindPointer ("item", reinterpret_cast<void **>(&item)) != B_OK)
        || (msg->FindInt32 ("status", ((int32 *)&newstatus)) != B_OK))
@@ -200,21 +199,19 @@ ClientWindow::MessageReceived (BMessage *msg)
          return;
        }
        
-       msg->FindBool ("hidden", &hidden);
-       
        if (!winList->HasItem (item))
          break;
- 
-       if (!hidden)
+       
+       if (msg->HasBool("hidden"))
        {
-         item->SetStatus (newstatus);
+       	 item->SetStatus (newstatus);
          winList->Invalidate();
          break;
        }
-             
+           
        if (item->Status() != WIN_NICK_BIT)
        {
-         item->SetStatus (newstatus);
+       	 item->SetStatus (newstatus);
          winList->Invalidate();
        }
        
@@ -420,7 +417,7 @@ ClientWindow::Init (void)
                     new BMessage (M_MOVE_DOWN), B_DOWN_ARROW));
   mWindow->AddItem (item = new BMenuItem ("Previous Window",
                     new BMessage (M_MOVE_UP), B_UP_ARROW));
-  mWindow->AddItem (item = new BMenuItem ("Server Agent",
+  mWindow->AddItem (item = new BMenuItem ("Server Window",
                     new BMessage (M_MOVE_TOP_SERVER), '/'));
   menubar->AddItem (mWindow);  
   

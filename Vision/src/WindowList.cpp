@@ -531,8 +531,10 @@ WindowListItem::pAgent() const
 void
 WindowListItem::SetName (const char *name)
 {
+  vision_app->pClientWin()->Lock();
   myName = name;
   vision_app->pClientWin()->pWindowList()->Invalidate();
+  vision_app->pClientWin()->Unlock();
 }
 
 void
@@ -544,7 +546,10 @@ WindowListItem::SetSid (int32 newSid)
 void
 WindowListItem::SetStatus (int32 winStatus)
 {
+  vision_app->pClientWin()->Lock();
   myStatus = winStatus;
+  vision_app->pClientWin()->pWindowList()->Invalidate();
+  vision_app->pClientWin()->Unlock();
 }
 
 void

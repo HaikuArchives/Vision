@@ -1,6 +1,14 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0328]
+ 2001-03-28
+   * Add a Window Lock() to WindowListItem->SetName and SetStatus to try and
+     prevent a crasher.
+   * Rename Server Agent -> Server Window in the Window menu
+   * Another attempt at resolving some crashes from canceled connections
+   * Fixed a strange case where the someone-said-your-nick bit would get reset
+     back to there-is-new-text bit for WindowListItems.
 
 [0.1.0327]
  2001-03-27
