@@ -456,13 +456,30 @@ RunView::SetViewColor (rgb_color color)
 }
 
 void
+RunView::MouseDown (BPoint point)
+{
+	SelectPos pos (PositionAt (point));
+}
+
+void
+RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
+{
+}
+
+void
+RunView::MouseUp (BPoint point)
+{
+}
+
+void
 RunView::MessageReceived (BMessage *msg)
 {
 	switch (msg->what)
 	{
 		case M_FOREGROUND_CHANGE:
 		case M_BACKGROUND_CHANGE:
-			Invalidate (Bounds());
+		    if (!IsHidden())
+				Invalidate (Bounds());
 			break;
 
 		case M_FONT_CHANGE:
@@ -760,8 +777,90 @@ RunView::SetTheme (Theme *t)
 		working->top = top;
 
 	RecalcScrollBar (false);
-	Invalidate (Bounds());
+	if (!IsHidden())
+		Invalidate (Bounds());
 	if (Window()) Window()->UpdateIfNeeded();
+}
+
+SelectPos
+RunView::PositionAt (BPoint point) const
+{
+	int16 i, lindex (0);
+	SelectPos pos;
+
+	if (line_count == 0)
+		return pos;
+
+	// find the line
+	for (i = 0; i < line_count; ++i)
+	{
+		if (lines[i]->top > point.y)
+			break;
+
+		lindex = i;
+	}
+
+	printf ("Line: %hd\n", lindex);
+
+	float height (lines[lindex]->top);
+	int16 sindex (0);
+
+	for (i = 0; i < lines[lindex]->softie_used; ++i)
+	{
+		if (height > point.y)
+			break;
+
+		sindex = i;
+		height += lines[lindex]->softies[i].height;
+	}
+
+	float margin (MARGIN_WIDTH / 2.0);
+	int16 width (0);
+	int16 start (0);
+
+	printf ("Softie: %hd\n", sindex);
+
+	if (sindex)
+	{
+		int16 offset (lines[lindex]->softies[sindex - 1].offset);
+
+		width = lines[lindex]->edges[offset];
+		start = offset + UTF8_CHAR_LEN (lines[lindex]->text[offset]);
+	}
+
+	for (i = start; i <= lines[lindex]->softies[sindex].offset; ++i)
+	{
+		if (lines[lindex]->edges[i] + margin - width >= point.x)
+			break;
+	}
+
+	pos.line = lindex;
+	pos.offset = min_c (i, lines[lindex]->softies[sindex].offset);
+
+	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
+
+	return pos;
+}
+
+BPoint
+RunView::PointAt (SelectPos) const
+{
+	return BPoint();
+}
+
+void
+RunView::GetSelection (SelectPos *, SelectPos *) const
+{
+}
+
+void
+RunView::Select (SelectPos, SelectPos)
+{
+}
+
+void
+RunView::SelectAll (void)
+{
 }
 
 Line::Line (

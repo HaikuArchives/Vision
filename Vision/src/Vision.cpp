@@ -194,6 +194,20 @@ VisionApp::InitDefaults (void)
   const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
   const rgb_color WALLOPS_COLOR       = {10,30,170, 255};
   const rgb_color NICK_DISPLAY        = {47, 47, 47, 255};
+  const rgb_color MIRC_BLUE           = { 0, 0, 127, 255};
+  const rgb_color MIRC_GREEN          = { 0, 127, 0, 255};
+  const rgb_color MIRC_RED            = { 127, 0, 0, 255};
+  const rgb_color MIRC_BROWN          = { 224, 192, 128, 255};
+  const rgb_color MIRC_PURPLE         = { 127, 0, 127, 255};
+  const rgb_color MIRC_ORANGE         = { 192, 127, 0, 255};
+  const rgb_color MIRC_YELLOW         = { 255, 255, 0, 255};
+  const rgb_color MIRC_LIME           = { 0, 255, 0, 255};
+  const rgb_color MIRC_TEAL           = { 0, 127, 127, 255};
+  const rgb_color MIRC_AQUA           = { 0, 255, 255, 255};
+  const rgb_color MIRC_LT_BLUE        = { 0, 0, 255, 255};
+  const rgb_color MIRC_PINK           = { 255, 127, 127, 255};
+  const rgb_color MIRC_GREY           = { 127, 127, 127, 255};
+  const rgb_color MIRC_SILVER         = { 192, 192, 192, 255};
 
   colors[C_TEXT]                      = myBlack;
   colors[C_BACKGROUND]                = myWhite;
@@ -229,6 +243,22 @@ VisionApp::InitDefaults (void)
   colors[C_TIMESTAMP]                 = myBlack;
   colors[C_TIMESTAMP_BACKGROUND]      = myWhite;
   colors[C_SELECTION]                 = myBlack;
+  colors[C_MIRC_WHITE]                = myWhite;
+  colors[C_MIRC_BLACK]                = myBlack;
+  colors[C_MIRC_BLUE]                 = MIRC_BLUE;
+  colors[C_MIRC_GREEN]                = MIRC_GREEN;
+  colors[C_MIRC_RED]                  = MIRC_RED;
+  colors[C_MIRC_BROWN]                = MIRC_BROWN;
+  colors[C_MIRC_PURPLE]               = MIRC_PURPLE;
+  colors[C_MIRC_ORANGE]               = MIRC_ORANGE;
+  colors[C_MIRC_YELLOW]               = MIRC_YELLOW;
+  colors[C_MIRC_LIME]                 = MIRC_LIME;
+  colors[C_MIRC_TEAL]                 = MIRC_TEAL;
+  colors[C_MIRC_AQUA]                 = MIRC_AQUA;
+  colors[C_MIRC_LT_BLUE]              = MIRC_LT_BLUE;
+  colors[C_MIRC_PINK]                 = MIRC_PINK;
+  colors[C_MIRC_GREY]                 = MIRC_GREY;
+  colors[C_MIRC_SILVER]               = MIRC_SILVER;
   
   client_font[F_TEXT]    = new BFont (be_plain_font);
   client_font[F_SERVER]  = new BFont (be_plain_font);
@@ -311,6 +341,9 @@ VisionApp::InitSettings (void)
     activeTheme->SetForeground (i, colors[i]);
     activeTheme->SetBackground (i, colors[C_BACKGROUND]);
   }
+  for (i = C_MIRC_WHITE; i < MAX_COLORS; i++)
+    activeTheme->SetBackground (i, colors[i]);
+    
   activeTheme->SetBackground (C_TIMESTAMP, colors[C_TIMESTAMP_BACKGROUND]);
   activeTheme->SetBackground (MAX_COLORS, colors[C_BACKGROUND]);
   activeTheme->SetForeground (MAX_COLORS, colors[C_TEXT]);
@@ -353,15 +386,15 @@ VisionApp::LoadDefaults (int32 section)
           
         if (!visionSettings->HasString ("timestamp_format"))
           visionSettings->AddString ("timestamp_format", "[%H:%M]");
-        else
-          visionSettings->ReplaceString ("timestamp_format", "[%H:%M]");
-          
+        
         if (!visionSettings->HasBool ("log_enabled"))
           visionSettings->AddBool ("log_enabled", false);
 
         if (!visionSettings->HasBool ("log_filetimestamp"))
           visionSettings->AddBool ("log_filetimestamp", false);
-          
+        
+        if (!visionSettings->HasBool ("stripcolors"))
+          visionSettings->AddBool ("stripcolors", true);  
       }
       break;
     
@@ -468,6 +501,14 @@ bool
 VisionApp::QuitRequested (void)
 {
   ShuttingDown = true;
+
+  if (identSocket >= 0)
+#ifdef BONE_BUILD
+  close (identSocket);
+#elif NETSERVER_BUILD
+  closesocket (identSocket);
+#endif
+
   BMessage *quitRequest (CurrentMessage());
 
   if ((clientWin) && (!quitRequest->HasBool ("real_thing")))
@@ -479,13 +520,6 @@ VisionApp::QuitRequested (void)
   // give our child threads a chance to die gracefully
   snooze (500000);  // 0.5 seconds
 
-  if (identSocket >= 0)
-#ifdef BONE_BUILD
-  close (identSocket);
-#elif NETSERVER_BUILD
-  closesocket (identSocket);
-#endif
-  
   status_t result;
 
   wait_for_thread (identThread, &result);
@@ -569,13 +603,12 @@ VisionApp::ReadyToRun (void)
 {
   InitSettings();
 
-  BRect clientWinRect;
-  visionSettings->FindRect ("clientWinRect", &clientWinRect);
-  
   identThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
   if (identThread >= B_OK)
     resume_thread (identThread);
 
+  BRect clientWinRect;
+  visionSettings->FindRect ("clientWinRect", &clientWinRect);
   
   clientWin = new ClientWindow (clientWinRect);
   setupWin = new SetupWindow (true);
@@ -762,15 +795,24 @@ VisionApp::SetColor (int32 which, const rgb_color color)
     
     if (which == C_BACKGROUND)
     {
+      // update regular background color on all other text
       for (int32 i = 0; i < C_TIMESTAMP; i++)
         activeTheme->SetBackground (i , color);
        activeTheme->SetBackground (MAX_COLORS, color);
     }
+    
+    // update timestamp bg color
     else if (which == C_TIMESTAMP_BACKGROUND)
       activeTheme->SetBackground (C_TIMESTAMP, color);
+    // mirc colors need to be updated on both fore and back
+    else if (which >= C_MIRC_WHITE)
+    {
+      activeTheme->SetForeground (which, color);
+      activeTheme->SetBackground (which, color);
+    }
     else
       activeTheme->SetForeground (which, color);
-    
+
     BMessage msg (M_STATE_CHANGE);
 
     msg.AddInt32 ("which", which);
@@ -966,7 +1008,7 @@ VisionApp::SetBool (const char *settingName, bool value)
   
   if (!boolLock.IsLocked())
     return B_ERROR;
-
+  
  if (visionSettings->ReplaceBool (settingName, value) == B_OK)
  {
    BMessage msg (M_STATE_CHANGE);
@@ -1126,71 +1168,81 @@ VisionApp::Identity (void *)
   if ((identSock = socket (AF_INET, SOCK_STREAM, 0)) >= 0 
   &&  bind (identSock, (struct sockaddr *)&localAddr, sizeof (localAddr)) == 0) 
   {
-    vision_app->identSocket = identSock;
+      vision_app->identSocket = identSock;
 
 #ifdef BONE_BUILD
     struct linger lng = { 0, 0 }; 
     setsockopt (identSock, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
 #endif
-    struct timeval tv = { 10 , 0 };
     listen (identSock, 2048);
 
     while (!vision_app->ShuttingDown) 
     {
       struct fd_set rset, eset;
       struct sockaddr_in remoteSock;
+      struct timeval tv = { 10, 0};
       int size (sizeof (sockaddr_in));
-      accepted = accept (identSock, (struct sockaddr *)&remoteSock, &size);
-      if (accepted >= 0) 
+      FD_ZERO (&rset);
+      FD_ZERO (&eset);
+      FD_SET (identSock, &rset);
+      FD_SET (identSock, &eset);
+
+      if (select (identSock, &rset, 0, &eset, &tv) < 0 || FD_ISSET (identSock, &eset))
+         break;
+      else if (FD_ISSET (identSock, &rset))
       {
-        FD_ZERO (&rset);
-        FD_ZERO (&eset);
+        accepted = accept (identSock, (struct sockaddr *)&remoteSock, &size);
+        if (accepted >= 0) 
+        {
+          FD_ZERO (&rset);
+          FD_ZERO (&eset);
         
-        BString remoteIP (inet_ntoa (remoteSock.sin_addr));
-        ident = vision_app->GetIdent (remoteIP.String());
+          BString remoteIP (inet_ntoa (remoteSock.sin_addr));
+          ident = vision_app->GetIdent (remoteIP.String());
 #ifdef BONE_BUILD
         setsockopt (accepted, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
 #endif 
-        if (ident) 
-        {
-          memset (received, 0, 64);
-          FD_SET (accepted, &rset);
-          FD_SET (accepted, &eset);
-          if (select (accepted + 1, &rset, 0, &eset, &tv) > 0
-            && FD_ISSET (accepted, &rset))
+          if (ident) 
           {
+            memset (received, 0, 64);
+            FD_SET (accepted, &rset);
+            FD_SET (accepted, &eset);
+            if (select (accepted + 1, &rset, 0, &eset, &tv) > 0
+              && FD_ISSET (accepted, &rset))
+            {
             
-            recv (accepted, received, 64, 0);
-            int32 len (0); 
+              recv (accepted, received, 64, 0);
+              int32 len (0); 
      
-            received[63] = 0; 
-            while ((len = strlen (received)) 
-            &&     isspace (received[len - 1])) 
-              received[len - 1] = 0;
+              received[63] = 0; 
+              while ((len = strlen (received)) 
+              &&     isspace (received[len - 1])) 
+                received[len - 1] = 0;
               
-            BString string; 
-            
-            string.Append (received); 
-            string.Append (" : USERID : BeOS : "); 
-            string.Append (ident); 
-            string.Append ("\r\n"); 
+              BString string; 
+              
+              string.Append (received); 
+              string.Append (" : USERID : BeOS : "); 
+              string.Append (ident); 
+              string.Append ("\r\n"); 
                 
-            send (accepted, string.String(), string.Length(), 0); 
-          }
-        } 
-        else 
-        { 
-          BString string ("0 , 0 : UNKNOWN : UNKNOWN-ERROR");
-          send (accepted, string.String(), string.Length(), 0);
-        } 
+              send (accepted, string.String(), string.Length(), 0); 
+            }
+          } 
+          else 
+          { 
+            BString string ("0 , 0 : UNKNOWN : UNKNOWN-ERROR");
+            send (accepted, string.String(), string.Length(), 0);
+          } 
 #ifdef NETSERVER_BUILD
-        closesocket (accepted);
+          closesocket (accepted);
 #elif BONE_BUILD
-        close (accepted);
+          close (accepted);
 #endif              
-        if (ident) 
-          ident = NULL; 
-      } 
+          if (ident) 
+            ident = NULL; 
+        }
+      }
     }
   }
 #ifdef BONE_BUILD

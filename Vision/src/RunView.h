@@ -82,6 +82,10 @@ class RunView : public BView
 	void					SetViewColor (uchar red, uchar green, uchar blue, uchar alpha = 255)
 							{ rgb_color color = {red, green, blue, alpha}; SetViewColor (color); }
 
+	virtual void		MouseDown (BPoint);
+	virtual void		MouseMoved (BPoint, uint32, const BMessage *);
+	virtual void		MouseUp (BPoint);
+
 	void					Append (const char *, int32, int16, int16, int16);
 	void					Append (const char *, int16, int16, int16);
 	void					Clear (void);
@@ -91,6 +95,12 @@ class RunView : public BView
 
 	void					SetTimeStampFormat (const char *);
 	void					SetTheme (Theme *);
+
+	SelectPos			PositionAt (BPoint) const;
+	BPoint				PointAt (SelectPos) const;
+	void					GetSelection (SelectPos *, SelectPos *) const;
+	void					Select (SelectPos, SelectPos);
+	void					SelectAll (void);
 };
 
 #endif

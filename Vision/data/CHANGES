@@ -12,6 +12,8 @@ http://vision.sourceforge.net
          * theme support (no GUI yet)
          * miscellaneous other minor rewrites/fixes
          * fixed stupid logger bug
+         * mIRC color support (colors and/or color stripping configurable in prefs)
+         * more miscellaneous rewrites/fixes
 
 [0.3.0828]
 2001-08-28

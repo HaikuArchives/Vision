@@ -142,7 +142,25 @@ enum {
 #define C_TIMESTAMP_BACKGROUND                          33
 #define C_SELECTION                                     34
 
-#define MAX_COLORS										35
+// mirc color codes 
+#define C_MIRC_WHITE									35 
+#define C_MIRC_BLACK									36
+#define C_MIRC_BLUE										37
+#define C_MIRC_GREEN									38
+#define C_MIRC_RED										39
+#define C_MIRC_BROWN									40
+#define C_MIRC_PURPLE									41
+#define C_MIRC_ORANGE									42
+#define C_MIRC_YELLOW									43
+#define C_MIRC_LIME										44
+#define C_MIRC_TEAL										45
+#define C_MIRC_AQUA										46
+#define C_MIRC_LT_BLUE									47
+#define C_MIRC_PINK										48
+#define C_MIRC_GREY										49
+#define C_MIRC_SILVER									50
+
+#define MAX_COLORS										51
 
 
 #define F_TEXT												0
