@@ -78,8 +78,6 @@ class RunView : public BView
 	BScrollView			*scroller;
 	BCursor				*URLCursor;
 	Theme					*theme;
-	BRect					*boxbuf;
-	int16					boxbuf_size;
 
 	Line					*working;
 	Line					*lines[LINE_COUNT];
