@@ -95,7 +95,10 @@ class WindowList : public BOutlineListView
     void                            Activate (int32);
     void                            CloseActive (void);
     void                            SelectLast (void);
+    void                            CollapseCurrentServer (void);
+    void                            ExpandCurrentServer (void);
     
+    int32                           GetServer (int32);
     void                            SelectServer (void);
     
     void                            ContextSelectUp (void);

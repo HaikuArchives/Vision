@@ -355,30 +355,78 @@ WindowList::SelectLast (void)
 }
 
 void
+WindowList::CollapseCurrentServer (void)
+{
+  int32 currentsel (CurrentSelection());
+  if (currentsel < 0)
+    return;
+  
+  int32 serversel (GetServer (currentsel));
+  
+  if (serversel < 0)
+    return;
+    
+  WindowListItem *citem ((WindowListItem *)ItemAt (serversel));
+  if (citem && (citem->Type() == WIN_SERVER_TYPE))
+  {
+    if (citem->IsExpanded())
+      Collapse (citem);
+  }
+}
+
+void
+WindowList::ExpandCurrentServer(void)
+{
+  int32 currentsel (CurrentSelection());
+  if (currentsel < 0)
+    return;
+
+  WindowListItem *citem ((WindowListItem *)ItemAt (currentsel));
+  if (citem && (citem->Type() == WIN_SERVER_TYPE))
+  {
+    if (!citem->IsExpanded())
+      Expand (citem);
+  }
+}
+
+int32
+WindowList::GetServer (int32 index)
+{
+  if (index < 0)
+    return -1;
+
+  int32 currentsid;
+       
+  WindowListItem *citem ((WindowListItem *)ItemAt (index));
+      
+  if (citem)
+    currentsid = citem->Sid();
+  else
+    return -1;
+      
+  for (int32 i (0); i < CountItems(); ++i)
+  { 
+    WindowListItem *aitem ((WindowListItem *)ItemAt (i));
+    if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
+    {
+      return i;
+    }
+  }
+  return -1;
+}
+
+void
 WindowList::SelectServer (void)
 {
   int32 currentsel (CurrentSelection());
   if (currentsel < 0)
     return;
-      
-  int32 currentsid;
-       
-  WindowListItem *citem ((WindowListItem *)ItemAt (currentsel));
-      
-  if (citem)
-    currentsid = citem->Sid();
-  else
+  
+  int32 serversel = GetServer (currentsel);
+  if (serversel < 0)
     return;
-      
-  for (int32 i (1); i <= CountItems(); ++i)
-  { 
-    WindowListItem *aitem ((WindowListItem *)ItemAt (i - 1));
-    if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
-    {
-      Select (IndexOf (aitem));
-      break; 
-    }
-  }
+    
+  Select (serversel);
 }
 
 void
@@ -700,9 +748,9 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   agent->RemoveSelf();
   RemoveItem (agentitem);
   FullListSortItems (SortListItems);
+  delete agent;
   SelectLast();
   Window()->EnableUpdates();
-  delete agent;
   
   UnlockLooper();
 }
