@@ -247,6 +247,12 @@ ClientAgent::SetScrollPos (float value)
 }
 
 void
+ClientAgent::SetServerName (const char *name)
+{
+  serverName = name;
+}
+
+void
 ClientAgent::AddMenuItems (BPopUpMenu *pmenu)
 {
   BMenuItem *item;
