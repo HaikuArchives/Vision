@@ -78,6 +78,7 @@ class WindowList : public BListView
     virtual                         ~WindowList (void);
     virtual void                    AllAttached (void);
     virtual void                    MouseDown (BPoint);
+    virtual void                    MessageReceived (BMessage *);
     virtual void 					SelectionChanged (void);
     virtual void                    KeyDown (const char *, int32);
 	
@@ -108,6 +109,8 @@ class WindowList : public BListView
     ClientWindow                    *parent;
                                     
     static int                      SortListItems (const void *, const void *);
+    
 };
 
+const uint32 M_MENU_NUKE            = 'wlmn';
 #endif

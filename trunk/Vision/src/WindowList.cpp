@@ -49,8 +49,9 @@ WindowList::WindowList (BRect frame)
 {
   myPopUp = new BPopUpMenu("Window Selection", false, false);
 
-  BMessage *myMessage = new BMessage (B_ABOUT_REQUESTED);
-  myPopUp->AddItem (new BMenuItem("Dance", myMessage));
+  BMenuItem *item;
+  myPopUp->AddItem (item = new BMenuItem("Close", new BMessage (M_MENU_NUKE)));
+  item->SetTarget (this);
   
   myPopUp->SetFont (be_plain_font);
   
@@ -77,6 +78,34 @@ WindowList::AllAttached (void)
 {
   parent = dynamic_cast<ClientWindow *>(Window());
   myPopUp->SetTargetForItems (vision_app);
+}
+
+void
+WindowList::MessageReceived (BMessage *msg)
+{
+  switch (msg->what)
+  {
+    case M_MENU_NUKE:
+    {
+      printf ("M_MENU_NUKE\n");
+      WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (CurrentSelection())));
+      if (myItem)
+      {
+        BMessage killMsg (M_CLIENT_QUIT);
+        killMsg.AddBool ("vision:winlist", true);
+        //BMessenger killMsgr (myItem->pAgent);
+        
+        BView *killTarget (myItem->pAgent());
+        
+        if ((killTarget = dynamic_cast<ClientAgent *>(killTarget)))
+          dynamic_cast<ClientAgent *>(killTarget)->msgr.SendMessage (&killMsg);
+      }
+      break;
+    }
+    
+    default:
+      BListView::MessageReceived (msg);
+  }
 }
 
 void

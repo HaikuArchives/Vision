@@ -693,7 +693,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
 		
 		case M_CLIENT_QUIT:
 		{
-			if (msg->HasBool ("vision:part") && msg->FindBool ("vision:part"))
+			printf ("ChannelAgent::M_CLIENT_QUIT\n");
+			if ((msg->HasBool ("vision:part") && msg->FindBool ("vision:part"))
+			||  (msg->HasBool ("vision:winlist") && msg->FindBool ("vision:winlist")))
 			{
 				BMessage send (M_SERVER_SEND);	
 				AddSend (&send, "PART ");
