@@ -53,7 +53,7 @@ CFLAGS += -DBONE_BUILD
 endif
 
 ifeq ($(VIS_BUILD),alan)
-CFLAGS += -DALAN_BUILD=1
+CFLAGS += -DALAN_BUILD=1 -fno-debug-opt
 endif
 
 ifeq ($(VIS_BUILD),be)
