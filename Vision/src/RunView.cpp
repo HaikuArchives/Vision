@@ -70,6 +70,7 @@ static unsigned char URLCursorData[] = {16,1,2,2,
 15,255,63,255,127,255,127,255,63,255,15,255,3,254,1,248
 };
 
+const float doubleClickThresh = 6;
 
 struct SoftBreak
 {
@@ -205,7 +206,9 @@ RunView::RunView (
 		off_view_time (0),
 		resizedirty (false),
 		fontsdirty (false),
-		myPopUp (NULL)
+		myPopUp (NULL),
+		lastClick (0,0),
+		lastClickTime (0)
 {
 	URLCursor = new BCursor (URLCursorData);
 	theme->ReadLock();
@@ -610,6 +613,34 @@ RunView::BuildPopUp (void)
   myPopUp->SetFont (be_plain_font);
 }
 
+bool
+RunView::WasDoubleClick(BPoint point)
+{
+	// check time and proximity
+	BPoint delta = point - lastClick;
+
+	bigtime_t sysTime;
+	Window()->CurrentMessage()->FindInt64("when", &sysTime);
+
+	bigtime_t timeDelta = sysTime - lastClickTime;
+
+	bigtime_t doubleClickSpeed;
+	get_click_speed(&doubleClickSpeed);
+
+	if (timeDelta < doubleClickSpeed
+		&& fabs(delta.x) < doubleClickThresh
+		&& fabs(delta.y) < doubleClickThresh)
+		{
+		  lastClick.Set(LONG_MAX, LONG_MAX);
+  		  lastClickTime = 0;
+		  return true;
+	    }
+
+	lastClick = point;
+	lastClickTime = sysTime;
+	return false;
+}
+
 void
 RunView::MouseDown (BPoint point)
 {
@@ -661,30 +692,31 @@ RunView::MouseDown (BPoint point)
 	&&      (modifiers & B_COMMAND_KEY) == 0
 	&&      (modifiers & B_CONTROL_KEY) == 0
 	&&      (modifiers & B_OPTION_KEY)  == 0
-	&&      (modifiers & B_MENU_KEY)    == 0
-	&&       s.offset >= 0
-    &&       clicks % 2 == 0)
+	&&      (modifiers & B_MENU_KEY)    == 0)
 	{
 		SelectPos start (s),
 					end (s);
-
-		// select word
-		lines[s.line]->SelectWord (&start.offset, &end.offset);
+			
+		if (WasDoubleClick (point))
+		{
+			// select word
+			lines[s.line]->SelectWord (&start.offset, &end.offset);
 		
-		Select (start, end);
-	}
-
-	else if (buttons                    == B_PRIMARY_MOUSE_BUTTON
-	&&      (modifiers & B_SHIFT_KEY)   == 0
-	&&      (modifiers & B_COMMAND_KEY) == 0
-	&&      (modifiers & B_CONTROL_KEY) == 0
-	&&      (modifiers & B_OPTION_KEY)  == 0
-	&&      (modifiers & B_MENU_KEY)    == 0)
-	{
-		SetMouseEventMask (B_POINTER_EVENTS);
-		tracking = 1;
-		track_offset = s;
-		Select (track_offset, track_offset);
+			Select (start, end);
+		}
+		else if (clicks == 3)
+		{
+			start.offset = 0;
+			end.offset = lines[s.line]->length;
+			Select (start, end);
+		}
+		else
+		{
+			SetMouseEventMask (B_POINTER_EVENTS);
+			tracking = 1;
+			track_offset = s;
+			Select (track_offset, track_offset);
+		}
 	}
 	else if (buttons					== B_PRIMARY_MOUSE_BUTTON
 	&&      (modifiers & B_SHIFT_KEY)   != 0
