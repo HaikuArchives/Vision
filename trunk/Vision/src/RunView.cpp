@@ -641,6 +641,13 @@ RunView::CheckClickCount(BPoint point)
 	return clickCount;
 }
 
+bool
+RunView::CheckClickBounds (const SelectPos &s, const BPoint &point) const
+{
+	return ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
+			&& (point.y <= lines[s.line]->bottom));
+}
+
 void
 RunView::MouseDown (BPoint point)
 {
@@ -651,11 +658,11 @@ RunView::MouseDown (BPoint point)
 	uint32 buttons;
 	uint32 modifiers;
 	uint16 clicks = CheckClickCount (point) % 3;
-
 	msg->FindInt32 ("buttons", reinterpret_cast<int32 *>(&buttons));
 	msg->FindInt32 ("modifiers", reinterpret_cast<int32 *>(&modifiers));
 
 	SelectPos s (PositionAt (point));
+	bool inBounds (CheckClickBounds (s, point));
 
 	if (buttons == B_SECONDARY_MOUSE_BUTTON
 	&&		(modifiers & B_SHIFT_KEY) == 0
@@ -668,8 +675,7 @@ RunView::MouseDown (BPoint point)
 					end (s);
 
 		// select word
-		if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
-			&& (point.y <= lines[s.line]->bottom) && !IntersectSelection (s,s))
+		if (inBounds && !IntersectSelection (s,s))
 		{
 			lines[s.line]->SelectWord (&start.offset, &end.offset);
 
@@ -701,8 +707,7 @@ RunView::MouseDown (BPoint point)
 		{
 			case 2:
 			{
-				if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
-				&& (point.y <= lines[s.line]->bottom))
+				if (inBounds)
 				{
 					// select word
 					lines[s.line]->SelectWord (&start.offset, &end.offset);
@@ -715,8 +720,7 @@ RunView::MouseDown (BPoint point)
 
 			case 0:
 			{
-				if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
-				&& (point.y <= lines[s.line]->bottom))
+				if (inBounds)
 				{
 					start.offset = 0;
 					end.offset = lines[s.line]->length - 1;
