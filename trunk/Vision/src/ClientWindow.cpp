@@ -433,7 +433,7 @@ ClientWindow::GetTopServer (WindowListItem *request)
   int32 requestindex;
   int32 requestsid;
   ServerAgent *target (NULL);
-  if (pWindowList()->HasItem (request))
+  if (pWindowList()->FullListHasItem (request))
   {
     requestindex = pWindowList()->IndexOf (request);
     requestsid = request->Sid();
