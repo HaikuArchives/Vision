@@ -71,8 +71,11 @@ ClientAgentLogger::StartLogging (void)
   // semaphore used to synchronize the log thread and newly incoming log requests
   logSyncherLock = create_sem (0, "logSynchLock_sem");
   
+  BString name;
+  vision_app->GetThreadName (THREAD_L, name);
+  
   logThread = spawn_thread (AsyncLogger,
-                            vision_app->GetThreadName (THREAD_L),
+                            name.String(),
                             B_LOW_PRIORITY,
                             this);
   resume_thread (logThread);
