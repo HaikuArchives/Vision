@@ -3,6 +3,9 @@ http://vision.sourceforge.net
 
 [0.3.07016]
 2001-07-16
+    * fix to Appearance prefs to account for extremely long fonts
+[0.3.07016]
+2001-07-16
     * fixed crash on enabling/disabling logging
 
 [0.3.07016]

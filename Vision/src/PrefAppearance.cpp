@@ -20,6 +20,9 @@
  *                 Todd Lair
  */
 
+// TODO: Color Schemes/Themes
+
+
 #include "PrefAppearance.h"
 #include "ColorLabel.h"
 #include "Vision.h"
@@ -117,7 +120,6 @@ AppearancePrefsView::AttachedToWindow (void)
      int32 i (0);
      BRect frame(Bounds());
      BBox *fontBox (new BBox(frame.InsetByCopy(5,5), "Sample"));
-     
      fontBox->ResizeBy (0, 5);
      sample = new BaseColorControl(BRect(0,0,0,0), "", "", colors[0], new BMessage (M_COLOR_CHANGED));
      sampleText = new BStringView (BRect (0,0,0,0), NULL,
@@ -130,7 +132,6 @@ AppearancePrefsView::AttachedToWindow (void)
        (fontBox->Bounds().Height()) - sample->Bounds().Height() - 5);
      sample->AddChild (sampleText);
      sampleText->MoveTo (1,1);
-     
      BMenu *elementMenu (new BMenu("Elements"));
      for (i = 0; i < MAX_COLORS; i++)
      {
@@ -143,10 +144,10 @@ AppearancePrefsView::AttachedToWindow (void)
      fontMenu->MenuItem()->SetLabel (ColorLabels[0]);
      fontBox->SetLabel (fontMenu);
      AddChild (fontBox);
+
      int32 family_count (count_font_families());
      float label_width (0.0);
      float name_width (0.0);
-     
      for (i = 0; i < MAX_COLORS; ++i)
         if (be_plain_font->StringWidth (ColorLabels[i]) > label_width)
            label_width = be_plain_font->StringWidth (ColorLabels[i]);
@@ -165,7 +166,6 @@ AppearancePrefsView::AttachedToWindow (void)
               && (font_stat[i].style_count = count_font_styles (font_stat[i].family)) > 0)
            {
              font_stat[i].styles = new font_style [font_stat[i].style_count];
-			 
 			 if (be_plain_font->StringWidth(font_stat[i].family) > name_width)
 			   name_width = be_plain_font->StringWidth (font_stat[i].family);
 			   
@@ -221,7 +221,6 @@ AppearancePrefsView::AttachedToWindow (void)
              parentMenu[1][i]);
           fontSize[i]->SetLabel ("Size:  ");
           fontBox->AddChild(fontSize[i]);
-
 #if B_BEOS_VERSION_DANO
           fontSize[i]->MoveTo(be_plain_font->StringWidth(" gP Font:") + clientFont[i]->Bounds().Width(), be_plain_font->Size() * 3);
 #else
@@ -264,7 +263,7 @@ AppearancePrefsView::AttachedToWindow (void)
                 sprintf (buffer, "%ld", FontSizes[j]);
                 msg->AddInt32 ("size", FontSizes[j]);
                 msg->AddInt32 ("which", i);
-	
+
                 parentMenu[1][i]->AddItem (item = new BMenuItem (buffer, msg));
 	
                 if (FontSizes[j] == cur_size)
@@ -282,14 +281,13 @@ AppearancePrefsView::AttachedToWindow (void)
          clientFont[i]->Hide();
          fontSize[i]->Hide();
       }
-      
+
       for (i = 0; i < 7; ++i)
       {
          fontSize[i]->Menu()->SetLabelFromMarked (true);
 		 fontSize[i]->MenuItem()->SetLabel (fontSize[i]->Menu()->FindMarked()->Label());
 
          fontSize[i]->Menu()->SetTargetForItems (this);
-
          for (int32 j = 0; j < clientFont[i]->Menu()->CountItems(); ++j)
 		 {
             BMenuItem *item (clientFont[i]->Menu()->ItemAt (j));
@@ -302,6 +300,13 @@ AppearancePrefsView::AttachedToWindow (void)
       label->MoveTo(be_plain_font->StringWidth("gP "), be_plain_font->Size() * 6);	  
       fontBox->AddChild (label);
       label->SetTarget (this);
+      
+      if ((clientFont[0]->Frame().right - fontBox->Frame().right) <= be_plain_font->StringWidth("Size: "))
+      {
+         for (i = 0; i < 7; i++)
+           fontSize[i]->MoveTo (1.5 * (label->Frame().right + be_plain_font->StringWidth (" gP ")), be_plain_font->Size() * 5.5);
+      }      
+
 
       // init sample color data
 
