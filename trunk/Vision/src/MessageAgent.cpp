@@ -111,6 +111,17 @@ MessageAgent::MessageReceived (BMessage *msg)
       break;
 
     }
+    
+    case M_MSG_WHOIS:
+    {
+      BMessage send (M_SERVER_SEND);
+
+      AddSend (&send, "WHOIS ");
+      AddSend (&send, chatee.String());
+      AddSend (&send, " ");
+      AddSend (&send, chatee.String());
+      AddSend (&send, endl);      
+    }
 
     case M_CHANGE_NICK:
     {

@@ -99,6 +99,9 @@ class WindowList : public BListView
 
     BPopUpMenu                      *myPopUp;
     WindowListItem                  *lastSelected;
+    
+    void                            BuildPopUp (void);
+    
     int32                           lastButton;
 
     rgb_color                       textColor,

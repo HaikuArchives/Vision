@@ -67,6 +67,8 @@ class ClientAgent : public BView
 	virtual void			AttachedToWindow (void);
 	virtual void			AllAttached (void);
 	virtual void            Show (void);
+	
+	void                            AddMenuItems (BPopUpMenu *);
 
 	float                       ScrollPos(void);
 	void                        SetScrollPos(float);

@@ -79,4 +79,6 @@ class MessageAgent : public ClientAgent
 
 };
 
+const uint32 M_MSG_WHOIS    = 'mamw';
+
 #endif
