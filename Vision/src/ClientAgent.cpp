@@ -651,8 +651,8 @@ ClientAgent::MessageReceived (BMessage *msg)
           int32 theChars (aMessage.Length());
           aMessage.Truncate (theChars - 1);
                    
-          if (aMessage[theChars - 1] == '\1')
-            aMessage.Truncate (theChars - 1);
+          if (aMessage[theChars - 2] == '\1')
+            aMessage.Truncate (theChars - 2);
       
           aMessage.RemoveFirst ("\1ACTION ");
           
