@@ -1545,6 +1545,7 @@ RunView::SelectAll (void)
 	{
 		sp_start = SelectPos (0, 0);
 		sp_end = SelectPos (line_count-1, lines[line_count-1]->length-1);
+		Invalidate(Bounds());
 	}
 }
 
