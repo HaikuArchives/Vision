@@ -86,10 +86,10 @@ EventPrefsView::EventPrefsView (BRect frame)
   BScrollBar *bar (fScroller->ScrollBar (B_VERTICAL));
   
   fMaxheight = bgView->Bounds().Height();
-  fProportionheight = fEvents[MAX_EVENTS-1]->Frame().bottom;
-  bar->SetRange (0.0, fMaxheight);
+  fProportionheight = fEvents[MAX_EVENTS-1]->Frame().bottom + 10.0;
+  bar->SetRange (0.0, (fProportionheight - fScroller->Bounds().Height()));
   bar->SetProportion (fScroller->Bounds().Height() / fProportionheight);
-  
+
   AddChild (fScroller);
 }
 
@@ -129,7 +129,7 @@ EventPrefsView::FrameResized (float width, float height)
   if (scrollheight < fProportionheight)
   {
     if (max != fMaxheight)
-      bar->SetRange (0.0, fMaxheight);
+      bar->SetRange (0.0, fProportionheight - scrollheight);
     bar->SetProportion (scrollheight / fProportionheight);
   }
   else

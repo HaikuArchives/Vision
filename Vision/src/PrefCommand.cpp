@@ -83,8 +83,8 @@ CommandPrefsView::CommandPrefsView (BRect frame)
   BScrollBar *bar (fScroller->ScrollBar(B_VERTICAL));
  
   fMaxheight = bgView->Bounds().Height();
-  fProportionheight = fCommands[MAX_COMMANDS-1]->Frame().bottom;
-  bar->SetRange (0.0, fMaxheight);
+  fProportionheight = fCommands[MAX_COMMANDS-1]->Frame().bottom + 10.0;
+  bar->SetRange (0.0, (fProportionheight - fScroller->Bounds().Height()));
   bar->SetProportion (fScroller->Bounds().Height() / fProportionheight);
 
   AddChild (fScroller);
@@ -122,7 +122,7 @@ CommandPrefsView::FrameResized (float width, float height)
   if (scrollheight < fProportionheight)
   {
     if (max != fMaxheight)
-      bar->SetRange (0.0, scrollheight);
+      bar->SetRange (0.0, fProportionheight - scrollheight);
     bar->SetProportion (scrollheight / fProportionheight);
   }
   else
