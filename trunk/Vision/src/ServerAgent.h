@@ -95,6 +95,9 @@ class ServerAgent : public ClientAgent
     void                        DisplayAll (const char *, const uint32 = 0, const uint32 = 0, const uint32 = 0);
 	
     void                        AddResumeData (BMessage *);
+    
+    void                        RemoveAutoexecChan (const BString &);
+    void                        ParseAutoexecChans (const BString &);
 
     BLocker                     *fEndPointLock;
 
@@ -153,7 +156,8 @@ class ServerAgent : public ClientAgent
     BString                     fCmds;
     int32                       fSocket;  // socket
 	
-    BList                       fTimers;
+    BList                       fTimers,
+                                  fStartupChannels;
     
     static int32                Establish (void *);
     static int32                Timer (void *);

@@ -115,7 +115,10 @@ ServerAgent::~ServerAgent (void)
 
   if (!fEstablishHasLock && fEndPointLock)
     delete fEndPointLock;
-    
+  
+  while (fStartupChannels.CountItems() != 0)
+    delete fStartupChannels.RemoveItem (0L);
+  
   delete fLogger;
 }
 
@@ -361,7 +364,7 @@ ServerAgent::Establish (void *arg)
         sMsgrE->SendMessage (&statMsg);  
       }
       
-            ClientAgent::PackDisplay (&statMsg, S_SERVER_HANDSHAKE "\n", C_ERROR);
+      ClientAgent::PackDisplay (&statMsg, S_SERVER_HANDSHAKE "\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
 
       BString string;
@@ -605,7 +608,6 @@ ServerAgent::ParseLine (const char *cData)
     fParse_buffer,
     &destLength,
     &state);
-  
   if (vision_app->fNumBench)
   {
     vision_app->fBench1 = system_time();
@@ -622,7 +624,6 @@ ServerAgent::ParseLine (const char *cData)
     if (ParseEvents (fParse_buffer))
       return;
   }
-  
 
   data.Append("\n");
   Display (data.String(), 0);
@@ -904,6 +905,43 @@ ServerAgent::AddResumeData (BMessage *msg)
   SendData (buffer.String());
 }
 
+void
+ServerAgent::ParseAutoexecChans (const BString &line)
+{
+  // parse out all autoexec channels to ensure we don't try to focus those
+  // on join
+  if (line.IFindFirst ("/J") != B_ERROR
+   || line.IFindFirst ("/JOIN") != B_ERROR)
+  {
+    int32 chanIndex (0), chanLen (0);
+    int32 cmdLen (line.Length());
+    BString *newChan (NULL);
+    while ((chanIndex = line.FindFirst ('#', chanIndex)) != B_ERROR)
+    {
+      chanLen = chanIndex;
+      while ((chanLen < cmdLen)
+           && line[chanLen] != ' '
+           && line[chanLen] != ',')
+        chanLen++;
+      newChan = new BString();
+      line.CopyInto (*newChan, chanIndex, chanLen - chanIndex);
+      fStartupChannels.AddItem (newChan);
+      chanIndex = chanLen;
+    }
+  }
+}
+
+void
+ServerAgent::RemoveAutoexecChan (const BString &chan)
+{
+  int32 chanCount (fStartupChannels.CountItems());
+  for (int32 i = 0; i < chanCount; i++)
+    if (((BString *)fStartupChannels.ItemAt (i))->ICompare(chan) == 0)
+    {
+      delete fStartupChannels.RemoveItem (i);
+      return;
+    }
+}
 
 void
 ServerAgent::MessageReceived (BMessage *msg)

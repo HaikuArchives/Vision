@@ -449,7 +449,7 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 1
+  #if 0
   if (firstWord == "/EXCLUDE")
   {
     {
@@ -478,7 +478,7 @@ ClientAgent::ParseCmd (const char *data)
   }
   
 
-  #if 1
+  #if 0
   if (firstWord == "/IGNORE")
   {
     {
@@ -742,7 +742,7 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 1
+  #if 0
   if (firstWord == "/NOTIFY")
   {
     {
@@ -968,7 +968,7 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
-  #if 1
+  #if 0
   if (firstWord == "/UNIGNORE")
   {
     {
@@ -988,7 +988,7 @@ ClientAgent::ParseCmd (const char *data)
   #endif
 
 
-  #if 1
+  #if 0
   if (firstWord == "/UNNOTIFY")
   {
     {

@@ -342,7 +342,6 @@ ClientAgent::Submit (
     Parser (cmd.String());
 }
 
-
 int32
 ClientAgent::TimedSubmit (void *arg)
 {
@@ -373,6 +372,7 @@ ClientAgent::TimedSubmit (void *arg)
   BMessenger agentMsgr (agent);
   BMessage submitMsg (M_SUBMIT);
   submitMsg.AddBool ("history", addtofHistory);
+  
   for (i = 0; (msg->HasString ("data", i)) && (agentMsgr.IsValid()) && (false == agent->CancelMultilineTextPaste()); ++i)
   {
     BString data;
@@ -396,7 +396,7 @@ ClientAgent::TimedSubmit (void *arg)
       // A small attempt to appease the
       // kicker gods
       if (delay)
-        snooze (300000);
+        snooze (600000);
     }
   }
 
@@ -776,7 +776,7 @@ ClientAgent::MessageReceived (BMessage *msg)
       {
         const char *buffer (NULL);
         bool clear (true),
-        add2fHistory (true);
+        add2history (true);
 
         msg->FindString ("input", &buffer);
 
@@ -784,9 +784,9 @@ ClientAgent::MessageReceived (BMessage *msg)
           msg->FindBool ("clear", &clear);
 
         if (msg->HasBool ("history"))
-          msg->FindBool ("history", &add2fHistory);
+          msg->FindBool ("history", &add2history);
 
-        Submit (buffer, clear, add2fHistory);
+        Submit (buffer, clear, add2history);
       }
       break;
 
