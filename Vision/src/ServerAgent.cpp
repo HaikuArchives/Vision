@@ -567,7 +567,7 @@ ServerAgent::SendData (const char *cData)
   int32 dest_length (sizeof(fSend_buffer)), state (0);
 
   convert_from_utf8 (
-    B_ISO_8859_1,
+    B_ISO1_CONVERSION,
     data.String(), 
     &length,
     fSend_buffer,
