@@ -1,6 +1,21 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0421]
+ 2001-04-21
+   * Logging support
+     - /setbool log_enabled true and restart any agents you want logging
+     - For dated log filenames ("#beos_20010421.log") use
+       /setbool log_filetimestamp true and restart any agents you want.
+   * Pressing single byte keys (like Backspace or arrows) while the IRCView
+     has focus doesnt put a garbage chracter in the input control.
+   * The spam/single line dialog when pasting multiple lines is now
+     non-blocking
+   * Shift+Up/Down-Arrow will jump to to the prev/next agent with nick activity
+     (red entry). If one isn't found it will jump to the prev/next agent with
+     normal activity (green). If one isn't found it will jump to the adjacent
+     agent.
+
 [0.2.0420]
  2001-04-20
    * Fixed a crasher when pasting multiple lines and parting a channel

@@ -50,8 +50,6 @@ class VisionApp * vision_app;
 
 #include "TestScript.h"
 
-static BLocker threadNameLock;
-
 // And so it begins....
 int
 main (void)
@@ -181,52 +179,40 @@ VisionApp::ThreadStates (void)
 
   while (get_next_thread_info (team, &cookie, &info) == B_NO_ERROR)
   {
-    buffer << "thread: " << info.thread;
-    buffer << " name:  " << info.name;
-    buffer << " state: ";
+    buffer += "thread: ";
+    buffer += info.thread;
+    buffer += " name:  ";
+    buffer += info.name;
+    buffer += " state: ";
 
     switch ((int32)info.state)
     {
       case B_THREAD_RUNNING:
-        {
-          buffer << "running\n";
-        }
+        buffer += "running\n";
         break;
         
       case B_THREAD_READY:
-        {
-          buffer << "ready\n";
-        }
+        buffer += "ready\n";
         break;
         
       case B_THREAD_RECEIVING:
-        {
-          buffer << "receiving\n";
-        }
+        buffer += "receiving\n";
         break;
         
       case B_THREAD_ASLEEP:
-        {
-          buffer << "asleep\n";
-        }
+        buffer += "asleep\n";
         break;
         
       case B_THREAD_SUSPENDED:
-        {
-          buffer << "suspended\n";
-        }
+        buffer += "suspended\n";
         break;
         
       case B_THREAD_WAITING:
-        {
-          buffer << "waiting\n";
-        }
+        buffer += "waiting\n";
         break;
         
       default:
-        {
-          buffer << "???\n";
-        }
+        buffer += "???\n";
     }
     ++t_count;
   }
@@ -301,6 +287,9 @@ VisionApp::LoadDefaults (int32 section)
 
         if (!visionSettings->HasBool ("timestamp"))
           visionSettings->AddBool ("timestamp", false);
+          
+        if (!visionSettings->HasString ("timestamp_format"))
+          visionSettings->AddString ("timestamp_format", "[%02d:%02d]");
         
         if (!visionSettings->HasBool ("log_enabled"))
           visionSettings->AddBool ("log_enabled", false);
@@ -715,7 +704,6 @@ VisionApp::SetBool (const char *settingName, bool value)
 const char *
 VisionApp::GetThreadName (int thread_type)
 {
-  threadNameLock.Lock();
   // random names for the connection thread
   static BString tnames[] = {
     /*  0 */ "gummi_bear_orgy",
@@ -760,16 +748,20 @@ VisionApp::GetThreadName (int thread_type)
     /* 38 */ "geisha_slut_villainess",
     /* 39 */ "ball_gravity_control",
     /* 40 */ "exploding_cow",
-    /* 41 */ "naked scottish weathergirls"
+    /* 41 */ "naked scottish weathergirls",
     /* 42 */ "gateway game^Wthread",
     /* 43 */ "hello kitty",
     /* 44 */ "please_fondle_my_buttocks",
     /* 45 */ "the_game's_afoot_watson!",
-    /* 46 */ "stop_making_that_big_face!",
-    /* 47 */ "hush"
+    /* 46 */ "Stop making that big face!",
+    /* 47 */ "hush",
+    /* 48 */ "Doctor Nick M.Ed.",
+    /* 49 */ "will_code_for_food",
+    /* 50 */ "Dig Me Out",
+    /* 51 */ "Little Babies"
   };
   
-  int rnd (rand() % 48);
+  int rnd (rand() % 52);
  
   static BString output;
   
@@ -785,8 +777,6 @@ VisionApp::GetThreadName (int thread_type)
   }
   
   output += tnames[rnd];
-  
-  threadNameLock.Unlock();
   
   return output.String();
 }
