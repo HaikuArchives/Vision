@@ -125,20 +125,24 @@ VisionApp::~VisionApp (void)
   delete fActiveTheme;
 }
 
-void
+int32
 VisionApp::ThreadStates (void)
 {
   thread_id team (Team());
   int32 cookie (0);
   thread_info info;
 
+#ifdef BUILD_DEBUG
   BString buffer;
+#endif
   int32 t_count (0);
 
   while (get_next_thread_info (team, &cookie, &info) == B_NO_ERROR)
   {
+
+#ifdef BUILD_DEBUG
     buffer += "thread: ";
-    buffer += info.thread;
+    buffer << info.thread;
     buffer += " name:  ";
     buffer += info.name;
     buffer += " state: ";
@@ -172,9 +176,11 @@ VisionApp::ThreadStates (void)
       default:
         buffer += "???\n";
     }
+#endif
     ++t_count;
   }
 
+#ifdef BUILD_DEBUG
   if (buffer.Length())
   {
     BAlert *alert (new BAlert (
@@ -187,7 +193,8 @@ VisionApp::ThreadStates (void)
       t_count > 1 ? B_STOP_ALERT : B_INFO_ALERT));
       alert->Go();
   }
-    
+#endif
+  return t_count;    
 }
 
 void
@@ -608,13 +615,19 @@ VisionApp::QuitRequested (void)
   if (msgr.IsValid())
     msgr.SendMessage(B_QUIT_REQUESTED);
   
-  status_t result;
-  wait_for_thread (fWinThread, &result);
+  if (fSetupWin)
+    BMessenger(fSetupWin).SendMessage(B_QUIT_REQUESTED);
+  
+  if (fPrefsWin)
+    BMessenger(fPrefsWin).SendMessage(B_QUIT_REQUESTED);
 
+  if (fNetWin)
+    BMessenger(fPrefsWin).SendMessage(B_QUIT_REQUESTED);
+  
   // give our child threads a chance to die gracefully
-  snooze (500000);  // 0.5 seconds
+  while (ThreadStates() > 2)
+    snooze (100000);
 
-  //ThreadStates();
   return true;
 }
 

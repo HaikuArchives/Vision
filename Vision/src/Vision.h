@@ -137,7 +137,7 @@ class VisionApp : public BApplication
 
   private:
 	void					InitSettings (void);
-    void                    ThreadStates (void);
+    int32                   ThreadStates (void);
     bool                    CheckStartupNetworks (void);
     
     volatile bool           fShuttingDown;
