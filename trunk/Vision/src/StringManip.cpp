@@ -179,6 +179,14 @@ ExpandKeyed (
 }
 
 BString
+StringToURI (const char *string)
+{
+  BString buffer;
+  
+  return buffer;
+}
+
+BString
 DurationString (int64 value)
 {
 	BString duration;

@@ -177,4 +177,7 @@ class ClientAgent : public BView
 
 };
 
+const uint32 M_LOOKUP_WEBSTER           = 'calw';
+const uint32 M_LOOKUP_GOOGLE            = 'calg';
+
 #endif

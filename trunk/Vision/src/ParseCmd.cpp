@@ -1047,15 +1047,7 @@ ClientAgent::ParseCmd (const char *data)
 		if ((place = buffer.FindFirst (" ")) >= 0)
 		{
 			buffer.Remove (0, place + 1);
-	
-			const char *arguments[] = {buffer.String(), 0};
-			
-			
-	
-			be_roster->Launch (
-				"text/html",
-				1,
-				const_cast<char **>(arguments));
+			vision_app->LoadURL (buffer.String());
 		}
 		
 		return true;

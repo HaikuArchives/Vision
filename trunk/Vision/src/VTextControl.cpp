@@ -91,7 +91,7 @@ VTextControl::BuildPopUp (void)
   if (TextView()->IsEditable())
   {
     BClipboard clipboard("system");
-    BMessage *clip = (BMessage *)NULL;
+    BMessage *clip ((BMessage *)NULL);
     if (clipboard.Lock()) {
       if ((clip = clipboard.Data()))
         if (clip->HasData ("text/plain", B_MIME_TYPE))
