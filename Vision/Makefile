@@ -39,7 +39,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 # compiler, linker, ...
 
 #CC := g++ -c -pipe
-CC := g++ -c -pipe -g3
+CC := g++ -c -pipe
 CFLAGS :=
 CFLAGS += -O3
 CFLAGS += -fno-pic

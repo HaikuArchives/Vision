@@ -23,126 +23,120 @@
  *                 Jamie Wilkinson
  */
 
-#include <Application.h>
 #include <AppFileInfo.h>
 
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "Vision.h"
 #include "StringManip.h"
 #include "ServerAgent.h"
 
 void
-ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
+ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
 {
-	BString theCTCP (GetWord(theMsg.String(), 1).ToUpper()),
-	        theRest (RestOfString(theMsg.String(), 2));
-	theCTCP.RemoveFirst("\1");
-	theCTCP.RemoveLast("\1");
+  BString theCTCP (GetWord(theMsg.String(), 1).ToUpper()),
+          theRest (RestOfString(theMsg.String(), 2));
+  theCTCP.RemoveFirst ("\1");
+  theCTCP.RemoveLast ("\1");
 
-	if(theCTCP == "PING")
-	{
-		if(theMsg == "-9z99")
-			return;
-		BString tempString("NOTICE ");
-		tempString += theNick;
-		tempString += " :";
-		tempString += theMsg;
-		SendData (tempString.String());
-	}
-	else if ((theCTCP == "VERSION") || (theCTCP == "CLIENTINFO"))
-	{
-		BString sysInfoString;
-		if(!vision_app->GetBool ("versionParanoid"))
-		{
-			BString librootversion;
-			BFile *libroot = new BFile("/boot/beos/system/lib/libroot.so", B_READ_ONLY);
-			BAppFileInfo info(libroot);
-			version_info version;
-			info.GetVersionInfo(&version, B_SYSTEM_VERSION_KIND);
-			librootversion = version.short_info;
-			librootversion.RemoveFirst ("R");
+  if (theCTCP == "PING")
+  {
+    if (theMsg == "-9z99")
+      return;
+    BString tempString("NOTICE ");
+    tempString += theNick;
+    tempString += " :";
+    tempString += theMsg;
+    SendData (tempString.String());
+  }
+  
+  else if ((theCTCP == "VERSION") || (theCTCP == "CLIENTINFO"))
+  {
+    BString sysInfoString;
+    if (!vision_app->GetBool ("versionParanoid"))
+    {
+      BString librootversion;
+      BFile *libroot (new BFile ("/boot/beos/system/lib/libroot.so", B_READ_ONLY));
+      BAppFileInfo info (libroot);
+      version_info version;
+      info.GetVersionInfo (&version, B_SYSTEM_VERSION_KIND);
+      librootversion = version.short_info;
+      librootversion.RemoveFirst ("R");
 			
-			delete libroot;			
+      delete libroot;			
 			
-			system_info myInfo;
-			get_system_info(&myInfo);
+      system_info myInfo;
+      get_system_info (&myInfo);
 			
-			sysInfoString = " : BeOS/";
-			sysInfoString += librootversion;
+      sysInfoString = " : BeOS/";
+      sysInfoString += librootversion;
 			
-			if ((librootversion.FindFirst("5.0") == 0) || (librootversion == "5"))
-			{
-				// this is the way the BeOS 5.0.1 update checks for R5 Pro...
-				bool BePro;
-				BePro = true; // innocent until proven guilty
-				BFile *indeo5rt = new BFile("/boot/beos/system/add-ons/media/encoders/indeo5rt.encoder", B_READ_ONLY);
-				BFile *indeo5rtmmx = new BFile("/boot/beos/system/add-ons/media/encoders/indeo5rtmmx.encoder", B_READ_ONLY);
-				BFile *mp3 = new BFile("/boot/beos/system/add-ons/media/encoders/mp3.encoder", B_READ_ONLY);
+      if ((librootversion.FindFirst("5.0") == 0) || (librootversion == "5"))
+      {
+        // this is the way the BeOS 5.0.1 update checks for R5 Pro...
+        bool BePro;
+        BePro = true; // innocent until proven guilty
+        BFile *indeo5rt (new BFile ("/boot/beos/system/add-ons/media/encoders/indeo5rt.encoder", B_READ_ONLY));
+        BFile *indeo5rtmmx (new BFile ("/boot/beos/system/add-ons/media/encoders/indeo5rtmmx.encoder", B_READ_ONLY));
+        BFile *mp3 (new BFile ("/boot/beos/system/add-ons/media/encoders/mp3.encoder", B_READ_ONLY));
 				
-				if ((indeo5rt->InitCheck() != B_OK) ||
-					(indeo5rtmmx->InitCheck() != B_OK) ||
-					(mp3->InitCheck() != B_OK))
-				{
-					BePro = false; // *gasp*! leeches!
-				}
+        if ((indeo5rt->InitCheck() != B_OK)
+        ||  (indeo5rtmmx->InitCheck() != B_OK)
+        ||  (mp3->InitCheck() != B_OK))
+          BePro = false; // *gasp*! leeches!
+
+        delete indeo5rt;
+        delete indeo5rtmmx;
+        delete mp3;
 				
-				delete indeo5rt;
-				delete indeo5rtmmx;
-				delete mp3;
-				
-				if (BePro)
-					sysInfoString += " Pro Edition";
-				else
-					sysInfoString += " Personal Ed.";
-				
-			}
+        if (BePro)
+          sysInfoString += " Pro Edition";
+        else
+          sysInfoString += " Personal Ed.";
+
+      }
 			
-			sysInfoString += " (";
-						
-			sysInfoString << myInfo.cpu_count;
-			sysInfoString += "x";
-			sysInfoString << myInfo.cpu_clock_speed / 1000000;
-			sysInfoString += "MHz) : ";
-		}
-		else
-			sysInfoString = " : A bird in the bush usually has a friend in there with him : ";
+      sysInfoString += " (";
+	  sysInfoString << myInfo.cpu_count;
+      sysInfoString += "x";
+      sysInfoString << myInfo.cpu_clock_speed / 1000000;
+      sysInfoString += "MHz) : ";
+    }
+    else
+      sysInfoString = " : A bird in the bush usually has a friend in there with him : ";
 		
-		BString tempString("NOTICE ");
-		tempString += theNick;
-		tempString += " :\1VERSION Vision-"; 
-		tempString += vision_app->VisionVersion();
-		tempString += sysInfoString;
-		tempString += "http://vision.sourceforge.net";
+    BString tempString ("NOTICE ");
+    tempString += theNick;
+    tempString += " :\1VERSION Vision-"; 
+    tempString += vision_app->VisionVersion();
+    tempString += sysInfoString;
+    tempString += "http://vision.sourceforge.net";
 			
 
-		tempString += '\1';
-		SendData (tempString.String());
-	}
+    tempString += '\1';
+    SendData (tempString.String());
+  }
 	
 
-	else if(theCTCP == "UPTIME")
-	{
+  else if (theCTCP == "UPTIME")
+  {
+    BString uptime (DurationString(system_time()));
+    BString expandedString;
 		
-		BString uptime (DurationString(system_time()));
-		BString expandedString;
-		
-		const char *expansions[1];
-		expansions[0] = uptime.String();
+    const char *expansions[1];
+    expansions[0] = uptime.String();
 
-		expandedString = ExpandKeyed (vision_app->GetCommand (CMD_UPTIME).String(), "U",
-		expansions);
-		expandedString.RemoveFirst("\n");
+    expandedString = ExpandKeyed (vision_app->GetCommand (CMD_UPTIME).String(), "U",
+    expansions);
+    expandedString.RemoveFirst ("\n");
 		
-		BString tempString("NOTICE ");
-		tempString += theNick;
-		tempString += " :\1UPTIME ";
-		tempString += expandedString;
-		tempString += '\1';
-		SendData (tempString.String());
-
-	}
+    BString tempString ("NOTICE ");
+    tempString += theNick;
+    tempString += " :\1UPTIME ";
+    tempString += expandedString;
+    tempString += '\1';
+    SendData (tempString.String());
+  }
 
     #if 0
 	else if(theCTCP == "DCC")
