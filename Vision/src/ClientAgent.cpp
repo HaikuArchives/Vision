@@ -10,7 +10,7 @@
  * rights and limitations under the License. 
  * 
  * The Original Code is Vision. 
- * 
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
@@ -136,7 +136,7 @@ ClientAgent::Init (void)
   textColor     = vision_app->GetColor (C_TEXT);
   nickColor     = vision_app->GetColor (C_NICK);
   ctcpReqColor  = vision_app->GetColor (C_CTCP_REQ);
-  quitColor	    = vision_app->GetColor (C_QUIT);
+  quitColor     = vision_app->GetColor (C_QUIT);
   errorColor    = vision_app->GetColor (C_ERROR);
   whoisColor    = vision_app->GetColor (C_WHOIS);
   joinColor     = vision_app->GetColor (C_JOIN);
@@ -144,7 +144,7 @@ ClientAgent::Init (void)
   actionColor   = vision_app->GetColor (C_ACTION);
   opColor       = vision_app->GetColor (C_OP);
   inputColor    = vision_app->GetColor (C_INPUT);
-	
+
   myFont     = *(vision_app->GetClientFont (F_TEXT));
   serverFont = *(vision_app->GetClientFont (F_SERVER));
   inputFont  = *(vision_app->GetClientFont (F_INPUT));
@@ -232,7 +232,7 @@ ClientAgent::Submit (
   bool historyAdd)
 {
   BString cmd;
-	
+
   if (historyAdd)
     cmd = history->Submit (buffer);
   else
@@ -286,7 +286,7 @@ ClientAgent::TimedSubmit (void *arg)
       snooze (1000000);
     }
   }
-	
+
   delete msg;
   return 0;
 }
@@ -326,49 +326,45 @@ ClientAgent::PackDisplay (
 
 void
 ClientAgent::Display (
-	const char *buffer,
-	const rgb_color *color,
-	const BFont *font,
-	bool timeStamp)
+  const char *buffer,
+  const rgb_color *color,
+  const BFont *font,
+  bool timeStamp)
 {
-    #if 0
-	if (isLogging)
-	{
-		BString printbuf;
-		if (timeStamp)
-		{
-			printbuf << TimeStamp().String();
-		}
-		
-		printbuf << buffer;
-		
-		off_t len = strlen (printbuf.String());
-		logFile.Write (printbuf.String(), len);
-	}
-	#endif
+  #if 0
+  if (isLogging)
+  {
+    BString printbuf;
+    if (timeStamp)
+      printbuf += TimeStamp().String();
 
-    // :TODO: wade 020101: tie to settings
-    timeStampState = vision_app->GetBool ("timestamp");
-    //
-
-	if (timeStamp && timeStampState)
-		text->DisplayChunk (
-			TimeStamp().String(),
-			&textColor,
-			&myFont);
-
-	text->DisplayChunk (
-		buffer,
-		color ? color : &textColor,
-		font  ? font  : &myFont);
+    printbuf << buffer;
 		
-	if (IsHidden())
-	{
-    	BMessage statusMsg (M_UPDATE_STATUS);
-    	statusMsg.AddPointer ("item", agentWinItem);
-    	statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
-    	Window()->PostMessage (&statusMsg);
-	}
+    off_t len = strlen (printbuf.String());
+    logFile.Write (printbuf.String(), len);
+  }
+  #endif
+
+  timeStampState = vision_app->GetBool ("timestamp");
+
+  if (timeStamp && timeStampState)
+    text->DisplayChunk (
+      TimeStamp().String(),
+      &textColor,
+      &myFont);
+
+  text->DisplayChunk (
+    buffer,
+    color ? color : &textColor,
+    font  ? font  : &myFont);
+		
+  if (IsHidden())
+  {
+    BMessage statusMsg (M_UPDATE_STATUS);
+    statusMsg.AddPointer ("item", agentWinItem);
+    statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
+    Window()->PostMessage (&statusMsg);
+  }
 }
 
 
@@ -668,7 +664,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 		  BString lookup;
 		  msg->FindString ("string", &lookup);
 		  lookup = StringToURI (lookup.String());
-		  lookup.Prepend ("http://work.ucsd.edu:5141/cgi-bin/http_webster?");	  		  		  
+		  lookup.Prepend ("http://www.dictionary.com/cgi-bin/dict.pl?term=");	  		  		  
 		  vision_app->LoadURL (lookup.String());
 		  break;
 		}

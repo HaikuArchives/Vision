@@ -239,6 +239,15 @@ ClientAgent::ParseCmd (const char *data)
 		text->ClearView (true);
 		return true;
 	}
+
+	if (firstWord == "/GOOGLE")
+	{
+		BString buffer (RestOfString (data, 2));
+		BMessage lookup (M_LOOKUP_GOOGLE);
+		lookup.AddString ("string", buffer);		
+		msgr.SendMessage (&lookup);
+		return true;
+	}
 	
 	
 	if (firstWord == "/CTCP")
@@ -1090,19 +1099,23 @@ ClientAgent::ParseCmd (const char *data)
 	
 	if (firstWord == "/VISIT")
 	{
-		BString buffer (data);
-		int32 place;
-	
-		if ((place = buffer.FindFirst (" ")) >= 0)
-		{
-			buffer.Remove (0, place + 1);
+		BString buffer (GetWord (data, 2));
+
+		if (buffer != "-9z99")
 			vision_app->LoadURL (buffer.String());
-		}
 		
 		return true;
 	}
 
 
+	if (firstWord == "/WEBSTER" || firstWord =="/DICTIONARY")
+	{
+		BString buffer (RestOfString (data, 2));
+		BMessage lookup (M_LOOKUP_WEBSTER);
+		lookup.AddString ("string", buffer);		
+		msgr.SendMessage (&lookup);
+		return true;
+	}
 
 	if (firstWord != "" && firstWord[0] == '/')
 	// != "" is required to prevent a nasty crash with firstWord[0]

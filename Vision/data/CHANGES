@@ -1,6 +1,16 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0330]
+ 2001-03-30
+   * Change SetupWindow's default to irc.exodusirc.net instead of irc.elric.net
+   * ChannelAgent, ClientAgent code cleanup, squeezed some performance out of
+     various functions
+   * cleaned up the code for /visit
+   * /google loads up Google.com with the search string
+   * /webster|/dictionary load up Dictionary.com with the search string
+   * Changed to Dictionary.com instead of Webster 1913
+
 [0.1.0329]
  2001-03-29
    * Aliased /rrun to /pexec
