@@ -868,8 +868,7 @@ ClientAgent::ParseCmd (const char *data)
   if (firstWord == "/PART")
   {
     {
-      ChannelAgent *channelagent;
-      if ((channelagent = dynamic_cast<ChannelAgent *>(this)))
+      if ((dynamic_cast<ChannelAgent *>(this)) || (dynamic_cast<MessageAgent *>(this)))
       {
         BMessage msg (M_CLIENT_QUIT);
         msg.AddBool ("vision:part", true);

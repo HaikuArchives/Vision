@@ -22,6 +22,7 @@
  *                 Andrew Bazan
  *                 Jean-Baptiste M. Queru <jbq@be.com>
  *                 Seth Flaxman
+ *                 Alan Ellis <void@be.com>
  */
  
 
@@ -648,14 +649,14 @@ WindowList::Activate (int32 index)
   if ((activeagent != newagent) && (activeagent != 0))
   {
     LockLooper();
+
+    newagent->Show();
     
     if (activeagent)
     {
       activeagent->Hide(); // you arent wanted anymore!
       activeagent->Sync(); // and take your damned pixels with you!
     }
-  
-    newagent->Show();
     
     UnlockLooper();
   }
