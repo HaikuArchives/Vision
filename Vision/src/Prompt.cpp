@@ -204,17 +204,22 @@ RegExValidate::RegExValidate (const char *title_)
 	: compiled (false),
 	  title (title_)
 {
+#ifdef __INTEL__
 	memset (&re, 0, sizeof (re));
+#endif
 }
 
 RegExValidate::~RegExValidate (void)
 {
+#ifdef __INTEL__
 	if (compiled) regfree (&re);
+#endif
 }
 
 bool
 RegExValidate::Validate (const char *text)
 {
+#ifdef __INTEL__
 	if (compiled)
 	{
 		regfree (&re);
@@ -255,5 +260,6 @@ RegExValidate::Validate (const char *text)
 		return false;
 	}
 
+#endif
 	return true;
 }

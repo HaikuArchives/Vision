@@ -100,7 +100,7 @@ status_t SettingsFile::Load() {
 	
 	if (vision_app->fDebugSettings)
 	  PrintToStream();
-	
+/*	
 	ret=file.RewindAttrs();
 	if (ret!=B_OK) {
 		file.Unlock();
@@ -157,8 +157,9 @@ status_t SettingsFile::Load() {
 			}
 		}		
 	}
+*/
 	file.Unlock();
-	return B_OK;
+	return B_OK; 
 }
 
 status_t SettingsFile::_ExtractAttribute(BMessage*m,BFile*f,const char*full_name,char*partial_name,attr_info*ai) {
@@ -288,11 +289,13 @@ status_t SettingsFile::Save() const {
 		file.Unlock();
 		return ret;
 	}
+/*
 	ret=_StoreAttributes(this,&file);
 	if (ret!=B_OK) {
 		file.Unlock();
 		return ret;
 	}
+*/
 	file.Unlock();
 	return B_OK;
 }

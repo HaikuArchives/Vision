@@ -28,8 +28,9 @@
 #include <MessageFilter.h>
 #include <String.h>
 
+#ifdef __INTEL__
 #include <regex.h>
-
+#endif
 class VTextControl;
 class BButton;
 
@@ -44,7 +45,9 @@ class PromptValidate
 
 class RegExValidate : public PromptValidate
 {
+#ifdef __INTEL__
 	regex_t				re;
+#endif
 	bool					compiled;
 	BString				title;
 
