@@ -157,7 +157,7 @@ IRCView::BuildPopUp (void)
     querystring.UnlockBuffer(-1);
   }
   
-  myPopUp = new BPopUpMenu("Context Menu", false, false); 
+  myPopUp = new BPopUpMenu ("Context Menu", false, false); 
 
   BMenuItem *item;
   BMessage *lookup;

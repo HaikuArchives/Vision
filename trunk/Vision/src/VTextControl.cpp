@@ -101,7 +101,7 @@ VTextControl::BuildPopUp (void)
     delete clip;
   }
   
-  myPopUp = new BPopUpMenu("Context Menu", false, false); 
+  myPopUp = new BPopUpMenu ("Context Menu", false, false); 
 
   BMenuItem *item; 
   item = new BMenuItem("Cut", new BMessage (B_CUT));
