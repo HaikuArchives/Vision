@@ -21,6 +21,7 @@
  *                 Rene Gollent
  */
 
+#include "ClientWindow.h"
 #include "SetupWindow.h"
 #include "Vision.h"
 
@@ -63,6 +64,15 @@ SetupWindow::InitServerStartup (void)
 {
   // iterates through servers that have connect on startup enabled
   // and adds them to ClientWindow
+  
+  
+  // temp
+  BMessage newserver (M_MAKE_NEW_SERVER);
+  newserver.AddString ("hostname", "irc.elric.net");
+  newserver.AddString ("port", "6667");
+  newserver.AddString ("autoexec", "");
+  newserver.AddBool   ("enidentd", true);
+  vision_app->pClientWin()->PostMessage (&newserver);
   
   QuitRequested();
 }
