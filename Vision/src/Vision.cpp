@@ -283,10 +283,20 @@ VisionApp::ArgvReceived (int32 ac, char **av)
         
     else if (strcmp (av[i], "-S") == 0)
       debugsettings = true;
+    
+    else if (strcmp (av[i], "-T") == 0)
+    {
+      TestScript *tscript = new TestScript();
+      delete tscript;
+      if (IsLaunching())
+        Quit();
+    }
         
     else if (strcmp (av[i], "--help") == 0)
     {
       printf ("Vision command line switches:\n");
+      printf ("Devel:\n");
+      printf ("\t-T\t\tRun TestScript() and quit\n");
       printf ("Debug:\n");
       printf ("\t-!\t\tPrint everything\n");
       printf ("\t-r\t\tPrint data received across the network\n");
@@ -304,11 +314,6 @@ VisionApp::ArgvReceived (int32 ac, char **av)
 void
 VisionApp::ReadyToRun (void)
 {
-  printf ("# START # TestScript::RunTestScripts()\n"); 
-  TestScript *tscript = new TestScript();
-  tscript = 0;
-  printf ("# END   # TestScript::RunTestScripts()\n"); 
-  
   InitSettings();
 
   BRect clientWinRect;

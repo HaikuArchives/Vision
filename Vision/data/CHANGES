@@ -1,6 +1,13 @@
 Vision
 http://vision.sourceforge.net
 
+
+[0.1.0327]
+ 2001-03-27
+   * Move TestScript's to a -T status option (fixes crash on startup when being
+     launched via app-sig)
+   * Fix some ServerAgent/Establish crashes from failed/canceled connections
+
 [0.1.0326]
  2001-03-26
    * Add support for misc numerics: 511, 512, 514, 521, 522, 523, 600, 601,
