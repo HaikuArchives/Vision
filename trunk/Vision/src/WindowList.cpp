@@ -162,7 +162,7 @@ WindowList::MouseDown (BPoint myPoint)
   }
     
   if (activeagent)
-    Select (IndexOf (activeagent));
+    Activate (IndexOf (activeagent));
 }
 
 void 
