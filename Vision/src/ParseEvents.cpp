@@ -515,8 +515,19 @@ ServerAgent::ParseEvents (const char *data)
 		        theServer (GetWord(data, 2));
 		theServer.RemoveFirst(":");
 		
-		tempString << "PONG " << myNick << " " << theServer;
-		SendData(tempString.String());
+		tempString += "PONG ";
+		tempString += myNick;
+		tempString += " ";
+		tempString += theServer;
+		SendData (tempString.String());
+		
+		// some noncompliant servers dont like the above (correct) reply,
+		// so we send this one, too.
+		tempString = "";
+		tempString += "PONG ";
+		tempString += " ";
+		tempString += theServer;
+		SendData (tempString.String());
 		return true;
 	}
 
