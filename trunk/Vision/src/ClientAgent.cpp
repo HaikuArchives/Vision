@@ -605,8 +605,13 @@ ClientAgent::MessageReceived (BMessage *msg)
         {
           BMessage logMessage (M_UNREGISTER_LOGGER);
           logMessage.AddString ("name", fId.String());
-          fSMsgr.SendMessage (&logMessage);
+          fSMsgr.SendMessage(&logMessage);
         }
+
+        BMessage deathchant (M_CLIENT_SHUTDOWN);
+        deathchant.AddPointer("agent", this);
+        fSMsgr.SendMessage (&deathchant);
+
       }
       break;
 

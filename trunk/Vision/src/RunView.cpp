@@ -37,7 +37,6 @@
 #include <time.h>
 #include <ctype.h>
 #include <assert.h>
-#include <slist>
 
 #include <Message.h>
 #include <Messenger.h>
@@ -52,9 +51,7 @@
 #include <Bitmap.h>
 #include <Cursor.h>
 
-#include <Debug.h>
-#include <StopWatch.h>
-
+#include "ObjectList.h"
 #include "Theme.h"
 #include "RunView.h"
 #include "URLCrunch.h"
@@ -91,7 +88,7 @@ struct URL
                 { }
 };
 
-typedef slist<URL *> urllist;
+typedef BObjectList<URL> urllist;
 
 struct SoftBreakEnd
 {
@@ -769,15 +766,18 @@ RunView::CheckURLCursor (BPoint point)
     SetViewCursor (B_CURSOR_SYSTEM_DEFAULT);
     return;
   }
+  Line *curline (fLines[s.fLine]);
 
-  urllist::const_iterator it;
-  for (it = fLines[s.fLine]->fUrls->begin(); it != fLines[s.fLine]->fUrls->end(); ++it)
-    if ((s.fOffset >= (*it)->fOffset)
-     && (s.fOffset <= (*it)->fOffset + (*it)->fLength))
+  for (int32 i = 0; i < curline->fUrls->CountItems(); i++)
+  {
+    URL *current = curline->fUrls->ItemAt(i);
+    if ((s.fOffset >= current->fOffset)
+     && (s.fOffset <= current->fOffset + current->fLength))
      {
        SetViewCursor (fURLCursor);
        return;
      }
+  }
 
   // no URLs found, set back to default
   SetViewCursor (B_CURSOR_SYSTEM_DEFAULT);
@@ -959,17 +959,20 @@ RunView::MouseUp (BPoint point)
 
   if (fTracking == 1)
   {
-    if (fLines[s.fLine]->fUrls)
+    Line *curline (fLines[s.fLine]);
+    if (curline->fUrls)
     {
-      urllist::const_iterator it;
-      for (it = fLines[s.fLine]->fUrls->begin(); it != fLines[s.fLine]->fUrls->end(); ++it)
-        if ((s.fOffset >= (*it)->fOffset)
-         && (s.fOffset <= (*it)->fOffset + (*it)->fLength))
+      for (int32 i = 0; i < curline->fUrls->CountItems(); i++)
+      {
+        URL *current = curline->fUrls->ItemAt(i);
+        if ((s.fOffset >= current->fOffset)
+         && (s.fOffset <= current->fOffset + current->fLength))
          {
-           vision_app->LoadURL ((*it)->fUrl.String());
+           vision_app->LoadURL (current->fUrl.String());
            url_handle = true;
            break;
          }
+      }
     }
     if (!url_handle && s == fTrack_offset)
       Select (s, s);
@@ -1860,9 +1863,8 @@ Line::~Line (void)
   
   if (fUrls)
   {
-    urllist::const_iterator it = fUrls->begin();
-    for (; it != fUrls->end(); ++it)
-      delete (*it);
+    while (fUrls->CountItems() > 0)
+      delete fUrls->RemoveItemAt(0L);
     delete fUrls;
   }
 }
@@ -1911,14 +1913,11 @@ Line::Append (
   {
     if (!fUrls)
       fUrls = new urllist;
-    fUrls->push_front (new URL (buffer, save, len));
+    fUrls->AddItem (new URL (buffer, save, len));
   }
 
   if (fText[fLength - 1] == '\n')
   {
-    if (fUrls)
-      fUrls->sort();
-
     FigureSpaces();
     FigureEdges (theme, width);
   }
@@ -2353,21 +2352,21 @@ size_t
 Line::SetStamp (const char *format, bool was_on)
 {
   size_t size (0);
-
+  int32 i (0);
+  
   if (was_on)
   {
     int16 offset (fFcs[4].fOffset + 1);
 
     if (fUrls)
     {
-      urllist::const_iterator it = fUrls->begin();
-      for (; it != fUrls->end(); ++it)
-        (*it)->fOffset -= offset;
+      for (i = 0; i < fUrls->CountItems(); i++)
+        fUrls->ItemAt(i)->fOffset -= offset;
     }
     memmove (fText, fText + offset, fLength - offset);
     fText[fLength -= offset] = '\0';
 
-    for (int16 i = 6; i < fFc_count; ++i)
+    for (i = 6; i < fFc_count; ++i)
     {
       fFcs[i].fOffset -= offset;
       fFcs[i - 6] = fFcs[i];
@@ -2385,9 +2384,8 @@ Line::SetStamp (const char *format, bool was_on)
     size = strftime (buffer, 1023, format, &curTime);
     if (fUrls)
     {
-      urllist::const_iterator it = fUrls->begin();
-      for (; it != fUrls->end(); ++it)
-        (*it)->fOffset += size;
+      for (i = 0; i < fUrls->CountItems(); i++)
+        fUrls->ItemAt(i)->fOffset += size;
     }
 
     char *new_fText;
@@ -2440,7 +2438,7 @@ Line::SetStamp (const char *format, bool was_on)
     fFcs[5].fIndex  = Theme::TimespaceFont;
     fFcs[5].fOffset  = size - 1;
 
-    for (int16 i = 6; i < fFc_count; ++i)
+    for (i = 6; i < fFc_count; ++i)
       fFcs[i].fOffset += size;
   }
 

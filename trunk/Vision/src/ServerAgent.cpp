@@ -505,7 +505,7 @@ ServerAgent::Establish (void *arg)
       endpointMsg.AddInt32 ("socket", serverSock);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
-        
+
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
@@ -808,7 +808,7 @@ ServerAgent::Client (const char *cName)
 
   for (int32 i = 0; i < fClients.CountItems(); ++i)
   {
-    ClientAgent *item ((ClientAgent *)fClients.ItemAt (i));
+    ClientAgent *item (fClients.ItemAt (i));
     if (strcasecmp (cName, item->Id().String()) == 0)
     {
       
@@ -826,8 +826,8 @@ ServerAgent::ActiveClient (void)
   ClientAgent *client (0);
 
   for (int32 i = 0; i < fClients.CountItems(); ++i)
-    if (!((ClientAgent *)fClients.ItemAt (i))->IsHidden())
-      client = (ClientAgent *)fClients.ItemAt (i);
+    if (!fClients.ItemAt (i)->IsHidden())
+      client = fClients.ItemAt (i);
 
   return client;
 }
@@ -838,7 +838,7 @@ ServerAgent::Broadcast (BMessage *msg)
 {
   for (int32 i = 0; i < fClients.CountItems(); ++i)
   {
-    ClientAgent *client ((ClientAgent *)fClients.ItemAt (i));
+    ClientAgent *client (fClients.ItemAt (i));
 
     if (client != this)
       client->fMsgr.SendMessage (msg);
@@ -875,7 +875,7 @@ ServerAgent::DisplayAll (
 {
   for (int32 i = 0; i < fClients.CountItems(); ++i)
   {
-    ClientAgent *client ((ClientAgent *)fClients.ItemAt (i));
+    ClientAgent *client (fClients.ItemAt (i));
 
     BMessage msg (M_DISPLAY);
     PackDisplay (&msg, buffer, fore, back, font);
@@ -1560,7 +1560,7 @@ ServerAgent::MessageReceived (BMessage *msg)
       {
         for (int32 i = 0; i < fClients.CountItems(); ++i)
         {
-          ClientAgent *client ((ClientAgent *)fClients.ItemAt (i));
+          ClientAgent *client (fClients.ItemAt (i));
           
           if (dynamic_cast<ChannelAgent *>(client))
           {
@@ -1640,17 +1640,17 @@ ServerAgent::MessageReceived (BMessage *msg)
  
           SendData (fQuitMsg.String());
         }
-
-        Broadcast (new BMessage (M_CLIENT_QUIT));
-		BMessenger listMsgr(fListAgent);
-		listMsgr.SendMessage(M_CLIENT_QUIT);
-
-        BMessage deathchant (M_OBITUARY);
-        deathchant.AddPointer ("agent", this);
-        deathchant.AddPointer ("item", fAgentWinItem);
-        vision_app->pClientWin()->PostMessage (&deathchant);
-
-        ClientAgent::MessageReceived(msg);
+        
+        if (fClients.CountItems() >= 1)
+        {
+          Broadcast (new BMessage (M_CLIENT_QUIT));
+  	      BMessenger listMsgr(fListAgent);
+          listMsgr.SendMessage(M_CLIENT_QUIT);
+        }
+        else
+        {
+          ClientAgent::MessageReceived(msg);
+        }
       }
       break;
 
@@ -1663,8 +1663,13 @@ ServerAgent::MessageReceived (BMessage *msg)
           printf (":ERROR: error getting valid pointer from M_CLIENT_SHUTDOWN -- bailing\n");
           break;
         }
-    
+        
         fClients.RemoveItem (deadagent);
+
+        BMessage deathchant (M_OBITUARY);
+        deathchant.AddPointer ("agent", deadagent);
+        deathchant.AddPointer ("item", deadagent->fAgentWinItem);
+        vision_app->pClientWin()->PostMessage (&deathchant);
 
         if (fIsQuitting && fClients.CountItems() <= 1)
           fSMsgr.SendMessage (M_CLIENT_QUIT);

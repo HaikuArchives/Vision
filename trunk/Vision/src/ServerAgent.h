@@ -155,7 +155,7 @@ class ServerAgent : public ClientAgent
     volatile thread_id          fLoginThread,
                                   fSenderThread;		// thread that receives
 
-    BList                       fClients;			// agents this server "owns"
+    BObjectList<ClientAgent>    fClients;			// agents this server "owns"
     
     BString                     *fEvents;
     BString                     fServerHostName;
