@@ -42,7 +42,8 @@ class AppWindowPrefsView : public BView
               *timeStamp,
               *logEnabled,
               *logFileTimestamp,
-              *stripColors;
+              *stripColors,
+              *spamMode;
 };
 
 #endif // _PREFAPP_H

@@ -113,6 +113,20 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxHeight += trackingBoundsRect.Height() * 1.5; 
   AddChild (stripColors);
+
+  checkboxRect.top += stripColors->Bounds().Height() * 1.2;
+  msg.ReplaceString ("setting", "Newbie Spam Mode");
+  spamMode = new BCheckBox (checkboxRect, "newbiespammode",
+    "Use paste flood protection",
+    new BMessage (msg));
+  spamMode->SetValue ((vision_app->GetBool ("Newbie Spam Mode")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  spamMode->MoveBy(be_plain_font->StringWidth("S"), 0);
+  spamMode->ResizeToPreferred();
+  trackingBoundsRect = spamMode->Bounds();
+  maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
+  maxHeight += trackingBoundsRect.Height() * 1.5; 
+  AddChild (spamMode);
+
   
   ResizeTo(maxWidth, maxHeight);
 }
@@ -136,6 +150,7 @@ AppWindowPrefsView::AllAttached (void)
   logEnabled->SetTarget (this);
   logFileTimestamp->SetTarget (this);
   stripColors->SetTarget (this);
+  spamMode->SetTarget (this);
   BView::AllAttached();
 }
 
