@@ -226,7 +226,7 @@ ClientAgent::ParseCmd (const char *data)
       msg.AddString("input", "/clear");
       msg.AddBool("clear", true);
       msg.AddBool("history", false); 
-      currentserver->Broadcast(&msg);
+      currentserver->Broadcast(&msg, true);
     }
     return true;
   }
