@@ -79,6 +79,20 @@ URLCrunch::Crunch (BString *url)
 			*url = "";
 
 			url->Append (buffer.String() + marker, url_length);
+			
+			// the launch doesn't appear to work correctly without the protocol signature
+			// so if it's not present, prepend it
+			if (url->FindFirst ("://") == B_ERROR)
+				switch (url->String()[0])
+				{
+					case 'w':
+						url->Prepend ("http://");
+						break;
+					
+					case 'f':
+						url->Prepend ("ftp://");
+						break;
+				}
 		}
 
 		current_pos = pos;
