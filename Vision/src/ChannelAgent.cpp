@@ -507,7 +507,7 @@ ChannelAgent::TabExpansion (void)
           break;
       }
       if (start == 0)
-	insertion += ":";
+	insertion += ": ";
 
       fInput->TextView()->Delete (
         place - fInput->TextView()->Text(),
