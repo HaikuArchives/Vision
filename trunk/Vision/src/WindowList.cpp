@@ -684,7 +684,9 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   RemoveItem (agentitem);
   FullListSortItems (SortListItems);
   delete agent;
-  SelectLast();
+  // if there isn't anything left in the list, don't try to do any ptr comparisons
+  if (CountItems() > 0)
+    SelectLast();
   fLastSelected = NULL;
   Window()->EnableUpdates();
 }
