@@ -77,13 +77,13 @@ ServerEntryView::ServerEntryView (BRect bounds, BHandler *handler, BMessage *inv
     stateMenu->AddItem (new BMenuItem (S_SERVERWIN_MENU_SEC, new BMessage (M_SERVER_STATE)));
     stateMenu->AddItem (new BMenuItem (S_SERVERWIN_MENU_DIS , new BMessage (M_SERVER_STATE)));
     statusField = new BMenuField (BRect (0,0,0,0), "states", S_SERVERWIN_STATE, stateMenu,
-      B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
+      B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
 
     okButton = new BButton (BRect (0,0,0,0), "serverOk", S_SERVERWIN_DONE_BUTTON,
-      new BMessage (M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
+      new BMessage (M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
     
     cancelButton = new BButton (BRect (0,0,0,0), "serverCancel", S_SERVERWIN_CANCEL_BUTTON,
-      new BMessage (M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW);
+      new BMessage (M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
 
   AddChild (statusField);
   AddChild (serverName);
