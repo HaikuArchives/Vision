@@ -216,6 +216,30 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
+  if (firstWord == "/NETCLEAR")
+  {
+    BLooper *looper (NULL);
+    ServerAgent *currentserver (dynamic_cast<ServerAgent *>(fSMsgr.Target(&looper)));
+    if (currentserver != NULL)
+    {
+      BMessage msg (M_SUBMIT);
+      msg.AddString("input", "/clear");
+      msg.AddBool("clear", true);
+      msg.AddBool("history", false); 
+      currentserver->Broadcast(&msg);
+    }
+  }
+ 
+  if (firstWord == "/ACLEAR")
+  {
+    BMessage msg (M_SUBMIT);
+    msg.AddString("input", "/netclear");
+    msg.AddBool("clear", true);
+    msg.AddBool("history", true);
+    vision_app->pClientWin()->ServerBroadcast(&msg);
+  }
+
+
   if (firstWord == "/GOOGLE")
   {
     BString buffer (RestOfString (data, 2));
