@@ -417,9 +417,9 @@ ClientWindow::Init (void)
                     new BMessage (M_CW_ALTP), 'P'));
   mWindow->AddSeparatorItem();
   mWindow->AddItem (item = new BMenuItem ("Next Window",
-                    navDown, B_DOWN_ARROW));
+                    new BMessage (M_MOVE_DOWN), B_DOWN_ARROW));
   mWindow->AddItem (item = new BMenuItem ("Previous Window",
-                    navUp, B_UP_ARROW));
+                    new BMessage (M_MOVE_UP), B_UP_ARROW));
   mWindow->AddItem (item = new BMenuItem ("Server Agent",
                     new BMessage (M_MOVE_TOP_SERVER), '/'));
   menubar->AddItem (mWindow);  
