@@ -1539,6 +1539,7 @@ void BColumnListView::Refresh()
 	if(LockLooper())
 	{
 		Invalidate();
+		fOutlineView->FixScrollBar (true);
 		fOutlineView->Invalidate();
 		Window()->UpdateIfNeeded();
 		UnlockLooper();
@@ -3388,20 +3389,20 @@ void OutlineView::RemoveRow(BRow *row)
 	if (row) {
 		BRow *parentRow;
 		bool parentIsVisible;
+		float subTreeHeight = row->Height();
 		if (FindParent(row, &parentRow, &parentIsVisible)) {
 			// adjust height
 			if (parentIsVisible && (parentRow == 0 || parentRow->fIsExpanded)) {
-				float subTreeHeight = row->Height();
 				if (row->fIsExpanded) {
 					for (RecursiveOutlineIterator iterator(row->fChildList);
 						iterator.CurrentRow(); iterator.GoToNext())
 						subTreeHeight += iterator.CurrentRow()->Height();
 				}
-				
-				fItemsHeight -= subTreeHeight + 1;
-				FixScrollBar(false);
 			}
 		}
+		fItemsHeight -= subTreeHeight + 1;
+		FixScrollBar(false);
+
 		if (parentRow)
 			parentRow->fChildList->RemoveItem(row);
 		else
@@ -3596,9 +3597,12 @@ void OutlineView::FixScrollBar(bool scrollToFit)
 {
 	BScrollBar *vScrollBar = ScrollBar(B_VERTICAL);
 	if (vScrollBar) {
+	    float min, max;
+	    vScrollBar->GetRange (&min, &max);
 		if (fItemsHeight > fVisibleRect.Height()) {
 			float maxScrollBarValue = (fItemsHeight + kBottomMargin) - fVisibleRect.Height();
 			vScrollBar->SetProportion(fVisibleRect.Height() / (fItemsHeight + kBottomMargin));
+			fVisibleRect.PrintToStream();
 
 			// If the user is scrolled down too far when makes the range smaller, the list
 			// will jump suddenly, which is undesirable.  In this case, don't fix the scroll
