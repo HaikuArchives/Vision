@@ -987,6 +987,16 @@ VisionApp::MessageReceived (BMessage *msg)
     }
     break;
     
+    case M_LOAD_URL:
+    {
+      BString url (msg->FindString("url"));
+      if (url.Length() > 0)
+      {
+        LoadURL(url.String());
+      }
+    }
+    break;
+    
     default:
       BApplication::MessageReceived (msg);
   }

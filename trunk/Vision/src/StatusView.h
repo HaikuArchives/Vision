@@ -50,6 +50,7 @@ class StatusView : public BView
 
     void                SetItemValue (int32, const char *, bool = true);
     virtual void        Draw (BRect);
+    virtual void		MouseDown (BPoint);
     void                Clear (void);
 
   protected:
@@ -64,6 +65,8 @@ class StatusItem
 								    int32 = STATUS_ALIGN_RIGHT);
 
     virtual               ~StatusItem (void);
+    
+    void                GeneratePopUp(BPoint, BRect);
   
   private:
     BString               label,
