@@ -69,7 +69,9 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 			nickPrompt (NULL),
 			netPrompt (NULL),
 			dupePrompt (NULL),
-			serverPrefs (NULL)
+			serverPrefs (NULL),
+			nickUpButton (NULL),
+			nickDnButton (NULL)
 {
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
 	BMenu *menu (new BMenu ("Networks"));
@@ -83,6 +85,7 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	mainNetBox->SetLabel (networkMenu);
 	AddChild (mainNetBox);
 	BRect boundsRect (Bounds().InsetByCopy(10,15));
+	boundsRect.PrintToStream();
 	boundsRect.right /= 2;
 	boundsRect.right -= 8;
 	boundsRect.top += 15;
@@ -170,17 +173,23 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 		nickRemoveButton->Frame().top);
 	personalBox->AddChild (nickAddButton);
 	BBitmap *bmp (BTranslationUtils::GetBitmap ('bits', "UpArrow"));
-    boundsRect = bmp->Bounds().InsetByCopy (-2, -2);
-    nickUpButton = new TSpeedButton (boundsRect, NULL, NULL, new BMessage (M_NICK_UP), bmp);
-	nickUpButton->MoveTo (listScroll->Frame().left, nickAddButton->Frame().top);
-	personalBox->AddChild (nickUpButton);
-	delete bmp;
+    if (bmp)
+    {
+      boundsRect = bmp->Bounds().InsetByCopy (-2, -2);
+      nickUpButton = new TSpeedButton (boundsRect, NULL, NULL, new BMessage (M_NICK_UP), bmp);
+  	  nickUpButton->MoveTo (listScroll->Frame().left, nickAddButton->Frame().top);
+	  personalBox->AddChild (nickUpButton);
+	  delete bmp;
+	}
     bmp = BTranslationUtils::GetBitmap ('bits', "DownArrow");
-    boundsRect = bmp->Bounds().InsetByCopy (-2, -2);
-    nickDnButton = new TSpeedButton (boundsRect, NULL, NULL, new BMessage (M_NICK_DOWN), bmp);
-	nickDnButton->MoveTo (nickUpButton->Frame().left, nickUpButton->Frame().bottom);
-	personalBox->AddChild (nickDnButton);
-	delete bmp;          		
+	if (bmp)
+	{
+      boundsRect = bmp->Bounds().InsetByCopy (-2, -2);
+      nickDnButton = new TSpeedButton (boundsRect, NULL, NULL, new BMessage (M_NICK_DOWN), bmp);
+	  nickDnButton->MoveTo (nickUpButton->Frame().left, nickUpButton->Frame().bottom);
+	  personalBox->AddChild (nickDnButton);
+	  delete bmp;
+	}          		
 	ident = new BTextControl (listScroll->Frame(), NULL, "Ident: ", NULL, NULL);
 	realName = new BTextControl (listScroll->Frame(), NULL, "Real name: ", NULL, NULL);
 	realName->ResizeTo (listScroll->Frame().Width(), realName->Frame().Height());
@@ -217,10 +226,16 @@ NetworkPrefsView::AttachedToWindow (void)
 	nickRemoveButton->SetTarget (this);
 	realName->SetTarget (this);
 	listView->SetTarget (this);
-	nickUpButton->SetTarget (this);
-	nickDnButton->SetTarget (this);
-	nickUpButton->SetEnabled (false);
-	nickDnButton->SetEnabled (false);
+	// for some unknown reason the bmp doesn't seem to get retrieved right on
+	// some people's systems...if this is the case the up and down buttons will
+	// not get created, hence this check
+	if (nickUpButton)
+	{
+	  nickUpButton->SetTarget (this);
+	  nickDnButton->SetTarget (this);
+	  nickUpButton->SetEnabled (false);
+	  nickDnButton->SetEnabled (false);
+	}
 	nickRemoveButton->SetEnabled (false);
 	execButton->SetEnabled (false);
 	ident->SetTarget (this);
