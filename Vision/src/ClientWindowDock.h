@@ -98,6 +98,7 @@ class ClientWindowDock : public BView
     WindowList              *pWindowList (void);
     NotifyList              *pNotifyList (void);
     
+    virtual void            AllAttached (void);
     virtual void            MessageReceived (BMessage *);
     	
   private:

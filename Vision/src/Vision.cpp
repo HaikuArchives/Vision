@@ -438,6 +438,9 @@ VisionApp::LoadDefaults (int32 section)
           
         if (!fVisionSettings->HasBool ("Newbie Spam Mode"))
           fVisionSettings->AddBool("Newbie Spam Mode", true);
+         
+        if (!fVisionSettings->HasBool ("notifyExpanded"))
+          fVisionSettings->AddBool("notifyExpanded", true);
         
         if (!fVisionSettings->HasString ("logBaseDir"))
           fVisionSettings->AddString("logBaseDir", "logs");
@@ -677,7 +680,7 @@ bool
 VisionApp::CheckStartupNetworks (void)
 {
   bool autoStarted (false);
-#if 1
+#if 0
   BMessage netData;
   for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
   {
@@ -795,6 +798,17 @@ VisionApp::MessageReceived (BMessage *msg)
       }
       break;
     
+    case M_WINLIST_EMPTY:
+      {
+        if (!fShuttingDown);
+        {
+          fClientWin->Lock();
+          fClientWin->Hide();
+          fClientWin->Unlock();
+          PostMessage (M_SETUP_SHOW);
+        }
+      }
+      break;
       
     case M_PREFS_SHOW:
       {
@@ -837,8 +851,7 @@ VisionApp::MessageReceived (BMessage *msg)
     
     case M_CONNECT_NETWORK:
       {
-        BRect clientWinRect;
-        fVisionSettings->FindRect ("clientWinRect", &clientWinRect);
+        BRect clientWinRect (GetRect("clientWinRect"));
         BMessage netData = GetNetwork (msg->FindString ("network"));
 
         // sanity check
@@ -967,13 +980,13 @@ VisionApp::GetString (const char *stringName) const
 }
 
 
-status_t
+void
 VisionApp::SetString (const char *stringName, int32 index, const char *value)
 {
   BAutolock stringLock (const_cast<BLocker *>(&fSettingsLock));
   
   if (!stringLock.IsLocked())
-    return B_ERROR;
+    return;
 
   if (!strcmp(stringName, "timestamp_format"))
   {
@@ -983,16 +996,18 @@ VisionApp::SetString (const char *stringName, int32 index, const char *value)
     Broadcast (&msg);
   }
   
-  if (fVisionSettings->ReplaceString (stringName, index, value) == B_OK)
-    return B_OK;
-  
-  return B_ERROR;  
+  fVisionSettings->ReplaceString (stringName, index, value);
 }
 
 const BRect
 VisionApp::GetRect (const char *settingName)
 {
   BRect rect (0.0, 0.0, 0.0, 0.0);
+
+  BAutolock rectLock (const_cast<BLocker *>(&fSettingsLock));
+  
+  if (!rectLock.IsLocked())
+    return rect;
   
   if (fVisionSettings->HasRect (settingName))
     fVisionSettings->FindRect (settingName, &rect);
@@ -1000,19 +1015,15 @@ VisionApp::GetRect (const char *settingName)
   return rect;
 }
 
-status_t
+void
 VisionApp::SetRect (const char *settingName, BRect value)
 {
  BAutolock rectLock(const_cast<BLocker *>(&fSettingsLock));
  
- 
  if (!rectLock.IsLocked())
-   return B_ERROR;
+   return;
      
- if (fVisionSettings->ReplaceRect (settingName, value) == B_OK)
-   return B_OK;
- 
- return B_ERROR;
+ fVisionSettings->ReplaceRect (settingName, value);
 }
 
 
@@ -1127,6 +1138,8 @@ VisionApp::ClientFontSize (int32 which, float size)
     if (fVisionSettings->ReplaceFloat ("size", which, size) != B_OK)
       printf("error, could not set font size\n");
   }
+  
+  SaveSettings();
 }
 
 const BFont *
@@ -1244,14 +1257,16 @@ VisionApp::SetBool (const char *settingName, bool value)
   if (!boolLock.IsLocked())
     return B_ERROR;
   
- if (fVisionSettings->ReplaceBool (settingName, value) == B_OK)
- {
-   BMessage msg (M_STATE_CHANGE);
-   msg.AddBool ("bool", true);
-   Broadcast (&msg);
-   return B_OK;
- }
- return B_ERROR;
+  status_t result (B_OK);
+  
+  if ((result = fVisionSettings->ReplaceBool (settingName, value)) == B_OK)
+  {
+    BMessage msg (M_STATE_CHANGE);
+    msg.AddBool ("bool", true);
+    Broadcast (&msg);
+  }
+
+  return result;
 }
 
 BMessage
@@ -1356,7 +1371,6 @@ VisionApp::RemoveNetwork (const char *network)
      }
      else ++i;
   }
-  SaveSettings();
   return B_OK;
 }
 
@@ -1460,14 +1474,11 @@ VisionApp::BenchOut (const char *ts)
 void
 VisionApp::Broadcast (BMessage *msg)
 {
-
-  Lock();
-
   for (int32 i = 0; i < CountWindows(); ++i)
-    WindowAt (i)->PostMessage (msg);
-
-  Unlock();
-  
+  {
+    BMessenger msgr (WindowAt (i));
+    msgr.SendMessage (msg);
+  }
 }
 
 void

@@ -39,9 +39,9 @@ const uint32 M_NOTIFYLIST_CHANGE					= 0x1019;
 const uint32 M_NOTIFYLIST_UPDATE					= 0x1020;
 const uint32 M_NOTIFYLIST_RESIZE					= 0x1021;
 const uint32 M_WINLIST_NOTIFY_BLINKER				= 0x1022;
-//const uint32 M_NOTIFY_WINDOW						= 0x1023;
-//const uint32 M_NOTIFY_SHUTDOWN						= 0x1024;
-
+const uint32 M_WINLIST_EMPTY                        = 0x1023;
+// reserved                                         = 0x1024;
+    
 const uint32 M_LIST_BEGIN							= 0x1025;
 const uint32 M_LIST_EVENT							= 0x1026;
 const uint32 M_LIST_DONE							= 0x1027;
@@ -158,6 +158,7 @@ const uint32 M_NAMES_POPUP_WHOIS                    = 0x2102;
 const uint32 M_NAMES_POPUP_KICK                     = 0x2103;
 const uint32 M_NAMES_POPUP_DCCCHAT                  = 0x2104;
 const uint32 M_NAMES_POPUP_DCCSEND                  = 0x2105;
+const uint32 M_NAMES_POPUP_NOTIFY                   = 0x2106;
 
 // network prefs
 

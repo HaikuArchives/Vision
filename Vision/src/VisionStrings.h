@@ -163,6 +163,7 @@
 
 #define S_NOTIFYLIST_QUERY_ITEM     "Query"
 #define S_NOTIFYLIST_WHOIS_ITEM     "Whois"
+#define S_NOTIFYLIST_REMOVE_ITEM    "Remove"
 
 // command parser
 
