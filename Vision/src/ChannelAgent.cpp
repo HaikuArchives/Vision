@@ -130,7 +130,7 @@ ChannelAgent::Init (void)
     B_PLAIN_BORDER);
 
   resize = new ResizeView (namesList, BRect (textScroll->Frame().right + 1,
-    Bounds().top + 1, textScroll->Frame().right + 3, textScroll->Frame().Height()));
+    Bounds().top + 1, textScroll->Frame().right + 3, textScroll->Frame().Height()), "resize", B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM);
 
   AddChild (namesScroll);
 
