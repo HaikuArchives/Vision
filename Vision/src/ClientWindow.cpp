@@ -401,11 +401,14 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_RESIZE_VIEW:
       {
         int32 agentCount (pWindowList()->CountItems());
-        int32 offset (msg->FindInt32 ("delta"));
         BView *view (NULL);
         msg->FindPointer ("view", reinterpret_cast<void **>(&view));
         if (dynamic_cast<ClientWindowDock *>(view))
         {
+          BPoint point;
+          msg->FindPoint ("loc", &point);
+          ConvertFromScreen (&point);
+          int32 offset ((int32)(point.x - cwDock->Frame().right));
           resize->MoveBy (offset, 0.0);
           cwDock->ResizeBy (offset, 0.0);
           for (int32 i = 0; i < agentCount; i++)

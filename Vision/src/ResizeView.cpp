@@ -79,7 +79,7 @@ ResizeView::MouseMoved (BPoint current, uint32 transit, const BMessage *)
       return;
     BMessage msg (M_RESIZE_VIEW);
     msg.AddPointer ("view", attachedView);
-    msg.AddInt32 ("delta", current.x);
+    msg.AddPoint ("loc", converted);
     window->MessageReceived (&msg);
   }
 }
