@@ -80,8 +80,7 @@ main (void)
 
 VisionApp::VisionApp (void)
   : BApplication ("application/x-vnd.Ink-Vision"),
-      aboutWin (0),
-      identEndpoint (0)
+      aboutWin (0)
 {
   // some setup
   settingsloaded = false;
@@ -239,6 +238,8 @@ VisionApp::VisionApp (void)
   commands[CMD_AWAY]        = "is idle: $R";
   commands[CMD_BACK]        = "has returned";
   commands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
+  
+  identSyncSem = create_sem (0, "identity");
   
   identThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
   if (identThread >= B_OK)
@@ -406,8 +407,6 @@ VisionApp::QuitRequested (void)
 
   if ((clientWin) && (!quitRequest->HasBool ("real_thing")))
   {
-    if (identEndpoint)
-      identEndpoint->Close();
     clientWin->PostMessage (B_QUIT_REQUESTED);
     return false;
   }
@@ -415,10 +414,15 @@ VisionApp::QuitRequested (void)
   if (settingsloaded)
     if ((visionSettings->Save() == B_OK) && debugsettings)
       printf (":SETTINGS: saved to file\n");
+
+  delete_sem (identSyncSem);
   
   // give our child threads a chance to die gracefully
   snooze (500000);  // 0.5 seconds
   
+  status_t result;
+
+  wait_for_thread (identThread, &result);
   //ThreadStates();
   
   return true;
@@ -928,10 +932,10 @@ VisionApp::Identity (void *)
   &&  identPoint.Bind (113)     == B_OK) 
   { 
     identPoint.Listen (2048);
-    vision_app->identEndpoint = &identPoint; 
-    while (!vision_app->ShuttingDown) 
-    { 
-      accepted = identPoint.Accept (-1); 
+    while (acquire_sem (vision_app->identSyncSem) == B_NO_ERROR) 
+    {
+      accepted = identPoint.Accept (30 * 1000);
+      
       if (accepted) 
       {
         BNetAddress remoteAddr (accepted->RemoteAddr()); 
@@ -944,7 +948,7 @@ VisionApp::Identity (void *)
           accepted->SetTimeout(5);
 
           if (accepted->Receive (buffer, 64) > 0)
-          { 
+          {
             buffer.RemoveString (received, 64); 
             int32 len; 
  
@@ -977,9 +981,11 @@ VisionApp::Identity (void *)
         if (ident) 
           ident = NULL; 
       } 
-    } 
-  } 
+    }
+  }
+  identPoint.Close();
   return 0; 
+
 } 
  
 void 
@@ -987,7 +993,8 @@ VisionApp::AddIdent (const char *server, const char *serverIdent)
 { 
   identLock.Lock(); 
   idents.AddString (server, serverIdent); 
-  identLock.Unlock(); 
+  identLock.Unlock();
+  release_sem (identSyncSem); 
 } 
  
 void 
