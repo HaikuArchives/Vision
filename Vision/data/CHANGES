@@ -19,6 +19,7 @@ http://vision.sourceforge.net
          * fixed a few other hanging bugs
          * names list font updates correctly again
          * fixed topic color stripping bug (thanks to Brad Froehle)
+         * fixed timestamp format bug
 
 [0.3.0828]
 2001-08-28
