@@ -202,6 +202,15 @@ DCCFileFilter::HandleButton (BMessage *)
 		&&  entry.GetStat (&s)               == B_NO_ERROR
 		&&  S_ISREG (s.st_mode))
 		{
+          if (vision_app->GetBool ("dccAutoAccept"))
+          {
+            BMessage msg (M_FILE_PANEL_ALERT);
+            msg.AddInt32 ("which", 2);
+            panel->Window()->PostMessage (&msg);
+            result = B_SKIP_MESSAGE; 
+          }
+          else
+          {
 			BString buffer;
 			BAlert *alert;
 
@@ -225,6 +234,7 @@ DCCFileFilter::HandleButton (BMessage *)
 				panel->Window()));
 
 			result = B_SKIP_MESSAGE;
+	      }
 		}
 	}
 	return result;
