@@ -31,6 +31,7 @@
 #include "Vision.h"
 #include "VTextControl.h"
 
+#include <unistd.h>
 #include <stdlib.h>
 
 #ifdef BONE_BUILD
@@ -80,8 +81,8 @@ MessageAgent::~MessageAgent (void)
   if (dChat)
   {
 #ifdef BONE_BUILD
-    shutdown (mySocket, SHUTDOWN_BOTH);
-    shutdown (acceptSocket, SHUTDOWN_BOTH);
+    close (mySocket);
+    close (acceptSocket);
 #elif NETSERVER_BUILD
     closesocket (mySocket);
     closesocket (acceptSocket);
@@ -237,8 +238,8 @@ MessageAgent::DCCIn (void *arg)
   outta_there: // GOTO MARKER
 
 #ifdef BONE_BUILD
-  shutdown (dccSocket, SHUTDOWN_BOTH);
-  shutdown (dccAcceptSocket, SHUTDOWN_BOTH);
+  close (dccSocket);
+  close (dccAcceptSocket);
 #elif NETSERVER_BUILD
   closesocket (dccSocket);
   closesocket (dccAcceptSocket);
@@ -300,7 +301,7 @@ MessageAgent::DCCOut (void *arg)
     ClientAgent::PackDisplay (&msg, "Error connecting socket.\n", 0);
     mMsgr.SendMessage (&msg);
 #ifdef BONE_BUILD
-    shutdown (agent->mySocket, SHUTDOWN_BOTH);
+    close (agent->mySocket);
 #elif NETSERVER_BUILD
     closesocket (agent->mySocket);
 #endif
@@ -344,7 +345,7 @@ MessageAgent::DCCOut (void *arg)
   outta_loop: // GOTO MARKER
 
 #ifdef BONE_BUILD
-  shutdown (dccAcceptSocket, SHUTDOWN_BOTH);
+  close (dccAcceptSocket);
 #elif NETSERVER_BUILD
   closesocket (dccAcceptSocket);
 #endif  
