@@ -28,7 +28,7 @@
 
 #define BACK_BUFFER_SIZE                20
 
-class BTextControl;
+class VTextControl;
 class BString;
 
 class HistoryMenu : public BView
@@ -52,8 +52,8 @@ class HistoryMenu : public BView
 	virtual void			MouseMoved (BPoint, uint32, const BMessage *);
 	virtual void			MouseUp (BPoint);
 
-	void						PreviousBuffer (BTextControl *);
-	void						NextBuffer (BTextControl *);
+	void						PreviousBuffer (VTextControl *);
+	void						NextBuffer (VTextControl *);
 	BString					Submit (const char *);
 	bool						HasHistory (void) const;
 	void						DoPopUp (bool);

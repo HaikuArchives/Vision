@@ -24,13 +24,13 @@
  */
  
 #include <Window.h>
-#include <TextControl.h>
 #include <PopUpMenu.h>
 #include <MenuItem.h>
 #include <String.h>
 
 #include <stdio.h>
 
+#include "VTextControl.h"
 #include "VisionBase.h"
 #include "HistoryMenu.h"
 
@@ -181,7 +181,7 @@ HistoryMenu::MouseUp (BPoint point)
 }
 
 void
-HistoryMenu::PreviousBuffer (BTextControl *input)
+HistoryMenu::PreviousBuffer (VTextControl *input)
 {
   if (bufferPos)
   {
@@ -200,7 +200,7 @@ HistoryMenu::PreviousBuffer (BTextControl *input)
 }
 
 void
-HistoryMenu::NextBuffer (BTextControl *input)
+HistoryMenu::NextBuffer (VTextControl *input)
 {
   BString buffer;
 

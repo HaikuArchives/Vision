@@ -98,7 +98,6 @@ class WindowList : public BListView
   private:
 
     BPopUpMenu                      *myPopUp;
-    BMenu                           *CTCPPopUp;
     int32                           lastSelected;
     int32                           lastButton;
 

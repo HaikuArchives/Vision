@@ -25,7 +25,6 @@
 
 #include <ScrollView.h>
 #include <FilePanel.h>
-#include <TextControl.h>
 
 #include <stdio.h>
 
@@ -35,6 +34,7 @@
 #include "StatusView.h"
 #include "ClientWindow.h"
 #include "StringManip.h"
+#include "VTextControl.h"
 
 
 ChannelAgent::ChannelAgent (
