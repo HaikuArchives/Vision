@@ -331,7 +331,6 @@ ClientAgent::Display (
 	const BFont *font,
 	bool timeStamp)
 {
-
     #if 0
 	if (isLogging)
 	{

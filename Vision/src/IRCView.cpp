@@ -23,9 +23,9 @@
  *                 Jamie Wilkinson
  */
 
-#define MAX_BYTES           128000 
-#define MELTDOWN_BYTES      500000 
-#define REMOVE_BYTES        786
+#define MAX_BYTES           196000
+#define MELTDOWN_BYTES      500000
+#define REMOVE_BYTES        1024
 
 #include <PopUpMenu.h>
 #include <MenuItem.h>
@@ -272,8 +272,30 @@ IRCView::DisplayChunk (
 {
   int32 urlMarker; 
   BString url, 
-          data (cData); 
-  bool scrolling (true); 
+          data (cData);
+  bool scrolling;
+          
+  float scrollMin, scrollMax;  
+  settings->parentAgent->ScrollRange (&scrollMin, &scrollMax);
+  float scrollVal (settings->parentAgent->ScrollPos());
+  
+  if (scrollVal == scrollMax)
+  {
+    // we're at the bottom... let's autoscroll
+    scrolling = true;
+  }
+  else if (TextLength() > MELTDOWN_BYTES)
+  {
+    // we're getting too big, we *have* to scroll (and clip excess bytes)
+    scrolling = true;
+  }
+  else
+  {
+    // we aren't at the bottom, don't scroll (or clip)
+    scrolling = false;
+  }
+          
+   
 
   /* Previously calling SetFontAndColor is really the wrong approach, 
    * since it does not add to the run array.  You have to pass a run array 
@@ -325,10 +347,12 @@ IRCView::DisplayChunk (
      Insert (TextLength(), data.String(), data.Length(), &run); 
    } 
 
-   if (TextLength() > MAX_BYTES) 
-   { 
+   if ((TextLength() > MAX_BYTES) && (scrolling)) 
+   {
+     // clip off excess buffer
      list<URL> &urls (settings->urls); 
-     int32 bytes (REMOVE_BYTES); 
+     int32 bytes ((TextLength() - MAX_BYTES) + REMOVE_BYTES);
+      
      const char *text (Text()); 
 
      while (*(text + bytes) && *(text + bytes) != '\n') 
@@ -353,16 +377,7 @@ IRCView::DisplayChunk (
      list<URL>::iterator it; 
      for (it = urls.begin(); it != urls.end(); ++it) 
        it->offset -= bytes; 
-                
-     float scrollMin, scrollMax; 
-     settings->parentAgent->ScrollRange (&scrollMin, &scrollMax); 
-
-     float scrollVal = settings->parentAgent->ScrollPos(); 
-     int32 curLine ((int32) ((scrollMax/LineHeight()) * (scrollVal/scrollMax))); 
-                
-     Delete (0,bytes); 
-     if (!scrolling) 
-       settings->parentAgent->SetScrollPos (TextHeight(0, curLine));           
+               
    } 
 
    if (scrolling && !tracking)
