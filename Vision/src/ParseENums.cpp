@@ -686,7 +686,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
                 mLock (GetWord (data, 8)),
                 lockMessage (S_PENUM_MLOCK);
         lockMessage += theChan;
-        lockMessage += ":";
+        lockMessage += " :";
         lockMessage += mLock;
         lockMessage += "\n";
         
