@@ -1440,7 +1440,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         // kind of a hack since Agent() returns a pointer of type ClientAgent, of which
         // ListAgent is not a subclass...
         BMessenger listMsgr(fListAgent);
-        listMsgr.SendMessage(M_LIST_COMMAND);
+        listMsgr.SendMessage(msg);
       }
       break;
     

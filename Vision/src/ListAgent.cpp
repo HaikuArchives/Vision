@@ -248,8 +248,12 @@ ListAgent::MessageReceived (BMessage *msg)
         if (!processing)
         {
           BMessage sMsg (M_SERVER_SEND);
+          
+          BString command ("LIST ");
+          
+          command.Append (msg->FindString ("cmd"));
 
-          sMsg.AddString ("data", "LIST");
+          sMsg.AddString ("data", command.String());
 
           fSMsgr->SendMessage (&sMsg);
           processing = true;

@@ -599,7 +599,7 @@ ClientAgent::ParseCmd (const char *data)
     BString theArgs (RestOfString (data, 2));
     
     BMessage msg (M_LIST_COMMAND);
-    msg.AddString ("cmd", data);
+    msg.AddString ("cmd", theArgs);
     fSMsgr.SendMessage (&msg);
     return true;
   }
