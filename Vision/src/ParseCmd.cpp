@@ -1144,7 +1144,7 @@ ClientAgent::ExecPipe (void *arg)
 
   FILE *fp = popen (exec->String(), "r");
   
-  if( ((int)fp) <= 0)
+  if(fp == NULL)
   {
     msg->what = M_DISPLAY;
     PackDisplay(msg, "[x] " S_PCMD_PEXEC_ERROR "\n", C_ERROR);
