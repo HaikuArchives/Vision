@@ -3,6 +3,11 @@ http://vision.sourceforge.net
 
 [0.1.0330]
  2001-03-30
+   * Add !channel support to /m
+   * Add an invalid parameters output to various commands (instead of just doing
+     nothing)
+   * /google and /webster|/dictionary will load the home pages if you don't enter
+     a query string
    * Change SetupWindow's default to irc.exodusirc.net instead of irc.elric.net
    * ChannelAgent, ClientAgent code cleanup, squeezed some performance out of
      various functions
