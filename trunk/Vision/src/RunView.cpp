@@ -913,9 +913,11 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 					}
 					if (!end_found)
 					{
+						int32 soft_count = (line->softie_used >= 2) ?
+							line->softie_used - 2 : 0;
 						right = line->edges[line->length - 1] -
-							line->edges[line->softies[line->softie_used - 2].offset];
-						bottom_softie = line->softie_used - 2;
+							line->edges[line->softies[soft_count].offset];
+						bottom_softie = soft_count - 2;
 							
 					}
 					if (right < left || (bottom_softie - top_softie) > 0)
