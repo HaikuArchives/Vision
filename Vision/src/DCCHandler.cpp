@@ -184,6 +184,7 @@ ServerAgent::DCCGetDialog (
       if (panel->Window()->Lock())
       {
         panel->Window()->SetTitle (text.String());
+        panel->Window()->SetFlags (panel->Window()->Flags() | B_AVOID_FOCUS);
         panel->Window()->AddFilter (new DCCFileFilter (panel, msg));
         panel->Window()->Unlock();
       }
