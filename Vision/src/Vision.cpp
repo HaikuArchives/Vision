@@ -1390,10 +1390,11 @@ VisionApp::GetThreadName (int thread_type)
     /* 49 */ "will_code_for_food",
     /* 50 */ "Dig Me Out",
     /* 51 */ "Little Babies",
-    /* 52 */ "daydreaming"
+    /* 52 */ "daydreaming",
+    /* 53 */ "BEWARE OF THE DUCK!" // this one's for you freston :-)
   };
   
-  int rnd (rand() % 53);
+  int rnd (rand() % 54);
  
   static BString output;
   
