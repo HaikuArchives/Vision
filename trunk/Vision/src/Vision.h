@@ -71,10 +71,10 @@ class VisionApp : public BApplication
     const BFont             *GetClientFont (int32) const;
     
     const BRect             GetRect (const char *);
-    status_t                SetRect (const char *, BRect);
+    void                    SetRect (const char *, BRect);
     
     const char              *GetString (const char *) const; 
-    status_t                SetString (const char *, int32 index, const char *); 
+    void                    SetString (const char *, int32 index, const char *); 
     
     rgb_color               GetColor (int32) const;
     void                    SetColor (int32, const rgb_color);

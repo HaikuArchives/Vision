@@ -183,6 +183,11 @@ NotifyList::BuildPopUp(void)
     data.Append(name);
     msg.ReplaceString("input", data.String());
     fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_WHOIS_ITEM, new BMessage (msg)));
+    fMyPopUp->AddSeparatorItem();
+    data = "/UNNOTIFY ";
+    data.Append(name);
+    msg.ReplaceString("input", data.String());
+    fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_REMOVE_ITEM, new BMessage (msg)));
 
     WindowListItem *winItem (dynamic_cast<WindowListItem *>(
       vision_app->pClientWin()->pWindowList()->ItemAt(

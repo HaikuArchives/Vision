@@ -78,6 +78,9 @@ void NamesView::AttachedToWindow (void)
 
   myMessage = new BMessage (M_OPEN_MSGAGENT);
   fMyPopUp->AddItem(new BMenuItem("Query", myMessage));
+  
+  myMessage = new BMessage (M_NAMES_POPUP_NOTIFY);
+  fMyPopUp->AddItem(new BMenuItem("Add To Notify", myMessage));
 
   fMyPopUp->AddSeparatorItem();
 

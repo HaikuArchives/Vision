@@ -93,6 +93,16 @@ ClientWindowDock::pNotifyList (void)
 }
 
 void
+ClientWindowDock::AllAttached (void)
+{
+  if (vision_app->GetBool ("notifyExpanded"))
+  {
+    BMessenger dockMsgr (this);
+    dockMsgr.SendMessage(M_NOTIFYLIST_RESIZE);
+  }
+}
+
+void
 ClientWindowDock::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
@@ -113,6 +123,7 @@ ClientWindowDock::MessageReceived (BMessage *msg)
         fNotifyAgent->ResizeBy (0.0, Frame().bottom - fNotifyAgent->Frame().bottom - 1.0);
         fNotifyExpanded = true;
       }
+      vision_app->SetBool ("notifyExpanded", fNotifyExpanded);
       break;
     }
     

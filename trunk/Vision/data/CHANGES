@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
          
-[0.9-exp-0628]
+[0.9-0629]
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
          * changed the PrefGeneral keyboard nav to be more standard. (Alan Ellis)
          * added file: and mailto: URL support (Alan Ellis)
@@ -21,6 +21,8 @@ http://vision.sourceforge.net
          * added notify list 
              - /notify nick1 nick2 etc. to add nicks to notify list for current network
              - /unnotify nick1 nick2, etc. to remove nicks from notify list for current network
+             - context popup item in channel's nick list (add to notify)
+             - double click/right click functionality in notify list
          * split off logging into its own section in prefs ; added features:
              - configurable log base path (no longer restricted to logs/ off the Vision dir)
              - configurable timestamp format (this applies to both the main textview and the logs themselves)

@@ -1012,6 +1012,33 @@ ChannelAgent::MessageReceived (BMessage *msg)
         ParseCmd (command.String());
       }
       break;
+    
+    case M_NAMES_POPUP_NOTIFY:
+      {
+        int32 index (0);
+        BString victims,
+                targetNick;
+        NameItem *myUser (NULL);
+
+        /// iterate ///
+        while ((i = fNamesList->CurrentSelection (index++)) >= 0)
+        { 
+          myUser = static_cast<NameItem *>(fNamesList->ItemAt (i));
+          targetNick = myUser->Name();
+
+          victims += targetNick;
+          victims += " ";
+        }
+
+        victims.RemoveLast (",");
+  
+        BString command ("/notify ");
+        command += victims;
+
+        ParseCmd (command.String());
+
+      }
+      break;
 
     case M_NAMES_POPUP_DCCCHAT: 
       { 
