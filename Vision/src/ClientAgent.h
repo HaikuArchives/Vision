@@ -133,9 +133,9 @@ class ClientAgent : public BView
     static int32                    TimedSubmit (void *);
     static void                     PackDisplay (BMessage *,
                                       const char *,
-                                      const uint32 = 1,
-                                      const uint32 = 1,
-                                      const uint32 = 1);
+                                      const uint32 = 0,
+                                      const uint32 = 0,
+                                      const uint32 = 0);
 
     int32                           FirstKnownAs (
                                       const BString &,

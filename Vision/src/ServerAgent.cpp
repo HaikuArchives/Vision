@@ -113,10 +113,9 @@ ServerAgent::~ServerAgent (void)
     delete [] parse_buffer;
   if (lagRunner)
     delete lagRunner;
-#ifdef NETSERVER_BUILD
+
   if (!establishHasLock && endPointLock)
     delete endPointLock;
-#endif
 }
 
 void
@@ -522,7 +521,11 @@ ServerAgent::Establish (void *arg)
 // HandleReconnect() will.
   if (!sMsgrE->IsValid())
   {
+#ifdef BONE_BUILD
     close (serverSock);
+#elif NETSERVER_BUILD
+    closesocket (serverSock);
+#endif
   }
 #ifdef NETSERVER_BUILD
   delete endpointLock;
