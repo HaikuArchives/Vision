@@ -435,8 +435,10 @@ DCCReceive::Transfer (void *arg)
   }
 
   if (file.InitCheck() == B_OK)
+  {
     file.Unset();
-
+    update_mime_info (reply.FindString("name"), 0, 0, 1);
+  }
   return 0;
 }
 

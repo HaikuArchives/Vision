@@ -59,7 +59,7 @@ class AgentDockWinList : public BView
                           AgentDockWinList (BRect);
     virtual               ~AgentDockWinList (void);
     
-    WindowList            *pWindowList (void);
+    WindowList            *pWindowList (void) const;
 
   private:
     WindowList            *fWinList;
@@ -75,7 +75,7 @@ class AgentDockNotifyList : public BView
                           AgentDockNotifyList (BRect);
     virtual               ~AgentDockNotifyList (void);
     
-    NotifyList            *pNotifyList (void);
+    NotifyList            *pNotifyList (void) const; 
     
     virtual void          AllAttached(void);
 
@@ -95,8 +95,8 @@ class ClientWindowDock : public BView
     
     void                    AddWinList (void);
     void                    AddNotifyList (void);
-    WindowList              *pWindowList (void);
-    NotifyList              *pNotifyList (void);
+    WindowList              *pWindowList (void) const;
+    NotifyList              *pNotifyList (void) const;
     
     virtual void            AllAttached (void);
     virtual void            MessageReceived (BMessage *);

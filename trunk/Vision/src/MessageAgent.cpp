@@ -78,7 +78,7 @@ MessageAgent::MessageAgent (
   fAcceptSocket (0),
   fLocker (NULL)
 #elif BONE_BUILD
-  fAcceptSocket (0)
+  fAcceptSocket(0)
 #endif
 {
   Init();
@@ -493,7 +493,7 @@ MessageAgent::ChannelMessage (
   const char *address)
 {
 //  fAgentWinItem->SetName (nick);
-
+  
   ClientAgent::ChannelMessage (msgz, nick, ident, address);
 }
 
@@ -593,6 +593,7 @@ MessageAgent::MessageReceived (BMessage *msg)
     case M_CLIENT_QUIT:
       {
         ClientAgent::MessageReceived(msg);
+
         BMessage deathchant (M_OBITUARY);
         deathchant.AddPointer ("agent", this);
         deathchant.AddPointer ("item", fAgentWinItem);
@@ -602,7 +603,7 @@ MessageAgent::MessageReceived (BMessage *msg)
         fSMsgr.SendMessage (&deathchant);
       }
       break;
-     
+
     case M_STATUS_ADDITEMS:
       {
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (

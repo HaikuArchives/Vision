@@ -326,7 +326,7 @@ WindowList::SelectLast (void)
   if (lastInt >= 0)
     Select (lastInt);
   else
-    Select (0);
+    Select (0L);
   ScrollToSelection();
 }
 

@@ -114,6 +114,8 @@ VisionApp::VisionApp (void)
 
 VisionApp::~VisionApp (void)
 {
+  SaveSettings();
+  delete fVisionSettings;
   // empty d'tor
 }
 
@@ -442,6 +444,9 @@ VisionApp::LoadDefaults (int32 section)
         if (!fVisionSettings->HasBool ("Newbie Spam Mode"))
           fVisionSettings->AddBool("Newbie Spam Mode", true);
          
+        if (!fVisionSettings->HasBool ("queryOnMsg"))
+          fVisionSettings->AddBool ("queryOnMsg", false);
+         
         if (!fVisionSettings->HasBool ("notifyExpanded"))
           fVisionSettings->AddBool("notifyExpanded", true);
         
@@ -597,8 +602,6 @@ VisionApp::QuitRequested (void)
   //  snooze (500000);  // 0.5 seconds
 
   //ThreadStates();
-  SaveSettings();
-
   return true;
 }
 

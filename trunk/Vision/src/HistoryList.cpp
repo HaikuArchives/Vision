@@ -83,6 +83,7 @@ HistoryList::NextBuffer (VTextControl *input)
 BString
 HistoryList::Submit (const char *buffer)
 {
+  int32 i(0);
   // All filled up
   if (bufferFree == BACK_BUFFER_SIZE)
   {
@@ -97,11 +98,13 @@ HistoryList::Submit (const char *buffer)
   BString cmd;
 	
   for (i = 0; i < backBuffer[bufferFree].Length(); ++i)
+  {
     if (backBuffer[bufferFree][i] == '\n')
       cmd += " ";
     else if (backBuffer[bufferFree][i] != '\r')
       cmd += backBuffer[bufferFree][i];
-
+  }
+  
   bufferPos = ++bufferFree;
 
   return cmd;
