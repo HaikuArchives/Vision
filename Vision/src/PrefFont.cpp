@@ -23,11 +23,16 @@
 #include "PrefFont.h"
 #include "Vision.h"
 
+#include <ctype.h>
+#include <stdlib.h>
+
 #include <ScrollView.h>
 #include <Menu.h>
 #include <MenuBar.h>
 #include <MenuField.h>
 #include <MenuItem.h>
+#include <MessageFilter.h>
+#include <TextControl.h>
 
 const uint32 M_FONT_ELEMENT_CHANGE = 'mfec';
 const uint32 M_FONT_CHANGE = 'mffc';
@@ -39,6 +44,57 @@ struct FontStat
   int32						style_count;
   font_style				*styles;
 };
+
+class NumericFilter : public BMessageFilter
+{
+  public:
+    NumericFilter (void);
+    virtual ~NumericFilter (void);
+    virtual filter_result Filter (BMessage *, BHandler **);
+};
+
+NumericFilter::NumericFilter (void)
+    : BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE)
+{
+}
+
+NumericFilter::~NumericFilter (void)
+{
+}
+
+filter_result 
+NumericFilter::Filter (BMessage *msg, BHandler **)
+{
+  filter_result result = B_DISPATCH_MESSAGE;
+  switch (msg->what)
+  {
+    case B_KEY_DOWN:
+    {
+      uint32 modifier (msg->FindInt32 ("modifiers"));
+      const char *bytes (msg->FindString ("bytes"));
+      
+      if (!modifier)
+      {
+        if (bytes[0] != B_ENTER
+        &&  bytes[0] != B_BACKSPACE
+        &&  !isdigit (bytes[0]))
+          result = B_SKIP_MESSAGE;
+      }
+      else if (modifier & B_SHIFT_KEY)
+      {
+        if (bytes[0] == B_LEFT_ARROW
+        ||  bytes[0] == B_RIGHT_ARROW
+        ||  bytes[0] == B_HOME
+        ||  bytes[0] == B_END)
+          break;
+        else
+          result = B_SKIP_MESSAGE;
+      }
+    }
+    break;
+  }
+  return result;
+}
 
 class FontMenuItem : public BMenuItem
 {
@@ -194,6 +250,10 @@ FontPrefsView::FontPrefsView (BRect frame)
   FontMenu *menu (new FontMenu ("fonts"));
   fontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", "Font: ", menu);
   AddChild (fontMenuField);
+  textControl = new BTextControl (BRect (60, 60, 200, 90), "", "Size: ", "",
+  	new BMessage (M_FONT_SIZE_CHANGE));
+  textControl->TextView()->AddFilter (new NumericFilter());
+  AddChild (textControl);
 }
 
 FontPrefsView::~FontPrefsView (void)
@@ -214,8 +274,9 @@ FontPrefsView::AllAttached (void)
   fontElementField->SetDivider (fontElementField->StringWidth(
     fontElementField->Label()) + 5);
   fontMenuField->SetDivider (fontMenuField->StringWidth (fontMenuField->Label()) + 5);
-  
+  textControl->SetDivider (textControl->StringWidth (textControl->Label()) + 5);
   BMenu *menu (fontElementField->Menu());
+  textControl->SetTarget (this);
   menu->SetTargetForItems (this);
   menu->SetLabelFromMarked (true);
 
@@ -227,6 +288,8 @@ FontPrefsView::AllAttached (void)
   
   BRect frame (fontElementField->Frame());
   fontMenuField->MoveTo (frame.left + 20, frame.bottom + 20);
+  textControl->ResizeToPreferred();
+  textControl->MoveTo (fontMenuField->Frame().right + 5, fontMenuField->Frame().top);
   menu = fontMenuField->Menu();
   menu->SetTargetForItems (this);
   menu->SetLabelFromMarked (true);
@@ -288,6 +351,11 @@ FontPrefsView::MessageReceived (BMessage *msg)
   	  break;
   	
   	case M_FONT_SIZE_CHANGE:
+  	  {
+  	    const char *text (textControl->TextView()->Text());
+  	    int32 size (atoi (text));
+  	    vision_app->ClientFontSize (activeFont, size);
+  	  }
       break;
       
   	case M_FONT_ELEMENT_CHANGE:
@@ -298,6 +366,10 @@ FontPrefsView::MessageReceived (BMessage *msg)
        font_family family;
        font_style style;
        font->GetFamilyAndStyle (&family, &style);
+       char line[100];
+       memset (line, 0, sizeof(line));
+       sprintf(line, "%ld", (long)(font->Size()));
+       textControl->TextView()->SetText (line);
        BMenuItem *it = fontMenuField->Menu()->FindItem (family);
        if (it)
          it->SetMarked (true);
