@@ -3,6 +3,15 @@ http://vision.sourceforge.net
 
 [0.1.0329]
  2001-03-29
+   * Aliased /rrun to /pexec
+   * New IRCView scrolling logic! Yay!
+     - Increased scrollback buffer to 192,000 bytes.
+     - IRCView won't try to bring you back down to the bottom if you are
+       scrolled up.
+     - If your scrolled up, IRCView won't clip unless you reach a higher
+       threshold (500,000 bytes), so text wont jump around while your trying
+       to read. This is so if you scroll up for some reason and leave your
+       keyboard, the scrollback buffer wont fill up forever.
    * Tab complete now works on your own nick as well in MessageAgents
    * /exit .... exits.
    * M_OPEN_MSGAGENT will activate the query window if it already exists

@@ -439,7 +439,7 @@ ClientAgent::ParseCmd (const char *data)
 		return true;
 	}
 		
-	if (firstWord == "/PEXEC") // piped exec
+	if (firstWord == "/PEXEC" || firstWord == "/RRUN") // piped exec
 	{
 		
 		BString *theCmd (new BString(RestOfString (data, 2)));
