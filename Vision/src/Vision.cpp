@@ -35,13 +35,19 @@ class VisionApp * vision_app;
 #include <Font.h>
 #include <Autolock.h>
 #include <Roster.h>
-#include <NetEndpoint.h>
-#include <NetBuffer.h>
+#include <NetworkKit.h>
 
 #include <algorithm>
 #include <stdio.h>
 #include <ctype.h>
-#include <arpa/inet.h>
+
+#ifdef NETSERVER_BUILD
+#  include <netdb.h>
+#endif
+
+#ifdef BONE_BUILD
+#  include <arpa/inet.h>
+#endif
 
 #include "AboutWindow.h"
 #include "Vision.h"
