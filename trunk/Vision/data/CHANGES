@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8.6-0420]
+[0.8.6-0421]
          * more tab completion fixes
          * startup channels no longer grab away the active window
          * servers also no longer grab focus
