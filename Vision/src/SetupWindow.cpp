@@ -38,7 +38,7 @@
 
 SetupWindow::SetupWindow (void)
   : BWindow (
-      BRect (108.0, 88.0, 535.0, 290.0),
+      BRect (108.0, 88.0, 455.0, 290.0),
       S_SETUP_TITLE,
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
