@@ -1,9 +1,11 @@
-#! /usr/bin/perl
+#! /usr/bin/perl -w
 # to call this script, add in you CVSROOT/commitinfo :
 # module_to_match THE_GOOF/PATH/commitinfo.pl
 
 # (c)1999  Robert CHERAMY <tibob@via.ecp.fr>
 # you are free to reuse this script
+
+system ("running commitinfo.pl");
 
 $last_dir_file = "/tmp/#visioncvs.files.lastdir";
 
