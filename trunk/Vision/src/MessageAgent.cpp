@@ -24,6 +24,7 @@
  */
 
 #include <Beep.h>
+#include <Entry.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
 #include <UTF8.h>
@@ -416,9 +417,8 @@ MessageAgent::DCCOut (void *arg)
   int32 recvReturn (0);
 
   struct fd_set rset, eset;
-#ifdef NETSERVER_BUILD
   struct timeval tv = { 0, 0 };
-#endif
+
   FD_ZERO (&rset);
   FD_ZERO (&eset);
   FD_SET (dccAcceptSocket, &rset);
@@ -426,11 +426,7 @@ MessageAgent::DCCOut (void *arg)
   
   while (mMsgr.IsValid() && agent->fDConnected)
   {
-#ifdef NETSERVER_BUILD
     if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) > 0)
-#elif BONE_BUILD
-    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) > 0)
-#endif
     {
 #ifdef NETSERVER_BUILD
       myLocker->Lock();
@@ -470,10 +466,8 @@ MessageAgent::DCCOut (void *arg)
       mMsgr.SendMessage (&termMsg);
       break;
     }
-#ifdef NETSERVER_BUILD
     else
       snooze (20000);
-#endif
     FD_SET (dccAcceptSocket, &rset);
     FD_SET (dccAcceptSocket, &eset);
   }
@@ -502,6 +496,23 @@ MessageAgent::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
   {
+    case B_SIMPLE_DATA:
+      {
+        if (msg->HasRef("refs"))
+        {
+          // TODO: get this to work properly for multiple refs
+          // and update DCC send logic to figure that out too
+          entry_ref ref;
+          msg->FindRef("refs", &ref);
+          
+          BMessage dccmsg(M_CHOSE_FILE);
+          dccmsg.AddString("nick", fChatee.String());
+          dccmsg.AddRef("refs", &ref);
+          fSMsgr.SendMessage(&dccmsg); 
+        }
+      }
+      break;
+      
     case M_CHANNEL_MSG:
       {
         const char *nick (NULL);

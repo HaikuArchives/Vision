@@ -160,7 +160,32 @@ WindowList::MessageReceived (BMessage *msg)
         if (refresh)
           Invalidate();
       }
-      break;   
+      break;
+      
+    case B_SIMPLE_DATA:
+    {
+      BPoint dropPoint;
+      msg->FindPoint("_drop_point_", &dropPoint);
+      dropPoint = ConvertFromScreen(dropPoint);
+      
+      msg->PrintToStream();
+      
+      int32 idx (IndexOf(dropPoint));
+      
+      if (idx >= 0)
+      {
+        WindowListItem *item (reinterpret_cast<WindowListItem *>(ItemAt(idx)));
+        if (item != NULL)
+        {
+          BMessenger msgr (item->pAgent());
+          if (msgr.IsValid())
+          {
+            msgr.SendMessage(msg);
+          }
+        }
+      }
+    }
+    break;   
     
     default:
       BOutlineListView::MessageReceived (msg);
