@@ -62,7 +62,8 @@ class ChannelAgent : public ClientAgent
     int                     FindPosition (const char *);
     void                    UpdateMode (char, char);
     void                    ModeEvent (BMessage *);
-
+    
+    static int              AlphaSortNames (const void *, const void *);
     static int              SortNames (const void *, const void *);
     
 

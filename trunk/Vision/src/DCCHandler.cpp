@@ -132,10 +132,11 @@ ServerAgent::DCCGetDialog (
         }
         panelWindow->Unlock();
         panel->Show();
+        // hack trick to ensure that the file panel doesn't take over the keyboard focus
+        // when it pops up
         panelWindow->Lock();
         panelWindow->SetFlags (panelWindow->Flags() & ~B_AVOID_FOCUS);
         panelWindow->Unlock();
-//        vision_app->pClientWin()->Activate(true);
       }
 }
 
