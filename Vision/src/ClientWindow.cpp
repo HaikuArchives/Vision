@@ -29,9 +29,6 @@
 #include <MenuBar.h>
 #include <Rect.h>
 
-// :TODO: wade 020201: remove once serverwindow is spawning serveragents.
-#include <List.h>
-
 #include <stdio.h>
 
 #include "WindowList.h"
