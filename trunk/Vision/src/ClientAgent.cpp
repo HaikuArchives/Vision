@@ -795,7 +795,8 @@ ClientAgent::MessageReceived (BMessage *msg)
         BString theNick;
         const char *theMessage;
         bool hasNick (false);
-        bool me;
+        bool me (false);
+        bool isAction (false);
         BString knownAs;
 
         msg->FindString("nick", &theNick);
@@ -803,59 +804,50 @@ ClientAgent::MessageReceived (BMessage *msg)
 
         if (theNick.FindFirst (" [DCC]") != B_ERROR)
           theNick.RemoveFirst (" [DCC]");
-
+        
+        BString tempString;
+        BString nickString;
+        
         if (theMessage[0] == '\1')
         {
-       
-          BString aMessage (theMessage);
-
-          int32 theChars (aMessage.Length());
-          aMessage.Truncate (theChars - 1);
-
-          // this next if() is a quirk fix for JAVirc.
-          // it appends an (illegal) space to actions, so the last
-          // truncate doesn't remove the \1
-          if (aMessage[theChars - 2] == '\1')
-            aMessage.Truncate (theChars - 2);
-
+          BString aMessage (theMessage);    
           aMessage.RemoveFirst ("\1ACTION ");
-
-          BString tempString("* ");
-          tempString += theNick;
-          tempString += " ";
+          aMessage.RemoveLast ("\1");
+          
+          tempString = " ";
           tempString += aMessage;
-          tempString += '\n';
-          Display (tempString.String(), C_ACTION);
+          tempString += "\n";
+          
+          nickString = "* ";
+          nickString += theNick;
+          isAction = true;
         }
         else
         {
           Display ("<", theNick == myNick ? C_MYNICK : C_NICK);
           Display (theNick.String(), C_NICKDISPLAY);
           Display (">", theNick == myNick ? C_MYNICK : C_NICK);
-
-          BString tempString;
           tempString += " ";
           tempString += theMessage;
           tempString += '\n';
-
-          // soley for the purpose of iterating through the words
-          int32 place;
-          BString tempString2 (tempString);
-          while ((place = FirstKnownAs (tempString2, knownAs, &me)) != B_ERROR)
-          {
-            BString buffer;
-
-            if (place)
-              tempString2.MoveInto (buffer, 0, place);
-
-            tempString2.MoveInto (buffer, 0, knownAs.Length());
-
-            if (me)
-              hasNick = true;
-          }
-
-          Display (tempString.String(), hasNick ? C_MYNICK : C_TEXT);
         }
+
+        // soley for the purpose of iterating through the words
+        BString tempString2 (tempString);
+        if (FirstKnownAs (tempString2, knownAs, &me) != B_ERROR)
+            hasNick = true;
+        
+        tempString2 = nickString;
+        tempString2 += tempString;
+        tempString = tempString2;
+        
+        int32 colorIndex (C_TEXT);
+        if (hasNick)
+          colorIndex = C_MYNICK;
+        else if (isAction)
+          colorIndex = C_ACTION;
+        
+        Display (tempString.String(), colorIndex);
 
         if (IsHidden())
         {
