@@ -20,6 +20,7 @@
  *                 Rene Gollent
  *                 Todd Lair
  *                 Andrew Bazan
+ *                 Ted Stodgell <kart@hal-pc.org>
  */
 
 class VisionApp * vision_app;
@@ -91,6 +92,8 @@ VisionApp::VisionApp (void)
   ShuttingDown = false;
   
   // :TODO: wade 013101 move colors to settings class
+#if 1
+// default Vision color scheme
   const rgb_color myBlack             = {0,0,0, 255};
   const rgb_color myWhite             = {255, 255, 255, 255};
   const rgb_color NOTICE_COLOR        = {10,90,170, 255};
@@ -115,7 +118,6 @@ VisionApp::VisionApp (void)
   const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
   const rgb_color WALLOPS_COLOR       = {10,30,170, 255};
   const rgb_color NICK_DISPLAY        = {47, 47, 47, 255};
-
 
   colors[C_TEXT]                      = myBlack;
   colors[C_BACKGROUND]                = myWhite;
@@ -148,6 +150,68 @@ VisionApp::VisionApp (void)
   colors[C_WINLIST_PAGESIX]           = WINLIST_PAGE6_COLOR;
   colors[C_WALLOPS]                   = WALLOPS_COLOR;
   colors[C_NICKDISPLAY]               = NICK_DISPLAY;
+#endif
+
+#if 0
+  // alternate color scheme <kart@hal-pc.org>
+  const rgb_color myBlack             = {32,   32,  64, 255};
+  const rgb_color myWhite             = {224, 192, 128, 255};
+  const rgb_color NOTICE_COLOR        = {102, 215, 215, 255};
+  const rgb_color ACTION_COLOR        = {101, 225, 116, 255};
+  const rgb_color QUIT_COLOR          = {224,  96,  64, 255};
+  const rgb_color ERROR_COLOR         = {255,  92,   0, 255};
+  const rgb_color URL_COLOR           = {123, 150, 255, 255};
+  const rgb_color NICK_COLOR          = {102, 215, 215, 255}; // for angle brackets around nick
+  const rgb_color MYNICK_COLOR        = {122, 255, 237, 255}; // when anyone says your name
+  const rgb_color JOIN_COLOR          = {192, 255, 192, 255};
+  const rgb_color KICK_COLOR          = {255, 213,  88, 255};
+  const rgb_color WHOIS_COLOR         = {180, 224, 221, 255};
+  const rgb_color OP_COLOR            = {255,  64, 128, 255};
+  const rgb_color VOICE_COLOR         = {255, 213,  88, 255};
+  const rgb_color CTCP_REQ_COLOR      = {213, 180, 224, 255};
+  const rgb_color CTCP_RPY_COLOR      = {180, 191, 224, 255};
+  const rgb_color IGNORE_COLOR        = {106, 106, 173, 255};
+  const rgb_color INPUT_COLOR         = {222, 255, 222, 255};
+  const rgb_color INPUT_BG_COLOR      = {  0,   0,   0, 255};
+  const rgb_color WINLIST_PAGE6_COLOR = {192, 192, 255, 255};
+  const rgb_color WINLIST_BG_COLOR    = {32,   32,  64, 255};
+  const rgb_color WINLIST_SEL_COLOR   = { 64,  92,  64, 255};  
+  const rgb_color WALLOPS_COLOR       = {255, 135,  87, 255};
+  const rgb_color NICK_DISPLAY        = {224, 207, 128, 255};
+
+
+  colors[C_TEXT]                      = myWhite;   // this stuff is important
+  colors[C_BACKGROUND]                = myBlack;   // pay attention to myBlack and myWhite
+  colors[C_NAMES]                     = myWhite;
+  colors[C_NAMES_BACKGROUND]          = myBlack;
+  colors[C_URL]                       = URL_COLOR;
+  colors[C_SERVER]                    = myWhite;
+  colors[C_NOTICE]                    = NOTICE_COLOR;
+  colors[C_ACTION]                    = ACTION_COLOR;
+  colors[C_QUIT]                      = QUIT_COLOR;
+  colors[C_ERROR]                     = ERROR_COLOR;
+  colors[C_NICK]                      = NICK_COLOR;
+  colors[C_MYNICK]                    = MYNICK_COLOR;
+  colors[C_JOIN]                      = JOIN_COLOR;
+  colors[C_KICK]                      = KICK_COLOR;
+  colors[C_WHOIS]                     = WHOIS_COLOR;
+  colors[C_OP]                        = OP_COLOR;
+  colors[C_HELPER]                    = OP_COLOR;
+  colors[C_VOICE]                     = VOICE_COLOR;
+  colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
+  colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
+  colors[C_IGNORE]                    = IGNORE_COLOR;
+  colors[C_INPUT]                     = INPUT_COLOR;
+  colors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
+  colors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
+  colors[C_WINLIST_NORMAL]            = myWhite;
+  colors[C_WINLIST_NEWS]              = JOIN_COLOR;
+  colors[C_WINLIST_NICK]              = QUIT_COLOR;
+  colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
+  colors[C_WINLIST_PAGESIX]           = WINLIST_PAGE6_COLOR;
+  colors[C_WALLOPS]                   = WALLOPS_COLOR;
+  colors[C_NICKDISPLAY]               = NICK_DISPLAY;
+#endif
 
   client_font[F_TEXT]    = new BFont (be_fixed_font);
   client_font[F_SERVER]  = new BFont (be_fixed_font);
