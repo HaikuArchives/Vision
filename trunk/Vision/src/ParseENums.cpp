@@ -127,7 +127,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER,
               serverHostName.String());
         
-        
           // detect IRCd
           ircdtype = IRCD_STANDARD;
         
@@ -849,7 +848,12 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BString tempString (RestOfString(data, 4));
         tempString.RemoveFirst (":");
         tempString.Append ("\n");
-        Display (tempString.String(), 0);
+        
+        // we buffer the motd and display it in one big chunk
+        if (num == RPL_MOTD)
+          motdBuffer.Append (tempString);
+        else
+          Display (tempString.String(), 0);
       }
       return true;
     
@@ -866,7 +870,15 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BString tempString (RestOfString (data, 4));
 	    tempString.RemoveFirst (":");
 	    tempString.Append ("\n");
-	    Display (tempString.String(), 0);
+	    
+	    if (motdBuffer.Length() > 0)
+	    {
+	      motdBuffer.Append (tempString);
+	      Display (motdBuffer.String(), 0);
+	      motdBuffer = "";
+	    }
+	    else
+	      Display (tempString.String(), 0);
       		
         if (reconnecting)
         {

@@ -79,6 +79,7 @@ VisionApp::VisionApp (void)
   debugrecv = false;
   debugsend = false;
   debugsettings = false;
+  numBench = false;
   ShuttingDown = false;
   
   // :TODO: wade 013101 move colors to settings class
@@ -371,6 +372,7 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       debugrecv = true;
       debugsend = true;
       debugsettings = true;
+      numBench = true;
     }
     
     else if (strcmp (av[i], "-r") == 0)
@@ -381,6 +383,9 @@ VisionApp::ArgvReceived (int32 ac, char **av)
         
     else if (strcmp (av[i], "-S") == 0)
       debugsettings = true;
+      
+    else if (strcmp (av[i], "-n") == 0)
+      numBench = true;
     
     else if (strcmp (av[i], "-T") == 0)
     {
@@ -780,6 +785,19 @@ VisionApp::GetThreadName (int thread_type)
   output += tnames[rnd];
   
   return output.String();
+}
+
+void
+VisionApp::BenchOut (const char *ts)
+{
+  // note: this doesn't waste time figuring out whole seconds
+  // output won't look right with more than 0.999s differences.
+
+  int32 bench0;
+  bench0 = bench2 - bench1;
+  bench0 = bench0 / 100;
+  
+  printf ("%s: 0.%04lds\n", ts, bench0);
 }
 
 void

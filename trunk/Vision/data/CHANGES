@@ -1,6 +1,13 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0504]
+ 2001-05-04
+   * Fixed a bug in MessageAgent where it would not update myNick properly
+   * The displaying of the MOTD is much faster on most servers
+   * Added a -n runtime option, which outputs the time used to process each
+     server event (the addition of which led to the MOTD optimization above)
+
 [0.2.0502]
  2001-05-02
    * Fixed a potential contention issue in Establish()
