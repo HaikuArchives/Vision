@@ -906,27 +906,46 @@ ServerAgent::AddResumeData (BMessage *msg)
 }
 
 void
-ServerAgent::ParseAutoexecChans (const BString &line)
+ServerAgent::ParseAutoexecChans (const BString &origLine)
 {
+  BString line (origLine);
+  int32 chanIndex (0);
+  if ((chanIndex = line.IFindFirst ("/JOIN")) != B_ERROR)
+  {
+    chanIndex += 6;
+    line.Remove (0, chanIndex);
+  }
+  else if ((chanIndex = line.IFindFirst ("/J")) != B_ERROR)
+  {
+    chanIndex += 2;
+    line.Remove (0, chanIndex);
+  }
+  else
+    return;
   // parse out all autoexec channels to ensure we don't try to focus those
   // on join
-  if (line.IFindFirst ("/J") != B_ERROR
-   || line.IFindFirst ("/JOIN") != B_ERROR)
+  chanIndex = 0;
+  BString *newChan (NULL);
+  for (;;)
   {
-    int32 chanIndex (0), chanLen (0);
-    const char *lineData (line.String());
-    const char *currentData = lineData;
-    BString *newChan (NULL);
-    while ((chanIndex = line.FindFirst ('#', chanIndex)) != B_ERROR)
-    {
-      currentData = lineData + chanIndex;
-      chanLen = strcspn(currentData, " ,");
-      newChan = new BString();
-      line.CopyInto (*newChan, chanIndex, chanLen);
-      fStartupChannels.AddItem (newChan);
-      chanIndex += chanLen;
-    }
+    if ((chanIndex = line.FindFirst (',')) == B_ERROR)
+      break;
+    newChan = new BString();
+    line.CopyInto (*newChan, 0, chanIndex);
+    if ((*newChan)[0] != '#')
+      newChan->Prepend("#");
+    fStartupChannels.AddItem (newChan);
+    line.Remove (0, chanIndex + 1);
   }
+  newChan = new BString();
+  // catch last channel (or only channel if no comma separations)
+  if ((chanIndex = line.FindFirst (' ')) != B_ERROR)
+    line.CopyInto (*newChan, 0, chanIndex);
+  else
+    *newChan = line;
+  if ((*newChan)[0] != '#')
+    newChan->Prepend("#");
+  fStartupChannels.AddItem (newChan);
 }
 
 void
