@@ -111,6 +111,7 @@ WindowList::CloseActive (void)
 void
 WindowList::MouseDown (BPoint myPoint)
 {
+  BMessage *message (Window()->CurrentMessage());
   int32 selected (IndexOf (myPoint));
   if (selected >= 0)
   {
@@ -123,7 +124,7 @@ WindowList::MouseDown (BPoint myPoint)
     
     // slight kludge to make sure the expand/collapse triangles behave how they should
     // -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
-    if ((myPoint.x < 10.0) && Superitem(ItemAt(selected)) == NULL)
+    if ((myPoint.x < 10.0) || (message->FindInt32 ("clicks") == 2))
     {
       // since Expand/Collapse are not virtual, override them by taking over processing
       // the collapse triangle logic manually
@@ -138,6 +139,7 @@ WindowList::MouseDown (BPoint myPoint)
         }
       }
     }
+    
     else if (mousebuttons == B_PRIMARY_MOUSE_BUTTON)
       Select (selected);
 
