@@ -239,8 +239,6 @@ VisionApp::VisionApp (void)
   commands[CMD_BACK]        = "has returned";
   commands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
   
-  identSyncSem = create_sem (0, "identity");
-  
   identThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
   if (identThread >= B_OK)
     resume_thread (identThread);
@@ -415,8 +413,6 @@ VisionApp::QuitRequested (void)
     if ((visionSettings->Save() == B_OK) && debugsettings)
       printf (":SETTINGS: saved to file\n");
 
-  delete_sem (identSyncSem);
-  
   // give our child threads a chance to die gracefully
   snooze (500000);  // 0.5 seconds
   
@@ -932,7 +928,7 @@ VisionApp::Identity (void *)
   &&  identPoint.Bind (113)     == B_OK) 
   { 
     identPoint.Listen (2048);
-    while (acquire_sem (vision_app->identSyncSem) == B_NO_ERROR) 
+    while (!vision_app->ShuttingDown) 
     {
       accepted = identPoint.Accept (30 * 1000);
       
@@ -994,7 +990,6 @@ VisionApp::AddIdent (const char *server, const char *serverIdent)
   identLock.Lock(); 
   idents.AddString (server, serverIdent); 
   identLock.Unlock();
-  release_sem (identSyncSem); 
 } 
  
 void 
