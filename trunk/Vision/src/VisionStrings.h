@@ -185,7 +185,7 @@
 #define S_PENUM_SIGNON              "Signon: "
 #define S_PENUM_WHOIS_CHANNELS      "[x] Channels: "
 #define S_PENUM_CHANMODE            "*** Channel mode for "
-#define S_PENUM_MLOCK               "*** Channel mode lock for "
+#define S_PENUM_MLOCK               "*** Channel lock for "
 #define S_PENUM_CHANCREATED         "created"
 #define S_PENUM_NO_TOPIC            "[x] No topic set in "
 #define S_PENUM_DISP_TOPIC          "*** Topic: "
