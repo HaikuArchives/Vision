@@ -725,6 +725,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				STATUS_ALIGN_LEFT),
 			true);
 			
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000");
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
 		
 			break;
