@@ -1853,7 +1853,8 @@ Line::~Line (void)
   delete [] fEdges;
   delete [] fFcs;
   delete [] fText;
-
+  delete [] fSofties;
+  
   if (fUrls)
   {
     urllist::const_iterator it = fUrls->begin();
