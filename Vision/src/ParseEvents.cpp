@@ -350,7 +350,6 @@ ServerAgent::ParseEvents (const char *data)
       BString tempCmd ("/nick ");
       tempCmd += reconNick;
       ParseCmd (tempCmd.String());
-      reacquiredNick = true;
     }
 
     return true;
@@ -508,9 +507,6 @@ ServerAgent::ParseEvents (const char *data)
     theError.Append ("\n");
 
     Display (theError.String(), C_QUIT);
-    
-    if (!isConnected) // we got the error on connect
-      isConnecting = false;
     
     return true;
   }

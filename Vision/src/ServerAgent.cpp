@@ -295,6 +295,7 @@ ServerAgent::Establish (void *arg)
          ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", C_ERROR);
          sMsgrE->SendMessage (&statMsg);
          sMsgrE->SendMessage (M_NOT_CONNECTING);
+         sMsgrE->SendMessage (M_SERVER_DISCONNECT);
          throw failToLock();
        }
     }
@@ -313,6 +314,7 @@ ServerAgent::Establish (void *arg)
          ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", C_ERROR);
          sMsgrE->SendMessage (&statMsg);
          sMsgrE->SendMessage (M_NOT_CONNECTING);
+         sMsgrE->SendMessage (M_SERVER_DISCONNECT);
          throw failToLock();
     }
     
@@ -391,6 +393,7 @@ ServerAgent::Establish (void *arg)
     {
       ClientAgent::PackDisplay (&statMsg, "[@] Could not establish a connection to the server. Sorry.\n", C_ERROR);
       sMsgrE->SendMessage (&statMsg);
+      sMsgrE->SendMessage (M_NOT_CONNECTING);
       sMsgrE->SendMessage (M_SERVER_DISCONNECT);
       throw failToLock();
     }
@@ -407,8 +410,10 @@ ServerAgent::Establish (void *arg)
     if (identRegistered)
       vision_app->RemoveIdent (remoteIP.String());
     return B_ERROR;
-  }  
-  // Don't need this anymore
+  }
+  
+  sMsgrE->SendMessage (M_CONNECTED);
+  
   struct fd_set eset, rset, wset;
 #ifdef NETSERVER_BUILD
   struct timeval tv = {0, 0};
@@ -896,6 +901,11 @@ ServerAgent::MessageReceived (BMessage *msg)
     case M_NOT_CONNECTING:
       isConnecting = false;
       break;
+     
+    case M_CONNECTED:
+      isConnecting = false;
+      isConnected = true;
+      break;
     
     case M_INC_RECONNECT:
       ++retry;
@@ -1058,10 +1068,10 @@ ServerAgent::MessageReceived (BMessage *msg)
         }
 			
         isConnected = false;
-        isConnecting = false;		      
       
         // attempt a reconnect
-        HandleReconnect();
+        if (!isConnecting)
+          HandleReconnect();
       }
       break;
       
