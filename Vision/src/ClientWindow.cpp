@@ -85,7 +85,7 @@ ClientWindow::QuitRequested (void)
     fShutdown_in_progress = true;
     BMessage killMsg (M_CLIENT_QUIT);
     killMsg.AddBool ("vision:winlist", true);
-    killMsg.AddBool ("vision:shutdown_in_progress", fShutdown_in_progress);
+    killMsg.AddBool ("vision:shutdown", fShutdown_in_progress);
 
     if (ServerBroadcast (&killMsg))
       fWait_for_quits = true;
