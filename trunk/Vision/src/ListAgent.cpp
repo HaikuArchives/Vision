@@ -115,7 +115,7 @@ ListAgent::ListAgent (
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW));
 
-  bgView->SetViewColor (212, 212, 212, 255);
+  bgView->SetViewColor (vision_app->GetColor(C_BACKGROUND));
   AddChild (bgView);
 
   frame = bgView->Bounds().InsetByCopy (1, 1);
@@ -348,6 +348,7 @@ ListAgent::MessageReceived (BMessage *msg)
 
         listView->AddList (&showing);
         statusStr = "Done";
+
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
         mFind->SetEnabled (true);
@@ -362,6 +363,7 @@ ListAgent::MessageReceived (BMessage *msg)
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (0, cString.String(), true);
         scroller->Show();
+        
       }
       break;
 
@@ -703,18 +705,21 @@ ChannelItem::DrawItem (BView *owner, BRect frame, bool)
 
 	if (IsSelected())
 	{
-		owner->SetLowColor (180, 180, 180, 255);
+		owner->SetLowColor (vision_app->GetColor(C_WINLIST_SELECTION));
 		owner->FillRect (frame, B_SOLID_LOW);
 	}
 	else //if (complete)
 	{
-		owner->SetLowColor (255, 255, 255, 255);
+		owner->SetLowColor (vision_app->GetColor(C_BACKGROUND));
 		owner->FillRect (frame, B_SOLID_LOW);
 	}
 
 	float channelWidth (listAgent->ChannelWidth());
 	BFont font;
 	font_height fh;
+
+	owner->SetHighColor (vision_app->GetColor(C_TEXT));
+	owner->SetDrawingMode (B_OP_OVER);
 
 	owner->GetFontHeight (&fh);
 	owner->GetFont (&font);
@@ -735,9 +740,6 @@ ChannelItem::DrawItem (BView *owner, BRect frame, bool)
 			B_TRUNCATE_END,
 			channelWidth,
 			outputs);
-
-		owner->SetHighColor (0, 0, 0, 255);
-		owner->SetDrawingMode (B_OP_OVER);
 
 		owner->DrawString (
 			outputs[0], 

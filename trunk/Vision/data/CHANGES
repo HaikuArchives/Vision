@@ -5,6 +5,7 @@ http://vision.sourceforge.net
  2001-06-09
    * closing a server with a listagent open now correctly closes the listagent in the process
    * added preliminary support for line highlighting on detection of user's nick
+   * modified ListAgent to use vision_app's color scheme
 
 [0.2.0608]
  2001-06-08
