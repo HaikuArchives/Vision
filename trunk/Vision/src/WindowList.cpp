@@ -23,6 +23,7 @@
  *                 Jean-Baptiste M. Queru <jbq@be.com>
  *                 Seth Flaxman
  */
+ 
 
 #ifdef GNOME_BUILD
 #  include "gnome/PopUpMenu.h"
