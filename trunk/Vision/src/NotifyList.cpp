@@ -50,16 +50,21 @@ NotifyList::NotifyList (BRect _frame)
  
 NotifyList::~NotifyList (void)
 {
-  // empty for now
-  MakeEmpty();
+  while (CountItems() > 0)
+    delete RemoveItem (0L);
   delete fMyPopUp;
 }
 
 void
 NotifyList::UpdateList(BList *newList)
 {
-  MakeEmpty();
-  AddList(newList);
+  while (CountItems() > 0)
+    delete RemoveItem (0L);
+  BList updateList;
+  // make private copy of list items otherwise things go bad
+  for (int32 i = 0; i < newList->CountItems(); i++)
+    updateList.AddItem (new NotifyListItem (*((NotifyListItem *)newList->ItemAt(i))));
+  AddList(&updateList);
 }
 
 void
@@ -241,6 +246,13 @@ NotifyListItem::NotifyListItem (const char *name, bool state)
     fNotifyState (state)
 {
   // empty c'tor
+}
+
+NotifyListItem::NotifyListItem (const NotifyListItem &copyItem)
+  : BStringItem (copyItem.Text()),
+    fNotifyState (copyItem.fNotifyState)
+{
+  // empty copy c'tor
 }
 
 NotifyListItem::~NotifyListItem (void)

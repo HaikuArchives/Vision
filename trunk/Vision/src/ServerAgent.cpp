@@ -462,14 +462,6 @@ ServerAgent::Establish (void *arg)
       BMessage dataSend (M_SERVER_SEND);
       dataSend.AddString ("data", "blah");
 
-      // temporary hack
-      if (connectId.ICompare("64.156.75", 9) == 0)
-      {
-        string = "PASS 2legit2quit";
-        dataSend.ReplaceString ("data", string.String());
-        sMsgrE->SendMessage (&dataSend);
-      }
-      
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
@@ -1477,18 +1469,18 @@ ServerAgent::MessageReceived (BMessage *msg)
               }
             }
           }
-        }
-        if (fNotifyNicks.CountItems() > 0)
-        {
-          BString cmd ("ISON ");
-          for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
+          if (fNotifyNicks.CountItems() > 0)
           {
-            cmd += " ";
-            cmd += ((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text();
+            BString cmd ("ISON ");
+            for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
+            {
+              cmd += " ";
+              cmd += ((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text();
+            }
+            BMessage dataSend (M_SERVER_SEND);
+            dataSend.AddString ("data", cmd.String());
+            fSMsgr.SendMessage (&dataSend);
           }
-          BMessage dataSend (M_SERVER_SEND);
-          dataSend.AddString ("data", cmd.String());
-          fSMsgr.SendMessage (&dataSend);
         }	
       }
       break;

@@ -41,7 +41,6 @@ class NotifyList : public BListView
     virtual void                    MessageReceived (BMessage *);
     virtual void                    MouseDown (BPoint);
   private:
-    
     void                            BuildPopUp(void);
   
     Theme                           *fActiveTheme;
@@ -58,6 +57,7 @@ class NotifyListItem : public BStringItem
 {
   public:
     NotifyListItem (const char *, bool);
+    NotifyListItem (const NotifyListItem &);
     virtual ~NotifyListItem (void);
     void SetState (bool);
     bool GetState (void);
