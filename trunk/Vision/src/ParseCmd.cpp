@@ -21,6 +21,7 @@
  *                 Todd Lair
  *                 Andrew Bazan
  *                 Jamie Wilkinson
+ *                 Alan Ellis <alan@cgsoftware.org>
  */
 
 #include <FilePanel.h>
