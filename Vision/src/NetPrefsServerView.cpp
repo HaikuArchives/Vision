@@ -135,14 +135,14 @@ NetPrefsServerView::NetPrefsServerView (BRect bounds, const char *name, BMesseng
 {
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
 	BRect boundsRect (Bounds());
-	BBox *mainBox (new BBox (bounds.InsetByCopy (-1, -1)));
+	BBox *mainBox (new BBox (bounds.InsetByCopy (-1, -1), NULL, B_FOLLOW_ALL_SIDES));
 	AddChild (mainBox);
 	selectTitleString = new BStringView (BRect (0,0,0,0), NULL, "Select servers for");
 	selectTitleString->ResizeToPreferred();
 	mainBox->AddChild (selectTitleString);
 	selectTitleString->MoveTo (11,11);
 	serverList = new BColumnListView (BRect (0, 0, boundsRect.Width() - 10,
-		boundsRect.Height() / 2), "serverList", B_FOLLOW_ALL_SIDES, B_WILL_DRAW,
+		boundsRect.Height() / 2), "serverList", B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW,
 		B_PLAIN_BORDER);
 	serverList->SetSelectionMessage (new BMessage (M_SERVER_ITEM_SELECTED));
 	mainBox->AddChild (serverList);
@@ -174,6 +174,28 @@ NetPrefsServerView::NetPrefsServerView (BRect bounds, const char *name, BMesseng
 	editButton->MoveTo (addButton->Frame().left - (editButton->Frame().Width() +15),
 		addButton->Frame().top);
 	mainBox->AddChild (editButton);
+	BStringView *legend1 = new BStringView (BRect (0,0,0,0), "str1", "Key: ");
+	legend1->ResizeToPreferred();
+	mainBox->AddChild (legend1);
+	legend1->MoveTo (serverList->Frame().left + 5, addButton->Frame().bottom + 5);
+	BStringView *legend2 = new BStringView (BRect (0,0,0,0), "str1", "  * = primary");
+	legend2->ResizeToPreferred();
+	mainBox->AddChild (legend2);
+	legend2->MoveTo (legend1->Frame().left, legend1->Frame().bottom);
+	BStringView *legend3 = new BStringView (BRect (0,0,0,0), "str1", "  + = secondary (fallback)");
+	legend3->ResizeToPreferred();
+	mainBox->AddChild (legend3);
+	legend3->MoveTo (legend2->Frame().left, legend2->Frame().bottom);
+	legend4 = new BStringView (BRect (0,0,0,0), "str1", "  - = disabled");
+	legend4->ResizeToPreferred();
+	mainBox->AddChild (legend4);
+	legend4->MoveTo (legend3->Frame().left, legend3->Frame().bottom);
+	okButton = new BButton (BRect (0,0,0,0), NULL, "OK",
+		new BMessage (B_QUIT_REQUESTED));
+	okButton->ResizeToPreferred();
+	mainBox->AddChild (okButton);
+	okButton->MoveTo (serverList->Frame().right - okButton->Frame().Width(),
+	  legend4->Frame().bottom + 5);
 }
 
 NetPrefsServerView::~NetPrefsServerView (void)
@@ -186,13 +208,17 @@ NetPrefsServerView::~NetPrefsServerView (void)
 void
 NetPrefsServerView::AttachedToWindow (void)
 {
+	BView::AttachedToWindow();
 	addButton->SetTarget (this);
 	editButton->SetTarget (this);
 	removeButton->SetTarget (this);
 	serverList->SetTarget (this);
 	editButton->SetEnabled (false);
 	removeButton->SetEnabled (false);
-	BView::AttachedToWindow();
+	okButton->SetTarget (Window());
+
+	if (okButton->Frame().bottom > Bounds().Height())
+	  Window()->ResizeTo (Bounds().Width(), okButton->Frame().bottom + 5);
 }
 
 void
