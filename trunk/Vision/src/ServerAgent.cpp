@@ -144,6 +144,7 @@ void
 ServerAgent::AttachedToWindow(void)
 {
   Init();
+  ClientAgent::AttachedToWindow();
 }
 
 void
@@ -461,15 +462,6 @@ ServerAgent::Establish (void *arg)
       BMessage dataSend (M_SERVER_SEND);
       dataSend.AddString ("data", "blah");
       
-      // temporary hack
-      if (connectId.ICompare("64.156.75", 9) == 0)
-      {      
-        string = "PASS 2legit2quit";
-        dataSend.ReplaceString ("data", string.String());
-        sMsgrE->SendMessage (&dataSend);
-      }
-
-
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
