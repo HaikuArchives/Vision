@@ -225,11 +225,15 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_STATSBLINE:        // 220
     case RPL_DALSTATSE:         // 223
     case RPL_DALSTATSF:         // 224
+    case RPL_DALSTATSZ:         // 225
     case RPL_DALSTATSN:         // 226
+    case RPL_DALSTATSG:         // 227
     case RPL_STATSLLINE:        // 241
     case RPL_STATSUPTIME:       // 242
     case RPL_STATSOLINE:        // 243
     case RPL_STATSHLINE:        // 244
+    case RPL_STATSSLINE:        // 245
+    case RPL_DALSTATSX:         // 246
     case RPL_STATSXLINE:        // 247
     case RPL_STATSPLINE:        // 249
     case RPL_ADMINME:           // 256
@@ -238,8 +242,11 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_ADMINEMAIL:        // 259
     case RPL_TRACELOG:          // 261
     case RPL_ENDOFTRACE:        // 262
+    case RPL_SILELIST:          // 271
+    case RPL_ENDOFSILELIST:     // 272
     case RPL_ENDOFWHO:          // 315
     case RPL_CHANSERVURL:       // 328
+    case RPL_COMMANDSYNTAX:     // 334
     case RPL_VERSION:           // 351
     case RPL_WHOREPLY:          // 352
     case RPL_INFO:              // 371
@@ -248,8 +255,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_REHASHING:         // 382
     case RPL_TIME:              // 391
     case ERR_TOOMANYTARGETS:    // 407
+    case ERR_NOCOLORSONCHAN:    // 408
     case ERR_NOORIGIN:          // 409
     case ERR_NOTEXTTOSEND:      // 412
+    case ERR_TOOMANYAWAY:       // 429
     case ERR_ERRONEOUSNICKNAME: // 432
     case ERR_NICKCHANGETOOFAST: // 438
     case ERR_TARGETCHANGETOOFAST: // 439
@@ -296,6 +305,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_CANNOTSENDTOCHAN:  // 404
     case ERR_TOOMANYCHANNELS:   // 405
     case ERR_WASNOSUCHNICK:     // 406
+    case ERR_YOUCANTDOTHAT:     // 460
     case ERR_CHANOPRIVSNEEDED:  // 482
     {
       BString tempString ("[x] ");
@@ -414,6 +424,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_WHOISSERVICESADMIN:  // 309
     case RPL_WHOISHELPOP:         // 310
     case RPL_WHOISOPERATOR:       // 313
+    case RPL_WHOISACTUALLY:       // 338
     case RPL_WHOISUSERMODES:      // 615
     case RPL_WHOISREALHOSTNAME:   // 616
     {
