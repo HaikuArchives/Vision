@@ -696,15 +696,16 @@ ServerAgent::AsyncSendData (const char *cData)
     fSend_buffer,
     &dest_length,
     &state);
-    
-#ifdef NETSERVER_BUILD
-  fEndPointLock->Lock();
-#endif
+
   if (fServerSocket <= 0)
   {
       // doh, we aren't even connected.
       return;
   }
+    
+#ifdef NETSERVER_BUILD
+  fEndPointLock->Lock();
+#endif
 
   struct fd_set eset, wset;
   FD_ZERO (&wset);
