@@ -131,6 +131,7 @@ AboutWindow::AboutWindow (void)
     "Terminus\n"
     "Bob Maple\n"
     "Gord McLeod\n"
+    "Ted Stodgell\n"
     "Seth Flaxman\n"
     "David Aquilina\n"
     "Kurt von Finck\n"
@@ -138,7 +139,7 @@ AboutWindow::AboutWindow (void)
     "Jean-Baptiste Quéru\n"
     "Be, Inc., Menlo Park, CA\n"
     "Pizza Hut, Winter Haven, FL (now give me that free pizza Mike)\n\n\n"
-    "http://bowser.sourceforge.net\n\n\n\n\n\n"
+    "http://vision.sourceforge.net\n\n\n\n\n\n"
     
     "\"A human being should be able to change "
     "a diaper, plan an invasion, butcher a "
