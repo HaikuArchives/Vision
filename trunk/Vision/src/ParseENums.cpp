@@ -50,9 +50,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 {
   int num (atoi (sWord));
   
-  printf ("num: %d\n", num);
-	
-  
   switch (num)
   {
     case ZERO:                 // 0
