@@ -283,7 +283,7 @@ ClientAgent::TimedSubmit (void *arg)
 
       // A small attempt to appease the
       // kicker gods
-      snooze (75000);
+      snooze (1000000);
     }
   }
 	
@@ -443,7 +443,8 @@ ClientAgent::MessageReceived (BMessage *msg)
 				BMessage *buffer (new BMessage (*msg));
 				thread_id tid;
 
-				buffer->AddPointer ("client", this);
+				buffer->AddPointer ("agent", this);
+				buffer->AddPointer ("window", Window());
 
 				tid = spawn_thread (
 					TimedSubmit,
@@ -649,7 +650,6 @@ ClientAgent::MessageReceived (BMessage *msg)
 		
 		case M_CHANGE_NICK:
 		{
-		    printf ("M_CHANGE_NICK\n");
 			const char *oldNick;
 
 			msg->FindString ("oldnick", &oldNick);
