@@ -146,7 +146,9 @@ RunView::RunView (
 		line_count (0),
 		stamp_format (NULL),
 		sp_start (0, 0),
-		sp_end (0, 0)
+		sp_end (0, 0),
+		resizedirty (false),
+		fontsdirty (false)
 {
 	theme->ReadLock();
 
@@ -188,69 +190,14 @@ RunView::DetachedFromWindow (void)
 void
 RunView::FrameResized (float start_width, float height)
 {
-	float width (start_width - MARGIN_WIDTH);
-	int16 softie_size (0), softie_used (0);
-	SoftBreak *softies (NULL);
-	BRect bounds (Bounds());
-	BRegion region;
-	float top (0.0);
+	BView::FrameResized (start_width, height);
 	
-	theme->ReadLock();
-	for (int16 i = 0; i < line_count; ++i)
+	if (IsHidden())
 	{
-		float old_top (lines[i]->top), old_bottom (lines[i]->bottom);
-		if (softie_size < lines[i]->softie_used)
-		{
-			delete [] softies;
-			softies = new SoftBreak [softie_size = lines[i]->softie_size];
-		}
-
-		softie_used = lines[i]->softie_used;
-		memcpy (softies, lines[i]->softies, (softie_used * sizeof (SoftBreak)));
-
-		lines[i]->top = top;
-		lines[i]->SoftBreaks (theme, width);
-		top = lines[i]->bottom + 1.0;
-
-		BRect r (0.0, lines[i]->top, bounds.right, lines[i]->bottom);
-
-		if (bounds.Intersects (r)
-		&& (old_top != lines[i]->top
-		||  old_bottom != lines[i]->bottom
-		||  softie_used != lines[i]->softie_used
-		||  memcmp (softies, lines[i]->softies, softie_used * sizeof (SoftBreak))))
-			region.Include (r);
+		resizedirty = true;
+		return;
 	}
-
-	theme->ReadUnlock();
-
-	if (Window())
-	{
-		if (RecalcScrollBar (true))
-			Invalidate (Bounds());
-		else 
-		{
-			int32 count (region.CountRects()), i;
-
-			for (i = 0; i < count; ++i)
-				Invalidate (region.RectAt (i));
-
-			if (top <= bounds.bottom)
-			{
-				BRect r (bounds);
-
-				r.top = top;
-				Invalidate (r);
-			}
-		}
-
-		Window()->Sync();
-	}
-
-	if (working) working->top = top;
-	delete [] softies;
-
-	//BView::FrameResized (start_width, height);
+	ResizeRecalc();
 }
 
 void
@@ -258,6 +205,24 @@ RunView::TargetedByScrollView (BScrollView *s)
 {
 	scroller = s;
 	BView::TargetedByScrollView (scroller);
+}
+
+void
+RunView::Show (void)
+{
+	if (fontsdirty)
+	{
+		FontChangeRecalc();
+		// this effectively does the same thing as resize so if both have changed, only
+		// do the fonts recalculation
+		fontsdirty = false;
+		resizedirty = false;
+	}
+	if (resizedirty)
+	{
+		ResizeRecalc();
+	}
+	BView::Show();
 }
 
 void
@@ -494,6 +459,97 @@ RunView::MessageReceived (BMessage *msg)
 		default:
 			BView::MessageReceived (msg);
 	}
+}
+
+void
+RunView::ResizeRecalc (void)
+{
+	float width (Bounds().Width() - MARGIN_WIDTH);
+	int16 softie_size (0), softie_used (0);
+	SoftBreak *softies (NULL);
+	BRect bounds (Bounds());
+	BRegion region;
+	float top (0.0);
+	
+	theme->ReadLock();
+	for (int16 i = 0; i < line_count; ++i)
+	{
+		float old_top (lines[i]->top), old_bottom (lines[i]->bottom);
+		if (softie_size < lines[i]->softie_used)
+		{
+			delete [] softies;
+			softies = new SoftBreak [softie_size = lines[i]->softie_size];
+		}
+
+		softie_used = lines[i]->softie_used;
+		memcpy (softies, lines[i]->softies, (softie_used * sizeof (SoftBreak)));
+
+		lines[i]->top = top;
+		lines[i]->SoftBreaks (theme, width);
+		top = lines[i]->bottom + 1.0;
+
+		BRect r (0.0, lines[i]->top, bounds.right, lines[i]->bottom);
+
+		if (bounds.Intersects (r)
+		&& (old_top != lines[i]->top
+		||  old_bottom != lines[i]->bottom
+		||  softie_used != lines[i]->softie_used
+		||  memcmp (softies, lines[i]->softies, softie_used * sizeof (SoftBreak))))
+			region.Include (r);
+	}
+
+	theme->ReadUnlock();
+
+	if (Window())
+	{
+		if (RecalcScrollBar (true))
+			Invalidate (Bounds());
+		else 
+		{
+			int32 count (region.CountRects()), i;
+
+			for (i = 0; i < count; ++i)
+				Invalidate (region.RectAt (i));
+
+			if (top <= bounds.bottom)
+			{
+				BRect r (bounds);
+
+				r.top = top;
+				Invalidate (r);
+			}
+		}
+
+		Window()->Sync();
+	}
+
+	if (working) working->top = top;
+	delete [] softies;
+}
+
+void
+RunView::FontChangeRecalc (void)
+{
+	float width (Bounds().Width() - MARGIN_WIDTH);
+	float top (0.0);
+
+	for (int16 i = 0; i < line_count; ++i)
+	{
+		lines[i]->top = top;
+
+		lines[i]->FigureSpaces();
+		lines[i]->FigureEdges (&boxbuf, &boxbuf_size, theme, width);
+
+		top = lines[i]->bottom + 1.0;
+	}
+
+	if (working)
+		working->top = top;
+
+	RecalcScrollBar (false);
+	if (!IsHidden())
+		Invalidate (Bounds());
+	if (Window()) Window()->UpdateIfNeeded();
 }
 
 bool
@@ -758,28 +814,14 @@ RunView::SetTheme (Theme *t)
 	if (t == NULL || theme == t)
 		return;
 
-	float width (Bounds().Width() - MARGIN_WIDTH);
-	float top (0.0);
-
 	theme = t;
-
-	for (int16 i = 0; i < line_count; ++i)
+	
+	if (IsHidden())
 	{
-		lines[i]->top = top;
-
-		lines[i]->FigureSpaces();
-		lines[i]->FigureEdges (&boxbuf, &boxbuf_size, theme, width);
-
-		top = lines[i]->bottom + 1.0;
+		fontsdirty = true;
+		return;
 	}
-
-	if (working)
-		working->top = top;
-
-	RecalcScrollBar (false);
-	if (!IsHidden())
-		Invalidate (Bounds());
-	if (Window()) Window()->UpdateIfNeeded();
+	FontChangeRecalc();
 }
 
 SelectPos
@@ -830,6 +872,7 @@ RunView::PositionAt (BPoint point) const
 
 	for (i = start; i <= lines[lindex]->softies[sindex].offset; ++i)
 	{
+		printf("char: %c, point, current: %f, %f\n", lines[lindex]->text[pos.offset], lines[lindex]->edges[i] + margin - width, point.x);
 		if (lines[lindex]->edges[i] + margin - width >= point.x)
 			break;
 	}

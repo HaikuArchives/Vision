@@ -56,10 +56,15 @@ class RunView : public BView
 	char					*stamp_format;
 
 	SelectPos			sp_start, sp_end;
+	
+	bool 				resizedirty;
+	bool				fontsdirty;
 
 
 	bool					RecalcScrollBar (bool constrain);
-
+	void					ResizeRecalc (void);
+	void					FontChangeRecalc (void);
+	
 	public:
 
 							RunView (
@@ -74,7 +79,7 @@ class RunView : public BView
 	virtual void		DetachedFromWindow (void);
 	virtual void		FrameResized (float, float);
 	virtual void		TargetedByScrollView (BScrollView *);
-
+	virtual void		Show ();
 	virtual void		Draw (BRect);
 	virtual void		MessageReceived (BMessage *);
 
