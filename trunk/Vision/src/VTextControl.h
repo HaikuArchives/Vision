@@ -48,6 +48,7 @@ class VTextControl : public BTextControl
                            VTextControl (BMessage *);
     virtual                ~VTextControl (void);
     virtual void           AllAttached (void);
+    void                   BuildPopUp (void);
 
     BPopUpMenu                      *myPopUp;
 };
