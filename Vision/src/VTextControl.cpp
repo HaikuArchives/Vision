@@ -127,14 +127,6 @@ VTextControl::BuildPopUp (void)
 
 }
 
-
-VTextControl::~VTextControl (void)
-{
-  // Clean up
-  
-  //delete myPopUp;
-}
-
 ///////////////////////////
 // Filter //
 
@@ -189,9 +181,4 @@ VTextControlFilter::Filter (BMessage *msg, BHandler **)
 
   return result;
 
-}
-
-VTextControlFilter::~VTextControlFilter (void)
-{
- //
 }

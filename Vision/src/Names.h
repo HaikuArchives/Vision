@@ -36,10 +36,9 @@ class NameItem : public BListItem
 {
 	public:
 
-										NameItem (
-											const char *,
-											int32);
-	virtual							~NameItem (void);
+									NameItem (
+										const char *,
+										int32);
 	BString							Name (void) const;
 	BString							Address (void) const;
 	int32								Status (void) const;

@@ -44,7 +44,6 @@ class VisionApp : public BApplication
 {
   public:
                             VisionApp (void);
-    virtual                 ~VisionApp (void);
 
     virtual void            MessageReceived (BMessage *);
     virtual void            AboutRequested (void);

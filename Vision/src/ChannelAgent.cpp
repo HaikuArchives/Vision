@@ -102,42 +102,6 @@ ChannelAgent::Init (void)
 		true,
 		B_PLAIN_BORDER);
 
-	vision_app->pClientWin()->status->AddItem (new StatusItem (
-		serverName.String(), 0),
-		true);
-		
-	vision_app->pClientWin()->status->AddItem (new StatusItem (
-		"Lag: ",
-		"",
-		STATUS_ALIGN_LEFT),
-		true);
-
-	vision_app->pClientWin()->status->AddItem (new StatusItem (
-		0,
-		"",
-		STATUS_ALIGN_LEFT),
-		true);
-
-	vision_app->pClientWin()->status->AddItem (new StatusItem (
-		"Users: ", ""),
-		true);
-
-	vision_app->pClientWin()->status->AddItem (new StatusItem (
-		"Ops: ", ""),
-		true);
-
-	vision_app->pClientWin()->status->AddItem (new StatusItem (
-		"Modes: ",
-		""),
-		true);
-
-	vision_app->pClientWin()->status->AddItem (new StatusItem (
-		"", "", 
-		STATUS_ALIGN_LEFT),
-		true);
-	vision_app->pClientWin()->status->SetItemValue (STATUS_LAG, "0.000");
-	vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, myNick.String());
-		
 	AddChild (namesScroll);
 
 	joinColor = vision_app->GetColor (C_JOIN);
@@ -681,6 +645,55 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			}
 			
 		    break;
+		}
+		
+		case M_STATUS_ADDITEMS:
+		{
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+	     		serverName.String(), 0),
+				true);
+		
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+				"Lag: ",
+				"",
+				STATUS_ALIGN_LEFT),
+				true);
+
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+				0,
+				"",
+				STATUS_ALIGN_LEFT),
+			true);
+	
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+				"Users: ", ""),
+				true);
+
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+				"Ops: ", ""),
+				true);
+
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+				"Modes: ",
+				""),
+				true);
+
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+				"", "", 
+				STATUS_ALIGN_LEFT),
+				true);
+				
+			vision_app->pClientWin()->status->SetItemValue (STATUS_LAG, "0.000");
+			vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, myNick.String());
+			vision_app->pClientWin()->status->SetItemValue (STATUS_MODES, chanMode.String());
+			BString buffer;
+			buffer << userCount;
+			vision_app->pClientWin()->status->SetItemValue (STATUS_USERS, buffer.String());
+			buffer = "";
+			buffer << opsCount;
+			vision_app->pClientWin()->status->SetItemValue (STATUS_OPS, buffer.String());
+			
+			break;
 		}
 		
 		case M_CLIENT_QUIT:

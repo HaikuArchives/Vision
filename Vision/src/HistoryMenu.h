@@ -44,8 +44,7 @@ class HistoryMenu : public BView
 
 	public:
 
-								HistoryMenu (BRect);
-	virtual					~HistoryMenu (void);
+							HistoryMenu (BRect);
 	virtual void			Draw (BRect);
 	virtual void			AttachedToWindow (void);
 	virtual void			MouseDown (BPoint);

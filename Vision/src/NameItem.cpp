@@ -39,10 +39,6 @@ NameItem::NameItem (
 {
 }
 
-NameItem::~NameItem (void)
-{
-}
-
 BString
 NameItem::Name (void) const
 {

@@ -50,10 +50,6 @@ HistoryMenu::HistoryMenu (BRect frame)
   tricolor.alpha = 255;
 }
 
-HistoryMenu::~HistoryMenu (void)
-{
-}
-
 void
 HistoryMenu::Draw (BRect)
 {

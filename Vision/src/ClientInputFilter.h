@@ -37,8 +37,7 @@ class ClientInputFilter : public BMessageFilter
 	bool								handledDrop;
 
 	public:
-										ClientInputFilter (ClientAgent *);
-	virtual							~ClientInputFilter (void);
+									ClientInputFilter (ClientAgent *);
 	virtual filter_result			Filter (BMessage *, BHandler **);
 
 	filter_result					HandleKeys (BMessage *);
