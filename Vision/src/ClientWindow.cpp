@@ -79,7 +79,8 @@ ClientWindow::ClientWindow (BRect frame)
 bool
 ClientWindow::QuitRequested (void)
 {
-  vision_app->SetRect ("windowDockRect", cwDock->Frame());
+  vision_app->SetRect ("windowDockRect", cwDock->Bounds());
+  vision_app->SetRect ("clientWinRect", Frame());
   if (!shutdown_in_progress)
   {
     shutdown_in_progress = true;
@@ -396,7 +397,7 @@ ClientWindow::MessageReceived (BMessage *msg)
           true); // bring to front
       }
       break;
-/*    
+    
     case M_RESIZE_VIEW:
       {
         float offset (msg->FindFloat ("delta"));
@@ -411,17 +412,21 @@ ClientWindow::MessageReceived (BMessage *msg)
           {
             WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
             BView *agent (item->pAgent());
-            agent->ResizeBy (-offset, 0.0);
-            agent->MoveBy (offset, 0.0);
-          }
+            if (!agent->IsHidden())
+            {
+              agent->ResizeBy (-offset, 0.0);
+              agent->MoveBy (offset, 0.0);
+              break;
+            }
+          } 
         }
         else if (dynamic_cast<NamesView *>(view))
         {
           printf ("names view resize\n");
-        }
+        } 
       }
       break;
-*/        
+        
     default:
       BWindow::MessageReceived (msg);
   }
@@ -597,9 +602,8 @@ ClientWindow::Init (void)
     "irc.elric.net", 0),
     true);
   
-  BRect dockRect = vision_app->GetRect ("windowDockRect");
-  cwDock = new ClientWindowDock ((dockRect.Width() == 0.0) ?
-    BRect (0, frame.top, 130, status->Frame().top - 1) : dockRect);
+  BRect cwDockRect (vision_app->GetRect ("windowDockRect"));
+  cwDock = new ClientWindowDock (BRect (0, frame.top, (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(), status->Frame().top - 1));
   
   bgView->AddChild (cwDock);
   
