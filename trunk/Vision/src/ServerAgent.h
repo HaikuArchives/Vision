@@ -137,10 +137,9 @@ class ServerAgent : public ClientAgent
                                 fLagCount,			// passes made waiting
                                 fNickAttempt,
                                 fServerSocket;
-    char                        fSend_buffer[4096];		// dynamic buffer for sending
+    char                        fSend_buffer[2048];		// buffer for sending
 
-    char                        *fParse_buffer;		// dynamic buffer for parsing
-    size_t                      fParse_size;			// size of buffer
+    char                        fParse_buffer[2048];	// buffer for parsing
 
     thread_id                   fLoginThread;		// thread that receives
 

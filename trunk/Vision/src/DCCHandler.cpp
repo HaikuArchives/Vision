@@ -122,7 +122,7 @@ ServerAgent::DCCGetDialog (
         }
         if (vision_app->GetBool ("dccAutoAccept"))
         {
-          panel->Hide();
+          panel->Window()->Hide();
           BButton *button (dynamic_cast<BButton *>(panel->Window()->FindView ("default button")));
           if (button)
             button->Invoke();

@@ -117,7 +117,7 @@ ServerAgent::ParseEvents (const char *data)
   {
     BString theNotice (RestOfString(data, 3));
     theNotice.RemoveFirst(":");
-    
+
     BString tempString;
     
     const char *expansions[2];
@@ -153,8 +153,8 @@ ServerAgent::ParseEvents (const char *data)
       BString theNick (GetNick (data)),
               ident (GetIdent (data)),
               address (GetAddress (data));
-              
-      if (theNotice[0] == '\1')
+      
+      if ((theNotice.Length() > 0) && theNotice[0] == '\1')
       {
         // CTCP reply
         ParseCTCPResponse (theNick, theNotice);

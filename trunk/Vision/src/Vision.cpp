@@ -820,6 +820,10 @@ VisionApp::MessageReceived (BMessage *msg)
         fVisionSettings->FindRect ("clientWinRect", &clientWinRect);
         BMessage netData = GetNetwork (msg->FindString ("network"));
 
+        // sanity check
+        if (netData.IsEmpty())
+          break;
+
         if (netData.FindBool ("useDefaults"))
         {
           netData.RemoveName ("nick");
