@@ -1248,15 +1248,16 @@ VisionApp::SetNetwork (const char *network, BMessage *data)
   type_code type;
   int32 count (0);
   visionSettings->GetInfo ("network", &type, &count);
-  for (int32 i = 0; i < count; i++)
+  for (int32 i = 0; i < count;)
   {
      BMessage tempMsg;
      visionSettings->FindMessage ("network", i, &tempMsg);
      if (!strcmp (tempMsg.FindString ("name"), network))
      {
-       visionSettings->ReplaceMessage ("network", i, data);
-       return B_OK;
+       visionSettings->RemoveData ("network", i);
+       break;
      }
+     else ++i;
   }
   visionSettings->AddMessage ("network", data);
   return B_OK;
@@ -1276,7 +1277,7 @@ VisionApp::RemoveNetwork (const char *network)
   type_code type;
   int32 count (0);
   visionSettings->GetInfo ("network", &type, &count);
-  for (int32 i = 0; i < count; i++)
+  for (int32 i = 0; i < count;)
   {
      BMessage tempMsg;
      visionSettings->FindMessage ("network", i, &tempMsg);
@@ -1285,6 +1286,7 @@ VisionApp::RemoveNetwork (const char *network)
        visionSettings->RemoveData ("network", i);
        break;
      }
+     else ++i;
   }
   return B_OK;
 }

@@ -37,7 +37,7 @@ class NetworkPrefsView : public BView
 	void			UpdatePersonalData (BMessage &);
 	void			SetupDefaults (BMessage &);
 	void            BuildNetworkList (void);
-	
+	void            SaveCurrentNetwork();
 	BMenuField *networkMenu;
 	BScrollView *execScroller,
 				*nickScroller;
