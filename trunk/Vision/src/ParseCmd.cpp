@@ -794,12 +794,16 @@ ClientAgent::ParseCmd (const char *data)
 	
 	if (firstWord == "/PART")
 	{
-		BMessage msg (M_CLIENT_QUIT);
+		ChannelAgent *channel;
+	    if ((channel = dynamic_cast<ChannelAgent *>(this)))
+		{
+			BMessage msg (M_CLIENT_QUIT);
 
-		msg.AddBool ("vision:part", true);
-		PostMessage (&msg);
+			msg.AddBool ("vision:part", true);
+			msgr.SendMessage (&msg);
 
-		return true;
+			return true;
+		}
 	}	
 	
 	if (firstWord == "/PING")

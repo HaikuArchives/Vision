@@ -687,7 +687,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
 		
 		case M_CLIENT_QUIT:
 		{
-		
+		  // TODO
+		  printf ("FIXME: do something with this M_CLIENT_QUIT msg\n");
+		  break;
 		}
 						
 		default:
