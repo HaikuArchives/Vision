@@ -193,7 +193,9 @@ WindowList::MouseDown (BPoint myPoint)
     
     bigtime_t sysTime;
     msg->FindInt64 ("when", &sysTime);
-    uint16 clicks = CheckClickCount (myPoint, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
+    uint16 clicks (0);
+    if (mousebuttons == B_PRIMARY_MOUSE_BUTTON)
+      clicks = CheckClickCount (myPoint, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
     
     // slight kludge to make sure the expand/collapse triangles behave how they should
     // -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
@@ -276,41 +278,17 @@ WindowList::SelectionChanged (void)
     WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (currentIndex)));
     if (myItem != NULL)
     {
+      if (myItem->OutlineLevel() > 0)
+        myItem = dynamic_cast<WindowListItem *>(Superitem(myItem));
       Activate (currentIndex);
 
-      ServerAgent *oldParent (NULL),
-                  *newParent (NULL);
-      
       if (fLastSelected != NULL)
       {
-        BView *testAgent (fLastSelected->pAgent());
-        if (dynamic_cast<ListAgent *>(testAgent) != NULL)
-        {
-          oldParent = (ServerAgent *)((WindowListItem *)Superitem(fLastSelected));
-        }
-        else
-        {
-          ClientAgent *oldAgent ((ClientAgent *)fLastSelected->pAgent());
-          if (dynamic_cast<ServerAgent *>(oldAgent))
-            oldParent = (ServerAgent *)oldAgent;
-          else
-            oldParent = (ServerAgent *)oldAgent;
-        }
-        testAgent = myItem->pAgent();
-        if (dynamic_cast<ListAgent *>(testAgent) != NULL)
-        {
-          newParent = (ServerAgent *)((WindowListItem *)Superitem(myItem));
-        }
-        else
-        {
-          if (dynamic_cast<ServerAgent *>(myItem->pAgent()))
-            newParent = (ServerAgent *)myItem->pAgent();
-          else
-            newParent = (ServerAgent *)((WindowListItem *)Superitem(myItem))->pAgent();
-        }
-
-        if (oldParent != newParent)
-          BMessenger(newParent).SendMessage(M_NOTIFYLIST_UPDATE);
+        WindowListItem *lastItem (fLastSelected);
+        if (lastItem->OutlineLevel() > 0)
+          lastItem = dynamic_cast<WindowListItem *>(Superitem(lastItem));
+        if (lastItem->pAgent() != myItem->pAgent())
+          BMessenger(myItem->pAgent()).SendMessage(M_NOTIFYLIST_UPDATE);
       }
       else
         BMessenger(myItem->pAgent()).SendMessage(M_NOTIFYLIST_UPDATE);

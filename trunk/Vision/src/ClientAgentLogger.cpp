@@ -207,24 +207,26 @@ ClientAgentLogger::SetupLogging (void)
   be_app->GetAppInfo (&ai);
 
   BEntry entry (&ai.ref);
-  entry.GetPath (&fLogPath);
-  fLogPath.GetParent (&fLogPath);
-  
-  BString visLogPath (vision_app->GetString ("logBaseDir"));
-  if (visLogPath.Length() == 0)
-    visLogPath = "logs";
-  else if (visLogPath[0] == '/')
-    fLogPath.SetTo (visLogPath.String());
-  else
-    fLogPath.Append (visLogPath.String());
-  create_directory (fLogPath.Path(), 0777);
-  BDirectory dir (fLogPath.Path());
-  BString sName (fServerName);
-  sName.ToLower();
-  dir.CreateDirectory (sName.String(), &dir);
-  fLogPath.Append (sName.String());
-
-  return;
+  if (entry.InitCheck() == B_OK)
+  {
+    entry.GetPath (&fLogPath);
+    if (fLogPath.InitCheck() == B_OK)
+      fLogPath.GetParent (&fLogPath);
+      
+    BString visLogPath (vision_app->GetString ("logBaseDir"));
+    if (visLogPath.Length() == 0)
+      visLogPath = "logs";
+    else if (visLogPath[0] == '/')
+      fLogPath.SetTo (visLogPath.String());
+    else
+      fLogPath.Append (visLogPath.String());
+    create_directory (fLogPath.Path(), 0777);
+    BDirectory dir (fLogPath.Path());
+    BString sName (fServerName);
+    sName.ToLower();
+    dir.CreateDirectory (sName.String(), &dir);
+    fLogPath.Append (sName.String());
+  }  
 }
 
 void
@@ -275,8 +277,8 @@ ClientAgentLogger::AsyncLogger (void *arg)
     if (!myLogBuffer->IsEmpty())
     {
       // grab next string from list and write to file
-      currentLogger = (BString *)myLogBuffer->RemoveItem (0L);
-      currentString = (BString *)myLogBuffer->RemoveItem (0L);
+      currentLogger = (BString *)(myLogBuffer->RemoveItem (0L));
+      currentString = (BString *)(myLogBuffer->RemoveItem (0L));
       myLogBufferLock->Unlock();
       myLogFile = logger->fLogFiles[*currentLogger];
       if (myLogFile && myLogFile->InitCheck() != B_NO_INIT)
@@ -290,8 +292,8 @@ ClientAgentLogger::AsyncLogger (void *arg)
   // on shutdown empty out all remaining data (if any) and write to file
   while (!myLogBuffer->IsEmpty())
   {
-    currentLogger = (BString *)myLogBuffer->RemoveItem (0L);
-    currentString = (BString *)myLogBuffer->RemoveItem(0L);
+    currentLogger = (BString *)(myLogBuffer->RemoveItem (0L));
+    currentString = (BString *)(myLogBuffer->RemoveItem(0L));
     myLogFile = logger->fLogFiles[*currentLogger];
     if (myLogFile && myLogFile->InitCheck() != B_NO_INIT)
       myLogFile->Write (currentString->String(), currentString->Length());

@@ -87,6 +87,7 @@ class ServerAgent : public ClientAgent
 
     static int                  SortNotifyItems (const void *, const void *);
 
+    bool                        ServerThreadValid(thread_id);
 
     void                        HandleReconnect (void);
     static bool                 PrivateIPCheck (const char *);
@@ -104,7 +105,7 @@ class ServerAgent : public ClientAgent
     void                        ParseAutoexecChans (const BString &);
 
     BLocker                     *fEndPointLock,
-                                 fSendLock;
+                                 *fSendLock;
 
     static int32                fServerSeed;
 
@@ -164,7 +165,7 @@ class ServerAgent : public ClientAgent
 	
     BList                       fTimers,
                                   fStartupChannels,
-                                  fPendingSends,
+                                  *fPendingSends,
                                   fNotifyNicks,
                                   fIgnoreNicks;
     
