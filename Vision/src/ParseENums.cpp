@@ -733,32 +733,45 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
     case ERR_NICKNAMEINUSE:    // 433
     {
-//      if (isConnecting)
-//      {
-//        if (++nickAttempt >= lnicks->CountItems())
-//        {
-//          Display ("* All your pre-selected nicknames are in use.\n", 0);
-//          Display ("* Please type /NICK <NEWNICK> to try another.\n", 0);
-//          return true;
-//        }
-//
-//        myNick = (const char *)lnicks->ItemAt (nickAttempt);
-//        Display ("* Nickname \"", 0);
-//        Display ((const char *)lnicks->ItemAt (nickAttempt - 1), 0);
-//        Display ("\" in use.. trying \"", 0);
-//        Display (myNick.String(), 0);
-//        Display ("\"\n", 0);
-//
-//        BString tempString ("NICK ");
-//
-//        tempString << myNick;
-//        SendData (tempString.String());
-//
-//        return true;
-//      }
+      BString theNick (GetWord (data, 4));
+      
+      if (isConnecting)
+      {
+        if (theNick == lnick1)
+        {
+          Display ("* Nickname \"", 0);
+          Display (lnick1.String(), 0);
+          Display ("\" in use.. trying \"", 0);
+          Display (lnick2.String(), 0);
+          Display ("\"\n", 0);
 
-      BString theNick (GetWord (data, 4)),
-              tempString;
+          BString tempString ("NICK ");
+          tempString += lnick2;
+          SendData (tempString.String());
+          return true;
+        }
+        else if (theNick == lnick2)
+        {
+          Display ("* Nickname \"", 0);
+          Display (lnick2.String(), 0);
+          Display ("\" in use.. trying \"_", 0);
+          Display (lnick1.String(), 0);
+          Display ("\"\n", 0);
+
+          BString tempString ("NICK _");
+          tempString += lnick1;
+          SendData (tempString.String());
+          return true;
+        }
+        else
+        {
+          Display ("* All your pre-selected nicknames are in use.\n", 0);
+          Display ("* Please type /NICK <NEWNICK> to try another.\n", 0);
+          return true;
+        }                         
+      }
+
+      BString tempString;
       tempString << "[x] Nickname " << theNick << " is already in use.\n";
 
       BMessage display (M_DISPLAY);
