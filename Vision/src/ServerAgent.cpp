@@ -1116,37 +1116,34 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_LAG_CHECK:
       {
-        if (isConnected)
-	    {
-	      if (!checkingLag)
+        if (!checkingLag && isConnected)
+        {
+          lagCheck = system_time();
+          lagCount = 1;
+          checkingLag = true;
+          BMessage lagSend (M_SERVER_SEND);
+          AddSend (&lagSend, "VISION_LAG_CHECK");
+          AddSend (&lagSend, endl);
+        }
+        else
+        {
+          if (lagCount > 4)
           {
-            lagCheck = system_time();
-            lagCount = 1;
-            checkingLag = true;
-            BMessage lagSend (M_SERVER_SEND);
-            AddSend (&lagSend, "VISION_LAG_CHECK");
-            AddSend (&lagSend, endl);
+            // we've waited 50 seconds
+            // connection problems?
+            myLag = "CONNECTION PROBLEM";
+            msgr.SendMessage (M_LAG_CHANGED);
           }
           else
           {
-            if (lagCount > 4)
-            {
-              // we've waited 50 seconds
-              // connection problems?
-              myLag = "CONNECTION PROBLEM";
-              msgr.SendMessage (M_LAG_CHANGED);
-            }
-            else
-            {
-              // wait some more
-              char lag[15] = "";
-              sprintf (lag, "%ld0.000+", lagCount);  // assuming a 10 second runner
-              myLag = lag;
-              ++lagCount;
-              msgr.SendMessage (M_LAG_CHANGED);
-            }
-          }	
-        }
+            // wait some more
+            char lag[15] = "";
+            sprintf (lag, "%ld0.000+", lagCount);  // assuming a 10 second runner
+            myLag = lag;
+            ++lagCount;
+            msgr.SendMessage (M_LAG_CHANGED);
+          }
+        }	
       }
       break;
       
