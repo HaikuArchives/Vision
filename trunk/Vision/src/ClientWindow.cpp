@@ -606,7 +606,7 @@ ClientWindow::Init (void)
   bgView = new BView (frame,
                       "Background",
                       B_FOLLOW_ALL_SIDES,
-                      B_WILL_DRAW);
+                      0);
 
   bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   AddChild (bgView);
