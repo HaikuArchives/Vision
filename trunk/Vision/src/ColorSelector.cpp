@@ -15,6 +15,7 @@
 #include <ColorControl.h>
 #include <MenuField.h>
 #include <MenuItem.h>
+#include <MenuBar.h>
 #include <PopUpMenu.h>
 #include <Screen.h>
 #include <StringView.h>
@@ -305,6 +306,9 @@ void ColorSelector::LayoutViews(bool really)
 		if (Window()) Window()->BeginViewTransaction();
 		fColorField->MoveTo(b.left, b.top);
 		fColorField->ResizeTo(b.Width()+1, mh);
+#if !B_BEOS_VERSION_DANO
+		fColorField->MenuBar()->SetMaxContentWidth(99999999);
+#endif
 		fColorPalette->MoveTo(b.left, b.top+mh+SPACE);
 		fColorPalette->ResizeTo(cw, ch);
 #if !B_BEOS_VERSION_DANO
