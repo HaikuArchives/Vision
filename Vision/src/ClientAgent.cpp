@@ -688,6 +688,14 @@ ClientAgent::MessageReceived (BMessage *msg)
             {
               BMessage *buffer (new BMessage (*msg));
               thread_id tid;
+              
+              // if there is some text in the input control already, submit it before
+              // starting the timed paste
+              if (fInput->TextView()->TextLength() != 0)
+              {
+                BString inputData (fInput->TextView()->Text());
+                Submit(inputData.String(), true, true);
+              }
 
               buffer->AddPointer ("agent", this);
               buffer->AddPointer ("window", Window());

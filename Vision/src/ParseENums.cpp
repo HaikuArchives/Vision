@@ -260,7 +260,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_NOORIGIN:          // 409
     case ERR_NOTEXTTOSEND:      // 412
     case ERR_TOOMANYAWAY:       // 429
-    case ERR_ERRONEOUSNICKNAME: // 432
     case ERR_NICKCHANGETOOFAST: // 438
     case ERR_TARGETCHANGETOOFAST: // 439
     case ERR_SUMMONDISABLED:    // 445
@@ -990,6 +989,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       }
       return true;
       
+    case ERR_ERRONEOUSNICKNAME:    // 432
     case ERR_NICKNAMEINUSE:        // 433
     case ERR_RESOURCEUNAVAILABLE:  // 437
       {

@@ -239,6 +239,36 @@ ChannelAgent::RemoveUser (const char *data)
   return false;
 }
 
+int
+ChannelAgent::AlphaSortNames(const void *name1, const void *name2)
+{
+  /*
+   * Function purpose: Help Tab Completion sort nicknames
+   *
+   * uses strict lexicographic order, ignores the op/voice bits
+   */
+   
+   // clunky way to get around C++ warnings re casting from const void * to NameItem *
+   
+  const NameItem *firstPtr (*((NameItem * const *)name1));
+  const NameItem *secondPtr (*((NameItem * const *)name2));
+
+  // Not sure if this can happen, and we
+  // are assuming that if one is NULL
+  // we return them as equal.  What if one
+  // is NULL, and the other isn't?
+  if (!firstPtr
+  ||  !secondPtr)
+    return 0;
+
+  BString first, second;
+
+  first  += (firstPtr)->Name();
+  second += (secondPtr)->Name();
+  
+  return first.ICompare (second);
+}
+
 
 int
 ChannelAgent::SortNames(const void *name1, const void *name2)
@@ -325,6 +355,9 @@ ChannelAgent::TabExpansion (void)
       for (int32 i = 0; i < count ; i++)
         if (!((NameItem *)fNamesList->ItemAt(i))->Name().ICompare(fLastExpansion.String(), strlen(fLastExpansion.String())))
          myList.AddItem(fNamesList->ItemAt(i));
+      
+      // sort items alphabetically
+      myList.SortItems (AlphaSortNames);
     }
   
     // We first check if what the user typed matches the channel

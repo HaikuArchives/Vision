@@ -1,11 +1,15 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8.5-0414]
+[0.8.5-0415]
          * fixed incorrect behavior with spam paste dialog 
            (cancel was causing the same result as clicking single line)
          * fixed bug where dcc file panel would not take focus
            (and also not grab focus on incoming send)
+         * fixed bug where multiline paste would discard whatever line was currently
+            in the input control
+         * numeric 432 is now caught on connect for alt nick fallback (thanks to Matt Elzer for pointing this possibility out)
+         * tweaked tab completion
 
 [0.8.4-0411]
          * fixed deadlock bug in DCC resume
