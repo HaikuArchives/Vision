@@ -476,7 +476,7 @@ WindowList::Agent (int32 serverId, const char *aName)
           break;      
         }
       }
-      else if (dynamic_cast<ListAgent *>(item->pAgent()))
+      else if (dynamic_cast<ListAgent *>(item->pAgent()) && !strcmp(aName, "Channels"))
       {
           agent = reinterpret_cast<ClientAgent *>(item->pAgent());
           break;
