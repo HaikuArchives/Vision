@@ -53,8 +53,6 @@ class ChannelAgent : public ClientAgent
 	virtual void            Parser (const char *);
 	virtual void            TabExpansion (void);
 	
-	void                    Init();
-
     bool                    RemoveUser (const char *);
     int                     FindPosition (const char *);
     void                    UpdateMode (char, char);
@@ -65,6 +63,8 @@ class ChannelAgent : public ClientAgent
 
     
   private:
+	void                    Init();
+
     BString                 chanMode,
                             chanLimit,
                             chanLimitOld,
