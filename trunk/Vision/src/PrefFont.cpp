@@ -32,7 +32,7 @@
 #include <MenuField.h>
 #include <MenuItem.h>
 #include "NumericFilter.h"
-#include <TextControl.h>
+#include "VTextControl.h"
 
 struct FontStat
 {
@@ -195,7 +195,7 @@ FontPrefsView::FontPrefsView (BRect frame)
   FontMenu *menu (new FontMenu ("fonts"));
   fFontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", S_PREFFONT_FONTLABEL, menu);
   AddChild (fFontMenuField);
-  fTextControl = new BTextControl (BRect (60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
+  fTextControl = new VTextControl (BRect (60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
   	new BMessage (M_FONT_SIZE_CHANGE));
   fTextControl->TextView()->AddFilter (new NumericFilter());
   AddChild (fTextControl);
@@ -305,7 +305,7 @@ FontPrefsView::MessageReceived (BMessage *msg)
   	case M_FONT_SIZE_CHANGE:
   	  {
   	    const char *text (fTextControl->TextView()->Text());
-  	    int32 size (atoi (text));
+  	    float size (atof (text));
   	    vision_app->ClientFontSize (fActiveFont, size);
   	  }
       break;

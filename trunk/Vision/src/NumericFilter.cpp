@@ -25,6 +25,8 @@
 #include <Message.h>
 #include <ctype.h>
 #include "NumericFilter.h"
+#include <TextView.h>
+#include <Invoker.h>
 
 #include <stdio.h>
 
@@ -38,7 +40,7 @@ NumericFilter::~NumericFilter (void)
 }
 
 filter_result 
-NumericFilter::Filter (BMessage *msg, BHandler **)
+NumericFilter::Filter (BMessage *msg, BHandler **handler)
 {
   filter_result result = B_DISPATCH_MESSAGE;
   switch (msg->what)
@@ -55,13 +57,21 @@ NumericFilter::Filter (BMessage *msg, BHandler **)
       {
         switch (bytes[0])
         {
-          case B_ENTER:
           case B_BACKSPACE:
           case B_LEFT_ARROW:
           case B_RIGHT_ARROW:
           case B_HOME:
           case B_END:
           case B_TAB:
+            break;
+
+          case B_ENTER:
+            // for some stupid reason BTextControl on R5 does not always Invoke() when
+            // you hit enter, so forcing the issue here.
+            if (dynamic_cast<BTextView *>(*handler))
+            {
+              dynamic_cast<BInvoker *>(((BView *)*handler)->Parent())->Invoke();
+            }
             break;
             
           default:
