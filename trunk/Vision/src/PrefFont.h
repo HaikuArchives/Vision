@@ -28,6 +28,7 @@
 class VTextControl;
 class BScrollView;
 class BMenuField;
+class BTextControl;
 
 class FontPrefsView : public BView
 {
@@ -41,6 +42,7 @@ class FontPrefsView : public BView
   private:
   	BMenuField *fontMenuField;
   	BMenuField *fontElementField;
+  	BTextControl *textControl;
   	int32 activeFont;
 };
 

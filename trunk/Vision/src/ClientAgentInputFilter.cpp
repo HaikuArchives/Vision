@@ -279,7 +279,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         {
           // scroll the IRCView
           BRect myrect (window->text->Bounds());
-          float height (myrect.bottom - myrect.top);
+          float height (myrect.bottom - myrect.top - 10.0);
 
           if (window->textScroll->ScrollBar (B_VERTICAL)->Value() > height)
             window->text->ScrollBy (0.0, -1 * height);
@@ -294,7 +294,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         {
           // scroll the IRCView
           BRect myrect (window->text->Bounds());
-          float height (myrect.bottom - myrect.top);
+          float height (myrect.bottom - myrect.top - 10.0);
 
           float min, max;
           window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
