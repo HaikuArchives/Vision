@@ -42,6 +42,8 @@
 #include <Message.h>
 #include <Messenger.h>
 #include <MessageRunner.h>
+#include <PopUpMenu.h>
+#include <MenuItem.h>
 #include <Clipboard.h>
 #include <ScrollView.h>
 #include <ScrollBar.h>
@@ -210,7 +212,8 @@ RunView::RunView (
 		off_view_runner (NULL),
 		off_view_time (0),
 		resizedirty (false),
-		fontsdirty (false)
+		fontsdirty (false),
+		myPopUp (NULL)
 {
 	URLCursor = new BCursor (URLCursorData);
 	theme->ReadLock();
@@ -449,18 +452,64 @@ RunView::Draw (BRect frame)
 							drawSelection = false;
 						}
 						// we're at the selection, switch drawing color mode
-						else if (place == sp_start.offset)
+						else if (place >= sp_start.offset && place < sp_end.offset)
 						{
-							// selection's confined to a section of the current line
-							if (sp_start.line == sp_end.line)
-								length = sp_end.offset - sp_start.offset;
-							else
-							// multi-line selection, select to end
-								length = line->length - sp_start.offset;
+							if (place == sp_start.offset && place > 0)
+							{
+								BFont f;
+								GetFont (&f);
+
+								BString s;
+								s += line->text[place-1];
+								
+								if (line->text[place-1] == ' ')
+								{
+							
+									float escapement;
+									f.GetEscapements (s.String(), 1, &escapement);
+									
+									left += escapement * f.Size();
+								}
+								s = "";
+								s += line->text[place];
+								edge_info e;
+								f.GetEdges (s.String(), 1, &e);
+								
+								left += e.left * f.Size();
+							}
+							if (sp_end.line == sp_start.line)
+								if (sp_end.offset - place < length)
+									length = sp_end.offset - place;
+															
 							drawSelection = true;
+							
 						}
-						else
+						else if (place == sp_end.offset)
+						{
 							drawSelection = false;
+							if (place > 0)
+							{
+								BFont f;
+								GetFont (&f);
+
+								BString s;
+								s += line->text[place-1];
+								
+								if (line->text[place-1] == ' ')
+								{
+
+									float escapement;
+									f.GetEscapements (s.String(), 1, &escapement);
+									left += escapement * f.Size();
+								}
+								s = "";
+								s += line->text[place];
+								edge_info e;
+								f.GetEdges (s.String(), 1, &e);
+								left += ABS(e.left) * f.Size();
+							}
+						}							
+
 					}
 					// case 2: line in between beginning and end of selection,
 					// highlight entire line
@@ -475,7 +524,31 @@ RunView::Draw (BRect frame)
 							drawSelection = true;
 						}
 						else
+						{
+							if (place > 0)
+							{
+								BFont f;
+								GetFont (&f);
+
+								BString s;
+								s += line->text[place];
+
+								if (line->text[place] == ' ')
+								{
+									float escapement;
+									f.GetEscapements (s.String(), 1, &escapement);
+									left += escapement * f.Size();
+								}
+								else
+								{
+									edge_info e;
+									f.GetEdges (s.String(), 1, &e);
+									left += e.left;
+								}
+							}							
+
 							drawSelection = false;
+						}
 					}
 					else
 						drawSelection = false;
@@ -550,6 +623,64 @@ RunView::SetViewColor (rgb_color color)
 }
 
 void
+RunView::BuildPopUp (void)
+{
+  // This function checks certain criteria (text is selected,
+  // TextView is editable, etc) to determine which MenuItems
+  // to enable and disable
+  
+  bool enablecopy (true),
+       enableselectall (true),
+       enablelookup (false);
+  BString querystring ("");
+       
+  if (sp_start == sp_end)
+    enablecopy = false; // no selection
+    
+  if (!line_count)
+    enableselectall = false;
+    
+  if (enablecopy)
+  {
+    enablelookup = true; // has a selection less than 32 chars long
+    GetSelectionText(querystring);
+  }
+  
+  myPopUp = new BPopUpMenu ("IRCView Context Menu", false, false); 
+
+  BMenuItem *item;
+
+  BMessage *lookup;  
+  lookup = new BMessage (M_LOOKUP_WEBSTER);
+  lookup->AddString ("string", querystring);
+  item = new BMenuItem("Lookup (Dictionary)", lookup);
+  item->SetEnabled (enablelookup);
+  item->SetTarget (Parent());
+  myPopUp->AddItem (item);
+
+  lookup = new BMessage (M_LOOKUP_GOOGLE);
+  lookup->AddString ("string", querystring);
+  item = new BMenuItem("Lookup (Google)", lookup);
+  item->SetEnabled (enablelookup);
+  item->SetTarget (Parent());
+  myPopUp->AddItem (item);
+  
+  myPopUp->AddSeparatorItem(); 
+
+  item = new BMenuItem("Copy", new BMessage (B_COPY), 'C');
+  item->SetEnabled (enablecopy);
+  item->SetTarget (this);
+  myPopUp->AddItem (item);
+  
+  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL), 'A');
+  item->SetEnabled (enableselectall);
+  item->SetTarget (this);
+  myPopUp->AddItem (item);
+  
+  myPopUp->SetFont (be_plain_font);
+}
+
+void
 RunView::MouseDown (BPoint point)
 {
 	if (!line_count)
@@ -565,6 +696,32 @@ RunView::MouseDown (BPoint point)
 	msg->FindInt32 ("modifiers", reinterpret_cast<int32 *>(&modifiers));
 
 	SelectPos s (PositionAt (point));
+	
+	if (buttons == B_SECONDARY_MOUSE_BUTTON
+	&&		(modifiers & B_SHIFT_KEY) == 0
+	&&		(modifiers & B_COMMAND_KEY) == 0
+	&&		(modifiers & B_CONTROL_KEY) == 0
+	&&		(modifiers & B_OPTION_KEY) == 0
+	&&      (modifiers & B_MENU_KEY) == 0)
+	{
+		SelectPos start (s),
+					end (s);
+
+		// select word
+		lines[s.line]->SelectWord (&start.offset, &end.offset);
+		
+		Select (start, end);
+
+    	BuildPopUp();
+    	myPopUp->Go (
+    	  ConvertToScreen (point),
+    	  true,
+    	  false);
+    	
+    	delete myPopUp;
+    	myPopUp = 0;
+    	return;
+	}
 
 	if (buttons == B_PRIMARY_MOUSE_BUTTON
 	&&      (modifiers & B_SHIFT_KEY)   == 0
@@ -2192,10 +2349,12 @@ Line::SelectWord (int16 *start, int16 *end)
 {
 	int16 start_tmp (*start), end_tmp (*end);
 
-	while(start_tmp > 0 && (isdigit (text[start_tmp-1]) || isalpha (text[start_tmp-1])))
+	while(start_tmp > 0 && ((text[start_tmp-1] <= 'z' && text[start_tmp-1] >= 'A')
+			|| (text[start_tmp-1] >= '0' && text[start_tmp-1] <= '9')))
 			start_tmp--;
 
-	while (end_tmp < length && (isdigit (text[end_tmp]) || isalpha (text[end_tmp])))
+	while (end_tmp < length && ((text[end_tmp-1] <= 'z' && text[end_tmp-1] >= 'A')
+			|| (text[end_tmp-1] >= '0' && text[end_tmp-1] <= '9')))
 			end_tmp++;
 	
 	*start = start_tmp;

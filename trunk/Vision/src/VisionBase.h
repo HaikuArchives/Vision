@@ -218,6 +218,9 @@ const uint32 M_CHANNEL_TOPIC						= 0x1603;
 const uint32 M_CHANNEL_MODE							= 0x1604;
 const uint32 M_INPUT_FOCUS                          = 0x1605;
 const uint32 M_CHANNEL_GOT_KICKED					= 0x1606;
+const uint32 M_LOOKUP_WEBSTER                       = 0x1607;
+const uint32 M_LOOKUP_GOOGLE                        = 0x1608;
+
 
 // Sound event identifiers
 enum SoundEvent

@@ -181,8 +181,6 @@ class ClientAgent : public BView
 
 };
 
-const uint32 M_LOOKUP_WEBSTER         = 'calw';
-const uint32 M_LOOKUP_GOOGLE          = 'calg';
 
 /// IRCDS
 /// an effort to properly support conflicting numeric meanings
