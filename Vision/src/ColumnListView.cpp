@@ -2181,9 +2181,12 @@ void TitleView::MouseDown(BPoint position)
 
 void TitleView::MouseMoved(BPoint position, uint32 transit, const BMessage *)
 {
+
+	
 	if(fEditMode)
 		return;
-		
+	
+	
 	// Handle column manipulation
 	switch (fCurrentState) {
 		case RESIZING_COLUMN:
@@ -3401,9 +3404,10 @@ void OutlineView::ToggleFocusRowOpen()
 void OutlineView::ExpandOrCollapse(BRow* ParentRow, bool Expand)
 {
 	if (ParentRow) {
-		if (ParentRow->fIsExpanded == Expand)
+	
+		if (ParentRow->fIsExpanded == Expand) 
 			return;
-			
+
 		ParentRow->fIsExpanded = Expand;
 	
 		BRect parentRect;
@@ -3439,6 +3443,7 @@ void OutlineView::ExpandOrCollapse(BRow* ParentRow, bool Expand)
 			FixScrollBar(false);
 		}
 	}
+	
 }
 
 void OutlineView::RemoveRow(BRow *row)
@@ -3457,9 +3462,14 @@ void OutlineView::RemoveRow(BRow *row)
 				}
 			}
 		}
-		fItemsHeight -= subTreeHeight + 1;
+		if (parentRow) {
+			if (parentRow->fIsExpanded)
+				fItemsHeight -= subTreeHeight + 1;
+		}
+		else {
+			fItemsHeight -= subTreeHeight + 1;
+		}
 		FixScrollBar(false);
-
 		if (parentRow)
 			parentRow->fChildList->RemoveItem(row);
 		else
@@ -3571,7 +3581,7 @@ void OutlineView::AddRow(BRow* Row, int32 Index, BRow* ParentRow)
 					fRows.AddItem(Row, Index);
 			}
 		}
-			
+				
 		if (ParentRow == 0 || ParentRow->fIsExpanded)
 			fItemsHeight += Row->Height() + 1;
 	
