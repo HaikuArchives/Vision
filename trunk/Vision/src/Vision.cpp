@@ -835,6 +835,8 @@ VisionApp::SetColor (int32 which, const rgb_color color)
     // update timestamp bg color
     else if (which == C_TIMESTAMP_BACKGROUND)
       activeTheme->SetBackground (C_TIMESTAMP, color);
+    else if (which == C_SELECTION)
+      activeTheme->SetBackground (C_SELECTION, color);
     // mirc colors need to be updated on both fore and back
     else if (which >= C_MIRC_WHITE)
     {
