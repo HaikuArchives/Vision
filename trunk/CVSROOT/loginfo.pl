@@ -5,6 +5,8 @@
 # (c)1999  Robert CHERAMY <tibob@via.ecp.fr>
 # you are free to reuse this script
 
+system("echo running");
+
 $last_dir_file = "/tmp/#visioncvs.files.lastdir";
 $summary_file  = "/tmp/#visioncvs.files.summary";
 
