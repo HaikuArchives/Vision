@@ -307,21 +307,6 @@ VisionApp::ReadyToRun (void)
   clientWin = new ClientWindow (clientWinRect);
   setupWin = new SetupWindow (true);
   clientWin->Show();
-
-//  if (showsetupwindow)
-//  {
-//    setupWin = new SetupWindow (true);
-//    setupWin->Show();
-//  }
-//  else
-//  {
-//    BRect clientWinRect;
-//    visionSettings->FindRect ("clientWinRect", &clientWinRect);
-//  
-//    clientWin = new ClientWindow(clientWinRect);
-//  
-//    clientWin->Show();
-//  }
 }
 
 void

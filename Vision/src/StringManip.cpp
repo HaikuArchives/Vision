@@ -181,8 +181,10 @@ ExpandKeyed (
 BString
 StringToURI (const char *string)
 {
-  BString buffer;
-  
+  BString buffer (string);
+  buffer.ToLower();
+  buffer.ReplaceAll (" ", "+");
+    
   return buffer;
 }
 
