@@ -1200,7 +1200,7 @@ ClientAgent::ExecPipe (void *arg)
 
     // ship off to agent
     agent->LockLooper();
-    agent->Parser (read);
+    agent->Submit (read);
     agent->UnlockLooper();
   }
 
