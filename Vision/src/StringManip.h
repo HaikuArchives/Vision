@@ -41,5 +41,6 @@ BString      DurationString (int64);
 BString      StringToURI (const char *);
 const char   *RelToAbsPath (const char *);
 BString      GetWordColon (const char *, int32);
+int32        Get440Len (const char *);
 
 #endif
