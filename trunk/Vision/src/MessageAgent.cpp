@@ -108,7 +108,7 @@ MessageAgent::MessageReceived (BMessage *msg)
         ClientAgent::MessageReceived (msg);
       }
       break;
-
+      
     case M_MSG_WHOIS:
       {
         BMessage send (M_SERVER_SEND);
@@ -187,7 +187,7 @@ MessageAgent::MessageReceived (BMessage *msg)
         // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
         // We send true on the last SetItemValue().
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String(), false);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
       }        
       break;

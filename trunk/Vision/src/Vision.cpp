@@ -88,7 +88,7 @@ VisionApp::VisionApp (void)
   const rgb_color ACTION_COLOR        = {128,0,128, 255};
   const rgb_color QUIT_COLOR          = {180,10,10, 255};
   const rgb_color ERROR_COLOR         = {210,5,5, 255};
-  const rgb_color URL_COLOR	          = {5,5,150, 255};
+  const rgb_color URL_COLOR           = {5,5,150, 255};
   const rgb_color NICK_COLOR          = {10,10,190, 255};
   const rgb_color MYNICK_COLOR        = {200,10,20, 255};
   const rgb_color JOIN_COLOR          = {10,130,10, 255};
@@ -106,65 +106,65 @@ VisionApp::VisionApp (void)
   const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
   const rgb_color WALLOPS_COLOR       = {10,30,170, 255};
   const rgb_color NICK_DISPLAY        = {47, 47, 47, 255};
-	
 
-	colors[C_TEXT]                      = myBlack;
-	colors[C_BACKGROUND]                = myWhite;
-	colors[C_NAMES]                     = myBlack;
-	colors[C_NAMES_BACKGROUND]          = myWhite;
-	colors[C_URL]                       = URL_COLOR;
-	colors[C_SERVER]                    = myBlack;
-	colors[C_NOTICE]                    = NOTICE_COLOR;
-	colors[C_ACTION]                    = ACTION_COLOR;
-	colors[C_QUIT]                      = QUIT_COLOR;
-	colors[C_ERROR]                     = ERROR_COLOR;
-	colors[C_NICK]                      = NICK_COLOR;
-	colors[C_MYNICK]                    = MYNICK_COLOR;
-	colors[C_JOIN]                      = JOIN_COLOR;
-	colors[C_KICK]                      = KICK_COLOR;
-	colors[C_WHOIS]                     = WHOIS_COLOR;
-	colors[C_OP]                        = OP_COLOR;
-	colors[C_HELPER]                    = OP_COLOR;
-	colors[C_VOICE]                     = VOICE_COLOR;
-	colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
-	colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
-	colors[C_IGNORE]                    = IGNORE_COLOR;
-	colors[C_INPUT]                     = INPUT_COLOR;
-	colors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
-	colors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
-	colors[C_WINLIST_TEXT]              = myBlack;
-	colors[C_WINLIST_NEWS]              = JOIN_COLOR;
-	colors[C_WINLIST_NICK]              = QUIT_COLOR;
-	colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
-	colors[C_WINLIST_VOID]              = WINLIST_VOID_COLOR;
-	colors[C_WALLOPS]                   = WALLOPS_COLOR;
-	colors[C_NICKDISPLAY]               = NICK_DISPLAY;
-	
-	client_font[F_TEXT]    = new BFont (be_fixed_font);
-	client_font[F_SERVER]  = new BFont (be_fixed_font);
-	client_font[F_URL]     = new BFont (be_fixed_font);
-	client_font[F_NAMES]   = new BFont (be_plain_font);
-	client_font[F_INPUT]   = new BFont (be_fixed_font);
-	client_font[F_WINLIST] = new BFont (be_plain_font);
-	
-	events[E_JOIN]							= "*** $N ($I@$A) has joined the channel.";
-	events[E_PART]							= "*** $N has left the channel.";
-	events[E_NICK]							= "*** $N is now known as $n.";
-	events[E_QUIT]							= "*** $N ($I@$A) has quit IRC ($R)";
-	events[E_KICK]							= "*** $N has been kicked from $C by $n ($R)";
-	events[E_TOPIC]							= "*** $C Topic changed by $N: $T";
-	events[E_SNOTICE]						= "-$N- $R";
-	events[E_UNOTICE]						= "-$N- $R";
-	events[E_NOTIFY_ON]						= "*** $N has joined IRC.";
-	events[E_NOTIFY_OFF]					= "*** $N has left IRC.";
 
-	commands[CMD_KICK]					= "Ouch!";
-	commands[CMD_QUIT]					= "Vision[$V]: i've been blurred!";
-	commands[CMD_IGNORE]				= "*** $N is now ignored ($i).";
-	commands[CMD_UNIGNORE]				= "*** $N is no longer ignored.";
-	commands[CMD_AWAY]					= "is idle: $R";
-	commands[CMD_BACK]					= "has returned";
-	commands[CMD_UPTIME]				= "OS Uptime [BeOS]: $U";
+  colors[C_TEXT]                      = myBlack;
+  colors[C_BACKGROUND]                = myWhite;
+  colors[C_NAMES]                     = myBlack;
+  colors[C_NAMES_BACKGROUND]          = myWhite;
+  colors[C_URL]                       = URL_COLOR;
+  colors[C_SERVER]                    = myBlack;
+  colors[C_NOTICE]                    = NOTICE_COLOR;
+  colors[C_ACTION]                    = ACTION_COLOR;
+  colors[C_QUIT]                      = QUIT_COLOR;
+  colors[C_ERROR]                     = ERROR_COLOR;
+  colors[C_NICK]                      = NICK_COLOR;
+  colors[C_MYNICK]                    = MYNICK_COLOR;
+  colors[C_JOIN]                      = JOIN_COLOR;
+  colors[C_KICK]                      = KICK_COLOR;
+  colors[C_WHOIS]                     = WHOIS_COLOR;
+  colors[C_OP]                        = OP_COLOR;
+  colors[C_HELPER]                    = OP_COLOR;
+  colors[C_VOICE]                     = VOICE_COLOR;
+  colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
+  colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
+  colors[C_IGNORE]                    = IGNORE_COLOR;
+  colors[C_INPUT]                     = INPUT_COLOR;
+  colors[C_INPUT_BACKGROUND]          = INPUT_BG_COLOR;
+  colors[C_WINLIST_BACKGROUND]        = WINLIST_BG_COLOR;
+  colors[C_WINLIST_TEXT]              = myBlack;
+  colors[C_WINLIST_NEWS]              = JOIN_COLOR;
+  colors[C_WINLIST_NICK]              = QUIT_COLOR;
+  colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
+  colors[C_WINLIST_VOID]              = WINLIST_VOID_COLOR;
+  colors[C_WALLOPS]                   = WALLOPS_COLOR;
+  colors[C_NICKDISPLAY]               = NICK_DISPLAY;
+
+  client_font[F_TEXT]    = new BFont (be_fixed_font);
+  client_font[F_SERVER]  = new BFont (be_fixed_font);
+  client_font[F_URL]     = new BFont (be_fixed_font);
+  client_font[F_NAMES]   = new BFont (be_plain_font);
+  client_font[F_INPUT]   = new BFont (be_fixed_font);
+  client_font[F_WINLIST] = new BFont (be_plain_font);
+
+  events[E_JOIN]            = "*** $N ($I@$A) has joined the channel.";
+  events[E_PART]            = "*** $N has left the channel.";
+  events[E_NICK]            = "*** $N is now known as $n.";
+  events[E_QUIT]            = "*** $N ($I@$A) has quit IRC ($R)";
+  events[E_KICK]            = "*** $N has been kicked from $C by $n ($R)";
+  events[E_TOPIC]           = "*** $C Topic changed by $N: $T";
+  events[E_SNOTICE]         = "-$N- $R";
+  events[E_UNOTICE]         = "-$N- $R";
+  events[E_NOTIFY_ON]       = "*** $N has joined IRC.";
+  events[E_NOTIFY_OFF]      = "*** $N has left IRC.";
+
+  commands[CMD_KICK]        = "Ouch!";
+  commands[CMD_QUIT]        = "Vision[$V]: i've been blurred!";
+  commands[CMD_IGNORE]      = "*** $N is now ignored ($i).";
+  commands[CMD_UNIGNORE]    = "*** $N is no longer ignored.";
+  commands[CMD_AWAY]        = "is idle: $R";
+  commands[CMD_BACK]        = "has returned";
+  commands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
 }
 
 void
@@ -173,7 +173,7 @@ VisionApp::ThreadStates (void)
   thread_id team (Team());
   int32 cookie (0);
   thread_info info;
-	
+
   BString buffer;
   int32 count (0);
 
@@ -182,7 +182,7 @@ VisionApp::ThreadStates (void)
     buffer << "thread: " << info.thread;
     buffer << " name:  " << info.name;
     buffer << " state: ";
-			
+
     switch ((int32)info.state)
     {
       case B_THREAD_RUNNING:
@@ -225,10 +225,10 @@ VisionApp::ThreadStates (void)
         {
           buffer << "???\n";
         }
-    }								
+    }
     ++count;
   }
-	
+
   if (buffer.Length())
   {
     BAlert *alert (new BAlert (
@@ -247,26 +247,24 @@ VisionApp::ThreadStates (void)
 void
 VisionApp::InitSettings (void)
 {
-    if (debugsettings)
-      printf (":SETTINGS: loading...\n");
+  if (debugsettings)
+    printf (":SETTINGS: loading...\n");
       
-	visionSettings = new SettingsFile ("VisionSettings", "Vision");
-	// :TODO: Add default settings here
-
+  visionSettings = new SettingsFile ("VisionSettings", "Vision");
     
-	if (visionSettings->InitCheck() == B_OK)
-		visionSettings->Load();	
-	else
-      printf(":ERROR: Error Loading /Vision/VisionSettings\n");
+  if (visionSettings->InitCheck() == B_OK)
+    visionSettings->Load();
+  else
+    printf(":ERROR: Error Loading /Vision/VisionSettings\n");
       
-    LoadDefaults (SET_SERVER);
-    LoadDefaults (SET_GENERAL);
-    LoadDefaults (SET_WINDOW);
-    LoadDefaults (SET_NOTIFY);
- 
-    settingsloaded = true;
-    if (debugsettings)
-      printf (":SETTINGS: done loading\n");
+  LoadDefaults (SET_SERVER);
+  LoadDefaults (SET_GENERAL);
+  LoadDefaults (SET_WINDOW);
+  LoadDefaults (SET_NOTIFY);
+  
+  settingsloaded = true;  
+  if (debugsettings)
+    printf (":SETTINGS: done loading\n");
       
 
 }
@@ -770,21 +768,21 @@ VisionApp::Broadcast (BMessage *msg)
 void
 VisionApp::Broadcast (BMessage *msg, const char *serverName, bool active)
 {
-//	Lock();
+//  Lock();
 //
-//	for (int32 i = 0; i < CountWindows(); ++i)
-//	{
-//		ServerWindow *serverWindow (dynamic_cast<ServerWindow *>(WindowAt (i)));
+//  for (int32 i = 0; i < CountWindows(); ++i)
+//  {
+//    ServerWindow *serverWindow (dynamic_cast<ServerWindow *>(WindowAt (i)));
 //
-//		if (serverWindow
-//		&&  serverWindow->Id().ICompare (serverName) == 0)
-//			if (active)
-//				serverWindow->PostActive (msg);
-//			else
-//				serverWindow->RepliedBroadcast (msg);
-//	}
+//    if (serverWindow
+//    &&  serverWindow->Id().ICompare (serverName) == 0)
+//      if (active)
+//        serverWindow->PostActive (msg);
+//      else
+//        serverWindow->RepliedBroadcast (msg);
+//  }
 //
-//	Unlock();
+//  Unlock();
 }
 
 

@@ -43,6 +43,7 @@
 #include "MessageAgent.h"
 #include "ChannelAgent.h"
 #include "ClientWindow.h"
+#include "StatusView.h"
 #include "ClientAgent.h"
 #include "ClientInputFilter.h"
 #include "StringManip.h"
@@ -97,6 +98,7 @@ ClientAgent::ClientAgent (
   frame (frame_),
   sMsgr (sMsgr_)
 {
+  myLag = "0.000";
   Init();
 }
 
@@ -143,18 +145,18 @@ ClientAgent::Show (void)
 void
 ClientAgent::Init (void)
 {    
-  textColor     = vision_app->GetColor (C_TEXT);
-  nickColor     = vision_app->GetColor (C_NICK);
-  ctcpReqColor  = vision_app->GetColor (C_CTCP_REQ);
-  quitColor     = vision_app->GetColor (C_QUIT);
-  errorColor    = vision_app->GetColor (C_ERROR);
-  whoisColor    = vision_app->GetColor (C_WHOIS);
-  joinColor     = vision_app->GetColor (C_JOIN);
-  myNickColor   = vision_app->GetColor (C_MYNICK);
+  textColor        = vision_app->GetColor (C_TEXT);
+  nickColor        = vision_app->GetColor (C_NICK);
+  ctcpReqColor     = vision_app->GetColor (C_CTCP_REQ);
+  quitColor        = vision_app->GetColor (C_QUIT);
+  errorColor       = vision_app->GetColor (C_ERROR);
+  whoisColor       = vision_app->GetColor (C_WHOIS);
+  joinColor        = vision_app->GetColor (C_JOIN);
+  myNickColor      = vision_app->GetColor (C_MYNICK);
   nickdisplayColor = vision_app->GetColor (C_NICKDISPLAY);
-  actionColor   = vision_app->GetColor (C_ACTION);
-  opColor       = vision_app->GetColor (C_OP);
-  inputColor    = vision_app->GetColor (C_INPUT);
+  actionColor      = vision_app->GetColor (C_ACTION);
+  opColor          = vision_app->GetColor (C_OP);
+  inputColor       = vision_app->GetColor (C_INPUT);
 
   myFont     = *(vision_app->GetClientFont (F_TEXT));
   serverFont = *(vision_app->GetClientFont (F_SERVER));
@@ -240,10 +242,10 @@ ClientAgent::AddMenuItems (BPopUpMenu *pmenu)
 {
   BMenuItem *item;
   
-  ChannelAgent *channel;
-  MessageAgent *message;
+  ChannelAgent *channelagent;
+  MessageAgent *messageagent;
   
-  if ((channel = dynamic_cast<ChannelAgent *>(this)))
+  if ((channelagent = dynamic_cast<ChannelAgent *>(this)))
   {
     // Channel Options
     item = new BMenuItem("Channel Options", new BMessage (M_CHANNEL_OPTIONS_SHOW));
@@ -253,12 +255,12 @@ ClientAgent::AddMenuItems (BPopUpMenu *pmenu)
     pmenu->AddSeparatorItem();
   }
 
-  if ((message = dynamic_cast<MessageAgent *>(this)))
+  if ((messageagent = dynamic_cast<MessageAgent *>(this)))
   {
     // Whois
     item = new BMenuItem("Whois", new BMessage (M_MSG_WHOIS));
     item->SetTarget (this);
-    if (message->Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
+    if (messageagent->Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
       item->SetEnabled (false);
     pmenu->AddItem (item);
     
@@ -565,6 +567,15 @@ ClientAgent::MessageReceived (BMessage *msg)
 
         Submit (buffer, clear, add2history);
       } 
+      break;
+
+    case M_LAG_CHANGED:
+      {
+        msg->FindString ("lag", &myLag);
+        
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String());
+      }
       break;
 
     case M_DISPLAY:
