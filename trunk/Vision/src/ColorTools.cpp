@@ -1,3 +1,13 @@
+/*******************************************************************************
+/
+/	File:			ColorTools.cpp
+/
+/   Description:    Additional experimental color manipulation functions.
+/
+/	Copyright 2000, Be Incorporated, All Rights Reserved
+/
+*******************************************************************************/
+
 #include "ColorTools.h"
 
 #if B_BEOS_VERSION <= B_BEOS_VERSION_MAUI
