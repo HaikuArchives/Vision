@@ -88,9 +88,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
   
   
     case RPL_WELCOME:          // 001
-    case RPL_WELCOME2:         // 002
-    case RPL_WELCOME3:         // 003
-    case RPL_WELCOME4:         // 004
+    case RPL_YOURHOST:         // 002
+    case RPL_CREATED:          // 003
+    case RPL_MYINFO:          // 004
     {
       isConnected  = true;
       isConnecting = false;
@@ -115,7 +115,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       Display (theMsg.String(), 0);
       
       
-      if (num == RPL_WELCOME4)
+      if (num == RPL_MYINFO)
       {
         // set "real" hostname
         serverHostName = (GetWord (data, 1));
@@ -155,7 +155,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     }
     
         
-    case RPL_MYINFO:         // 005
+    case RPL_PROTOCTL:         // 005
     {
       // this numeric also serves as RPL_NNMAP on Newnet
 

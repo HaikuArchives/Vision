@@ -83,7 +83,7 @@ ClientWindow::QuitRequested (void)
   }
 
 
- // vision_app->SetRect ("clientWinRect", Frame());
+  vision_app->SetRect ("clientWinRect", Frame());
   
   BMessage killMeNow (B_QUIT_REQUESTED);
   killMeNow.AddBool ("real_thing", true);  

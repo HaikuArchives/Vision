@@ -31,11 +31,11 @@ const int ZERO                        = 0;
 // NUMERICS
 
 const int RPL_WELCOME                 = 001;
-const int RPL_WELCOME2                = 002;
-const int RPL_WELCOME3                = 003;
-const int RPL_WELCOME4                = 004;
+const int RPL_YOURHOST                = 002;
+const int RPL_CREATED                 = 003;
+const int RPL_MYINFO                  = 004;
 
-const int RPL_MYINFO                  = 005; // conflict (most)
+const int RPL_PROTOCTL                = 005; // conflict (most)
 const int RPL_NNMAP                   = 005; // conflict (newnet)
 
 const int RPL_ULMAP                   = 006;
