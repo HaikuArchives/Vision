@@ -3,6 +3,10 @@ http://vision.sourceforge.net
 
 [0.1.0315]
  2001-03-18
+   * No longer relies on .rsrc file for Version info
+   * Remove old #define not needed anymore
+   * Begin work on IRCd dectection
+   * Rename numerics 615, 616, 617 to standard names
    * Fix bug with \n's in StringToURI()
    * Rename RelativePath() to RelToAbsPath()
    * Changed some BString <<'s to +='s in ParseENums (faster)

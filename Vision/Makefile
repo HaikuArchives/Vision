@@ -41,6 +41,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 #CC := g++ -c -pipe
 CC := g++ -c -pipe
 CFLAGS :=
+CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 CFLAGS += -O3
 CFLAGS += -fno-pic
 CFLAGS += -ffast-math
@@ -109,9 +110,6 @@ endif
 	@echo linking $@
 	@$(LD) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo merging resources
-	@echo resource\(\'CSTR\', 100, \"VERSION\"\) { \"$(VERSION)\" } >version.r
-	@mwbres -merge -o $(SRCDIR)/Vision.rsrc version.r
-	@rm -f version.r
 	@xres -o $@ $(SRCDIR)/Vision.rsrc
 	@mimeset -f $@
 	

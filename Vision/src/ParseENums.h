@@ -27,6 +27,9 @@
 
 const int ZERO                        = 0;
 
+
+// NUMERICS
+
 const int RPL_WELCOME                 = 001;
 const int RPL_WELCOME2                = 002;
 const int RPL_WELCOME3                = 003;
@@ -185,10 +188,25 @@ const int ERR_NOSERVICEHOST           = 492;
 const int ERR_UMODEUNKNOWNFLAG        = 501;
 const int ERR_USERSDONTMATCH          = 502;
 
-/// Ultimate Support ///
-const int ULTIMATE_USERMODES          = 615;
-const int ULTIMATE_REALHOSTNAME       = 616;
-const int ULTIMATE_REGISTEREDBOT      = 617;
+const int RPL_WHOISUSERMODES          = 615;
+const int RPL_WHOISREALHOSTNAME       = 616;
+const int RPL_WHOISREGISTEREDBOT      = 617;
+
+
+
+/// IRCDS
+/// an effort to properly support conflicting numeric meanings
+
+const int IRCD_STANDARD               =  1;
+const int IRCD_HYBRID                 =  2;  // "hybrid"    
+const int IRCD_ULTIMATE               =  3;  // "UltimateIRCd"
+const int IRCD_COMSTUD                =  4;  // "comstud"
+const int IRCD_FUCKOFF                =  5;  // "Fuckoff"
+const int IRCD_UNDERNET               =  6;  // "u2."
+const int IRCD_BAHAMUT                =  7;  // "bahamut"
+const int IRCD_PTLINK                 =  8;  // "PTlink"
+const int IRCD_CONFERENCEROOM         =  9;  // "CR"
+const int IRCD_NEWNET                 = 10;  // "nn-"
 
 
 #endif

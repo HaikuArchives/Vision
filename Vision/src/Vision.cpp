@@ -378,11 +378,7 @@ VisionApp::pClientWin() const
 BString
 VisionApp::VisionVersion (void)
 {
-  BResources *appResources = AppResources(); 
-  size_t len;
-  char *str = (char *)appResources->FindResource (B_STRING_TYPE, "VERSION", &len); 
-  BString output (str);
-  free (str);
+  BString output (VERSION_STRING);
   return output;
 }
 
