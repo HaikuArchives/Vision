@@ -341,7 +341,7 @@ ServerAgent::Establish (void *arg)
   BString remoteIP;
   int32 serverSid;
   int32 serverSock (-1);
-  if (!(sMsgrE->IsValid() && (sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg) == B_OK)));
+  if (!(sMsgrE->IsValid() && (sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg) == B_OK)))
   {
     printf (":ERROR: sMsgr not valid in Establish() -- bailing\n");
     return B_ERROR;
