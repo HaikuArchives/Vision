@@ -739,7 +739,22 @@ VisionApp::LoadURL (const char *url)
 
   const char *args[] = { argument.String(), 0 };
   
-  be_roster->Launch ("text/html", 1, const_cast<char **>(args));
+  if (argument.IFindFirst ("file:") == 0)
+  {
+    // The URL is guaranteed to be at least "file:/"
+    BString file(argument.String() + 5);
+
+    // todo: Should probably see if the file exists before going through
+    //       all this, but, oh well... ;)
+	file.Prepend("/boot/beos/system/Tracker ");
+	file += " &";									// just in case
+
+    system(file.String());
+  }
+  else
+  {
+  	be_roster->Launch ("text/html", 1, const_cast<char **>(args));
+  }
 }
 
 
