@@ -787,6 +787,26 @@ ChannelAgent::MessageReceived (BMessage *msg)
       }
       break;
 
+    case POPUP_DCCCHAT: 
+      { 
+        int32 index (0); 
+        BString targetNick; 
+        NameItem *myUser; 
+
+        /// iterate /// 
+        while ((i = namesList->CurrentSelection(index++)) >= 0) 
+        { 
+          myUser = static_cast<NameItem *>(namesList->ItemAt(i)); 
+          targetNick = myUser->Name(); 
+ 
+           BString command ("/dcc chat "); 
+           command += targetNick; 
+
+           ParseCmd (command.String()); 
+         } 
+       } 
+       break; 
+
     case POPUP_KICK:
       {
         int32 index (0);
