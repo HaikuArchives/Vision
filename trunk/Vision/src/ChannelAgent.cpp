@@ -568,6 +568,31 @@ ChannelAgent::MessageReceived (BMessage *msg)
         {
           item->SetName (newNick);
           fNamesList->SortItems (SortNames);
+          if (fLastExpansion.ICompare (oldNick, fLastExpansion.Length()) == 0)
+          {
+            int32 count (fRecentNicks.CountItems());
+            BString *name (NULL);
+            
+            for (i = 0; i < count ; i++)
+              if ((name = (BString *)fRecentNicks.ItemAt (i))->ICompare (oldNick) == 0)
+              {
+                if (fLastExpansion.ICompare (newNick, fLastExpansion.Length()) == 0)
+                  name->SetTo (newNick);
+                else
+                  delete fRecentNicks.RemoveItem (i);
+                break;
+              }
+            count = fCompletionNicks.CountItems();
+            for (i = 0; i < count; i++)
+              if ((name = (BString *)fCompletionNicks.ItemAt (i))->ICompare (oldNick) == 0)
+              {
+                if (fLastExpansion.ICompare (newNick, fLastExpansion.Length()) == 0)
+                  name->SetTo (newNick);
+                else
+                  delete fCompletionNicks.RemoveItem (i);
+                break;
+              }
+          }
         }
         else
           break;

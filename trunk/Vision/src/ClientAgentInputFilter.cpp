@@ -237,6 +237,18 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			result = B_SKIP_MESSAGE;
 		}
 		break;
+
+	case B_TAB: // tab key
+		{
+			// used for tabcompletion for nickname/channelname/etc
+			fWindow->TabExpansion();
+		    BMessage logMessage (M_CLIENT_LOG);
+		    logMessage.AddString ("name", fWindow->fId.String());
+		    logMessage.AddString ("data", "DEBUG: Tab completion used\n");
+		    fWindow->fSMsgr.SendMessage (&logMessage);
+			result = B_SKIP_MESSAGE;
+		}
+		break;
 	}
 
 
@@ -291,14 +303,6 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 				fWindow->fTextScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
 				if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() != max)
 					fWindow->fText->ScrollBy (0.0, height);
-				result = B_SKIP_MESSAGE;
-			}
-			break;
-
-		case B_TAB: // tab key
-			{
-				// used for tabcompletion for nickname/channelname/etc
-				fWindow->TabExpansion();
 				result = B_SKIP_MESSAGE;
 			}
 			break;
