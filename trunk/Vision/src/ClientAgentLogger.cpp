@@ -96,8 +96,8 @@ ClientAgentLogger::SetupLogging (void)
   if (logFile->InitCheck() == B_NO_INIT)
   {
     time_t myTime (time (0));
-    struct tm *ptr;
-    ptr = localtime (&myTime);
+    struct tm ptr;
+    localtime_r (&myTime, &ptr);
 
     app_info ai;
     be_app->GetAppInfo (&ai);
@@ -125,7 +125,7 @@ ClientAgentLogger::SetupLogging (void)
     if (vision_app->GetBool ("log_filetimestamp"))
     {
       char tempDate[16];
-      strftime (tempDate, 16, "_%Y%m%d", ptr);
+      strftime (tempDate, 16, "_%Y%m%d", &ptr);
       wName << tempDate;
     }
 
@@ -141,11 +141,11 @@ ClientAgentLogger::SetupLogging (void)
       char tempTime[96];
       if (logFile->Position() == 0) // new file
       {
-        strftime (tempTime, 96, "Session Start: %a %b %d %H:%M %Y\n", ptr);
+        strftime (tempTime, 96, "Session Start: %a %b %d %H:%M %Y\n", &ptr);
       }
       else
       {
-        strftime (tempTime, 96, "\n\nSession Start: %a %b %d %H:%M %Y\n", ptr);
+        strftime (tempTime, 96, "\n\nSession Start: %a %b %d %H:%M %Y\n", &ptr);
       }
       BString timeString(tempTime);
       logFile->Write (timeString.String(), timeString.Length());
