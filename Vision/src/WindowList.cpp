@@ -116,6 +116,7 @@ WindowList::MouseDown (BPoint myPoint)
   if (selected >= 0)
   {
     BOutlineListView::MouseDown (myPoint);
+
     BMessage *inputMsg (Window()->CurrentMessage());
     int32 mousebuttons (0),
           keymodifiers (0);
@@ -123,26 +124,29 @@ WindowList::MouseDown (BPoint myPoint)
     inputMsg->FindInt32 ("buttons", &mousebuttons);
     inputMsg->FindInt32 ("modifiers", &keymodifiers);
     
-    Select (selected);
+    // slight kludge to make sure the expand/collapse triangles behave how they should
+    if ((myPoint.x > 10.0) || Superitem(ItemAt(selected)) != NULL)
+      Select (selected);
 
-    if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
-    && (keymodifiers & B_SHIFT_KEY)   == 0
+    if ((keymodifiers & B_SHIFT_KEY)  == 0
     && (keymodifiers & B_OPTION_KEY)  == 0
     && (keymodifiers & B_COMMAND_KEY) == 0
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
+      if (mousebuttons == B_SECONDARY_MOUSE_BUTTON)
+      {
+        BListItem *item = ItemAt(IndexOf(myPoint));
+        if (item && !item->IsSelected())
+          Select (IndexOf (myPoint));
 
-      BListItem *item = ItemAt(IndexOf(myPoint));
-      if (item && !item->IsSelected())
-        Select (IndexOf (myPoint));
-
-      BuildPopUp();
-      myPopUp->Go (
-        ConvertToScreen (myPoint),
-        true,
-        false,
-        ConvertToScreen (ItemFrame (selected)),
-        true);
+        BuildPopUp();
+        myPopUp->Go (
+          ConvertToScreen (myPoint),
+          true,
+          false,
+          ConvertToScreen (ItemFrame (selected)),
+          true);
+      }
     }
   }
   else
@@ -161,7 +165,7 @@ WindowList::MouseDown (BPoint myPoint)
     }
     
     if (activeagent)
-      Select (IndexOf (activeagent));
+        Select (IndexOf (activeagent));
   }    
 }
 
@@ -313,7 +317,6 @@ WindowList::GetColor (int32 which) const
 
   return color;
 }
-
 
 void
 WindowList::SetFont (int32 which, const BFont *font)
