@@ -129,6 +129,11 @@ ClientAgent::AllAttached (void)
     sMsgr = BMessenger (this);
   }
 
+  // we initialize the color constants for the input control here
+  // because BTextControl ignores them prior to being attached for some reason
+  input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
+    &inputColor);
+  input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
 }
 
 void
@@ -176,19 +181,16 @@ ClientAgent::Init (void)
                 "Input", 0, 0,
                 0,
                 B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
-  input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
-    &inputColor);
+  
   input->SetDivider (0);
   input->ResizeToPreferred();
   input->MoveTo (
            0,
            frame.bottom - input->Frame().Height() + 1);
-
-  input->TextView()->AddFilter (new ClientAgentInputFilter (this));
   AddChild (input);
-
-  input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
+  input->TextView()->AddFilter (new ClientAgentInputFilter (this));
   input->Invalidate();
+  
 
   history = new HistoryMenu (BRect (
     frame.right - 11,
