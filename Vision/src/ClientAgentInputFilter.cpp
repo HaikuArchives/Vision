@@ -479,6 +479,7 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 		else
 		{
 			msg.AddInt32 ("which", PASTE_MULTI);
+			msgr.SendMessage (&msg);
 		}
 	}
 
