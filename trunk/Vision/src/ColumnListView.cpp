@@ -2459,11 +2459,11 @@ void OutlineView::AddToSelection(BRow *row)
 	}
 }
 
-void OutlineView::RecursiveDeleteRows(BRowContainer *list, bool owner)
+void OutlineView::RecursiveDeleteRows(BRowContainer* List, bool IsOwner)
 {
-	if (list) {
+	if (List) {
 		while (true) {
-			BRow *row = list->RemoveItemAt(0L);
+			BRow *row = List->RemoveItemAt(0L);
 			if (row == 0)
 				break;
 				
@@ -2473,8 +2473,8 @@ void OutlineView::RecursiveDeleteRows(BRowContainer *list, bool owner)
 			delete row;
 		}
 	
-		if (owner)
-			delete list;
+		if (IsOwner)
+			delete List;
 	}
 }
 
@@ -3356,31 +3356,40 @@ void OutlineView::ToggleFocusRowOpen()
 
 
 // xxx Could use CopyBits here to speed things up.
-void OutlineView::ExpandOrCollapse(BRow *parent, bool expand)
+void OutlineView::ExpandOrCollapse(BRow* ParentRow, bool Expand)
 {
-	if (parent) {
-		if (parent->fIsExpanded == expand)
+	if (ParentRow) {
+		if (ParentRow->fIsExpanded == Expand)
 			return;
 			
-		parent->fIsExpanded = expand;
+		ParentRow->fIsExpanded = Expand;
 	
 		BRect parentRect;
-		if (FindRect(parent, &parentRect)) {
+		if (FindRect(ParentRow, &parentRect)) {
 			// Determine my new height
 			float subTreeHeight = 0.0;
-			if (parent->fIsExpanded)
-				for (RecursiveOutlineIterator iterator(parent->fChildList); iterator.CurrentRow(); iterator.GoToNext())
+			if (ParentRow->fIsExpanded)
+				for (RecursiveOutlineIterator iterator(ParentRow->fChildList);
+				     iterator.CurrentRow();
+				     iterator.GoToNext()
+				    )
+				{
 					subTreeHeight += iterator.CurrentRow()->Height()+1;
+				}
 			else
-				for (RecursiveOutlineIterator iterator(parent->fChildList); iterator.CurrentRow(); iterator.GoToNext())
+				for (RecursiveOutlineIterator iterator(ParentRow->fChildList);
+				     iterator.CurrentRow();
+				     iterator.GoToNext()
+				    )
+				{
 					subTreeHeight -= iterator.CurrentRow()->Height()+1;
-		
+				}
 			fItemsHeight += subTreeHeight;
 	
 			// Adjust focus row if necessary.
 			if (FindRect(fFocusRow, &fFocusRowRect) == false) {
 				// focus row is in a subtree that has collapsed, move it up to the parent.
-				fFocusRow = parent;
+				fFocusRow = ParentRow;
 				FindRect(fFocusRow, &fFocusRowRect);
 			}
 			
@@ -3489,45 +3498,45 @@ void OutlineView::UpdateRow(BRow *row)
 	}
 }
 
-void OutlineView::AddRow(BRow *row, int32 index, BRow *parent)
+void OutlineView::AddRow(BRow* Row, int32 Index, BRow* ParentRow)
 {
-	if(row) {
-		row->fParent = parent;
+	if(Row) {
+		Row->fParent = ParentRow;
 	
 		if (fMasterView->SortingEnabled()) {
 			// Ignore index here.
-			if (parent) {
-				if (parent->fChildList == 0)
-					parent->fChildList = new BRowContainer;
+			if (ParentRow) {
+				if (ParentRow->fChildList == 0)
+					ParentRow->fChildList = new BRowContainer;
 				
-				AddSorted(parent->fChildList, row);
+				AddSorted(ParentRow->fChildList, Row);
 			} else
-				AddSorted(&fRows, row);
+				AddSorted(&fRows, Row);
 		} else {
 			// Note, a -1 index implies add to end if sorting is not enabled
-			if (parent) {
-				if (parent->fChildList == 0)
-					parent->fChildList = new BRowContainer;
+			if (ParentRow) {
+				if (ParentRow->fChildList == 0)
+					ParentRow->fChildList = new BRowContainer;
 				
-				if (index < 0 || index > parent->fChildList->CountItems())
-					parent->fChildList->AddItem(row);
+				if (Index < 0 || Index > ParentRow->fChildList->CountItems())
+					ParentRow->fChildList->AddItem(Row);
 				else	
-					parent->fChildList->AddItem(row, index);
+					ParentRow->fChildList->AddItem(Row, Index);
 			} else {
-				if (index < 0 || index >= fRows.CountItems())
-					fRows.AddItem(row);
+				if (Index < 0 || Index >= fRows.CountItems())
+					fRows.AddItem(Row);
 				else	
-					fRows.AddItem(row, index);
+					fRows.AddItem(Row, Index);
 			}
 		}
 			
-		if (parent == 0 || parent->fIsExpanded)
-			fItemsHeight += row->Height() + 1;
+		if (ParentRow == 0 || ParentRow->fIsExpanded)
+			fItemsHeight += Row->Height() + 1;
 	
 		FixScrollBar(false);
 	
 		BRect newRowRect;
-		bool newRowIsInOpenBranch = FindRect(row, &newRowRect);
+		bool newRowIsInOpenBranch = FindRect(Row, &newRowRect);
 	
 		if (fFocusRow && fFocusRowRect.top > newRowRect.bottom) {
 			// The focus row has moved.
@@ -3543,8 +3552,8 @@ void OutlineView::AddRow(BRow *row, int32 index, BRow *parent)
 					// everything down and redraw the first line.
 					BRect source(fVisibleRect);
 					BRect dest(fVisibleRect);
-					source.bottom -= row->Height() + 1;
-					dest.top += row->Height() + 1;
+					source.bottom -= Row->Height() + 1;
+					dest.top += Row->Height() + 1;
 					CopyBits(source, dest);
 					Invalidate(BRect(fVisibleRect.left, fVisibleRect.top, fVisibleRect.right,
 						fVisibleRect.top + newRowRect.Height()));
@@ -3592,8 +3601,8 @@ void OutlineView::AddRow(BRow *row, int32 index, BRow *parent)
 	
 		// If the parent was previously childless, it will need to have a latch drawn.
 		BRect parentRect;
-		if (parent && parent->fChildList->CountItems() == 1
-			&& FindVisibleRect(parent, &parentRect))
+		if (ParentRow && ParentRow->fChildList->CountItems() == 1
+			&& FindVisibleRect(ParentRow, &parentRect))
 			Invalidate(parentRect);
 	}
 }
@@ -3782,17 +3791,23 @@ BRow* OutlineView::FocusRow() const
 	return fFocusRow;
 }
 
-void OutlineView::SetFocusRow(BRow *row, bool select)
+void OutlineView::SetFocusRow(BRow* Row, bool Select)
 {
-	if (row) {
-		if(select)
-			AddToSelection(row);
-		if(fFocusRow==row)
+	if (Row)
+	{
+		if(Select)
+			AddToSelection(Row);
+			
+		if(fFocusRow == Row)
 			return;
+			
 		Invalidate(fFocusRowRect); // invalidate previous
-		fTargetRow=fFocusRow=row;
+	
+		fTargetRow = fFocusRow = Row;
+
 		FindVisibleRect(fFocusRow, &fFocusRowRect);
 		Invalidate(fFocusRowRect); // invalidate current
+
 		fFocusRowRect.right = 10000;
 		fMasterView->SelectionChanged();
 	}
