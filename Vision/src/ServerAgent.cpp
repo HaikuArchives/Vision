@@ -102,6 +102,7 @@ ServerAgent::ServerAgent (
     fServerHostName (id_),
     fInitialMotd (true),
     fCmds (net.FindString ("autoexec")),
+    fSocket(-1),
     fListAgent (NULL),
     fNetworkData (net),
     fServerIndex (0),
@@ -686,7 +687,7 @@ ServerAgent::Establish (void *arg)
         break;
     }    
   // take a nap, so the ServerAgent can do things
-    snooze(20000);
+     snooze(20000);
   }
   vision_app->RemoveIdent (remoteIP.String());
 
@@ -1466,6 +1467,12 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_SERVER_DISCONNECT:
       {
+#ifdef BONE_BUILD
+          close (fSocket);
+#elif NETSERVER_BUILD
+          closesocket (fSocket);
+#endif
+		fSocket = -1;
         if (fIsQuitting)
           break;
           
@@ -1478,11 +1485,6 @@ ServerAgent::MessageReceived (BMessage *msg)
         // let the user know
         if (fIsConnected)
         {
-#ifdef BONE_BUILD
-          close (fSocket);
-#elif NETSERVER_BUILD
-          closesocket (fSocket);
-#endif
           fIsConnected = false;
           BString sAnnounce;
           sAnnounce += S_SERVER_DISCONNECT;
