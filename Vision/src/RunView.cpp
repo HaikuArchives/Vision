@@ -714,8 +714,12 @@ RunView::MouseDown (BPoint point)
 		{
 			SetMouseEventMask (B_POINTER_EVENTS);
 			tracking = 1;
+			if ((s.line < sp_start.line)
+				|| (s.line == sp_start.line && s.offset < sp_start.offset)
+			  	|| (s.line > sp_end.line)
+			  	|| (s.line == sp_end.line && s.offset > sp_end.offset))
+			  	Select (s,s);
 			track_offset = s;
-			Select (track_offset, track_offset);
 		}
 	}
 	else if (buttons					== B_PRIMARY_MOUSE_BUTTON
@@ -817,9 +821,44 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 			}
 			break;
 
-
 		case B_INSIDE_VIEW:
-			if (tracking == 1 || tracking == 2)
+
+			if ((tracking == 1) && (sp_start != sp_end))
+			{
+				BMessage msg (B_MIME_DATA);
+				BString text;
+
+				GetSelectionText (text);
+				msg.AddData (
+					"text/plain",
+					B_MIME_TYPE,
+					text.String(),
+					text.Length() + 1);
+					
+				msg.AddString ("be:clip_name", "RunView Clipping");
+				msg.AddInt32 ("be:actions", B_COPY_TARGET);
+
+				BRect frame (
+					lines[sp_start.line]->edges[sp_start.offset],
+					lines[sp_start.line]->top,
+					lines[sp_end.line]->edges[sp_end.offset],
+					lines[sp_end.line]->bottom);
+
+				if (sp_start.line != sp_end.line)
+				{
+					frame.left = 0.0;
+					frame.right = Bounds().right;
+				}
+
+				if (frame.Height() > Bounds().Height())
+					frame = Bounds();
+
+
+				DragMessage (&msg, frame);
+
+				tracking = 3;
+			}
+			else if (tracking == 1 || tracking == 2)
 				ExtendTrackingSelect (point);
 			break;
 	}
@@ -1377,6 +1416,10 @@ RunView::Clear (void)
 	line_count = 0;
 	RecalcScrollBar (true);
 	Invalidate();
+	
+	sp_start.line = 0;
+	sp_start.offset = 0;
+	sp_end = sp_start;
 
 	if (working)
 		working->top = 0.0;
@@ -1529,9 +1572,9 @@ RunView::PositionAt (BPoint point) const
 }
 
 BPoint
-RunView::PointAt (SelectPos) const
+RunView::PointAt (SelectPos s) const
 {
-	return BPoint();
+	return BPoint(lines[s.line]->top + lines[s.line]->bottom / 2.0, lines[s.line]->edges[s.offset]);
 }
 
 void
