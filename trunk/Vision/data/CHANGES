@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0619]
+ 2001-06-19
+   * fixed crasher in ServerAgent
+
 [0.2.0612]
  2001-06-12
    * Vision properly recognizes and deals with UnrealIRCd

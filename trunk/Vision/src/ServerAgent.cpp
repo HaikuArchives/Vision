@@ -581,6 +581,8 @@ void
 ServerAgent::SendData (const char *cData)
 {
   int32 length;
+  if (!cData)
+    return;
   BString data (cData);
 
   data.Append("\r\n");
