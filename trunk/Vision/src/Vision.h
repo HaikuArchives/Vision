@@ -34,6 +34,7 @@
 
 class BFont;
 class AboutWindow;
+class SetupWindow;
 class ClientWindow;
 class SettingsFile;
 
@@ -87,9 +88,13 @@ class VisionApp : public BApplication
 	bool                    debugrecv;
 	bool                    settingsloaded;
 	
+	// temp
+	bool                    showsetupwindow;
+	
   private:
 	void					InitSettings(void);
     AboutWindow             *aboutWin;
+    SetupWindow             *setupWin;
     
     rgb_color               colors[MAX_COLORS];
     BFont                   *client_font[MAX_FONTS];
