@@ -284,7 +284,7 @@ ServerAgent::Establish (void *arg)
 #ifdef BONE_BUILD
     if (inet_aton (connectId.String(), &remoteAddr.sin_addr) == 0)
 #elif NETSERVER_BUILD
-    if ((remoteAddr.sin_addr.s_addr = inet_addr (connectId.String())) == 0)
+    if ((int)(remoteAddr.sin_addr.s_addr = inet_addr (connectId.String())) <= 0)
 #endif
     {
        struct hostent *remoteInet (gethostbyname (connectId.String()));
@@ -301,7 +301,6 @@ ServerAgent::Establish (void *arg)
 
     remoteAddr.sin_port = htons(atoi (connectPort.String()));
     remoteIP = inet_ntoa (remoteAddr.sin_addr);
-    
 
     if (useIdent)
     {
