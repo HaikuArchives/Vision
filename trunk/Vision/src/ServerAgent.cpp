@@ -974,7 +974,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         BString data;
         int32 color (-1);
         msg->FindString  ("data", &data);
-        msg->FindInt32 ("color", color);
+        msg->FindInt32 ("color", &color);
         DisplayAll (data.String(), color, &serverFont);
       }
       break;
