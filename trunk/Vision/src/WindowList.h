@@ -111,4 +111,5 @@ class WindowList : public BListView
 };
 
 const uint32 M_MENU_NUKE            = 'wlmn';
+
 #endif

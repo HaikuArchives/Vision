@@ -61,8 +61,8 @@ class VTextControlFilter : public BMessageFilter
 {
 
   public:
-									VTextControlFilter (VTextControl *);
-    virtual filter_result			Filter (BMessage *, BHandler **);
+                                    VTextControlFilter (VTextControl *);
+    virtual filter_result           Filter (BMessage *, BHandler **);
 
   private:
     VTextControl                    *parent;
