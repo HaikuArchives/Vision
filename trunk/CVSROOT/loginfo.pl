@@ -7,8 +7,8 @@
 
 system("echo running loginfo.pl");
 
-$last_dir_file = "/tmp/#visioncvs.files.lastdir";
-$summary_file  = "/tmp/#visioncvs.files.summary";
+$last_dir_file = "/tmp/#cvs.files.lastdir";
+$summary_file  = "/tmp/#cvs.files.summary";
 
 $cvsroot    = $ENV{CVSROOT}."/";
 
