@@ -51,6 +51,7 @@ class ListAgent : public BView
 	virtual void			AllAttached (void);
     static int              SortChannels (const void *, const void *);
     static int              SortUsers (const void *, const void *);
+    virtual void			Show(void);
 
     float                   ChannelWidth (void) const;
     WindowListItem          *agentWinItem;
@@ -65,7 +66,8 @@ class ListAgent : public BView
     BList                   list,
                               showing;
     BString                 filter,
-                              find;
+                              find,
+                              statusStr;
     regex_t                 re,
                               fre;
                               

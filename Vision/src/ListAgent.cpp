@@ -113,23 +113,6 @@ ListAgent::ListAgent (
   bgView->SetViewColor (212, 212, 212, 255);
   AddChild (bgView);
 
-//  //status = new StatusView (bgView->Bounds());
-//status->AddItem (new StatusItem (
-//    "Count:", "@@@@@"),
-//    true);
-//  status->AddItem (new StatusItem (
-//    "Status:", "@@@@@@@@@@@@"),
-//    true);
-//  status->AddItem (new StatusItem (
-//    "Filter:",
-//    "@@@@@@@@@@@@@@@@@@@@@@",
-//    STATUS_ALIGN_LEFT),
-//    true);
-//
-//   status->SetItemValue (2, filter.String());
-
- //  bgView->AddChild (status);
-
   frame = bgView->Bounds().InsetByCopy (1, 1);
 
   listView = new BListView (
@@ -213,10 +196,32 @@ ListAgent::AllAttached (void)
 }
 
 void
+ListAgent::Show (void)
+{
+  Window()->PostMessage (M_STATUS_CLEAR);
+  this->msgr.SendMessage (M_STATUS_ADDITEMS);
+  
+  BView::Show();
+}
+
+void
 ListAgent::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
   {
+    case M_STATUS_ADDITEMS:
+      {
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem ("Count: ", ""), true);
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem ("Status: ", ""), true);
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem ("Filter: ", "", STATUS_ALIGN_LEFT), true);
+        BString countString;
+        countString << list.CountItems();
+        vision_app->pClientWin()->pStatusView()->SetItemValue (0, countString.String(), false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (2, filter.String(), true);
+      }
+      break;
+
     case M_LIST_COMMAND:
       {
         if (!processing)
@@ -229,7 +234,7 @@ ListAgent::MessageReceived (BMessage *msg)
           processing = true;
           mFind->SetEnabled (false);
           mFindAgain->SetEnabled (false);
-          // mChannelSort->SetEnabled (false);
+          mChannelSort->SetEnabled (false);
           mUserSort->SetEnabled (false);
           mFilter->SetEnabled (false);
 
@@ -238,21 +243,25 @@ ListAgent::MessageReceived (BMessage *msg)
           listView->MakeEmpty();
           while ((item = (BListItem *)list.RemoveItem (0L)) != 0)
             delete item;
-          
-          //status->SetItemValue (0, "0");
+          if (!IsHidden())
+            vision_app->pClientWin()->pStatusView()->SetItemValue (0, "0", true);
         }
       }
       break;
 
     case M_LIST_BEGIN:
-      //status->SetItemValue (1, "Loading");
+      statusStr = "Loading";
+      if (!IsHidden())
+        vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
       channelWidth = 0.0;
       break;
 
     case M_LIST_DONE:
       {
-        //status->SetItemValue (1, "Sorting");
-        //UpdateIfNeeded();
+        statusStr = "Sorting";
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
+        // UpdateIfNeeded();
 
         if (filter.Length())
         {
@@ -300,21 +309,26 @@ ListAgent::MessageReceived (BMessage *msg)
           bar->SetProportion (low);
 			
         showing.SortItems (SortChannels);
-        //status->SetItemValue (1, "Adding");
+        statusStr = "Adding";
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
         //UpdateIfNeeded();
 
         listView->AddList (&showing);
-        //status->SetItemValue (1, "Done");
+        statusStr = "Done";
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
         mFind->SetEnabled (true);
         mFindAgain->SetEnabled (true);
-        // mChannelSort->SetEnabled (true);
+        mChannelSort->SetEnabled (true);
         mUserSort->SetEnabled (true);
         mFilter->SetEnabled (true);
         processing = false;
 
         BString cString;
         cString << showing.CountItems();
-        //status->SetItemValue (0, cString.String());
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (0, cString.String(), true);
         scroller->Show();
       }
       break;
@@ -341,8 +355,10 @@ ListAgent::MessageReceived (BMessage *msg)
 				
         BString countStr;
         countStr << list.CountItems();
-        //status->SetItemValue (0, countStr.String());
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (0, countStr.String(), true);
       }
+      
       break;
 
 		case M_LIST_SORT_CHANNEL:
@@ -353,18 +369,23 @@ ListAgent::MessageReceived (BMessage *msg)
 			mUserSort->SetEnabled (false);
 			mFilter->SetEnabled (false);
 			listView->MakeEmpty();
-
-			//status->SetItemValue (1, "Sorting");
+			statusStr = "Sorting";
+            if (!IsHidden())
+              vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
 			//UpdateIfNeeded();
 
 			showing.SortItems (
 				msg->what == M_LIST_SORT_CHANNEL
 				? SortChannels : SortUsers);
-			//status->SetItemValue (1, "Adding");
+			statusStr = "Adding";
+			if (!IsHidden())
+			  vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
 			//UpdateIfNeeded();
 
 			listView->AddList (&showing);
-			//status->SetItemValue (1, "Done");
+			statusStr = "Done";
+			if (!IsHidden())
+			  vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
 
 			mFind->SetEnabled (true);
 			mFindAgain->SetEnabled (true);
@@ -389,7 +410,8 @@ ListAgent::MessageReceived (BMessage *msg)
 				{
 					filter = buffer;
 
-					//status->SetItemValue (2, filter.String());
+					if (!IsHidden())
+					  vision_app->pClientWin()->pStatusView()->SetItemValue (2, filter.String(), true);
 
 					regfree (&re);
 					memset (&re, 0, sizeof (re));
