@@ -32,6 +32,8 @@ class Theme;
 class RunView;
 class BScrollView;
 class BCursor;
+class BMessageRunner;
+
 class SelectPos
 {
 	public:
@@ -61,6 +63,12 @@ class SelectPos
 
 								return *this;
 							}
+							
+	inline int			operator == (const SelectPos &rhs) const
+							{
+								return ((line == rhs.line) && (offset == rhs.offset));
+							}
+	
 
 };
 
@@ -80,6 +88,11 @@ class RunView : public BView
 
 	SelectPos			sp_start, sp_end;
 	
+	int32							tracking;
+	SelectPos							track_offset;
+	BMessageRunner				*off_view_runner;
+	bigtime_t					off_view_time;
+
 	bool 				resizedirty;
 	bool				fontsdirty;
 
@@ -110,9 +123,14 @@ class RunView : public BView
 	void					SetViewColor (uchar red, uchar green, uchar blue, uchar alpha = 255)
 							{ rgb_color color = {red, green, blue, alpha}; SetViewColor (color); }
 
+	void					CheckURLCursor (BPoint);
+
 	virtual void		MouseDown (BPoint);
 	virtual void		MouseMoved (BPoint, uint32, const BMessage *);
 	virtual void		MouseUp (BPoint);
+	
+	void					ExtendTrackingSelect (BPoint);
+	void					ShiftTrackingSelect (BPoint, bool, bigtime_t);
 
 	void					Append (const char *, int32, int16, int16, int16);
 	void					Append (const char *, int16, int16, int16);
@@ -127,6 +145,7 @@ class RunView : public BView
 	SelectPos			PositionAt (BPoint) const;
 	BPoint				PointAt (SelectPos) const;
 	void					GetSelection (SelectPos *, SelectPos *) const;
+	void					GetSelectionText (BString &) const;
 	void					Select (SelectPos, SelectPos);
 	void					SelectAll (void);
 };

@@ -343,7 +343,8 @@ VisionApp::InitSettings (void)
   }
   for (i = C_MIRC_WHITE; i < MAX_COLORS; i++)
     activeTheme->SetBackground (i, colors[i]);
-    
+   
+  activeTheme->SetBackground (C_SELECTION, colors [C_SELECTION]); 
   activeTheme->SetBackground (C_TIMESTAMP, colors[C_TIMESTAMP_BACKGROUND]);
   activeTheme->SetBackground (MAX_COLORS, colors[C_BACKGROUND]);
   activeTheme->SetForeground (MAX_COLORS, colors[C_TEXT]);
