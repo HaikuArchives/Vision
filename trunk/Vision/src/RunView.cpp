@@ -447,11 +447,11 @@ RunView::Draw (BRect frame)
 						{
 							if (sp_end.line == sp_start.line)
 							{
-								if (place < (sp_end.offset - 1))
+								if (place < sp_end.offset)
 								{
 									drawSelection = true;
-									if ((sp_end.offset - place - 1) < length)
-										length = sp_end.offset - place - 1;
+									if ((sp_end.offset - place) < length)
+										length = sp_end.offset - place;
 								}
 								else
 									drawSelection = false;
@@ -2244,12 +2244,10 @@ Line::SelectWord (int16 *start, int16 *end)
 {
 	int16 start_tmp (*start), end_tmp (*end);
 
-	while(start_tmp > 0 && ((text[start_tmp-1] <= 'z' && text[start_tmp-1] >= 'A')
-			|| (text[start_tmp-1] >= '0' && text[start_tmp-1] <= '9')))
+	while(start_tmp > 0 && text[start_tmp-1] != ' ')
 			start_tmp--;
 
-	while (end_tmp < length && ((text[end_tmp-1] <= 'z' && text[end_tmp-1] >= 'A')
-			|| (text[end_tmp-1] >= '0' && text[end_tmp-1] <= '9')))
+	while ((end_tmp - 1) < length && text[end_tmp] != ' ')
 			end_tmp++;
 	
 	*start = start_tmp;
