@@ -267,7 +267,7 @@ IRCView::MouseDown (BPoint myPoint)
   && (keymodifiers & B_COMMAND_KEY) == 0
   && (keymodifiers & B_CONTROL_KEY) == 0)
   {
-    if ((selfinish - selstart) == 0)
+    if (selfinish == selstart)
     {
       selstart = OffsetAt(myPoint);
       Select(selstart, selstart);
