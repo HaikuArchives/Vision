@@ -72,7 +72,7 @@ void
 AgentDock::AddNotifyList (void)
 {
   BRect notifyFrame (workingFrame);
-  notifyFrame.top = workingFrame.bottom - 13;
+  notifyFrame.top = workingFrame.bottom - 15;
   
   workingFrame.bottom = workingFrame.bottom - notifyFrame.Height();
   
@@ -106,13 +106,13 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   BRect frame (frame_);
   
   BRect headerFrame (frame);
-  headerFrame.top = 0;
+  headerFrame.top = 1;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
   aHeader = new AgentDockHeader (headerFrame, "Window List", B_FOLLOW_NONE);
   AddChild (aHeader);
    
-  frame.top = frame.top + headerFrame.Height() + 1;  // make room for header
+  frame.top = frame.top + headerFrame.Height() + 4;  // make room for header
   frame.right = frame.right - B_V_SCROLL_BAR_WIDTH; // scrollbar
   frame.bottom = frame.bottom - 2; // room for "fancy" border
     

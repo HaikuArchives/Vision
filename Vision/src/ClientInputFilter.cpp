@@ -275,6 +275,10 @@ ClientInputFilter::HandleKeys (BMessage *msg)
           result = B_SKIP_MESSAGE;
         }
         break;
+      
+      case B_ESCAPE:
+        result = B_SKIP_MESSAGE;
+        break;
 
       case '\t': // tab key
         {
@@ -308,6 +312,10 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 
           result = B_SKIP_MESSAGE;
         }
+        break;
+        
+      case B_ESCAPE:
+        result = B_SKIP_MESSAGE;
         break;
     }
   }
@@ -385,6 +393,10 @@ ClientInputFilter::HandleKeys (BMessage *msg)
           
           result = B_SKIP_MESSAGE;
         }
+        break;
+      
+      case B_ESCAPE:
+        result = B_SKIP_MESSAGE;
         break;
     }
   }

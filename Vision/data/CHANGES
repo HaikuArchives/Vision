@@ -1,6 +1,15 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0424]
+ 2001-04-24
+   * The Establish thread handles abruptly closed ServerAgents better
+   * Some ClientInputFilter fixes
+   * Properly support &channels and !channels in ParseEvents
+   * Other ParseEvents code cleanups
+   * Invite support
+   
+
 [0.2.0421]
  2001-04-23
    * Mousewheel messages are redirected to the IRCView if the input control is

@@ -271,6 +271,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_SILELISTFULL:      // 511
     case ERR_TOOMANYWATCH:      // 512
     case ERR_TOOMANYDCC:        // 514
+    case ERR_CANTINVITE:        // 518
     case ERR_LISTSYNTAX:        // 521
     case ERR_WHOSYNTAX:         // 522
     case ERR_WHOLIMEXCEED:      // 523
@@ -746,6 +747,27 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         }
       }
       return true;
+    
+    case RPL_INVITING:             // 341
+      {
+        BString channel (GetWord (data, 5)),
+                theNick (GetWord (data, 4)),
+                tempString;
+        
+        tempString += "*** ";
+        tempString += theNick;
+        tempString += " has been invited to ";
+        tempString += channel;
+        tempString += ".\n";
+        
+        BMessage display (M_DISPLAY);
+        
+        PackDisplay (&display, tempString.String(), &whoisColor, 0,
+          vision_app->GetBool ("timestamp"));
+        PostActive (&display);
+      }
+      return true;
+         
     
     case RPL_NAMEREPLY:             // 353
       {
