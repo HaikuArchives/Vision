@@ -33,9 +33,9 @@
 #  include <netdb.h>
 #endif
 
-//#ifdef BONE_BUILD
-//#  include <bone/arpa/inet.h>
-//#endif
+#ifdef BONE_BUILD
+#  include <arpa/inet.h>
+#endif
 
 #include <ctype.h>
 #include <stdio.h>
@@ -307,7 +307,7 @@ ServerAgent::Establish (void *arg)
       struct sockaddr_in sockin;
 
 
-#ifdef NETSERVER_BUILD
+//#ifdef NETSERVER_BUILD
       // store local ip address for future use (dcc, etc)
       int addrlength (sizeof (struct sockaddr_in));
       if (getsockname (endPoint->Socket(),(struct sockaddr *)&sockin,&addrlength)) {
@@ -338,7 +338,7 @@ ServerAgent::Establish (void *arg)
         sMsgrE->SendMessage (&statMsg);  
       }
 
-#endif
+//#endif
 
       // resume normal business matters.
 
