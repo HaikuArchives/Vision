@@ -70,12 +70,17 @@ ChannelAgent::ChannelAgent (
   chanOpt (0)
 
 {
-  //Init();
-  
+  /*
+   * Function purpose: Consctruct
+   */  
 }
 
 ChannelAgent::~ChannelAgent (void)
 {
+  /*
+   * Function purpose: Clean up
+   */
+   
   namesList->ClearList();
   
 }
@@ -83,12 +88,21 @@ ChannelAgent::~ChannelAgent (void)
 void
 ChannelAgent::AttachedToWindow(void)
 {
+  /*
+   * Function purpose: Once the BView has been successfully attached,
+                       call Init()
+   */
+   
   Init();
 }
 
 void
 ChannelAgent::Init (void)
 {
+  /*
+   * Function purpose: Setup everything
+   */
+   
   textScroll->ResizeTo (
     Frame().Width() - 100,
     textScroll->Frame().Height());
@@ -122,6 +136,11 @@ ChannelAgent::Init (void)
 int
 ChannelAgent::FindPosition (const char *data)
 {
+  /*
+   * Function purpose: Find the index of nickname {data} in the
+   *                   ChannelAgent's NamesView
+   */
+   
   int32 count (namesList->CountItems());
 
   for (int32 i = 0; i < count; ++i)
@@ -147,6 +166,11 @@ ChannelAgent::FindPosition (const char *data)
 bool
 ChannelAgent::RemoveUser (const char *data)
 {
+  /*
+   * Function purpose: Remove nickname {data} from the ChannelAgent's
+   *                   NamesView and update the status counts
+   */
+   
   int32 myIndex (FindPosition (data));
 
   if (myIndex != -1)
@@ -186,6 +210,16 @@ ChannelAgent::RemoveUser (const char *data)
 int
 ChannelAgent::SortNames(const void *name1, const void *name2)
 {
+  /*
+   * Function purpose: Help NamesView::SortItems() sort nicknames
+   *
+   * Order:
+   *   Channel Ops
+   *   Channel Helper/HalfOps
+   *   Voiced
+   *   Normal User
+   */
+   
   NameItem **firstPtr ((NameItem **)name1);
   NameItem **secondPtr ((NameItem **)name2);
 
@@ -215,6 +249,12 @@ ChannelAgent::SortNames(const void *name1, const void *name2)
 void
 ChannelAgent::TabExpansion (void)
 {
+  /*
+   * Function purpose: Get the characters before the caret's current position,
+   *                   and update the input VTextControl with a relevant match
+   *                   from the ChannelAgent's NamesView 
+   */
+   
   int32 start, finish;
   static int32 lastindex;
   static BString lastNick;
@@ -756,7 +796,12 @@ ChannelAgent::MessageReceived (BMessage *msg)
 void
 ChannelAgent::Parser (const char *buffer)
 {
-  lastExpansion = "";
+  /*
+   * Function purpose: Send the text in {buffer} to the server
+   */
+   
+  lastExpansion = "";  // used by ChannelAgent::TabExpansion()
+  
   BMessage send (M_SERVER_SEND);
 
   AddSend (&send, "PRIVMSG ");
@@ -765,12 +810,14 @@ ChannelAgent::Parser (const char *buffer)
   AddSend (&send, buffer);
   AddSend (&send, endl);
 
-  Display ("<", 0, 0, true);
-  Display (myNick.String(), &myNickColor);
-  Display ("> ", 0);
+  Display ("<", &myNickColor, 0, true);
+  Display (myNick.String(), &nickdisplayColor);
+  Display ("> ", &myNickColor);
 
   BString sBuffer (buffer);
+  Display (sBuffer.String(), 0);
 
+  #if 0
   int32 hit;
 
   do
@@ -813,6 +860,7 @@ ChannelAgent::Parser (const char *buffer)
 
   if (sBuffer.Length())
     Display (sBuffer.String(), 0);
+  #endif
     
   Display ("\n", 0);
 }

@@ -170,7 +170,8 @@ class ClientAgent : public BView
 										actionColor,
 										opColor,
 										inputbgColor,
-										inputColor;
+										inputColor,
+										nickdisplayColor;
 
 	BFont								myFont,
 										serverFont,

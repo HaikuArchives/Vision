@@ -151,6 +151,7 @@ ClientAgent::Init (void)
   whoisColor    = vision_app->GetColor (C_WHOIS);
   joinColor     = vision_app->GetColor (C_JOIN);
   myNickColor   = vision_app->GetColor (C_MYNICK);
+  nickdisplayColor = vision_app->GetColor (C_NICKDISPLAY);
   actionColor   = vision_app->GetColor (C_ACTION);
   opColor       = vision_app->GetColor (C_OP);
   inputColor    = vision_app->GetColor (C_INPUT);
@@ -627,14 +628,16 @@ ClientAgent::MessageReceived (BMessage *msg)
 			}
 			else
 			{
-				Display ("<", 0, 0, true);
+				Display ("<", theNick == myNick ? &myNickColor : &nickColor, 0, true);
 
 				Display (
 					theNick,
-					theNick == myNick ? &myNickColor : &nickColor);
-
+					&nickdisplayColor);
+					
+				Display (">", theNick == myNick ? &myNickColor : &nickColor);
+				
 				BString tempString;
-				tempString += "> ";
+				tempString += " ";
 				tempString += theMessage;
 				tempString += '\n';
 

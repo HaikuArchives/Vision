@@ -103,6 +103,7 @@ VisionApp::VisionApp (void)
   const rgb_color WINLIST_BG_COLOR    = {238, 242, 242, 255};
   const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
   const rgb_color WALLOPS_COLOR       = {10,30,170, 255};
+  const rgb_color NICK_DISPLAY        = {47, 47, 47, 255};
 	
 
 	colors[C_TEXT]                      = myBlack;
@@ -121,7 +122,7 @@ VisionApp::VisionApp (void)
 	colors[C_KICK]                      = KICK_COLOR;
 	colors[C_WHOIS]                     = WHOIS_COLOR;
 	colors[C_OP]                        = OP_COLOR;
-	colors[C_HELPER]					 = OP_COLOR;
+	colors[C_HELPER]                    = OP_COLOR;
 	colors[C_VOICE]                     = VOICE_COLOR;
 	colors[C_CTCP_REQ]                  = CTCP_REQ_COLOR;
 	colors[C_CTCP_RPY]                  = CTCP_RPY_COLOR;
@@ -134,6 +135,7 @@ VisionApp::VisionApp (void)
 	colors[C_WINLIST_NICK]              = QUIT_COLOR;
 	colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
 	colors[C_WALLOPS]                   = WALLOPS_COLOR;
+	colors[C_NICKDISPLAY]               = NICK_DISPLAY;
 	
 	client_font[F_TEXT]    = new BFont (be_fixed_font);
 	client_font[F_SERVER]  = new BFont (be_fixed_font);
@@ -163,7 +165,7 @@ VisionApp::VisionApp (void)
 }
 
 void
-VisionApp::InitSettings(void)
+VisionApp::InitSettings (void)
 {
     if (debugsettings)
       printf (":SETTINGS: loading...\n");
@@ -404,10 +406,21 @@ VisionApp::pClientWin() const
 }
 
 BString
-VisionApp::VisionVersion (void)
+VisionApp::VisionVersion (int typebit)
 {
-  static BString output (VERSION_STRING);
-  return output;
+  switch (typebit)
+  {
+    case VERSION_VERSION:
+    {
+      static BString version_version (VERSION_STRING);
+      return version_version;
+    }
+    case VERSION_DATE:
+    {
+      static BString version_builddate (BUILD_DATE);
+      return version_builddate;
+    }
+  }
 }
 
 const char *

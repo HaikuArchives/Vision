@@ -62,8 +62,9 @@
 #define C_WINLIST_SELECTION                             27
 #define C_NAMES_SELECTION                               28
 #define C_WALLOPS                                       29
+#define C_NICKDISPLAY                                   30
 
-#define MAX_COLORS										30
+#define MAX_COLORS										31
 
 
 #define F_TEXT												0

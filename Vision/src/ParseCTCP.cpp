@@ -112,7 +112,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     BString tempString ("NOTICE ");
     tempString += theNick;
     tempString += " :\1VERSION Vision-"; 
-    tempString += vision_app->VisionVersion();
+    tempString += vision_app->VisionVersion(VERSION_VERSION);
     tempString += sysInfoString;
     tempString += "http://vision.sourceforge.net";
 			
