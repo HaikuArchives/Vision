@@ -509,10 +509,10 @@ ServerAgent::Establish (void *arg)
           break;
         }
       }
-
-      // take a nap, so the ServerAgent can do things
-      snooze (20000);
     }
+    
+    // take a nap, so the ServerAgent can do things
+    snooze (20000);
   }
   
   server->lEndpoint = 0;
