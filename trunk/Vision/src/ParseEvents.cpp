@@ -528,6 +528,14 @@ ServerAgent::ParseEvents (const char *data)
     tempString += "! ";
     tempString += theWall;
     
+    if (IsHidden())
+    {
+      BMessage statusMsg (M_UPDATE_STATUS);
+      statusMsg.AddPointer ("item", agentWinItem);
+      statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
+      Window()->PostMessage (&statusMsg);
+    }
+    
     Display (tempString.String(), &wallColor);
     return true;      
   }
