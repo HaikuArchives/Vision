@@ -703,6 +703,13 @@ ChannelAgent::MessageReceived (BMessage *msg)
         fNamesList->ClearList();
         fOpsCount = 0;
         fUserCount = 0;
+        
+        // clear heuristics completion list - this ensures that no stale nicks are left
+        // over in it after reconnect -- list will quickly be rebuilt anyhow if there
+        // is any conversation whatsoever going on
+        while (fRecentNicks.CountItems() > 0)
+          delete fRecentNicks.RemoveItem(0L);
+        
       }
       break;
     
