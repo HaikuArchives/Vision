@@ -24,18 +24,45 @@
 #include "SetupWindow.h"
 #include "Vision.h"
 
-SetupWindow::SetupWindow (void)
+#include <stdio.h>
+
+SetupWindow::SetupWindow (bool launching)
   : BWindow (
-      BRect (188.0, 88.0, 485.0, 290.0),
+      BRect (188.0, 88.0, 485.0, 390.0),
       "SetupWindow",
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
-  // eek
+  if (launching)
+    InitServerStartup();
+  else
+    Init();
 }
 
 
 SetupWindow::~SetupWindow (void)
 {
   //
+}
+
+bool
+SetupWindow::QuitRequested (void)
+{
+  be_app_messenger.SendMessage (M_SETUP_CLOSE);
+  return true;  
+}
+
+void
+SetupWindow::Init (void)
+{
+ //
+}
+
+void
+SetupWindow::InitServerStartup (void)
+{
+  // iterates through servers that have connect on startup enabled
+  // and adds them to ClientWindow
+  
+  QuitRequested();
 }

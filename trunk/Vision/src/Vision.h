@@ -58,7 +58,9 @@ class VisionApp : public BApplication
                               const char *);
     void                    ClientFontSize (int32, float);
     const BFont             *GetClientFont (int32) const;
-
+    
+    status_t                SetRect (const char *, BRect);
+    
     rgb_color               GetColor (int32) const;
     void                    SetColor (int32, const rgb_color);
 
@@ -75,12 +77,7 @@ class VisionApp : public BApplication
 
     void                    Broadcast (BMessage *);
     void                    Broadcast (BMessage *, const char *, bool = false);
-    
-    
-	SettingsFile			*visionSettings;
-
-	ClientWindow            *clientWin;
-	
+    	
 	BString					events[MAX_EVENTS];
 	
 	bool                    debugsettings;
@@ -88,13 +85,15 @@ class VisionApp : public BApplication
 	bool                    debugrecv;
 	bool                    settingsloaded;
 	
-	// temp
-	bool                    showsetupwindow;
+
+	ClientWindow           *pClientWin (void) const;
 	
   private:
 	void					InitSettings(void);
     AboutWindow             *aboutWin;
     SetupWindow             *setupWin;
+    ClientWindow            *clientWin;
+    SettingsFile			*visionSettings;
     
     rgb_color               colors[MAX_COLORS];
     BFont                   *client_font[MAX_FONTS];
@@ -102,5 +101,7 @@ class VisionApp : public BApplication
 
 };
 
+const uint32 M_SETUP_CLOSE           = 'vasc';
+const uint32 M_SETUP_SHOW            = 'vass';
 
 #endif

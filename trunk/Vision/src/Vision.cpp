@@ -228,10 +228,6 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       debugsettings = true;
     }
     
-    // temp
-    else if (strcmp (av[i], "--setupwindow") == 0)
-      showsetupwindow = true;
-    
     else if (strcmp (av[i], "-r") == 0)
       debugrecv = true;
 
@@ -262,21 +258,28 @@ void
 VisionApp::ReadyToRun (void)
 {
   InitSettings();
+
+  BRect clientWinRect;
+  visionSettings->FindRect ("clientWinRect", &clientWinRect);
   
-  if (showsetupwindow)
-  {
-    setupWin = new SetupWindow();
-    setupWin->Show();
-  }
-  else
-  {
-    BRect clientWinRect;
-    visionSettings->FindRect ("clientWinRect", &clientWinRect);
-  
-    clientWin = new ClientWindow(clientWinRect);
-  
-    clientWin->Show();
-  }
+  clientWin = new ClientWindow (clientWinRect);
+  setupWin = new SetupWindow (true);
+  clientWin->Show();
+
+//  if (showsetupwindow)
+//  {
+//    setupWin = new SetupWindow (true);
+//    setupWin->Show();
+//  }
+//  else
+//  {
+//    BRect clientWinRect;
+//    visionSettings->FindRect ("clientWinRect", &clientWinRect);
+//  
+//    clientWin = new ClientWindow(clientWinRect);
+//  
+//    clientWin->Show();
+//  }
 }
 
 
@@ -288,6 +291,27 @@ VisionApp::MessageReceived (BMessage *msg)
     case M_ABOUT_CLOSE:
     {
       aboutWin = 0;
+      break;
+    }
+    
+    case M_SETUP_SHOW:
+    {
+      if (setupWin)
+      {
+        setupWin->Activate();
+      }
+      else
+      {
+        setupWin = new SetupWindow(false);
+        setupWin->Show();
+      }
+      
+      break;
+    }
+    
+    case M_SETUP_CLOSE:
+    {
+      setupWin = 0;
       break;
     }
 
@@ -305,6 +329,12 @@ VisionApp::MessageReceived (BMessage *msg)
 /// Begin Public Functions
 //////////////////////////////////////////////////////////////////////////////
 
+ClientWindow *
+VisionApp::pClientWin() const
+{
+  return clientWin;
+}
+
 BString
 VisionApp::VisionVersion (void)
 {
@@ -316,6 +346,17 @@ VisionApp::VisionVersion (void)
   return output;
 }
 
+
+status_t
+VisionApp::SetRect (const char *settingName, BRect value)
+{
+ if (visionSettings->ReplaceRect (settingName, value) == B_OK)
+   return B_OK;
+ 
+ return B_ERROR;
+}
+
+
 rgb_color
 VisionApp::GetColor (int32 which) const
 {
@@ -326,6 +367,7 @@ VisionApp::GetColor (int32 which) const
 
   return color;
 }
+
 
 void
 VisionApp::SetColor (int32 which, const rgb_color color)
@@ -369,6 +411,7 @@ VisionApp::ClientFontFamilyAndStyle (
   }
 }
 
+
 void
 VisionApp::ClientFontSize (int32 which, float size)
 {
@@ -384,6 +427,7 @@ VisionApp::ClientFontSize (int32 which, float size)
   }
 }
 
+
 const BFont *
 VisionApp::GetClientFont (int32 which) const
 {
@@ -391,6 +435,7 @@ VisionApp::GetClientFont (int32 which) const
     ? client_font[which] : new BFont (be_plain_font);
 }
 /// end font prefs ///
+
 
 BString
 VisionApp::GetEvent (int32 which) const
@@ -402,6 +447,7 @@ VisionApp::GetEvent (int32 which) const
 
   return buffer;
 }
+
 
 void
 VisionApp::SetEvent (int32 which, const char *event)
@@ -420,6 +466,7 @@ VisionApp::SetEvent (int32 which, const char *event)
   }
 }
 
+
 BString
 VisionApp::GetCommand (int32 which)
 {
@@ -432,6 +479,7 @@ VisionApp::GetCommand (int32 which)
   return buffer;
 }
 
+
 void
 VisionApp::SetCommand (int32 which, const char *command)
 {
@@ -440,6 +488,7 @@ VisionApp::SetCommand (int32 which, const char *command)
   if (which < MAX_EVENTS && which >= 0 && SetCommandLock.IsLocked())
     commands[which] = command;
 }
+
 
 bool
 VisionApp::GetBool (const char *settingName)
@@ -458,6 +507,7 @@ VisionApp::GetBool (const char *settingName)
       
   return value;
 }
+
 
 status_t
 VisionApp::SetBool (const char *settingName, bool value)
