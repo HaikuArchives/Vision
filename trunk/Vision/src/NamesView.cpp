@@ -61,7 +61,8 @@ NamesView::NamesView(BRect frame)
 
 NamesView::~NamesView (void)
 {
-  delete myPopUp;
+  if (myPopUp)
+    delete myPopUp;
 }
 
 void 
