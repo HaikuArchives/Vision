@@ -137,14 +137,14 @@ SetupWindow::MessageReceived (BMessage *msg)
       {
         BMessage connMsg (M_CONNECT_NETWORK);
         connMsg.AddString ("network", netList->MenuItem()->Label());
-        vision_app->PostMessage (&connMsg);
+        be_app_messenger.SendMessage (&connMsg);
       }
       break;
       
     case M_PREFS_SHOW:
       {
         // forwarding Cmd+Shift+/ message
-        vision_app->PostMessage (msg);
+        be_app_messenger.SendMessage(msg);
       }
       break; 
       
