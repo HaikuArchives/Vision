@@ -136,8 +136,8 @@ sourcearchive : $(FULLNAME)-src.zip
 binarchive : $(FULLNAME).zip
 
 cvsup:
-	@echo CVS up
-	@cvs up
+	@echo CVS up -d
+	@cvs up -d
 
 $(BINARY) : $(OBJECTS)
 ifeq ($(wildcard ./src/lua/lib/liblua.a),)
