@@ -77,7 +77,7 @@ class ServerAgent : public ClientAgent
  	ClientAgent					*Client (const char *);
 	ClientAgent					*ActiveClient (void);
 
-	void						DisplayAll (const char *, const uint32 = 1, const uint32 = 1, const uint32 = 1);
+	void						DisplayAll (const char *, const uint32 = 0, const uint32 = 0, const uint32 = 0);
 	BString						FilterCrap (const char *);
 	
 	BLocker						*endPointLock,

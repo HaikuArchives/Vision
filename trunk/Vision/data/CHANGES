@@ -2,28 +2,29 @@ Vision
 http://vision.sourceforge.net
 
 [0.4-exp]
-		* replaced IRCView with RunView (*HUGE* thanks to Todd Lair!)
-		   -- differentiable background colors
-		   -- timestamps can be stripped/readded
-		   -- all color/font changes are fully live now
-		   -- timestamp format can be customized (no GUI yet)
-		* rewrote network code to fix a bunch of crash/corruption bugs
-		* theme support (no GUI yet)
-		* miscellaneous other minor rewrites/fixes
+         * replaced IRCView with RunView (*HUGE* thanks to Todd Lair!)
+            -- differentiable background colors
+            -- timestamps can be stripped/readded
+            -- all color/font changes are fully live now
+            -- timestamp format can be customized (no GUI yet)
+            -- timestamp fore/back color and font can be customized
+         * rewrote network code to fix a bunch of crash/corruption bugs
+         * theme support (no GUI yet)
+         * miscellaneous other minor rewrites/fixes
 
 [0.3.0828]
 2001-08-28
-		* fixed stupid error where all font sizes would be the same as that of the
+        * fixed stupid error where all font sizes would be the same as that of the
 		  background text, thanks again to tic.		  
 
 [0.3.0822]
 2001-08-22
-		* fixed stupid error with not updating URL fonts, thanks tic for catching that.
+        * fixed stupid error with not updating URL fonts, thanks tic for catching that.
 
 [0.3.0802]
 2001-08-02
         * fixed status view nick update bug, thanks to EnochRoot
-
+  
 [0.3.07026]
 2001-07-26
         * fixed crash bug in message agent
