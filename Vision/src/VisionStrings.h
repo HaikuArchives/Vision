@@ -376,6 +376,7 @@
 #define S_SERVER_LOCALIP_ERROR      "[@] Error getting Local IP"
 #define S_SERVER_LOCALIP            "[@] Local IP: "
 #define S_SERVER_PROXY_MSG          "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)"
+#define S_SERVER_PASS_MSG           "[@] Sending Password"
 #define S_SERVER_HANDSHAKE          "[@] Handshaking"
 #define S_SERVER_ESTABLISH          "[@] Established"
 #define S_SERVER_RETRY_LIMIT        "[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go."
@@ -401,6 +402,8 @@
 #define S_SERVERWIN_STATE           "State: "
 #define S_SERVERWIN_DONE_BUTTON     "Done"
 #define S_SERVERWIN_CANCEL_BUTTON   "Cancel"
+#define S_SERVERWIN_PASS_CHECK      "Use Password: "
+
 // setup window
 
 #define S_SETUP_TITLE               "Setup Window"

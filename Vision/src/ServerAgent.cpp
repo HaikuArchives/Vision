@@ -499,6 +499,16 @@ ServerAgent::Establish (void *arg)
       endpointMsg.AddInt32 ("socket", serverSock);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
+        
+      if (strlen(serverData->password) > 0)
+      {
+        ClientAgent::PackDisplay (&statMsg, S_SERVER_PASS_MSG "\n", C_ERROR);
+        sMsgrE->SendMessage (&statMsg);  
+        string = "PASS ";
+        string += serverData->password;
+        dataSend.ReplaceString ("data", string.String());
+        sMsgrE->SendMessage (&dataSend);
+      }
 
       string = "USER ";
       string.Append (ident);
@@ -699,8 +709,6 @@ ServerAgent::AsyncSendData (const char *cData)
 #endif
   if (fServerSocket <= 0)
   {
-    if (!fReconnecting && !fIsConnecting)
-      fMsgr.SendMessage (M_SERVER_DISCONNECT);
       // doh, we aren't even connected.
       return;
   }
@@ -961,7 +969,11 @@ ServerAgent::GetNextServer ()
     for (; fNetworkData.FindData ("server", B_RAW_TYPE, fServerIndex, 
       reinterpret_cast<const void **>(&server), &size) == B_OK; fServerIndex++)
         if (server->state == state)
-          return server;
+        {
+          memset(&currentServer, 0, sizeof(ServerData));
+          memcpy(&currentServer, server, size);
+          return &currentServer;
+        }
   }
 }
 
@@ -1605,9 +1617,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           fQuitMsg = quitstr;
         }
 
-        fIsQuitting = true;
-
-        if (fIsConnected && fServerSocket)
+        if (!fIsQuitting && fIsConnected && fServerSocket) 
         {
           if (fQuitMsg.Length() == 0)
           {
@@ -1617,10 +1627,11 @@ ServerAgent::MessageReceived (BMessage *msg)
             expansions[0] = version.String();
             fQuitMsg << "QUIT :" << ExpandKeyed (vision_app->GetCommand (CMD_QUIT).String(), "V", expansions);
           }
- 
           SendData (fQuitMsg.String());
         }
-        
+
+        fIsQuitting = true;
+
         if (fClients.CountItems() != 0)
         {
           Broadcast (new BMessage (M_CLIENT_QUIT));

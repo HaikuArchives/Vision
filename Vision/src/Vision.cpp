@@ -612,7 +612,7 @@ VisionApp::QuitRequested (void)
   wait_for_thread (fWinThread, &result);
 
   // give our child threads a chance to die gracefully
-  snooze (500000);  // 0.5 seconds
+  snooze (2000000);  // 0.5 seconds
 
   //ThreadStates();
   return true;
@@ -1185,7 +1185,7 @@ VisionApp::SetEvent (int32 which, const char *event)
   if (which < MAX_EVENTS && which >= 0
   &&  fEvents[which].Compare (event))
   {
-    fEvents[which] = event;
+    fEvents[which] =  event;
 
     fVisionSettings->ReplaceString ("event", which, event);
   }

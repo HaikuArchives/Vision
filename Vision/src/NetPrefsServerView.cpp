@@ -368,7 +368,7 @@ NetPrefsServerView::MessageReceived (BMessage * msg)
           fEntryWin->Activate ();
         else
         {
-          fEntryWin = new ServerEntryWindow (this, new BMessage (M_SERVER_RECV_DATA), NULL);
+          fEntryWin = new ServerEntryWindow (this, new BMessage (M_SERVER_RECV_DATA), NULL, 0);
           fEntryWin->Show ();
         }
       }
@@ -392,11 +392,11 @@ NetPrefsServerView::MessageReceived (BMessage * msg)
           {
             fActiveNetwork->FindData ("server", B_RAW_TYPE, i, reinterpret_cast < const void **>(&compData), &size);
             if (!strcmp (compData->serverName, ((BStringField *) row->GetField (1))->String ()))
-            break;
+              break;
 	      }
           BMessage *invoke (new BMessage (M_SERVER_RECV_DATA));
           invoke->AddBool ("edit", true);
-          fEntryWin = new ServerEntryWindow (this, invoke, compData);
+          fEntryWin = new ServerEntryWindow (this, invoke, compData, size);
           fEntryWin->Show ();
           }
       }
