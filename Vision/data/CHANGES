@@ -5,6 +5,8 @@ http://vision.sourceforge.net
 2001-07-18
       * reduced flicker on window switches, thanks to Alan Ellis
       * /part now works on message windows
+      * more intelligent context menu selection logic in IRCView, thanks to Alan Ellis
+
 [0.3.07017]
 2001-07-17
      * fixed bug where colors would sometimes be incorrect
