@@ -176,8 +176,6 @@ WindowList::MouseDown (BPoint myPoint)
     handled = true;
   }    
 
-  lastSelected = selected;
-  
   if (!handled)
     BListView::MouseDown (myPoint);
 }
@@ -379,8 +377,8 @@ WindowList::Activate (int32 index)
     if (!aitem->pAgent()->IsHidden())
     {
       activeagent = aitem->pAgent();
+      lastSelected = aitem;
       break;
-      
     }
   }
   
@@ -422,7 +420,12 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   RemoveItem (agentitem);
   SortItems (SortListItems);
   delete agent;
-  Select (0); // TODO select something more intelligently
+  
+  int32 lastInt (IndexOf (lastSelected));
+  if (lastInt >= 0)
+    Select (lastInt);
+  else
+    Select (0);
   vision_app->pClientWin()->Unlock();
 }
 
