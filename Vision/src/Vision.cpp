@@ -778,6 +778,18 @@ VisionApp::MessageReceived (BMessage *msg)
         visionSettings->FindRect ("clientWinRect", &clientWinRect);
 
         BMessage netData = GetNetwork (msg->FindString ("network"));
+        if (netData.FindBool ("useDefaults"))
+        {
+          netData.RemoveName ("nick");
+          netData.RemoveName ("realname");
+          netData.RemoveName ("ident");
+          BMessage netDefaults (GetNetwork ("defaults"));
+          netData.AddString ("realname", netDefaults.FindString ("realname"));
+          netData.AddString ("ident", netDefaults.FindString ("ident"));
+          const char *nick (NULL);
+          for (int32 i = 0; (nick = netDefaults.FindString ("nick", i)) != NULL; i++)
+            netData.AddString ("nick", nick);
+        }
         if (clientWin == NULL)
         {
           clientWin = new ClientWindow (clientWinRect);
