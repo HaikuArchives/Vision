@@ -145,7 +145,7 @@ ifeq ($(wildcard ./src/lua/lib/liblua.a),)
 	@echo Building...
 	@cd $(SRCDIR)/lua && make >/dev/null && cd $(SRCDIR)/..
 endif
-	@rm start.tmp middle.tmp end.tmp
+	@rm -f start.tmp middle.tmp end.tmp
 	@echo linking $@
 	@$(LD) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo merging resources
