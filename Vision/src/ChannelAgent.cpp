@@ -232,11 +232,8 @@ ChannelAgent::SortNames(const void *name1, const void *name2)
    
    // clunky way to get around C++ warnings re casting from const void * to NameItem *
    
-  void **interim1 ((void **)const_cast<void *>(name1));
-  void **interim2 ((void **)const_cast<void *>(name2));
-   
-  NameItem *firstPtr ((NameItem *)*interim1);
-  NameItem *secondPtr ((NameItem *)*interim2);
+  const NameItem *firstPtr (*((NameItem * const *)name1));
+  const NameItem *secondPtr (*((NameItem * const *)name2));
 
   // Not sure if this can happen, and we
   // are assuming that if one is NULL

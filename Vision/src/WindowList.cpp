@@ -654,10 +654,8 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
 int
 WindowList::SortListItems (const void *name1, const void *name2)
 {
-  void **interim1 ((void **)const_cast<void *>(name1));
-  void **interim2 ((void **)const_cast<void *>(name2));
-  WindowListItem *firstPtr = (WindowListItem *)*interim1;
-  WindowListItem *secondPtr = (WindowListItem *)*interim2;
+  WindowListItem *firstPtr (*(WindowListItem * const *)name1);
+  WindowListItem *secondPtr (*(WindowListItem * const *)name2);
 
   /* Not sure if this can happen, and we
    * are assuming that if one is NULL
