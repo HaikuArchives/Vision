@@ -124,6 +124,7 @@ class VisionApp : public BApplication
     BString                 fEvents[MAX_EVENTS];
 
     bool                    fDebugSettings;
+    bool                    fDebugShutdown;
     bool                    fDebugSend;
     bool                    fDebugRecv;
     bool                    fSettingsLoaded;

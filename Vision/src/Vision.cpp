@@ -111,6 +111,7 @@ VisionApp::VisionApp (void)
   fDebugSettings = false;
   fNumBench = false;
   fShuttingDown = false;
+  fDebugShutdown = false;
   fStartupTime = system_time();
 }
 
@@ -132,57 +133,56 @@ VisionApp::ThreadStates (void)
   int32 cookie (0);
   thread_info info;
 
-#ifdef BUILD_DEBUG
   BString buffer;
-#endif
   int32 t_count (0);
 
   while (get_next_thread_info (team, &cookie, &info) == B_NO_ERROR)
   {
-
-#ifdef BUILD_DEBUG
-    buffer += "thread: ";
-    buffer << info.thread;
-    buffer += " name:  ";
-    buffer += info.name;
-    buffer += " state: ";
-
-    switch ((int32)info.state)
+    if (fDebugShutdown)
     {
-      case B_THREAD_RUNNING:
-        buffer += "running\n";
-        break;
+      buffer += "thread: ";
+      buffer << info.thread;
+      buffer += " name:  ";
+      buffer += info.name;
+      buffer += " state: ";
+
+      switch ((int32)info.state)
+      {
+        case B_THREAD_RUNNING:
+          buffer += "running\n";
+          break;
+         
+        case B_THREAD_READY:
+          buffer += "ready\n";
+          break;
         
-      case B_THREAD_READY:
-        buffer += "ready\n";
-        break;
+        case B_THREAD_RECEIVING:
+          buffer += "receiving\n";
+          break;
         
-      case B_THREAD_RECEIVING:
-        buffer += "receiving\n";
-        break;
+        case B_THREAD_ASLEEP:
+          buffer += "asleep\n";
+          break;
         
-      case B_THREAD_ASLEEP:
-        buffer += "asleep\n";
-        break;
+        case B_THREAD_SUSPENDED:
+          buffer += "suspended\n";
+          break;
         
-      case B_THREAD_SUSPENDED:
-        buffer += "suspended\n";
-        break;
+        case B_THREAD_WAITING:
+          buffer += "waiting\n";
+          break;
         
-      case B_THREAD_WAITING:
-        buffer += "waiting\n";
-        break;
-        
-      default:
-        buffer += "???\n";
+        default:
+          buffer += "???\n";
+      }
     }
-#endif
     ++t_count;
   }
 
-#ifdef BUILD_DEBUG
-  if (buffer.Length())
+  if (fDebugShutdown && buffer.Length())
   {
+    printf("%s\n", buffer.String());
+#if 0
     BAlert *alert (new BAlert (
       "Too many threads",
       buffer.String(),
@@ -192,8 +192,9 @@ VisionApp::ThreadStates (void)
       B_WIDTH_AS_USUAL,
       t_count > 1 ? B_STOP_ALERT : B_INFO_ALERT));
       alert->Go();
-  }
 #endif
+  }
+
   return t_count;    
 }
 
@@ -659,6 +660,7 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       fDebugSend = true;
       fDebugSettings = true;
       fNumBench = true;
+      fDebugShutdown = true;
     }
     
     else if (strcmp (av[i], "-r") == 0)
@@ -669,6 +671,9 @@ VisionApp::ArgvReceived (int32 ac, char **av)
         
     else if (strcmp (av[i], "-S") == 0)
       fDebugSettings = true;
+    
+    else if (strcmp (av[i], "-u") == 0)
+      fDebugShutdown = true;
       
     else if (strcmp (av[i], "-n") == 0)
       fNumBench = true;
