@@ -1,10 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.7-0716]
+[0.9.7-0804]
 	 * added JIS encoding support
 	 * modified tab completion to append a ":" if the nick is at the beginning of a line 
 	 * refined URL crunching logic (Alan Ellis)
+	 * Fixed /netclear and /aclear not working correctly (thanks to Michael Weirauch for reporting)
 
 [0.9.6-0207]
          * fixed crash bug during shutdown with notify blinkers
