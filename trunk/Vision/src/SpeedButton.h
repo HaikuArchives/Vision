@@ -42,11 +42,14 @@ class TSpeedButton : public BControl
 	    /**
 	     * Standard stuff for BButtons with some additions.
 	     * @param Label Set this to NULL if you do not wish to have a label drawn on your button.
-	     * @param EnabledBitmap The bitmap which shows the button in an enabled state. Copies are made of the bitmaps that you pass in. You still own them.
-	        * @param Style Optional style. Avaliable styles are sbFlat (pops up as the mouse goes over it)
-	        * and sbUp, normal looking button.
-	        * @param DisabledBitmap Optional look for a disabled bitmap.
-	        */
+	     * @param EnabledBitmap The bitmap which shows the button in an enabled state.
+	     *                      Copies are made of the bitmaps that you pass in. You still own them.
+	     * @param Style Optional style. Avaliable styles are sbFlat (pops up as the mouse goes over it)
+	     *              and sbUp, normal looking button.
+	     * @param DisabledBitmap Optional look for a disabled bitmap.
+	     *                       If this is not supplied, a disabled button will be created from the
+	     *                       Enabled bitmap
+	     */
 	    TSpeedButton(BRect Frame, const char *Name, const char* Label,
 	                 BMessage *Message, BBitmap *EnabledBitmap,
 	                 TSBStyle Style = sbFlat,
