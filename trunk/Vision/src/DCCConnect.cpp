@@ -35,12 +35,7 @@
 #include "DCCConnect.h"
 #include "PlayButton.h"
 
-const uint32 M_STOP_BUTTON				= 'stop';
-const uint32 M_UPDATE_STATUS			= 'stat';
-const uint32 M_GET_CONNECT_DATA         = 'dccd';
-const uint32 M_GET_RESUME_POS           = 'dcrp';
-const uint32 M_UPDATE_TRANSFERRED       = 'dcut';
-const uint32 M_UPDATE_AVERAGE           = 'dcua';
+
 
 
 DCCConnect::DCCConnect (
@@ -75,7 +70,7 @@ DCCConnect::DCCConnect (
 	bar = new BStatusBar (
 		BRect (10, 10, Bounds().right - 30, Bounds().bottom - 10),
 		"progress",
-		"bps: ",
+		S_DCC_SPEED,
 		trail);
 	bar->SetMaxValue (atol (size.String()));
 	bar->SetBarHeight (8.0);
@@ -90,7 +85,7 @@ DCCConnect::DCCConnect (
 
 	stop = new StopButton (
 		BPoint (bar->Frame().right + 15, bar->Frame().bottom - 18),
-		new BMessage (M_STOP_BUTTON));
+		new BMessage (M_DCC_STOP_BUTTON));
 	AddChild (stop);
 }
 
@@ -150,19 +145,19 @@ DCCConnect::MessageReceived (BMessage *msg)
 {
 	switch (msg->what)
 	{
-		case M_STOP_BUTTON:
+		case M_DCC_STOP_BUTTON:
 		{
 			Stopped();
 			break;
 		}
 
-		case M_UPDATE_STATUS:
+		case M_DCC_UPDATE_STATUS:
 		{
 			label->SetText (msg->FindString ("text"));
 			break;
 		}
 		
-		case M_GET_CONNECT_DATA:
+		case M_DCC_GET_CONNECT_DATA:
 		{
 		  BMessage reply;
 		  reply.AddString ("port", port.String());
@@ -180,7 +175,7 @@ DCCConnect::MessageReceived (BMessage *msg)
 		}
 		break;
 		
-		case M_GET_RESUME_POS:
+		case M_DCC_GET_RESUME_POS:
 		{
 		  BMessage reply;
 		  DCCSend *sendview (dynamic_cast<DCCSend *>(this));
@@ -190,13 +185,13 @@ DCCConnect::MessageReceived (BMessage *msg)
 		}
 		break;
 		
-		case M_UPDATE_TRANSFERRED:
+		case M_DCC_UPDATE_TRANSFERRED:
 		{
 		  totalTransferred = msg->FindInt32 ("transferred");
 		}
 		break;
 		
-		case M_UPDATE_AVERAGE:
+		case M_DCC_UPDATE_AVERAGE:
 		{
 		  finalRateAverage = msg->FindInt32 ("average");
 		}
@@ -277,7 +272,7 @@ DCCConnect::UpdateBar (const BMessenger &msgr, int read, int cps, uint32 size, b
 void
 DCCConnect::UpdateStatus (const BMessenger &msgr, const char *text)
 {
-	BMessage msg (M_UPDATE_STATUS);
+	BMessage msg (M_DCC_UPDATE_STATUS);
 
 	msg.AddString ("text", text);
 	msgr.SendMessage (&msg);
@@ -325,13 +320,13 @@ DCCReceive::Transfer (void *arg)
 	
 	if ((dccSock = socket (AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		UpdateStatus (msgr, "Unable to establish connection.");
+		UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
 		return B_ERROR;
 	}
 	
 	BMessage reply;
 	
-	if (msgr.SendMessage (M_GET_CONNECT_DATA, &reply) == B_ERROR)
+	if (msgr.SendMessage (M_DCC_GET_CONNECT_DATA, &reply) == B_ERROR)
 	  return B_ERROR;
 	
 	
@@ -341,10 +336,10 @@ DCCReceive::Transfer (void *arg)
 	sin.sin_port   = htons (atoi (reply.FindString ("port")));
 	sin.sin_addr.s_addr = htonl(strtoul (reply.FindString("ip"), 0, 10));
 
-	UpdateStatus (msgr, "Connecting to sender.");
+	UpdateStatus (msgr, S_DCC_CONNECT_TO_SENDER);
 	if (connect (dccSock, (sockaddr *)&sin, sizeof (sin)) < 0)
 	{
-		UpdateStatus (msgr, "Unable to establish connection.");
+		UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
 #ifdef BONE_BUILD
 		close (dccSock);
 #elif NETSERVER_BUILD
@@ -357,9 +352,9 @@ DCCReceive::Transfer (void *arg)
 	BString buffer;
 	off_t file_size (0);
 	
-	buffer << "Receiving \""
+	buffer << S_DCC_RECV1
 		<< path.Leaf()
-		<< "\" from "
+		<< S_DCC_RECV2
 		<< reply.FindString ("nick")
 		<< ".";
 
@@ -408,7 +403,7 @@ DCCReceive::Transfer (void *arg)
 			
 			file.Write (buffer, read);
 			bytes_received += read;
-			BMessage msg (M_UPDATE_TRANSFERRED);
+			BMessage msg (M_DCC_UPDATE_TRANSFERRED);
 			msg.AddInt32 ("transferred", bytes_received);
 			msgr.SendMessage (&msg);
 
@@ -422,7 +417,7 @@ DCCReceive::Transfer (void *arg)
 			if (now - last > 500000)
 			{
 				cps = (int)ceil ((bytes_received - file_size) / ((now - start) / 1000000.0));
-				BMessage msg (M_UPDATE_AVERAGE);
+				BMessage msg (M_DCC_UPDATE_AVERAGE);
 				msg.AddInt32 ("average", cps);
 				msgr.SendMessage (&msg);
 				last = now;
@@ -436,7 +431,7 @@ DCCReceive::Transfer (void *arg)
 
 	if (msgr.IsValid())
 	{
-	    BMessage msg (M_STOP_BUTTON);
+	    BMessage msg (M_DCC_STOP_BUTTON);
 	    msgr.SendMessage (&msg);
 	}
 
@@ -497,7 +492,7 @@ DCCSend::Transfer (void *arg)
 	BLooper *looper (NULL);
 
 	if (msgr.IsValid())
-	  msgr.SendMessage (M_GET_CONNECT_DATA, &reply);
+	  msgr.SendMessage (M_DCC_GET_CONNECT_DATA, &reply);
 
 	BMessenger callmsgr;
 	reply.FindMessenger ("caller", &callmsgr);
@@ -516,7 +511,7 @@ DCCSend::Transfer (void *arg)
 
 	if ((sd = socket (AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		UpdateStatus (msgr, "Unable to establish connection.");
+		UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
 		return 0;
 	}
 
@@ -528,13 +523,13 @@ DCCSend::Transfer (void *arg)
 	int sin_size;
 	sin_size = (sizeof (struct sockaddr_in));
 		
-	UpdateStatus (msgr, "Acquiring DCC lock...");
+	UpdateStatus (msgr, S_DCC_LOCK_ACQUIRE B_UTF8_ELLIPSIS);
 	
 	vision_app->AcquireDCCLock();
     
 	if (!msgr.IsValid() || bind (sd, (sockaddr *)&sin, sin_size) < 0)
 	{
-		UpdateStatus (msgr, "Unable to establish connection.");
+		UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
 		vision_app->ReleaseDCCLock();
 
 #ifdef BONE_BUILD
@@ -544,7 +539,7 @@ DCCSend::Transfer (void *arg)
 #endif
 		return 0;
 	}
-	UpdateStatus (msgr, "Waiting for acceptance.");
+	UpdateStatus (msgr, S_DCC_ACK_WAIT);
 	
 	sendaddr.s_addr = inet_addr (ipdata.FindString ("ip"));
 
@@ -566,10 +561,10 @@ DCCSend::Transfer (void *arg)
 		msg.AddString ("data", status.String());
 		if (callmsgr.IsValid())
 		  callmsgr.SendMessage (&msg);
-		UpdateStatus (msgr, "Doing listen call.");
+		UpdateStatus (msgr, S_DCC_LISTEN_CALL);
 		if (listen (sd, 1) < 0)
 		{
-			UpdateStatus (msgr, "Unable to establish connection.");
+			UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
 			vision_app->ReleaseDCCLock();
 #ifdef BONE_BUILD
 		close (sd);
@@ -595,7 +590,7 @@ DCCSend::Transfer (void *arg)
 
 		if (select (sd + 1, &rset, 0, 0, &t) < 0)
 		{
-			UpdateStatus (msgr, "Unable to establish connection.");
+			UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
 			vision_app->ReleaseDCCLock();
 #ifdef BONE_BUILD
 		close (sd);
@@ -608,12 +603,12 @@ DCCSend::Transfer (void *arg)
 		if (FD_ISSET (sd, &rset))
 		{
 			dccSock = accept (sd, (sockaddr *)&sin, &sin_size);
-			UpdateStatus (msgr, "Established connection.");
+			UpdateStatus (msgr, S_DCC_ESTABLISH_SUCCEEDED);
 			break;
 		}
 
 		++try_count;
-		status = "Waiting for connection ";
+		status = S_DCC_WAIT_FOR_CONNECTION;
 		status << try_count << ".";
 		UpdateStatus (msgr, status.String());
 	};
@@ -633,7 +628,7 @@ DCCSend::Transfer (void *arg)
 	      seekpos (0L);
 	
 	BMessage resumeData;
-	msgr.SendMessage (M_GET_RESUME_POS, &resumeData);
+	msgr.SendMessage (M_DCC_GET_RESUME_POS, &resumeData);
 	
 	if (resumeData.HasInt32 ("pos"))
 	{
@@ -643,9 +638,9 @@ DCCSend::Transfer (void *arg)
 		bytes_sent = seekpos;
 	}
 
-	status = "Sending \"";
+	status = S_DCC_SEND1;
 	status << path.Leaf() 
-		<< "\" to "
+		<< S_DCC_SEND2
 		<< reply.FindString ("nick")
 		<< ".";
 	UpdateStatus (msgr, status.String());
@@ -669,11 +664,11 @@ DCCSend::Transfer (void *arg)
 
 			if ((sent = send (dccSock, buffer, count, 0)) < count)
 			{
-				UpdateStatus (msgr, "Error writing data.");
+				UpdateStatus (msgr, S_DCC_WRITE_ERROR);
 				break;
 			}
 			bytes_sent += sent;
-			BMessage msg (M_UPDATE_TRANSFERRED);
+			BMessage msg (M_DCC_UPDATE_TRANSFERRED);
 			msg.AddInt32 ("transferred", bytes_sent);
 			msgr.SendMessage (&msg);
 	
@@ -704,7 +699,7 @@ DCCSend::Transfer (void *arg)
 			if (now - last > 500000)
 			{
 				cps = (int) ceil ((bytes_sent - seekpos) / ((now - start) / 1000000.0));
-				BMessage msg (M_UPDATE_AVERAGE);
+				BMessage msg (M_DCC_UPDATE_AVERAGE);
 				msg.AddInt32 ("average", cps);
 				msgr.SendMessage (&msg);
 				last = now;
@@ -721,7 +716,7 @@ DCCSend::Transfer (void *arg)
 
 	if (msgr.IsValid())
 	{
-	    BMessage msg (M_STOP_BUTTON);
+	    BMessage msg (M_DCC_STOP_BUTTON);
 	    msgr.SendMessage (&msg);
 	}
 

@@ -22,6 +22,7 @@
 
 #include "ChannelAgent.h"
 #include "ChannelOptions.h"
+#include "VisionBase.h"
 
 #include <StringView.h>
 
@@ -55,7 +56,7 @@ ChannelOptions::QuitRequested (void)
 void
 ChannelOptions::Init (void)
 {
-  BString temp (" Options");
+  BString temp (S_CHANOPTS_TITLE);
   temp.Prepend (chan_name);
   SetTitle (temp.String());
   
@@ -90,8 +91,8 @@ ChannelOptions::Init (void)
 
   
   BString privString;  // this will become dynamic based on the current mode
-  privString += "You are currently a channel operator. ";
-  privString += "You may change any of these options.";
+  privString += S_CHANOPTS_OPID1;
+  privString += S_CHANOPTS_OPID2;
   
   BStringView *privMsgView = new BStringView (BRect (privilegesView->Bounds().left,
                                                      privilegesView->Bounds().top,

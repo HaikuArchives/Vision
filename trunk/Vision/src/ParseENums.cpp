@@ -374,13 +374,13 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             in_addr *addr = (in_addr *)hp->h_addr_list[0];
             strcpy(addr_buf, inet_ntoa(*addr));
             localip = addr_buf;
-//            printf("hostname found: %s\n", localip.String());
+            printf("hostname found: %s\n", localip.String());
             return true;
 		  }
 		  else if (isdigit(theHostname[0]))
 		  {
               localip = theHostname;
-//              printf("hostname found: %s\n", localip.String());
+              printf("hostname found: %s\n", localip.String());
               return true;
           }
 #if 0
@@ -925,6 +925,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             msg.AddString ("data", place);
 
           msg.AddInt32 ("which", 3);
+          msg.AddBool ("autoexec", true);
           msgr.SendMessage (&msg);
         }
         

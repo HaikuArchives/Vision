@@ -37,7 +37,7 @@ class ClientAgentInputFilter;
 class ClientAgentLogger;
 class RunView;
 class Theme;
-class HistoryMenu;
+class HistoryList;
 class AgentSettings;
 class WindowListItem;
 
@@ -111,7 +111,7 @@ class ClientAgent : public BView
     bool						fCancelMLPaste;
                             
   protected:
-    HistoryMenu                 *history;
+    HistoryList                 *history;
     RunView                     *text;
     BScrollView                 *textScroll;
     VTextControl                *input;
@@ -179,20 +179,5 @@ class ClientAgent : public BView
     friend class                     WindowList;
 
 };
-
-
-/// IRCDS
-/// an effort to properly support conflicting numeric meanings
-
-const int IRCD_STANDARD               =  1;
-const int IRCD_HYBRID                 =  2;  // "hybrid"    
-const int IRCD_ULTIMATE               =  3;  // "UltimateIRCd"
-const int IRCD_COMSTUD                =  4;  // "comstud"
-const int IRCD_UNDERNET               =  5;  // "u2."
-const int IRCD_BAHAMUT                =  6;  // "bahamut"
-const int IRCD_PTLINK                 =  7;  // "PTlink"
-const int IRCD_CONFERENCEROOM         =  8;  // "CR"
-const int IRCD_NEWNET                 =  9;  // "nn-"
-
 
 #endif

@@ -107,7 +107,7 @@ EventPrefsView::AttachedToWindow (void)
     
   BScrollBar *bar (scroller->ScrollBar (B_VERTICAL));
   if (bar)
-    bar->SetSteps (3.0, 10.0);
+    bar->SetSteps (3.0, 5.0);
 }
 
 void

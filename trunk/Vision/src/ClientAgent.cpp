@@ -36,7 +36,7 @@
 
 #include "VTextControl.h"
 #include "Vision.h"
-#include "HistoryMenu.h"
+#include "HistoryList.h"
 #include "Theme.h"
 #include "RunView.h"
 #include "MessageAgent.h"
@@ -148,7 +148,7 @@ ClientAgent::Show (void)
   Window()->PostMessage (M_STATUS_CLEAR);
   this->msgr.SendMessage (M_STATUS_ADDITEMS);
 
-  BMessage statusMsg (M_UPDATE_STATUS);
+  BMessage statusMsg (M_CW_UPDATE_STATUS);
   statusMsg.AddPointer ("item", agentWinItem);
   statusMsg.AddInt32 ("status", WIN_NORMAL_BIT);
   statusMsg.AddBool ("hidden", false);
@@ -205,12 +205,8 @@ ClientAgent::Init (void)
 
   activeTheme->AddView (this);  
 
-  history = new HistoryMenu (BRect (
-    frame.right - 11,
-    input->Frame().top,
-    frame.right - 1,
-    input->Frame().bottom - 1));
-
+  history = new HistoryList ();
+  
   BRect textrect (
     1,
     frame.top - 2,
@@ -277,6 +273,7 @@ ClientAgent::SetServerName (const char *name)
 void
 ClientAgent::AddMenuItems (BPopUpMenu *pmenu)
 {
+  // TODO: make this an empty virtual and implement the specific menus in the subclasses
   BMenuItem *item;
 
   ChannelAgent *channelagent;
@@ -319,24 +316,38 @@ ClientAgent::FilterCrap (const char *data, bool force)
       outData << data[i];
     else if (data[i] > 1 && data[i] < 32)
     {
-      // TODO Get these codes working
       if (data[i] == 3)
       {
         if (ViewCodes)
           outData << "[0x03]{";
 
         ++i;
-        while (i < theChars
-        &&   ((data[i] >= '0'
-        &&     data[i] <= '9')
-        ||     data[i] == ','))
-        {
-          if (ViewCodes)
-          outData << data[i];
-
-          ++i;
-        }
         
+        // filter foreground
+        for (int32 j = 0; j < 2; j++)
+          if (data[i] >= '0' && data[i] <= '9')
+          {
+            if (ViewCodes)
+              outData << data[i];
+              ++i;
+          }
+          else break;
+          
+        if (data[i] == ',')
+        {
+            if (ViewCodes)
+              outData << data[i];
+              ++i;
+            for (int32 j = 0; j < 2; j++)
+            if (data[i] >= '0' && data[i] <= '9')
+            {
+              if (ViewCodes)
+                outData << data[i];
+                ++i;
+            }
+            else break;
+        }
+
         --i;
         
         if (ViewCodes)
@@ -385,6 +396,7 @@ ClientAgent::TimedSubmit (void *arg)
   ClientWindow *window;
   BString buffer;
   int32 i;
+  bool addtohistory (true);
 
   if (msg->FindPointer ("agent", reinterpret_cast<void **>(&agent)) != B_OK)
   {
@@ -399,10 +411,13 @@ ClientAgent::TimedSubmit (void *arg)
   }
 
   bool delay (!msg->HasBool ("delay"));
+  if (msg->HasBool ("autoexec"))
+    addtohistory = false;
 
   BMessenger agentMsgr (agent);
   BMessage submitMsg (M_SUBMIT);
-  for (i = 0; (msg->HasString ("data", i)) && (false == agent->CancelMultilineTextPaste()); ++i)
+  submitMsg.AddBool ("history", addtohistory);
+  for (i = 0; (msg->HasString ("data", i)) && (agentMsgr.IsValid()) && (false == agent->CancelMultilineTextPaste()); ++i)
   {
     const char *data;
 
@@ -468,7 +483,7 @@ ClientAgent::Display (
 
   if (IsHidden())
   {
-    BMessage statusMsg (M_UPDATE_STATUS);
+    BMessage statusMsg (M_CW_UPDATE_STATUS);
     statusMsg.AddPointer ("item", agentWinItem);
     statusMsg.AddInt32 ("status", WIN_PAGESIX_BIT);
     Window()->PostMessage (&statusMsg);
@@ -482,9 +497,11 @@ ClientAgent::ParsemIRCColors (
   uint32 back,
   uint32 font)
 {
-  int mircFore = fore;
-  int mircBack = back;
-  int mircFont = font;
+  int mircFore (fore),
+        mircBack (back),
+        mircFont (font),
+        i (0);
+        
   while (buffer && *buffer)
   {
    
@@ -510,16 +527,25 @@ ClientAgent::ParsemIRCColors (
       {
         // parse colors
         mircFore = 0;
-        while (isdigit (*buffer))
+        for (i = 0; i < 2; i++)
+        {
+          if (!isdigit (*buffer))
+            break;
           mircFore = mircFore * 10 + *buffer++ - '0';
+        }
         mircFore = (mircFore % 16) + C_MIRC_WHITE;
+        
         if (*buffer == ',')
         {
           ++buffer;
           mircBack = 0;
-          while (isdigit (*buffer))
+          for (i = 0; i < 2; i++)
+          {
+            if (!isdigit (*buffer))
+              break;
             mircBack = mircBack * 10 + *buffer++ - '0';
-          mircBack = (mircBack % 16) + C_MIRC_WHITE;
+          }
+          mircBack = (mircFore % 16) + C_MIRC_WHITE;
         }
       }
       // set start to text portion (we have recorded the mirc stuff)
@@ -660,17 +686,18 @@ ClientAgent::MessageReceived (BMessage *msg)
       	fCancelMLPaste = false;
         bool lines (false);
         int32 which (0);
+
         msg->FindBool ("lines", &lines);
         msg->FindInt32 ("which", &which);
 
         if (msg->HasPointer ("invoker"))
         {
-          BInvoker *invoker;
+          BInvoker *invoker (NULL);
           msg->FindPointer ("invoker", reinterpret_cast<void **>(&invoker));
           delete invoker;
         }
-
-        if ((which == 0) && msg->HasInt32 ("which"))
+        
+        if (which == 0 && msg->HasBool ("which"))
           break;
 
         if (which == 1 || which == 3)
@@ -700,7 +727,7 @@ ClientAgent::MessageReceived (BMessage *msg)
             buffer += (i ? " " : "");
             buffer += data;
           }
-
+          
           int32 start, finish;
 
           if (msg->FindInt32 ("selstart", &start) == B_OK)
@@ -749,7 +776,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
     case M_SUBMIT:
       {
-        const char *buffer;
+        const char *buffer (NULL);
         bool clear (true),
         add2history (true);
 
@@ -864,7 +891,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
         if (IsHidden())
         {
-          BMessage statusMsg (M_UPDATE_STATUS);
+          BMessage statusMsg (M_CW_UPDATE_STATUS);
           statusMsg.AddPointer ("item", agentWinItem);
 
           if (hasNick || dynamic_cast<MessageAgent *>(this))
@@ -919,6 +946,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         vision_app->LoadURL (lookup.String());
       }
       break;
+      
     case M_RESIZE_VIEW:
       {
         ChannelAgent *currentAgent (dynamic_cast<ChannelAgent *>(this));
@@ -972,20 +1000,20 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           /// send mesage ///				
         if (completed)
-          message << "Completed ";
-        else message << "Terminated ";
+          message << S_CLIENT_DCC_SUCCESS;
+        else message << S_CLIENT_DCC_FAILED;
 				
         if (type == "SEND")
-          message << "send of " << pFile.Leaf() << " to ";
-        else message << "receive of " << pFile.Leaf() << " from ";
+          message << S_CLIENT_DCC_SENDTYPE << pFile.Leaf() << S_CLIENT_DCC_TO;
+        else message << S_CLIENT_DCC_RECVTYPE << pFile.Leaf() << S_CLIENT_DCC_FROM;
 				
         message << nick << " (";
 
         if (!completed)
           message << fAck << "/";
 				
-        message << size << " bytes), ";
-        message	<< rate << " cps\n";
+        message << size << S_CLIENT_DCC_SIZE_UNITS "), ";
+        message	<< rate << S_CLIENT_DCC_SPEED_UNITS "\n";
 					
         Display (message.String(), C_CTCP_RPY);
 	  }

@@ -30,6 +30,5 @@ class PrefsWindow : public BWindow
     PrefsWindow(void);
     virtual ~PrefsWindow(void);
     virtual bool QuitRequested(void);
-    virtual void MessageReceived(BMessage *);
 };
 #endif // _PREFS_WINDOW_H

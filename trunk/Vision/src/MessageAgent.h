@@ -91,7 +91,4 @@ class MessageAgent : public ClientAgent
     BLocker                     *locker;
 #endif
 };
-
-const uint32 M_MSG_WHOIS    = 'mamw';
-
 #endif

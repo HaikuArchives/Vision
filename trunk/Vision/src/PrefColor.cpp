@@ -36,7 +36,7 @@
 
 #include <stdio.h>
 
-const uint32 M_REVERT_SELECTION = 'mcrs';
+
 // data structures for font prefs
 
 struct FontStat
@@ -119,7 +119,7 @@ ColorPrefsView::ColorPrefsView (BRect frame)
   selector = new ColorSelector (frame, "selector", NULL, mycolors, labels, new BMessage ('vtst'));
   selector->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   selector->ResizeToPreferred();
-  revert = new BButton (BRect (0,0,0,0), "revert", "Revert", new BMessage (M_REVERT_SELECTION));
+  revert = new BButton (BRect (0,0,0,0), "revert", "Revert", new BMessage (M_REVERT_COLOR_SELECTIONS));
   revert->ResizeToPreferred();
   ResizeTo (selector->Bounds().Width() + 30, selector->Bounds().Height() + 30 + revert->Bounds().Height());
   AddChild (selector);
@@ -152,7 +152,7 @@ ColorPrefsView::MessageReceived (BMessage *msg)
 {
   switch (msg->what)
   {
-    case M_REVERT_SELECTION:
+    case M_REVERT_COLOR_SELECTIONS:
       selector->Revert();
       break;
   }

@@ -175,21 +175,4 @@ class ServerAgent : public ClientAgent
                                 nickIndex;
 };
 
-const uint32 M_GET_ESTABLISH_DATA           = 'saed'; // used by Establish()
-const uint32 M_SET_ENDPOINT                 = 'sase'; // used by Establish()
-const uint32 M_GET_RECONNECT_STATUS         = 'sars'; // used by Establish()
-const uint32 M_NOT_CONNECTING               = 'sanc'; // used by Establish()
-const uint32 M_CONNECTED                    = 'sacs'; // used by Establish()
-const uint32 M_INC_RECONNECT                = 'sair'; // used by Establish()
-const uint32 M_INIT_LAG                     = 'sail'; // used by Establish()
-const uint32 M_DISPLAY_ALL                  = 'sada'; // display to all clients
-const uint32 M_SET_IP                       = 'sasi'; // used by Establish()
-const uint32 M_GET_IP                       = 'sagi'; // used by MessageAgent
-const uint32 M_SERVER_DISCONNECT            = 'sasd'; // we got disconnected
-const uint32 M_PARSE_LINE                   = 'sapl'; // new data from server
-const uint32 M_LAG_CHECK                    = 'salc'; // send lag check to server
-const uint32 M_REJOIN_ALL                   = 'sara';
-const uint32 M_SEND_RAW                     = 'sasr';
-const uint32 M_CHAT_ACCEPT                  = 'saca'; // used by DCCHandler
-const uint32 M_CHAT_ACTION                  = 'sacc'; // used by DCC
 #endif

@@ -1,6 +1,13 @@
 Vision
 http://vision.sourceforge.net
 
+[0.8-exp-1117]
+         * cleaned up message constants
+         * fixed crash bug in mirc color parser
+         * fixed bug in control code stripper where too many digits would get removed
+         * tweaked textview drawing performance
+         * began moving program strings to a common header file for easier localization 
+
 [0.7.8-0113]
          * fixed crash bug in ParseEvents
          * fixed /me trailing line bug in DCC chats

@@ -129,6 +129,4 @@ class DCCSend : public DCCConnect
 	
 };
 
-uint32 const M_DCC_FINISH					= 'fnsh';
-
 #endif

@@ -31,12 +31,6 @@
 
 #include "ClientAgent.h"
 
-
-const int MODE_NORMAL = 1;
-const int MODE_VOICE  = 2;
-const int MODE_HELP   = 3;
-const int MODE_OP     = 4;
-
 class ChannelOptions;
 class BScrollView;
 class ServerWindow;
@@ -94,7 +88,6 @@ class ChannelAgent : public ClientAgent
 
 };
 
-const uint32 M_CHANNEL_OPTIONS_SHOW    = 'caos';
-const uint32 M_CHANNEL_OPTIONS_CLOSE   = 'caoc';
+
 
 #endif

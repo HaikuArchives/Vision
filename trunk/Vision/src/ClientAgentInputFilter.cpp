@@ -237,11 +237,6 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			result = B_SKIP_MESSAGE;
 		}
 		break;
-
-	case B_ESCAPE:
-		window->fCancelMLPaste = true;
-		result = B_SKIP_MESSAGE;
-		break;
 	}
 
 
@@ -308,6 +303,12 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			}
 			break;
 
+		case B_ESCAPE:
+		    {
+			window->fCancelMLPaste = true;
+			result = B_SKIP_MESSAGE;
+			}
+			break;
 		}
 	}
 
