@@ -29,7 +29,7 @@
 #include <View.h>
 #include <String.h>
 #include <Messenger.h>
-
+#include <MessageRunner.h>
 #include <regex.h>
 
 class BListView;
@@ -59,12 +59,14 @@ class ListAgent : public BView
     
   private:
     BMessenger              *sMsgr;
+    BMessageRunner          *listUpdateTrigger;
 	BMenuBar				*mBar;
     BListView               *listView;
     BScrollView             *scroller;
     StatusView              *status;
     BList                   list,
-                              showing;
+                              showing,
+                              nextbatch;
     BString                 filter,
                               find,
                               statusStr;
@@ -93,5 +95,5 @@ const uint32 M_LIST_SORT_CHANNEL       = 'lasc';
 const uint32 M_LIST_SORT_USERS         = 'lasu';
 const uint32 M_LIST_FILTER             = 'lafr';
 const uint32 M_LIST_INVOKE             = 'lali';
-
+const uint32 M_LIST_UPDATE             = 'lalu';
 #endif
