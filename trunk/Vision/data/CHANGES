@@ -1,7 +1,8 @@
 Vision
 http://vision.sourceforge.net
 
-[0.4-exp]
+[0.4-1001]
+2001-10-01
          * replaced IRCView with RunView (*HUGE* thanks to Todd Lair!)
             -- differentiable background colors
             -- timestamps can be stripped/readded
