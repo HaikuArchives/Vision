@@ -24,4 +24,4 @@
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
-DEFAULT $CVSROOT/CVSROOT/loginfo.pl guru@startrek.com guru@startrek.com %{s}
+DEFAULT $CVSROOT/CVSROOT/loginfo.pl guru@startrek.com guru@startrek.com %{sVv}
