@@ -109,7 +109,10 @@ WindowList::MessageReceived (BMessage *msg)
           int32 state (msg->FindInt32 ("state"));
           WindowListItem *item (NULL);
           msg->FindPointer ("source", reinterpret_cast<void **>(&item));
-          if (item != NULL)
+          // this is insufficient since it seems events can be timed such that the runner
+          // lets off one last message before being destroyed in a destructor
+          // as such, verify that the item does indeed still exist in the list before doing this
+          if ((item != NULL) && HasItem(item))
           {
             int32 oldState (item->BlinkState());
             item->SetBlinkState ((oldState == 0) ? state : 0);
