@@ -56,7 +56,6 @@ class VisionApp : public BApplication
     virtual bool            QuitRequested (void);
     virtual void            ArgvReceived (int32, char **);
     virtual void            ReadyToRun (void);
-    virtual void            AppActivated (bool);
     
     void                    LoadURL (const char *);
 
