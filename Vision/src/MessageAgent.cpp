@@ -23,6 +23,7 @@
  *                 Jamie Wilkinson
  */
 
+#include <Beep.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
 #include <UTF8.h>
@@ -523,6 +524,10 @@ MessageAgent::MessageReceived (BMessage *msg)
 
         if (IsHidden())
           UpdateStatus (WIN_NICK_BIT);
+        
+        BWindow *window (NULL);
+        if ((window = Window()) != NULL && !window->IsActive())
+          system_beep(kSoundEventNames[(uint32)seNickMentioned]);
 
         // Send the rest of processing up the chain
         ClientAgent::MessageReceived (msg);

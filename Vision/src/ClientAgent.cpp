@@ -874,7 +874,12 @@ ClientAgent::MessageReceived (BMessage *msg)
  
         int32 dispColor = C_TEXT;
         if (hasNick)
+        {
+          BWindow *window (NULL);
           dispColor = C_MYNICK;
+          if ((window = Window()) != NULL && !window->IsActive())
+            system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+        }            
         else if (isAction)
           dispColor = C_ACTION;
         
