@@ -66,36 +66,42 @@ ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 			librootversion = version.short_info;
 			librootversion.RemoveFirst ("R");
 			
-			delete libroot;
-						
+			delete libroot;			
+			
 			system_info myInfo;
 			get_system_info(&myInfo);
 			
 			sysInfoString = "BeOS/";
 			sysInfoString += librootversion;
 			
-			// this is the way the BeOS 5.0.1 update checks for R5 Pro...
-			bool BePro;
-			BePro = true; // innocent until proven guilty
-			BFile *indeo5rt = new BFile("/boot/beos/system/add-ons/media/encoders/indeo5rt.encoder", B_READ_ONLY);
-			BFile *indeo5rtmmx = new BFile("/boot/beos/system/add-ons/media/encoders/indeo5rtmmx.encoder", B_READ_ONLY);
-			BFile *mp3 = new BFile("/boot/beos/system/add-ons/media/encoders/mp3.encoder", B_READ_ONLY);
-			
-			if ((indeo5rt->InitCheck() != B_OK) ||
-				(indeo5rtmmx->InitCheck() != B_OK) ||
-				(mp3->InitCheck() != B_OK))
+			if (librootversion.FindFirst("5.0") == 0)
 			{
-				BePro = false; // *gasp*! leeches!
+				// this is the way the BeOS 5.0.1 update checks for R5 Pro...
+				bool BePro;
+				BePro = true; // innocent until proven guilty
+				BFile *indeo5rt = new BFile("/boot/beos/system/add-ons/media/encoders/indeo5rt.encoder", B_READ_ONLY);
+				BFile *indeo5rtmmx = new BFile("/boot/beos/system/add-ons/media/encoders/indeo5rtmmx.encoder", B_READ_ONLY);
+				BFile *mp3 = new BFile("/boot/beos/system/add-ons/media/encoders/mp3.encoder", B_READ_ONLY);
+				
+				if ((indeo5rt->InitCheck() != B_OK) ||
+					(indeo5rtmmx->InitCheck() != B_OK) ||
+					(mp3->InitCheck() != B_OK))
+				{
+					BePro = false; // *gasp*! leeches!
+				}
+				
+				delete indeo5rt;
+				delete indeo5rtmmx;
+				delete mp3;
+				
+				if (BePro)
+					sysInfoString += " Pro Edition";
+				else
+					sysInfoString += " Personal Ed.";
+				
 			}
 			
-			delete indeo5rt;
-			delete indeo5rtmmx;
-			delete mp3;
-				
-			if (BePro)
-				sysInfoString += " Pro Edition : ";
-			else
-				sysInfoString += " Personal Ed. : ";
+			sysInfoString += " : ";
 						
 			sysInfoString << myInfo.cpu_count;
 			sysInfoString += " CPU";
