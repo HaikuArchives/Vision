@@ -901,12 +901,6 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
   else if ((myStatus & WIN_NICK_BIT) != 0)
     color = father->GetColor (C_WINLIST_NICK);
 
-  if ((myType & WIN_CHANNEL_TYPE) != 0)
-    drawString.Prepend ("  ");
-
-  if ((myType & WIN_MESSAGE_TYPE) != 0)
-    drawString.Prepend ("  ");
-
   if (IsSelected())
     color = father->GetColor (C_WINLIST_NORMAL);
   
