@@ -60,7 +60,7 @@ ClientAgent::ParseCmd (const char *data)
   BString firstWord (GetWord(data, 1).ToUpper());
   BMessage sendMsg (M_SERVER_SEND);
 
-  if (dynamic_cast<ChannelAgent *>(this) && vision_app->HasAlias(firstWord))
+  if (vision_app->HasAlias(firstWord))
   {
     return ParseCmd(vision_app->ParseAlias(data, fId).String());
   }

@@ -130,7 +130,10 @@ class VisionApp : public BApplication
 	status_t				AddAlias(const BString &, const BString &);
 	void					RemoveAlias(const BString &);
 	void					LoadAliases();
-	void					SaveAliases();					
+	void					SaveAliases();
+    
+    int32                   CountAliases() const;
+    bool                    GetNextAlias(void **, BString &, BString &);
     
     BString                 fEvents[MAX_EVENTS];
 

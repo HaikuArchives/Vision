@@ -2014,6 +2014,39 @@ VisionApp::SaveAliases(void)
   }
 }
 
+int32
+VisionApp::CountAliases(void) const
+{
+  return fAliases.size();
+}
+
+bool
+VisionApp::GetNextAlias(void **cookie, BString &name, BString &value)
+{
+  map<BString, BString>::const_iterator *it (NULL);
+  if (*cookie == NULL)
+  {
+    it = new map<BString, BString>::const_iterator;
+    *it = fAliases.begin();
+    *cookie = it;
+  }
+  else
+  {
+    it = (map<BString, BString>::const_iterator *)*cookie;
+  }
+  if (*it != fAliases.end())
+  {
+    name = (*it)->first;
+    value = (*it)->second;
+    ++(*it);
+    return true;
+  }
+  else
+  {
+    delete *cookie;
+    return false;
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 /// End Public Functions
