@@ -66,12 +66,12 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 			name,
 			B_FOLLOW_ALL_SIDES,
 			B_WILL_DRAW),
+			nickUpButton (NULL),
+			nickDnButton (NULL),
 			nickPrompt (NULL),
 			netPrompt (NULL),
 			dupePrompt (NULL),
-			serverPrefs (NULL),
-			nickUpButton (NULL),
-			nickDnButton (NULL)
+			serverPrefs (NULL)
 {
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
 	BMenu *menu (new BMenu ("Networks"));
@@ -85,7 +85,6 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	mainNetBox->SetLabel (networkMenu);
 	AddChild (mainNetBox);
 	BRect boundsRect (Bounds().InsetByCopy(10,15));
-	boundsRect.PrintToStream();
 	boundsRect.right /= 2;
 	boundsRect.right -= 8;
 	boundsRect.top += 15;

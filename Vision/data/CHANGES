@@ -1,6 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
+[0.6.5-1125]
+         * really fixed nick = network bug
+         * crash fix in network prefs view if PNG translator is missing or corrupt
+         * miscellaneous other cleanups
+         * nick highlight now works on actions too
+
 [0.6.2-1125]
          * fixed bug where messages would get directed incorrectly if the nickname
            was identical to the network name
