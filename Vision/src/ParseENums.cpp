@@ -39,6 +39,14 @@
 #include <ctype.h>
 #include <math.h>
 
+#include <netdb.h>
+
+#ifdef BONE_BUILD
+#  include <sys/socket.h>
+#  include <arpa/inet.h>
+#endif
+
+
 bool
 ServerAgent::ParseENums (const char *data, const char *sWord)
 {
@@ -350,13 +358,36 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BString theHost (GetWord (data, 4)),
                 theHostname (GetAddress (theHost.String()));
         theHost.RemoveFirst (":");
-				
-        printf ("%s\n", theHostname.String());
-      
+
         BString tempString (RestOfString (data, 4));
         tempString.RemoveFirst (":");
         tempString.Append ("\n");
         Display (tempString.String());
+		
+		if (getLocalIP && (tempString.IFindFirst (myNick.String()) == 0))
+		{
+		  getLocalIP = false;
+          hostent *hp = gethostbyname (theHostname.String());
+		  if (hp != NULL)
+		  {
+		    char addr_buf[16];
+            in_addr *addr = (in_addr *)hp->h_addr_list[0];
+            strcpy(addr_buf, inet_ntoa(*addr));
+            localip = addr_buf;
+            printf("hostname found: %s\n", localip.String());
+            return true;
+		  }
+		  else if (isdigit(theHostname[0]))
+		  {
+              localip = theHostname;
+              printf("hostname found: %s\n", localip.String());
+              return true;
+          }
+          else
+          {
+              printf("lookup failed, unable to resolve host\n");
+          }
+		}
 						
         if (theHost != "-9z99" && theHost != "")
         {
@@ -894,7 +925,13 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           msg.AddInt32 ("which", 3);
           msgr.SendMessage (&msg);
         }
-
+        
+        if (localip_private)
+        {
+          BString IPCommand ("/userhost ");
+          IPCommand += myNick;
+          ParseCmd (IPCommand.String());
+        }
         initialMotd = false;
       }
       return true;

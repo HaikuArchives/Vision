@@ -114,16 +114,13 @@ class DCCSend : public DCCConnect
 	friend DCCConnect;
 	protected:
 	int64				pos;
-	struct in_addr		addr;
-	
 
 	public:
 							DCCSend (
 								const char *,
 								const char *,
 								const char *,
-								const BMessenger &,
-								struct in_addr);
+								const BMessenger &);
 	virtual				~DCCSend (void);
 	virtual void		AttachedToWindow (void);
 	static int32		Transfer (void *);

@@ -143,8 +143,8 @@ MessageAgent::DCCServerSetup(void)
   sMsgr.SendMessage (M_GET_IP, &reply);
   
   BString address;
-  reply.FindString ("ip", &address); 
-  
+  reply.FindString ("ip", &address);
+    
   if (dPort != "")
     myPort = atoi (dPort.String());
 
@@ -159,7 +159,8 @@ MessageAgent::DCCServerSetup(void)
   }
 
   sa.sin_family = AF_INET;
-  sa.sin_addr.s_addr = inet_addr (address.String());
+
+  sa.sin_addr.s_addr = INADDR_ANY;
   
   sa.sin_port = htons(myPort);
   
@@ -178,6 +179,8 @@ MessageAgent::DCCServerSetup(void)
   
   BMessage sendMsg (M_SERVER_SEND);
   BString buffer;
+  
+  sa.sin_addr.s_addr = inet_addr (address.String());
   
   buffer << "PRIVMSG " << outNick << " :\1DCC CHAT chat ";
   buffer << htonl(sa.sin_addr.s_addr) << " ";

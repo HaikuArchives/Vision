@@ -74,6 +74,7 @@ ServerAgent::ServerAgent (
     frame_),
     localip (""),
     localip_private (false),
+    getLocalIP (false),
     lname (net.FindString ("realname")),
     lident (net.FindString ("ident")),
     nickAttempt (0),
@@ -976,6 +977,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         msg->FindString("ip", &ip);
         localip = ip.String();
         localip_private = msg->FindBool("private");
+        getLocalIP = localip_private;
       }
       break;
     
@@ -1087,18 +1089,17 @@ ServerAgent::MessageReceived (BMessage *msg)
         // a binded socket will return the
         // LAN ip over the DUN one 
 			
-        hostent *hp = gethostbyname (localip);
-				
         DCCSend *view;
+
         view = new DCCSend (
                 nick,
                 path.Path(),
                 ssize.String(),
-                sMsgr,
-                *((struct in_addr*)(hp->h_addr_list)[0]));
+                sMsgr);
             BMessage msg (M_DCC_FILE_WIN);
             msg.AddPointer ("view", view);
-            be_app->PostMessage (&msg);
+            vision_app->PostMessage (&msg);
+
       }
       break;
 
