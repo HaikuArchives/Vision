@@ -35,8 +35,8 @@ const int RPL_WELCOME2                = 002;
 const int RPL_WELCOME3                = 003;
 const int RPL_WELCOME4                = 004;
 
-const int RPL_WELCOME5                = 005;
-const int RPL_NNMAP                   = 005; // MAPEND is 007 like Ul.
+const int RPL_MYINFO                  = 005; // conflict (most)
+const int RPL_NNMAP                   = 005; // conflict (newnet)
 
 const int RPL_ULMAP                   = 006;
 const int RPL_ULMAPEND                = 007;
@@ -61,6 +61,7 @@ const int RPL_STATSKLINE              = 216;
 const int RPL_STATSQLINE              = 217;
 const int RPL_STATSYLINE              = 218;
 const int RPL_ENDOFSTATS              = 219;
+const int RPL_STATSBLINE              = 220;
 const int RPL_UMODEIS                 = 221;
 const int RPL_DALSTATSE               = 223;
 const int RPL_DALSTATSF               = 224;
@@ -74,6 +75,7 @@ const int RPL_STATSLLINE              = 241;
 const int RPL_STATSUPTIME             = 242;
 const int RPL_STATSOLINE              = 243;
 const int RPL_STATSHLINE              = 244;
+const int RPL_STATSXLINE              = 247;
 const int RPL_STATSPLINE              = 249;
 const int RPL_LUSERHIGHESTCONN        = 250;
 const int RPL_LUSERCLIENT             = 251;
@@ -100,6 +102,9 @@ const int RPL_UNAWAY                  = 305;
 const int RPL_NOWAWAY                 = 306;
 const int RPL_WHOISIDENTIFIED         = 307;
 const int RPL_U2USERIP                = 307;
+const int RPL_WHOISADMIN              = 308;
+const int RPL_WHOISSERVICESADMIN      = 309;
+const int RPL_WHOISHELPOP             = 310;
 const int RPL_WHOISUSER               = 311;
 const int RPL_WHOISSERVER             = 312;
 const int RPL_WHOISOPERATOR           = 313;
@@ -171,6 +176,7 @@ const int ERR_NICKNAMEINUSE           = 433;
 const int ERR_NICKCOLLISION           = 436;
 const int ERR_RESOURCEUNAVAILABLE     = 437;
 const int ERR_NICKCHANGETOOFAST       = 438;
+const int ERR_TARGETCHANGETOOFAST     = 439;
 const int ERR_USERNOTINCHANNEL        = 441;
 const int ERR_NOTONCHANNEL            = 442;
 const int ERR_USERONCHANNEL           = 443;
@@ -201,7 +207,11 @@ const int ERR_USERSDONTMATCH          = 502;
 
 const int RPL_WHOISUSERMODES          = 615;
 const int RPL_WHOISREALHOSTNAME       = 616;
-const int RPL_WHOISREGISTEREDBOT      = 617;
+const int RPL_WHOISREGISTEREDBOT      = 617; // conflict (ultimate)
+const int RPL_DCCALLOWCHANGE          = 617; // conflict (bahamut)
+const int RPL_DCCALLOWLIST            = 618;
+const int RPL_DCCALLOWEND             = 619;
+const int RPL_DCCALLOW                = 620;
 
 
 
