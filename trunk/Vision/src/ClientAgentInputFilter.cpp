@@ -217,7 +217,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 
 	msg->FindString ("bytes", &keyStroke);
 	msg->FindInt32 ("modifiers", &keymodifiers);
-
+	
 	switch (keyStroke[0])
 	{
 		/////////////////
@@ -240,8 +240,11 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 
 	case B_TAB: // tab key
 		{
-		    if (keymodifiers == 0)
-		    {
+            if ((keymodifiers & B_OPTION_KEY)  == 0
+	        &&  (keymodifiers & B_COMMAND_KEY) == 0
+	        &&  (keymodifiers & B_CONTROL_KEY) == 0
+	        &&  (keymodifiers & B_SHIFT_KEY) == 0)
+	        {
   				// used for tabcompletion for nickname/channelname/etc
 				fWindow->TabExpansion();
 			    BMessage logMessage (M_CLIENT_LOG);
@@ -249,7 +252,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			    logMessage.AddString ("data", "DEBUG: Tab completion used\n");
 			    fWindow->fSMsgr.SendMessage (&logMessage);
 			}
-			if ((keymodifiers & B_SHIFT_KEY) || keymodifiers == 0)
+			if ((keymodifiers & B_SHIFT_KEY) || !(keymodifiers & B_CONTROL_KEY))
 				result = B_SKIP_MESSAGE;
 		}
 		break;
