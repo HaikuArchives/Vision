@@ -1177,6 +1177,8 @@ ServerAgent::MessageReceived (BMessage *msg)
     
     case M_LIST_COMMAND:
       {
+        if (pListAgent)
+          break;
         vision_app->pClientWin()->pWindowList()->AddAgent (
           new ListAgent (
             *vision_app->pClientWin()->AgentRect(),
