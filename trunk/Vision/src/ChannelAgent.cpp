@@ -603,7 +603,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
             
             // u2 may not send the channel key, thats why we stored the /join cmd
             // in a string in ParseCmd
-            if (chanKey == "-9z99" && ircdtype == IRCD_UNDERNET)
+            if (chanKey == "*" && ircdtype == IRCD_UNDERNET)
             {
               BString tempId (id);
               tempId.Remove (0, 1); // remove any #, &, !, blah.
