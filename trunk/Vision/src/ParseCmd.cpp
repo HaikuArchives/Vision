@@ -139,7 +139,6 @@ ClientAgent::ParseCmd (const char *data)
     resume_thread (execThread);
     return true;
   }
-  
 
   if (firstWord == "/ABOUT")
   {
@@ -272,6 +271,16 @@ ClientAgent::ParseCmd (const char *data)
     }
     else
       vision_app->LoadURL ("http://www.acronymfinder.com");
+    return true;
+  }
+
+  if (firstWord == "/FIND" || firstWord == "/SEARCH")
+  {
+    BString buffer (RestOfString(data, 2));
+    if (buffer != "-9z99")
+    {
+      fText->FindText(buffer.String());
+    }
     return true;
   }
 
