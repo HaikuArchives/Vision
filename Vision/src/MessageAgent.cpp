@@ -304,16 +304,16 @@ MessageAgent::DCCIn (void *arg)
     if (recvReturn > 0)
     {
       if (tempBuffer[0] == '\n')
-        {
-          inputBuffer.RemoveLast ("\r");
-          inputBuffer = FilterCrap (inputBuffer.String(), false);
-          BMessage dispMsg (M_DISPLAY);
-          ClientAgent::PackDisplay (&dispMsg, inputBuffer.String());
-          mMsgr.SendMessage (&dispMsg);
-          inputBuffer = "";
-        }
-        else if (tempBuffer[0] != '\r')
-          inputBuffer.Append(tempBuffer[0],1);
+      {
+        inputBuffer.RemoveLast ("\r");
+        inputBuffer = FilterCrap (inputBuffer.String(), false);
+        BMessage dispMsg (M_CHANNEL_MSG);
+        dispMsg.AddString ("msgz", inputBuffer.String());
+        mMsgr.SendMessage (&dispMsg);
+        inputBuffer = "";
+      }
+      else
+        inputBuffer.Append(tempBuffer[0],1);
     }
   }
 
@@ -454,8 +454,8 @@ MessageAgent::DCCOut (void *arg)
       {
         inputBuffer.RemoveLast ("\r");
         inputBuffer = FilterCrap (inputBuffer.String(), false);
-        BMessage dispMsg (M_DISPLAY);
-        ClientAgent::PackDisplay (&dispMsg, inputBuffer.String());
+        BMessage dispMsg (M_CHANNEL_MSG);
+        dispMsg.AddString ("msgz", inputBuffer.String());
         mMsgr.SendMessage (&dispMsg);
         inputBuffer = "";
       }

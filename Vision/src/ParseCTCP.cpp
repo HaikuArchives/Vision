@@ -255,8 +255,8 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       BMessage bMsg (M_DCC_MESSENGER), bReply;
       be_app_messenger.SendMessage (&bMsg, &bReply);
 
-      BMessenger fMsgr;
-      bReply.FindMessenger ("msgr", &fMsgr);
+      BMessenger msgr;
+      bReply.FindMessenger ("msgr", &msgr);
 
       BMessage msg (M_ADD_RESUME_DATA), reply;
       msg.AddString ("vision:nick", theNick.String());
