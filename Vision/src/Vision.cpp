@@ -594,7 +594,7 @@ VisionApp::QuitRequested (void)
   //  snooze (500000);  // 0.5 seconds
 
   //ThreadStates();
-  //SaveSettings();
+  SaveSettings();
 
   return true;
 }
@@ -1122,8 +1122,6 @@ VisionApp::ClientFontSize (int32 which, float size)
     if (fVisionSettings->ReplaceFloat ("size", which, size) != B_OK)
       printf("error, could not set font size\n");
   }
-  
-  SaveSettings();
 }
 
 const BFont *
@@ -1326,7 +1324,6 @@ VisionApp::SetNetwork (const char *network, BMessage *data)
      else ++i;
   }
   fVisionSettings->AddMessage ("network", data);
-  SaveSettings();
   return B_OK;
 
 }
