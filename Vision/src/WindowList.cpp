@@ -102,10 +102,10 @@ WindowList::MouseDown (BPoint myPoint)
     && (keymodifiers & B_COMMAND_KEY) == 0
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
-			
+
       BListItem *item = ItemAt(IndexOf(myPoint));
       if (item && !item->IsSelected())
-        Select(IndexOf(myPoint));
+        Select (IndexOf (myPoint));
 
       myPopUp->Go (
         ConvertToScreen (myPoint),
@@ -231,11 +231,11 @@ WindowList::GetColor (int32 which) const
 void
 WindowList::SetFont (int32 which, const BFont *font)
 {
-	if (which == F_NAMES)
-	{
-		BListView::SetFont (font);
-		Invalidate();
-	}
+  if (which == F_NAMES)
+  {
+    BListView::SetFont (font);
+    Invalidate();
+  }
 }
 
 void
@@ -243,13 +243,11 @@ WindowList::ClearList (void)
 {
   // never ever call this function unless you understand
   // the consequences!
-	int32 i,
-	      all (CountItems());
-	
-	for (i = 0; i <= all; i++)
-	{
-		RemoveItem (0L);
-	}
+  int32 i,
+        all (CountItems());
+
+  for (i = 0; i <= all; i++)
+    RemoveItem (0L);
 }
 
 //int32
@@ -492,7 +490,7 @@ void
 WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
 {
   WindowList *father (static_cast<WindowList *>(passedFather));
-	
+
   if (IsSelected())
   {
     father->SetHighColor (father->GetColor (C_WINLIST_SELECTION));
@@ -517,10 +515,10 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
 
   if ((myStatus & WIN_NEWS_BIT) != 0)
     color = father->GetColor (C_WINLIST_NEWS);
-		
+
   else if ((myStatus & WIN_NICK_BIT) != 0)
     color = father->GetColor (C_WINLIST_NICK);
-		
+
   if ((myType & WIN_CHANNEL_TYPE) != 0)
     drawString.Prepend ("  ");
 
