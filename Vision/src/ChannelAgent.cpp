@@ -711,7 +711,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 		    chanOpt->Activate();
 		  else
 		  {
-		    chanOpt = new ChannelOptions (id, this);
+		    chanOpt = new ChannelOptions (id.String(), this);
 		    chanOpt->Show();
 		  }
 		  break;		

@@ -23,9 +23,11 @@
 #include "ChannelAgent.h"
 #include "ChannelOptions.h"
 
+#include <StringView.h>
+
 #include <stdio.h>
 
-ChannelOptions::ChannelOptions (BString chan_name_, ChannelAgent *parent_)
+ChannelOptions::ChannelOptions (const char *chan_name_, ChannelAgent *parent_)
   : BWindow (
       BRect (188.0, 88.0, 600.0, 390.0),
       "",
@@ -64,5 +66,48 @@ ChannelOptions::Init (void)
 
   bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   AddChild (bgView);
+
+  BStringView *tempStringView = new BStringView (Bounds(),
+                                                 "temp",
+                                                 "AEIOUglqj",
+                                                 0,
+                                                 0);
+  tempStringView->ResizeToPreferred();
+  float stringHeight = tempStringView->Frame().bottom;
+  
+  delete tempStringView;
+
+  
+  privilegesView = new BView (BRect (bgView->Frame().left + 2,
+                                     bgView->Frame().top + 2,
+                                     bgView->Frame().right - 2,
+                                     stringHeight+2),
+                             "privilege message",
+                             0,
+                             B_WILL_DRAW);
+  privilegesView->SetViewColor (0, 100, 0);
+  bgView->AddChild (privilegesView);
+
+  
+  BString privString;  // this will become dynamic based on the current mode
+  privString += "You are currently a channel operator. ";
+  privString += "You may change any of these options.";
+  
+  BStringView *privMsgView = new BStringView (BRect (privilegesView->Bounds().left,
+                                                     privilegesView->Bounds().top,
+                                                     privilegesView->Bounds().right,
+                                                     stringHeight),
+                                              "privMsgView",
+                                              privString.String(),
+                                              0,
+                                              B_WILL_DRAW);
+  privMsgView->SetHighColor (255,255,255);
+  privMsgView->SetAlignment (B_ALIGN_CENTER);
+  //privMsgView->ResizeToPreferred();
+  privilegesView->ResizeToPreferred();
+  privilegesView->AddChild (privMsgView);
+  
+  
+  
 }
 

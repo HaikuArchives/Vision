@@ -32,16 +32,17 @@ class BView;
 class ChannelOptions : public BWindow
 {
   public:
-                              ChannelOptions (BString, ChannelAgent *);
+                              ChannelOptions (const char *, ChannelAgent *);
     virtual                   ~ChannelOptions (void);
     virtual bool              QuitRequested (void);
       
   private:  
     void                      Init (void);
     ChannelAgent              *parent;
-    BString                   chan_name;
+    const char                *chan_name;
     
     BView                     *bgView;
+    BView                     *privilegesView;
     
     
 };
