@@ -43,14 +43,15 @@ class BMenuItem;
 class BScrollView;
 class BView;
 class BMessageRunner;
-class ServerAgent;
-class StatusView;
-class WindowList;
+class ClientWindowDock;
 class NotifyList;
 class NotifyListItem;
-class WindowListItem;
-class ClientWindowDock;
 class ResizeView;
+class ServerAgent;
+class StatusView;
+class TIconMenu;
+class WindowList;
+class WindowListItem;
 
 class ClientWindow : public BWindow
 {
@@ -59,9 +60,8 @@ class ClientWindow : public BWindow
     BMenuBar              *fMenuBar;
     BMenu                 *fServer,
                           *fEdit,
-                          *fTools,
-                          *fWindow,
-                          *fHelp;
+                          *fWindow;
+    TIconMenu             *fApp;
 
   public:
                           ClientWindow (BRect);

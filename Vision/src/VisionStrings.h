@@ -54,21 +54,21 @@
 
 // client window
 
+#define S_CW_APP_ABOUT              "About"
+#define S_CW_APP_PREFS              "Preferences"
+#define S_CW_APP_CHANLIST           "List Channels"
+#define S_CW_APP_TERMINAL           "New Terminal"
+#define S_CW_APP_QUIT               "Quit"
 #define S_CW_SERVER_MENU            "Server"
 #define S_CW_SERVER_CONNECT         "Connect to"
 #define S_CW_SERVER_SETUP           "Setup"
 #define S_CW_EDIT_MENU              "Edit"
 #define S_CW_TOOLS_MENU             "Tools"
-#define S_CW_TOOLS_CHANLIST         "Channel List"
-#define S_CW_TOOLS_NOTIFYLIST       "Notify List"
-#define S_CW_TOOLS_IGNORELIST       "Ignore List"
-#define S_CW_TOOLS_TERMINAL         "New Terminal"
 #define S_CW_WINDOW_MENU            "Window"
 #define S_CW_WINDOW_PART            "Part Agent"
 #define S_CW_EDIT_CUT               "Cut"
 #define S_CW_EDIT_COPY              "Copy"
 #define S_CW_EDIT_PASTE             "Paste"
-#define S_CW_EDIT_PREFS             "Preferences"
 
 // client window dock
 

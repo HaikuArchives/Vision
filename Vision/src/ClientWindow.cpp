@@ -37,6 +37,7 @@
 #include "ClientAgent.h"
 #include "ClientWindow.h"
 #include "ClientWindowDock.h"
+#include "IconMenu.h"
 #include "ListAgent.h"
 #include "Names.h"
 #include "NetworkMenu.h"
@@ -614,6 +615,28 @@ ClientWindow::Init (void)
   BMenuItem *item;
   BMenu *menu;
   // Server menu
+  
+  menu = new BMenu("App");
+
+  menu->AddItem (item = new BMenuItem (S_CW_APP_ABOUT B_UTF8_ELLIPSIS,
+                    new BMessage (B_ABOUT_REQUESTED)));
+  item->SetTarget (vision_app);
+  menu->AddItem (item = new BMenuItem (S_CW_APP_PREFS B_UTF8_ELLIPSIS, new BMessage (M_PREFS_SHOW)));
+  item->SetTarget (vision_app);
+
+  menu->AddSeparatorItem();                  
+  menu->AddItem (item = new BMenuItem (S_CW_APP_CHANLIST B_UTF8_ELLIPSIS,
+                    new BMessage (M_LIST_COMMAND), 'L'));
+  menu->AddItem (item = new BMenuItem (S_CW_APP_TERMINAL, new BMessage (M_OPEN_TERM),
+                    'T', B_OPTION_KEY));
+  menu->AddSeparatorItem();
+  menu->AddItem (item = new BMenuItem (S_CW_APP_QUIT,
+                    new BMessage (B_QUIT_REQUESTED)));
+  item->SetTarget (vision_app);
+
+  fApp = new TIconMenu (menu);
+  fMenuBar->AddItem (fApp);
+  
   fServer = new BMenu (S_CW_SERVER_MENU);
   fServer->AddItem (menu = new NetworkMenu (S_CW_SERVER_CONNECT B_UTF8_ELLIPSIS, M_CONNECT_NETWORK, BMessenger (vision_app)));
   
@@ -626,32 +649,15 @@ ClientWindow::Init (void)
   // Edit menu
   fEdit = new BMenu (S_CW_EDIT_MENU);
 
-  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_CUT, new BMessage (B_CUT)));
-  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_COPY, new BMessage (B_COPY)));
-  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_PASTE, new BMessage (B_PASTE)));
-  fEdit->AddSeparatorItem();
-  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_PREFS B_UTF8_ELLIPSIS, new BMessage (M_PREFS_SHOW)));
-  item->SetTarget (vision_app);
+  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_CUT, new BMessage (B_CUT), 'X'));
+  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_COPY, new BMessage (B_COPY), 'C'));
+  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_PASTE, new BMessage (B_PASTE), 'V'));
+
+  RemoveShortcut('X', B_COMMAND_KEY);
+  RemoveShortcut('C', B_COMMAND_KEY);
+  RemoveShortcut('V', B_COMMAND_KEY);
  
   fMenuBar->AddItem (fEdit);
-  
-  // Tools menu
-  fTools = new BMenu (S_CW_TOOLS_MENU);
-
-  fTools->AddItem (item = new BMenuItem (S_CW_TOOLS_CHANLIST,
-                    new BMessage (M_LIST_COMMAND), 'L'));
-  fTools->AddItem (item = new BMenuItem (S_CW_TOOLS_IGNORELIST B_UTF8_ELLIPSIS,
-                    new BMessage (B_ABOUT_REQUESTED), 'I'));
-  item->SetTarget (vision_app);
-  fTools->AddItem (item = new BMenuItem (S_CW_TOOLS_NOTIFYLIST B_UTF8_ELLIPSIS,
-                    new BMessage (B_ABOUT_REQUESTED), 'N'));
-  item->SetTarget (vision_app);
-  
-  fTools->AddItem (item = new BMenuItem (S_CW_TOOLS_TERMINAL, new BMessage (M_OPEN_TERM),
-                    'T', B_OPTION_KEY));
-
-
-  fMenuBar->AddItem (fTools);
   
   // Window menu
   fWindow = new BMenu (S_CW_WINDOW_MENU);
