@@ -500,13 +500,13 @@ ChannelAgent::TabExpansion (void)
       // check if we are at the beginning of a line
       // (ignoring whitespace). if we are, prepend a colon to the nick being
       // inserted
-      while (start > 0)
+      while (place > fInputText)
       {
-        --start;
-        if (fInput->TextView()->ByteAt(start) != 0x20)
+        --place;
+        if (*place != 0x20)
           break;
       }
-      if (start == 0)
+      if (place == fInputText)
 	insertion += ": ";
 
       fInput->TextView()->Delete (
