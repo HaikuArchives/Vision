@@ -162,6 +162,7 @@ class RunView : public BView
 	void					Select (const SelectPos &, const SelectPos &);
 	void					SelectAll (void);
 	void					SetClippingName (const char *);
+        bool                                    FindText(const char *);
 };
 
 #endif

@@ -2472,3 +2472,25 @@ Line::SelectWord (int16 *start, int16 *end)
   *end = end_tmp;
 }
 
+bool
+RunView::FindText(const char *text)
+{
+  bool result (false);
+  if (text != NULL)
+  {
+    for (int32 i = 0; i < fLine_count; i++)
+    {
+      char *offset (NULL);
+      if ((offset = strstr(fLines[i], text)) != NULL)
+      {
+        SelectPos start (i, offset - text,
+          end (i, (offset - text) + strlen(text));
+        Select(start, end);
+        ScrollTo(0.0, fLines[i].fTop);
+        result = true;
+        break;
+      }
+    }
+  }
+  return result;
+}
