@@ -1,7 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+         
 [0.9-exp-0609]
+         * removed numeric constants from code of PrefGeneral. (Alan Ellis)
+         * changed the PrefGeneral keyboard nav to be more standard. (Alan Ellis)
          * added file: and mailto: URL support (Alan Ellis)
          * added keyboard shortcuts for reordering networks in the window list, shift+alt+u moves the current network up one, shift+alt+d moves the current network down one
          * fixed bug where reordering by above shortcut would get undone
