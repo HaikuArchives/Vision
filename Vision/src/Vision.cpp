@@ -423,6 +423,7 @@ VisionApp::VisionVersion (int typebit)
       return version_builddate;
     }
   }
+  
 }
 
 const char *
