@@ -14,6 +14,7 @@
 #include <netdb.h>
 #endif
 
+class BMessenger;
 class BStatusBar;
 class BStringView;
 class StopButton;
@@ -38,14 +39,9 @@ class DCCConnect : public BView
 	int32				finalRateAverage;
 
 	thread_id			tid;
-	BFile				file;
-	int					s;
-	bool					running;
 	bool					success;
 	bool					isStopped;
 
-	void					UpdateBar (int, int, uint32, bool);
-	void					UpdateStatus (const char *);
 	virtual void		Stopped (void);
 	virtual void		Lock (void);
 	virtual void		Unlock (void);
@@ -64,10 +60,15 @@ class DCCConnect : public BView
 	virtual void		DetachedFromWindow (void);
 	virtual void		Draw (BRect);
 	virtual void		MessageReceived (BMessage *);
+	static void			UpdateBar (const BMessenger &, int, int, uint32, bool);
+	static void			UpdateStatus (const BMessenger &, const char *);
+
 };
 
 class DCCReceive : public DCCConnect
 {
+	friend DCCConnect;
+    protected:
 	bool					resume;
 
 	public:
@@ -85,16 +86,11 @@ class DCCReceive : public DCCConnect
 
 class DCCSend : public DCCConnect
 {
+	friend DCCConnect;
 	BMessenger			caller;
-	sem_id				sid;
 	int64				pos;
 	struct in_addr		addr;
 	
-
-	protected:
-	
-	void					Lock (void);
-	void					Unlock (void);
 
 	public:
 							DCCSend (

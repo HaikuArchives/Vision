@@ -14,6 +14,12 @@
 
 const uint32 M_STOP_BUTTON				= 'stop';
 const uint32 M_UPDATE_STATUS			= 'stat';
+const uint32 M_GET_CONNECT_DATA         = 'dccd';
+const uint32 M_GET_RESUME_POS           = 'dcrp';
+const uint32 M_SUCCESS                  = 'dccs';
+const uint32 M_UPDATE_TRANSFERRED       = 'dcut';
+const uint32 M_UPDATE_AVERAGE           = 'dcua';
+
 
 #ifdef BONE_BUILD
 #define DCC_BLOCK_SIZE 8192
@@ -41,7 +47,6 @@ DCCConnect::DCCConnect (
 		port (p),
 		finalRateAverage (0),
 		tid (-1),
-		running (false),
 		success (false),
 		isStopped (false)
 {
@@ -79,7 +84,6 @@ DCCConnect::~DCCConnect (void)
 void
 DCCConnect::AttachedToWindow (void)
 {
-	running = true;
 	stop->SetTarget (this);
 }
 
@@ -140,6 +144,56 @@ DCCConnect::MessageReceived (BMessage *msg)
 			label->SetText (msg->FindString ("text"));
 			break;
 		}
+		
+		case M_GET_CONNECT_DATA:
+		{
+		  BMessage reply;
+		  reply.AddString ("port", port.String());
+		  reply.AddString ("ip", ip.String());
+		  reply.AddString ("name", file_name.String());
+		  reply.AddString ("nick", nick.String());
+		  reply.AddString ("size", size.String());
+		  DCCReceive *recview (dynamic_cast<DCCReceive *>(this));
+		  if (recview != NULL)
+		    reply.AddBool ("resume", recview->resume);
+		  DCCSend *sendview (dynamic_cast<DCCSend *>(this));
+		  if (sendview != NULL)
+		  {
+		    reply.AddData ("addr", B_RAW_TYPE, &sendview->addr, sizeof(in_addr));
+		    reply.AddMessenger ("caller", sendview->caller);
+		  }
+		  msg->SendReply(&reply);
+		}
+		break;
+		
+		case M_GET_RESUME_POS:
+		{
+		  BMessage reply;
+		  DCCSend *sendview (dynamic_cast<DCCSend *>(this));
+		  if (sendview != NULL)
+		    reply.AddInt32 ("pos", sendview->pos);
+		  msg->SendReply(&reply);
+		}
+		break;
+		
+		case M_UPDATE_TRANSFERRED:
+		{
+		  totalTransferred = msg->FindInt32 ("transferred");
+		}
+		break;
+		
+		case M_UPDATE_AVERAGE:
+		{
+		  finalRateAverage = msg->FindInt32 ("average");
+		}
+		break;
+		
+		case M_SUCCESS:
+		{
+		   success = true;
+		   Stopped();
+		}
+		break;
 
 		default:
 			BView::MessageReceived (msg);
@@ -149,23 +203,6 @@ DCCConnect::MessageReceived (BMessage *msg)
 void
 DCCConnect::Stopped (void)
 {
-	running = false;
-
-	if (s > 0)
-	{
-#ifdef BONE_BUILD
-		close (s);
-#elif NETSERVER_BUILD
-		closesocket (s);
-#endif
-	}
-
-	Unlock();
-	if (file.InitCheck() == B_OK)
-	{
-		file.Unset();
-	}
-
  	if (totalTransferred > 0)
  	{
  	
@@ -192,7 +229,7 @@ DCCConnect::Stopped (void)
 
 	BMessage msg (M_DCC_FINISH);
 
-	msg.AddBool ("success", true);
+	msg.AddBool ("success", success);
 	msg.AddPointer ("source", this);
 	msg.AddBool ("stopped", true);
 	Window()->PostMessage (&msg);
@@ -209,7 +246,7 @@ DCCConnect::Unlock (void)
 }
 
 void
-DCCConnect::UpdateBar (int read, int cps, uint32 size, bool update)
+DCCConnect::UpdateBar (const BMessenger &msgr, int read, int cps, uint32 size, bool update)
 {
 	BMessage msg (B_UPDATE_STATUS_BAR);
 
@@ -225,14 +262,16 @@ DCCConnect::UpdateBar (int read, int cps, uint32 size, bool update)
 	}
 
 	msg.AddFloat ("delta", read);
-	Looper()->PostMessage (&msg, bar);
+	BLooper *looper (NULL);
+	DCCConnect *transferView ((DCCConnect *)msgr.Target(&looper));
+	if ((looper != NULL) && (transferView != NULL))
+	  looper->PostMessage (&msg, transferView->bar);
 }
 
 void
-DCCConnect::UpdateStatus (const char *text)
+DCCConnect::UpdateStatus (const BMessenger &msgr, const char *text)
 {
 	BMessage msg (M_UPDATE_STATUS);
-	BMessenger msgr (this, Window());
 
 	msg.AddString ("text", text);
 	msgr.SendMessage (&msg);
@@ -253,9 +292,6 @@ DCCReceive::DCCReceive (
 
 DCCReceive::~DCCReceive (void)
 {
-	running = false;
-	status_t result;
-	wait_for_thread (tid, &result);
 }
 
 void
@@ -274,74 +310,82 @@ DCCReceive::AttachedToWindow (void)
 int32
 DCCReceive::Transfer (void *arg)
 {
-	DCCReceive *view ((DCCReceive *)arg);
+	BMessenger msgr (reinterpret_cast<DCCReceive *>(arg));
 	struct sockaddr_in sin;
-	//unsigned long ip;
+	BLooper *looper (NULL);
 	
-	if ((view->s = socket (AF_INET, SOCK_STREAM, 0)) < 0)
+	int32 dccSock (-1);
+	
+	if ((dccSock = socket (AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		view->UpdateStatus ("Unable to establish connection.");
-		view->running = false;
-		return 0;
+		UpdateStatus (msgr, "Unable to establish connection.");
+		return B_ERROR;
 	}
+	
+	BMessage reply;
+	
+	if (msgr.SendMessage (M_GET_CONNECT_DATA, &reply) == B_ERROR)
+	  return B_ERROR;
+	
+	
 	
 	memset (&sin, 0, sizeof(sockaddr_in));
 	sin.sin_family = AF_INET;
-	sin.sin_port   = htons (atoi (view->port.String()));
-	sin.sin_addr.s_addr = htonl(strtoul (view->ip.String(), 0, 10));
+	sin.sin_port   = htons (atoi (reply.FindString ("port")));
+	sin.sin_addr.s_addr = htonl(strtoul (reply.FindString("ip"), 0, 10));
 
-//	printf ("***** CONNECTION TO %s\n", view->ip.String());
-
-	view->UpdateStatus ("Connecting to sender.");
-	if (connect (view->s, (sockaddr *)&sin, sizeof (sin)) < 0)
+	UpdateStatus (msgr, "Connecting to sender.");
+	if (connect (dccSock, (sockaddr *)&sin, sizeof (sin)) < 0)
 	{
-		view->UpdateStatus ("Unable to establish connection.");
-		view->running = false;
-		return 0;
+		UpdateStatus (msgr, "Unable to establish connection.");
+#ifdef BONE_BUILD
+		close (dccSock);
+#elif NETSERVER_BUILD
+		closesocket (dccSock);
+#endif
+		return B_ERROR;
 	}
 	
-//	printf("connected\n");
-
-	BPath path (view->file_name.String());
+	BPath path (reply.FindString("name"));
 	BString buffer;
 	off_t file_size (0);
 	
 	buffer << "Receiving \""
 		<< path.Leaf()
 		<< "\" from "
-		<< view->nick
+		<< reply.FindString ("nick")
 		<< ".";
 
-	view->UpdateStatus (buffer.String());
+	UpdateStatus (msgr, buffer.String());
 	
-	if (view->resume && view->running)
+	BFile file;
+	
+	if (msgr.IsValid())
 	{
-		if (view->file.SetTo (
-			view->file_name.String(),
-			B_WRITE_ONLY | B_OPEN_AT_END) == B_NO_ERROR
-		&&  view->file.GetSize (&file_size) == B_NO_ERROR
-		&&  file_size > 0LL)
+  		if (reply.FindBool ("resume"))
 		{
-			view->UpdateBar (file_size, 0, 0, true);
+			if (file.SetTo (
+				reply.FindString("name"),
+				B_WRITE_ONLY | B_OPEN_AT_END) == B_NO_ERROR
+			&&  file.GetSize (&file_size) == B_NO_ERROR
+			&&  file_size > 0LL)
+				UpdateBar (msgr, file_size, 0, 0, true);
+			else
+				file_size = 0LL;
 		}
 		else
 		{
-			view->resume = false;
-			file_size = 0LL;
+			file.SetTo (
+				reply.FindString("name"),
+				B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
 		}
 	}
-	else if (view->running)
-	{
-		view->file.SetTo (
-			view->file_name.String(),
-			B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
-	}
-	
+		
 	int32 bytes_received (file_size);
-	int32 size (atol (view->size.String()));
+	int32 size (atol (reply.FindString("size")));
 	int32 cps (0);
 	
-	if (view->file.InitCheck() == B_NO_ERROR)
+	if (file.InitCheck() == B_NO_ERROR)
 	{
 		bigtime_t last (system_time()), now;
 		int period (0);
@@ -349,20 +393,20 @@ DCCReceive::Transfer (void *arg)
 		bigtime_t start = system_time();
 
 
-		while (view->running && bytes_received < size)
+		while ((msgr.Target(&looper) != NULL) && bytes_received < size)
 		{
 			int read;
-			if ((read = recv (view->s, buffer, 8196, 0)) < 0)
-			{
+			if ((read = recv (dccSock, buffer, 8196, 0)) < 0)
 				break;
-			}
 			
-			view->file.Write (buffer, read);
+			file.Write (buffer, read);
 			bytes_received += read;
-			view->totalTransferred = bytes_received;
+			BMessage msg (M_UPDATE_TRANSFERRED);
+			msg.AddInt32 ("transferred", bytes_received);
+			msgr.SendMessage (&msg);
 
 			uint32 feed_back (htonl (bytes_received));
-			send (view->s, &feed_back, sizeof (uint32), 0);
+			send (dccSock, &feed_back, sizeof (uint32), 0);
 
 			now = system_time();
 			period += read;
@@ -371,24 +415,37 @@ DCCReceive::Transfer (void *arg)
 			if (now - last > 500000)
 			{
 				cps = (int)ceil ((bytes_received - file_size) / ((now - start) / 1000000.0));
-				view->finalRateAverage = cps;
+				BMessage msg (M_UPDATE_AVERAGE);
+				msg.AddInt32 ("transferred", cps);
+				msgr.SendMessage (&msg);
 				last = now;
 				period = 0;
 				hit = true;
 			}
 
-			view->UpdateBar (read, cps, bytes_received, hit);
+			DCCConnect::UpdateBar (msgr, read, cps, bytes_received, hit);
 		}
 	}
 
-	if (view->running)
+	if (msgr.IsValid())
 	{
-		view->success = bytes_received == size;
-		update_mime_info(path.Path(), false, false, true);
-		view->file.Unset();	
-		view->Stopped ();
+	    BMessage msg (M_SUCCESS);
+	    msg.AddBool ("success", bytes_received == size);
+	    msgr.SendMessage (&msg);
 	}
-	
+
+	if (dccSock > 0)
+	{
+#ifdef BONE_BUILD
+	close (dccSock);
+#elif NETSERVER_BUILD
+	closesocket (dccSock);
+#endif
+	}
+
+	if (file.InitCheck() == B_OK)
+		file.Unset();
+
 	return 0;
 }
 
@@ -404,17 +461,11 @@ DCCSend::DCCSend (
 	  pos (0LL),
 	  addr (a)
 {
-	BMessage reply;
-	be_app_messenger.SendMessage (M_DCC_PORT, &reply);
 	port << (40000 + (rand() % 5000)); // baxter's way of getting a port
-	reply.FindInt32 ("sid", &sid);
 }
 
 DCCSend::~DCCSend (void)
 {
-	running = false;
-	status_t result;
-	wait_for_thread (tid, &result);
 }
 
 void
@@ -433,73 +484,79 @@ DCCSend::AttachedToWindow (void)
 int32
 DCCSend::Transfer (void *arg)
 {
-	DCCSend *view ((DCCSend *)arg);
-	BPath path (view->file_name.String());
+	BMessenger msgr (reinterpret_cast<DCCSend *>(arg));
+	BMessage reply;
+	BLooper *looper (NULL);
+
+	if (msgr.IsValid())
+	  msgr.SendMessage (M_GET_CONNECT_DATA, &reply);
+	
+	BPath path (reply.FindString ("name"));
 	BString file_name, status;
 	struct sockaddr_in sin;
-	int sd;
+	const struct in_addr *sendaddr;
+	memset (&sendaddr, 0, sizeof (struct in_addr));
+	int sd, dccSock (-1);
 
 	file_name.Append (path.Leaf());
 	file_name.ReplaceAll (" ", "_");
 
-	view->Lock();
 	if ((sd = socket (AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		view->UpdateStatus ("Unable to establish connection.");
-		view->Unlock();
-		view->Stopped();
+		UpdateStatus (msgr, "Unable to establish connection.");
 		return 0;
 	}
 
 	memset (&sin, 0, sizeof (struct sockaddr_in));
 	sin.sin_family      = AF_INET;
 	sin.sin_addr.s_addr = INADDR_ANY;
-	sin.sin_port        = htons (atoi (view->port.String()));
+	sin.sin_port        = htons (atoi (reply.FindString("port")));
 
-	int sin_size = (sizeof (struct sockaddr_in));
+	int sin_size;
+	reply.FindData ("addr", B_RAW_TYPE, reinterpret_cast<const void **>(&sendaddr), (ssize_t *)&sin_size);
+	sin_size = (sizeof (struct sockaddr_in));
 		
-	if (!view->running || bind (sd, (sockaddr *)&sin, sin_size) < 0)
+	if (!msgr.IsValid() || bind (sd, (sockaddr *)&sin, sin_size) < 0)
 	{
-		view->UpdateStatus ("Unable to establish connection.");
+		UpdateStatus (msgr, "Unable to establish connection.");
 #ifdef BONE_BUILD
 		close (sd);
 #elif NETSERVER_BUILD
 		closesocket (sd);
 #endif
-		view->Unlock();
-		view->Stopped();
 		return 0;
 	}
-	view->UpdateStatus ("Waiting for acceptance.");
+	UpdateStatus (msgr, "Waiting for acceptance.");
 
-	if (view->running)
+	if (msgr.IsValid())
 	{
 		status = "PRIVMSG ";
-		status << view->nick
+		status << reply.FindString ("nick") 
 			<< " :\1DCC SEND "
 			<< file_name
 			<< " "
-			<< htonl (view->addr.s_addr)
+			<< htonl (sendaddr->s_addr)
 			<< " "
-			<< view->port
+			<< reply.FindString ("port")
 			<< " "
-			<< view->size
+			<< reply.FindString ("size")
 			<< "\1";
 
 		BMessage msg (M_SERVER_SEND);
 		msg.AddString ("data", status.String());
-		view->caller.SendMessage (&msg);
-		view->UpdateStatus ("Doing listen call.");
+		BMessenger callmsgr;
+		reply.FindMessenger ("caller", &callmsgr);
+		if (callmsgr.IsValid())
+		  callmsgr.SendMessage (&msg);
+		UpdateStatus (msgr, "Doing listen call.");
 		if (listen (sd, 1) < 0)
 		{
-			view->UpdateStatus ("Unable to establish connection.");
+			UpdateStatus (msgr, "Unable to establish connection.");
 #ifdef BONE_BUILD
 		close (sd);
 #elif NETSERVER_BUILD
 		closesocket (sd);
 #endif
-			view->Unlock();
-			view->Stopped();
 			return 0;
 		}
 	}
@@ -510,7 +567,7 @@ DCCSend::Transfer (void *arg)
 
 	uint32 try_count (0);
 
-	while (view->running)	
+	while (msgr.Target(&looper) != NULL)	
 	{
 		fd_set rset;
 
@@ -519,28 +576,26 @@ DCCSend::Transfer (void *arg)
 
 		if (select (sd + 1, &rset, 0, 0, &t) < 0)
 		{
-			view->UpdateStatus ("Unable to establish connection.");
+			UpdateStatus (msgr, "Unable to establish connection.");
 #ifdef BONE_BUILD
 		close (sd);
 #elif NETSERVER_BUILD
 		closesocket (sd);
 #endif
-			view->Unlock();
-			view->Stopped();
 			return 0;
 		}
 
 		if (FD_ISSET (sd, &rset))
 		{
-			view->s = accept (sd, (sockaddr *)&sin, &sin_size);
-			view->UpdateStatus ("Established connection.");
+			dccSock = accept (sd, (sockaddr *)&sin, &sin_size);
+			UpdateStatus (msgr, "Established connection.");
 			break;
 		}
 
 		++try_count;
 		status = "Waiting for connection ";
 		status << try_count << ".";
-		view->UpdateStatus (status.String());
+		UpdateStatus (msgr, status.String());
 	};
 	char set[4];
 	memset(set, 1, sizeof(set));
@@ -549,28 +604,34 @@ DCCSend::Transfer (void *arg)
 #elif NETSERVER_BUILD
 		closesocket (sd);
 #endif
-	view->Unlock();
-	
-	view->file.SetTo(view->file_name.String(), B_READ_ONLY);
-	int32 bytes_sent (0L);
+	BFile file;
 
-	if (view->pos)
+	file.SetTo(reply.FindString ("name"), B_READ_ONLY);
+	int32 bytes_sent (0L),
+	      seekpos (0L);
+	
+	BMessage resumeData;
+	msgr.SendMessage (M_GET_RESUME_POS, &resumeData);
+	
+	if (resumeData.HasInt32 ("pos"))
 	{
-		view->file.Seek (view->pos, SEEK_SET);
-		view->UpdateBar (view->pos, 0, 0, true);
-		bytes_sent = view->pos;
+	 	resumeData.FindInt32 ("pos", &seekpos);
+		file.Seek (seekpos, SEEK_SET);
+		UpdateBar (msgr, seekpos, 0, 0, true);
+		bytes_sent = seekpos;
 	}
 
 	status = "Sending \"";
 	status << path.Leaf() 
 		<< "\" to "
-		<< view->nick
+		<< reply.FindString ("nick")
 		<< ".";
-	view->UpdateStatus (status.String());
+	UpdateStatus (msgr, status.String());
 
 	int cps (0);
 	
-	if (view->file.InitCheck() == B_NO_ERROR)
+	
+	if (file.InitCheck() == B_NO_ERROR)
 	{
 		bigtime_t last (system_time()), now;
 		char buffer[DCC_BLOCK_SIZE];
@@ -578,32 +639,34 @@ DCCSend::Transfer (void *arg)
 		ssize_t count;
 		bigtime_t start = system_time();
 
-		while (view->running
-		&&    (count = view->file.Read (buffer, DCC_BLOCK_SIZE - 1)) > 0)
+		while ((msgr.Target(&looper) != NULL)
+		&&    (count = file.Read (buffer, DCC_BLOCK_SIZE - 1)) > 0)
 		{
 			int sent;
 
-			if ((sent = send (view->s, buffer, count, 0)) < count)
+			if ((sent = send (dccSock, buffer, count, 0)) < count)
 			{
-				view->UpdateStatus ("Error writing data.");
+				UpdateStatus (msgr, "Error writing data.");
 				break;
 			}
 
 			bytes_sent += sent;
-			view->totalTransferred = bytes_sent;
+			BMessage msg (M_UPDATE_TRANSFERRED);
+			msg.AddInt32 ("transferred", bytes_sent);
+			msgr.SendMessage (&msg);
 	
 			uint32 confirm;
 			fd_set rset;
 			FD_ZERO (&rset);
-			FD_SET (view->s, &rset);
+			FD_SET (dccSock, &rset);
 			t.tv_sec = 0;
 			t.tv_usec = 10;
 			
-			while (select (view->s + 1, &rset, NULL, NULL, &t) > 0 && FD_ISSET (view->s, &rset))
+			while (select (dccSock + 1, &rset, NULL, NULL, &t) > 0 && FD_ISSET (dccSock, &rset))
 			{
-  			  recv (view->s, &confirm, sizeof (confirm), 0);
+  			  recv (dccSock, &confirm, sizeof (confirm), 0);
   			  FD_ZERO (&rset);
-  			  FD_SET (view->s, &rset);
+  			  FD_SET (dccSock, &rset);
   			}
 
 			now = system_time();
@@ -613,39 +676,42 @@ DCCSend::Transfer (void *arg)
 
 			if (now - last > 500000)
 			{
-				cps = (int) ceil ((bytes_sent - view->pos) / ((now - start) / 1000000.0));
-				view->finalRateAverage = cps;
+				cps = (int) ceil ((bytes_sent - seekpos) / ((now - start) / 1000000.0));
+				BMessage msg (M_UPDATE_AVERAGE);
+				msg.AddInt32 ("transferred", cps);
+				msgr.SendMessage (&msg);
 				last = now;
 				period = 0;
 				hit = true;
 			}
 
-			view->UpdateBar (sent, cps, bytes_sent, hit);
+			UpdateBar (msgr, sent, cps, bytes_sent, hit);
 		}
-
-		off_t size;
-		view->file.GetSize (&size);
-		view->success = bytes_sent == size;
 	}
-	
-	view->file.Unset();	
-	if (view->running)
+
+	off_t size;
+	file.GetSize (&size);
+
+	if (msgr.IsValid())
 	{
-		view->Stopped();
+	    BMessage msg (M_SUCCESS);
+	    msg.AddBool ("success", bytes_sent == size);
+	    msgr.SendMessage (&msg);
 	}
+
+	if (dccSock > 0)
+	{
+#ifdef BONE_BUILD
+	close (dccSock);
+#elif NETSERVER_BUILD
+	closesocket (dccSock);
+#endif
+	}
+
+	if (file.InitCheck() == B_OK)
+		file.Unset();
+	
 	return 0;
-}
-
-void
-DCCSend::Lock (void)
-{
-	acquire_sem (sid);
-}
-
-void
-DCCSend::Unlock (void)
-{
-	release_sem (sid);
 }
 
 bool

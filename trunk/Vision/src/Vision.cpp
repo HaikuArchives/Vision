@@ -107,7 +107,6 @@ VisionApp::VisionApp (void)
   debugsettings = false;
   numBench = false;
   ShuttingDown = false;
-  dcc_sid     = create_sem (1, "dcc accept");
 }
 
 void
@@ -826,18 +825,6 @@ VisionApp::MessageReceived (BMessage *msg)
       }
       break;
 
-    case M_DCC_PORT:
-      {
-        if (msg->IsSourceWaiting())
-        {
-          BMessage reply (B_REPLY);
-          reply.AddInt32 ("sid", dcc_sid);
-          msg->SendReply (&reply);
-        }
-      }
-      break;
-
-		
     case M_DCC_FILE_WIN:
     {
       if (dccFileWin)
