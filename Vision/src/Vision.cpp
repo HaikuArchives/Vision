@@ -39,6 +39,8 @@ class VisionApp * vision_app;
 #include "SettingsFile.h"
 #include "SetupWindow.h"
 
+#include "TestScript.h"
+
 // And so it begins....
 int
 main (void)
@@ -299,6 +301,11 @@ VisionApp::ArgvReceived (int32 ac, char **av)
 void
 VisionApp::ReadyToRun (void)
 {
+  printf ("# START # TestScript::RunTestScripts()\n"); 
+  TestScript *tscript;
+  tscript->RunTestScripts();
+  printf ("# END   # TestScript::RunTestScripts()\n"); 
+  
   InitSettings();
 
   BRect clientWinRect;

@@ -320,7 +320,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			BString buffer;
 			buffer << userCount;
 			
-			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
+			if (!IsHidden())
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
 
 			BMessage display;
 			if (msg->FindMessage ("display", &display) == B_NO_ERROR)
@@ -350,7 +351,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			item->SetName (newNick);
 			namesList->SortItems (SortNames);
 
-			if (myNick.ICompare (oldNick) == 0)
+			if (myNick.ICompare (oldNick) == 0 && !IsHidden())
 			{
 				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
 			}
@@ -399,7 +400,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 				}
 			}
 
-			if (hit)
+			if (hit && !IsHidden())
 			{
 				namesList->SortItems (SortNames);
 				BString buffer;
@@ -421,7 +422,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			msg->FindString ("topic", &theTopic);
 			
 			topic = theTopic;
-			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, theTopic);
+			if (!IsHidden())
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, theTopic);
 
 				
 
@@ -495,8 +497,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
 					chanKey = GetWord (mode, place++);
 
 				chanMode = mode;
-				
-				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
+				if (!IsHidden())
+					vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
 			}
 			BMessage dispMsg (M_DISPLAY);
 			PackDisplay (&dispMsg, msgz, &opColor, 0, vision_app->GetBool ("timestamp"));

@@ -279,7 +279,7 @@ public:
 	void RawSetI(int index, int n)				{  lua_rawseti(m_state, index, n);  }
 	void SetGlobals()							{  lua_setglobals(m_state);  }
 	void SetTagMethod(int tag, const char *event)	{  lua_settagmethod(m_state, tag, event);  }
-	int Ref(int lock)							{  return lua_ref(m_state, lock);  }
+	int Ref(int lock_)							{  return lua_ref(m_state, lock_);  }
 
 
 	// "do" functions(run Lua code)
