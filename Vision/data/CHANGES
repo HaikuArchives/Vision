@@ -5,6 +5,7 @@ http://vision.sourceforge.net
  2001-06-11
    * made ListAgent font configurable
    * BONE optimizations to ServerAgent::Establish (does not affect net_server users)
+   * bugfix to ListAgent to fix case where color scheme was incorrect
 
 [0.2.0609]
  2001-06-09
