@@ -684,6 +684,41 @@ ClientAgent::MessageReceived (BMessage *msg)
 		  break;
 		}
 		
+		case M_LOOKUP_TRANSLATE:
+		{
+		  BString lookup;
+		  const char *type;
+		  msg->FindString ("string", &lookup);
+		  msg->FindString ("type", &type);
+		  lookup = StringToURI (lookup.String());
+		  printf (": [%s]\n", type);
+		  
+		  if (!strcmp(type, "chef"))		    		  
+		    lookup.Prepend ("http://www.cs.utexas.edu/users/jbc/bork/bork.cgi?type=chef&input=");	  		  		  
+		  else if (!strcmp(type, "jive"))
+		    lookup.Prepend ("http://www.cs.utexas.edu/users/jbc/bork/bork.cgi?type=jive&input=");
+		  else if (!strcmp(type, "valley"))
+		    lookup.Prepend ("http://www.cs.utexas.edu/users/jbc/bork/bork.cgi?type=valspeak&input=");
+		  else if (!strcmp(type, "piglatin"))
+		    lookup.Prepend ("http://www.cs.utexas.edu/users/jbc/bork/bork.cgi?type=piglatin&input=");
+		  else if (!strcmp(type, "enfr"))
+		    lookup.Prepend ("http://babelfish.altavista.com/translate.dyn?enc=utf8&doit=done&BabelFishFrontPage=yes&bblType=urltext&lp=en_fr&urltext=");
+		  else if (!strcmp(type, "ende"))
+		    lookup.Prepend ("http://babelfish.altavista.com/translate.dyn?enc=utf8&doit=done&BabelFishFrontPage=yes&bblType=urltext&lp=en_de&urltext=");
+          else if (!strcmp(type, "enit"))
+            lookup.Prepend ("http://babelfish.altavista.com/translate.dyn?enc=utf8&doit=done&BabelFishFrontPage=yes&bblType=urltext&lp=en_it&urltext=");
+          else if (!strcmp(type, "enpt"))
+            lookup.Prepend ("http://babelfish.altavista.com/translate.dyn?enc=utf8&doit=done&BabelFishFrontPage=yes&bblType=urltext&lp=en_pt&urltext=");
+          else if (!strcmp(type, "enes"))
+            lookup.Prepend ("http://babelfish.altavista.com/translate.dyn?enc=utf8&doit=done&BabelFishFrontPage=yes&bblType=urltext&lp=en_es&urltext=");  
+		  else
+		    break;  	  	  
+		  
+		  vision_app->LoadURL (lookup.String());
+		  break;		  
+		
+		}
+		
 		default:
 			BView::MessageReceived (msg);
 	}
