@@ -11,6 +11,7 @@ http://vision.sourceforge.net
    * fixed memleak in StatusView
    * fixed crash in net_server identd
    * optimized ListAgent to add channels in batches
+   * modified ListAgent filters to parse entire line, not just channel names
 
 [0.2.0523]
  2001-05-23
