@@ -17,6 +17,7 @@ http://vision.sourceforge.net
          * fixed cancel reboot bug (thanks to Brad Froehle)
          * fixed deadlock in multiline paste
          * fixed a few other hanging bugs
+         * names list font updates correctly again
 
 [0.3.0828]
 2001-08-28

@@ -400,7 +400,16 @@ ChannelAgent::MessageReceived (BMessage *msg)
              namesList->SetColor (which, vision_app->GetColor (which));
              break;
           }
-        }  
+        }
+        if (msg->HasBool ("font"))
+        {
+          switch (which)
+          {
+            case F_NAMES:
+             namesList->SetFont (which, vision_app->GetClientFont (which));
+             break;
+          }
+        }
         ClientAgent::MessageReceived (msg);
       }
       break;
