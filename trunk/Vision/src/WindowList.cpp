@@ -755,7 +755,7 @@ WindowList::BuildPopUp (void)
       activeagent->AddMenuItems (myPopUp);
   }
   
-  item = new BMenuItem("Close", new BMessage (M_MENU_NUKE));
+  item = new BMenuItem(S_WINLIST_CLOSE_ITEM, new BMessage (M_MENU_NUKE));
   item->SetTarget (this);
   myPopUp->AddItem (item);
   

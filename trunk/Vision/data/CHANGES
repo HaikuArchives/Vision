@@ -1,12 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8-exp-1117]
+[0.8-exp-1125]
          * cleaned up message constants
          * fixed crash bug in mirc color parser
          * fixed bug in control code stripper where too many digits would get removed
          * tweaked textview drawing performance
-         * began moving program strings to a common header file for easier localization 
+         * moved program UI strings to a common header file for easier localization 
          * fixed thread-safety issue in thread name generator
 
 [0.7.8-0113]

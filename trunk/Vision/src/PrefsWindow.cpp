@@ -30,7 +30,7 @@
 
 PrefsWindow::PrefsWindow(void)
   : BWindow (BRect (0.0, 0.0, 0.0, 0.0),
-      "Preferences",
+      S_PREFSWIN_TITLE,
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS)
 {

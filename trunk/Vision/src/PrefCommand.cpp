@@ -28,13 +28,13 @@
 
 static const char *CommandControlLabels[] =
 {
-	"Quit:",
-	"Kick:",
-	"Ignore:",
-	"Unignore:",
-	"Away:",
-	"Back:",
-	"Uptime:",
+	S_PREFCOMMAND_QUIT,
+	S_PREFCOMMAND_KICK,
+	S_PREFCOMMAND_IGNORE,
+	S_PREFCOMMAND_UNIGNORE,
+	S_PREFCOMMAND_AWAY,
+	S_PREFCOMMAND_BACK,
+	S_PREFCOMMAND_UPTIME,
 	0
 };
 

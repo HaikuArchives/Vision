@@ -213,6 +213,7 @@ RunView::RunView (
 		lastClick (0,0),
 		lastClickTime (0)
 {
+    memset (lines, 0, sizeof (lines));
 	URLCursor = new BCursor (URLCursorData);
 	theme->ReadLock();
 
@@ -2306,15 +2307,15 @@ Line::SoftBreaks (Theme *theme, float start_width)
 			// we encountered more than one space, so we rule out having to
 			// split the word, if the current word will fit within the bounds
 			int16 ccount1, ccount2;
+			--space_place;
 
-			ccount1 = spaces[space_place - 1];
-			ccount2 = spaces[space_place] - spaces[space_place - 1];
+			ccount1 = spaces[space_place];
+			ccount2 = spaces[space_place+1] - ccount1;
 
 			int16 i (ccount1 - 1);
 			while (edges[i] == 0)
 				--i;
 				
-			--space_place; // TODO we probably have to move this up a bit
 			if (edges[ccount1 + ccount2] - edges[i] < width - margin)
 				{
 					AddSoftBreak (SoftBreakEnd(spaces[space_place]), start, text_place, font, width, start_width, theme);

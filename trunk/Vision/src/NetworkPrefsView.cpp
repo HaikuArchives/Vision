@@ -58,12 +58,12 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 			serverPrefs (NULL)
 {
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-	BMenu *menu (new BMenu ("Networks"));
-	menu->AddItem (new BMenuItem ("Defaults", new BMessage (M_NETWORK_DEFAULTS)));
+	BMenu *menu (new BMenu (S_NETPREFS_NETMENU));
+	menu->AddItem (new BMenuItem (S_NETPREFS_DEFAULTS_ITEM, new BMessage (M_NETWORK_DEFAULTS)));
 	menu->AddSeparatorItem();
-	menu->AddItem (new BMenuItem ("Add New...", new BMessage (M_ADD_NEW_NETWORK)));
-	menu->AddItem (removeItem = new BMenuItem ("Remove current", new BMessage (M_REMOVE_CURRENT_NETWORK)));
-	menu->AddItem (dupeItem = new BMenuItem ("Duplicate current", new BMessage (M_DUPE_CURRENT_NETWORK)));
+	menu->AddItem (new BMenuItem (S_NETPREFS_ADD_NEW B_UTF8_ELLIPSIS, new BMessage (M_ADD_NEW_NETWORK)));
+	menu->AddItem (removeItem = new BMenuItem (S_NETPREFS_REMOVE, new BMessage (M_REMOVE_CURRENT_NETWORK)));
+	menu->AddItem (dupeItem = new BMenuItem (S_NETPREFS_DUPE B_UTF8_ELLIPSIS, new BMessage (M_DUPE_CURRENT_NETWORK)));
 	networkMenu = new BMenuField(BRect (0, 0, 100, 30), "NetList", NULL, menu);
 	mainNetBox = new BBox (Bounds().InsetByCopy (5, 5));
 	mainNetBox->SetLabel (networkMenu);
@@ -74,10 +74,10 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	boundsRect.top += 15;
 	boundsRect.bottom -= 30;
 	netDetailsBox = new BBox (boundsRect);
-	netDetailsBox->SetLabel ("Network Details");
+	netDetailsBox->SetLabel (S_NETPREFS_NET_BOX);
 	mainNetBox->AddChild (netDetailsBox);
 	personalBox = new BBox (boundsRect);
-	personalBox->SetLabel ("Personal Details");
+	personalBox->SetLabel (S_NETPREFS_PERSONAL_BOX);
 	mainNetBox->AddChild (personalBox);
 	personalBox->MoveBy (boundsRect.Width() + 16, 0);
 	boundsRect.left += 10;
@@ -85,7 +85,7 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	boundsRect.top = 10;
 	boundsRect.bottom += 20;
 	BStringView *stringView1 (new BStringView (boundsRect, NULL,
-		"Will connect to"));
+		S_NETPREFS_CONN1));
 	stringView1->ResizeToPreferred();
 	stringView1->MoveTo(netDetailsBox->Frame().left, netDetailsBox->Frame().top);
 	netDetailsBox->AddChild (stringView1);
@@ -94,18 +94,18 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	connectServer->ResizeToPreferred();
 	connectServer->MoveTo (stringView1->Frame().left, stringView1->Frame().bottom);
 	alternates = new BStringView (boundsRect, NULL,
-		"falling back to 9 others.");
+		S_NETPREFS_CONN2);
 	alternates->ResizeToPreferred();
 	alternates->MoveTo(connectServer->Frame().left, connectServer->Frame().bottom);
 	netDetailsBox->AddChild (connectServer);
 	netDetailsBox->AddChild (alternates);
-	serverButton = new BButton (boundsRect, NULL, "Change Server"B_UTF8_ELLIPSIS,
+	serverButton = new BButton (boundsRect, NULL, S_NETPREFS_CHANGE_SERVER B_UTF8_ELLIPSIS,
 		new BMessage (M_SERVER_DIALOG));
 	serverButton->ResizeToPreferred();
 	serverButton->MoveTo (alternates->Frame().left + alternates->Frame().Width() / 2,
 		alternates->Frame().bottom + 10);
 	netDetailsBox->AddChild (serverButton);
-	BStringView *stringView4 (new BStringView (boundsRect, NULL, "Autoexec:"));
+	BStringView *stringView4 (new BStringView (boundsRect, NULL, S_NETPREFS_AUTOEXEC));
 	stringView4->ResizeToPreferred();
 	stringView4->MoveTo (alternates->Frame().left, serverButton->Frame().bottom);
 	netDetailsBox->AddChild (stringView4);
@@ -119,22 +119,22 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	textView->MakeEditable (true);
 	textView->SetStylable (false);
 	netDetailsBox->AddChild (scrollView);
-	execButton = new BButton (boundsRect, NULL, "Add Common"B_UTF8_ELLIPSIS,
+	execButton = new BButton (boundsRect, NULL, S_NETPREFS_ADD_COMMON B_UTF8_ELLIPSIS,
 		new BMessage (M_EXEC_COMMAND_DIALOG));
 	execButton->ResizeToPreferred();
 	execButton->MoveTo (serverButton->Frame().right - execButton->Bounds().Width(), scrollView->Frame().bottom + 5);
 	netDetailsBox->AddChild (execButton);
-	startupBox = new BCheckBox (boundsRect, NULL, "Connect to this network when Vision starts up",
+	startupBox = new BCheckBox (boundsRect, NULL, S_NETPREFS_STARTUP_CONN,
 		new BMessage (M_CONNECT_ON_STARTUP));
 	startupBox->ResizeToPreferred();
 	startupBox->MoveTo (netDetailsBox->Frame().left, mainNetBox->Frame().bottom - (startupBox->Bounds().Height() + 12));
 	mainNetBox->AddChild (startupBox);
-	nickDefaultsBox = new BCheckBox (boundsRect, NULL, "Use Defaults",
+	nickDefaultsBox = new BCheckBox (boundsRect, NULL, S_NETPREFS_USE_DEFAULTS,
 		new BMessage (M_USE_NICK_DEFAULTS));
 	nickDefaultsBox->ResizeToPreferred();
 	nickDefaultsBox->MoveTo (netDetailsBox->Frame().left, netDetailsBox->Frame().top);
 	personalBox->AddChild (nickDefaultsBox);
-	BStringView *stringView5 (new BStringView (boundsRect, NULL, "Preferred Nicks:"));
+	BStringView *stringView5 (new BStringView (boundsRect, NULL, S_NETPREFS_PREFNICK));
 	stringView5->ResizeToPreferred();
 	stringView5->MoveTo (alternates->Frame().left, alternates->Frame().top);
 	personalBox->AddChild (stringView5);
@@ -145,9 +145,9 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	BScrollView *listScroll (new BScrollView (NULL, listView, B_FOLLOW_LEFT | B_FOLLOW_TOP,
 		0, false, true));
 	personalBox->AddChild (listScroll);
-	nickAddButton = new BButton (boundsRect, NULL, "Add", new BMessage(M_ADD_NICK));
+	nickAddButton = new BButton (boundsRect, NULL, S_NETPREFS_ADD_BUTTON B_UTF8_ELLIPSIS, new BMessage(M_ADD_NICK));
 	nickAddButton->ResizeToPreferred();
-	nickRemoveButton = new BButton (boundsRect, NULL, "Remove", new BMessage (M_REMOVE_NICK));
+	nickRemoveButton = new BButton (boundsRect, NULL, S_NETPREFS_REMOVE_BUTTON, new BMessage (M_REMOVE_NICK));
 	nickRemoveButton->ResizeToPreferred();
 	nickRemoveButton->MoveTo (listScroll->Frame().right - nickRemoveButton->Frame().Width(),
 		listScroll->Frame().bottom + 5);
@@ -173,8 +173,8 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	  personalBox->AddChild (nickDnButton);
 	  delete bmp;
 	}          		
-	ident = new BTextControl (listScroll->Frame(), NULL, "Ident: ", NULL, NULL);
-	realName = new BTextControl (listScroll->Frame(), NULL, "Real name: ", NULL, NULL);
+	ident = new BTextControl (listScroll->Frame(), NULL, S_NETPREFS_IDENT, NULL, NULL);
+	realName = new BTextControl (listScroll->Frame(), NULL, S_NETPREFS_REALNAME, NULL, NULL);
 	realName->ResizeTo (listScroll->Frame().Width(), realName->Frame().Height());
 	realName->MoveTo (listScroll->Frame().left, nickAddButton->Frame().bottom + 5);
 	realName->SetDivider (realName->StringWidth (realName->Label()) + 5);
@@ -265,10 +265,10 @@ NetworkPrefsView::SetAlternateCount (uint32 altCount)
 {
 	if (altCount > 0)
 	{
-		BString text ("falling back to ");
+		BString text (S_NETPREFS_FALLBACK1);
 		text << altCount;
-		text += " other";
-		text += (altCount > 1) ? "s" : "";
+		text += S_NETPREFS_FALLBACK2;
+		text += (altCount > 1) ? S_NETPREFS_FALLBACK2_PLURAL : "";
 		text += ".";
 		alternates->SetText(text.String());
 		alternates->ResizeToPreferred();
@@ -484,7 +484,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 				else
 				{
 					netPrompt = new PromptWindow (BPoint (Window()->Frame().left + Window()->Frame().Width() /2, Window()->Frame().top + Window()->Frame().Height() / 2),
-					"Network Name: ", "Add Network", NULL, this, new BMessage (M_ADD_NEW_NETWORK), NULL, false);
+					S_NETPREFS_NET_PROMPT, S_NETPREFS_ADDNET_TITLE, NULL, this, new BMessage (M_ADD_NEW_NETWORK), NULL, false);
 					netPrompt->Show();
 				}
 			}
@@ -537,7 +537,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 				else
 				{
 					dupePrompt = new PromptWindow (BPoint (Window()->Frame().left + Window()->Frame().Width() /2, Window()->Frame().top + Window()->Frame().Height() / 2),
-					"Network Name: ", "Duplicate Network", NULL, this, new BMessage (M_DUPE_CURRENT_NETWORK), NULL, false);
+					S_NETPREFS_NET_PROMPT, S_NETPREFS_DUPENET_TITLE, NULL, this, new BMessage (M_DUPE_CURRENT_NETWORK), NULL, false);
 					dupePrompt->Show();
 				}
 			}
@@ -606,7 +606,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 			else
 			{
 				nickPrompt = new PromptWindow (BPoint (Window()->Frame().left + Window()->Frame().Width() /2, Window()->Frame().top + Window()->Frame().Height() / 2),
-				"Nickname: ", "Add NickName", NULL, this, new BMessage (M_ADD_NICK), NULL, false);
+				S_NETPREFS_ADDNICK_PROMPT, S_NETPREFS_ADDNICK_TITLE, NULL, this, new BMessage (M_ADD_NICK), NULL, false);
 				nickPrompt->Show();
 			}
 			break;

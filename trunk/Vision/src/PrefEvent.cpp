@@ -28,16 +28,16 @@
 
 static const char *EventControlLabels[] =
 {
-	"Join:",
-	"Part:",
-	"Nick:",
-	"Quit:",
-	"Kick:",
-	"Topic:",
-	"Server Notice:",
-	"User Notice:",
-	"Notify On:",
-	"Notify Off:",
+	S_PREFEVENT_JOIN,
+	S_PREFEVENT_PART,
+	S_PREFEVENT_NICK,
+	S_PREFEVENT_QUIT,
+	S_PREFEVENT_KICK,
+	S_PREFEVENT_TOPIC,
+	S_PREFEVENT_SNOTICE,
+	S_PREFEVENT_UNOTICE,
+	S_PREFEVENT_NOTIFYON,
+	S_PREFEVENT_NOTIFYOFF,
 	0
 };
 

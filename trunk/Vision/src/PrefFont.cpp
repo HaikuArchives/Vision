@@ -163,20 +163,20 @@ FontMenu::AttachedToWindow (void)
 
 static const char *FontControlLabels[] =
 {
-  "Text",
-  "Server messages",
-  "URLs",
-  "Names list",
-  "Input text",
-  "Window List",
-  "Channel List",
-  "Timestamp",
+  S_PREFFONT_TEXT,
+  S_PREFFONT_SMESSAGES,
+  S_PREFFONT_URLS,
+  S_PREFFONT_NAMESLIST,
+  S_PREFFONT_INPUT_TEXT,
+  S_PREFFONT_WINLIST,
+  S_PREFFONT_CHANLIST,
+  S_PREFFONT_TSTAMP,
 	0
 };
 
 
 FontPrefsView::FontPrefsView (BRect frame)
-  : BView (frame, "Command prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS),
+  : BView (frame, "Font prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS),
     fontMenuField (NULL),
     fontElementField (NULL),
     activeFont (0)
@@ -193,9 +193,9 @@ FontPrefsView::FontPrefsView (BRect frame)
     elementMenu);
   AddChild (fontElementField);
   FontMenu *menu (new FontMenu ("fonts"));
-  fontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", "Font: ", menu);
+  fontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", S_PREFFONT_FONTLABEL, menu);
   AddChild (fontMenuField);
-  textControl = new BTextControl (BRect (60, 60, 200, 90), "", "Size: ", "",
+  textControl = new BTextControl (BRect (60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
   	new BMessage (M_FONT_SIZE_CHANGE));
   textControl->TextView()->AddFilter (new NumericFilter());
   AddChild (textControl);
