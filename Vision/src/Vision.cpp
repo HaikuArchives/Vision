@@ -1005,6 +1005,7 @@ VisionApp::ClientFontFamilyAndStyle (
     
   if (which < MAX_FONTS && which >= 0)
   {
+    client_font[which]->SetFamilyAndStyle (family, style);
     activeTheme->SetFont (which, client_font[which]);
     
     if (which == F_TEXT)
