@@ -35,9 +35,10 @@
 #include <map.h>
 #include <ctype.h>
 
-// <bone/netdb.h> complains...
-#ifdef NETSERVER_BUILD
-#  include <netdb.h>
+#include <netdb.h>
+
+#ifdef BONE_BUILD
+#  include <arpa/inet.h>
 #endif
 
 
@@ -1215,7 +1216,6 @@ int32
 ClientAgent::DNSLookup (void *arg)
 {
 
-#ifdef NETSERVER_BUILD
   BMessage *msg (reinterpret_cast<BMessage *>(arg));
   const char *lookup;
   ClientAgent *agent;
@@ -1278,8 +1278,6 @@ ClientAgent::DNSLookup (void *arg)
   BMessage dnsMsg (M_DISPLAY);
   agent->PackDisplay (&dnsMsg, output.String(), &(agent->whoisColor));
   agent->msgr.SendMessage (&dnsMsg);
-
-#endif
 
   return B_OK;
 }
