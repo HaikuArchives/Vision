@@ -1156,6 +1156,26 @@ ClientAgent::ExecPipe (void *arg)
   }
 
   pclose(fp);
+  
+//  fp = fopen(stderr, "r");
+  
+  if( stderr != 0 )
+  {
+    while (fgets(data, 767, stderr))
+    {
+      data[strlen(data)-1] = '\0'; // strip termination
+      if (data[0] == '/')
+      {
+        memmove(data + 1, data, strlen(data));
+        data[0] = ' ';      
+      }
+      // ship off to agent
+      agent->LockLooper();
+      agent->Submit (data);
+      agent->UnlockLooper();
+    }
+  }
+
   delete exec;
 
   return B_OK;
