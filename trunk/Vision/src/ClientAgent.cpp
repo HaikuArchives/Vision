@@ -798,9 +798,6 @@ ClientAgent::MessageReceived (BMessage *msg)
         msg->FindString("nick", &theNick);
         msg->FindString("msgz", &theMessage);
 
-        if (theNick.FindFirst (" [DCC]") != B_ERROR)
-          theNick.RemoveFirst (" [DCC]");
-        
         BString tempString;
         BString nickString;
         

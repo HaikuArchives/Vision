@@ -120,7 +120,6 @@ ServerAgent::DCCGetDialog (
           if (path.InitCheck() == B_OK)
             panel->SetPanelDirectory(&path);
         }
-  	    panel->Window()->Unlock();
         if (vision_app->GetBool ("dccAutoAccept"))
         {
           panel->Hide();
@@ -128,6 +127,7 @@ ServerAgent::DCCGetDialog (
           if (button)
             button->Invoke();
         }
+        panel->Window()->Unlock();
         panel->Show();
       }
 }
