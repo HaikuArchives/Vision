@@ -579,9 +579,9 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
   // so it can quickly update it's status entry
   if ((newagent = dynamic_cast<ClientAgent *>(newagent)))
   {
-    for (int32 i = 0; i < CountItems(); ++i)
+    for (int32 i = 0; i < FullListCountItems(); ++i)
     {
-      WindowListItem *item = (WindowListItem *)ItemAt (i);
+      WindowListItem *item = (WindowListItem *)FullListItemAt (i);
       if ((strcasecmp (name, item->Name().String()) == 0)
       &&  (item->Sid() == serverId)) 
       {
@@ -639,9 +639,9 @@ WindowList::Activate (int32 index)
 
   // find the currently active agent (if there is one)
   BView *activeagent (0);
-  for (int32 i (1); i <= CountItems(); ++i)
+  for (int32 i (1); i <= FullListCountItems(); ++i)
   { 
-    WindowListItem *aitem ((WindowListItem *)ItemAt (i - 1));
+    WindowListItem *aitem ((WindowListItem *)FullListItemAt (i - 1));
     if (!aitem->pAgent()->IsHidden())
     {
       activeagent = aitem->pAgent();
