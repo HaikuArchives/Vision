@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
  *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Rene Gollent
  *                 Todd Lair
@@ -60,13 +60,13 @@ ClientAgent::ClientAgent (
   const char *serverName_,
   const char *myNick_,
   BRect frame_)
-  
+
   : BView (
     frame_,
     id_,
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW | B_FRAME_EVENTS),
-    
+
   id (id_),
   sid (sid_),
   serverName (serverName_),
@@ -85,13 +85,13 @@ ClientAgent::ClientAgent (
   const char *myNick_,
   const BMessenger &sMsgr_,
   BRect frame_)
-  
+
   : BView (
     frame_,
     id_,
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW),
-    
+
   id (id_),
   sid (sid_),
   serverName (serverName_),
@@ -122,12 +122,12 @@ void
 ClientAgent::AllAttached (void)
 {
   msgr = BMessenger (this);
-  
+
   ServerAgent *sagent;
   if ((sagent = dynamic_cast<ServerAgent *>(this)))
   {
     sMsgr = BMessenger (this);
-  } 
+  }
 
 }
 
@@ -136,7 +136,7 @@ ClientAgent::Show (void)
 {
   Window()->PostMessage (M_STATUS_CLEAR);
   this->msgr.SendMessage (M_STATUS_ADDITEMS);
-  
+
   BMessage statusMsg (M_UPDATE_STATUS);
   statusMsg.AddPointer ("item", agentWinItem);
   statusMsg.AddInt32 ("status", WIN_NORMAL_BIT);
@@ -149,7 +149,7 @@ ClientAgent::Show (void)
 
 void
 ClientAgent::Init (void)
-{    
+{
   textColor        = vision_app->GetColor (C_TEXT);
   nickColor        = vision_app->GetColor (C_NICK);
   ctcpReqColor     = vision_app->GetColor (C_CTCP_REQ);
@@ -176,10 +176,10 @@ ClientAgent::Init (void)
                 "Input", 0, 0,
                 0,
                 B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
-  input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL, 
+  input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
     &inputColor);
-  input->SetDivider (0); 
-  input->ResizeToPreferred(); 
+  input->SetDivider (0);
+  input->ResizeToPreferred();
   input->MoveTo (
            0,
            frame.bottom - input->Frame().Height() + 1);
@@ -188,8 +188,8 @@ ClientAgent::Init (void)
   AddChild (input);
 
   input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
-  input->Invalidate(); 
-  
+  input->Invalidate();
+
   history = new HistoryMenu (BRect (
     frame.right - 11,
     input->Frame().top,
@@ -208,7 +208,7 @@ ClientAgent::Init (void)
     input,
     this);
   text->SetViewColor (vision_app->GetColor (C_BACKGROUND));
-  
+
 
   textScroll = new BScrollView (
     "textscroll",
@@ -256,17 +256,17 @@ void
 ClientAgent::AddMenuItems (BPopUpMenu *pmenu)
 {
   BMenuItem *item;
-  
+
   ChannelAgent *channelagent;
   MessageAgent *messageagent;
-  
+
   if ((channelagent = dynamic_cast<ChannelAgent *>(this)))
   {
     // Channel Options
     item = new BMenuItem("Channel Options", new BMessage (M_CHANNEL_OPTIONS_SHOW));
     item->SetTarget (this);
     pmenu->AddItem (item);
-    
+
     pmenu->AddSeparatorItem();
   }
 
@@ -278,7 +278,7 @@ ClientAgent::AddMenuItems (BPopUpMenu *pmenu)
     if (messageagent->Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
       item->SetEnabled (false);
     pmenu->AddItem (item);
-    
+
     pmenu->AddSeparatorItem();
   }
 
@@ -320,12 +320,14 @@ ClientAgent::TimedSubmit (void *arg)
     printf (":ERROR: no valid agent pointer found in TimedSubmit, bailing...\n");
     return -1;
   }
-  
+
   if (msg->FindPointer ("window", reinterpret_cast<void **>(&window)) != B_OK)
   {
     printf (":ERROR: no valid window pointer found in TimedSubmit, bailing...\n");
     return -1;
   }
+
+  bool delay (!msg->HasBool ("delay"));
 
   BMessenger agentMsgr (agent);
   for (i = 0; msg->HasString ("data", i); ++i)
@@ -344,7 +346,8 @@ ClientAgent::TimedSubmit (void *arg)
 
       // A small attempt to appease the
       // kicker gods
-      snooze (1000000);
+      if (delay)
+        snooze (1000000);
     }
   }
 
@@ -380,7 +383,7 @@ ClientAgent::PackDisplay (
 
   if (msg->HasMessage ("packed"))
     msg->ReplaceMessage ("packed", &packed);
-  else  
+  else
     msg->AddMessage ("packed", &packed);
 }
 
@@ -400,17 +403,17 @@ ClientAgent::Display (
     BString printbuf;
     if (timeStamp)
       printbuf += TimeStamp().String();
-        
+
     printbuf += buffer;
     logger->Log (printbuf.String());
   }
-  
+
   if (timeStamp && timeStampState)
     text->DisplayChunk (
       TimeStamp().String(),
       &textColor,
       &myFont);
-  
+
   text->DisplayChunk (
     buffer,
     color ? color : &textColor,
@@ -477,16 +480,16 @@ ClientAgent::MessageReceived (BMessage *msg)
         input->MakeFocus (true);
         // We don't like your silly selecting-on-focus.
         input->TextView()->Select (input->TextView()->TextLength(),
-        input->TextView()->TextLength()); 
+        input->TextView()->TextLength());
       }
       break;
-    
+
     case M_CLIENT_QUIT:
       {
         bool shuttingdown (false);
         if (msg->HasBool ("vision:shutdown_in_progress"))
           msg->FindBool ("vision:shutdown_in_progress", &shuttingdown);
-        
+
         if (logger)
           logger->isQuitting = shuttingdown;
       }
@@ -498,25 +501,26 @@ ClientAgent::MessageReceived (BMessage *msg)
         int32 which (0);
         msg->FindBool ("lines", &lines);
         msg->FindInt32 ("which", &which);
-        
+
         if (msg->HasPointer ("invoker"))
         {
           BInvoker *invoker;
           msg->FindPointer ("invoker", reinterpret_cast<void **>(&invoker));
           delete invoker;
         }
-  
+
         if (which == 0)
           break;
 
-        if (which == 1)
+        if (which == 1 || which == 3)
         {
           BMessage *buffer (new BMessage (*msg));
           thread_id tid;
 
           buffer->AddPointer ("agent", this);
           buffer->AddPointer ("window", Window());
-
+          if (which == 3)
+            buffer->AddBool ("delay", false);
           tid = spawn_thread (
             TimedSubmit,
             "Timed Submit",
@@ -525,23 +529,19 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           resume_thread (tid);
         }
-        else if ((which >= 2) || !lines)
+        else if ((which == 2) || !lines)
         {
           BString buffer;
           for (int32 i = 0; msg->HasString ("data", i); ++i)
           {
             const char *data;
-            char marker (' ');
-            if (which == 3)
-              marker = '\n'; 
             msg->FindString ("data", i, &data);
-            if (i)
-              buffer << marker;
+            buffer += (i ? " " : "");
             buffer += data;
           }
 
           int32 start, finish;
-          
+
           if (msg->FindInt32 ("selstart", &start) == B_OK)
           {
             msg->FindInt32 ("selend", &finish);
@@ -568,7 +568,7 @@ ClientAgent::MessageReceived (BMessage *msg)
             input->TextView()->Select (input->TextView()->TextLength(),
             input->TextView()->TextLength());
           }
-        
+
           input->TextView()->ScrollToSelection();
         }
       }
@@ -591,9 +591,9 @@ ClientAgent::MessageReceived (BMessage *msg)
         const char *buffer;
         bool clear (true),
         add2history (true);
-    
+
         msg->FindString ("input", &buffer);
-    
+
         if (msg->HasBool ("clear"))
           msg->FindBool ("clear", &clear);
 
@@ -601,13 +601,13 @@ ClientAgent::MessageReceived (BMessage *msg)
           msg->FindBool ("history", &add2history);
 
         Submit (buffer, clear, add2history);
-      } 
+      }
       break;
 
     case M_LAG_CHANGED:
       {
         msg->FindString ("lag", &myLag);
-        
+
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String());
       }
@@ -620,7 +620,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         for (int32 i = 0; msg->HasMessage ("packed", i); ++i)
         {
           BFont *font (&myFont);
-          const rgb_color *color (&textColor); 
+          const rgb_color *color (&textColor);
           ssize_t size (sizeof (rgb_color));
           bool timeStamp (false);
           BMessage packed;
@@ -662,15 +662,15 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           int32 theChars (aMessage.Length());
           aMessage.Truncate (theChars - 1);
-          
+
           // this next if() is a quirk fix for JAVirc.
           // it appends an (illegal) space to actions, so the last
           // truncate doesn't remove the \1
           if (aMessage[theChars - 2] == '\1')
             aMessage.Truncate (theChars - 2);
-      
+
           aMessage.RemoveFirst ("\1ACTION ");
-          
+
           BString tempString("* ");
           tempString += theNick;
           tempString += " ";
@@ -712,12 +712,12 @@ ClientAgent::MessageReceived (BMessage *msg)
         {
           BMessage statusMsg (M_UPDATE_STATUS);
           statusMsg.AddPointer ("item", agentWinItem);
-          
+
           if (hasNick)
             statusMsg.AddInt32 ("status", WIN_NICK_BIT);
           else
             statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
-            
+
           Window()->PostMessage (&statusMsg);
         }
       }
@@ -743,7 +743,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         BString lookup;
         msg->FindString ("string", &lookup);
         lookup = StringToURI (lookup.String());
-        lookup.Prepend ("http://www.dictionary.com/cgi-bin/dict.pl?term=");      
+        lookup.Prepend ("http://www.dictionary.com/cgi-bin/dict.pl?term=");
         vision_app->LoadURL (lookup.String());
       }
       break;
@@ -753,7 +753,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         BString lookup;
         msg->FindString ("string", &lookup);
         lookup = StringToURI (lookup.String());
-        lookup.Prepend ("http://www.google.com/search?q=");      
+        lookup.Prepend ("http://www.google.com/search?q=");
         vision_app->LoadURL (lookup.String());
       }
       break;
@@ -875,10 +875,10 @@ ClientAgent::ChannelMessage (
 
   if (nick)
     msg.AddString ("nick", nick);
-  
+
   if (ident)
     msg.AddString ("ident", ident);
-  
+
   if (address)
     msg.AddString ("address", address);
 
