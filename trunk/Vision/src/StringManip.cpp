@@ -188,7 +188,7 @@ StringToURI (const char *string)
   BString buffer (string);
   buffer.ToLower();
   buffer.ReplaceAll ("%",  "%25"); // do this first!
-  
+  buffer.ReplaceAll ("\n", "%20");
   buffer.ReplaceAll (" ",  "%20");
   buffer.ReplaceAll ("\"", "%22");
   buffer.ReplaceAll ("#",  "%23");  
@@ -238,7 +238,7 @@ DurationString (int64 value)
 
 
 const char *
-RelativePath (const char *append_)
+RelToAbsPath (const char *append_)
 {
   app_info ai;
   be_app->GetAppInfo (&ai);
