@@ -36,7 +36,6 @@
 #include "ClientAgent.h"
 #include "ServerAgent.h"
 #include "ListAgent.h"
-
 #include <stdio.h>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -125,6 +124,7 @@ WindowList::MouseDown (BPoint myPoint)
     inputMsg->FindInt32 ("modifiers", &keymodifiers);
     
     // slight kludge to make sure the expand/collapse triangles behave how they should
+    // -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
     if ((myPoint.x > 10.0) || Superitem(ItemAt(selected)) != NULL)
       Select (selected);
 
@@ -139,34 +139,30 @@ WindowList::MouseDown (BPoint myPoint)
         if (item && !item->IsSelected())
           Select (IndexOf (myPoint));
 
+        // do this synchronously otherwise things behave a little strangely
         BuildPopUp();
         myPopUp->Go (
           ConvertToScreen (myPoint),
           true,
           false,
-          ConvertToScreen (ItemFrame (selected)),
-          true);
+          ConvertToScreen (ItemFrame (selected)));
       }
     }
   }
-  else
-  {
-    // find the active agent and select it
-    WindowListItem *activeagent (NULL);
-    for (int32 i (1); i <= CountItems(); ++i)
-    { 
-      WindowListItem *aitem ((WindowListItem *)ItemAt (i - 1));
-      if (!aitem->pAgent()->IsHidden())
-      {
-        activeagent = aitem;
-        break;
-      
-      }
+  // find the active agent and select it
+  WindowListItem *activeagent (NULL);
+  for (int32 i (1); i <= CountItems(); ++i)
+  { 
+    WindowListItem *aitem ((WindowListItem *)ItemAt (i - 1));
+    if (!aitem->pAgent()->IsHidden())
+    {
+      activeagent = aitem;
+      break;
     }
+  }
     
-    if (activeagent)
-        Select (IndexOf (activeagent));
-  }    
+  if (activeagent)
+    Select (IndexOf (activeagent));
 }
 
 void 
@@ -621,6 +617,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
   }
   
   vision_app->pClientWin()->bgView->AddChild (newagent);
+
   newagent->Hide(); // get it out of the way
   newagent->Sync(); // clear artifacts
   

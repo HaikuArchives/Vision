@@ -262,7 +262,7 @@ ServerAgent::Establish (void *arg)
       ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
       sMsgrE->SendMessage (&statMsg);
       
-      BMessage data (M_DISPLAY_ALL);
+      BMessage data (M_DISPLAY);
       data.AddString ("data", statString.String());
       data.AddInt32 ("fore", C_ERROR);
       sMsgrE->SendMessage (&data);
@@ -775,7 +775,9 @@ ServerAgent::HandleReconnect (void)
     const char *soSorry;
     soSorry = "[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n";
     Display (soSorry, C_ERROR);
-    DisplayAll (soSorry, C_ERROR, C_BACKGROUND, F_SERVER);    
+    ClientAgent *agent (ActiveClient());
+    if (agent != this)
+      agent->Display (soSorry, C_ERROR, C_BACKGROUND, F_SERVER);    
   }
 }
 
@@ -1050,7 +1052,9 @@ ServerAgent::MessageReceived (BMessage *msg)
           sAnnounce += serverName;
           sAnnounce += "\n";
           Display (sAnnounce.String(), C_ERROR);
-          DisplayAll (sAnnounce.String(), C_ERROR, C_BACKGROUND, F_SERVER);
+          ClientAgent *agent;
+          if ((agent = ActiveClient()) != this)
+            agent->Display (sAnnounce.String(), C_ERROR, C_BACKGROUND, F_SERVER);
         }
 			
         isConnected = false;
