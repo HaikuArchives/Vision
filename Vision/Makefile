@@ -76,7 +76,9 @@ HEADERS := $(addprefix $(SRCDIR)/,$(BASEHEADERS))
 
 .DELETE_ON_ERROR : $(BINARY)
 
-default : $(BINARY)
+default : build
+
+build : $(BINARY)
 
 clean :
 	@echo cleaning
