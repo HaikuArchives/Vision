@@ -917,7 +917,6 @@ ServerAgent::ParseAutoexecChans (const BString &line)
     const char *lineData (line.String());
     const char *currentData = lineData;
     BString *newChan (NULL);
-    printf("parsing channels\n");
     while ((chanIndex = line.FindFirst ('#', chanIndex)) != B_ERROR)
     {
       currentData = lineData + chanIndex;
