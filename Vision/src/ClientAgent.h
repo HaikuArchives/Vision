@@ -85,7 +85,8 @@ class ClientAgent : public BView
     
     const BString               &Id (void) const;
     
-    BMessenger                  fMsgr;
+    BMessenger                  fMsgr,
+                                fSMsgr;
     
     virtual void                ChannelMessage (
                                   const char *,
@@ -173,7 +174,6 @@ class ClientAgent : public BView
                                        fIsLogging;
                                        
     BRect                            fFrame;
-    BMessenger                       fSMsgr;
     friend class                     WindowList;
 
 };
