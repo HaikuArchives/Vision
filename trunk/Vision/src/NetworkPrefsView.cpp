@@ -390,13 +390,15 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 		    	if (item && strcmp(item->Label(), networkMenu->MenuItem()->Label()) != 0)
 		    	{
 		    	    const char *exec (textView->Text());
+
 		    	    if (activeNetwork.HasString ("autoexec"))
 		    	      activeNetwork.ReplaceString ("autoexec", exec);
 		    	    else
 		    	      activeNetwork.AddString ("autoexec", exec);
-		    	      
+		    	    
 		    	    if (activeNetwork.HasString ("name"))
 	 		    	  vision_app->SetNetwork (activeNetwork.FindString ("name"), &activeNetwork);
+
 			    	activeNetwork = vision_app->GetNetwork (item->Label());
 			    	networkMenu->MenuItem()->SetLabel (item->Label());
 		    		UpdatePersonalData (activeNetwork);
