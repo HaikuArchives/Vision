@@ -30,8 +30,6 @@
 
 #include "VisionBase.h"
 
-#define MAX_THREADNAMES 10
-
 class BFont;
 class AboutWindow;
 class SetupWindow;

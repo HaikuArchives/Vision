@@ -82,6 +82,9 @@ class ServerAgent : public ClientAgent
 									lident;
 
 	int32							nickAttempt;		// going through list
+	
+	int                         ircdtype;
+	
 	BString						myNick;
 	BString						quitMsg;
 	BString						myLag;

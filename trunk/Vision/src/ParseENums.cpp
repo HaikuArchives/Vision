@@ -110,7 +110,36 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       theMsg.RemoveFirst (":");
       theMsg.Prepend ("* ");
       theMsg.Append ("\n");
-      Display (theMsg.String(), 0);     
+      Display (theMsg.String(), 0);
+      
+      
+      if (num == RPL_WELCOME4)
+      {
+        ircdtype = IRCD_STANDARD;
+        
+        // detect IRCd
+        
+        if (theMsg.FindFirst("hybrid") > 0)
+          ircdtype = IRCD_HYBRID;
+        else if (theMsg.FindFirst("UltimateIRCd") > 0)
+          ircdtype = IRCD_ULTIMATE;
+        else if (theMsg.FindFirst("comstud") > 0)
+          ircdtype = IRCD_COMSTUD;
+        else if (theMsg.FindFirst("Fuckoff") > 0)
+          ircdtype = IRCD_FUCKOFF;
+        else if (theMsg.FindFirst("u2.") > 0)
+          ircdtype = IRCD_UNDERNET;
+        else if (theMsg.FindFirst("PTlink") > 0)
+          ircdtype = IRCD_PTLINK;
+        else if (theMsg.FindFirst ("CR") > 0)
+          ircdtype = IRCD_CONFERENCEROOM;
+        else if (theMsg.FindFirst ("nn-") > 0)
+          ircdtype = IRCD_NEWNET;
+        
+        printf ("IRCD TYPE: %d\n", ircdtype);
+      } 
+      
+      
       return true;
     }
 	   
@@ -976,9 +1005,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
     // Added support for Ultimate dependent numerics
     // Added by Bjorn Oksholen
-    case ULTIMATE_USERMODES:  // 615
-    case ULTIMATE_REALHOSTNAME:  // 616
-    case ULTIMATE_REGISTEREDBOT:  // 617
+    case RPL_WHOISUSERMODES:  // 615
+    case RPL_WHOISREALHOSTNAME:  // 616
+    case RPL_WHOISREGISTEREDBOT:  // 617
     {
       BString theNick (GetWord (data, 4)),
               theMessage (RestOfString (data, 5)),
