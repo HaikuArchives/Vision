@@ -31,6 +31,7 @@
 #elif BEOS_BUILD
 #  include <Application.h>
 #  include <String.h>
+#  include <Locker.h>
 #endif
 
 #include "VisionBase.h"
@@ -40,6 +41,7 @@ class AboutWindow;
 class SetupWindow;
 class ClientWindow;
 class SettingsFile;
+class BLocker;
 
 extern class VisionApp * vision_app;
 
@@ -88,6 +90,11 @@ class VisionApp : public BApplication
 
     void                    Broadcast (BMessage *);
     void                    Broadcast (BMessage *, const char *, bool = false);
+    
+    void                    AddIdent (const char *, const char *);
+    void                    RemoveIdent (const char *);
+    const char *            GetIdent (const char *);
+    static int32            Identity (void *);
 
     BString                 events[MAX_EVENTS];
 
@@ -118,7 +125,9 @@ class VisionApp : public BApplication
     rgb_color               colors[MAX_COLORS];
     BFont                   *client_font[MAX_FONTS];
 	BString					commands[MAX_COMMANDS];
-
+	BMessage                idents;
+	BLocker                 identLock;
+	thread_id               identThread;
 };
 
 const uint32 M_SETUP_CLOSE           = 'vasc';

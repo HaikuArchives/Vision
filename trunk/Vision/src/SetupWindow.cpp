@@ -21,11 +21,7 @@
  *                 Rene Gollent
  */
 
-#ifdef GNOME_BUILD
-#  include "gnome/View.h"
-#elif BEOS_BUILD
-#  include <View.h>
-#endif
+#include <View.h>
 
 #include "ClientWindow.h"
 #include "SetupWindow.h"

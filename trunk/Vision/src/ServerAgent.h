@@ -127,8 +127,6 @@ class ServerAgent : public ClientAgent
 
     BNetEndpoint               *lEndpoint;
 
-	static BLocker				identLock;
-
 	char							*send_buffer;		// dynamic buffer for sending
 	size_t						send_size;			// size of buffer
 

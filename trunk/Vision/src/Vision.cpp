@@ -9,7 +9,7 @@
  * implied. See the License for the specific language governing 
  * rights and limitations under the License. 
  * 
- * The Original Code is Vision. 
+ * The Original Code is Vision.
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
@@ -35,9 +35,13 @@ class VisionApp * vision_app;
 #include <Font.h>
 #include <Autolock.h>
 #include <Roster.h>
+#include <NetEndpoint.h>
+#include <NetBuffer.h>
 
 #include <algorithm>
 #include <stdio.h>
+#include <ctype.h>
+#include <arpa/inet.h>
 
 #include "AboutWindow.h"
 #include "Vision.h"
@@ -163,6 +167,10 @@ VisionApp::VisionApp (void)
   commands[CMD_AWAY]        = "is idle: $R";
   commands[CMD_BACK]        = "has returned";
   commands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
+  
+  identThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
+  if (identThread >= B_OK)
+    resume_thread (identThread);
 }
 
 void
@@ -834,6 +842,94 @@ VisionApp::Broadcast (BMessage *msg, const char *serverName, bool active)
 //  Unlock();
 }
 
+int32 
+VisionApp::Identity (void *) 
+{ 
+  BNetEndpoint identPoint, *accepted; 
+  BNetBuffer buffer; 
+  const char *ident (NULL); 
+  char received[64]; 
+      
+  if (identPoint.InitCheck()    == B_OK 
+  &&  identPoint.Bind (113)     == B_OK) 
+  { 
+    identPoint.Listen (2048); 
+    while (1) 
+    { 
+      accepted = identPoint.Accept (-1); 
+      if (accepted) 
+      { 
+        BNetAddress remoteAddr (accepted->RemoteAddr()); 
+        struct sockaddr_in remoteSock; 
+        remoteAddr.GetAddr (remoteSock); 
+        BString remoteIP (inet_ntoa (remoteSock.sin_addr)); 
+        ident = vision_app->GetIdent (remoteIP.String()); 
+        if (ident) 
+        { 
+          accepted->Receive (buffer, 64); 
+          buffer.RemoveString (received, 64); 
+          int32 len; 
+ 
+          received[63] = 0; 
+          while ((len = strlen (received)) 
+          &&     isspace (received[len - 1])) 
+            received[len - 1] = 0; 
+ 
+          BNetBuffer output; 
+          BString string; 
+            
+          string.Append (received); 
+          string.Append (" : USERID : BeOS : "); 
+          string.Append (ident); 
+          string.Append ("\r\n"); 
+                
+          output.AppendString (string.String()); 
+          accepted->Send (output); 
+        } 
+        else 
+        { 
+          BNetBuffer output; 
+          output.AppendString ("0 , 0 : UNKNOWN : UNKNOWN-ERROR"); 
+          accepted->Send (output); 
+        } 
+              
+        accepted->Close(); 
+        delete accepted; 
+        if (ident) 
+          ident = NULL; 
+      } 
+    } 
+  } 
+  return 0; 
+} 
+ 
+void 
+VisionApp::AddIdent (const char *server, const char *serverIdent) 
+{ 
+  identLock.Lock(); 
+  idents.AddString (server, serverIdent); 
+  identLock.Unlock(); 
+} 
+ 
+void 
+VisionApp::RemoveIdent (const char *server) 
+{ 
+  identLock.Lock(); 
+  idents.RemoveName (server); 
+  identLock.Unlock(); 
+} 
+ 
+const char * 
+VisionApp::GetIdent (const char *server) 
+{ 
+  const char *ident (NULL); 
+  identLock.Lock(); 
+  if (idents.HasString (server)) 
+    ident = idents.FindString (server); 
+  identLock.Unlock();
+  
+  return ident; 
+} 
 
 //////////////////////////////////////////////////////////////////////////////
 /// End Public Functions
