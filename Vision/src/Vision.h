@@ -113,6 +113,8 @@ class VisionApp : public BApplication
     
     void                    AddNotifyNick(const char *, const char *);
     void                    RemoveNotifyNick (const char *, const char *);
+    void                    AddIgnoreNick(const char *, const char *, bool = false);
+    void                    RemoveIgnoreNick (const char *, const char *, bool = false);
     
     void                    AcquireDCCLock (void);
     void                    ReleaseDCCLock (void);

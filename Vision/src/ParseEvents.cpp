@@ -267,10 +267,18 @@ ServerAgent::ParseEvents (const char *data)
   if (secondWord == "PART")
   {
     BString nick (GetNick (data)),
-            channel (GetWord (data, 3));
+            channel (GetWord (data, 3)),
+            reason (RestOfString(data, 4));
+            
 
     // some servers seem to add this, shouldn't be there though
     channel.RemoveFirst(":");
+    reason.RemoveFirst(":");
+    
+    if (reason == "-9z99")
+    {
+      reason = "";
+    }
 
     ClientAgent *client;
 
@@ -280,12 +288,13 @@ ServerAgent::ParseEvents (const char *data)
               address (GetAddress (data)),
               buffer;
       
-      const char *expansions[3];
+      const char *expansions[4];
       expansions[0] = nick.String();
       expansions[1] = ident.String();
       expansions[2] = address.String();
+      expansions[3] = reason.String();
 
-      buffer = ExpandKeyed (fEvents[E_PART].String(), "NIA", expansions);
+      buffer = ExpandKeyed (fEvents[E_PART].String(), "NIAR", expansions);
 
       BMessage display (M_DISPLAY);
       PackDisplay (&display, buffer.String(), C_JOIN);

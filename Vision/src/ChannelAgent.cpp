@@ -500,6 +500,7 @@ ChannelAgent::TabExpansion (void)
       // check if we are at the beginning of a line
       // (ignoring whitespace). if we are, prepend a colon to the nick being
       // inserted
+#if 0
       const char *place2 = place;
       while (place2 > fInput->TextView()->Text())
       {
@@ -509,7 +510,7 @@ ChannelAgent::TabExpansion (void)
       }
       if (place2 == fInput->TextView()->Text())
 	insertion += ": ";
-
+#endif
       fInput->TextView()->Delete (
         place - fInput->TextView()->Text(),
         fInput->TextView()->TextLength());
@@ -1227,6 +1228,11 @@ ChannelAgent::MessageReceived (BMessage *msg)
            BMessage send (M_SERVER_SEND);
            AddSend (&send, "PART ");
            AddSend (&send, fId);
+           if (msg->HasString ("vision:partmsg"))
+           {
+             AddSend (&send, " :");
+             AddSend (&send, msg->FindString("vision:partmsg"));
+           }
            AddSend (&send, endl);
          }  
          ClientAgent::MessageReceived(msg);

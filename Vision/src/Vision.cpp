@@ -1787,6 +1787,72 @@ VisionApp::RemoveNotifyNick (const char *network, const char *nick)
 }
 
 void
+VisionApp::AddIgnoreNick (const char *network, const char *nick, bool exclude)
+{
+  // in case user has deleted the network in question, unlikely but better safe than sorry
+  BMessage netMsg (GetNetwork (network));
+  if (!netMsg.HasString("name"))
+    return;
+    
+  char optype[8];
+  memset(optype, 0, sizeof(optype));
+  if (exclude)
+  {
+    strcpy(optype, "exclude");
+  }
+  else
+  {
+    strcpy(optype, "ignore");
+  }
+  
+  type_code type;
+  int32 attrCount;
+  
+  // make sure this nick hasn't already been added
+  netMsg.GetInfo (optype, &type, &attrCount);
+  for (int32 i = 0; i < attrCount; i++)
+  {
+    if (!strcmp(netMsg.FindString (optype, i), nick))
+      return;
+  }
+
+  netMsg.AddString (optype, nick);
+  SetNetwork (network, &netMsg);
+}
+
+void
+VisionApp::RemoveIgnoreNick (const char *network, const char *nick, bool exclude)
+{
+  BMessage netMsg (GetNetwork (network));
+
+  char optype[8];
+  memset(optype, 0, sizeof(optype));
+  if (exclude)
+  {
+    strcpy(optype, "exclude");
+  }
+  else
+  {
+    strcpy(optype, "ignore");
+  }
+
+  type_code type;
+  int32 attrCount, i;
+  netMsg.GetInfo (optype, &type, &attrCount);
+  for (i = 0; i < attrCount; i++)
+  {
+    if (!strcasecmp(netMsg.FindString (optype, i), nick))
+    {
+      netMsg.RemoveData (optype, i);
+      break;
+    }
+  }
+  if (i < attrCount)
+    SetNetwork (network, &netMsg);  
+}
+
+
+void
 VisionApp::AcquireDCCLock (void)
 {
   fDccLock.Lock();
