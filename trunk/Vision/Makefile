@@ -17,7 +17,7 @@
 # the file name, ...
 
 BINARY := Vision
-VERSION := 0.1.0324
+VERSION := 0.1.0325
 
 # system libs
 LIBS := -lbe -lnet -lnetapi -ltextencoding -ltranslation -ltracker

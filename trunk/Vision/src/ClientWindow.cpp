@@ -83,7 +83,7 @@ ClientWindow::QuitRequested (void)
   }
 
 
-  vision_app->SetRect ("clientWinRect", Frame());
+ // vision_app->SetRect ("clientWinRect", Frame());
   
   BMessage killMeNow (B_QUIT_REQUESTED);
   killMeNow.AddBool ("real_thing", true);  
@@ -336,9 +336,9 @@ ClientWindow::Init (void)
  
   BMessage *navUp (new BMessage (M_MOVE_UP));
   BMessage *navDown (new BMessage (M_MOVE_DOWN));
+  
   // logical nav shortcuts
-  AddShortcut (B_UP_ARROW, B_COMMAND_KEY, navUp);
-  AddShortcut (B_DOWN_ARROW, B_COMMAND_KEY, navDown);
+  // (moved to Window menu below)
 
   // baxter-habit-friendly nav shortcuts
   AddShortcut (B_LEFT_ARROW, B_COMMAND_KEY, navUp);
@@ -389,7 +389,17 @@ ClientWindow::Init (void)
   
   // Window menu
   mWindow = new BMenu ("Window");
-  menubar->AddItem (mWindow);
+  mWindow->AddItem (item = new BMenuItem ("Close Window",
+                    new BMessage (M_CW_ALTP), 'P'));
+  mWindow->AddSeparatorItem();
+  mWindow->AddItem (item = new BMenuItem ("Next Window",
+                    navDown, B_DOWN_ARROW));
+  mWindow->AddItem (item = new BMenuItem ("Previous Window",
+                    navUp, B_UP_ARROW));
+  mWindow->AddItem (item = new BMenuItem ("Server Agent",
+                    new BMessage (B_ABOUT_REQUESTED), '/'));
+  item->SetTarget (vision_app);
+  menubar->AddItem (mWindow);  
   
   AddChild (menubar);
   

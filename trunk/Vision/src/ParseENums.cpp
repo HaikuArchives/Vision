@@ -244,6 +244,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_TARGETCHANGETOOFAST: // 439
     case ERR_SUMMONDISABLED:    // 445
     case ERR_USERSDISABLED:     // 446
+    case ERR_NOTREGISTERED:     // 451
     case ERR_NEEDMOREPARMS:     // 461
     case ERR_PASSWDMISMATCH:    // 464
     case ERR_YOUREBANNEDCREEP:  // 465
