@@ -556,6 +556,7 @@ ServerAgent::SendData (const char *cData)
   int32 length (0);
   if (!cData)
     return;
+    
   BString data (cData);
 
   data.Append("\r\n");
@@ -572,14 +573,15 @@ ServerAgent::SendData (const char *cData)
     fSend_buffer,
     &dest_length,
     &state);
+    
 #ifdef NETSERVER_BUILD
   fEndPointLock->Lock();
 #endif
   if (fServerSocket > 0 &&
 #ifdef BONE_BUILD  
-  (length = send (fServerSocket, fSend_buffer, length, MSG_DONTWAIT) < 0)
+  (length = send (fServerSocket, fSend_buffer, dest_length, MSG_DONTWAIT) < 0)
 #elif NETSERVER_BUILD
-  (length = send (fServerSocket, fSend_buffer, length, 0) < 0)
+  (length = send (fServerSocket, fSend_buffer, dest_length, 0) < 0)
 #endif
   || fServerSocket < 0)
   {
@@ -1031,7 +1033,6 @@ ServerAgent::MessageReceived (BMessage *msg)
           msg->FindString ("data", i, &str);
           buffer << str;
         }
-        
 
         SendData (buffer.String());
         if (msg->IsSourceWaiting())
