@@ -853,7 +853,8 @@ ClientAgent::MessageReceived (BMessage *msg)
         }
 
         // scan for presence of nickname, highlight if present
-        FirstKnownAs (tempString, knownAs, &hasNick);
+        if (theNick != fMyNick)
+          FirstKnownAs (tempString, knownAs, &hasNick);
 
         tempString.Prepend (nickString);
  
