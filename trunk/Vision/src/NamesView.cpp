@@ -172,15 +172,19 @@ NamesView::MouseDown (BPoint myPoint)
     && (keymodifiers & B_COMMAND_KEY) == 0
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
+      // user double clicked
+      
       BListItem *item (ItemAt (IndexOf(myPoint)));
       if (item && !item->IsSelected())
 	  {
+	    // "double" clicked away from another selection
 	    Select (IndexOf (myPoint), false);
 	    currentindex = IndexOf (myPoint);
 	    _tracking = true;
 	  }
 	  else if (item && item->IsSelected())
       {
+        // double clicking on a single item
         NameItem *myItem (reinterpret_cast<NameItem *>(item));
         BString theNick (myItem->Name());
         BMessage msg (M_OPEN_MSGAGENT);
@@ -200,6 +204,7 @@ NamesView::MouseDown (BPoint myPoint)
     && (keymodifiers & B_COMMAND_KEY) == 0
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
+      // user single clicks
       BListItem *item (ItemAt (IndexOf(myPoint)));
       if (item && !item->IsSelected())
         Select (IndexOf (myPoint), false);
@@ -217,6 +222,7 @@ NamesView::MouseDown (BPoint myPoint)
     && (keymodifiers & B_COMMAND_KEY) == 0
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
+      // user clicks on something in the middle of a sweep selection
       BListItem *item (ItemAt (IndexOf(myPoint)));
       if (item)
         Select (IndexOf (myPoint), false);
@@ -232,7 +238,7 @@ NamesView::MouseDown (BPoint myPoint)
     && (keymodifiers & B_COMMAND_KEY) == 0
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
-
+      // user right clicks - display popup menu
       BListItem *item (ItemAt (IndexOf(myPoint)));
       if (item && !item->IsSelected())
         Select (IndexOf (myPoint), false);
@@ -300,24 +306,7 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg
        int32 last (IndexOf (myPoint));
        
        if (currentindex != last)
-       {
          DeselectExcept (CurrentSelection (0), last);
-
-         #if 0
-         // MouseMoved messages might not get sent if the user moves real fast
-         // fill in any possible blank areas.     
-         if (currentindex > last)
-         {
-           // backtracking up
-           Deselect (last+1, currentindex);
-         }
-         else if (currentindex < last)
-         {
-           // backtracking down
-           Deselect (currentindex, last-1);
-         }
-         #endif
-       }
           
        currentindex = last;
      }       
