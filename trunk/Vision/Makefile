@@ -47,19 +47,12 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 # compiler, linker, ...
 
 CC := gcc -c -pipe
+
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
 CFLAGS += -DNETSERVER_BUILD
 else
 CFLAGS += -DBONE_BUILD
-endif
-
-ifeq ($(VIS_BUILD),alan)
-CFLAGS += -DALAN_BUILD=1 -fno-debug-opt
-endif
-
-ifeq ($(VIS_BUILD),be)
-CFLAGS += -DBE_INC_BUILD=1
 endif
 
 ifeq ($(CHECK_MEM), true)
@@ -83,6 +76,9 @@ CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
 CFLAGS += -Wcast-qual -Wshadow
+
+# be able to add flags from the env at will without chaging the makefile
+CFLAGS += $(VISION_ADDL_BUILD_FLAGS)
 
 LD := gcc
 
