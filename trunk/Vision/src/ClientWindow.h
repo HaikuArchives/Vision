@@ -105,6 +105,8 @@ class ClientWindow : public BWindow
     StatusView            *status;
     
     ClientWindowDock      *cwDock;
+    
+    sem_id                shutdownSem;
 
 };
 

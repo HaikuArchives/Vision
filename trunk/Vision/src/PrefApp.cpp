@@ -104,7 +104,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.top += logFileTimestamp->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "stripcolors");
   stripColors = new BCheckBox (checkboxRect, "stripcolors",
-    "strip mIRC Colors",
+    "Strip mIRC Colors",
     new BMessage (msg));
   stripColors->SetValue ((vision_app->GetBool ("stripcolors")) ? B_CONTROL_ON : B_CONTROL_OFF);
   stripColors->MoveBy(be_plain_font->StringWidth("S"), 0);

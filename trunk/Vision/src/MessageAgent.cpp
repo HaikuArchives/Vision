@@ -76,7 +76,6 @@ MessageAgent::MessageAgent (
 
 MessageAgent::~MessageAgent (void)
 {
-  status_t result (0);
   dConnected = false;
   if (dChat)
   {
@@ -87,7 +86,6 @@ MessageAgent::~MessageAgent (void)
     closesocket (mySocket);
     closesocket (acceptSocket);
 #endif
-    wait_for_thread (dataThread, &result);
   }
 }
 
