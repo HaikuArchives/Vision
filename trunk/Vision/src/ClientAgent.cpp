@@ -418,7 +418,7 @@ ClientAgent::TimedSubmit (void *arg)
       // A small attempt to appease the
       // kicker gods
       if (delay)
-        snooze (1000000);
+        snooze (300000);
     }
   }
 
