@@ -213,6 +213,19 @@ ChannelAgent::RemoveNickFromList (BList &list, const char *data)
 void
 ChannelAgent::AddUser (const char *nick, const int32 status)
 {
+  NameItem *compareItem (NULL);
+  
+  // make sure this nick doesn't already exist in the list
+  // can happen since some ircds allow stealth quits that don't
+  // broadcast a quit message
+  int32 i;
+  for (i = 0; i < fNamesList->CountItems(); i++)
+  {
+    compareItem = dynamic_cast<NameItem *>(fNamesList->ItemAt(i));
+    if (compareItem && compareItem->Name().ICompare(nick) == 0)
+      return;
+  }
+  
   fNamesList->AddItem (new NameItem (nick, status));
   fNamesList->SortItems (SortNames);
 
@@ -226,7 +239,7 @@ ChannelAgent::AddUser (const char *nick, const int32 status)
   if (fLastExpansion.Length() > 0 && fLastExpansion.ICompare(nick, fLastExpansion.Length()) == 0)
   {
     int32 count (fCompletionNicks.CountItems());
-    for (int32 i = count - 1; i >= 0; i--)
+    for (i = count - 1; i >= 0; i--)
     {
       comparator = (BString *)fCompletionNicks.ItemAt (i);
       if (comparator && comparator->ICompare (nick) < 0)
