@@ -166,8 +166,8 @@ ClientAgent::Show (void)
   if (agent)
   {
     const BRect namesListRect (vision_app->GetRect ("namesListRect"));
-    float difference (((BView *)agent->namesList)->Bounds().Width() - namesListRect.Width());
-    if (difference != 0.0)
+    int32 difference ((int32)(((BView *)agent->namesList)->Bounds().Width() - namesListRect.Width()));
+    if (difference != 0)
     {
       agent->resize->MoveBy (difference, 0.0);
       textScroll->ResizeBy (difference, 0.0);
@@ -916,7 +916,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         ChannelAgent *currentAgent (dynamic_cast<ChannelAgent *>(this));
         if (currentAgent)
         {
-          float offset (msg->FindFloat ("delta"));
+          int32 offset (msg->FindInt32 ("delta"));
           currentAgent->resize->MoveBy (offset, 0.0);
           textScroll->ResizeBy (offset, 0.0);
           currentAgent->namesScroll->ResizeBy (-offset, 0.0);

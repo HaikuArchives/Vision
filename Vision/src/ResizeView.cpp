@@ -75,11 +75,11 @@ ResizeView::MouseMoved (BPoint current, uint32 transit, const BMessage *)
   {
     BWindow *window (Window ());
     BPoint converted (ConvertToScreen (current));
-    if (converted.x <= window->Frame().left)
+    if ((converted.x <= window->Frame().left) || (converted.x >= window->Frame().right))
       return;
     BMessage msg (M_RESIZE_VIEW);
     msg.AddPointer ("view", attachedView);
-    msg.AddFloat ("delta", (current.x - Bounds().right));
+    msg.AddInt32 ("delta", (current.x - Bounds().right));
     window->PostMessage (&msg);
   }
 }
