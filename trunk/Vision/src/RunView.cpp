@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
  * The Original Code is Vision.
- * 
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Rene Gollent
  *                 Todd Lair
  */
@@ -172,7 +172,7 @@ struct Line
 
 	int16					CountChars (int16 pos, int16 len);
 	size_t				SetStamp (const char *, bool);
-	
+
 	void				SelectWord (int16 *, int16 *);
 };
 
@@ -299,13 +299,13 @@ RunView::Draw (BRect frame)
 	BRegion clipper;
 	bool drawSelection (false);
 	bool checkSelection (sp_start != sp_end);
-	
+
 	clipper.Set (frame);
 	ConstrainClippingRegion (&clipper);
 
 	theme->ReadLock();
 	view_color = theme->BackgroundAt (Theme::NormalBack);
-	
+
 	sel_color = theme->BackgroundAt (Theme::SelectionBack);
 	if (((sel_color.red + sel_color.blue + sel_color.green) / 3) >= 127)
 	{
@@ -337,7 +337,7 @@ RunView::Draw (BRect frame)
 		Line *line (lines[i]);
 		if (line->bottom < frame.top)
 			break;
-			
+
 		BRect r (bounds.left, line->top, bounds.right, line->bottom);
 
 		if (!frame.Intersects (r))
@@ -349,7 +349,7 @@ RunView::Draw (BRect frame)
 		int16 fore (0);
 		int16 back (0);
 		int16 font (0);
-		
+
 		height = line->top;
 
 		for (int16 sit = 0; sit < line->softie_used; ++sit)
@@ -420,13 +420,13 @@ RunView::Draw (BRect frame)
 
 					++font;
 				}
-				
+
 				int16 length (line->softies[sit].offset - place + last_len);
-				
+
 				if (fore < line->fc_count
 				&&  line->fcs[fore].offset - place < length)
 					length = line->fcs[fore].offset - place;
-				
+
 				if (back < line->fc_count
 				&&  line->fcs[back].offset - place < length)
 					length = line->fcs[back].offset - place;
@@ -434,7 +434,7 @@ RunView::Draw (BRect frame)
 				if (font < line->fc_count
 				&&  line->fcs[font].offset - place < length)
 					length = line->fcs[font].offset - place;
-				
+
 				if (checkSelection)
 				{
 					// case 1: current line marks beginning of selection
@@ -487,14 +487,14 @@ RunView::Draw (BRect frame)
 					else
 						drawSelection = false;
 				}
-				
+
 				if (place + length == line->length)
 					--length;
 
 				int16 i (place + length - 1);
 				while (line->edges[i] == 0)
 					--i;
-				
+
 				r.Set (
 					left,
 					height,
@@ -508,10 +508,10 @@ RunView::Draw (BRect frame)
 					SetLowColor (low_color);
 				SetHighColor (hi_color);
 				FillRect (r, B_SOLID_LOW);
-				
+
 				if (drawSelection)
 					SetHighColor (sel_text);
-	
+
 				SetDrawingMode (B_OP_COPY);
 
 				DrawString (
@@ -562,29 +562,29 @@ RunView::BuildPopUp (void)
   // This function checks certain criteria (text is selected,
   // TextView is editable, etc) to determine which MenuItems
   // to enable and disable
-  
+
   bool enablecopy (true),
        enableselectall (true),
        enablelookup (false);
   BString querystring ("");
-       
+
   if (sp_start == sp_end)
     enablecopy = false; // no selection
-    
+
   if (!line_count)
     enableselectall = false;
-    
+
   if (enablecopy)
   {
     enablelookup = true; // has a selection less than 32 chars long
     GetSelectionText(querystring);
   }
-  
-  myPopUp = new BPopUpMenu ("IRCView Context Menu", false, false); 
+
+  myPopUp = new BPopUpMenu ("IRCView Context Menu", false, false);
 
   BMenuItem *item;
 
-  BMessage *lookup;  
+  BMessage *lookup;
   lookup = new BMessage (M_LOOKUP_WEBSTER);
   lookup->AddString ("string", querystring);
   item = new BMenuItem("Lookup (Dictionary)", lookup);
@@ -598,19 +598,19 @@ RunView::BuildPopUp (void)
   item->SetEnabled (enablelookup);
   item->SetTarget (Parent());
   myPopUp->AddItem (item);
-  
-  myPopUp->AddSeparatorItem(); 
+
+  myPopUp->AddSeparatorItem();
 
   item = new BMenuItem("Copy", new BMessage (B_COPY), 'C');
   item->SetEnabled (enablecopy);
   item->SetTarget (this);
   myPopUp->AddItem (item);
-  
+
   item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL), 'A');
   item->SetEnabled (enableselectall);
   item->SetTarget (this);
   myPopUp->AddItem (item);
-  
+
   myPopUp->SetFont (be_plain_font);
 }
 
@@ -646,17 +646,17 @@ RunView::MouseDown (BPoint point)
 {
 	if (!line_count)
 		return;
-	
+
 	BMessage *msg (Window()->CurrentMessage());
 	uint32 buttons;
 	uint32 modifiers;
-	uint16 clicks = CheckClickCount (point) % 3; 
+	uint16 clicks = CheckClickCount (point) % 3;
 
 	msg->FindInt32 ("buttons", reinterpret_cast<int32 *>(&buttons));
 	msg->FindInt32 ("modifiers", reinterpret_cast<int32 *>(&modifiers));
 
 	SelectPos s (PositionAt (point));
-	
+
 	if (buttons == B_SECONDARY_MOUSE_BUTTON
 	&&		(modifiers & B_SHIFT_KEY) == 0
 	&&		(modifiers & B_COMMAND_KEY) == 0
@@ -671,16 +671,16 @@ RunView::MouseDown (BPoint point)
 		if (sp_start == sp_end)
 		{
 			lines[s.line]->SelectWord (&start.offset, &end.offset);
-		
+
 			Select (start, end);
 		}
-		
+
     	BuildPopUp();
     	myPopUp->Go (
     	  ConvertToScreen (point),
     	  true,
     	  false);
-    	
+
     	delete myPopUp;
     	myPopUp = 0;
     	return;
@@ -695,7 +695,7 @@ RunView::MouseDown (BPoint point)
 	{
 		SelectPos start (s),
 					end (s);
-		
+
 		switch (clicks)
 		{
 			case 2:
@@ -705,20 +705,26 @@ RunView::MouseDown (BPoint point)
 				{
 					// select word
 					lines[s.line]->SelectWord (&start.offset, &end.offset);
-				
+
 					Select (start, end);
 					return;
 				}
 			}
+			break;
 
 			case 0:
 			{
-				start.offset = 0;
-				end.offset = lines[s.line]->length - 1;
-				Select (start, end);
-				return;
+				if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
+				&& (point.y <= lines[s.line]->bottom))
+				{
+					start.offset = 0;
+					end.offset = lines[s.line]->length - 1;
+					Select (start, end);
+					return;
+				}
 			}
-			
+			break;
+
 			default:
 			{
 				if (!IntersectSelection (s, s))
@@ -758,16 +764,16 @@ RunView::CheckURLCursor (BPoint point)
 {
 	if (!line_count)
 		return;
-		
+
 	SelectPos s = PositionAt (point);
-	
+
 	if (!lines[s.line]->urls)
 	{
 		// if there aren't any URLs in the current line, go back to default
 		SetViewCursor (B_CURSOR_SYSTEM_DEFAULT);
 		return;
 	}
-		
+
 	urllist::const_iterator it;
 	for (it = lines[s.line]->urls->begin(); it != lines[s.line]->urls->end(); ++it)
 		if ((s.offset >= (*it)->offset)
@@ -790,7 +796,7 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 	||  transit == B_INSIDE_VIEW))
 		CheckURLCursor (point);
 
-		
+
 	if (!line_count || tracking == 0)
 	{
 		BView::MouseMoved (point, transit, msg);
@@ -842,14 +848,14 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 					B_MIME_TYPE,
 					text.String(),
 					text.Length() + 1);
-				
+
 				BString clip_name (" Clipping");
-				
+
 				if (clipping_name)
 					clip_name.Prepend (clipping_name);
 				else
 					clip_name.Prepend ("RunView");
-				
+
 				msg.AddString ("be:clip_name", clip_name.String());
 				msg.AddInt32 ("be:actions", B_COPY_TARGET);
 
@@ -858,7 +864,7 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 					lines[sp_start.line]->top,
 					lines[sp_end.line]->edges[sp_end.offset],
 					lines[sp_end.line]->bottom);
-				
+
 				if (sp_start.line != sp_end.line)
 				{
 					frame.left = 0.0;
@@ -877,16 +883,16 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 					int top_softie (0), bottom_softie (0);
 					bool start_found (false);
 					bool end_found (false);
-					
+
 					if (line->softie_used)
 					{
 						if (sp_start.offset < line->softies[0].offset)
 							start_found = true;
-						
+
 						if (sp_end.offset < line->softies[0].offset)
 							end_found = true;
 					}
-					
+
 					if (!end_found)
 					for (int16 sit = 1; sit < line->softie_used; ++sit)
 					{
@@ -894,22 +900,22 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 						{
 							left = line->edges[sp_start.offset] -
 								line->edges[line->softies[sit-1].offset];
-							
+
 							top += (sit) * line->softies[sit].height;
 							top_softie = sit;
 							start_found = true;
 						}
-						
+
 						if (sp_end.offset < line->softies[sit].offset)
 						{
 							right = line->edges[sp_end.offset] -
 								line->edges[line->softies[sit-1].offset];
-								
+
 							bottom = top + (sit - top_softie + 1) * line->softies[sit].height;
 							bottom_softie = sit;
 							end_found = true;
 							break;
-						}	
+						}
 					}
 					if (!end_found)
 					{
@@ -918,21 +924,21 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 						right = line->edges[line->length - 1] -
 							line->edges[line->softies[soft_count].offset];
 						bottom_softie = soft_count - 2;
-							
+
 					}
 					if (right < left || (bottom_softie - top_softie) > 0)
 					{
 						left = 0.0;
 						right = Bounds().right;
 					}
-			
+
 					frame.Set (left, top, right, bottom);
-					frame.OffsetBy (MARGIN_WIDTH / 2.0, 0.0);						
+					frame.OffsetBy (MARGIN_WIDTH / 2.0, 0.0);
 				}
 
 				if (frame.Height() > Bounds().Height())
 					frame = Bounds();
-				
+
 				DragMessage (&msg, frame);
 
 				tracking = 3;
@@ -948,13 +954,13 @@ RunView::MouseUp (BPoint point)
 {
 	SelectPos s (PositionAt (point));
 	bool url_handle (false);
-	
+
 	if (!line_count)
 	{
 		tracking = 0;
 		return;
 	}
-	
+
 	if (tracking == 1)
 	{
 		if (lines[s.line]->urls)
@@ -968,7 +974,7 @@ RunView::MouseUp (BPoint point)
 				 	url_handle = true;
 				 	break;
 				 }
-		}			 
+		}
 		if (!url_handle && s == track_offset)
 			Select (s, s);
 	}
@@ -978,7 +984,7 @@ RunView::MouseUp (BPoint point)
 		delete off_view_runner;
 		off_view_runner = 0;
 	}
-	
+
 	tracking = 0;
 
 }
@@ -1109,18 +1115,18 @@ RunView::MessageReceived (BMessage *msg)
 			SetTheme (save);
 			break;
 		}
-		
+
 		case B_SELECT_ALL:
 			SelectAll();
 			break;
-			
+
 		case B_COPY:
 			if (sp_start != sp_end
 			&&  be_clipboard->Lock())
 			{
 				BString text;
 				GetSelectionText (text);
-				
+
 				be_clipboard->Clear();
 
 				BMessage *msg (be_clipboard->Data());
@@ -1330,7 +1336,7 @@ RunView::Append (
 	assert (back != Theme::SelectionBack);
 
 	theme->ReadLock();
-	
+
 
 	while (place < len)
 	{
@@ -1370,7 +1376,7 @@ RunView::Append (
 				place += (url_offset - last_offset) + temp.Length();
 				last_offset = url_offset + temp.Length();
 			}
-			
+
 			if (place < end)
 				working->Append (
 				buffer + place,
@@ -1436,7 +1442,7 @@ RunView::Append (
 									back,
 									font);
 		}
-		
+
 		if (working->length
 		&&  working->text[working->length - 1] == '\n')
 		{
@@ -1497,7 +1503,7 @@ RunView::Clear (void)
 	line_count = 0;
 	RecalcScrollBar (true);
 	Invalidate();
-	
+
 	sp_start.line = 0;
 	sp_start.offset = 0;
 	sp_end = sp_start;
@@ -1602,7 +1608,7 @@ RunView::PositionAt (BPoint point) const
 			break;
 		lindex = i;
 	}
-	
+
 	// check to make sure we actually did find a line and not just run into line_count
 	if (lines[lindex]->bottom < point.y)
 	{
@@ -1641,7 +1647,7 @@ RunView::PositionAt (BPoint point) const
 
 	pos.line = lindex;
 	pos.offset = min_c (i, lines[lindex]->softies[sindex].offset);
-	if (pos.offset > 0) pos.offset += 1;
+	if (pos.offset > 0) pos.offset += UTF8_CHAR_LEN (lines[pos.line]->text[pos.offset]);
 
 	return pos;
 }
@@ -1657,14 +1663,14 @@ RunView::GetSelectionText (BString &string) const
 {
 	if (sp_start == sp_end)
 		return;
-	
+
 	if (sp_start.line == sp_end.line)
 	{
 		const char *line (LineAt (sp_start.line));
 		string.Append (line + sp_start.offset, sp_end.offset - sp_start.offset);
 		return;
 	}
-	
+
 	for (int32 i = sp_start.line; i <= sp_end.line; i++)
 	{
 		const char *line (LineAt (i));
@@ -1679,7 +1685,7 @@ RunView::GetSelectionText (BString &string) const
 			break;
 		}
 		else
-			string.Append (line);	
+			string.Append (line);
 	}
 }
 
@@ -1688,22 +1694,22 @@ RunView::IntersectSelection (const SelectPos &start, const SelectPos &end) const
 {
 	if (start.line == sp_start.line && start.offset >= sp_start.offset)
 		return true;
-	
+
 	if (end.line == sp_start.line && end.offset >= sp_start.offset)
 		return true;
-	
+
 	if (start.line > sp_start.line && start.line < sp_end.line)
 		return true;
-	
+
 	if (end.line > sp_start.line && end.line < sp_end.line)
 		return true;
-	
+
 	if (start.line == sp_end.line && start.offset < sp_end.offset)
 		return true;
-		
+
 	if (end.line == sp_end.line && end.offset < sp_end.offset)
 		return true;
-	
+
 	return false;
 }
 
@@ -1712,7 +1718,7 @@ RunView::GetTextFrame(const SelectPos &start, const SelectPos &end) const
 {
 	return BRect (0.0, lines[(start.line > 0) ? (start.line - 1) : 0]->top,
 		Bounds().Width(), lines[end.line]->bottom);
-}	
+}
 
 void
 RunView::Select (const SelectPos &start, const SelectPos &end)
@@ -1880,21 +1886,21 @@ Line::Append (
 
 	delete [] text;
 	text = new_text;
-	
+
 	FigureFontColors (save, fore, back, font);
-	
+
 	if (fore == C_URL)
 	{
 		if (!urls)
 			urls = new urllist;
 		urls->push_front (new URL (buffer, save, len));
 	}
-	
+
 	if (text[length - 1] == '\n')
 	{
 		if (urls)
 			urls->sort();
-			
+
 		FigureSpaces();
 		FigureEdges (theme, width);
 	}
@@ -2312,7 +2318,7 @@ Line::SetStamp (const char *format, bool was_on)
 	if (was_on)
 	{
 		int16 offset (fcs[4].offset + 1);
-		
+
 		if (urls)
 		{
 			urllist::const_iterator it = urls->begin();
@@ -2344,7 +2350,7 @@ Line::SetStamp (const char *format, bool was_on)
 			for (; it != urls->end(); ++it)
 				(*it)->offset += size;
 		}
-		
+
 		char *new_text;
 
 		new_text = new char [length + size + 2];
@@ -2412,10 +2418,10 @@ Line::SelectWord (int16 *start, int16 *end)
 
 	while ((end_tmp - 1) < length && text[end_tmp] != ' ')
 			end_tmp++;
-	
+
 	while (end_tmp >= length)
 		--end_tmp;
-	
+
 	*start = start_tmp;
 	*end = end_tmp;
 }
