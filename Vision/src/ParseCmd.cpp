@@ -741,11 +741,15 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 1
   if (firstWord == "/NOTIFY")
   {
     {
       BString rest (RestOfString (data, 2));
+      
+      // strip trailing spaces
+      int32 count (rest.Length() - 1);
+      while (rest[count--] == ' ')
+        rest.RemoveLast(" ");
 
       if (rest != "-9z99")
       {
@@ -756,7 +760,6 @@ ClientAgent::ParseCmd (const char *data)
     }
     return true;
   }
-  #endif
   
   if (firstWord == "/OP")
   {
@@ -984,24 +987,26 @@ ClientAgent::ParseCmd (const char *data)
   #endif
 
 
-  #if 1
   if (firstWord == "/UNNOTIFY")
   {
     {
       BString rest (RestOfString (data, 2));
+      
+      // strip trailing spaces
+      int32 count (rest.Length() - 1);
+      while (rest[count--] == ' ')
+        rest.RemoveLast(" ");
+      
 
       if (rest != "-9z99")
       {
         BMessage msg (M_NOTIFYLIST_REMOVE);
         msg.AddString ("cmd", rest.String());
-        msg.AddBool ("add", false);
-        msg.AddString ("server", fServerName.String());
-        vision_app->PostMessage (&msg);
+        fSMsgr.SendMessage (&msg);
       }
     }
     return true;
   }
-  #endif
 
 
   if (firstWord == "/UPTIME")
