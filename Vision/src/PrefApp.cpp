@@ -86,6 +86,19 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxHeight += trackingBoundsRect.Height() * 1.5; 
   AddChild (fSpamMode);
+
+  checkboxRect.top += fSpamMode->Bounds().Height() * 1.2;
+  msg.ReplaceString ("setting", "queryOnMsg");
+  fQueryMsg = new BCheckBox (checkboxRect, "queryOnMsg",
+    S_PREFAPP_QUERY_MSG,
+    new BMessage (msg));
+  fQueryMsg->SetValue ((vision_app->GetBool ("queryOnMsg")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fQueryMsg->MoveBy(be_plain_font->StringWidth("S"), 0);
+  fQueryMsg->ResizeToPreferred();
+  trackingBoundsRect = fSpamMode->Bounds();
+  maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
+  maxHeight += trackingBoundsRect.Height() * 1.5; 
+  AddChild (fQueryMsg);
   
   ResizeTo(maxWidth, maxHeight);
 }
@@ -105,13 +118,9 @@ AppWindowPrefsView::AllAttached (void)
 {
   fVersionParanoid->SetTarget (this);
   fCatchAltW->SetTarget (this);
-#if 0
-  fTimeStamp->SetTarget (this);
-  fLogEnabled->SetTarget (this);
-  fLogFileTimestamp->SetTarget (this);
-#endif
   fStripColors->SetTarget (this);
   fSpamMode->SetTarget (this);
+  fQueryMsg->SetTarget (this);
   BView::AllAttached();
 }
 

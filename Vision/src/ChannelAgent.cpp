@@ -1198,7 +1198,6 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
      case M_CLIENT_QUIT:
        {
-         ClientAgent::MessageReceived(msg);
          if ((msg->HasBool ("vision:part") && msg->FindBool ("vision:part"))
          ||  (msg->HasBool ("vision:winlist") && msg->FindBool ("vision:winlist")))
          {
@@ -1207,14 +1206,14 @@ ChannelAgent::MessageReceived (BMessage *msg)
            AddSend (&send, fId);
            AddSend (&send, endl);
          }  
-  
+         ClientAgent::MessageReceived(msg);
          BMessage deathchant (M_OBITUARY);
          deathchant.AddPointer ("agent", this);
          deathchant.AddPointer ("item", fAgentWinItem);
          vision_app->pClientWin()->PostMessage (&deathchant);
-  
+
          deathchant.what = M_CLIENT_SHUTDOWN;
-         fSMsgr.SendMessage (&deathchant);
+         fSMsgr.SendMessage(&deathchant);
        }
        break;
 

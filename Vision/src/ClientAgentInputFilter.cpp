@@ -338,7 +338,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 				// scroll the IRCView up by 1 line
 				if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() != 0)
 				{
-					// fWindow->fText->ScrollBy (0.0, fWindow->fText->LineHeight() * -1);
+					fWindow->fText->ScrollBy (0.0, vision_app->GetClientFont(F_TEXT)->Size() * -1);
 					result = B_SKIP_MESSAGE;
 				}
 			}
@@ -351,7 +351,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 				fWindow->fTextScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
 				if (fWindow->fTextScroll->ScrollBar (B_VERTICAL)->Value() != max)
 				{
-					// fWindow->fText->ScrollBy (0.0, fWindow->fText->LineHeight());
+					fWindow->fText->ScrollBy (0.0, vision_app->GetClientFont(F_TEXT)->Size());
 					result = B_SKIP_MESSAGE;
 				}
 			}

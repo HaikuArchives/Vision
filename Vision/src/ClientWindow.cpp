@@ -404,7 +404,7 @@ ClientWindow::MessageReceived (BMessage *msg)
         view = item->pAgent();
       if ((view == NULL) || (dynamic_cast<ListAgent *>(view) != NULL))
         break;
-      dynamic_cast<ClientAgent *>(view)->ParseCmd ("/LIST");;
+      dynamic_cast<ClientAgent *>(view)->ParseCmd ("/LIST");
     }
     break;
 
@@ -509,9 +509,9 @@ ClientWindow::ServerBroadcast (BMessage *outmsg_) const
 {
   bool reply (false);
   
-  for (int32 i (1); i <= pWindowList()->CountItems(); ++i)
+  for (int32 i (0); i < pWindowList()->CountItems(); i++)
     { 
-      WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i - 1));
+      WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i));
       if (aitem->Type() == WIN_SERVER_TYPE)
       {
         dynamic_cast<ServerAgent *>(aitem->pAgent())->fMsgr.SendMessage (outmsg_);

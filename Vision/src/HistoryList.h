@@ -36,7 +36,6 @@ class HistoryList
   BString                 backBuffer[BACK_BUFFER_SIZE];
   int32                   bufferFree,
                           bufferPos;
-  int32                   i;
 
   public:
                           HistoryList (void);

@@ -76,14 +76,13 @@ class ListAgent : public BView
                               
     bool                    processing;
     
-    BList                   hiddenItems;
+    BList                   hiddenItems,
+                              fBuildList;
 
     BMenuItem               *mFilter,
                               *mFind,
                               *mFindAgain;
-    BList                   fBuildList;
-
-    friend class WindowList;
+    friend class            WindowList;
 };
 
 #endif

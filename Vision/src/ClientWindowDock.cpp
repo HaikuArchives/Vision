@@ -81,13 +81,13 @@ ClientWindowDock::AddNotifyList (void)
 }
 
 WindowList *
-ClientWindowDock::pWindowList (void)
+ClientWindowDock::pWindowList (void) const
 {
   return fWinListAgent->pWindowList();
 }
 
 NotifyList *
-ClientWindowDock::pNotifyList (void)
+ClientWindowDock::pNotifyList (void) const
 {
   return fNotifyAgent->pNotifyList();
 }
@@ -183,7 +183,7 @@ AgentDockWinList::~AgentDockWinList (void)
 }
 
 WindowList *
-AgentDockWinList::pWindowList (void)
+AgentDockWinList::pWindowList (void) const
 {
   return fWinList;
 }
@@ -234,7 +234,7 @@ AgentDockNotifyList::~AgentDockNotifyList (void)
 }
 
 NotifyList *
-AgentDockNotifyList::pNotifyList (void)
+AgentDockNotifyList::pNotifyList (void) const
 {
   return fNotifyList;
 }
