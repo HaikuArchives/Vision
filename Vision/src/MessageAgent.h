@@ -43,20 +43,21 @@ class MessageAgent : public ClientAgent
                                        const char *,
                                        const char *,
                                        bool = false,
-                                       bool = false,
                                        const char * = "",
                                        const char * = "");
                          
                          ~MessageAgent (void);
 
     virtual void         MessageReceived (BMessage *);
-    virtual void         Show (void);
     virtual void         Parser (const char *);
     virtual void         DroppedFile (BMessage *);
     virtual void         TabExpansion (void);
 
 
   private:
+  
+    void                 Init (void);
+    
     BString                     chatAddy,
                                 chatee,
                                 dIP,

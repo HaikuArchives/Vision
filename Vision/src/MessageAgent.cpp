@@ -25,7 +25,11 @@
  
  
 #include "MessageAgent.h"
+#include "ServerAgent.h"
+#include "ClientWindow.h"
+#include "StatusView.h"
 #include "Vision.h"
+#include "VTextControl.h"
 
 
 MessageAgent::MessageAgent (
@@ -37,7 +41,6 @@ MessageAgent::MessageAgent (
   const char *nick,
   const char *addyString,
   bool chat,
-  bool initiate,
   const char *IP,
   const char *port)
 
@@ -54,35 +57,131 @@ MessageAgent::MessageAgent (
   dIP (IP),
   dPort (port),
   dChat (chat),
-  dInitiate (initiate),
   dConnected (false)
 {
- //
+  Init();
 }
-
 
 MessageAgent::~MessageAgent (void)
 {
   //
 }
 
+void
+MessageAgent::Init (void)
+{
+  // TODO handle & initiate dcc stuff here
+}
+
 
 void
 MessageAgent::MessageReceived (BMessage *msg)
 {
-  ClientAgent::MessageReceived (msg);
+  switch (msg->what)
+  {
+  
+    case M_CHANNEL_MSG:
+    {
+      const char *nick;
+
+      if (msg->HasString ("nick"))
+        msg->FindString ("nick", &nick);
+      else
+      {
+        nick = chatee.String();
+        msg->AddString ("nick", nick);
+      }
+      
+      // Send the rest of processing up the chain
+      ClientAgent::MessageReceived (msg);
+      break;
+
+    }
+      
+    case M_STATUS_ADDITEMS:
+    {
+      vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+          serverName.String(), 0),
+        true);
+      
+      vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+          "Lag: ",
+          "",
+          STATUS_ALIGN_LEFT),
+        true);
+      
+      vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+          0,
+          "",
+          STATUS_ALIGN_LEFT),
+        true);
+		
+      vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000");
+      vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
+            
+    }
+    
+    default:
+      ClientAgent::MessageReceived (msg);
+  }
 }
 
 void
-MessageAgent::Show (void)
+MessageAgent::Parser (const char *buffer)
 {
-  ClientAgent::Show();
-}
+  if(!dChat)
+  {
+    BMessage send (M_SERVER_SEND);
 
-void
-MessageAgent::Parser (const char *)
-{
-  //
+    AddSend (&send, "PRIVMSG ");
+    AddSend (&send, chatee);
+    AddSend (&send, " :");
+    AddSend (&send, buffer);
+    AddSend (&send, endl);
+  }
+  else if (dConnected)
+  {
+//    // TODO Handle DCC stuff
+//    BString outTemp (buffer);
+//
+//    outTemp << "\n";
+//    if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
+//    {
+//      dConnected = false;
+//      Display ("DCC chat terminated.\n", 0);
+//      return;
+//    }
+  }
+  else
+    return;
+
+  BFont msgFont (vision_app->GetClientFont (F_TEXT));
+  Display ("<", &textColor, &msgFont, vision_app->GetBool ("timestamp"));
+  Display (myNick.String(), &myNickColor);
+  Display ("> ", 0);
+	
+  BString sBuffer (buffer);
+
+  int32 place;
+  while ((place = FirstSingleKnownAs (sBuffer, chatee)) != B_ERROR)
+  {
+    BString tempString;
+
+    if (place)
+    {
+      sBuffer.MoveInto (tempString, 0, place);
+      Display (tempString.String(), 0);
+    }
+
+    sBuffer.MoveInto (tempString, 0, chatee.Length());
+    Display (tempString.String(), &nickColor);
+ 
+  }
+
+  if (sBuffer.Length())
+    Display (sBuffer.String(), 0);
+
+  Display ("\n", 0);
 }
 
 void
@@ -94,5 +193,46 @@ MessageAgent::DroppedFile (BMessage *drop)
 void
 MessageAgent::TabExpansion (void)
 {
- //
+  int32 start,
+        finish;
+
+  input->TextView()->GetSelection (&start, &finish);
+
+  if (input->TextView()->TextLength()
+  &&  start == finish
+  &&  start == input->TextView()->TextLength())
+  {
+    const char *inputText (
+                  input->TextView()->Text()
+                  + input->TextView()->TextLength());
+    const char *place (inputText);
+		
+
+    while (place > input->TextView()->Text())
+    {
+      if (*(place - 1) == '\x20')
+        break;
+      --place;
+    }
+		
+    BString insertion;
+
+    if (!id.ICompare (place, strlen (place)))
+    {
+      insertion = id;
+      insertion.RemoveLast(" [DCC]");
+    }
+		
+    if (insertion.Length())
+    {
+      input->TextView()->Delete (
+        place - input->TextView()->Text(),
+        input->TextView()->TextLength());
+
+      input->TextView()->Insert (insertion.String());
+      input->TextView()->Select (
+        input->TextView()->TextLength(),
+        input->TextView()->TextLength());
+    }
+  }
 }

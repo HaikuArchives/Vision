@@ -589,7 +589,7 @@ VisionApp::GetThreadName (void)
 {
   // random names for the connection thread
   BString buffer;
-  BString tnames[23];
+  BString tnames[31];
     
   tnames[0]  = "gummi_bear_orgy"; // pictures will be taken and uploaded
                                   // via the personal_info_uploader thread.
@@ -618,8 +618,16 @@ VisionApp::GetThreadName (void)
   tnames[22] = "bubbles";   // the joy and the laughter 
   tnames[23] = "buttercup"; // shes the toughest fighter
                             // Powerpuffs save the day!
-    
-  int rnd (rand() % 23);
+  tnames[24] = "youlooklikeyouneedamonkey";
+  tnames[25] = "wegotdeathstar";   // we got def star! we got def star!
+  tnames[26] = "whatcha_gonna_do";  // uh oh!
+  tnames[27] = "lookit! a ball!";
+  tnames[28] = "5038";
+  tnames[29] = "talk_to_the_hand";
+  tnames[30] = "manah, manah!";
+  tnames[31] = "magic 8-nipple";
+  
+  int rnd (rand() % 31);
   buffer = tnames[rnd];
     
   return buffer.String();

@@ -35,6 +35,8 @@
 #include "ServerAgent.h"
 #include "Vision.h"
 #include "ClientWindow.h"
+#include "MessageAgent.h"
+#include "WindowList.h"
 #include "StringManip.h"
 #include "StatusView.h"
 
@@ -779,6 +781,49 @@ ServerAgent::MessageReceived (BMessage *msg)
 		{
 		  printf ("M_LAG_CHECK %s\n", id.String());
 		  break;
+		}
+		
+		case M_OPEN_MSGAGENT:
+		{
+			ClientAgent *client;
+			const char *theNick;
+
+			msg->FindString ("nick", &theNick);
+
+			if (!(client = Client (theNick)))
+			{
+				vision_app->pClientWin()->pWindowList()->AddAgent (
+				  new MessageAgent (
+					*vision_app->pClientWin()->AgentRect(),
+					theNick,
+					sid,
+					serverName.String(),
+					sMsgr,
+					myNick.String(),
+					""),
+				  sid,
+				  theNick,
+				  WIN_MESSAGE_TYPE,
+				  true);
+
+				client = (vision_app->pClientWin()->pWindowList()->Agent (sid, theNick));
+				clients.AddItem (client);
+			}
+			else
+			{
+				// TODO: Activation/MakeFocus/Blah
+				//client->Activate (true);
+			}
+						
+			if (msg->HasMessage ("msg"))
+			{
+				BMessage buffer;
+
+				msg->FindMessage ("msg", &buffer);
+				client->msgr.SendMessage (&buffer);
+			}
+			
+			break;		
 		}
 		
 		case M_CLIENT_QUIT:
