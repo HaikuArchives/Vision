@@ -335,6 +335,7 @@ ClientWindow::Init (void)
     WIN_SERVER_TYPE,
     true); // activate
     
+    
   
 //  int32 x (0);
 //  serverhost = new BString ("irc.inetking.com");

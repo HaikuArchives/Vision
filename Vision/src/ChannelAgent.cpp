@@ -500,7 +500,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 				AddSend (&send, chanKey);
 			}
 			AddSend (&send, endl);
-					
+			
 			break;			
 		}		
 		
