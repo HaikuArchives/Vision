@@ -33,93 +33,21 @@
 #include "Names.h"
 
 NamesView::NamesView(BRect frame)
-	: BListView(
-		frame,
-		"namesList",
-		B_MULTIPLE_SELECTION_LIST,
-		B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM)
+  : BListView(
+    frame,
+    "namesList",
+    B_MULTIPLE_SELECTION_LIST,
+    B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM)
 {
-	myPopUp = new BPopUpMenu("User selection", false, false);
-	
+  BListView::SetFont (vision_app->GetClientFont (F_NAMES));
 
-	BMessage *myMessage = new BMessage (POPUP_WHOIS);
-	myPopUp->AddItem(new BMenuItem("Whois", myMessage));
-	
-	myMessage = new BMessage (M_OPEN_MSGAGENT);
-	myPopUp->AddItem(new BMenuItem("Query", myMessage));
-	
-	myPopUp->AddSeparatorItem();
-	
-//	myMessage = new BMessage(SEND_ACTION);
-//	myPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
-//	
-//	myMessage = new BMessage(CHAT_ACTION);
-//	myPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
-		
-	CTCPPopUp = new BMenu("CTCP");
-	myPopUp->AddItem( CTCPPopUp );
-		
-	myMessage = new BMessage(POPUP_CTCP);
-	myMessage->AddString("action", "ping");
-	CTCPPopUp->AddItem(new BMenuItem("PING", myMessage));
+  textColor   = vision_app->GetColor (C_NAMES);
+  opColor     = vision_app->GetColor (C_OP);
+  voiceColor  = vision_app->GetColor (C_VOICE);
+  bgColor     = vision_app->GetColor (C_NAMES_BACKGROUND);
+  ignoreColor = vision_app->GetColor (C_IGNORE);
 
-	myMessage = new BMessage(POPUP_CTCP);
-	myMessage->AddString("action", "version");
-	CTCPPopUp->AddItem(new BMenuItem("VERSION", myMessage));
-	
-	CTCPPopUp->AddSeparatorItem();
-	
-	myMessage = new BMessage(POPUP_CTCP);
-	myMessage->AddString("action", "finger");
-	CTCPPopUp->AddItem(new BMenuItem("FINGER", myMessage));
-
-	myMessage = new BMessage(POPUP_CTCP);
-	myMessage->AddString("action", "time");
-	CTCPPopUp->AddItem(new BMenuItem("TIME", myMessage));
-
-	myMessage = new BMessage(POPUP_CTCP);
-	myMessage->AddString("action", "clientinfo");
-	CTCPPopUp->AddItem(new BMenuItem("CLIENTINFO", myMessage));
-
-	myMessage = new BMessage(POPUP_CTCP);
-	myMessage->AddString("action", "userinfo");
-	CTCPPopUp->AddItem(new BMenuItem("USERINFO", myMessage));
-
-	myPopUp->AddSeparatorItem();
-	
-	myMessage = new BMessage(POPUP_MODE);
-	myMessage->AddString("action", "op");
-	myPopUp->AddItem(new BMenuItem("Op", myMessage));
-
-	myMessage = new BMessage(POPUP_MODE);
-	myMessage->AddString("action", "deop");
-	myPopUp->AddItem(new BMenuItem("Deop", myMessage));
-	
-	myMessage = new BMessage(POPUP_MODE);
-	myMessage->AddString("action", "voice");
-	myPopUp->AddItem(new BMenuItem("Voice", myMessage));
-
-	myMessage = new BMessage(POPUP_MODE);
-	myMessage->AddString("action", "devoice");
-	myPopUp->AddItem(new BMenuItem("Devoice", myMessage));
-
-	myMessage = new BMessage(POPUP_KICK);
-	myPopUp->AddItem(new BMenuItem("Kick", myMessage));
-
-	
-	// PopUp Menus tend to have be_plain_font
-	myPopUp->SetFont (be_plain_font);
-	CTCPPopUp->SetFont (be_plain_font);
-
-	BListView::SetFont (vision_app->GetClientFont (F_NAMES));
-
-	textColor   = vision_app->GetColor (C_NAMES);
-	opColor     = vision_app->GetColor (C_OP);
-	voiceColor  = vision_app->GetColor (C_VOICE);
-	bgColor     = vision_app->GetColor (C_NAMES_BACKGROUND);
-	ignoreColor = vision_app->GetColor (C_IGNORE);
-
-	SetViewColor (bgColor);
+  SetViewColor (bgColor);
 }
 
 NamesView::~NamesView (void)
@@ -129,8 +57,80 @@ NamesView::~NamesView (void)
 
 void NamesView::AttachedToWindow (void)
 {
-  myPopUp->SetTargetForItems(Window());
-  CTCPPopUp->SetTargetForItems(Window());
+  myPopUp = new BPopUpMenu("User selection", false, false);
+	
+
+  BMessage *myMessage = new BMessage (POPUP_WHOIS);
+  myPopUp->AddItem(new BMenuItem("Whois", myMessage));
+	
+  myMessage = new BMessage (M_OPEN_MSGAGENT);
+  myPopUp->AddItem(new BMenuItem("Query", myMessage));
+	
+  myPopUp->AddSeparatorItem();
+	
+//  myMessage = new BMessage(SEND_ACTION);
+//  myPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
+
+//  myMessage = new BMessage(CHAT_ACTION);
+//  myPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
+		
+  CTCPPopUp = new BMenu("CTCP");
+  myPopUp->AddItem( CTCPPopUp );
+		
+  myMessage = new BMessage(POPUP_CTCP);
+  myMessage->AddString("action", "ping");
+  CTCPPopUp->AddItem(new BMenuItem("PING", myMessage));
+
+  myMessage = new BMessage(POPUP_CTCP);
+  myMessage->AddString("action", "version");
+  CTCPPopUp->AddItem(new BMenuItem("VERSION", myMessage));
+	
+  CTCPPopUp->AddSeparatorItem();
+	
+  myMessage = new BMessage(POPUP_CTCP);
+  myMessage->AddString("action", "finger");
+  CTCPPopUp->AddItem(new BMenuItem("FINGER", myMessage));
+
+  myMessage = new BMessage(POPUP_CTCP);
+  myMessage->AddString("action", "time");
+  CTCPPopUp->AddItem(new BMenuItem("TIME", myMessage));
+
+  myMessage = new BMessage(POPUP_CTCP);
+  myMessage->AddString("action", "clientinfo");
+  CTCPPopUp->AddItem(new BMenuItem("CLIENTINFO", myMessage));
+
+  myMessage = new BMessage(POPUP_CTCP);
+  myMessage->AddString("action", "userinfo");
+  CTCPPopUp->AddItem(new BMenuItem("USERINFO", myMessage));
+
+  myPopUp->AddSeparatorItem();
+	
+  myMessage = new BMessage(POPUP_MODE);
+  myMessage->AddString("action", "op");
+  myPopUp->AddItem(new BMenuItem("Op", myMessage));
+
+  myMessage = new BMessage(POPUP_MODE);
+  myMessage->AddString("action", "deop");
+  myPopUp->AddItem(new BMenuItem("Deop", myMessage));
+	
+  myMessage = new BMessage(POPUP_MODE);
+  myMessage->AddString("action", "voice");
+  myPopUp->AddItem(new BMenuItem("Voice", myMessage));
+
+  myMessage = new BMessage(POPUP_MODE);
+  myMessage->AddString("action", "devoice");
+  myPopUp->AddItem(new BMenuItem("Devoice", myMessage));
+
+  myMessage = new BMessage(POPUP_KICK);
+  myPopUp->AddItem(new BMenuItem("Kick", myMessage));
+
+	
+  // PopUp Menus tend to have be_plain_font
+  myPopUp->SetFont (be_plain_font);
+  CTCPPopUp->SetFont (be_plain_font);
+	
+  myPopUp->SetTargetForItems (this);
+  CTCPPopUp->SetTargetForItems (this);
 }
 
 void
