@@ -57,7 +57,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   fCatchAltW = new BCheckBox (checkboxRect, "catch AltW",
     S_PREFAPP_CMDW,
     new BMessage (msg));
-  fCatchAltW->SetValue ((!vision_app->GetBool ("catchAltW")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fCatchAltW->SetValue ((vision_app->GetBool ("catchAltW")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fCatchAltW->MoveBy(be_plain_font->StringWidth("S"), 0);
   fCatchAltW->ResizeToPreferred();
   trackingBoundsRect = fCatchAltW->Bounds();
@@ -275,7 +275,7 @@ AppWindowPrefsView::MessageReceived (BMessage *msg)
         BString setting;
         msg->FindString ("setting", &setting);
         int32 value (source->Value() == B_CONTROL_ON);
-        if ((setting.ICompare ("catchAltW") == 0) || (setting.ICompare ("versionParanoid") == 0))
+        if ((setting.ICompare ("versionParanoid") == 0))
           value = !value;
         vision_app->SetBool (setting.String(), value);
       }
