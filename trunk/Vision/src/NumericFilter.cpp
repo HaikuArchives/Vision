@@ -61,6 +61,7 @@ NumericFilter::Filter (BMessage *msg, BHandler **)
           case B_RIGHT_ARROW:
           case B_HOME:
           case B_END:
+          case B_TAB:
             break;
             
           default:
@@ -74,7 +75,8 @@ NumericFilter::Filter (BMessage *msg, BHandler **)
         if (bytes[0] == B_LEFT_ARROW
         ||  bytes[0] == B_RIGHT_ARROW
         ||  bytes[0] == B_HOME
-        ||  bytes[0] == B_END)
+        ||  bytes[0] == B_END
+        ||  bytes[0] == B_TAB)
           break;
         else
           result = B_SKIP_MESSAGE;

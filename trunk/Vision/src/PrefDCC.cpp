@@ -50,15 +50,15 @@ DCCPrefsView::DCCPrefsView (BRect frame)
   menu->AddItem (new BMenuItem ("4096", new BMessage (M_BLOCK_SIZE_CHANGED)));
   menu->AddItem (new BMenuItem ("8192", new BMessage (M_BLOCK_SIZE_CHANGED)));
   blockSize = new BMenuField (BRect (0,0,0,0), NULL, "DCC Block size: ", menu);
-  AddChild (blockSize);
   autoAccept = new BCheckBox (BRect (0,0,0,0), NULL, "Automatically accept incoming sends",
     new BMessage (M_AUTO_ACCEPT_CHANGED));
-  AddChild (autoAccept);
   defDir = new VTextControl (BRect (0,0,0,0), NULL, "Default path: ", "", new BMessage (M_DEFAULT_PATH_CHANGED));
   defDir->SetDivider (defDir->StringWidth ("Default path: " + 5));
-  AddChild (defDir);
   box = new BBox (BRect (0,0,0,0), NULL);
   box->SetLabel ("DCC Port Range");
+  AddChild (defDir);
+  AddChild (autoAccept);
+  AddChild (blockSize);
   AddChild (box);
   dccPortMin = new VTextControl (BRect (0,0,0,0), NULL, "Min: ", "",
     new BMessage (M_DCC_MIN_PORT_CHANGED));
@@ -109,7 +109,7 @@ DCCPrefsView::AttachedToWindow (void)
   dccPortMax->SetTarget (this);
   
   box->ResizeTo (Bounds().Width() - 20, dccPortMin->Bounds().Height()+30);
-  box->MoveTo (blockSize->Frame().left, blockSize->Frame().bottom + 5);
+  box->MoveTo (blockSize->Frame().left, blockSize->Frame().bottom + 25);
   dccPortMin->ResizeTo ((box->Bounds().Width() / 2.0) - 15, dccPortMin->Bounds().Height());
   dccPortMax->ResizeTo (dccPortMin->Bounds().Width(), dccPortMin->Bounds().Height());
 
