@@ -29,7 +29,7 @@
 #include <ScrollView.h>
 
 PrefsWindow::PrefsWindow(void)
-  : BWindow (BRect (0.0, 0.0, 0.0, 0.0),
+  : BWindow (BRect (88.0, 108.0, 0.0, 0.0),
       S_PREFSWIN_TITLE,
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS)
