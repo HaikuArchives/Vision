@@ -70,7 +70,7 @@ class ServerAgent : public ClientAgent
     virtual void                AllAttached (void);
     virtual void                AddMenuItems (BPopUpMenu *);
     void                        PostActive (BMessage *);
-    void                        Broadcast (BMessage *);
+    void                        Broadcast (BMessage *, bool = false);
     void                        RepliedBroadcast (BMessage *);
     status_t                    NewTimer (const char *, int32, int32);
 	

@@ -867,7 +867,7 @@ ServerAgent::ActiveClient (void)
 
 
 void
-ServerAgent::Broadcast (BMessage *msg)
+ServerAgent::Broadcast (BMessage *msg, bool sendToServer)
 {
   for (int32 i = 0; i < fClients.CountItems(); ++i)
   {
@@ -876,7 +876,10 @@ ServerAgent::Broadcast (BMessage *msg)
     if (client != this)
       client->fMsgr.SendMessage (msg);
   }
-  fSMsgr.SendMessage(msg);
+  if (sendToServer)
+  {
+    fSMsgr.SendMessage(msg);
+  }
 }
 
 void
