@@ -63,11 +63,17 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
       break;
     
     case B_COPY:
-    case B_SELECT_ALL:
       {
         int32 start, finish;
         window->input->TextView()->GetSelection (&start, &finish);
         if (start == finish)
+          *target = window->text;
+      }
+      break;
+
+    case B_SELECT_ALL:
+      {
+      	if (window->input->TextView()->TextLength() == 0)
           *target = window->text;
       }
       break;
