@@ -751,6 +751,15 @@ VisionApp::LoadURL (const char *url)
 
     system(file.String());
   }
+  else if (argument.IFindFirst ("mailto:") == 0)
+  {
+    if (argument.Length() > 7)
+    {
+      BString mailer("BeMail ");
+      mailer << argument << " &";
+      system(mailer.String());
+    }
+  }
   else
   {
   	be_roster->Launch ("text/html", 1, const_cast<char **>(args));

@@ -41,7 +41,7 @@ URLCrunch::Crunch (BString *url)
 	if (current_pos >= buffer.Length())
 		return B_ERROR;
 
-	const int32 tagNum = 6;
+	const int32 tagNum = 7;
 	const char *tags[tagNum] =
 	{
 		"http://",
@@ -49,7 +49,8 @@ URLCrunch::Crunch (BString *url)
 		"www.",
 		"ftp://",
 		"ftp.",
-		"file:/"
+		"file:/",
+		"mailto:"
 	};
 
 	int32 marker (buffer.Length());
