@@ -26,7 +26,7 @@ REG_LIBS := -lbe -ltranslation -ltextencoding
 NET_LIBS := -lnet -lnetapi
 
 # bone libs
-BONE_LIBS := -lroot -lsocket -lbnetapi -lbind -lbe2
+BONE_LIBS := -lroot -lsocket -lbnetapi -lbind
 
 # lua
 LUA_LIBS := -L./src/lua/lib -llua -llualib
