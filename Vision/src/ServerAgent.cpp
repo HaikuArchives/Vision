@@ -1055,6 +1055,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           size,
           ip,
           port,
+          sMsgr,
           cont);
 	
           BMessage aMsg (M_DCC_FILE_WIN);

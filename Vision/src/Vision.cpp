@@ -338,7 +338,8 @@ VisionApp::InitSettings (void)
   LoadDefaults (SET_FONT);
   LoadDefaults (SET_COLOR);
   LoadDefaults (SET_STRINGS);
-
+  LoadDefaults (SET_DCC);
+  
   // initialize theme, TODO: move to separate function
 
   for (i = 0; i < MAX_COLORS; i++)
@@ -545,6 +546,17 @@ VisionApp::LoadDefaults (int32 section)
        }
      }
      break;
+     
+   case SET_DCC:
+     {
+       if (!visionSettings->HasString ("dccDefPath"))
+         visionSettings->AddString ("dccDefPath", "/boot/home");
+       if (!visionSettings->HasBool ("dccAutoAccept"))
+         visionSettings->AddBool ("dccAutoAccept", false);
+       if (!visionSettings->HasString ("dccBlockSize"))
+         visionSettings->AddString ("dccBlockSize", "2048");
+     }
+     break;  
   }
 }
 

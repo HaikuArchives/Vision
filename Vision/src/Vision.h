@@ -172,6 +172,7 @@ const int SET_NOTIFY    = 4;
 const int SET_FONT      = 5;
 const int SET_COLOR     = 6;
 const int SET_STRINGS   = 7;
+const int SET_DCC       = 8;
 
 const int VERSION_VERSION = 1;
 const int VERSION_DATE    = 2;

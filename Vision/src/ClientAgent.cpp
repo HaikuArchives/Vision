@@ -24,9 +24,11 @@
  */
 
 #include <Beep.h>
-#include <ScrollView.h>
-#include <PopUpMenu.h>
+#include <File.h>
 #include <MenuItem.h>
+#include <Path.h>
+#include <PopUpMenu.h>
+#include <ScrollView.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -942,6 +944,55 @@ ClientAgent::MessageReceived (BMessage *msg)
 	case B_ESCAPE:
 	  	fCancelMLPaste = true;
 		break;
+	
+	case M_DCC_COMPLETE:
+	  {
+          /// set up ///
+        BString nick,
+          file,
+          size,
+          type,
+          message ("[@] "),
+          fAck;
+        int32 rate,
+          xfersize;
+        bool completed (true);
+
+        msg->FindString ("nick", &nick);
+        msg->FindString ("file", &file);
+        msg->FindString ("size", &size);
+        msg->FindString ("type", &type);
+        msg->FindInt32 ("transferred", &xfersize);
+        msg->FindInt32 ("transferRate", &rate);
+				
+        BPath pFile (file.String());
+
+        fAck << xfersize;
+								
+        if (size.ICompare (fAck))
+          completed = false;
+
+
+          /// send mesage ///				
+        if (completed)
+          message << "Completed ";
+        else message << "Terminated ";
+				
+        if (type == "SEND")
+          message << "send of " << pFile.Leaf() << " to ";
+        else message << "receive of " << pFile.Leaf() << " from ";
+				
+        message << nick << " (";
+
+        if (!completed)
+          message << fAck << "/";
+				
+        message << size << " bytes), ";
+        message	<< rate << " cps\n";
+					
+        Display (message.String(), C_CTCP_RPY);
+	  }
+	  break;
 
     default:
       BView::MessageReceived (msg);
