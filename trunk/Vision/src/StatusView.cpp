@@ -80,7 +80,8 @@ StatusView::AddItem (StatusItem *item, bool erase)
   item->frame.left   = width;
   item->frame.right  = width + StringWidth (item->value.String());
 
-  if (erase) item->value = "";
+  if (erase)
+    item->value = "";
 
   items.AddItem (item);
 }
@@ -96,6 +97,7 @@ StatusView::SetItemValue (int32 which, const char *value)
 {
   StatusItem *item (ItemAt (which));
   StatusItem *nextitem;
+  
   if (item)
   {
     item->value = value;
@@ -128,7 +130,7 @@ StatusView::Draw (BRect update)
 
   SetDrawingMode (B_OP_OVER);
   SetHighColor (0, 0, 0, 255);
-	
+
   for (int32 i = 0; i < items.CountItems(); ++i)
   {
     if (i)
@@ -136,7 +138,7 @@ StatusView::Draw (BRect update)
       DrawSplit (width += 3);
       width += 5;
     }
-		
+
     StatusItem *item (ItemAt (i));
 
     if (item->label.Length())
@@ -149,7 +151,7 @@ StatusView::Draw (BRect update)
       width = item->frame.right - StringWidth (item->value.String());
     else
       width = item->frame.left;
-				
+
     DrawString (item->value.String(),
     BPoint (width, fh.ascent + fh.leading + 2));
     width = item->frame.right;
@@ -172,7 +174,7 @@ StatusView::DrawSplit (float x)
   SetHighColor (255, 255, 255, 255);
   StrokeLine (BPoint (x + 1, bounds.top + 2.0),
               BPoint (x + 1, bounds.bottom));
-	
+
   PopState();
 }
 
