@@ -594,6 +594,10 @@ ClientAgent::MessageReceived (BMessage *msg)
               input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
                 &inputColor);
               break;
+            
+            case F_URL:
+              text->SetFont (F_URL, vision_app->GetClientFont (F_URL));
+              break;
               
             default:
               break;
