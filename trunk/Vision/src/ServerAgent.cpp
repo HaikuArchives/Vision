@@ -272,7 +272,6 @@ ServerAgent::Establish (void *arg)
       statString += ")\n";
       ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
       sMsgrE->SendMessage (&statMsg);
-//    server->DisplayAll (statString.String(), &errColor, &(server->serverFont));
       
       BMessage data (M_DISPLAY_ALL);
       data.AddString ("data", statString.String());
@@ -1025,7 +1024,15 @@ ServerAgent::MessageReceived (BMessage *msg)
         localip_private = msg->FindBool("private");
       }
       break;
-
+    
+    case M_GET_IP:
+      {
+        BMessage reply;
+        reply.AddBool ("private", localip_private);
+        reply.AddString ("ip", localip);
+        msg->SendReply (&reply);
+      }
+      break;
 
     case M_GET_RECONNECT_STATUS:
       {
@@ -1055,6 +1062,78 @@ ServerAgent::MessageReceived (BMessage *msg)
           msg->SendReply(B_REPLY);
       }
       break;
+    
+    case M_CHAT_ACCEPT:
+      {
+        int32 acceptDeny;
+        BString theNick;
+        const char *theIP, *thePort;
+        msg->FindInt32("which", &acceptDeny);
+        if (acceptDeny)
+          return;
+        msg->FindString("nick", &theNick);
+        msg->FindString("ip", &theIP);
+        msg->FindString("port", &thePort);
+        
+        theNick.Append (" [DCC]");
+        vision_app->pClientWin()->pWindowList()->AddAgent (
+          new MessageAgent (
+            *vision_app->pClientWin()->AgentRect(),
+            theNick.String(),
+            sid,
+            serverHostName.String(),
+            sMsgr,
+            myNick.String(),
+            "",
+            true,
+            false,
+            theIP,
+            thePort),
+          sid,
+          theNick.String(),
+          WIN_MESSAGE_TYPE,
+          true);
+          
+          ClientAgent *client (vision_app->pClientWin()->pWindowList()->Agent (sid, theNick.String()));
+          clients.AddItem (client);
+      }
+      break;	
+
+    case M_CHAT_ACTION: // dcc chat
+     {
+       ClientAgent *client;
+       const char *theNick;
+       BString thePort;
+       BString theId;
+
+       msg->FindString ("nick", &theNick);
+       msg->FindString ("port", &thePort);
+       theId << theNick << " [DCC]";
+
+       if ((client = Client (theId.String())) == 0)
+       {
+          vision_app->pClientWin()->pWindowList()->AddAgent (
+            new MessageAgent (
+              *vision_app->pClientWin()->AgentRect(),
+              theId.String(),
+              sid,
+              serverHostName.String(),
+              sMsgr,
+              myNick.String(),
+              "",
+              true,
+              true,
+              "",
+              thePort != "" ? thePort.String() : ""),
+            sid,
+            theId.String(),
+            WIN_MESSAGE_TYPE,
+            true);
+         client = vision_app->pClientWin()->pWindowList()->Agent (sid, theId.String());
+         clients.AddItem (client);
+       }
+     }
+     break;
 
     case M_SLASH_RECONNECT:
       if (!isConnected && !isConnecting)

@@ -31,6 +31,16 @@
 #include "Vision.h"
 #include "VTextControl.h"
 
+#include <stdlib.h>
+
+#ifdef BONE_BUILD
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#elif NETSERVER_BUILD
+#include <socket.h>
+#include <netdb.h>
+#endif
+
 MessageAgent::MessageAgent (
   BRect &frame_,
   const char *id_,
@@ -40,6 +50,7 @@ MessageAgent::MessageAgent (
   const char *nick,
   const char *addyString,
   bool chat,
+  bool initiate,
   const char *IP,
   const char *port)
 
@@ -56,6 +67,7 @@ MessageAgent::MessageAgent (
   dIP (IP),
   dPort (port),
   dChat (chat),
+  dInitiate (initiate),
   dConnected (false)
 {
   Init();
@@ -63,13 +75,270 @@ MessageAgent::MessageAgent (
 
 MessageAgent::~MessageAgent (void)
 {
-  //
+  status_t result (0);
+  dConnected = false;
+  if (dChat)
+  {
+#ifdef BONE_BUILD
+    shutdown (mySocket, SHUTDOWN_BOTH);
+    shutdown (acceptSocket, SHUTDOWN_BOTH);
+#endif
+    wait_for_thread (dataThread, &result);
+  }
+}
+
+void
+MessageAgent::AttachedToWindow (void)
+{
+  // initialize threads here since messenger will otherwise not be valid
+  if (dChat)
+  {
+    if (dInitiate)
+      dataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY, this);
+    else
+      dataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY, this);
+    
+    resume_thread (dataThread);
+  }
 }
 
 void
 MessageAgent::Init (void)
 {
-  // TODO handle & initiate dcc stuff here
+// empty Init, call DCCServerSetup from input thread to avoid deadlocks
+}
+
+void
+MessageAgent::DCCServerSetup(void)
+{
+  int32 myPort (1500 + (rand() % 5000));
+  BString outNick (chatee);
+  outNick.RemoveFirst (" [DCC]");
+  struct sockaddr_in sa;
+  
+  BMessage reply;
+  sMsgr.SendMessage (M_GET_IP, &reply);
+  
+  BString address;
+  reply.FindString ("ip", &address); 
+  
+  if (dPort != "")
+    myPort = atoi (dPort.String());
+
+  mySocket = socket (AF_INET, SOCK_STREAM, 0);
+
+  if (mySocket < 0)
+  {
+    LockLooper();
+    Display ("Error creating socket.\n", 0);
+    UnlockLooper();
+    return;
+  }
+
+  sa.sin_family = AF_INET;
+  inet_aton (address.String(), &sa.sin_addr);
+  
+  sa.sin_port = htons(myPort);
+  
+  if (bind (mySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
+  {
+    myPort = 1500 + (rand() % 5000); // try once more
+    sa.sin_port = htons(myPort);
+    if (bind (mySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
+    {
+      LockLooper();
+      Display ("Error binding socket.\n", 0);
+      UnlockLooper();
+      return;
+    }
+  }
+  
+  BMessage sendMsg (M_SERVER_SEND);
+  BString buffer;
+  
+  buffer << "PRIVMSG " << outNick << " :\1DCC CHAT chat ";
+  buffer << htonl(sa.sin_addr.s_addr) << " ";
+  buffer << myPort << "\1";
+  sendMsg.AddString ("data", buffer.String());
+  sMsgr.SendMessage (&sendMsg);
+	
+  listen (mySocket, 1);
+
+  BString dataBuffer;
+  struct in_addr addr;
+		
+  inet_aton (address.String(), &addr);
+  dataBuffer << "Accepting connection on address "
+    << address.String() << ", port " << myPort << "\n";
+  LockLooper();
+  Display (dataBuffer.String(), 0);
+  UnlockLooper();
+}
+
+status_t
+MessageAgent::DCCIn (void *arg)
+{
+  MessageAgent *agent ((MessageAgent *)arg);
+  BMessenger sMsgrE (agent->sMsgr);
+  BMessenger mMsgr (agent);
+  
+  agent->DCCServerSetup();
+    
+  int dccSocket (agent->mySocket);
+  int dccAcceptSocket (0);
+  
+  struct sockaddr_in remoteAddy;
+  int theLen (sizeof (struct sockaddr_in));
+
+  dccAcceptSocket = accept(dccSocket, (struct sockaddr*)&remoteAddy, &theLen);
+
+  if (dccAcceptSocket < 0)
+    return B_ERROR;
+    
+  agent->acceptSocket = dccAcceptSocket;
+  agent->dConnected = true;
+  
+  BMessage msg (M_DISPLAY);
+
+  ClientAgent::PackDisplay (&msg, "Connected!\n", 0);
+  mMsgr.SendMessage (&msg);
+
+  char tempBuffer[2];
+  BString inputBuffer;
+  
+  while (agent->dConnected)
+  {
+    if (recv(dccAcceptSocket, tempBuffer, 1, 0) == 0)
+    {
+      BMessage termMsg (M_DISPLAY);
+
+      agent->dConnected = false;
+      ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n", 0);
+      mMsgr.SendMessage (&termMsg);
+      goto outta_there; // I hate goto, but this is a good use.
+    }
+
+    if (tempBuffer[0] == '\n')
+      {
+        agent->ChannelMessage (inputBuffer.String());
+        inputBuffer = "";
+      }
+      else
+        inputBuffer.Append(tempBuffer[0],1);
+  }
+
+	
+  outta_there: // GOTO MARKER
+
+#ifdef BONE_BUILD
+  shutdown (dccSocket, SHUTDOWN_BOTH);
+  shutdown (dccAcceptSocket, SHUTDOWN_BOTH);
+#elif NETSERVER_BUILD
+  closesocket (dccSocket);
+  closesocket (dccAcceptSocket);
+#endif
+
+  return 0;
+}
+
+status_t
+MessageAgent::DCCOut (void *arg)
+{
+  MessageAgent *agent ((MessageAgent *)arg);
+  
+  BMessenger mMsgr (agent);
+
+  struct sockaddr_in sa;
+  int status;
+  int dccAcceptSocket (0);
+  char *endpoint;
+  
+  uint32 realIP = strtoul (agent->dIP.String(), &endpoint, 10);
+
+  if ((dccAcceptSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+  {
+    BMessage msg (M_DISPLAY);
+
+    ClientAgent::PackDisplay (&msg, "Error opening socket.\n", 0);
+    mMsgr.SendMessage (&msg);
+    return false;
+  }
+  
+  agent->acceptSocket = dccAcceptSocket;
+	
+  sa.sin_family = AF_INET;
+  sa.sin_port = htons (atoi (agent->dPort.String()));
+  sa.sin_addr.s_addr = ntohl (realIP);
+  memset (sa.sin_zero, 0, sizeof(sa.sin_zero));
+
+  {
+    BMessage msg (M_DISPLAY);
+    BString buffer;
+    struct in_addr addr;
+
+    addr.s_addr = ntohl (realIP);
+
+    buffer << "Trying to connect to address "
+      << inet_ntoa (addr)
+      << " port " << agent->dPort << "\n";
+    
+    ClientAgent::PackDisplay (&msg, buffer.String(), 0);
+    mMsgr.SendMessage (&msg);
+  }
+
+  status = connect (dccAcceptSocket, (struct sockaddr *)&sa, sizeof(sa));
+  if (status < 0)
+  {
+    BMessage msg (M_DISPLAY);
+
+    ClientAgent::PackDisplay (&msg, "Error connecting socket.\n", 0);
+    mMsgr.SendMessage (&msg);
+#ifdef BONE_BUILD
+    shutdown (agent->mySocket, SHUTDOWN_BOTH);
+#elif NETSERVER_BUILD
+    closesocket (agent->mySocket);
+#endif
+    return false;
+  }
+
+  agent->dConnected = true;
+
+  BMessage msg (M_DISPLAY);
+  ClientAgent::PackDisplay (&msg, "Connected!\n", 0);
+  mMsgr.SendMessage (&msg);
+
+  char tempBuffer[2];
+  BString inputBuffer;
+
+  while (agent->dConnected)
+  {
+    if (recv (dccAcceptSocket, tempBuffer, 1, 0) == 0)
+    {
+      BMessage termMsg (M_DISPLAY);
+
+      agent->dConnected = false;
+      ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n", 0);
+      mMsgr.SendMessage (&termMsg);
+      goto outta_loop; // I hate goto, but this is a good use.
+    }
+
+    if (tempBuffer[0] == '\n')
+    {
+      agent->ChannelMessage (inputBuffer.String());
+      inputBuffer = "";
+    }
+    else
+      inputBuffer.Append(tempBuffer[0],1);
+  }
+	
+  outta_loop: // GOTO MARKER
+
+#ifdef BONE_BUILD
+  shutdown (dccAcceptSocket, SHUTDOWN_BOTH);
+#elif NETSERVER_BUILD
+  closesocket (dccAcceptSocket);
+#endif  
+  return 0;
 }
 
 void
@@ -97,11 +366,12 @@ MessageAgent::MessageReceived (BMessage *msg)
           msg->FindString ("nick", &nick);
         else
         {
-          nick = chatee.String();
-          msg->AddString ("nick", nick);
+          BString outNick (chatee.String());
+          outNick.RemoveFirst (" [DCC]");
+          msg->AddString ("nick", outNick.String());
         }
       
-        if (myNick.ICompare (nick) != 0)
+        if (myNick.ICompare (nick) != 0 && !dChat)
           agentWinItem->SetName (nick);      
       
         // Send the rest of processing up the chain
@@ -111,13 +381,13 @@ MessageAgent::MessageReceived (BMessage *msg)
       
     case M_MSG_WHOIS:
       {
-        BMessage send (M_SERVER_SEND);
+        BMessage dataSend (M_SERVER_SEND);
 
-        AddSend (&send, "WHOIS ");
-        AddSend (&send, chatee.String());
-        AddSend (&send, " ");
-        AddSend (&send, chatee.String());
-        AddSend (&send, endl);      
+        AddSend (&dataSend, "WHOIS ");
+        AddSend (&dataSend, chatee.String());
+        AddSend (&dataSend, " ");
+        AddSend (&dataSend, chatee.String());
+        AddSend (&dataSend, endl);      
       }
 
     case M_CHANGE_NICK:
@@ -204,26 +474,25 @@ MessageAgent::Parser (const char *buffer)
 {
   if (!dChat)
   {
-    BMessage send (M_SERVER_SEND);
+    BMessage dataSend (M_SERVER_SEND);
 
-    AddSend (&send, "PRIVMSG ");
-    AddSend (&send, chatee);
-    AddSend (&send, " :");
-    AddSend (&send, buffer);
-    AddSend (&send, endl);
+    AddSend (&dataSend, "PRIVMSG ");
+    AddSend (&dataSend, chatee);
+    AddSend (&dataSend, " :");
+    AddSend (&dataSend, buffer);
+    AddSend (&dataSend, endl);
   }
   else if (dConnected)
   {
-//    // TODO Handle DCC stuff
-//    BString outTemp (buffer);
-//
-//    outTemp << "\n";
-//    if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
-//    {
-//      dConnected = false;
-//      Display ("DCC chat terminated.\n", 0);
-//      return;
-//    }
+    BString outTemp (buffer);
+
+    outTemp << "\n";
+    if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
+    {
+      dConnected = false;
+      Display ("DCC chat terminated.\n", 0);
+      return;
+    }
   }
   else
     return;

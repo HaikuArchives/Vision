@@ -776,7 +776,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
     case M_CHANNEL_MSG:
       {
-        const char *theNick;
+        BString theNick;
         const char *theMessage;
         bool hasNick (false);
         bool me;
@@ -785,8 +785,12 @@ ClientAgent::MessageReceived (BMessage *msg)
         msg->FindString("nick", &theNick);
         msg->FindString("msgz", &theMessage);
 
+        if (theNick.FindFirst (" [DCC]") != B_ERROR)
+          theNick.RemoveFirst (" [DCC]");
+
         if (theMessage[0] == '\1')
         {
+       
           BString aMessage (theMessage);
 
           int32 theChars (aMessage.Length());
@@ -810,7 +814,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         else
         {
           Display ("<", theNick == myNick ? &myNickColor : &nickColor, 0, true);
-          Display (theNick, &nickdisplayColor);
+          Display (theNick.String(), &nickdisplayColor);
           Display (">", theNick == myNick ? &myNickColor : &nickColor);
 
           BString tempString;
