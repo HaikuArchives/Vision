@@ -386,12 +386,6 @@ NetworkPrefsView::SaveCurrentNetwork (void)
     if (activeNetwork.FindString ("name") == NULL)
       return;
       
-	if (!strcmp (activeNetwork.FindString ("name"), "defaults"))
-	{
-	  vision_app->SetNetwork ("defaults", &activeNetwork);
-	  return;
-	}
-
 	// check real name and ident, update if needed
 	if (nickDefaultsBox->Value() == 0)
 	{
@@ -422,8 +416,13 @@ NetworkPrefsView::SaveCurrentNetwork (void)
 
     const char *name (activeNetwork.FindString ("name"));
 
-    if (name)
-      vision_app->SetNetwork (name, &activeNetwork);
+	if (!strcmp (activeNetwork.FindString ("name"), "defaults"))
+	{
+	  vision_app->SetNetwork ("defaults", &activeNetwork);
+	  return;
+	}
+
+    vision_app->SetNetwork (name, &activeNetwork);
 }
 
 void
