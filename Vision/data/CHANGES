@@ -1,9 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8.4-0329]
+[0.8.4-0411]
          * fixed deadlock bug in DCC resume
          * fixed scroller proportion bug in command and event prefs
+         * added DCC send option to window list popup menu for queries
 
 [0.8.3-0301]
          * fixed crash bug in net prefs

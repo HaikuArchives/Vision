@@ -141,6 +141,8 @@ AboutWindow::AboutWindow (void)
     "Kristine Gouveia\n"
     "Be, Inc., Menlo Park, CA\n"
     "Pizza Hut, Winter Haven, FL (now give me that free pizza Mike)\n\n\n"
+    
+    "send all complaints and nipple pictures to kaye\n\n\n"
 
     "\n\n\n\n\n"
     "\"A human being should be able to change "

@@ -124,11 +124,11 @@ DCCFileWindow::MessageReceived (BMessage *msg)
 
     case M_ADD_RESUME_DATA:
     {
-      const char *nick;
-      const char *file;
-      const char *port;
+      const char *nick (NULL);
+      const char *file (NULL);
+      const char *port (NULL);
       bool hit (false);
-      off_t pos;
+      off_t pos (0);
       
       msg->FindString ("vision:nick", &nick);
       msg->FindString ("vision:file", &file);
