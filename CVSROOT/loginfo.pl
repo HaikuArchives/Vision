@@ -24,6 +24,8 @@ $user     = shift;
 
 $directory = shift;
 
+system("echo directory: $directory");
+
 if (!open(LD_FD, "$last_dir_file.$my_pgrp_id")) {
     # last_dir file does not exist -> cvs add directory
     $mail = "To: $mailto
