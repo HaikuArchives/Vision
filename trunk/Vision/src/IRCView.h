@@ -41,13 +41,13 @@ struct IRCViewSettings;
 class IRCView : public BTextView
 {
   public:
-    IRCView (
-      BRect,
-      BRect,
-      VTextControl *,
-      ClientAgent *);
+                            IRCView (
+                              BRect,
+                              BRect,
+                              VTextControl *,
+                              ClientAgent *);
 
-    ~IRCView (void);
+    virtual                 ~IRCView (void);
 
     virtual void            MouseDown (BPoint);
     virtual void            KeyDown (

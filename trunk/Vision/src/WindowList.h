@@ -113,6 +113,7 @@ class WindowList : public BListView
     rgb_color                       textColor,
                                     newsColor,
                                     nickColor,
+                                    sixColor,
                                     selColor,
                                     bgColor;
                                     

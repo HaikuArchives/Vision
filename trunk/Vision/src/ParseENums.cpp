@@ -892,7 +892,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
         if (initialMotd && cmds.Length())
         {
-          BMessage msg (M_SUBMIT_RAW);
+          BMessage msg (M_SUBMIT_INPUT);
           const char *place (cmds.String()), *eol;
 
           msg.AddBool ("lines", true);

@@ -34,12 +34,11 @@
 #  include <Messenger.h>
 #endif
 
-#include "Logger.h"
-
 class BScrollView;
 class VTextControl;
 
 class ClientAgentInputFilter;
+class ClientAgentLogger;
 class IRCView;
 class HistoryMenu;
 class AgentSettings;
@@ -182,12 +181,12 @@ class ClientAgent : public BView
                                        
     BRect                            frame;
     BMessenger                       sMsgr;
-    Logger                           *logger;
+    ClientAgentLogger                *logger;
 
 };
 
-const uint32 M_LOOKUP_WEBSTER           = 'calw';
-const uint32 M_LOOKUP_GOOGLE            = 'calg';
+const uint32 M_LOOKUP_WEBSTER         = 'calw';
+const uint32 M_LOOKUP_GOOGLE          = 'calg';
 
 /// IRCDS
 /// an effort to properly support conflicting numeric meanings

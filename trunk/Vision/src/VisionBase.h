@@ -60,7 +60,7 @@
 #define C_WINLIST_NEWS                                  25
 #define C_WINLIST_NICK                                  26
 #define C_WINLIST_SELECTION                             27
-#define C_WINLIST_VOID                                  28
+#define C_WINLIST_PAGESIX                               28
 #define C_NAMES_SELECTION                               29
 #define C_WALLOPS                                       30
 #define C_NICKDISPLAY                                   31
@@ -110,16 +110,17 @@
 
 
 // tells the WindowList how to color the WindowListItem
-#define WIN_VOID_BIT                                0x0001
-#define WIN_NORMAL_BIT                              0x0010
+#define WIN_NORMAL_BIT                              0x0001
+#define WIN_PAGESIX_BIT                             0x0010
 #define WIN_NEWS_BIT								0x0100
 #define WIN_NICK_BIT							 	0x1000
 
-// tells the WindowList how to format the WindowListItem
+// tells the WindowList how to format and sort the WindowListItem
 // (eg: WIN_CHANNEL_TYPE = indent 2 spaces)
 #define WIN_SERVER_TYPE                                 0x0001
 #define WIN_CHANNEL_TYPE                                0x0010
 #define WIN_MESSAGE_TYPE                                0x0100
+#define WIN_LIST_TYPE                                   0x0200
 
 
 const int32 ID_SERVER = -47;
@@ -170,7 +171,7 @@ const uint32 M_PREVIOUS_INPUT						= 0x1302;
 const uint32 M_NEXT_INPUT							= 0x1303;
 const uint32 M_SUBMIT								= 0x1304;
 const uint32 M_DISPLAY								= 0x1305;
-const uint32 M_SUBMIT_RAW							= 0x1306;
+const uint32 M_SUBMIT_INPUT							= 0x1306;
 const uint32 M_CHANNEL_MSG							= 0x1307;
 const uint32 M_CHANGE_NICK							= 0x1308;
 const uint32 M_CHANNEL_MODES						= 0x1309;

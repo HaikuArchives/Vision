@@ -42,7 +42,7 @@ class ClickView;
 
 AboutWindow::AboutWindow (void)
   : BWindow (
-      BRect (0.0, 0.0, 317.0, 225.0),
+      BRect (0.0, 0.0, 420.0, 266.0),
       "About Vision",
       B_TITLED_WINDOW,
       B_WILL_DRAW | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
@@ -54,60 +54,54 @@ AboutWindow::AboutWindow (void)
   BRect bounds (Bounds());
   BBitmap *bmp;
 
-  // what's a program without easter eggs?
-  //AddShortcut('O', B_COMMAND_KEY, new BMessage(M_ABOUT_ORGY));
-  //AddShortcut('J', B_COMMAND_KEY, new BMessage(M_ABOUT_BUDDYJ));
-
   background = new BView (
                      bounds,
                      "background",
                      B_FOLLOW_ALL_SIDES,
                      B_WILL_DRAW);
   rgb_color myBlack = {0, 0, 0, 255};
-  background->SetViewColor (myBlack);
+  background->SetViewColor (255, 255, 255);
   AddChild (background);
 
 
-  if ((bmp = BTranslationUtils::GetBitmap ('bits', "bits")) != 0)
+  if ((bmp = BTranslationUtils::GetBitmap ('bits', "vision")) != 0)
   {
-    BRect bmp_bounds (bmp->Bounds());
+    BRect logo_bounds (bmp->Bounds());
 
-    ResizeTo (
-      bmp_bounds.Width() + 50,
-      bmp_bounds.Height() + 250);
+//    ResizeTo (
+//      logo_bounds.Width() + 50,
+//      logo_bounds.Height() + 250);
 
-    graphic = new ClickView (
-                    bmp->Bounds().OffsetByCopy (25, 25),
+    logo = new ClickView (
+                    bmp->Bounds().OffsetByCopy (16, 16),
                     "image",
                     B_FOLLOW_LEFT | B_FOLLOW_TOP,
                     B_WILL_DRAW,
                     "http://vision.sourceforge.net");
-    background->AddChild (graphic);
-
-    graphic->SetViewBitmap (bmp);
-    EasterEggOn = false;
+    background->AddChild (logo);
+    logo->SetViewBitmap (bmp);
     delete bmp;
 
     bounds.Set (
       0.0,
-      graphic->Frame().bottom + 1, 
+      logo->Frame().bottom + 1, 
       Bounds().right,
       Bounds().bottom);
   }
 
-  credits = new BTextView (
-                  bounds,
-                  "credits",
-                  bounds.OffsetToCopy (B_ORIGIN).InsetByCopy (20, 0),
-                  B_FOLLOW_LEFT | B_FOLLOW_TOP,
-                  B_WILL_DRAW); 
-
-  credits->SetViewColor (myBlack);
-  credits->MakeSelectable (false);
-  credits->MakeEditable (false);
-  credits->SetStylable (true);
-  credits->SetAlignment (B_ALIGN_CENTER);
-  background->AddChild (credits);
+//  credits = new BTextView (
+//                  bounds,
+//                  "credits",
+//                  bounds.OffsetToCopy (B_ORIGIN).InsetByCopy (20, 0),
+//                  B_FOLLOW_LEFT | B_FOLLOW_TOP,
+//                  B_WILL_DRAW); 
+//
+//  credits->SetViewColor (myBlack);
+//  credits->MakeSelectable (false);
+//  credits->MakeEditable (false);
+//  credits->SetStylable (true);
+//  credits->SetAlignment (B_ALIGN_CENTER);
+//  background->AddChild (credits);
 
   const char *unita =
     "{A-Z}\n"
@@ -176,55 +170,55 @@ AboutWindow::AboutWindow (void)
     "is for insects.\" -- Robert A. Heinlein"
   ;
 
-  rgb_color myBlue   = {56, 172, 236, 255};
-  rgb_color myWhite  = {255, 255, 255, 255};
-  rgb_color myHeader = {119, 119, 255, 255};
-  rgb_color myQuote  = {153, 204, 153, 255};
-  BFont font (*be_plain_font);
-  text_run_array run;
-
-  font.SetSize (24);
-  font.SetFace (B_BOLD_FACE);
-  
-  run.count          = 1;
-  run.runs[0].offset = 0;
-  run.runs[0].font   = font;
-  run.runs[0].color  = myBlue;
-
-  credits->Insert ("\n\n\n\n\n\n\nVision\n", &run);
-  credits->Insert (vision_app->VisionVersion (VERSION_VERSION).String(), &run);
-  credits->Insert ("\n\n\n\n", &run);
-  
-  font = *be_plain_font;
-  font.SetSize (11);
-  
-  run.runs[0].font = font;
-  run.runs[0].color = myWhite;
-  
-  text_run_array runhead;
-  runhead = run;
-  
-  font = *be_plain_font;
-  font.SetSize (16);
-  font.SetFace (B_BOLD_FACE);  
-  runhead.runs[0].color = myHeader;
-  runhead.runs[0].font  = font;
-  
-  credits->Insert ("A Vision Team Production\n\n© 1999, 2000, 2001\n\n\n\n\n\n", &run);
-  
-  credits->Insert ("Unit A\n[Vision]\n", &runhead);      
-  credits->Insert (unita, &run);
-  credits->Insert ("\n\n\n\nUnit B\n[Bowser]\n", &runhead);      
-  credits->Insert (unitb, &run);
-  credits->Insert ("\n\n\n\nBrought To You In Part By Contributions From\n", &runhead);
-  credits->Insert (contrib, &run); 
-  credits->Insert ("\n\n\n\nUnit C\n[Support Crew]\n", &runhead);
-  credits->Insert (unitc, &run);        
-  credits->Insert ("\n\n\n\nSpecial Thanks\n\n", &runhead);      
-  credits->Insert (thanks, &run);
-  
-  run.runs[0].color = myQuote;
-  credits->Insert (quote, &run);
+//  rgb_color myBlue   = {56, 172, 236, 255};
+//  rgb_color myWhite  = {255, 255, 255, 255};
+//  rgb_color myHeader = {119, 119, 255, 255};
+//  rgb_color myQuote  = {153, 204, 153, 255};
+//  BFont font (*be_plain_font);
+//  text_run_array run;
+//
+//  font.SetSize (24);
+//  font.SetFace (B_BOLD_FACE);
+//  
+//  run.count          = 1;
+//  run.runs[0].offset = 0;
+//  run.runs[0].font   = font;
+//  run.runs[0].color  = myBlue;
+//
+//  credits->Insert ("\n\n\n\n\n\n\nVision\n", &run);
+//  credits->Insert (vision_app->VisionVersion (VERSION_VERSION).String(), &run);
+//  credits->Insert ("\n\n\n\n", &run);
+//  
+//  font = *be_plain_font;
+//  font.SetSize (11);
+//  
+//  run.runs[0].font = font;
+//  run.runs[0].color = myWhite;
+//  
+//  text_run_array runhead;
+//  runhead = run;
+//  
+//  font = *be_plain_font;
+//  font.SetSize (16);
+//  font.SetFace (B_BOLD_FACE);  
+//  runhead.runs[0].color = myHeader;
+//  runhead.runs[0].font  = font;
+//  
+//  credits->Insert ("A Vision Team Production\n\n© 1999, 2000, 2001\n\n\n\n\n\n", &run);
+//  
+//  credits->Insert ("Unit A\n[Vision]\n", &runhead);      
+//  credits->Insert (unita, &run);
+//  credits->Insert ("\n\n\n\nUnit B\n[Bowser]\n", &runhead);      
+//  credits->Insert (unitb, &run);
+//  credits->Insert ("\n\n\n\nBrought To You In Part By Contributions From\n", &runhead);
+//  credits->Insert (contrib, &run); 
+//  credits->Insert ("\n\n\n\nUnit C\n[Support Crew]\n", &runhead);
+//  credits->Insert (unitc, &run);        
+//  credits->Insert ("\n\n\n\nSpecial Thanks\n\n", &runhead);      
+//  credits->Insert (thanks, &run);
+//  
+//  run.runs[0].color = myQuote;
+//  credits->Insert (quote, &run);
   
   // Center that bad boy
   BRect frame (BScreen().Frame());
@@ -233,7 +227,7 @@ AboutWindow::AboutWindow (void)
     frame.Height()/2 - Frame().Height()/2); 
  
 
-  SetPulseRate (74000);
+  //SetPulseRate (74000);
 }
 
 
@@ -293,17 +287,17 @@ AboutWindow::AboutImage (const char *eggName, bool egg)
   /*
    * Function purpose: Read image resource bits::{eggName} and display
    */
-   
-  BBitmap *bmp;
-
-  if ((bmp = BTranslationUtils::GetBitmap ('bits', eggName)) != 0)
-  {
-    BRect bmp_bounds (bmp->Bounds());
-    graphic->ResizeTo (bmp_bounds.Width(), bmp_bounds.Height());
-    graphic->SetViewBitmap (bmp);
-    credits->MoveTo (0.0, graphic->Frame().bottom + 1);
-    graphic->Invalidate();
-    EasterEggOn = egg;
-    delete bmp;
-  }
+//   
+//  BBitmap *bmp;
+//
+//  if ((bmp = BTranslationUtils::GetBitmap ('bits', eggName)) != 0)
+//  {
+//    BRect bmp_bounds (bmp->Bounds());
+//    graphic->ResizeTo (bmp_bounds.Width(), bmp_bounds.Height());
+//    graphic->SetViewBitmap (bmp);
+//    credits->MoveTo (0.0, graphic->Frame().bottom + 1);
+//    graphic->Invalidate();
+//    EasterEggOn = egg;
+//    delete bmp;
+//  }
 }

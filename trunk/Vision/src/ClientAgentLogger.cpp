@@ -27,10 +27,10 @@
 #include <Application.h>
 #include <Roster.h>
 
-#include "Logger.h"
+#include "ClientAgentLogger.h"
 #include "Vision.h"
 
-Logger::Logger (BString currentLog, BString server)
+ClientAgentLogger::ClientAgentLogger (BString currentLog, BString server)
 {
   logName = currentLog;
   serverName = server;
@@ -51,7 +51,7 @@ Logger::Logger (BString currentLog, BString server)
   resume_thread (logThread);
 }
 
-Logger::~Logger (void)
+ClientAgentLogger::~ClientAgentLogger (void)
 {
   // tell log thread it's time to die
   delete_sem (logSyncherLock);
@@ -64,7 +64,7 @@ Logger::~Logger (void)
 }
 
 void
-Logger::SetupLogging (void)
+ClientAgentLogger::SetupLogging (void)
 {
   // if the logFile doesn't exist already create the dirs
   // and initialize the file, otherwise just open the existing one
@@ -134,7 +134,7 @@ Logger::SetupLogging (void)
 }
 
 void
-Logger::Log (const char *data)
+ClientAgentLogger::Log (const char *data)
 {
   // add entry to logfile for logThread to write asynchronously
   logBufferLock->Lock();
@@ -146,9 +146,9 @@ Logger::Log (const char *data)
 }
 
 int32
-Logger::AsyncLogger (void *arg)
+ClientAgentLogger::AsyncLogger (void *arg)
 {
-  Logger *logger ((Logger *)arg);
+  ClientAgentLogger *logger ((ClientAgentLogger *)arg);
   BString *currentString (NULL);
   BLocker *myLogBufferLock ((logger->logBufferLock));
   BList *myLogBuffer ((logger->logBuffer));

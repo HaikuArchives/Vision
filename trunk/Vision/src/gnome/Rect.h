@@ -7,7 +7,10 @@
 
 #include "PlatformDefines.h"
 
+#ifdef GTK_ONLY
 #include <gdk/gdk.h>
+#endif
+
 #include <StdDefs.h>
 #include <Point.h>
 
@@ -41,6 +44,7 @@ public:
 			bottom(rightBottom.y)
 		{}
 
+#ifdef GTK_ONLY
 	FRect(const GdkRectangle &rect)
 		:	left(rect.x),
 			top(rect.y),
@@ -58,6 +62,7 @@ public:
 
 			return result;
 		}
+#endif
 		
 	const FRect &Set(float newLeft, float newTop, float newRight, float newBottom)
 		{
@@ -224,6 +229,7 @@ public:
 };
 
 #endif
+
 /*
 License
 

@@ -48,6 +48,7 @@
 #include "WindowList.h"
 #include "StringManip.h"
 #include "StatusView.h"
+#include "ListAgent.h"
 
 class failToLock { /* exception in Establish */ };
 
@@ -891,6 +892,14 @@ ServerAgent::MessageReceived (BMessage *msg)
         ParseLine (buffer);
       }
       break;
+      
+    case M_SEND_RAW:
+      {
+        const char *buffer;
+        msg->FindString ("line", &buffer);
+        SendData (buffer);
+      }
+      break;
 
     case M_DISPLAY_ALL:
       {
@@ -1189,6 +1198,19 @@ ServerAgent::MessageReceived (BMessage *msg)
 
         if (isQuitting && clients.CountItems() <= 1)
           sMsgr.SendMessage (M_CLIENT_QUIT);
+      }
+      break;
+    
+    case M_LIST_COMMAND:
+      {
+        vision_app->pClientWin()->pWindowList()->AddAgent (
+          new ListAgent (
+            *vision_app->pClientWin()->AgentRect(),
+            serverHostName.String()),
+          sid,
+          "Channels",
+          WIN_LIST_TYPE,
+          true);
       }
       break;
 

@@ -21,19 +21,19 @@
  *                 Todd Lair
  */
 
-#ifndef _LOGGER_H_
-#define _LOGGER_H_
+#ifndef _CLIENTAGENTLOGGER_H_
+#define _CLIENTAGENTLOGGER_H_
 
 #include <Locker.h>
 #include <String.h>
 #include <List.h>
 #include <File.h>
 
-class Logger
+class ClientAgentLogger
 {
   public:
-                       Logger (BString, BString);
-                       ~Logger (void);
+                       ClientAgentLogger (BString, BString);
+                       ~ClientAgentLogger (void);
    void                Log (const char *);
    bool                isQuitting;
   
