@@ -17,6 +17,7 @@ class BStringView;
 class PromptWindow;
 class NetPrefServerWindow;
 class BColumnListView;
+class TSpeedButton;
 struct ServerData;
 
 class NetworkPrefsView : public BView
@@ -50,6 +51,9 @@ class NetworkPrefsView : public BView
 			*execButton,
 			*nickAddButton,
 			*nickRemoveButton;
+	
+	TSpeedButton *nickUpButton,
+	             *nickDnButton;
 	
 	BCheckBox *nickDefaultsBox,
 			  *startupBox;
