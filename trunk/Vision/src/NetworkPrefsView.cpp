@@ -215,14 +215,10 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 
 NetworkPrefsView::~NetworkPrefsView (void)
 {
-  if (fNickPrompt)
-    fNickPrompt->PostMessage (B_QUIT_REQUESTED);
-  if (fNetPrompt)
-    fNetPrompt->PostMessage (B_QUIT_REQUESTED);
-  if (fDupePrompt)
-    fDupePrompt->PostMessage (B_QUIT_REQUESTED);
-  if (fServerPrefs)
-    fServerPrefs->PostMessage (B_QUIT_REQUESTED);
+  BMessenger(fNickPrompt).SendMessage(B_QUIT_REQUESTED);
+  BMessenger(fNetPrompt).SendMessage(B_QUIT_REQUESTED);
+  BMessenger(fDupePrompt).SendMessage(B_QUIT_REQUESTED);
+  BMessenger(fServerPrefs).SendMessage(B_QUIT_REQUESTED);
 }
 
 void
@@ -442,6 +438,11 @@ NetworkPrefsView::SaveCurrentNetwork (void)
 	    fActiveNetwork.ReplaceString ("ident", curIdent);
 	}
   }
+
+  // Not usually the best thing, but lets just do this until we
+  // split the functionality into a function.
+  BMessage m(M_NETPREFS_TEXT_INVOKE);
+  MessageReceived(&m);
 
   const char *name (fActiveNetwork.FindString ("name"));
 
