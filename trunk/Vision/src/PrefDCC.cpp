@@ -47,11 +47,14 @@ DCCPrefsView::DCCPrefsView (BRect frame)
   fBlockSize = new BMenuField (BRect (0,0,0,0), NULL, S_PREFDCC_BLOCK_SIZE, menu);
   fAutoAccept = new BCheckBox (BRect (0,0,0,0), NULL, S_PREFDCC_AUTOACK,
     new BMessage (M_AUTO_ACCEPT_CHANGED));
+  fPrivateCheck = new BCheckBox (BRect (0,0,0,0), NULL, S_PREFDCC_PRIVATE,
+    new BMessage (M_DCC_PRIVATE_CHANGED));
   fDefDir = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_DEFPATH, "", new BMessage (M_DEFAULT_PATH_CHANGED));
   fDefDir->SetDivider (fDefDir->StringWidth (S_PREFDCC_DEFPATH + 5));
   fBox = new BBox (BRect (0,0,0,0), NULL);
   fBox->SetLabel (S_PREFDCC_PORTRANGE);
   AddChild (fDefDir);
+  AddChild (fPrivateCheck);
   AddChild (fAutoAccept);
   AddChild (fBlockSize);
   AddChild (fBox);
@@ -83,10 +86,12 @@ DCCPrefsView::AttachedToWindow (void)
   fDefDir->MoveTo (10, 10);
   fAutoAccept->ResizeToPreferred ();
   fAutoAccept->MoveTo (fDefDir->Frame().left, fDefDir->Frame().bottom + 5);
+  fPrivateCheck->ResizeToPreferred ();
+  fPrivateCheck->MoveTo (fAutoAccept->Frame().left, fAutoAccept->Frame().bottom + 5);
   fBlockSize->ResizeToPreferred ();
   fBlockSize->ResizeTo (Bounds().Width() - 15, fBlockSize->Bounds().Height());
   fBlockSize->SetDivider (fBlockSize->StringWidth (S_PREFDCC_BLOCK_SIZE) + 5);
-  fBlockSize->MoveTo (fAutoAccept->Frame().left, fAutoAccept->Frame().bottom + 5);
+  fBlockSize->MoveTo (fPrivateCheck->Frame().left, fAutoAccept->Frame().bottom + 5);
   fBlockSize->Menu()->SetLabelFromMarked (true);
   
   const char *defPath (vision_app->GetString ("dccDefPath"));
@@ -94,9 +99,11 @@ DCCPrefsView::AttachedToWindow (void)
   
   if (vision_app->GetBool ("dccAutoAccept"))
     fAutoAccept->SetValue (B_CONTROL_ON);
-  
   else
     fDefDir->SetEnabled (false);
+  
+  if (vision_app->GetBool ("dccPrivateCheck"))
+    fPrivateCheck->SetValue (B_CONTROL_ON);
   
   fDccPortMin->ResizeToPreferred();
   fDccPortMax->ResizeToPreferred();
@@ -176,6 +183,12 @@ DCCPrefsView::MessageReceived (BMessage *msg)
         const char *portMax (fDccPortMax->Text());
         if (portMax != NULL)
           vision_app->SetString ("dccMaxPort", 0, portMax);
+      }
+      break;
+    
+    case M_DCC_PRIVATE_CHANGED:
+      {
+        vision_app->SetBool("dccPrivateCheck", fPrivateCheck->Value() == B_CONTROL_ON);
       }
       break;
       

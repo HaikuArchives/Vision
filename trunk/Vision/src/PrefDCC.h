@@ -44,7 +44,8 @@ class DCCPrefsView : public BView
     VTextControl *fDefDir,
                  *fDccPortMin,
                  *fDccPortMax;
-    BCheckBox *fAutoAccept;
+    BCheckBox *fAutoAccept,
+              *fPrivateCheck;
     BBox *fBox;
 };
 

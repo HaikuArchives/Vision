@@ -305,6 +305,7 @@
 
 #define S_PREFDCC_BLOCK_SIZE        "DCC Block Size: "
 #define S_PREFDCC_AUTOACK           "Automatically accept incoming sends"
+#define S_PREFDCC_PRIVATE           "Automatically check for NAT IP"
 #define S_PREFDCC_DEFPATH           "Default path: "
 #define S_PREFDCC_PORTRANGE         "DCC Port Range"
 #define S_PREFDCC_PORTMIN           "Min: "

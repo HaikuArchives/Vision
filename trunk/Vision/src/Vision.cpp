@@ -565,6 +565,8 @@ VisionApp::LoadDefaults (int32 section)
          fVisionSettings->AddString ("dccDefPath", "/boot/home");
        if (!fVisionSettings->HasBool ("dccAutoAccept"))
          fVisionSettings->AddBool ("dccAutoAccept", false);
+       if (!fVisionSettings->HasBool ("dccPrivateCheck"))
+         fVisionSettings->AddBool ("dccPrivateCheck", true);
        if (!fVisionSettings->HasString ("dccBlockSize"))
          fVisionSettings->AddString ("dccBlockSize", "2048");
        if (!fVisionSettings->HasString ("dccMinPort"))

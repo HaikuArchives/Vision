@@ -216,6 +216,7 @@ const uint32 M_GENERALPREFS_SELECTION_CHANGED       = 0x2312;
 const uint32 M_PREFLOG_CHECKBOX_CHANGED             = 0x2313;
 const uint32 M_PREFLOG_LOGPATH_CHANGED              = 0x2314;
 const uint32 M_PREFLOG_TS_FORMAT_CHANGED            = 0x2315;
+const uint32 M_DCC_PRIVATE_CHANGED                  = 0x2316;
 
 // misc
 
