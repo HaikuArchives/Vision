@@ -706,8 +706,7 @@ ClientAgent::ParseCmd (const char *data)
       BString theRest (RestOfString (data, 3));
       BString theNick (GetWord (data, 2));
 
-      if (theRest != "-9z99"
-      &&  myNick.ICompare (theNick))
+      if (theRest != "-9z99")
       {
         if (vision_app->GetBool ("queryOnMsg"))
         {
