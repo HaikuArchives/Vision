@@ -198,6 +198,7 @@ RunView::RunView (
 		working (NULL),
 		line_count (0),
 		stamp_format (NULL),
+		clipping_name (NULL),
 		sp_start (0, 0),
 		sp_end (0, 0),
 		tracking (0),
@@ -208,8 +209,7 @@ RunView::RunView (
 		fontsdirty (false),
 		myPopUp (NULL),
 		lastClick (0,0),
-		lastClickTime (0),
-		clipping_name (NULL)
+		lastClickTime (0)
 {
 	URLCursor = new BCursor (URLCursorData);
 	theme->ReadLock();
