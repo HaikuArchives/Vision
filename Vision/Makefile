@@ -92,6 +92,7 @@ LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(BONE_LIBS) -nodefaultlibs
 endif
 
 DEP := gcc -MM -DBEOS_BUILD
+
 # create the dep dir.
 MAKEDEP := $(shell mkdir -p $(DEPDIR))
 
@@ -125,6 +126,10 @@ default : build
 
 build : $(BINARY)
 
+#	rule to create the object file directory if needed
+$(OBJDIR)::
+	@[ -d $(OBJDIR) ] || mkdir $(OBJDIR) > /dev/null 2>&1
+
 clean :
 	@echo cleaning
 	@rm -rf $(BINARY) $(OBJDIR) $(DEPDIR) $(filter-out data.zip,$(wildcard *.zip)) *.zip~
@@ -139,7 +144,7 @@ cvsup:
 	@echo CVS up -d
 	@cvs up -d
 
-$(BINARY) : $(OBJECTS)
+$(BINARY) : $(OBJDIR) $(OBJECTS)
 ifeq ($(wildcard ./src/lua/lib/liblua.a),)
 	@echo Lua lib not found
 	@echo Building...
@@ -154,7 +159,6 @@ endif
 	
 $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	@echo compiling : $@
-	@mkdir -p $(OBJDIR)
 	@$(CC) $< $(CFLAGS) -o $@
 
 $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
