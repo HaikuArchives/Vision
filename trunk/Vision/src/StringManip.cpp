@@ -183,7 +183,23 @@ StringToURI (const char *string)
 {
   BString buffer (string);
   buffer.ToLower();
-  buffer.ReplaceAll (" ", "+");
+  buffer.ReplaceAll (" ",  "+");
+  buffer.ReplaceAll ("%",  "%25");
+  buffer.ReplaceAll ("\"", "%22");
+  buffer.ReplaceAll ("#",  "%23");  
+  buffer.ReplaceAll ("@",  "%40");
+  buffer.ReplaceAll ("`",  "%60");
+  buffer.ReplaceAll (":",  "%3A");
+  buffer.ReplaceAll ("<",  "%3C");
+  buffer.ReplaceAll (">",  "%3E");
+  buffer.ReplaceAll ("[",  "%5B");
+  buffer.ReplaceAll ("\\", "%5C");
+  buffer.ReplaceAll ("]",  "%5D");
+  buffer.ReplaceAll ("^",  "%5E");
+  buffer.ReplaceAll ("{",  "%7B");
+  buffer.ReplaceAll ("|",  "%7C");
+  buffer.ReplaceAll ("}",  "%7D");
+  buffer.ReplaceAll ("~",  "%7E");
     
   return buffer;
 }
