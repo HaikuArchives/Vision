@@ -630,10 +630,13 @@ RunView::MouseDown (BPoint point)
 					end (s);
 
 		// select word
-		lines[s.line]->SelectWord (&start.offset, &end.offset);
+		if (sp_start == sp_end)
+		{
+			lines[s.line]->SelectWord (&start.offset, &end.offset);
 		
-		Select (start, end);
-
+			Select (start, end);
+		}
+		
     	BuildPopUp();
     	myPopUp->Go (
     	  ConvertToScreen (point),
@@ -1471,6 +1474,7 @@ RunView::PositionAt (BPoint point) const
 
 	pos.line = lindex;
 	pos.offset = min_c (i, lines[lindex]->softies[sindex].offset);
+	if (pos.offset > 0) pos.offset += 1;
 
 //	printf ("Char: %c\n", lines[lindex]->text[pos.offset]);
 
@@ -1541,7 +1545,8 @@ RunView::IntersectSelection (const SelectPos &start, const SelectPos &end) const
 BRect
 RunView::GetTextFrame(const SelectPos &start, const SelectPos &end) const
 {
-	return BRect (0.0, lines[start.line]->top, Bounds().Width(), lines[end.line]->bottom);
+	return BRect (0.0, lines[(start.line > 0) ? (start.line - 1) : 0]->top,
+		Bounds().Width(), lines[end.line]->bottom);
 }	
 
 void
@@ -1851,7 +1856,6 @@ Line::FigureEdges (
 	edges = new float [length];
 
 	int16 cur_fcs (0), next_fcs (0), cur_font (0);
-	escapement_delta delta = {0.0, 0.0};
 
 	edge_count = 0;
 	while (cur_fcs < fc_count)
