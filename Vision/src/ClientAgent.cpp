@@ -392,7 +392,7 @@ ClientAgent::Display (
   if (isLogging)
   {
     BString printbuf;
-    if (timeStamp && timeStampState)
+    if (timeStamp)
       printbuf += TimeStamp().String();
         
     printbuf += buffer;
