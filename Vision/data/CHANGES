@@ -1,12 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
-[0.7-exp-1202]
-         * prototype DCC transfer support (*NOT DONE* -- USE AT OWN RISK, code is currently
-           known to have several different crash problems)
+[0.7-1203]
+         * DCC file transfer support 
          * added packet size configuration for DCC
          * added auto-accept options for DCC
-         * added configurable DCC port ranges (not heavily tested yet)
+         * added configurable DCC port ranges
          * added DCC Send option to nick popup menu
          * added experimental support for DCC over NAT
 
