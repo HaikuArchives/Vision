@@ -1,6 +1,9 @@
 Vision
 http://vision.sourceforge.net
 
+[0.8.4-0329]
+         * fixed deadlock bug in DCC resume
+
 [0.8.3-0301]
          * fixed crash bug in net prefs
          * fixed potential crash bug in dcc chat
