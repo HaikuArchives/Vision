@@ -29,7 +29,7 @@
  
 #include "ResizeView.h"
 #include "VisionBase.h"
-
+#include "Vision.h"
   
 ResizeView::ResizeView (BView *child, BRect frame, const char *title,
   uint32 resizeMode, uint32 flags) :
@@ -52,34 +52,31 @@ ResizeView::MouseDown (BPoint)
 {
   SetMouseEventMask (B_POINTER_EVENTS, B_NO_POINTER_HISTORY);
   mousePressed = true;
+  vision_app->SetCursor (&cursor);
 }
  
 void
 ResizeView::MouseUp (BPoint)
 {
   mousePressed = false;
+  vision_app->SetCursor (B_HAND_CURSOR);
 }
  
 void
 ResizeView::MouseMoved (BPoint current, uint32 transit, const BMessage *)
 {
-  if (transit == B_EXITED_VIEW && !mousePressed)
-  {
-    SetViewCursor(B_CURSOR_SYSTEM_DEFAULT);
-    return;
-  }
-  else
-    SetViewCursor(&cursor);
-
+  SetViewCursor (&cursor);
   if (mousePressed)
   {
     BWindow *window (Window ());
-    BPoint converted (ConvertToScreen (current));
-    if ((converted.x <= window->Frame().left) || (converted.x >= window->Frame().right))
-      return;
+    BMessage *windowmsg (window->CurrentMessage());
+    BPoint windowCoord;
+    windowmsg->FindPoint ("where", &windowCoord);
     BMessage msg (M_RESIZE_VIEW);
+    if (windowCoord.x <= 0.0 || windowCoord.x >= window->Bounds().right)
+      return;
+    msg.AddPoint ("loc", windowCoord);
     msg.AddPointer ("view", attachedView);
-    msg.AddPoint ("loc", converted);
     window->MessageReceived (&msg);
   }
 }
