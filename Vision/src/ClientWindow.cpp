@@ -268,6 +268,7 @@ ClientWindow::MessageReceived (BMessage *msg)
          }
          
          superItem = (WindowListItem *)pWindowList()->Superitem(item);
+
          if (superItem && (!superItem->IsExpanded()))
          {
            int32 srvstatus ((superItem->SubStatus()));
@@ -408,7 +409,7 @@ ClientWindow::MessageReceived (BMessage *msg)
           {
             WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
             BView *agent (item->pAgent());
-            if (!agent->IsHidden())
+            if (agent && !agent->IsHidden())
             {
               agent->ResizeTo (agRect->Width(), agRect->Height());
               agent->MoveTo (agRect->left, agRect->top);
@@ -422,7 +423,7 @@ ClientWindow::MessageReceived (BMessage *msg)
           {
             WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
             BView *agent (item->pAgent());
-            if (!agent->IsHidden())
+            if (agent && !agent->IsHidden())
             {
               DispatchMessage (msg, agent);
               break;
