@@ -841,12 +841,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BString tempString (RestOfString(data, 4));
         tempString.RemoveFirst (":");
         tempString.Append ("\n");
-        
-        // we buffer the motd and display it in one big chunk
-        if (num == RPL_MOTD)
-          motdBuffer.Append (tempString);
-        else
-          Display (tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
+        Display (tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
       }
       return true;
     
@@ -863,14 +858,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BString tempString (RestOfString (data, 4));
 	    tempString.RemoveFirst (":");
 	    tempString.Append ("\n");
-	    
-	    if (motdBuffer.Length() > 0)
-	    {
-	      motdBuffer.Append (tempString);
-	      Display (motdBuffer.String(), C_SERVER, C_BACKGROUND, F_SERVER);
-	      motdBuffer = "";
-	    }
-	    else
+
 	      Display (tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
       		
         if (reconnecting)
