@@ -25,6 +25,7 @@
 
 #include <ListView.h> 
 
+class BPopUpMenu;
 class Theme;
 
 class NotifyList : public BListView
@@ -33,13 +34,24 @@ class NotifyList : public BListView
     NotifyList (BRect);
     virtual ~NotifyList (void);
     
-    void UpdateList (BList *);
+    void                            UpdateList (BList *);
     
-    virtual void AttachedToWindow (void);
-    virtual void MessageReceived (BMessage *);
-  
+    virtual void                    AttachedToWindow (void);
+    virtual void                    DetachedFromWindow (void);
+    virtual void                    MessageReceived (BMessage *);
+    virtual void                    MouseDown (BPoint);
   private:
-    Theme * fActiveTheme;
+    
+    void                            BuildPopUp(void);
+  
+    Theme                           *fActiveTheme;
+    int16                           fLastButton,
+                                    fClickCount;
+    
+    BPoint                          fLastClick;
+    bigtime_t                       fLastClickTime;
+    BPopUpMenu                      *fMyPopUp;
+
 };
 
 class NotifyListItem : public BStringItem

@@ -77,9 +77,7 @@ ClientWindow::ClientWindow (BRect frame)
 bool
 ClientWindow::QuitRequested (void)
 {
-  vision_app->SetRect ("windowDockRect", fCwDock->Bounds());
-  vision_app->SetRect ("clientWinRect", Frame());
-
+  vision_app->SaveSettings();
   if (!fShutdown_in_progress)
   {
     fShutdown_in_progress = true;
@@ -98,6 +96,13 @@ ClientWindow::QuitRequested (void)
   return true;
 }
 
+void
+ClientWindow::FrameResized (float width, float height)
+{
+  BWindow::FrameResized (width, height);
+  vision_app->SetRect ("windowDockRect", fCwDock->Bounds());
+  vision_app->SetRect ("clientWinRect", Frame());
+}
 
 void
 ClientWindow::ScreenChanged (BRect screenframe, color_space mode)
@@ -408,15 +413,27 @@ ClientWindow::MessageReceived (BMessage *msg)
         
       msg->FindPointer("source", reinterpret_cast<void **>(&msgSource));
       msg->FindPointer("list", reinterpret_cast<void **>(&nickList));
+
       WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt(pWindowList()->CurrentSelection()));
       if (item != NULL)
       {
         if (item->pAgent() == msgSource)
+        {
           pNotifyList()->UpdateList (nickList);
+        }
+        else if (dynamic_cast<ServerAgent *>(item->pAgent()))
+        {
+          // it's a server agent and it doesn't match, start blinking
+          pWindowList()->BlinkNotifyChange(hasChanged, (ServerAgent *)msgSource);
+        }
         else if ((item = (WindowListItem *)(pWindowList()->Superitem(item))) != NULL)
         {
+          // if it failed the last two checks it can't be a server agent, get super item
+          // compare there
           if (item->pAgent() == msgSource)
+          {
             pNotifyList()->UpdateList(nickList);
+          }
           else
           {
             pWindowList()->BlinkNotifyChange(hasChanged, (ServerAgent *)msgSource);

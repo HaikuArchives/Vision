@@ -50,8 +50,13 @@ WindowList::WindowList (BRect frame)
     "windowList",
     B_SINGLE_SELECTION_LIST,
     B_FOLLOW_ALL),
+      fMyPopUp (NULL),
       fLastSelected (NULL),
-      fActiveTheme (vision_app->ActiveTheme())
+      fActiveTheme (vision_app->ActiveTheme()),
+      fLastButton (0),
+      fClickCount (0),
+      fLastClick (0, 0),
+      fLastClickTime (0)
 {
   fActiveTheme->ReadLock();
   
@@ -66,6 +71,7 @@ WindowList::WindowList (BRect frame)
 
 WindowList::~WindowList (void)
 {
+  delete fMyPopUp;
   //
 }
 
@@ -264,17 +270,17 @@ WindowList::KeyDown (const char *, int32)
 void
 WindowList::SelectionChanged (void)
 {
-  // TODO: find bug with switching up and down repeatedly
-  
   int32 currentIndex (CurrentSelection());
   if (currentIndex >= 0) // dont bother casting unless somethings selected
   {
     WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (currentIndex)));
     if (myItem != NULL)
     {
+      Activate (currentIndex);
+
       ServerAgent *oldParent (NULL),
                   *newParent (NULL);
-
+      
       if (fLastSelected != NULL)
       {
         BView *testAgent (fLastSelected->pAgent());
@@ -309,7 +315,6 @@ WindowList::SelectionChanged (void)
       else
         BMessenger(myItem->pAgent()).SendMessage(M_NOTIFYLIST_UPDATE);
 
-      Activate (currentIndex);
     }
   }
   BOutlineListView::SelectionChanged();
@@ -681,6 +686,8 @@ WindowList::AddAgent (BView *agent, const char *name, int32 winType, bool activa
 void
 WindowList::Activate (int32 index)
 {
+  if (index < 0)
+    return;
   WindowListItem *newagentitem ((WindowListItem *)ItemAt (index));
   BView *newagent (newagentitem->pAgent());
 
@@ -777,6 +784,7 @@ WindowList::SortListItems (const BListItem *name1, const BListItem *name2)
 void
 WindowList::BuildPopUp (void)
 {
+  delete fMyPopUp;
   fMyPopUp = new BPopUpMenu("Window Selection", false, false);
   BMenuItem *item;
   

@@ -321,9 +321,9 @@ NetworkPrefsView::UpdateNetworkData (BMessage & msg)
 void
 NetworkPrefsView::UpdatePersonalData (BMessage & msg)
 {
-  const char *curIdent (NULL);
-  const char *curRname (NULL);
-  const char *curNick (NULL);
+  BString curIdent ("");
+  BString curRname ("");
+  BString curNick ("");
   int32 count (fListView->CountItems ()),
         i (0);
   for (i = 0; i < count; i++)
@@ -335,7 +335,7 @@ NetworkPrefsView::UpdatePersonalData (BMessage & msg)
     defaults.FindString ("ident", &curIdent);
     defaults.FindString ("realname", &curRname);
     for (i = 0; defaults.FindString ("nick", i, &curNick) == B_OK; i++)
-      fListView->AddItem (new BStringItem (curNick));
+      fListView->AddItem (new BStringItem (curNick.String()));
     fIdent->SetEnabled (false);
     fRealName->SetEnabled (false);
     fNickAddButton->SetEnabled (false);
@@ -347,7 +347,7 @@ NetworkPrefsView::UpdatePersonalData (BMessage & msg)
     msg.FindString ("ident", &curIdent);
     msg.FindString ("realname", &curRname);
     for (i = 0; msg.FindString ("nick", i, &curNick) == B_OK; i++)
-      fListView->AddItem (new BStringItem (curNick));
+      fListView->AddItem (new BStringItem (curNick.String()));
     fIdent->SetEnabled (true);
     fRealName->SetEnabled (true);
     fNickAddButton->SetEnabled (true);
@@ -357,12 +357,12 @@ NetworkPrefsView::UpdatePersonalData (BMessage & msg)
   if (fActiveNetwork.what != VIS_NETWORK_DEFAULTS)
     fNickDefaultsBox->SetEnabled (true);
 
-  if (curIdent)
-    fIdent->SetText (curIdent);
+  if (curIdent.Length())
+    fIdent->SetText (curIdent.String());
   else
     fIdent->SetText ("");
-  if (curRname)
-    fRealName->SetText (curRname);
+  if (curRname.Length())
+    fRealName->SetText (curRname.String());
   else
     fRealName->SetText ("");
 

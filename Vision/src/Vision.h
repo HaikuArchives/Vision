@@ -113,6 +113,8 @@ class VisionApp : public BApplication
     
     void                    AcquireDCCLock (void);
     void                    ReleaseDCCLock (void);
+
+	bool                    SaveSettings (void);
     
     BString                 fEvents[MAX_EVENTS];
 
@@ -130,7 +132,6 @@ class VisionApp : public BApplication
 
   private:
 	void					InitSettings (void);
-	bool                    SaveSettings (void);
     void                    ThreadStates (void);
     bool                    CheckStartupNetworks (void);
     

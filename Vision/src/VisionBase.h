@@ -92,8 +92,10 @@
 
 #define C_NOTIFY_ON                                     51
 #define C_NOTIFY_OFF                                    52
+#define C_NOTIFYLIST_BACKGROUND                         53
+#define C_NOTIFYLIST_SELECTION                          54
 
-#define MAX_COLORS										53
+#define MAX_COLORS										55
 
 
 #define F_TEXT												0

@@ -159,6 +159,11 @@
 #define S_NETWORK_WINDOW_TITLE      "Network Setup"
 #define S_SERVERPREFS_TITLE         "Servers"
 
+// notify list
+
+#define S_NOTIFYLIST_QUERY_ITEM     "Query"
+#define S_NOTIFYLIST_WHOIS_ITEM     "Whois"
+
 // command parser
 
 #define S_PCMD_PARAMETER_ERROR      "Error: Invalid parameters"
@@ -281,6 +286,8 @@
 #define S_PREFCOLOR_MIRCSILVER      "mIRC Silver"
 #define S_PREFCOLOR_NOTIFY_ON       "Notify Online"
 #define S_PREFCOLOR_NOTIFY_OFF      "Notify Offline"
+#define S_PREFCOLOR_NOTIFY_BG       "Notify List background"
+#define S_PREFCOLOR_NOTIFY_SEL      "Notify List selection"
 #define S_PREFCOLOR_REVERT          "Revert"
 
 // command prefs
