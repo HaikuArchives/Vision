@@ -135,6 +135,7 @@ ClientWindow::HandleKey (BMessage *keyMsg)
 {
   int32 key;
   int32 mod;
+  
   keyMsg->FindInt32 ("key", &key);
   keyMsg->FindInt32 ("modifiers", &mod);
 
@@ -164,23 +165,6 @@ ClientWindow::HandleKey (BMessage *keyMsg)
       case VK_PERIOD: // bowser muscle memory
         pWindowList()->ContextSelectDown();
         break;      
-    }
-  }
-
-  else if ((mod & B_OPTION_KEY)  != 0
-       &&  (mod & B_COMMAND_KEY) != 0
-       &&  (mod & B_CONTROL_KEY) == 0
-       &&  (mod & B_SHIFT_KEY) == 0)
-  {
-    //////////////////////
-    /// Option+Command ///
-    //////////////////////
-    switch (key)
-    {
-      case VK_T: // TermHire muscle memory :)
-        // open Terminal
-        be_roster->Launch ("application/x-vnd.Be-SHEL", 0, NULL);
-        break;
     }
   }
 
@@ -215,14 +199,8 @@ ClientWindow::HandleKey (BMessage *keyMsg)
         // XXX move to WindowList ?
         pWindowList()->SelectServer();
         break;
-      
-      case VK_P: // P
-        // close agent
-        PostMessage (M_CW_ALTP);
-        break;
     }
   }
-    
 }
 
 void
@@ -438,6 +416,10 @@ ClientWindow::MessageReceived (BMessage *msg)
         } 
       }
       break;
+    
+    case M_OPEN_TERM:
+      be_roster->Launch ("application/x-vnd.Be-SHEL", 0, NULL);
+      break;
         
     default:
       BWindow::MessageReceived (msg);
@@ -577,6 +559,11 @@ ClientWindow::Init (void)
   mServer->AddItem (item = new BMenuItem ("Notify List" B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), 'N'));
   item->SetTarget (vision_app);
+  
+  mServer->AddItem (item = new BMenuItem ("New Terminal", new BMessage (M_OPEN_TERM),
+                    'T', B_OPTION_KEY));
+  
+  
   menubar->AddItem (mServer);
   
   
@@ -590,6 +577,10 @@ ClientWindow::Init (void)
   
   // Window menu
   mWindow = new BMenu ("Window");
+  
+  mWindow->AddItem (item = new BMenuItem ("Part Agent", new BMessage (M_CW_ALTP), 'P'));
+  
+  item->SetTarget (this);
   menubar->AddItem (mWindow);  
   
   AddChild (menubar);
