@@ -123,8 +123,6 @@ ListAgent::ListAgent (
     0, frame.Width(), 0);
   listView->AddColumn (topicColumn, 2);
   listView->SetSelectionMode (B_SINGLE_SELECTION_LIST);
-  listView->SetSortingEnabled (true);
-  listView->SetSortColumn (channelColumn, true, true);
   activeTheme->ReadLock();
   listView->SetColor (B_COLOR_BACKGROUND, activeTheme->ForegroundAt (C_BACKGROUND));
   listView->SetColor (B_COLOR_TEXT, activeTheme->ForegroundAt (C_TEXT));
@@ -312,6 +310,9 @@ ListAgent::MessageReceived (BMessage *msg)
           listUpdateTrigger = 0;
         }
         statusStr = S_LIST_STATUS_DONE;
+
+        listView->SetSortingEnabled (true);
+        listView->SetSortColumn (channelColumn, true, true);
         
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);

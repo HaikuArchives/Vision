@@ -95,6 +95,8 @@ ServerAgent::ServerAgent (
     fLagCount (0),
     fNickAttempt (0),
     fServerSocket (-1),
+    fLoginThread (-1),
+    fSenderThread (-1),
     fEvents (vision_app->fEvents),
     fServerHostName (id_),
     fInitialMotd (true),
@@ -120,6 +122,13 @@ ServerAgent::~ServerAgent (void)
     delete fStartupChannels.RemoveItem (0L);
   
   delete fLogger;
+  
+  delete_sem (fSendSyncSem);
+  
+  status_t result;
+  wait_for_thread (fSenderThread, &result);
+  while (fPendingSends.CountItems() > 0)
+    delete fPendingSends.RemoveItem (0L);
 }
 
 void
@@ -158,6 +167,8 @@ ServerAgent::Init (void)
   Display (temp.String(), C_NICK);
   Display ("\nHave fun!\n");
   
+  fSendSyncSem = create_sem (0, "VisionSendSync");
+  
   fLagRunner = new BMessageRunner (
     this,       // target ServerAgent
     new BMessage (M_LAG_CHECK),
@@ -173,8 +184,19 @@ ServerAgent::Init (void)
     name.String(),
     B_NORMAL_PRIORITY,
     new BMessenger(this));
+  
+  name = "t>";
+  
+  name += (rand() %2) ? "Tima" : "Kenichi";
+  
+  fSenderThread = spawn_thread (
+    Sender,
+    name.String(),
+    B_NORMAL_PRIORITY,
+    this);
 
   resume_thread (fLoginThread);
+  resume_thread (fSenderThread);
 }
 
 int
@@ -212,6 +234,54 @@ ServerAgent::Timer (void *arg)
   
   return B_OK;
   
+}
+
+int32
+ServerAgent::Sender (void *arg)
+{
+  printf("initiating sender\n");
+  ServerAgent *agent ((ServerAgent *)arg);
+  BMessenger msgr (agent);
+  sem_id sendSyncLock (-1);
+  BLocker *sendDataLock (NULL);
+  BList *pendingSends (NULL);
+  
+  printf("created messenger, agent pointer: %x\n", agent);
+  printf("messenger validity: %d\n", msgr.IsValid());
+  
+  
+  if (msgr.IsValid() && msgr.LockTarget())
+  {
+    printf("grabbing pointers\n");
+    sendSyncLock = agent->fSendSyncSem;
+    sendDataLock = &(agent->fSendLock);
+    pendingSends = &(agent->fPendingSends);
+    // this is safe since we know we have the looper at this point
+    agent->Window()->Unlock();
+  }
+  else
+  {
+    printf("what, no agent?! sender thread aborting.\n");
+    return B_ERROR;
+  }
+    
+  printf("unlocked window, going into transmit loop\n");
+  
+  BString *data (NULL);
+  
+  while (acquire_sem (sendSyncLock) == B_NO_ERROR)
+  {
+    printf("acquiring send lock\n");
+    sendDataLock->Lock();
+    data = (BString *)pendingSends->RemoveItem (0L);
+    sendDataLock->Unlock();
+    printf("sending data: %s\n", data->String());
+    agent->AsyncSendData (data->String());
+    delete data;
+    data = NULL;
+  }
+  printf("server agent shutting down, exiting sender thread\n");  
+  return B_OK;
 }
 
 int32
@@ -542,7 +612,7 @@ ServerAgent::Establish (void *arg)
 }
 
 void
-ServerAgent::SendData (const char *cData)
+ServerAgent::AsyncSendData (const char *cData)
 {
   int32 length (0);
   if (!cData)
@@ -589,6 +659,18 @@ ServerAgent::SendData (const char *cData)
     data.RemoveAll ("\r");
     printf("    SENT: (%ld:%03ld) \"%s\"\n", fSid, length, data.String());
   }
+}
+
+void
+ServerAgent::SendData (const char *cData)
+{
+  // this function simply queues up the data into the requests buffer, then releases
+  // the sender thread to take care of it
+  BString *data (new BString (cData));
+  fSendLock.Lock();
+  fPendingSends.AddItem (data);
+  fSendLock.Unlock();
+  release_sem (fSendSyncSem);
 }
 
 void
@@ -741,7 +823,13 @@ ServerAgent::HandleReconnect (void)
     printf (":ERROR: HandleReconnect() called when we're already connected! Whats up with that?!");
     return;
   }
-
+  
+  // empty out old send buffer to ensure no erroneous strings get sent
+  fSendLock.Lock();
+  while (fPendingSends.CountItems() > 0)
+    delete fPendingSends.RemoveItem (0L);
+  fSendLock.Unlock();
+  
   if (fRetry < fRetryLimit)
   {
     BString name;
