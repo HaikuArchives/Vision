@@ -45,12 +45,9 @@ Logger::Logger (BString currentLog, BString server)
 
 Logger::~Logger (void)
 {
-  release_sem (logSyncherLock);
-  thread_id logWait = logThread;
-  logThread = -1;
-  status_t result;
-  wait_for_thread (logWait, &result);
   delete_sem (logSyncherLock);
+  status_t result;
+  wait_for_thread (logThread, &result);
   if (logFile.InitCheck() != B_NO_INIT)
   {
     time_t myTime (time (0));
@@ -151,13 +148,8 @@ Logger::AsyncLogger (void *arg)
   BList *myLogBuffer (&(logger->logBuffer));
   BFile *myLogFile (&(logger->logFile));
   
-  thread_id loggerThread (find_thread (NULL));
-
   while (acquire_sem (logger->logSyncherLock) == B_NO_ERROR)
   {
-    if (loggerThread != logger->logThread)
-      break;
-  
     myLogBufferLock->Lock();
     if (!myLogBuffer->IsEmpty())
     {
