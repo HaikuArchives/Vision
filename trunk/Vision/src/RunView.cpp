@@ -223,6 +223,7 @@ RunView::~RunView (void)
 		delete lines[i];
 
 	delete working;
+	delete URLCursor;
 }
 
 void
