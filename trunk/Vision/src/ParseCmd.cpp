@@ -1198,10 +1198,10 @@ ClientAgent::ExecPipe (void *arg)
   {
     read[strlen(read)-1] = '\0'; // strip termination
 
-    BMessage echoMsg (M_SUBMIT_RAW);
-    echoMsg.AddBool ("lines", 1);
-    echoMsg.AddString ("data", read);
-    agent->msgr.SendMessage (&echoMsg);
+    // ship off to agent
+    agent->LockLooper();
+    agent->Parser (read);
+    agent->UnlockLooper();
   }
 
   pclose(fp);
