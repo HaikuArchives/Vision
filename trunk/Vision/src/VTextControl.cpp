@@ -61,11 +61,15 @@ VTextControl::AllAttached (void)
 
   myPopUp = new BPopUpMenu("Context Menu", false, false);
 
-  BMenuItem *item;
-  myPopUp->AddItem (item = new BMenuItem("Copy", new BMessage (B_COPY)));
+  //BMenuItem *item;
+  myPopUp->AddItem (new BMenuItem("Cut", new BMessage (B_CUT)));
+  myPopUp->AddItem (new BMenuItem("Copy", new BMessage (B_COPY)));
+  myPopUp->AddItem (new BMenuItem("Paste", new BMessage (B_PASTE)));
+  myPopUp->AddSeparatorItem();
+  myPopUp->AddItem (new BMenuItem("Select All", new BMessage (B_SELECT_ALL)));
   
   myPopUp->SetFont (be_plain_font);
-  myPopUp->SetTargetForItems (this);
+  myPopUp->SetTargetForItems (TextView());
 
 }
 
