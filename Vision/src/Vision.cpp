@@ -28,7 +28,7 @@ class VisionApp * vision_app;
 #include <Resources.h>
 #include <Font.h>
 #include <Autolock.h>
-
+#include <Roster.h>
 
 #include <algorithm>
 #include <stdio.h>
@@ -322,6 +322,13 @@ VisionApp::ReadyToRun (void)
 //  
 //    clientWin->Show();
 //  }
+}
+
+void
+VisionApp::LoadURL (const char *url)
+{
+  const char *arguments[] = {url, 0};
+  be_roster->Launch ("text/html", 1, const_cast<char **>(arguments));
 }
 
 

@@ -25,7 +25,7 @@
 
 #include <Alert.h>
 #include <NodeInfo.h>
-#include <Roster.h>
+#include <Clipboard.h>
 #include <ScrollView.h>
 #include <String.h>
 

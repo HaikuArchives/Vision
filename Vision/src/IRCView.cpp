@@ -30,7 +30,6 @@
 #include <PopUpMenu.h>
 #include <MenuItem.h>
 
-#include <Roster.h>
 #include <Window.h>
 
 #include <list.h>
@@ -137,57 +136,60 @@ IRCView::BuildPopUp (void)
   // to enable and disable
   
   bool enablecopy (true),
-       enablepaste (false), // check clipboard contents first
-       enablecut (true),
-       enableselectall (true);
+       enableselectall (true),
+       enablelookup (false);
+  BString querystring ("");
        
   int32 selstart, selfinish;
   GetSelection (&selstart, &selfinish);
   if (selstart == selfinish)
     enablecopy = false; // no selection
-  
-  if (!IsEditable() || !enablecopy)
-    enablecut = false; // no selection or not editable
-  
+    
   if (!IsSelectable() || (TextLength() == 0))
     enableselectall = false; // not selectable
   
-  if (IsEditable())
+  if ((enablecopy) && ((selfinish - selstart) <= 32))
   {
-    BClipboard clipboard("system");
-    BMessage *clip = (BMessage *)NULL;
-    if (clipboard.Lock()) {
-      if ((clip = clipboard.Data()))
-        if (clip->HasData ("text/plain", B_MIME_TYPE))
-          enablepaste = true; // has text on clipboard
-    }
-    clipboard.Unlock();
-    delete clip;
+    enablelookup = true; // has a selection less than 32 chars long
+    char *stringchar (querystring.LockBuffer(32));
+    GetText (selstart, (selfinish - selstart), stringchar);
+    printf (": [%s]\n", stringchar);
+    querystring.UnlockBuffer(-1);
   }
   
   myPopUp = new BPopUpMenu("Context Menu", false, false); 
 
-  BMenuItem *item; 
-  item = new BMenuItem("Cut", new BMessage (B_CUT));
-  item->SetEnabled (enablecut);
-  myPopUp->AddItem (item);
+  BMenuItem *item;
+  BMessage *lookup;
   
-  item = new BMenuItem("Copy", new BMessage (B_COPY));
-  item->SetEnabled (enablecopy);
+  lookup = new BMessage (M_LOOKUP_WEBSTER);
+  lookup->AddString ("string", querystring);
+  item = new BMenuItem("Lookup (Webster)", lookup);
+  item->SetEnabled (enablelookup);
+  item->SetTarget (settings->parentAgent);
   myPopUp->AddItem (item);
 
-  item = new BMenuItem("Paste", new BMessage (B_PASTE));
-  item->SetEnabled (enablepaste);
+  lookup = new BMessage (M_LOOKUP_GOOGLE);
+  lookup->AddString ("string", querystring);
+  item = new BMenuItem("Lookup (Google)", lookup);
+  item->SetEnabled (enablelookup);
+  item->SetTarget (settings->parentAgent);
   myPopUp->AddItem (item);
   
   myPopUp->AddSeparatorItem(); 
+
+  item = new BMenuItem("Copy", new BMessage (B_COPY));
+  item->SetEnabled (enablecopy);
+  item->SetTarget (this);
+  myPopUp->AddItem (item);
   
   item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL));
   item->SetEnabled (enableselectall);
+  item->SetTarget (this);
   myPopUp->AddItem (item);  
   
+  
   myPopUp->SetFont (be_plain_font); 
-  myPopUp->SetTargetForItems (this); 
 }
 
 void 
@@ -223,18 +225,14 @@ IRCView::MouseDown (BPoint myPoint)
     { 
       list<URL> &urls (settings->urls); 
       list<URL>::const_iterator it; 
-      int32 offset (OffsetAt (myPoint)); 
+      int32 offset (OffsetAt (myPoint));
   
       for (it = urls.begin(); it != urls.end(); ++it) 
  
       if (offset >= it->offset 
       &&  offset <  it->offset + it->display.Length()) 
-      { 
-        const char *arguments[] = {it->url.String(), 0}; 
- 
-        be_roster->Launch ("text/html", 
-          1, const_cast<char **>(arguments)); 
- 
+      {
+        vision_app->LoadURL (it->url.String()); 
         settings->parentInput->MakeFocus (true); 
       }
     }

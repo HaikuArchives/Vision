@@ -664,6 +664,18 @@ ClientAgent::MessageReceived (BMessage *msg)
 			break;
 		}
 		
+		case M_LOOKUP_WEBSTER:
+		{
+		  vision_app->LoadURL ("http://work.ucsd.edu:5141/cgi-bin/http_webster?vision");
+		  break;
+		}
+
+		case M_LOOKUP_GOOGLE:
+		{
+		  vision_app->LoadURL ("http://www.google.com/search?q=vision");
+		  break;
+		}
+		
 		default:
 			BView::MessageReceived (msg);
 	}

@@ -21,14 +21,12 @@
  *                 Todd Lair
  */ 
 
-#include <Roster.h>
-
+#include "Vision.h"
 #include "ClickView.h"
 
 void
 ClickView::MouseDown (BPoint)
 {
-  const char *arguments[] = {launch_url.String(), 0};
-  be_roster->Launch ("text/html", 1, const_cast<char **>(arguments));
+  vision_app->LoadURL (launch_url.String());
 }
 
