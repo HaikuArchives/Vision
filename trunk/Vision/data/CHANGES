@@ -11,9 +11,10 @@ http://vision.sourceforge.net
    * Removed nickname color changing from M_CHANNEL_MSG, this will be moved to
      IRCView soon. This fixes the nickname-in-url issue, as well as the totally
      sucky implementation of otherNick (would color seemingly random nicknames)
-   * Added alt+up/down to ClientAgent for scrolling "line-by-line"
-   * Added alt+pageup/pagedown to ClientAgent in addition to pageup/pagedown for
+   * Added shift+up/down to ClientAgent for scrolling "line-by-line"
+   * Added shift+pageup/pagedown to ClientAgent in addition to pageup/pagedown for
      consistancy
+   * Moved alt+home/end to shift+home/end
 
 [0.1.0330]
  2001-03-30
