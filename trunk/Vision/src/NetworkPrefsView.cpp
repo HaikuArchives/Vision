@@ -170,13 +170,13 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 		nickRemoveButton->Frame().top);
 	personalBox->AddChild (nickAddButton);
 	BBitmap *bmp (BTranslationUtils::GetBitmap ('bits', "UpArrow"));
-    boundsRect = bmp->Bounds();
+    boundsRect = bmp->Bounds().InsetByCopy (-2, -2);
     nickUpButton = new TSpeedButton (boundsRect, NULL, NULL, new BMessage (M_NICK_UP), bmp);
 	nickUpButton->MoveTo (listScroll->Frame().left, nickAddButton->Frame().top);
 	personalBox->AddChild (nickUpButton);
 	delete bmp;
     bmp = BTranslationUtils::GetBitmap ('bits', "DownArrow");
-    boundsRect = bmp->Bounds();
+    boundsRect = bmp->Bounds().InsetByCopy (-2, -2);
     nickDnButton = new TSpeedButton (boundsRect, NULL, NULL, new BMessage (M_NICK_DOWN), bmp);
 	nickDnButton->MoveTo (nickUpButton->Frame().left, nickUpButton->Frame().bottom);
 	personalBox->AddChild (nickDnButton);
