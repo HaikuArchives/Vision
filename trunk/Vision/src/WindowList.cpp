@@ -551,7 +551,6 @@ WindowList::Agent (int32 serverId, const char *aName)
 void
 WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winType, bool activate)
 {
-  LockLooper();
   int32 itemindex (0);
 
   WindowListItem *currentitem ((WindowListItem *)ItemAt (CurrentSelection()));
@@ -623,11 +622,11 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     printf ("no newagent!?\n");
     return;
   }
-  vision_app->pClientWin()->bgView->AddChild (newagent);
-
+  vision_app->pClientWin()->DisableUpdates();
   newagent->Hide(); // get it out of the way
+  vision_app->pClientWin()->bgView->AddChild (newagent);
   newagent->Sync(); // clear artifacts
-  
+  vision_app->pClientWin()->EnableUpdates();
 
   if (activate && itemindex >= 0)  // if activate is true, show the new view now.
     if (CurrentSelection() == -1)
@@ -636,8 +635,6 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       Activate (itemindex);
   else
     Select (IndexOf (currentitem));
-
-  UnlockLooper();
 }
 
 void
