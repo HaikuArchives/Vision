@@ -1522,6 +1522,7 @@ ServerAgent::MessageReceived (BMessage *msg)
  
           SendData (fQuitMsg.String());
         }
+        
 
         Broadcast (new BMessage (M_CLIENT_QUIT));
 		BMessenger listMsgr(fListAgent);
@@ -1531,6 +1532,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         deathchant.AddPointer ("agent", this);
         deathchant.AddPointer ("item", fAgentWinItem);
         vision_app->pClientWin()->PostMessage (&deathchant);
+        msg->SendReply (B_REPLY);
       }
       break;
 

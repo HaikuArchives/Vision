@@ -93,8 +93,6 @@ class VisionApp : public BApplication
     status_t                RemoveNetwork (const char *);
     bool                    CheckNetworkValid (const char *);
 
-    sem_id                  GetShutdownSem(void);
-    
     Theme *                 ActiveTheme(void);
     
     void                    GetThreadName (int, BString &);
@@ -123,7 +121,6 @@ class VisionApp : public BApplication
     // used for benchmarking
     int32                   fBench1;
     int32                   fBench2;
-
     
     ClientWindow            *pClientWin (void) const;
 
@@ -154,7 +151,6 @@ class VisionApp : public BApplication
 	thread_id               fIdentThread;
 	int32                   fIdentSocket;
 	Theme                   *fActiveTheme;
-	sem_id                  fShutdownSem;
 };
 
 const uint32 VIS_NETWORK_DATA        = 'vndc';

@@ -278,31 +278,28 @@ WindowList::SelectLast (void)
   /*
    * Function purpose: Select the last active agent
    */
-  LockLooper();
   int32 lastInt (IndexOf (fLastSelected));
   if (lastInt >= 0)
     Select (lastInt);
   else
     Select (0);
   ScrollToSelection();
-  UnlockLooper();
-  
 }
 
 void
 WindowList::Collapse (BListItem *collapseItem)
 {
-      WindowListItem *citem ((WindowListItem *)collapseItem),
+  WindowListItem *citem ((WindowListItem *)collapseItem),
                        *item (NULL);
-      int32 fSubstatus (-1);
-      int32 itemcount (CountItemsUnder (citem, true));
+  int32 fSubstatus (-1);
+  int32 itemcount (CountItemsUnder (citem, true));
 
-      for (int32 i = 0; i < itemcount; i++)
-        if (fSubstatus < (item = (WindowListItem *)ItemUnderAt(citem, true, i))->Status())
-          fSubstatus = item->Status();
+  for (int32 i = 0; i < itemcount; i++)
+    if (fSubstatus < (item = (WindowListItem *)ItemUnderAt(citem, true, i))->Status())
+      fSubstatus = item->Status();
 
-      citem->SetSubStatus (fSubstatus);
-      BOutlineListView::Collapse (collapseItem);
+  citem->SetSubStatus (fSubstatus);
+  BOutlineListView::Collapse (collapseItem);
 }
 
 void
@@ -666,8 +663,6 @@ WindowList::Activate (int32 index)
    
   if ((activeagent != newagent) && (activeagent != 0))
   {
-    LockLooper();
-
     newagent->Show();
     
     if (activeagent)
@@ -675,15 +670,9 @@ WindowList::Activate (int32 index)
       activeagent->Hide(); // you arent wanted anymore!
       activeagent->Sync(); // and take your damned pixels with you!
     }
-    
-    UnlockLooper();
   }
   if (activeagent == 0)
-  {
-    LockLooper();
     newagent->Show();
-    UnlockLooper();
-  }
  
   // activate the input box (if it has one)
   if ( (newagent = dynamic_cast<ClientAgent *>(newagent)) )
@@ -701,7 +690,6 @@ WindowList::Activate (int32 index)
 void
 WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
 {
-  LockLooper();
   Window()->DisableUpdates();
   agent->Hide();
   agent->Sync();
@@ -712,7 +700,6 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   SelectLast();
   fLastSelected = NULL;
   Window()->EnableUpdates();
-  UnlockLooper();
 }
 
 
