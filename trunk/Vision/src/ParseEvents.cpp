@@ -21,6 +21,7 @@
  *                 Todd Lair
  *                 Andrew Bazan
  *                 Jamie Wilkinson
+ *                 Bjorn Oksholen
  */
  
 #include "Vision.h"
@@ -551,6 +552,32 @@ ServerAgent::ParseEvents (const char *data)
     tempString += theChannel;
     tempString += " by ";
     tempString += GetNick(data);
+    tempString += ".\n";
+
+    BMessage msg (M_DISPLAY);
+
+    PackDisplay (&msg, tempString.String(), &whoisColor, 0,
+                   vision_app->GetBool("timestamp"));
+    PostActive (&msg);
+
+    return true;
+  }
+
+  if (secondWord == "SILENCE")
+  {
+    BString tempString,
+            theHostmask (GetWord(data, 3));  // Could be a hostmask, a nick, whatever
+		const char *hostmask = theHostmask.String();
+		
+		if (hostmask[0] == '+') {
+	    tempString += "*** Hostmask added to SILENCE list:  ";
+      theHostmask.RemoveFirst("+");
+		} else {
+	    tempString += "*** Hostmask removed from SILENCE list:  ";
+      theHostmask.RemoveFirst("-");
+		}
+
+    tempString += theHostmask;
     tempString += ".\n";
 
     BMessage msg (M_DISPLAY);
