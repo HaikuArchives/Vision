@@ -37,6 +37,7 @@ class VisionApp * vision_app;
 #include "Vision.h"
 #include "ClientWindow.h"
 #include "SettingsFile.h"
+#include "SetupWindow.h"
 
 
 // And so it begins....
@@ -227,6 +228,10 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       debugsettings = true;
     }
     
+    // temp
+    else if (strcmp (av[i], "--setupwindow") == 0)
+      showsetupwindow = true;
+    
     else if (strcmp (av[i], "-r") == 0)
       debugrecv = true;
 
@@ -258,13 +263,20 @@ VisionApp::ReadyToRun (void)
 {
   InitSettings();
   
-  BRect clientWinRect;
-  visionSettings->FindRect ("clientWinRect", &clientWinRect);
+  if (showsetupwindow)
+  {
+    setupWin = new SetupWindow();
+    setupWin->Show();
+  }
+  else
+  {
+    BRect clientWinRect;
+    visionSettings->FindRect ("clientWinRect", &clientWinRect);
   
-  clientWin = new ClientWindow(
-    clientWinRect);
+    clientWin = new ClientWindow(clientWinRect);
   
-  clientWin->Show();
+    clientWin->Show();
+  }
 }
 
 
