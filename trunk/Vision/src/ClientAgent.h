@@ -79,6 +79,7 @@ class ClientAgent : public BView
     float                       ScrollPos(void);
     void                        SetScrollPos(float);
     void                        ScrollRange(float *, float *);
+    void                        SetServerName(const char *);
     
     bool                        ParseCmd (const char *);
     virtual void                TabExpansion (void);
@@ -153,7 +154,7 @@ class ClientAgent : public BView
 
     BString                         id;
     const int32                     sid;
-    const BString                   serverName;
+    BString                         serverName;
     BString                         myNick,
                                       myLag;
 

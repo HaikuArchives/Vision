@@ -121,6 +121,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           if (!IsHidden())
             vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER,
               serverHostName.String());
+          
+          for (int32 i = 0; i < clients.CountItems(); i++)
+            ((ClientAgent *)clients.ItemAt(i))->SetServerName(serverHostName.String());
         
           // detect IRCd
           ircdtype = IRCD_STANDARD;
