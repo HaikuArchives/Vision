@@ -1150,7 +1150,9 @@ ServerAgent::MessageReceived (BMessage *msg)
         }
 
         Broadcast (new BMessage (M_CLIENT_QUIT));
-
+		BMessenger listMsgr(pListAgent);
+		listMsgr.SendMessage(M_CLIENT_QUIT);
+		
         BMessage deathchant (M_OBITUARY);
         deathchant.AddPointer ("agent", this);
         deathchant.AddPointer ("item", agentWinItem);
