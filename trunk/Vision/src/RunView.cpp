@@ -443,14 +443,21 @@ RunView::Draw (BRect frame)
 							drawSelection = false;
 						}
 						// we're at the selection, switch drawing color mode
-						else if (place >= sp_start.offset && place < (sp_end.offset - 1))
+						else if (place >= sp_start.offset)
 						{
 							if (sp_end.line == sp_start.line)
-								if (sp_end.offset - place < length)
-									length = (sp_end.offset - place) - 1;
-															
-							drawSelection = true;
-							
+							{
+								if (place < (sp_end.offset - 1))
+								{
+									drawSelection = true;
+									if ((sp_end.offset - place - 1) < length)
+										length = sp_end.offset - place - 1;
+								}
+								else
+									drawSelection = false;
+							}
+							else
+								drawSelection = true;
 						}
 						else
 							drawSelection = false;
