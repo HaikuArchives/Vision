@@ -126,7 +126,7 @@ class RunView : public BView
 
 	void					CheckURLCursor (BPoint);
 	void					BuildPopUp (void);
-	bool				WasDoubleClick (BPoint);
+	uint16				CheckClickCount (BPoint);
 	
 	virtual void		MouseDown (BPoint);
 	virtual void		MouseMoved (BPoint, uint32, const BMessage *);
