@@ -453,8 +453,10 @@ ListAgent::MessageReceived (BMessage *msg)
 
 				if (i < listView->CountRows())
 				{
+					BRow* row = listView->RowAt (i);
 					listView->DeselectAll();
-					listView->AddToSelection (listView->RowAt (i));
+					listView->AddToSelection (row);
+					listView->ScrollTo(row);
 					listView->Refresh();
 				}
 				else

@@ -268,6 +268,8 @@ public:
 			void			AddRow(BRow*, BRow *parent = 0);
 			void			AddRow(BRow*, int32 index, BRow *parent = 0);
 	
+			void			ScrollTo(const BRow* Row);
+			
 	// Does not delete row or children at this time.
 	// todo: Make delete row and children
 			void			RemoveRow(BRow*);	
