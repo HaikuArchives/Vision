@@ -337,7 +337,7 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
-  if (firstWord == "/DOP" || firstWord == "/DEOP")
+  if (firstWord == "/DOP" || firstWord == "/DEOP" || firstWord == "/DEVOICE")
   {
     BString theNick (RestOfString (data, 2));
     int32 current (2),
@@ -351,7 +351,7 @@ ClientAgent::ParseCmd (const char *data)
       {
         AddSend (&sendMsg, command.String());
         for (; GetWord(data, current) != "-9z99" && (current - last != 4); current++)
-          AddSend (&sendMsg, "o");
+          AddSend (&sendMsg, ((firstWord == "/DEVOICE") ? "v" : "o"));
         AddSend (&sendMsg, " ");
         for (; last < current; last++)
         {
@@ -367,7 +367,13 @@ ClientAgent::ParseCmd (const char *data)
       }
     }
     else
-      Display ("[x] /deop: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+    {
+      BString dispString ("[x] ");
+      dispString += firstWord.ToLower();
+      dispString += ": ";
+      dispString += S_PCMD_PARAMETER_ERROR "\n";
+      Display (dispString.String(), C_ERROR);
+    }
     return true;
   }
 
@@ -792,7 +798,7 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
   
-  if (firstWord == "/OP")
+  if (firstWord == "/OP" || firstWord == "/VOICE")
   {
     BString theNick (RestOfString (data, 2));
     int32 current (2),
@@ -806,7 +812,7 @@ ClientAgent::ParseCmd (const char *data)
       {
         AddSend (&sendMsg, command.String());
         for (; GetWord(data, current) != "-9z99" && (current - last != 4); current++)
-          AddSend (&sendMsg, "o");
+          AddSend (&sendMsg, ((firstWord == "/OP") ? "o" : "v"));
         AddSend (&sendMsg, " ");
         for (; last < current; last++)
         {
@@ -822,7 +828,13 @@ ClientAgent::ParseCmd (const char *data)
       }
     }
     else
-      Display ("[x] /op: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+    {
+      BString dispString ("[x] ");
+      dispString += firstWord.ToLower();
+      dispString += ": ";
+      dispString += S_PCMD_PARAMETER_ERROR "\n";
+      Display ( dispString.String(), C_ERROR);
+    }
     return true;
   }
   
