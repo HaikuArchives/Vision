@@ -129,6 +129,7 @@ class VisionApp : public BApplication
 	BMessage                idents;
 	BLocker                 identLock;
 	thread_id               identThread;
+	BNetEndpoint            *identEndpoint;
 };
 
 const uint32 M_SETUP_CLOSE           = 'vasc';
