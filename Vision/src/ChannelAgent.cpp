@@ -1210,30 +1210,11 @@ ChannelAgent::Parser (const char *buffer)
   
   BString sBuffer (buffer);
   
-  if (sBuffer.Length() > 440)
-  {
-    // length isn't irc safe (512 limit), truncate and send the text after
-    // character 440 on another line
-    BString tempBuffer;
-    int32 hit (Get440Len (buffer));
-
-    sBuffer.MoveInto (tempBuffer, 0, hit);
-    AddSend (&send, tempBuffer.String());
-    AddSend (&send, endl);
+  AddSend (&send, sBuffer.String());
+  AddSend (&send, endl);
   
-    Display (tempBuffer.String());
-    Display ("\n");
-    
-    Parser (sBuffer.String());
-  }
-  else
-  {
-    AddSend (&send, buffer);
-    AddSend (&send, endl);
-
-    Display (buffer);
-    Display ("\n");  
-  }
+  Display (sBuffer.String());
+  Display ("\n");
 }
 
 void
