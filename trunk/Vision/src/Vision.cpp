@@ -680,7 +680,7 @@ bool
 VisionApp::CheckStartupNetworks (void)
 {
   bool autoStarted (false);
-#if 0
+#if 1
   BMessage netData;
   for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
   {
@@ -803,8 +803,8 @@ VisionApp::MessageReceived (BMessage *msg)
         if (!fShuttingDown);
         {
           fClientWin->Lock();
-          fClientWin->Hide();
-          fClientWin->Unlock();
+          fClientWin->Quit();
+          fClientWin = NULL;
           PostMessage (M_SETUP_SHOW);
         }
       }
