@@ -410,6 +410,9 @@ VisionApp::LoadDefaults (int32 section)
         
         if (!visionSettings->HasRect ("windowDockRect"))
           visionSettings->AddRect ("windowDockRect", BRect (0, 0, 0, 0));
+        
+        if (!visionSettings->HasRect ("namesListRect"))
+          visionSettings->AddRect ("namesListRect", BRect (0, 0, 0, 0));
       }
       break;
 

@@ -42,6 +42,7 @@
 #include "StringManip.h"
 #include "VTextControl.h"
 #include "ChannelOptions.h"
+#include "ResizeView.h"
 
 
 ChannelAgent::ChannelAgent (
@@ -106,17 +107,19 @@ ChannelAgent::Init (void)
    * Function purpose: Setup everything
    */
    
-  textScroll->ResizeTo (
-    Frame().Width() - 100,
-    textScroll->Frame().Height());
+  const BRect namesRect (vision_app->GetRect ("nameListRect"));
 
+  textScroll->ResizeTo (
+    Frame().Width() - ((namesRect.Width() == 0.0) ? 100 : namesRect.Width()),
+    textScroll->Frame().Height());
+  
   frame = Bounds();
-  frame.left   = textScroll->Frame().right + 1;
+  frame.left   = textScroll->Frame().right + 4;
   frame.right -= B_V_SCROLL_BAR_WIDTH + 1;
   frame.bottom = textScroll->Frame().bottom - 1;
-
+  
   namesList = new NamesView (frame);
-
+  
   namesScroll = new BScrollView(
     "scroll_names",
     namesList,
@@ -126,7 +129,12 @@ ChannelAgent::Init (void)
     true,
     B_PLAIN_BORDER);
 
+  resize = new ResizeView (namesList, BRect (textScroll->Frame().right + 1,
+    Bounds().top + 1, textScroll->Frame().right + 3, textScroll->Frame().Height()));
+
   AddChild (namesScroll);
+
+  AddChild (resize);
 
   Display ("*** Now talking in ", C_JOIN);
   Display (id.String(), C_JOIN);
