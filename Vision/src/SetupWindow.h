@@ -24,11 +24,7 @@
 #ifndef _SETUPWINDOW_H_
 #define _SETUPWINDOW_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/Window.h"
-#elif BEOS_BUILD
-#  include <Window.h>
-#endif
+#include <Window.h>
 
 class BView;
 

@@ -25,14 +25,9 @@
 #ifndef _VISION_H_
 #define _VISION_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/Application.h"
-#  include "gnome/CString.h"
-#elif BEOS_BUILD
-#  include <Application.h>
-#  include <String.h>
-#  include <Locker.h>
-#endif
+#include <Application.h>
+#include <String.h>
+#include <Locker.h>
 
 #include "VisionBase.h"
 

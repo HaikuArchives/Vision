@@ -26,13 +26,8 @@
 #ifndef _CHANNELAGENT_H_
 #define _CHANNELAGENT_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/Rect.h"
-#  include "gnome/CString.h"
-#elif BEOS_BUILD
-#  include <Rect.h>
-#  include <String.h>
-#endif
+#include <Rect.h>
+#include <String.h>
 
 #include "ClientAgent.h"
 

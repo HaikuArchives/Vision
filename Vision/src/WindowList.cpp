@@ -26,9 +26,9 @@
  */
  
 
-#  include <PopUpMenu.h>
-#  include <MenuItem.h>
-#  include <List.h>
+#include <PopUpMenu.h>
+#include <MenuItem.h>
+#include <List.h>
 
 #include "Vision.h"
 #include "WindowList.h"

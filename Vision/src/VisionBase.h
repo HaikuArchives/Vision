@@ -26,11 +26,7 @@
 #define _VISIONBASE_H_
 
 /// base includes and defines ///
-#ifdef GNOME_BUILD
-#  include "gnome/GraphicsDefs.h"
-#elif BEOS_BUILD
-#  include <GraphicsDefs.h>
-#endif
+#include <GraphicsDefs.h>
 
 #include <Debug.h>
 

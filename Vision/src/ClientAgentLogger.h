@@ -24,17 +24,10 @@
 #ifndef _CLIENTAGENTLOGGER_H_
 #define _CLIENTAGENTLOGGER_H_
 
-#ifdef GNOME_BUILD
-#include "gnome/Locker.h"
-#include "gnome/String.h"
-#include "gnome/List.h"
-#include "gnome/File.h"
-#elif BEOS_BUILD
 #include <Locker.h>
 #include <String.h>
 #include <List.h>
 #include <File.h>
-#endif
 
 class ClientAgentLogger
 {

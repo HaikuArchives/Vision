@@ -26,11 +26,7 @@
 #ifndef _CLIENTAGENTINPUTFILTER_H_
 #define _CLIENTAGENTINPUTFILTER_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/MessageFilter.h"
-#elif BEOS_BUILD
-#  include <MessageFilter.h>
-#endif
+#include <MessageFilter.h>
 
 class ClientWindow;
 

@@ -25,12 +25,8 @@
 #ifndef _ABOUTWINDOW_H_
 #define _ABOUTWINDOW_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/Window.h"
-#elif BEOS_BUILD
-#  include <Window.h>
-#  include <TextView.h>
-#endif
+#include <Window.h>
+#include <TextView.h>
 
 class BView;
 

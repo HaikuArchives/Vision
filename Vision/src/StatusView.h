@@ -31,15 +31,9 @@
 
 #define STATUS_HEIGHT               13
 
-#ifdef GNOME_BUILD
-#  include "gnome/View.h"
-#  include "gnome/List.h"
-#  include "gnome/CString.h"
-#elif BEOS_BUILD
-#  include <View.h>
-#  include <List.h>
-#  include <String.h>
-#endif
+#include <View.h>
+#include <List.h>
+#include <String.h>
 
 class StatusItem;
 
