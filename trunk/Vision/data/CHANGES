@@ -1,6 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0414]
+ 2001-04-14
+   * Added visual keyboard shortcut identifiers to VTextControl for Copy/Cut/etc
+   * Tweaked the width of ChannelAgent's IRCView. It was off by 1px.
+
 [0.1.0412]
  2001-04-12
    * *Vision* compiles under Takashi's gcc 2.95.3 release now. Lua does not.

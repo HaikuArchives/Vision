@@ -110,21 +110,21 @@ VTextControl::BuildPopUp (void)
   myPopUp = new BPopUpMenu ("Context Menu", false, false); 
 
   BMenuItem *item; 
-  item = new BMenuItem("Cut", new BMessage (B_CUT));
+  item = new BMenuItem("Cut", new BMessage (B_CUT), 'X');
   item->SetEnabled (enablecut);
   myPopUp->AddItem (item);
   
-  item = new BMenuItem("Copy", new BMessage (B_COPY));
+  item = new BMenuItem("Copy", new BMessage (B_COPY), 'C');
   item->SetEnabled (enablecopy);
   myPopUp->AddItem (item);
 
-  item = new BMenuItem("Paste", new BMessage (B_PASTE));
+  item = new BMenuItem("Paste", new BMessage (B_PASTE), 'V');
   item->SetEnabled (enablepaste);
   myPopUp->AddItem (item);
   
   myPopUp->AddSeparatorItem(); 
   
-  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL));
+  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL), 'A');
   item->SetEnabled (enableselectall);
   myPopUp->AddItem (item);  
   
