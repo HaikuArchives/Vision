@@ -43,7 +43,7 @@ NamesView::NamesView(BRect frame)
     frame,
     "namesList",
     B_MULTIPLE_SELECTION_LIST,
-    B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM)
+    B_FOLLOW_ALL)
 {
   BListView::SetFont (vision_app->GetClientFont (F_NAMES));
 

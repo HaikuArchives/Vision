@@ -54,7 +54,7 @@
 #include "ServerAgent.h"
 #include "WindowList.h"
 #include "ClientAgentLogger.h"
-
+#include "ResizeView.h"
 
 const char *ClientAgent::endl               ("\1\1\1\1\1");
 
@@ -161,6 +161,20 @@ ClientAgent::Show (void)
   {
     ResizeTo (agentRect->Width(), agentRect->Height());
     MoveTo (agentRect->left, agentRect->top);
+  }
+  ChannelAgent *agent (dynamic_cast<ChannelAgent *>(this));
+  if (agent)
+  {
+    const BRect namesListRect (vision_app->GetRect ("namesListRect"));
+    float difference (((BView *)agent->namesList)->Bounds().Width() - namesListRect.Width());
+    if (difference != 0.0)
+    {
+      agent->resize->MoveBy (difference, 0.0);
+      textScroll->ResizeBy (difference, 0.0);
+      agent->namesScroll->ResizeBy (-difference, 0.0);
+      agent->namesScroll->MoveBy (difference, 0.0);
+      Sync();
+    }
   }
   
   BView::Show();
@@ -897,6 +911,22 @@ ClientAgent::MessageReceived (BMessage *msg)
         vision_app->LoadURL (lookup.String());
       }
       break;
+    case M_RESIZE_VIEW:
+      {
+        ChannelAgent *currentAgent (dynamic_cast<ChannelAgent *>(this));
+        if (currentAgent)
+        {
+          float offset (msg->FindFloat ("delta"));
+          currentAgent->resize->MoveBy (offset, 0.0);
+          textScroll->ResizeBy (offset, 0.0);
+          currentAgent->namesScroll->ResizeBy (-offset, 0.0);
+          currentAgent->namesScroll->MoveBy (offset, 0.0);
+          BRect namesRect (0, 0, currentAgent->namesScroll->Bounds().Width(), 0);
+          vision_app->SetRect ("namesListRect", namesRect);
+        }
+      }
+      break;
+
 
     default:
       BView::MessageReceived (msg);

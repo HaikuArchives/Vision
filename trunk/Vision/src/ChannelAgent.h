@@ -46,6 +46,7 @@ class ChannelOptions;
 class BScrollView;
 class ServerWindow;
 class NamesView;
+class ResizeView;
 
 class ChannelAgent : public ClientAgent
 {
@@ -94,6 +95,7 @@ class ChannelAgent : public ClientAgent
     NamesView               *namesList;
     BScrollView             *namesScroll;
     ChannelOptions          *chanOpt;
+    ResizeView              *resize;
 
 };
 

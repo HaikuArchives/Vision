@@ -400,6 +400,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_RESIZE_VIEW:
       {
+        int32 agentCount (pWindowList()->CountItems());
         float offset (msg->FindFloat ("delta"));
         BView *view (NULL);
         msg->FindPointer ("view", reinterpret_cast<void **>(&view));
@@ -407,7 +408,6 @@ ClientWindow::MessageReceived (BMessage *msg)
         {
           resize->MoveBy (offset, 0.0);
           cwDock->ResizeBy (offset, 0.0);
-          int32 agentCount (pWindowList()->CountItems());
           for (int32 i = 0; i < agentCount; i++)
           {
             WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
@@ -422,7 +422,16 @@ ClientWindow::MessageReceived (BMessage *msg)
         }
         else if (dynamic_cast<NamesView *>(view))
         {
-          printf ("names view resize\n");
+          for (int32 i = 0; i < agentCount; i++)
+          {
+            WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
+            BView *agent (item->pAgent());
+            if (!agent->IsHidden())
+            {
+              DispatchMessage (msg, agent);
+              break;
+            }
+          }
         } 
       }
       break;
