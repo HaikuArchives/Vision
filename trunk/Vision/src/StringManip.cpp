@@ -199,8 +199,7 @@ StringToURI (const char *string)
   buffer.ReplaceAll ("{",  "%7B");
   buffer.ReplaceAll ("|",  "%7C");
   buffer.ReplaceAll ("}",  "%7D");
-  buffer.ReplaceAll ("~",  "%7E");
-    
+  buffer.ReplaceAll ("~",  "%7E");    
   return buffer;
 }
 
