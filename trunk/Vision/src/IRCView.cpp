@@ -291,6 +291,7 @@ IRCView::MouseDown (BPoint myPoint)
   && (keymodifiers & B_COMMAND_KEY) == 0
   && (keymodifiers & B_CONTROL_KEY) == 0)
   {
+    MakeFocus (true);
     BuildPopUp();
     myPopUp->Go (
       ConvertToScreen (myPoint),
