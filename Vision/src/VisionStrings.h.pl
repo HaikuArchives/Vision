@@ -257,8 +257,8 @@ Kolejne poprawki oraz test - Mixer (mixer@beos.pl)
 #define S_PEVENTS_UMODE_CHANGE      "*** Tryb użytkownika zmieniony: "
 #define S_PEVENTS_INVITE1           "*** Zostałeś zaproszony do "
 #define S_PEVENTS_INVITE2           " przez "
-#define S_PEVENTS_SILENCE_ADDED     "*** Hostmask dodał do listy CISZA: "
-#define S_PEVENTS_SILENCE_REMOVED   "*** Hostmask usunał z listy CISZA: "
+#define S_PEVENTS_SILENCE_ADDED     "*** Hostmask dodał do listy SILENCE: "
+#define S_PEVENTS_SILENCE_REMOVED   "*** Hostmask usunał z listy SILENCE: "
 
 // app prefs
 
