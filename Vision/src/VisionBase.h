@@ -60,11 +60,12 @@
 #define C_WINLIST_NEWS                                  25
 #define C_WINLIST_NICK                                  26
 #define C_WINLIST_SELECTION                             27
-#define C_NAMES_SELECTION                               28
-#define C_WALLOPS                                       29
-#define C_NICKDISPLAY                                   30
+#define C_WINLIST_VOID                                  28
+#define C_NAMES_SELECTION                               29
+#define C_WALLOPS                                       30
+#define C_NICKDISPLAY                                   31
 
-#define MAX_COLORS										31
+#define MAX_COLORS										32
 
 
 #define F_TEXT												0
@@ -109,9 +110,10 @@
 
 
 // tells the WindowList how to color the WindowListItem
-#define WIN_NORMAL_BIT                              0x0001
-#define WIN_NEWS_BIT								0x0010
-#define WIN_NICK_BIT							 	0x0100
+#define WIN_VOID_BIT                                0x0001
+#define WIN_NORMAL_BIT                              0x0010
+#define WIN_NEWS_BIT								0x0100
+#define WIN_NICK_BIT							 	0x1000
 
 // tells the WindowList how to format the WindowListItem
 // (eg: WIN_CHANNEL_TYPE = indent 2 spaces)

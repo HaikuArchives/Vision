@@ -105,7 +105,7 @@ StatusView::ItemAt (int32 which) const
 }
 
 void
-StatusView::SetItemValue (int32 which, const char *value)
+StatusView::SetItemValue (int32 which, const char *value, bool redraw)
 {
   StatusItem *item (ItemAt (which));
   StatusItem *nextitem;
@@ -120,7 +120,8 @@ StatusView::SetItemValue (int32 which, const char *value)
       nextitem->frame.right = nextitem->frame.left + StringWidth(nextitem->value.String());
       item = nextitem;
     }
-    Invalidate ();
+    if (redraw)
+      Invalidate();
   }
 }
 

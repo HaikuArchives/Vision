@@ -733,18 +733,20 @@ ChannelAgent::MessageReceived (BMessage *msg)
        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
          "", "", STATUS_ALIGN_LEFT), true);
 
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String());
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000");
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, topic.String());
+       // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
+       // We send true on the last SetItemValue().
+       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String(), false);
+       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
+       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), false);
+       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String(), false);
+       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, topic.String(), false);
 
        BString buffer;
        buffer << userCount;
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
+       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String(), false);
        buffer = "";
        buffer << opsCount;
-       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
+       vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String(), true);
 
        break;
      }

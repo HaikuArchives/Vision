@@ -1,6 +1,16 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0411]
+ 2001-04-11
+   * Update the StatusView's nickname on connect, so it uses the new nick if
+     its changed (e.g.: your alt. nick)
+   * Modified the default /uptime|ctcp uptime reply text
+   * Change the default (temp) server back to irc.elric.net
+   * Remove some redundant drawing stuff from WinList... a *lot* less flickering
+     now.
+   * Remove some redundant drawing stuff from StatusView. Ditto on the flickering.
+
 [0.1.0409]
  2001-04-10
    * Fix an issue where joining multiple channels quickly would cause NickList sorting

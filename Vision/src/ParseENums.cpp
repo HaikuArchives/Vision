@@ -111,7 +111,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
       BString theNick (GetWord (data, 3));
       myNick = theNick;
-      //status->SetItemValue (STATUS_NICK, theNick.String());
+      
+      if (!IsHidden())
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, theNick.String());
 
       BString theMsg (RestOfString (data, 4));
       theMsg.RemoveFirst (":");

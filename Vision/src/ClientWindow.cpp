@@ -213,14 +213,12 @@ ClientWindow::MessageReceived (BMessage *msg)
        if (msg->HasBool("hidden"))
        {
        	 item->SetStatus (newstatus);
-         winList->Invalidate();
          break;
        }
            
        if (item->Status() != WIN_NICK_BIT)
        {
        	 item->SetStatus (newstatus);
-         winList->Invalidate();
        }
        
        break;

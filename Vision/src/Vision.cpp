@@ -101,6 +101,7 @@ VisionApp::VisionApp (void)
   const rgb_color INPUT_COLOR         = {0, 0, 0, 255};
   const rgb_color INPUT_BG_COLOR      = {255, 255, 255, 255};
   const rgb_color WINLIST_BG_COLOR    = {238, 242, 242, 255};
+  const rgb_color WINLIST_VOID_COLOR  = {100, 100, 100, 255};
   const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
   const rgb_color WALLOPS_COLOR       = {10,30,170, 255};
   const rgb_color NICK_DISPLAY        = {47, 47, 47, 255};
@@ -134,6 +135,7 @@ VisionApp::VisionApp (void)
 	colors[C_WINLIST_NEWS]              = JOIN_COLOR;
 	colors[C_WINLIST_NICK]              = QUIT_COLOR;
 	colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
+	colors[C_WINLIST_VOID]              = WINLIST_VOID_COLOR;
 	colors[C_WALLOPS]                   = WALLOPS_COLOR;
 	colors[C_NICKDISPLAY]               = NICK_DISPLAY;
 	
@@ -161,7 +163,7 @@ VisionApp::VisionApp (void)
 	commands[CMD_UNIGNORE]				= "*** $N is no longer ignored.";
 	commands[CMD_AWAY]					= "is idle: $R";
 	commands[CMD_BACK]					= "has returned";
-	commands[CMD_UPTIME]				= "System was booted $U ago.";
+	commands[CMD_UPTIME]				= "OS Uptime [BeOS]: $U";
 }
 
 void
