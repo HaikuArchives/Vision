@@ -40,6 +40,8 @@ DEPDIR := dep
 SRCDIR := src
 DATADIR := data
 
+TEMPDEPFILE := /tmp/vision_temp_deps
+
 LIBLUA_PATH := ./src/lua/lib/liblua.a
 
 # compiler, linker, ...
@@ -145,7 +147,7 @@ ifeq ($(wildcard ./src/lua/lib/liblua.a),)
 	@echo Building...
 	@cd $(SRCDIR)/lua && make >/dev/null && cd $(SRCDIR)/..
 endif
-	@rm -f start.tmp middle.tmp end.tmp
+	@rm -f $(TEMPDEPFILE)
 	@echo linking $@
 	@$(LD) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo merging resources
@@ -160,12 +162,8 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
 	@echo generating dependencies for $<
 	@mkdir -p $(DEPDIR)
-	@$(DEP) $< > middle.tmp
-	@echo -n "$@ " > start.tmp
-	@echo $(basename $(subst $(DEPDIR),$(OBJDIR),$@))".o : $(MAKEFILE)" > end.tmp
-	@cat start.tmp middle.tmp end.tmp > $@
-# This line slows the dep gen down...
-#	@echo -e yf.i$(OBJDIR)/\\033t:a$(DEPDIR)/\\033pad \\033f:a $(MAKEFILE)\\033ZZ | vi $@ >/dev/null 2>/dev/null
+	@echo $@ $(shell $(DEP) $<) > $(TEMPDEPFILE)
+	@echo $(basename $(@F))".o : $(MAKEFILE)" | cat - $(TEMPDEPFILE) > $@
 
 $(FULLNAME).zip : $(BINARY) $(DATA) $(EXTRADATA) $(MAKEFILE)
 	@rm -rf $@~
