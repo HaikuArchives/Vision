@@ -1,3 +1,24 @@
+/* 
+ * The contents of this file are subject to the Mozilla Public 
+ * License Version 1.1 (the "License"); you may not use this file 
+ * except in compliance with the License. You may obtain a copy of 
+ * the License at http://www.mozilla.org/MPL/ 
+ * 
+ * Software distributed under the License is distributed on an "AS 
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * rights and limitations under the License. 
+ * 
+ * The Original Code is Vision.
+ * 
+ * The Initial Developer of the Original Code is The Vision Team.
+ * Portions created by The Vision Team are
+ * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Reserved.
+ * 
+ * Contributor(s): Rene Gollent
+ *                 Todd Lair
+ */
 
 #define FORE_WHICH				0
 #define BACK_WHICH				1
@@ -22,6 +43,7 @@
 #include <Region.h>
 #include <Window.h>
 #include <Bitmap.h>
+#include <Cursor.h>
 
 #include <Debug.h>
 #include <StopWatch.h>
@@ -30,6 +52,16 @@
 #include "RunView.h"
 #include "URLCrunch.h"
 #include "Vision.h"
+
+// cursor data for hovering over URLs
+
+static unsigned char URLCursorData[] = {16,1,2,2,
+0,0,0,0,56,0,36,0,36,0,19,224,18,92,9,42,
+8,1,60,33,76,49,66,121,48,125,12,253,2,0,1,0,
+0,0,0,0,56,0,60,0,60,0,31,224,31,252,15,254,
+15,255,63,255,127,255,127,255,63,255,15,255,3,254,1,248
+};
+
 
 struct SoftBreak
 {
@@ -102,7 +134,7 @@ struct Line
 								int16 fore,
 								int16 back,
 								int16 font);
-	
+
 							~Line (void);
 
 	void					Append (
@@ -133,8 +165,6 @@ struct Line
 	void					SoftBreaks (
 								Theme * theme,
 								float width);
-	
-	void					ParseURLs ();
 
 	int16					CountChars (int16 pos, int16 len);
 	size_t				SetStamp (const char *, bool);
@@ -144,7 +174,7 @@ inline int32
 UTF8_CHAR_LEN (uchar c)
 {
  return (((0xE5000000 >> (((c) >> 3) & 0x1E)) & 3) + 1);
-} 
+}
 
 RunView::RunView (
 	BRect frame,
@@ -169,6 +199,7 @@ RunView::RunView (
 		resizedirty (false),
 		fontsdirty (false)
 {
+	URLCursor = new BCursor (URLCursorData);
 	theme->ReadLock();
 
 	BView::SetViewColor (B_TRANSPARENT_COLOR);
@@ -210,7 +241,7 @@ void
 RunView::FrameResized (float start_width, float height)
 {
 	BView::FrameResized (start_width, height);
-	
+
 	if (IsHidden())
 	{
 		resizedirty = true;
@@ -365,7 +396,6 @@ RunView::Draw (BRect frame)
 					++font;
 				}
 
-				int16 next_set (min_c (min_c (fore, back), font));
 				int16 length (line->softies[sit].offset - place + last_len);
 
 				if (fore < line->fc_count
@@ -386,13 +416,13 @@ RunView::Draw (BRect frame)
 				int16 i (place + length - 1);
 				while (line->edges[i] == 0)
 					--i;
-					
+
 				r.Set (
 					left,
 					height,
 					line->edges[i] + indent - start,
 					height + line->softies[sit].height - 1.0);
-				
+
 				SetDrawingMode (B_OP_COPY);
 				SetLowColor (low_color);
 				SetHighColor (hi_color);
@@ -412,7 +442,7 @@ RunView::Draw (BRect frame)
 			}
 
 
-			// Margin after text 
+			// Margin after text
 			SetDrawingMode (B_OP_COPY);
 			SetLowColor (view_color);
 			FillRect (
@@ -459,6 +489,16 @@ RunView::MouseDown (BPoint point)
 void
 RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 {
+	SelectPos s = PositionAt (point);
+	slist<URL *>::const_iterator it;
+	for (it = lines[s.line]->urls.begin(); it != lines[s.line]->urls.end(); ++it)
+		if ((s.offset >= (*it)->offset)
+		 && (s.offset < (*it)->offset + (*it)->length))
+		 {
+		 	SetViewCursor (URLCursor);
+		 	return;
+		 }
+	SetViewCursor (B_CURSOR_SYSTEM_DEFAULT);
 }
 
 void
@@ -508,7 +548,7 @@ RunView::ResizeRecalc (void)
 	BRect bounds (Bounds());
 	BRegion region;
 	float top (0.0);
-	
+
 	theme->ReadLock();
 	for (int16 i = 0; i < line_count; ++i)
 	{
@@ -542,7 +582,7 @@ RunView::ResizeRecalc (void)
 	{
 		if (RecalcScrollBar (true))
 			Invalidate (Bounds());
-		else 
+		else
 		{
 			int32 count (region.CountRects()), i;
 
@@ -666,7 +706,6 @@ RunView::Append (
 	unsigned long lcount (0);
 	int32 place (0);
 
-
 	assert (fore != Theme::TimestampFore);
 	assert (back != Theme::TimestampBack);
 	assert (font != Theme::TimestampFont);
@@ -677,6 +716,7 @@ RunView::Append (
 
 	theme->ReadLock();
 	
+
 	while (place < len)
 	{
 		int32 end (place);
@@ -690,12 +730,14 @@ RunView::Append (
 		{
 			URLCrunch crunch (buffer + place, end - place);
 			BString temp;
-			int32 url_offset (0);
-			
+			int32 url_offset (0),
+				last_offset (0);
+
+
 			while ((url_offset = crunch.Crunch (&temp)) != B_ERROR)
 			{
 				working->Append  (buffer + place,
-									url_offset,
+									(url_offset - last_offset),
 									&boxbuf,
 									&boxbuf_size,
 									width,
@@ -704,8 +746,8 @@ RunView::Append (
 									back,
 									font);
 
-				working->Append  (buffer + place + url_offset,
-									url_offset + temp.Length(),
+				working->Append  (buffer + place + (url_offset - last_offset),
+									temp.Length(),
 									&boxbuf,
 									&boxbuf_size,
 									width,
@@ -713,10 +755,13 @@ RunView::Append (
 									C_URL,
 									back,
 									F_URL);
-				place += url_offset + temp.Length();
+
+				place += (url_offset - last_offset) + temp.Length();
+				last_offset = url_offset;
 			}
 			
-			working->Append (
+			if (place < end)
+				working->Append (
 				buffer + place,
 				end - place,
 				&boxbuf,
@@ -726,6 +771,14 @@ RunView::Append (
 				fore,
 				back,
 				font);
+			else
+				working->Append ("\n", 1, &boxbuf,
+				 &boxbuf_size,
+				 width,
+				 theme,
+				 fore,
+				 back,
+				 font);
 		}
 		else
 		{
@@ -734,7 +787,7 @@ RunView::Append (
 			if (line_count > 0)
 				top = lines[line_count - 1]->bottom + 1.0;
 
-			
+
 			working = new Line (
 				buffer + place,
 				0,
@@ -747,13 +800,15 @@ RunView::Append (
 				fore,
 				back,
 				font);
-			
+
 			URLCrunch crunch (buffer + place, end - place);
 			BString temp;
-			int32 url_offset (0);
-			
+			int32 url_offset (0),
+				last_offset (0);
+
 			while ((url_offset = crunch.Crunch (&temp)) != B_ERROR)
 			{
+				url_offset -= last_offset;
 				working->Append  (buffer + place,
 									url_offset,
 									&boxbuf,
@@ -764,7 +819,7 @@ RunView::Append (
 									back,
 									font);
 
-				working->Append  (buffer + place + url_offset,
+				working->Append  (temp.String(),
 									temp.Length(),
 									&boxbuf,
 									&boxbuf_size,
@@ -773,21 +828,32 @@ RunView::Append (
 									C_URL,
 									back,
 									F_URL);
-									
-				place += url_offset + temp.Length();
-			}
-			
-			working->Append (buffer + place,
-								end - place,
-								&boxbuf,
-								&boxbuf_size,
-								width,
-								theme,
-								fore,
-								back,
-								font);
-		}
 
+				place += url_offset + temp.Length();
+				last_offset = url_offset + temp.Length();
+			}
+
+			if (place < end)
+				working->Append (buffer + place,
+									end - place,
+									&boxbuf,
+									&boxbuf_size,
+									width,
+									theme,
+									fore,
+									back,
+									font);
+			else 
+				working->Append ("\n", 1, &boxbuf,
+				 &boxbuf_size,
+				 width,
+				 theme,
+				 fore,
+				 back,
+				 font);
+
+		}
+		
 		if (working->length
 		&&  working->text[working->length - 1] == '\n')
 		{
@@ -924,7 +990,7 @@ RunView::SetTheme (Theme *t)
 		return;
 
 	theme = t;
-	
+
 	if (IsHidden())
 	{
 		fontsdirty = true;
@@ -1052,7 +1118,6 @@ Line::Line (
 
 	if (text[length - 1] == '\n')
 	{
-		ParseURLs();
 		FigureSpaces();
 		FigureEdges (boxbuf, boxbuf_size, theme, width);
 	}
@@ -1064,22 +1129,10 @@ Line::~Line (void)
 	delete [] edges;
 	delete [] fcs;
 	delete [] text;
-	
+
 	slist<URL *>::const_iterator it = urls.begin();
 	for (; it != urls.end(); ++it)
 		delete (*it);
-}
-
-void
-Line::ParseURLs(void)
-{
-	BString urlsearch;
-	URLCrunch crunch (text, length);
-	int32 offset (0);
-	
-	while ((offset = crunch.Crunch(&urlsearch)) != B_ERROR)
-		urls.push_front (new URL (urlsearch.String(), offset, urlsearch.Length()));
-	urls.sort();
 }
 
 void
@@ -1101,7 +1154,7 @@ Line::Append (
 
 	memcpy (new_text, text, length);
 	memcpy (new_text + length, buffer, len);
-	new_text[length += len] = '\0';		
+	new_text[length += len] = '\0';
 
 	delete [] text;
 	text = new_text;
@@ -1110,11 +1163,18 @@ Line::Append (
 
 	if (text[length - 1] == '\n')
 	{
-		ParseURLs();
+		URLCrunch crunch (text, length);
+		int32 offset (0);
+		BString temp_url;
+		
+		while ((offset = crunch.Crunch (&temp_url)) != B_ERROR)
+			urls.push_front (new URL (temp_url.String(), offset, temp_url.Length()));
+		
+		urls.sort();
 		FigureSpaces();
 		FigureEdges (boxbuf, boxbuf_size, theme, width);
 	}
-	
+
 }
 
 void
@@ -1429,7 +1489,7 @@ Line::SoftBreaks (Theme *theme, float start_width)
 			// we encountered more than one space, so we rule out having to
 			// split the word, if the current word will fit within the bounds
 			int16 ccount1, ccount2;
-		
+
 			ccount1 = spaces[space_place - 1];
 			ccount2 = spaces[space_place] - spaces[space_place - 1];
 
@@ -1551,7 +1611,7 @@ Line::SetStamp (const char *format, bool was_on)
 	if (was_on)
 	{
 		int16 offset (fcs[4].offset + 1);
-		
+
 		slist<URL *>::const_iterator it = urls.begin();
 		for (; it != urls.end(); ++it)
 			(*it)->offset -= offset;

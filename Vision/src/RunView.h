@@ -1,3 +1,25 @@
+/* 
+ * The contents of this file are subject to the Mozilla Public 
+ * License Version 1.1 (the "License"); you may not use this file 
+ * except in compliance with the License. You may obtain a copy of 
+ * the License at http://www.mozilla.org/MPL/ 
+ * 
+ * Software distributed under the License is distributed on an "AS 
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * rights and limitations under the License. 
+ * 
+ * The Original Code is Vision.
+ * 
+ * The Initial Developer of the Original Code is The Vision Team.
+ * Portions created by The Vision Team are
+ * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Reserved.
+ * 
+ * Contributor(s): Rene Gollent
+ *                 Todd Lair
+ */
+ 
 #ifndef RUNVIEW_H_
 #define RUNVIEW_H_
 
@@ -9,7 +31,7 @@ struct Line;
 class Theme;
 class RunView;
 class BScrollView;
-
+class BCursor;
 class SelectPos
 {
 	public:
@@ -45,6 +67,7 @@ class SelectPos
 class RunView : public BView
 {
 	BScrollView			*scroller;
+	BCursor				*URLCursor;
 	Theme					*theme;
 	BRect					*boxbuf;
 	int16					boxbuf_size;
