@@ -496,10 +496,6 @@ WindowListItem::WindowListItem (
 
 }
 
-WindowListItem::~WindowListItem (void)
-{
-}
-
 BString
 WindowListItem::Name (void) const
 {

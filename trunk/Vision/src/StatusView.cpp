@@ -86,6 +86,18 @@ StatusView::AddItem (StatusItem *item, bool erase)
   items.AddItem (item);
 }
 
+void
+StatusView::Clear (void)
+{
+  int32 i,
+        all (items.CountItems());
+
+  for (i = 0; i <= all; i++)
+    items.RemoveItem (0L);
+  
+  Invalidate();
+}
+
 StatusItem *
 StatusView::ItemAt (int32 which) const
 {

@@ -32,7 +32,6 @@ struct attr_info;
 class SettingsFile : public BMessage {
 public :
 	SettingsFile(char const*leafname=NULL,char const*basename=NULL,directory_which dir=B_USER_SETTINGS_DIRECTORY);
-	virtual ~SettingsFile();
 
 	status_t InitCheck() const;
 	

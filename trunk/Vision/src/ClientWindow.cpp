@@ -54,13 +54,6 @@ ClientWindow::ClientWindow (BRect frame)
   Init();
 }
 
-
-ClientWindow::~ClientWindow (void)
-{
- //
-}
-
-
 bool
 ClientWindow::QuitRequested (void)
 {
@@ -157,6 +150,12 @@ ClientWindow::MessageReceived (BMessage *msg)
        }
        
        break;
+    }
+    
+    case M_STATUS_CLEAR:
+    {
+      status->Clear();
+      break;
     }
     
     case M_OBITUARY:

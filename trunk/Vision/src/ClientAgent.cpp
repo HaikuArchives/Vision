@@ -112,12 +112,14 @@ ClientAgent::AllAttached (void)
     sMsgr = BMessenger (this);
   } 
 
-//  printf ("clientagent::allattached (%s)\n", id.String());
 }
 
 void
 ClientAgent::Show (void)
 {
+  Window()->PostMessage (M_STATUS_CLEAR);
+  this->msgr.SendMessage (M_STATUS_ADDITEMS);
+
   BMessage statusMsg (M_UPDATE_STATUS);
   statusMsg.AddPointer ("item", agentWinItem);
   statusMsg.AddInt32 ("status", WIN_NORMAL_BIT);

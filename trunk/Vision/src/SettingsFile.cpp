@@ -74,9 +74,6 @@ SettingsFile::SettingsFile(char const*lname,char const*bname,directory_which d) 
 	}
 }
 
-SettingsFile::~SettingsFile() {
-}
-
 status_t SettingsFile::InitCheck() const {
 	return check;
 }

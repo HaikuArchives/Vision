@@ -355,7 +355,6 @@ ClientAgent::ParseCmd (const char *data)
 		return true;
 	}
 	
-	
 	if (firstWord == "/DESCRIBE")
 	{
     	BString theTarget (GetWord (data, 2));

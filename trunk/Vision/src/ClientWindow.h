@@ -61,7 +61,6 @@ class ClientWindow : public BWindow
 
   public:
                           ClientWindow (BRect);
-    virtual               ~ClientWindow (void);
 
     virtual void          MessageReceived (BMessage *);
     virtual void          DispatchMessage (BMessage *, BHandler *);
@@ -88,5 +87,9 @@ const uint32 M_OBITUARY                     = 'cwob';
 const uint32 M_CW_ALTW                      = 'cwaw';
 const uint32 M_CW_ALTP                      = 'cwap';
 const uint32 M_MAKE_NEW_SERVER              = 'cwms';
+
+const uint32 M_STATUS_CLEAR                 = 'cwsc';
+const uint32 M_STATUS_ADDITEMS              = 'cwsa';
+
 
 #endif

@@ -44,10 +44,6 @@ ClientInputFilter::ClientInputFilter (ClientAgent *agent)
 {
 }
 
-ClientInputFilter::~ClientInputFilter (void)
-{
-}
-
 filter_result
 ClientInputFilter::Filter (BMessage *msg, BHandler **)
 {

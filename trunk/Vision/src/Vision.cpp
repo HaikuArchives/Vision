@@ -148,12 +148,6 @@ VisionApp::VisionApp (void)
 	commands[CMD_UPTIME]				= "System was booted $U ago.";
 }
 
-VisionApp::~VisionApp (void)
-{
-  // this space for rent
-  
-}
-
 void
 VisionApp::InitSettings(void)
 {

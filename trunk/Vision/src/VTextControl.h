@@ -49,7 +49,6 @@ class VTextControl : public BTextControl
                                          uint32 = B_WILL_DRAW | B_NAVIGABLE,
                                          bool = false);
                            VTextControl (BMessage *, bool = false);
-    virtual                ~VTextControl (void);
     virtual void           AllAttached (void);
     void                   BuildPopUp (void);
 
@@ -63,7 +62,6 @@ class VTextControlFilter : public BMessageFilter
 
   public:
 									VTextControlFilter (VTextControl *);
-    virtual							~VTextControlFilter (void);
     virtual filter_result			Filter (BMessage *, BHandler **);
 
   private:

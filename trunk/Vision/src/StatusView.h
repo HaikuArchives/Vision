@@ -50,6 +50,7 @@ class StatusView : public BView
 
     void                SetItemValue (int32, const char *);
     virtual void        Draw (BRect);
+    void                Clear (void);
 
   protected:
     void                DrawSplit (float);
