@@ -489,7 +489,11 @@ RunView::MouseDown (BPoint point)
 void
 RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 {
+	if (line_count == 0)
+		return;
+		
 	SelectPos s = PositionAt (point);
+		
 	slist<URL *>::const_iterator it;
 	for (it = lines[s.line]->urls.begin(); it != lines[s.line]->urls.end(); ++it)
 		if ((s.offset >= (*it)->offset)
