@@ -150,8 +150,7 @@ class VisionApp : public BApplication
 	thread_id               identThread;
 	int32                   identSocket;
 	Theme                   *activeTheme;
-	sem_id                  shutdownSem,
-	                        dcc_sid;
+	sem_id                  shutdownSem;
 };
 
 const uint32 M_SETUP_CLOSE           = 'vasc';
