@@ -141,7 +141,8 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
   else if ((theCTCP == "TIME") || (theCTCP == "DATE"))
   {
     time_t st (time (0));
-    struct tm curTime (*localtime (&st)); 
+    struct tm curTime;
+    localtime_r (&st, &curTime); 
     char str[47];
     strftime (str,47,"%A %b %d %Y %I:%M %p %Z",&curTime);
 

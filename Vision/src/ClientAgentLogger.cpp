@@ -224,10 +224,10 @@ ClientAgentLogger::AsyncLogger (void *arg)
   if (myLogFile->InitCheck() != B_NO_INIT)
   {
     time_t myTime (time (0));
-    struct tm *ptr;
-    ptr = localtime (&myTime);
+    struct tm ptr;
+    localtime_r (&myTime, &ptr);
     char tempTime[96];
-    strftime (tempTime, 96, "Session Close: %a %b %d %H:%M %Y\n", ptr);
+    strftime (tempTime, 96, "Session Close: %a %b %d %H:%M %Y\n", &ptr);
     off_t len = strlen (tempTime);
     myLogFile->Write (tempTime, len);
     myLogFile->Unset();

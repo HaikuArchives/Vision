@@ -524,12 +524,12 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString += "\n";
 		
         int32 serverTime = strtoul(signOnTime.String(), NULL, 0);
-        struct tm *ptr (NULL); 
+        struct tm ptr; 
         time_t st;
         char str[80];    
         st = serverTime; 
-        ptr = localtime(&st);
-        strftime (str,80,"%A %b %d %Y %I:%M %p %Z",ptr);
+        localtime_r (&st, &ptr);
+        strftime (str,80,"%A %b %d %Y %I:%M %p %Z", &ptr);
         BString signOnTimeParsed (str);
         signOnTimeParsed.RemoveAll ("\n");
 		
@@ -646,12 +646,12 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
                 tempString;
 				
         int32 serverTime (strtoul(theTime.String(), NULL, 0));
-        struct tm *ptr (NULL); 
+        struct tm ptr; 
         time_t st;
         char str[80];    
         st = serverTime; 
-        ptr = localtime (&st);
-        strftime (str,80,"%a %b %d %Y %I:%M %p %Z",ptr);
+        localtime_r (&st, &ptr);
+        strftime (str,80,"%a %b %d %Y %I:%M %p %Z",&ptr);
         BString theTimeParsed (str);
         theTimeParsed.RemoveAll ("\n");
     	
@@ -711,12 +711,12 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
                 theTime (GetWord (data, 6));
 		
         int32 serverTime (strtoul(theTime.String(), NULL, 0));
-        struct tm *ptr; 
+        struct tm ptr; 
         time_t st;
         char str[80];    
         st = serverTime; 
-        ptr = localtime (&st);
-        strftime (str,80,"%A %b %d %Y %I:%M %p %Z",ptr);
+        localtime_r (&st, &ptr);
+        strftime (str,80,"%A %b %d %Y %I:%M %p %Z",&ptr);
         BString theTimeParsed (str);
         theTimeParsed.RemoveAll ("\n");
 		

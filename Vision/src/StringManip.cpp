@@ -211,7 +211,8 @@ TimeStamp()
   const char *ts_format (vision_app->GetString ("timestamp_format"));
 
   time_t myTime (time (0));
-  tm curTime = *localtime (&myTime);
+  tm curTime;
+  localtime_r (&myTime, &curTime);
 	
   char tempTime[32];
   tempTime[strftime (tempTime, 31, ts_format, &curTime)] = '\0'; 
