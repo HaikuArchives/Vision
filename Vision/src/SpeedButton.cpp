@@ -92,7 +92,7 @@ TSpeedButton *TSpeedButton::Instantiate(BMessage *Archive)
     return NULL;
 }
 //-------------------------------------------------------------------------------
-status_t TSpeedButton::Archive(BMessage *Archive, bool Deep)
+status_t TSpeedButton::Archive(BMessage *Archive, bool Deep) const
 {
     BView::Archive(Archive, Deep);
     Archive->AddString("class", "TSpeedButton");
@@ -356,13 +356,9 @@ void TSpeedButton::Draw(BRect UpdateRect)
 }
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-void TSpeedButton::MouseDown(BPoint where)
+void TSpeedButton::MouseDown(BPoint Where)
 {
-    if (false == BControl::IsEnabled())
-    {
-        return;
-    }
-    else
+    if (true == BControl::IsEnabled())
     {
         SetMouseEventMask(B_POINTER_EVENTS);
         FMouseDown = true;
@@ -390,9 +386,11 @@ void TSpeedButton::MouseDown(BPoint where)
             SetHighColor(color);
         }
     }
+    
+    BControl::MouseDown(Where);
 }
 //-------------------------------------------------------------------------------
-void TSpeedButton::MouseUp(BPoint where)
+void TSpeedButton::MouseUp(BPoint Where)
 {
     // Save some clock cycles
     if ((!IsEnabled()) || (FSelected && (FGroupIndex > -1) && !FLatching))
@@ -502,9 +500,11 @@ void TSpeedButton::MouseUp(BPoint where)
 
         Draw(FBorder);
     }
+    
+    BControl::MouseUp(Where);
 }
 //-------------------------------------------------------------------------------
-void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage *Message)
+void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage* Message)
 {
     switch(Code)
     {
@@ -578,6 +578,8 @@ void TSpeedButton::MouseMoved(BPoint Where, uint32 Code, const BMessage *Message
            break;
        }
     }
+    
+    BControl::MouseMoved(Where, Code, Message);
 }
 //-------------------------------------------------------------------------------
 void TSpeedButton::FrameResized(float Width, float Height)
@@ -612,22 +614,20 @@ int32 TSpeedButton::GroupIndex()
 //-------------------------------------------------------------------------------
 void TSpeedButton::Selected(bool Selected)
 {
-    if (FSelected == Selected)
-        return;
+    if (FSelected != Selected)
+	{
+	    FSelected = Selected;
 
-    FSelected = Selected;
-
-    float scroller = FSelected ? -1.0 : 1.0;
-
-    // Reflect the state of the button appropriately
-    if (true == FAttachedToWindow)
-    {
-        BeginLineArray(2);
-        AddLine(FBorder.RightTop(), FBorder.RightBottom(), Parent()->ViewColor());
-        AddLine(FBorder.LeftBottom(), FBorder.RightBottom(), Parent()->ViewColor());
-        EndLineArray();
-        Draw(FBorder);
-    }
+	    // Reflect the state of the button appropriately
+	    if (true == FAttachedToWindow)
+	    {
+	        BeginLineArray(2);
+	        AddLine(FBorder.RightTop(), FBorder.RightBottom(), Parent()->ViewColor());
+	        AddLine(FBorder.LeftBottom(), FBorder.RightBottom(), Parent()->ViewColor());
+	        EndLineArray();
+	        Draw(FBorder);
+	    }
+	}
 }
 //-------------------------------------------------------------------------------
 bool TSpeedButton::Selected()

@@ -75,7 +75,7 @@ class TSpeedButton : public BControl
 	    /**
 	     * More archiving stuff.  
 	     */					
-	    virtual status_t Archive(BMessage *Archive, bool Deep = true);
+	    virtual status_t Archive(BMessage *Archive, bool Deep = true) const;
 	
 	    virtual void AttachedToWindow();
 	    virtual void DetachedFromWindow();
