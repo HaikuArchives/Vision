@@ -370,7 +370,6 @@ ClientWindow::MessageReceived (BMessage *msg)
           new ServerAgent (netName.String(),
             network,
             *AgentRect()),
-          ID_SERVER,
           netName.String(),
           WIN_SERVER_TYPE,
           pWindowList()->CountItems() > 0 ? false : true); // grab focus if none present

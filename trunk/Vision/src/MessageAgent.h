@@ -41,7 +41,6 @@ class MessageAgent : public ClientAgent
   
                          MessageAgent (BRect &,
                                        const char *,
-                                       int32,
                                        const char *,
                                        const BMessenger &,
                                        const char *,

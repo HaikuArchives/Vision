@@ -52,7 +52,6 @@ const char *ClientAgent::endl               ("\1\1\1\1\1");
 
 ClientAgent::ClientAgent (
   const char *id_,
-  int32 sid_,
   const char *serverName_,
   const char *myNick_,
   BRect frame_)
@@ -65,7 +64,6 @@ ClientAgent::ClientAgent (
   fCancelMLPaste(false),
   fActiveTheme (vision_app->ActiveTheme()),
   fId (id_),
-  fSid (sid_),
   fServerName (serverName_),
   fMyNick (myNick_),
   fTimeStampState (vision_app->GetBool ("timestamp")),
@@ -78,7 +76,6 @@ ClientAgent::ClientAgent (
 
 ClientAgent::ClientAgent (
   const char *id_,
-  int32 sid_,
   const char *serverName_,
   const char *myNick_,
   const BMessenger &sMsgr_,
@@ -91,7 +88,6 @@ ClientAgent::ClientAgent (
     B_WILL_DRAW),
   fActiveTheme (vision_app->ActiveTheme()),
   fId (id_),
-  fSid (sid_),
   fServerName (serverName_),
   fMyNick (myNick_),
   fTimeStampState (vision_app->GetBool ("timestamp")),
@@ -977,13 +973,6 @@ const BString &
 ClientAgent::Id (void) const
 {
   return fId;
-}
-
-int32
-ClientAgent::Sid (void) const
-{
-  //return const_cast<long int>(fSid);
-  return fSid;
 }
 
 int32

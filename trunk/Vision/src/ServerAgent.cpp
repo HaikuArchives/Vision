@@ -71,7 +71,6 @@ ServerAgent::ServerAgent (
 
   : ClientAgent (
     id_,
-    fServerSeed++,
     id_,
     net.FindString ("nick"),
     frame_),
@@ -169,9 +168,9 @@ ServerAgent::Init (void)
   Display (revString.String());
   Display ("\nThis agent goes by the name of Smith... err ");
   BString temp;
-  temp << fId << " (sid: " << fSid << ")";
+  temp << fId << "\n";
   Display (temp.String(), C_NICK);
-  Display ("\nHave fun!\n");
+  Display ("Have fun!\n");
   
   fSendSyncSem = create_sem (0, "VisionSendSync");
   
@@ -650,7 +649,7 @@ ServerAgent::AsyncSendData (const char *cData)
   {
     data.RemoveAll ("\n");
     data.RemoveAll ("\r");
-    printf("    SENT: (%ld:%03ld) \"%s\"\n", fSid, length, data.String());
+    printf("    SENT: (%03ld) \"%s\"\n", length, data.String());
   }
 }
 
@@ -1087,7 +1086,6 @@ ServerAgent::MessageReceived (BMessage *msg)
 #ifdef NETSERVER_BUILD
         reply.AddPointer ("lock", fEndPointLock);
 #endif
-        reply.AddInt32   ("sid", fSid);
         msg->SendReply (&reply); 
         fEstablishHasLock = true;
       }
@@ -1271,11 +1269,9 @@ ServerAgent::MessageReceived (BMessage *msg)
         msg->FindString("port", &thePort);
         
         theNick.Append (" [DCC]");
-        vision_app->pClientWin()->pWindowList()->AddAgent (
-          new MessageAgent (
+        MessageAgent *newAgent (new MessageAgent (
             *vision_app->pClientWin()->AgentRect(),
             theNick.String(),
-            fSid,
             fId.String(),
             fSMsgr,
             fMyNick.String(),
@@ -1283,14 +1279,13 @@ ServerAgent::MessageReceived (BMessage *msg)
             true,
             false,
             theIP,
-            thePort),
-          fSid,
+            thePort));
+        vision_app->pClientWin()->pWindowList()->AddAgent (newAgent,
           theNick.String(),
           WIN_MESSAGE_TYPE,
           true);
           
-          ClientAgent *client (vision_app->pClientWin()->pWindowList()->Agent (fSid, theNick.String()));
-          fClients.AddItem (client);
+          fClients.AddItem (newAgent);
       }
       break;	
 
@@ -1307,11 +1302,9 @@ ServerAgent::MessageReceived (BMessage *msg)
 
        if ((client = Client (theId.String())) == 0)
        {
-          vision_app->pClientWin()->pWindowList()->AddAgent (
-            new MessageAgent (
+          MessageAgent *newAgent (new MessageAgent (
               *vision_app->pClientWin()->AgentRect(),
               theId.String(),
-              fSid,
               fId.String(),
               fSMsgr,
               fMyNick.String(),
@@ -1319,13 +1312,13 @@ ServerAgent::MessageReceived (BMessage *msg)
               true,
               true,
               "",
-              thePort != "" ? thePort.String() : ""),
-            fSid,
+              thePort != "" ? thePort.String() : ""));
+          vision_app->pClientWin()->pWindowList()->AddAgent (newAgent,
             theId.String(),
             WIN_MESSAGE_TYPE,
             true);
-         client = vision_app->pClientWin()->pWindowList()->Agent (fSid, theId.String());
-         fClients.AddItem (client);
+
+         fClients.AddItem (newAgent);
        }
      }
      break;
@@ -1467,21 +1460,20 @@ ServerAgent::MessageReceived (BMessage *msg)
 
         if (!(client = Client (theNick)))
         {
-          vision_app->pClientWin()->pWindowList()->AddAgent (
-            (client = new MessageAgent (
+          MessageAgent *newAgent (new MessageAgent (
               *vision_app->pClientWin()->AgentRect(),
               theNick,
-              fSid,
               fId.String(),
               fSMsgr,
               fMyNick.String(),
-              "")),
-            fSid,
+              ""));
+          vision_app->pClientWin()->pWindowList()->AddAgent (
+            newAgent,
             theNick,
             WIN_MESSAGE_TYPE,
             true);
 
-          fClients.AddItem (client);
+          fClients.AddItem (newAgent);
         }
         else
           client->fAgentWinItem->ActivateItem();
@@ -1563,7 +1555,6 @@ ServerAgent::MessageReceived (BMessage *msg)
           (fListAgent = new ListAgent (
             *vision_app->pClientWin()->AgentRect(),
             fServerHostName.String(), new BMessenger(this))),
-          fSid,
           "Channels",
           WIN_LIST_TYPE,
           true);

@@ -45,7 +45,6 @@ class ChannelAgent : public ClientAgent
 
                             ChannelAgent (
                               const char *,       // id 
-                              int32,              // sid
                               const char *,       // serverName
                               int,                // ircdtype
                               const char *,       // nick

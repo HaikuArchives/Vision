@@ -45,7 +45,6 @@
 
 ChannelAgent::ChannelAgent (
   const char *id_,
-  int32 sid_,
   const char *serverName_,
   int ircdtype_,
   const char *nick,
@@ -54,7 +53,6 @@ ChannelAgent::ChannelAgent (
 
   : ClientAgent (
     id_,
-    sid_,
     serverName_,
     nick,
     sMsgr_,
