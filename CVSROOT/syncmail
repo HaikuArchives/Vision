@@ -1,6 +1,8 @@
 #! /usr/bin/python
 #  -*- Python -*-
 
+# modified by Wade Majors to remove CVS diff
+
 """Complicated notification for CVS checkins.
 
 This script is used to provide email notifications of changes to the CVS
