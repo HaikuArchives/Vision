@@ -265,6 +265,9 @@ ServerAgent::ParseEvents (const char *data)
     BString nick (GetNick (data)),
             channel (GetWord (data, 3));
 
+    // some servers seem to add this, shouldn't be there though
+    channel.RemoveFirst(":");
+
     ClientAgent *client;
 
     if ((client = Client (channel.String())) != 0)
