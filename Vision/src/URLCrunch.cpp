@@ -45,7 +45,7 @@ URLCrunch::Crunch (BString *url)
 		"http://",
 		"https://",
 		"www.",
-		"ftp:://",
+		"ftp://",
 		"ftp."
 	};
 
