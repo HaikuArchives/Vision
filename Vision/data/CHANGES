@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.3-0812]
+[0.9.3-0815]
          * unbroke auto-rejoin on disconnect
          * fixed bug where channel name list would be incorrect
          * fixed typo in rejoin on kick string
