@@ -179,6 +179,5 @@ class ClientAgent : public BView
 
 const uint32 M_LOOKUP_WEBSTER           = 'calw';
 const uint32 M_LOOKUP_GOOGLE            = 'calg';
-const uint32 M_LOOKUP_TRANSLATE         = 'calt';
 
 #endif
