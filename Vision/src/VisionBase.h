@@ -173,6 +173,10 @@ const int32 ID_SERVER = -47;
 const int32 ID_NOTCHILD = -1;
 
 
+const uint32 SERVER_PRIMARY           =  0;
+const uint32 SERVER_SECONDARY         =  1;
+const uint32 SERVER_DISABLED          =  2;
+
 
 const int32 BIG_ENOUGH_FOR_A_REALLY_FAST_ETHERNET	= 1024 * 16;
 

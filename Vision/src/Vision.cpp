@@ -759,7 +759,17 @@ VisionApp::CheckNetworkValid (const char *name)
       || netData.FindBool ("useDefaults"))
     && netData.HasData ("server", B_ANY_TYPE)
     && netData.HasString ("name"))
-      return true;
+    {
+      const ServerData *data (NULL);
+      int32 size;
+      for (int32 i = 0; netData.FindData ("server", B_RAW_TYPE, i, 
+        reinterpret_cast<const void **>(&data), &size) == B_OK; i++)
+      {
+        // look for a primary server
+        if (data->state == SERVER_PRIMARY)
+          return true;
+      } 
+    }
   return false;
 }
 
