@@ -140,6 +140,25 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
+  if (firstWord == "/GAWAY")
+  {
+    BString theReason (RestOfString (data, 2)),
+            tempString;
+
+    if (theReason == "-9z99")
+      theReason = "BRB"; // Todo: make a default away msg option
+     
+    BString theCmd ("/AWAY ");
+    theCmd += theReason;
+
+    BMessage cmdMsg (M_SUBMIT);
+    cmdMsg.AddBool("clear", true);
+    cmdMsg.AddBool("history", true);
+    cmdMsg.AddString("input", theCmd.String());
+    vision_app->pClientWin()->ServerBroadcast(&cmdMsg);
+    return true;
+  }
+  
   if (firstWord == "/AWAY")
   {
     BString theReason (RestOfString (data, 2)),
@@ -165,6 +184,18 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
   
+  if (firstWord == "/GBACK")
+  {
+    BString theCmd ("/BACK");
+
+    BMessage cmdMsg (M_SUBMIT);
+    cmdMsg.AddBool("clear", true);
+    cmdMsg.AddBool("history", true);
+    cmdMsg.AddString("input", theCmd.String());
+    vision_app->pClientWin()->ServerBroadcast(&cmdMsg);
+    return true;
+  }
+
 
   if (firstWord == "/BACK")
   {

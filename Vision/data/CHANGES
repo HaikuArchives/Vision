@@ -17,6 +17,7 @@ http://vision.sourceforge.net
          * possibly fixed bug where settings would sometimes get lost on exit
          * switched site being used for /webster and /dictionary
          * added /vuptime and /vuptime -l  (Vision client uptime / -l == local only)
+         * added /gaway and /gback (global away/global back -- broadcasts away/back command to every server to which you're connected)
          * fixed hordes of memleaks (*HUGE* thanks to Alan Ellis for helping track these down)
 
 [0.9.2-0719]
