@@ -23,8 +23,12 @@
  *                 Jamie Wilkinson
  */
 
-#include "Vision.h"
+#include <interface/MenuItem.h>
+#include <interface/PopUpMenu.h>
+
 #include "StatusView.h"
+#include "URLCrunch.h"
+#include "Vision.h"
 
 StatusView::StatusView (BRect frame)
   : BView (
@@ -84,6 +88,25 @@ StatusView::AddItem (StatusItem *item, bool erase)
     item->value = "";
 
   items.AddItem (item);
+}
+
+void
+StatusView::MouseDown(BPoint point)
+{
+  StatusItem *item (NULL);
+  for (int32 i = 0; i < items.CountItems(); i++)
+  {
+    item = (StatusItem *)items.ItemAt(i);
+    if (item != NULL)
+    {
+       if (point.x >= item->frame.left && point.x < item->frame.right)
+       {
+         item->GeneratePopUp(ConvertToScreen(point), ConvertToScreen(item->frame));
+         break;
+       }
+    }
+  }
+  BView::MouseDown(point);
 }
 
 void
@@ -214,4 +237,36 @@ StatusItem::StatusItem (
 StatusItem::~StatusItem (void)
 {
 
+}
+
+void
+StatusItem::GeneratePopUp (BPoint point, BRect openrect)
+{
+  BString str (value);
+  str.Append(" ");
+  BString url;
+  URLCrunch crunch (str.String(), str.Length());
+  BPopUpMenu *menu = new BPopUpMenu("URLs");
+  BMessage msg (M_LOAD_URL);
+  BMessage *allocmsg (NULL);
+  BMenuItem *item (NULL);
+
+  while (crunch.Crunch(&url) != B_ERROR)
+  {
+    allocmsg = new BMessage (msg);
+    allocmsg->AddString("url", url.String());
+    item = new BMenuItem(url.String(), allocmsg);
+    menu->AddItem(item);
+    allocmsg = NULL;
+  }
+  
+  if (menu->CountItems() > 0)
+  {
+    menu->SetTargetForItems(be_app);
+    menu->Go(point, true, true, openrect, true);
+  }
+  else
+  {
+    delete menu;
+  }
 }
