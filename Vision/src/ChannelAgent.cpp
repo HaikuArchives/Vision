@@ -423,18 +423,17 @@ ChannelAgent::MessageReceived (BMessage *msg)
       {
         const char *oldNick, *newNick;
         NameItem *item;
-        int32 thePos;
+        int32 thePos (-1);
 
         msg->FindString ("oldnick", &oldNick);
         msg->FindString ("newnick", &newNick);
 
-        if ((thePos = FindPosition (oldNick)) < 0
-        ||  (item = (static_cast<NameItem *>(namesList->ItemAt (thePos)))) == 0)
-          return;
-
-        item->SetName (newNick);
-        namesList->SortItems (SortNames);
-
+        if ((thePos = FindPosition (oldNick)) >= 0
+        &&  (item = (static_cast<NameItem *>(namesList->ItemAt (thePos)))) != 0)
+        {
+          item->SetName (newNick);
+          namesList->SortItems (SortNames);
+        }
         if (myNick.ICompare (oldNick) == 0 && !IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
 
