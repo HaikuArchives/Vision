@@ -36,6 +36,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <map.h>
 #include <netdb.h>
 #include <ctype.h>
@@ -420,6 +421,19 @@ ClientAgent::ParseCmd (const char *data)
       }
       else
         Display ("[x] /dns: Error: Invalid parameters\n", &errorColor);
+    }
+    return true;
+  }
+  
+  if (firstWord == "/EXEC" || firstWord == "/RUN")
+  {
+    {
+      BString theCmd (RestOfString (data, 2));
+
+      if (theCmd != "-9z99")
+        system (theCmd.String());
+      else
+        Display ("[x] /exec: Error: Invalid parameters\n", &errorColor);
     }
     return true;
   }
