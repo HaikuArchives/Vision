@@ -170,7 +170,93 @@ ClientWindow::MessageReceived (BMessage *msg)
 
     case M_MOVE_UP_SHIFT:
       {
-        printf ("m_move_up_shift\n");
+        int32 currentsel (winList->CurrentSelection());
+        if (currentsel < 0)
+          break;
+          
+        WindowListItem *aitem;
+        bool foundone (false);
+        int iloop;
+        
+        // try to find a WIN_NICK_BIT item first
+        for (iloop = currentsel; iloop > -1; --iloop)
+        {
+          aitem = (WindowListItem *)winList->ItemAt (iloop);
+          if ((aitem->Status() == WIN_NICK_BIT))
+          {
+            winList->Select (winList->IndexOf (aitem));
+            foundone = true;
+            break; 
+          }
+        }
+        
+        if (foundone)
+          break;        
+        
+        // try to find a WIN_NEWS_BIT item
+        for (iloop = currentsel; iloop > -1; --iloop)
+        {
+          aitem = (WindowListItem *)winList->ItemAt (iloop);
+          if ((aitem->Status() == WIN_NEWS_BIT))
+          {
+            winList->Select (winList->IndexOf (aitem));
+            foundone = true;
+            break; 
+          }
+        }
+        
+        if (foundone)
+          break;
+          
+        // just select the previous item then.
+        winList->Select (currentsel - 1);
+        winList->ScrollToSelection();        
+      }
+      break;
+
+    case M_MOVE_DOWN_SHIFT:
+      {
+        int32 currentsel (winList->CurrentSelection());
+        if (currentsel < 0)
+          break;
+          
+        WindowListItem *aitem;
+        bool foundone (false);
+        int iloop;
+        
+        // try to find a WIN_NICK_BIT item first
+        for (iloop = currentsel; iloop < winList->CountItems(); ++iloop)
+        {
+          aitem = (WindowListItem *)winList->ItemAt (iloop);
+          if ((aitem->Status() == WIN_NICK_BIT))
+          {
+            winList->Select (winList->IndexOf (aitem));
+            foundone = true;
+            break; 
+          }
+        }
+        
+        if (foundone)
+          break;        
+        
+        // try to find a WIN_NEWS_BIT item
+        for (iloop = currentsel; iloop < winList->CountItems(); ++iloop)
+        {
+          aitem = (WindowListItem *)winList->ItemAt (iloop);
+          if ((aitem->Status() == WIN_NEWS_BIT))
+          {
+            winList->Select (winList->IndexOf (aitem));
+            foundone = true;
+            break; 
+          }
+        }
+        
+        if (foundone)
+          break;
+          
+        // just select the previous item then.
+        winList->Select (currentsel + 1);
+        winList->ScrollToSelection();        
       }
       break;
     
@@ -425,6 +511,10 @@ ClientWindow::Init (void)
   AddShortcut ('.', B_COMMAND_KEY, new BMessage (M_MOVE_DOWN));
   
   AddShortcut (B_UP_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_UP_SHIFT));
+  AddShortcut (B_DOWN_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_DOWN_SHIFT));
+
+  AddShortcut (B_LEFT_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_UP_SHIFT));
+  AddShortcut (B_RIGHT_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_DOWN_SHIFT));
    
   shutdown_in_progress = false;
   wait_for_quits = false;

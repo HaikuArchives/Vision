@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.2.0420
+VERSION := 0.2.0421
 BUILDDATE := $(shell date +%b_%d_%Y)
 
 # system libs
@@ -39,7 +39,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 # compiler, linker, ...
 
 #CC := g++ -c -pipe
-CC := g++ -c -pipe
+CC := g++ -c -pipe -g3
 CFLAGS :=
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 CFLAGS += -DBEOS_BUILD

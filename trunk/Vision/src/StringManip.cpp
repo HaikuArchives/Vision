@@ -210,18 +210,18 @@ TimeStamp()
    *
    */
    
-  if(!vision_app->GetBool("timestamp"))
+  if(!vision_app->GetBool ("timestamp"))
     return "";
+    
+  const char *ts_format (vision_app->GetString ("timestamp_format"));
 
   time_t myTime (time (0));
   tm curTime = *localtime (&myTime);
 	
   char tempTime[32];
-  sprintf (tempTime, "[%02d:%02d] ", curTime.tm_hour, curTime.tm_min);
+  sprintf (tempTime, ts_format, curTime.tm_hour, curTime.tm_min);
 	
-  return BString (tempTime);
-	
-  return NULL;
+  return BString (tempTime).Append('\x20', 1);
 }
 
 
