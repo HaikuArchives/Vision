@@ -763,7 +763,7 @@ VisionApp::GetThreadName (int thread_type)
     /* 44 */ "please_fondle_my_buttocks"
   };
   
-  int rnd (rand() % 45);
+  int rnd (rand() % 44);
  
   static BString output;
   
