@@ -161,7 +161,6 @@ IRCView::BuildPopUp (void)
 
   BMenuItem *item;
   BMessage *lookup;
-  BMenu *translate;
   
   ChannelAgent *channel;
   if ((channel = dynamic_cast<ChannelAgent *>(settings->parentAgent)))

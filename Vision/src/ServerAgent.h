@@ -49,12 +49,11 @@ class ServerAgent : public ClientAgent
 
 	virtual void				MessageReceived (BMessage *);
 	virtual void				AttachedToWindow (void);
-    static int32				Establish (void *);
-    void							PostActive (BMessage *);
+    void						PostActive (BMessage *);
 
 
-	void							Broadcast (BMessage *);
-	void							RepliedBroadcast (BMessage *);
+	void						Broadcast (BMessage *);
+	void						RepliedBroadcast (BMessage *);
 
     
   private:
@@ -133,6 +132,8 @@ class ServerAgent : public ClientAgent
 								localIP;
 	uint32						localuIP;
 	int32 s; 				// socket
+    
+    static int32				Establish (void *);
 
 };
 

@@ -41,12 +41,12 @@ class AboutWindow : public BWindow
     virtual bool          QuitRequested (void);
     virtual void          DispatchMessage (BMessage *, BHandler *);
     void                  Pulse (void);
-    void                  AboutImage (const char *, bool);
 
   private:
     BView                 *background;
     bool                  EasterEggOn;
     BView                 *graphic;
+    void                  AboutImage (const char *, bool);
 };
 
 

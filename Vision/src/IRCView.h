@@ -58,8 +58,6 @@ class IRCView : public BTextView
                               const char *,
                               const rgb_color *,
                               const BFont *);
-    int32                   URLLength (const char *);
-    int32                   FirstMarker (const char *);
 
     void                    ClearView (bool);
     void                    SetColor (int32, rgb_color);
@@ -69,6 +67,8 @@ class IRCView : public BTextView
     IRCViewSettings         *settings;
     BPopUpMenu              *myPopUp;
     void                    BuildPopUp();
+    int32                   URLLength (const char *);
+    int32                   FirstMarker (const char *);
 
 };
 
