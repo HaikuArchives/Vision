@@ -42,14 +42,15 @@
 void
 ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
 {
-	BString theText(theNick);
-	theText << " wants to begin a DCC chat with you.";
-	BAlert *myAlert = new BAlert("DCC Request", theText.String(), "Accept",
-		"Refuse");
-	BMessage *myMessage = new BMessage(M_CHAT_ACCEPT);
-	myMessage->AddString("nick", theNick.String());
-	myMessage->AddString("ip", theIP.String());
-	myMessage->AddString("port", thePort.String());
-	BInvoker *myInvoker = new BInvoker(myMessage, this);
-	myAlert->Go(myInvoker);
+  BString theText(theNick);
+  theText << " wants to begin a DCC chat with you.";
+  BAlert *myAlert = new BAlert("DCC Request", theText.String(), "Accept",
+    "Refuse");
+  myAlert->SetFeel (B_FLOATING_APP_WINDOW_FEEL);
+  BMessage *myMessage = new BMessage(M_CHAT_ACCEPT);
+  myMessage->AddString("nick", theNick.String());
+  myMessage->AddString("ip", theIP.String());
+  myMessage->AddString("port", thePort.String());
+  BInvoker *myInvoker = new BInvoker(myMessage, this);
+  myAlert->Go(myInvoker);
 }
