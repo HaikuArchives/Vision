@@ -52,7 +52,8 @@ AboutWindow::AboutWindow (void)
                      "background",
                      B_FOLLOW_ALL_SIDES,
                      B_WILL_DRAW);
-  background->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+  rgb_color myBlack = {0, 0, 0, 255};
+  background->SetViewColor (myBlack);
   AddChild (background);
 
 
@@ -90,32 +91,28 @@ AboutWindow::AboutWindow (void)
                   B_FOLLOW_LEFT | B_FOLLOW_TOP,
                   B_WILL_DRAW); 
 
-  credits->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+  credits->SetViewColor (myBlack);
   credits->MakeSelectable (false);
   credits->MakeEditable (false);
   credits->SetStylable (true);
   credits->SetAlignment (B_ALIGN_CENTER);
   background->AddChild (credits);
 
-  const char *creditstext =
-    "\n\n\n\n\n\n\n\n\n"
-
-    "Unit A\n"
-    "[Vision]\n\n"
+  const char *unita =
     "Rene Gollent (AnEvilYak)\n"
     "Wade Majors (kurros)\n\n\n\n"
-
-    "Unit B\n"
-    "[Bowser]\n\n"
+  ;
+  
+  const char *unitb =
     "Andrew Bazan (Hiisi)\n"
     "Rene Gollent (AnEvilYak)\n"
     "Todd Lair (tlair)\n"
     "Brian Luft (Electroly)\n"
     "Wade Majors (kurros)\n"
     "Jamie Wilkinson (project)\n\n\n\n"
-    
-    "Unit C\n"
-    "[Support Teams]\n"
+  ;
+  
+  const char *unitc =
     "Assistant to Wade Majors: Patches\n"
     "Music Supervisor: Baron Arnold\n"
     "Assistant to Baron Arnold: Ficus Kirkpatrick\n"
@@ -124,9 +121,9 @@ AboutWindow::AboutWindow (void)
     "Counselors: regurg and helix\n\n\n"
     "No animals were injured during the production of this IRC client\n\n\n"
     "Soundtrack available on Catastrophe Records\n\n\n"
-
-    "Thanks\n\n"
-    "Special thanks go out to:\n"
+  ;
+  
+  const char *thanks =
     "Olathe\n"
     "Terminus\n"
     "Bob Maple\n"
@@ -139,8 +136,10 @@ AboutWindow::AboutWindow (void)
     "Jean-Baptiste Quéru\n"
     "Be, Inc., Menlo Park, CA\n"
     "Pizza Hut, Winter Haven, FL (now give me that free pizza Mike)\n\n\n"
-    "http://vision.sourceforge.net\n\n\n\n\n\n"
-    
+    "^^^ Click The Logo ^^^\nhttp://vision.sourceforge.net\n^^^ Click The Logo ^^^\n\n\n\n\n\n"
+  ;
+  
+  const char *quote =
     "\"A human being should be able to change "
     "a diaper, plan an invasion, butcher a "
     "hog, conn a ship, design a building, "
@@ -151,27 +150,56 @@ AboutWindow::AboutWindow (void)
     "problem, pitch manure, program a com"
     "puter, cook a tasty meal, fight effi"
     "ciently, die gallantly. Specialization "
-    "is for insects.\" -- Robert A. Heinlein\n\n\n\n\n\n\n\n"
-    "So, like, two guys walk into a bar.\n\n\n\n\nAnd they fell down.\n\n\n\n\nHAW!"
-    "\n\n\n";
+    "is for insects.\" -- Robert A. Heinlein"
+  ;
 
-  rgb_color black = {0, 0, 0, 255};
+  rgb_color myBlue   = {56, 172, 236, 255};
+  rgb_color myWhite  = {255, 255, 255, 255};
+  rgb_color myHeader = {119, 119, 255, 255};
+  rgb_color myQuote  = {153, 204, 153, 255};
   BFont font (*be_plain_font);
   text_run_array run;
 
-  font.SetSize (font.Size() * 2.0);
+  font.SetSize (24);
+  font.SetFace (B_BOLD_FACE);
   
   run.count          = 1;
   run.runs[0].offset = 0;
   run.runs[0].font   = font;
-  run.runs[0].color  = black;
+  run.runs[0].color  = myBlue;
 
-  credits->Insert ("\n\n\n\n\n\n\n\n\nVision ", &run);
+  credits->Insert ("\n\n\n\n\n\n\n\nVision ", &run);
   credits->Insert (vision_app->VisionVersion().String(), &run);
-  credits->Insert ("\n", &run);
-  run.runs[0].font = *be_plain_font;
-  credits->Insert (creditstext, &run);
+  credits->Insert ("\n\n\n", &run);
   
+  font = *be_plain_font;
+  font.SetSize (11);
+  
+  run.runs[0].font = font;
+  run.runs[0].color = myWhite;
+  
+  text_run_array runhead;
+  runhead = run;
+  
+  font = *be_plain_font;
+  font.SetSize (16);
+  font.SetFace (B_BOLD_FACE);  
+  runhead.runs[0].color = myHeader;
+  runhead.runs[0].font  = font;
+  
+  credits->Insert ("A Vision Team Production\n\n© 1998, 1999, 2000, 2001\n\n\n\n\n\n", &run);
+  
+  credits->Insert ("Unit A\n[Vision]\n", &runhead);      
+  credits->Insert (unita, &run);
+  credits->Insert ("\n\n\n\nUnit B\n[Bowser]\n", &runhead);      
+  credits->Insert (unitb, &run);
+  credits->Insert ("\n\n\n\nUnit C\n[Support Crew]\n", &runhead);      
+  credits->Insert (unitc, &run);  
+  credits->Insert ("\n\n\n\nSpecial Thanks\n\n", &runhead);      
+  credits->Insert (thanks, &run);
+  
+  run.runs[0].color = myQuote;
+  credits->Insert (quote, &run);
   
   // Center that bad boy
   BRect frame (BScreen().Frame());
