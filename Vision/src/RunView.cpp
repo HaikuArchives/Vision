@@ -658,6 +658,8 @@ RunView::MouseDown (BPoint point)
 
 	SelectPos s (PositionAt (point));
 	
+	clicks %= 3;
+	
 	if (buttons == B_SECONDARY_MOUSE_BUTTON
 	&&		(modifiers & B_SHIFT_KEY) == 0
 	&&		(modifiers & B_COMMAND_KEY) == 0
@@ -708,7 +710,7 @@ RunView::MouseDown (BPoint point)
 				Select (start, end);
 			}
 		}
-		else if ((clicks % 3) == 0)
+		else if (clicks == 0)
 		{
 			start.offset = 0;
 			end.offset = lines[s.line]->length;
