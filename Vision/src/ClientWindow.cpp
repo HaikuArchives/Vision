@@ -417,27 +417,14 @@ ClientWindow::MessageReceived (BMessage *msg)
       if (item != NULL)
       {
         if (item->pAgent() == msgSource)
-        {
           pNotifyList()->UpdateList (nickList);
-        }
-        else if (dynamic_cast<ServerAgent *>(item->pAgent()))
+        else
         {
-          // it's a server agent and it doesn't match, start blinking
-          pWindowList()->BlinkNotifyChange(hasChanged, (ServerAgent *)msgSource);
+          item = (WindowListItem *)(pWindowList()->Superitem(item));
+          if ((item != NULL) && (item->pAgent() == msgSource))
+            pNotifyList()->UpdateList (nickList);
         }
-        else if ((item = (WindowListItem *)(pWindowList()->Superitem(item))) != NULL)
-        {
-          // if it failed the last two checks it can't be a server agent, get super item
-          // compare there
-          if (item->pAgent() == msgSource)
-          {
-            pNotifyList()->UpdateList(nickList);
-          }
-          else
-          {
-            pWindowList()->BlinkNotifyChange(hasChanged, (ServerAgent *)msgSource);
-          }
-        }
+        pWindowList()->BlinkNotifyChange(hasChanged, (ServerAgent *)msgSource);
       }
 
     }
