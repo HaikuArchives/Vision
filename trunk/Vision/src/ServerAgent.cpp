@@ -318,19 +318,12 @@ ServerAgent::Sender (void *arg)
   return B_OK;
 }
 
-bool
-ServerAgent::ServerThreadValid (thread_id tid)
-{
-  return (tid == fLoginThread);
-}
-
 int32
 ServerAgent::Establish (void *arg)
 {
   BMessenger *sMsgrE (reinterpret_cast<BMessenger *>(arg));
   AutoDestructor<BMessenger> msgrKiller(sMsgrE);
   BMessage getMsg;
-  thread_id currentThread (find_thread(NULL));
 #ifdef NETSERVER_BUILD
   BLocker *endpointLock (NULL);
   AutoDestructor<BLocker> lockKiller (NULL);
@@ -506,7 +499,7 @@ ServerAgent::Establish (void *arg)
       endpointMsg.AddInt32 ("socket", serverSock);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
-        
+
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
@@ -561,16 +554,8 @@ ServerAgent::Establish (void *arg)
   FD_SET (serverSock, &rset);
   FD_SET (serverSock, &wset);
   
-  BMessage threadCheck (M_SERVER_THREAD_VALID),
-           reply;
-  threadCheck.AddInt32 ("thread", currentThread);
   while (sMsgrE->IsValid())
   {
-    sMsgrE->SendMessage (&threadCheck, &reply);
-    
-    if (!reply.FindBool("valid"))
-      break;
-    
     char indata[1024];
     int32 length (0);
     
@@ -1157,14 +1142,6 @@ ServerAgent::MessageReceived (BMessage *msg)
       }
       break;
     
-    case M_SERVER_THREAD_VALID:
-      {
-        BMessage reply (B_REPLY);
-        reply.AddBool ("valid", ServerThreadValid(msg->FindInt32("thread")));
-        msg->SendReply(&reply);
-      }
-      break;
-      
     case M_SEND_RAW:
       {
         const char *buffer;
