@@ -815,6 +815,10 @@ RunView::MessageReceived (BMessage *msg)
 			break;
 		}
 		
+		case B_SELECT_ALL:
+			SelectAll();
+			break;
+			
 		case B_COPY:
 			if (sp_start != sp_end
 			&&  be_clipboard->Lock())
@@ -1374,7 +1378,7 @@ RunView::GetSelectionText (BString &string) const
 		return;
 	}
 	
-	for (int32 i = sp_start.line; i < sp_end.line; i++)
+	for (int32 i = sp_start.line; i <= sp_end.line; i++)
 	{
 		const char *line (LineAt (i));
 		if (i == sp_start.line)
@@ -1410,7 +1414,7 @@ RunView::SelectAll (void)
 	if (line_count)
 	{
 		sp_start = SelectPos (0, 0);
-		sp_end = SelectPos (line_count - 1, lines[line_count-1]->length-1);
+		sp_end = SelectPos (line_count-1, lines[line_count-1]->length-1);
 	}
 }
 
