@@ -6,6 +6,8 @@ http://vision.sourceforge.net
    * added ListAgent
    * fixed /op,/deop,NamesView popup to work correctly for > 4 nicks
    * bugfixes/optimizations to identd
+   
+   * Status bar for ListAgent working
 
 [0.2.0523]
  2001-05-23
