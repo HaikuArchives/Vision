@@ -1,8 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
+[0.5-1103]
+         * added option to disable the spam flood dialog (thanks to Alan Ellis)
+         * minor bugfix here and there
+
 [0.5-1030]
-         * rewriting general preferences
+         * rewritten general preferences
             -- prefs window is now resizable
             -- Appearance prefs replaced by Color prefs (*HUGE* thanks to Be, Inc. for
                  contributing the ColorSelector control!)
