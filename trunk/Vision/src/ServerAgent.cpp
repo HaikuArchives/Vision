@@ -423,7 +423,7 @@ ServerAgent::Establish (void *arg)
 
       if (PrivateIPCheck (ip.String()))
       {
-        ClientAgent::PackDisplay (&statMsg, "\n", C_ERROR);
+        ClientAgent::PackDisplay (&statMsg, S_SERVER_PROXY_MSG "\n", C_ERROR);
         sMsgrE->SendMessage (&statMsg);  
       }
       
