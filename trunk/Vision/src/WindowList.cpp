@@ -316,7 +316,7 @@ void
 WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winType, bool activate)
 {
   int32 itemindex;
-  int32 currentindex (CurrentSelection());
+  WindowListItem *currentitem ((WindowListItem *)ItemAt (CurrentSelection()));
   
   WindowListItem *newagentitem (new WindowListItem (name, serverId, winType, WIN_NORMAL_BIT, agent));
   AddItem (newagentitem);
@@ -358,7 +358,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     else
       Activate (itemindex);
   else
-    Select (currentindex);
+    Select (IndexOf (currentitem));
 
 }
 

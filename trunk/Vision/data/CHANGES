@@ -1,11 +1,18 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0326]
+ 2001-03-26
+   * Enable window position saving again
+   * Rename WELCOME2/3/4/5 numerics to their proper names
+   * Fix a WindowList selection bug which happens when a new agent is added and
+     isn't made active immediately
+
 [0.1.0325]
  2001-03-25
    * Fix server notice support
    * WindowListItem for the ServerAgent is updated with the proper servername
-   * StatusView's are updated witht he proper servername
+   * StatusView's are updated with the proper servername
    * Now intelligently selects the previously active agent when closing the
      active agent
    * Fixed a crash on quit that resulted from adding the Alt+Arrow shortcuts
