@@ -77,7 +77,7 @@ class ServerAgent : public ClientAgent
 	void						ParseCTCPResponse (BString theNick, BString theMsg);
 
     void                        HandleReconnect (void);
-	void                        PrivateIPCheck (void);
+	static bool                 PrivateIPCheck (const char *);
 	
  	ClientAgent					*Client (const char *);
 	ClientAgent					*ActiveClient (void);
@@ -85,7 +85,7 @@ class ServerAgent : public ClientAgent
 	void						DisplayAll (const char *, const rgb_color * = 0, const BFont * = 0);
 	BString						FilterCrap (const char *);
 	
-	BLocker						endPointLock;
+	BLocker						*endPointLock;
 
 	static int32				ServerSeed;
 
@@ -103,7 +103,12 @@ class ServerAgent : public ClientAgent
 
 	int32							nickAttempt;		// going through list
 	
+	
+	// these are used to make Vision more dynamic to various
+	// ircd and server configurations	
 	int                         ircdtype;
+	
+	
 	
 	BString						myNick;
 	BString						quitMsg;
@@ -114,7 +119,10 @@ class ServerAgent : public ClientAgent
 									reconnecting,		// we're reconnecting
 									hasWarned,			// warn about quitting
 									isQuitting,			// look out, going down
-									checkingLag;		// waiting for a lag_check reply
+									checkingLag,		// waiting for a lag_check reply
+									establishHasLock;  // establish has taken ownership of
+									                   // the endPointLock pointer
+									                   
 	int32						retry,				// what retry # we're on
 								retryLimit,			// connect retry limit	
 								lagCheck,			// system_time()
@@ -131,7 +139,6 @@ class ServerAgent : public ClientAgent
 	size_t						parse_size;			// size of buffer
 
 	thread_id					loginThread;		// thread that receives
-	thread_id					identThread;
 
 	BList							clients;			// agents this server "owns"
 
@@ -161,10 +168,18 @@ class ServerAgent : public ClientAgent
 
 };
 
-const uint32 M_GET_ESTABLISH_DATA			= 'saed'; // used by Establish()
-const uint32 M_SERVER_DISCONNECT			= 'sasd'; // we got disconnected
-const uint32 M_PARSE_LINE					= 'sapl'; // new data from server
+const uint32 M_GET_ESTABLISH_DATA           = 'saed'; // used by Establish()
+const uint32 M_SET_ENDPOINT                 = 'sase'; // used by Establish()
+const uint32 M_GET_RECONNECT_STATUS         = 'sars'; // used by Establish()
+const uint32 M_NOT_CONNECTING               = 'sanc'; // used by Establish()
+const uint32 M_SERVER_PING                  = 'sasp'; // used by Establish()
+const uint32 M_INC_RECONNECT                = 'sair'; // used by Establish()
+const uint32 M_INIT_LAG                     = 'sail'; // used by Establish()
+const uint32 M_DISPLAY_ALL                  = 'sada'; // display to all clients
+const uint32 M_SET_IP                       = 'sasi'; // used by Establish()
+const uint32 M_SERVER_DISCONNECT            = 'sasd'; // we got disconnected
+const uint32 M_PARSE_LINE                   = 'sapl'; // new data from server
 const uint32 M_LAG_CHECK                    = 'salc'; // send lag check to server
-const uint32 M_REJOIN_ALL					= 'sara';
+const uint32 M_REJOIN_ALL                   = 'sara';
 
 #endif

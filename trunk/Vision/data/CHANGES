@@ -1,14 +1,20 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0430]
+ 2001-04-30
+   * Establish() rewrite
+   * Misc ParseENums/ParseEvent updates
+   * Made WinList/VTextControl context menu's async
+   * Agent name is shown in ClientWindow's titlebar
+
 [0.2.0424]
  2001-04-24
    * The Establish thread handles abruptly closed ServerAgents better
    * Some ClientInputFilter fixes
    * Properly support &channels and !channels in ParseEvents
    * Other ParseEvents code cleanups
-   * Invite support
-   
+   * Invite support   
 
 [0.2.0421]
  2001-04-23

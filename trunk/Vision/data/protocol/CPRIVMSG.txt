@@ -1,0 +1,16 @@
+Private messages within the channel context
+
+In order to escape the target flood limit, it will be allowed to send an
+arbitrary number of private messages to users who are on the same channel. In
+order to disallow spam, this privilege is only granted to channel ops. Because
+it would use too much cpu for the server to check for each private message if two
+people are on the same channel, you will have to give the channel context yourself
+and as such use a new command: CPRIVMSG (or CNOTICE). The syntax of the
+client-server protocol is as follows:
+
+CPRIVMSG <nick> <channel> :<text>
+
+Where <channel> is only used to check if <nick> and the user sending this
+message are both on that channel. The idea is that this will benefit channels
+where the channel ops are using private message heavily, as is the case on help
+channels and certain game channels.

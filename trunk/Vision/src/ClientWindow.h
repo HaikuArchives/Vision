@@ -99,9 +99,6 @@ class ClientWindow : public BWindow
     
     BRect                 *agentrect;
     
-    //WindowList            *winList;
-    //WindowListItem        *winListI;
-    //BScrollView           *winListScroll;
     StatusView            *status;
     
     AgentDock             *aDock;

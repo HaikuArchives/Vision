@@ -534,7 +534,10 @@ ClientAgent::ParseCmd (const char *data)
 
       if (channel != "-9z99")
       {
-        if (channel[0] != '#' && channel[0] != '!' && channel[0] != '&')
+        if (channel[0] != '#'
+        &&  channel[0] != '!'
+        &&  channel[0] != '&'
+        &&  channel[0] != '+')
           channel.Prepend ("#");
 
         AddSend (&sendMsg, "JOIN ");
@@ -626,7 +629,7 @@ ClientAgent::ParseCmd (const char *data)
 
       if (id == serverName)
         AddSend (&sendMsg, myNick);
-      else if (id[0] == '#' || id[0] == '&' || id[0] == '!')
+      else if (id[0] == '#' || id[0] == '!' || id[0] == '&' || id[0] == '+')
         AddSend (&sendMsg, id);
       else
         AddSend (&sendMsg, myNick);

@@ -132,7 +132,7 @@ class ClientAgent : public BView
     virtual void                    Submit (const char *, bool = true, bool = true);
 
     static int32                    TimedSubmit (void *);
-    void                            PackDisplay (BMessage *,
+    static void                     PackDisplay (BMessage *,
                                       const char *,
                                       const rgb_color * = 0,
                                       const BFont * = 0,
@@ -198,12 +198,11 @@ const int IRCD_STANDARD               =  1;
 const int IRCD_HYBRID                 =  2;  // "hybrid"    
 const int IRCD_ULTIMATE               =  3;  // "UltimateIRCd"
 const int IRCD_COMSTUD                =  4;  // "comstud"
-const int IRCD_FUCKOFF                =  5;  // "Fuckoff"
-const int IRCD_UNDERNET               =  6;  // "u2."
-const int IRCD_BAHAMUT                =  7;  // "bahamut"
-const int IRCD_PTLINK                 =  8;  // "PTlink"
-const int IRCD_CONFERENCEROOM         =  9;  // "CR"
-const int IRCD_NEWNET                 = 10;  // "nn-"
+const int IRCD_UNDERNET               =  5;  // "u2."
+const int IRCD_BAHAMUT                =  6;  // "bahamut"
+const int IRCD_PTLINK                 =  7;  // "PTlink"
+const int IRCD_CONFERENCEROOM         =  8;  // "CR"
+const int IRCD_NEWNET                 =  9;  // "nn-"
 
 
 #endif

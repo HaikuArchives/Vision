@@ -29,16 +29,16 @@ const int ZERO                        = 0;
 
 // NUMERICS
 
-const int RPL_WELCOME                 = 001;
-const int RPL_YOURHOST                = 002;
-const int RPL_CREATED                 = 003;
-const int RPL_MYINFO                  = 004;
-const int RPL_PROTOCTL                = 005; // conflict (most)
-const int RPL_NNMAP                   = 005; // conflict (newnet)
-const int RPL_ULMAP                   = 006;
-const int RPL_ULMAPEND                = 007;
-const int RPL_U2MAP                   = 015;
-const int RPL_U2MAPEND                = 017;
+const int RPL_WELCOME                 =   1;
+const int RPL_YOURHOST                =   2;
+const int RPL_CREATED                 =   3;
+const int RPL_MYINFO                  =   4;
+const int RPL_PROTOCTL                =   5; // conflict (most)
+const int RPL_NNMAP                   =   5; // conflict (newnet)
+const int RPL_ULMAP                   =   6;
+const int RPL_ULMAPEND                =   7;
+const int RPL_U2MAP                   =  15;
+const int RPL_U2MAPEND                =  17;
 
 const int RPL_TRACELINK               = 200;
 const int RPL_TRACECONNECTING         = 201;
