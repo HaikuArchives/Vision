@@ -977,7 +977,9 @@ VisionApp::Identity (void *)
       } 
     }
   }
-  shutdown(identPoint->Socket(), SHUTDOWN_BOTH);
+#ifdef BONE_BUILD
+  shutdown(identPoint.Socket(), SHUTDOWN_BOTH);
+#endif
   identPoint.Close();
   return 0; 
 } 
