@@ -1,13 +1,14 @@
 Vision
 http://vision.sourceforge.net
 
-[0.5-exp]
+[0.5-1030]
          * rewriting general preferences
             -- prefs window is now resizable
             -- Appearance prefs replaced by Color prefs (*HUGE* thanks to Be, Inc. for
                  contributing the ColorSelector control!)
             -- updated Font prefs
             -- adjusted pageup/pagedown to scroll by a little bit less than a full page
+            -- prefs window saves its window size/position
 
 [0.4-1001]
 2001-10-01

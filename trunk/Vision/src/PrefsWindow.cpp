@@ -45,7 +45,14 @@ PrefsWindow::PrefsWindow(void)
 
   box->AddChild(generalView);
   generalView->MoveTo ((box->Bounds().Width() - generalView->Bounds().Width()) / 2,
-    (box->Bounds().Height() - generalView->Bounds().Height()) / 2);   
+    (box->Bounds().Height() - generalView->Bounds().Height()) / 2);
+
+  BRect prefsRect (vision_app->GetRect ("GenPrefWinRect"));
+  if (prefsRect.Width() != 0.0 && prefsRect.Height() != 0.0)
+  {
+    ResizeTo (prefsRect.Width(), prefsRect.Height());
+    MoveTo (prefsRect.left, prefsRect.top);
+  }
 }
 
 PrefsWindow::~PrefsWindow(void)
@@ -55,6 +62,7 @@ PrefsWindow::~PrefsWindow(void)
 bool
 PrefsWindow::QuitRequested(void)
 {
+  vision_app->SetRect ("GenPrefWinRect", Frame());
   be_app_messenger.SendMessage (M_SETUP_CLOSE);
   return true;  
 }
