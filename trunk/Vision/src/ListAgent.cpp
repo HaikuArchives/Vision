@@ -115,11 +115,11 @@ ListAgent::ListAgent (
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW));
 
-  bgView->SetViewColor (vision_app->GetColor(C_BACKGROUND));
+  bgView->SetViewColor (vision_app->GetColor (C_BACKGROUND));
   AddChild (bgView);
 
   frame = bgView->Bounds().InsetByCopy (1, 1);
-
+  
   listView = new BListView (
   BRect (
     frame.left,
@@ -132,7 +132,7 @@ ListAgent::ListAgent (
     B_WILL_DRAW | B_NAVIGABLE | B_FRAME_EVENTS | B_FULL_UPDATE_ON_RESIZE);
 
   listView->SetInvocationMessage (new BMessage (M_LIST_INVOKE));
-
+  listView->SetViewColor (vision_app->GetColor (C_BACKGROUND));
   scroller = new BScrollView (
     "scroller",
     listView,
