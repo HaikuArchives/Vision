@@ -54,7 +54,6 @@
 class failToLock { /* exception in Establish */ };
 
 int32 ServerAgent::ServerSeed = 0;
-BLocker ServerAgent::identLock;
 
 ServerAgent::ServerAgent (
   const char *id_,
@@ -208,8 +207,9 @@ ServerAgent::Establish (void *arg)
   BMessenger *sMsgrE (reinterpret_cast<BMessenger *>(arg));
   BNetEndpoint *endPoint (NULL);
   BMessage getMsg;
-  rgb_color errorcolor (vision_app->GetColor(C_ERROR));
+  rgb_color errorColor (vision_app->GetColor (C_ERROR));
   BLocker *endpointLock (NULL);
+  BString remoteIP;
   int32 serverSid;
   if (sMsgrE->IsValid())
     sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg);
@@ -238,6 +238,7 @@ ServerAgent::Establish (void *arg)
     getMsg.FindPointer ("lock", reinterpret_cast<void **>(&endpointLock));
     serverSid = getMsg.FindInt32 ("sid");
     bool useIdent (getMsg.FindBool ("identd"));
+      
     if (sMsgrE->SendMessage (M_GET_RECONNECT_STATUS, &reply) == B_OK)
     {
       int retrycount (reply.FindInt32 ("retries"));
@@ -252,14 +253,14 @@ ServerAgent::Establish (void *arg)
       statString += " of ";
       statString << reply.FindInt32 ("max_retries");
       statString += ")\n";
-      ClientAgent::PackDisplay (&statMsg, statString.String(), &errorcolor);
+      ClientAgent::PackDisplay (&statMsg, statString.String(), &errorColor);
       sMsgrE->SendMessage (&statMsg);
 //    server->DisplayAll (statString.String(), &errorColor, &(server->serverFont));
       
       BMessage data (M_DISPLAY_ALL);
       rgb_color *color;
       data.AddString ("data", statString.String());
-      data.AddPointer ("color", &errorcolor);
+      data.AddPointer ("color", &errorColor);
       sMsgrE->SendMessage (&data);
 
     }
@@ -271,23 +272,31 @@ ServerAgent::Establish (void *arg)
     statString += ":";
     statString << connectPort;
     statString += "...\n";
-    ClientAgent::PackDisplay (&statMsg, statString.String(), &errorcolor);
+    ClientAgent::PackDisplay (&statMsg, statString.String(), &errorColor);
     sMsgrE->SendMessage (&statMsg);
 
     BNetAddress address;
  
     if (address.SetTo (connectId.String(), atoi (connectPort.String())) != B_NO_ERROR)
     {
-      ClientAgent::PackDisplay (&statMsg, "[@] The address and port seem to be invalid. Make sure your Internet connection is operational.\n", &errorcolor);
+      ClientAgent::PackDisplay (&statMsg, "[@] The address and port seem to be invalid. Make sure your Internet connection is operational.\n", &errorColor);
       sMsgrE->SendMessage (&statMsg);
       sMsgrE->SendMessage (M_SERVER_DISCONNECT);
       throw failToLock();
     }
+    
+    struct sockaddr_in remoteAddr;
+    address.GetAddr (remoteAddr);
+    remoteIP = inet_ntoa (remoteAddr.sin_addr);
+
+    if (useIdent)
+      vision_app->AddIdent (remoteIP.String(), ident.String());      
+    
     endPoint = new BNetEndpoint;
 
     if (!endPoint || endPoint->InitCheck() != B_NO_ERROR)
     {
-      ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", &errorcolor);
+      ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", &errorColor);
       sMsgrE->SendMessage (&statMsg);
       sMsgrE->SendMessage (M_NOT_CONNECTING);
       throw failToLock();
@@ -296,11 +305,10 @@ ServerAgent::Establish (void *arg)
     // just see if he's still hanging around before
     // we got blocked for a minute
 
-    ClientAgent::PackDisplay (&statMsg, "[@] Connection open, waiting for reply from server\n", &errorcolor);
+    ClientAgent::PackDisplay (&statMsg, "[@] Connection open, waiting for reply from server\n", &errorColor);
     sMsgrE->SendMessage (&statMsg);
     sMsgrE->SendMessage (M_LAG_CHANGED);
     
-    identLock.Lock();
     if (endPoint->Connect (address) == B_NO_ERROR)
     {
       BString ip ("");  
@@ -310,7 +318,7 @@ ServerAgent::Establish (void *arg)
       // store local ip address for future use (dcc, etc)
       int addrlength (sizeof (struct sockaddr_in));
       if (getsockname (endPoint->Socket(),(struct sockaddr *)&sockin,&addrlength)) {
-        ClientAgent::PackDisplay (&statMsg, "[@] Error getting Local IP\n", &errorcolor);
+        ClientAgent::PackDisplay (&statMsg, "[@] Error getting Local IP\n", &errorColor);
         sMsgrE->SendMessage (&statMsg);
         BMessage setIP (M_SET_IP);
         setIP.AddString("ip", "127.0.0.1");
@@ -327,67 +335,17 @@ ServerAgent::Establish (void *arg)
         statString = "[@] Local IP: ";
         statString += ip.String();
         statString += "\n";
-        ClientAgent::PackDisplay (&statMsg, statString.String(), &errorcolor);
+        ClientAgent::PackDisplay (&statMsg, statString.String(), &errorColor);
         sMsgrE->SendMessage (&statMsg);
       }
 
       if (PrivateIPCheck (ip.String()))
       {
-        ClientAgent::PackDisplay (&statMsg, "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)\n", &errorcolor);
+        ClientAgent::PackDisplay (&statMsg, "[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)\n", &errorColor);
         sMsgrE->SendMessage (&statMsg);  
       }
-
-      // resume normal business matters.
-
-      ClientAgent::PackDisplay (&statMsg, "[@] Established\n", &errorcolor);
-      sMsgrE->SendMessage (&statMsg);
-
-      if (useIdent)
-      {
-        ClientAgent::PackDisplay (&statMsg, "[@] Spawning Ident daemon (10 sec timeout)\n", &errorcolor);
-        sMsgrE->SendMessage (&statMsg);
-        BNetEndpoint identPoint, *accepted;
-        BNetAddress identAddress (sockin.sin_addr, 113);
-        BNetBuffer buffer;
-        char received[64];
-
-        if (sMsgrE->IsValid()
-        &&  identPoint.InitCheck()             == B_OK
-        &&  identPoint.Bind (identAddress)     == B_OK
-        &&  identPoint.Listen()                == B_OK
-        && (accepted = identPoint.Accept (10000))    != 0   // 10 sec timeout
-        &&  accepted->Receive (buffer, 64)     >= 0
-        &&  buffer.RemoveString (received, 64) == B_OK)
-        {
-          int32 len;
-  
-          received[63] = 0;
-          while ((len = strlen (received))
-          &&     isspace (received[len - 1]))
-            received[len - 1] = 0;
-
-          BNetBuffer output;
-          BString string;
-
-          string.Append (received);
-          string.Append (" : USERID : BeOS : ");
-          string.Append (ident);
-          string.Append ("\r\n");
-
-          output.AppendString (string.String());
-          accepted->Send (output);
-          accepted->Close();
-          delete accepted;
-
-          ClientAgent::PackDisplay (&statMsg, "[@] Replied to Ident request\n", &errorcolor);
-          sMsgrE->SendMessage (&statMsg);
-        }
-
-        ClientAgent::PackDisplay (&statMsg, "[@] Deactivated daemon\n", &(errorcolor));
-        sMsgrE->SendMessage (&statMsg);
-      }
-
-      ClientAgent::PackDisplay (&statMsg, "[@] Handshaking\n", &(errorcolor));
+      
+            ClientAgent::PackDisplay (&statMsg, "[@] Handshaking\n", &(errorColor));
       sMsgrE->SendMessage (&statMsg);
 
       BString string;
@@ -401,33 +359,25 @@ ServerAgent::Establish (void *arg)
       BMessage endpointMsg (M_SET_ENDPOINT);
       endpointMsg.AddPointer ("endpoint", endPoint);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
-      {
-        identLock.Unlock();
         throw failToLock();
-      }
       BMessage dataSend (M_SERVER_SEND);
       dataSend.AddString ("data", string.String());
       if (sMsgrE->SendMessage (&dataSend) != B_OK)
-      {
-        identLock.Unlock();
         throw failToLock();
-      }       
       string = "NICK ";
       string.Append (connectNick);
       dataSend.ReplaceString ("data", string.String());
       if (sMsgrE->SendMessage (&dataSend) != B_OK)
-      {
-        identLock.Unlock();
         throw failToLock();
-      }       
 
-      identLock.Unlock();
+      // resume normal business matters.
+
+      ClientAgent::PackDisplay (&statMsg, "[@] Established\n", &errorColor);
+      sMsgrE->SendMessage (&statMsg);
     }
     else // No endpoint->connect
     {
-      identLock.Unlock();
-
-      ClientAgent::PackDisplay (&statMsg, "[@] Could not establish a connection to the server. Sorry.\n", &(errorcolor));
+      ClientAgent::PackDisplay (&statMsg, "[@] Could not establish a connection to the server. Sorry.\n", &(errorColor));
       sMsgrE->SendMessage (&statMsg);
       sMsgrE->SendMessage (M_SERVER_DISCONNECT);
       throw failToLock();
@@ -443,6 +393,7 @@ ServerAgent::Establish (void *arg)
     if (endpointLock)
       delete endpointLock;
     delete sMsgrE;
+    vision_app->RemoveIdent (remoteIP.String());
     return B_ERROR;
   }  
   // Don't need this anymore
@@ -538,6 +489,7 @@ ServerAgent::Establish (void *arg)
     snooze (20000);
   }
   endPoint->Close();
+  vision_app->RemoveIdent (remoteIP.String());
   delete endPoint;
   delete endpointLock;
   delete sMsgrE;
@@ -927,7 +879,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         establishHasLock = true;
       }
       break;
-      
+    
     case M_SET_ENDPOINT:
       msg->FindPointer("endpoint", reinterpret_cast<void **>(&lEndpoint));
       break;

@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0523]
+ 2001-05-23
+   * New identd
+
 [0.2.0511]
  2001-05-15
    * Log file lines are now always timestamped regardless if the user has
