@@ -558,8 +558,12 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
   	AddItem (newagentitem);
   else
   {
-    BLooper *looper;
-    ServerAgent *agentParent ((ServerAgent *)((ClientAgent *)agent)->sMsgr.Target(&looper));
+    BLooper *looper (NULL);
+    ServerAgent *agentParent (NULL);
+    if (dynamic_cast<ClientAgent *>(agent) != NULL)
+      agentParent = (ServerAgent *)((ClientAgent *)agent)->sMsgr.Target(&looper);
+    else
+      agentParent = (ServerAgent *)((ListAgent *)agent)->sMsgr->Target(&looper);
     AddUnder (newagentitem, agentParent->agentWinItem);
   }
   
