@@ -65,6 +65,7 @@ class NamesView : public BListView
                                     NamesView (BRect);
     virtual                         ~NamesView (void);
     virtual void                    AttachedToWindow (void);
+    virtual void                    DetachedFromWindow (void);
     virtual void                    MouseDown (BPoint);
     virtual void                    MouseMoved (BPoint, uint32, const BMessage *);
     virtual void                    MouseUp (BPoint);

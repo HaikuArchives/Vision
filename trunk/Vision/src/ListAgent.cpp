@@ -56,7 +56,7 @@
   <regurg> But your .
 */
 
-const int32 LIST_BATCH_SIZE = 30;
+const int32 LIST_BATCH_SIZE = 75;
 
 ListAgent::ListAgent (
   BRect frame,
@@ -222,29 +222,33 @@ ListAgent::MessageReceived (BMessage *msg)
     case M_THEME_FOREGROUND_CHANGE:
       {
         int32 which (msg->FindInt16 ("which"));
-        activeTheme->ReadLock();
         bool refresh (false);
         switch (which)
         {
           case C_BACKGROUND:
+            activeTheme->ReadLock();
             listView->SetColor (B_COLOR_BACKGROUND, activeTheme->ForegroundAt (C_BACKGROUND));
+            activeTheme->ReadUnlock();
             refresh = true;
             break;
             
           case C_TEXT:
+            activeTheme->ReadLock();
             listView->SetColor (B_COLOR_TEXT, activeTheme->ForegroundAt (C_TEXT));
+            activeTheme->ReadUnlock();
             refresh = true;
             break;
 
           case C_SELECTION:             
+            activeTheme->ReadLock();
             listView->SetColor (B_COLOR_SELECTION, activeTheme->ForegroundAt (C_SELECTION));
+            activeTheme->ReadUnlock();
             refresh = true;
             break;
             
           default:
             break;
         }
-        activeTheme->ReadUnlock();
         if (refresh)
           Invalidate();
       }
@@ -317,6 +321,9 @@ ListAgent::MessageReceived (BMessage *msg)
         mFilter->SetEnabled (true);
 
         processing = false;
+        
+        // empty out any remaining channels that fell below the batch cut off
+        AddBatch();
 
         BString cString;
         cString << listView->CountRows();

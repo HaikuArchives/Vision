@@ -1,9 +1,14 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8.2-0209]
+[0.8.2-0211]
          * fixed bug where parameters to /list would get ignored
          * added support for numerics 325, 609, 610, 611, 614
+         * improved channel list performance on large networks
+         * fixed crash bugs in column list view when moving columns (huge thanks to Alan Ellis!)
+         * find/find next correctly display channel in visible area
+         * fixed bug where column list view scroll bar would be sized incorrectly
+         * fixed a few thread-safety issues and deadlocks
 
 [0.8.1-0208]
          * fixed a few crash bugs in event parser

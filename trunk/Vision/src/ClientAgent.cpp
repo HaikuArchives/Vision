@@ -115,12 +115,18 @@ void
 ClientAgent::AttachedToWindow (void)
 {
   BView::AttachedToWindow();
+  fActiveTheme->WriteLock();
+  fActiveTheme->AddView (this);  
+  fActiveTheme->WriteUnlock();
 }
 
 void
 ClientAgent::DetachedFromWindow (void)
 {
   BView::DetachedFromWindow ();
+  fActiveTheme->WriteLock();
+  fActiveTheme->RemoveView (this);  
+  fActiveTheme->WriteUnlock();
 }
 
 void
@@ -193,9 +199,7 @@ ClientAgent::Init (void)
   AddChild (fInput);
   fInput->TextView()->AddFilter (new ClientAgentInputFilter (this));
   fInput->Invalidate();
-
-  fActiveTheme->AddView (this);  
-
+  
   fHistory = new HistoryList ();
   
   BRect textrect (
@@ -214,8 +218,6 @@ ClientAgent::Init (void)
   
   if (vision_app->GetBool ("timestamp"))
     fText->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
- 
-  fActiveTheme->AddView (fText);
   
   fTextScroll = new BScrollView (
     "textscroll",

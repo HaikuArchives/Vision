@@ -342,7 +342,9 @@ VisionApp::InitSettings (void)
   LoadDefaults (SET_DCC);
   
   // initialize theme, TODO: move to separate function
-
+  
+  fActiveTheme->WriteLock();
+  
   for (i = 0; i < MAX_COLORS; i++)
   {
     fActiveTheme->SetForeground (i, fColors[i]);
@@ -359,6 +361,8 @@ VisionApp::InitSettings (void)
 
   for (i = 0; i < MAX_FONTS; i++)
     fActiveTheme->SetFont (i, fClientFont[i]);
+
+  fActiveTheme->WriteUnlock();
 
   fSettingsLoaded = true;  
   if (fDebugSettings)
@@ -1025,7 +1029,7 @@ VisionApp::SetColor (int32 which, const rgb_color color)
     fColors[which] = color;
     fVisionSettings->ReplaceData ("color", B_RGB_COLOR_TYPE, which,
       reinterpret_cast<void * const *>(&color), sizeof(rgb_color));
-    
+    fActiveTheme->WriteLock();    
     if (which == C_BACKGROUND)
     {
       // update regular background color on all other text
@@ -1047,6 +1051,7 @@ VisionApp::SetColor (int32 which, const rgb_color color)
     }
     else
       fActiveTheme->SetForeground (which, color);
+    fActiveTheme->WriteUnlock();    
   }
 }
 
@@ -1067,10 +1072,12 @@ VisionApp::ClientFontFamilyAndStyle (
   if (which < MAX_FONTS && which >= 0)
   {
     fClientFont[which]->SetFamilyAndStyle (family, style);
+
+    fActiveTheme->WriteLock();
     fActiveTheme->SetFont (which, fClientFont[which]);
-    
     if (which == F_TEXT)
       fActiveTheme->SetFont (MAX_FONTS, fClientFont[which]);
+    fActiveTheme->WriteUnlock();
     
     SetString ("family", which, family);
     SetString ("style", which, style);
@@ -1090,7 +1097,9 @@ VisionApp::ClientFontSize (int32 which, float size)
   {
     fClientFont[which]->SetSize (size);
     
+    fActiveTheme->WriteLock();
     fActiveTheme->SetFont (which, fClientFont[which]);
+    fActiveTheme->WriteUnlock();
     
     if (fVisionSettings->ReplaceFloat ("size", which, size) != B_OK)
       printf("error, could not set font size\n");

@@ -144,6 +144,19 @@ void NamesView::AttachedToWindow (void)
 
   fMyPopUp->SetTargetForItems (this);
   fCTCPPopUp->SetTargetForItems (this);
+  
+  fActiveTheme->WriteLock();
+  fActiveTheme->AddView (this);
+  fActiveTheme->WriteUnlock();
+}
+
+void
+NamesView::DetachedFromWindow (void)
+{
+  BView::DetachedFromWindow();
+  fActiveTheme->WriteLock();
+  fActiveTheme->RemoveView (this);
+  fActiveTheme->WriteUnlock();
 }
 
 void
@@ -342,10 +355,10 @@ NamesView::MessageReceived (BMessage *msg)
     {
       int16 which (msg->FindInt16 ("which"));
       bool refresh (false);
-      fActiveTheme->ReadLock();
       switch (which)
       {
         case C_NAMES_BACKGROUND:
+          fActiveTheme->ReadLock();
           SetViewColor (fActiveTheme->ForegroundAt (C_NAMES_BACKGROUND));
           refresh = true;
           fActiveTheme->ReadUnlock();
@@ -356,7 +369,6 @@ NamesView::MessageReceived (BMessage *msg)
         case C_HELPER:
         case C_NAMES_SELECTION:
           refresh = true;
-          fActiveTheme->ReadUnlock();
           break;
           
         default:

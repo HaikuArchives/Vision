@@ -114,10 +114,6 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
 
   fWinList = new WindowList (frame);
 
-  Theme *activeTheme (vision_app->ActiveTheme());
-
-  activeTheme->AddView (fWinList);
-  
   fWinListScroll = new BScrollView (
     "fWinListScroll",
     fWinList,
