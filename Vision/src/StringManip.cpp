@@ -183,8 +183,9 @@ StringToURI (const char *string)
 {
   BString buffer (string);
   buffer.ToLower();
-  buffer.ReplaceAll (" ",  "+");
-  buffer.ReplaceAll ("%",  "%25");
+  buffer.ReplaceAll ("%",  "%25"); // do this first!
+  
+  buffer.ReplaceAll (" ",  "%20");
   buffer.ReplaceAll ("\"", "%22");
   buffer.ReplaceAll ("#",  "%23");  
   buffer.ReplaceAll ("@",  "%40");
