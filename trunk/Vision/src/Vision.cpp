@@ -93,6 +93,7 @@ VisionApp::VisionApp (void)
   const rgb_color INPUT_BG_COLOR      = {255, 255, 255, 255};
   const rgb_color WINLIST_BG_COLOR    = {238, 242, 242, 255};
   const rgb_color WINLIST_SEL_COLOR   = ui_color (B_PANEL_BACKGROUND_COLOR);
+  const rgb_color WALLOPS_COLOR       = {10,30,170, 255};
 	
 
 	colors[C_TEXT]                      = myBlack;
@@ -123,6 +124,7 @@ VisionApp::VisionApp (void)
 	colors[C_WINLIST_NEWS]              = JOIN_COLOR;
 	colors[C_WINLIST_NICK]              = QUIT_COLOR;
 	colors[C_WINLIST_SELECTION]         = WINLIST_SEL_COLOR;
+	colors[C_WALLOPS]                   = WALLOPS_COLOR;
 	
 	client_font[F_TEXT]    = new BFont (be_fixed_font);
 	client_font[F_SERVER]  = new BFont (be_fixed_font);

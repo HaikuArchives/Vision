@@ -84,11 +84,11 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       return true;    
     }
   
+  
     case RPL_WELCOME:          // 001
     case RPL_WELCOME2:         // 002
     case RPL_WELCOME3:         // 003
     case RPL_WELCOME4:         // 004
-    case RPL_WELCOME5:         // 005
     {
       isConnected  = true;
       isConnecting = false;
@@ -142,6 +142,33 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       
       return true;
     }
+    
+        
+    case RPL_WELCOME5:         // 005
+    {
+      // this numeric also serves as RPL_NNMAP on Newnet
+
+      BString theMsg (RestOfString (data, 4));
+      theMsg.RemoveFirst (":");
+      theMsg.Append ("\n");      
+      
+      switch (ircdtype)
+      {
+        case IRCD_NEWNET:
+        {
+          Display (theMsg.String(), 0);          
+          return true;
+        }
+        
+        default:
+        {
+          theMsg.Prepend ("* ");
+          Display (theMsg.String(), 0);
+          return true;
+        }
+      }                 
+    }
+    
 	   
     case RPL_LUSERHIGHESTCONN: // 250
     case RPL_LUSERCLIENT:      // 251
@@ -160,7 +187,12 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       return true;
 	}
   
+  
     /// strip and send to server agent  ///
+    case RPL_ULMAP:             // 006
+    case RPL_ULMAPEND:          // 007
+    case RPL_U2MAP:             // 015
+    case RPL_U2MAPEND:          // 017
     case RPL_TRACELINK:         // 200
     case RPL_TRACECONNECTING:   // 201
     case RPL_TRACEHANDSHAKE:    // 202
@@ -179,6 +211,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_STATSQLINE:        // 217
     case RPL_STATSYLINE:        // 218
     case RPL_ENDOFSTATS:        // 219
+    case RPL_DALSTATSE:         // 223
+    case RPL_DALSTATSF:         // 224
+    case RPL_DALSTATSN:         // 226
     case RPL_STATSLLINE:        // 241
     case RPL_STATSUPTIME:       // 242
     case RPL_STATSOLINE:        // 243
@@ -207,6 +242,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case ERR_SUMMONDISABLED:    // 445
     case ERR_USERSDISABLED:     // 446
     case ERR_NEEDMOREPARMS:     // 461
+    case ERR_PASSWDMISMATCH:    // 464
     case ERR_YOUREBANNEDCREEP:  // 465
     case ERR_NOPRIVILEGES:      // 481
     case ERR_NOOPERHOST:        // 491
@@ -331,6 +367,31 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     }
     
     case RPL_WHOISIDENTIFIED:   // 307
+    {
+      BString theInfo (RestOfString (data, 5));
+      theInfo.RemoveFirst (":");
+      
+      if (theInfo == "-9z99")
+      {
+        // USERIP reply? (RPL_U2USERIP)
+        BString tempString (RestOfString (data, 4));
+        tempString.RemoveFirst (":");
+        tempString.Append ("\n");
+        Display (tempString.String(), 0);     
+        return true;        
+      }
+      
+      BMessage display (M_DISPLAY);
+      BString buffer;
+		
+      buffer += "[x] ";
+      buffer += theInfo;
+      buffer += "\n";
+      PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
+      PostActive (&display);      
+      return true;    
+    }
+    
     case RPL_WHOISOPERATOR:     // 313
     {
       BString theInfo (RestOfString (data, 5));

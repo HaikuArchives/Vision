@@ -158,10 +158,9 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 
 	msg->FindInt8 ("byte", &keyStroke);
 	msg->FindInt32 ("modifiers", &keymodifiers);
-
+	
 	// Must check modifiers -- things like control-tab must work!
-	if ((keymodifiers & B_SHIFT_KEY)   == 0
-	&&  (keymodifiers & B_OPTION_KEY)  == 0
+	if ((keymodifiers & B_OPTION_KEY)  == 0
 	&&  (keymodifiers & B_COMMAND_KEY) == 0
 	&&  (keymodifiers & B_CONTROL_KEY) == 0)
 		switch(keyStroke)
