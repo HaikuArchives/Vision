@@ -2,18 +2,16 @@
 #ifndef DCCFILEWINDOW_H_
 #define DCCFILEWINDOW_H_
 
-#include "ObserverWindow.h"
+#include <Window.h>
 
 class DCCConnect;
 class WindowSettings;
 
-class DCCFileWindow : public ObserverWindow
+class DCCFileWindow : public BWindow
 {
-	WindowSettings				*settings;
-
 	public:
 
-									DCCFileWindow (DCCConnect *, bool);
+								DCCFileWindow (DCCConnect *);
 	virtual						~DCCFileWindow (void);
 
 	virtual bool				QuitRequested (void);
