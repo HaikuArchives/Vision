@@ -167,7 +167,7 @@ ClientAgent::Show (void)
   {
     const BRect namesListRect (vision_app->GetRect ("namesListRect"));
     int32 difference ((int32)(((BView *)agent->namesList)->Bounds().Width() - namesListRect.Width()));
-    if (difference != 0)
+    if (difference != 0.0)
     {
       agent->resize->MoveBy (difference, 0.0);
       textScroll->ResizeBy (difference, 0.0);
@@ -927,7 +927,6 @@ ClientAgent::MessageReceived (BMessage *msg)
           currentAgent->namesScroll->MoveBy (offset, 0.0);
           BRect namesRect (0, 0, currentAgent->namesScroll->Bounds().Width(), 0);
           vision_app->SetRect ("namesListRect", namesRect);
-
         } 
       }
       break;
