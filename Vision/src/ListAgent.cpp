@@ -191,7 +191,7 @@ ListAgent::MessageReceived (BMessage *msg)
   {
     case M_THEME_FONT_CHANGE:
       {
-        int32 which (msg->FindInt32 ("which"));
+        int32 which (msg->FindInt16 ("which"));
         if (which == F_LISTAGENT)
         {
           activeTheme->ReadLock();
@@ -204,7 +204,7 @@ ListAgent::MessageReceived (BMessage *msg)
       
     case M_THEME_FOREGROUND_CHANGE:
       {
-        int32 which (msg->FindInt32 ("which"));
+        int32 which (msg->FindInt16 ("which"));
         activeTheme->ReadLock();
         bool refresh (false);
         switch (which)
@@ -442,6 +442,7 @@ ListAgent::MessageReceived (BMessage *msg)
 				{
 					listView->DeselectAll();
 					listView->AddToSelection (listView->RowAt (i));
+					listView->Refresh();
 				}
 				else
 				{
