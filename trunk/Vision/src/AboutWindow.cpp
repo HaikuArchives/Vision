@@ -26,7 +26,7 @@
 #  include "gnome/Bitmap.h"
 #  include "gnome/Screen.h"
 #  include "gnome/TextView.h"
-#  include "TranslationUtils.h"
+#  include "gnome/TranslationUtils.h"
 #elif BEOS_BUILD
 #  include <Bitmap.h>
 #  include <Screen.h>
@@ -47,6 +47,10 @@ AboutWindow::AboutWindow (void)
       B_TITLED_WINDOW,
       B_WILL_DRAW | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
+  /*
+   * Function purpose: Construct
+   */
+
   BRect bounds (Bounds());
   BBitmap *bmp;
 
@@ -187,9 +191,9 @@ AboutWindow::AboutWindow (void)
   run.runs[0].font   = font;
   run.runs[0].color  = myBlue;
 
-  credits->Insert ("\n\n\n\n\n\n\nVision-", &run);
-  credits->Insert (vision_app->VisionVersion().String(), &run);
-  credits->Insert ("\n\n\n", &run);
+  credits->Insert ("\n\n\n\n\n\n\nVision\n", &run);
+  credits->Insert (vision_app->VisionVersion (VERSION_VERSION).String(), &run);
+  credits->Insert ("\n\n\n\n", &run);
   
   font = *be_plain_font;
   font.SetSize (11);
@@ -248,7 +252,12 @@ AboutWindow::~AboutWindow (void)
 bool
 AboutWindow::QuitRequested (void)
 {
-  be_app_messenger.SendMessage (M_ABOUT_CLOSE);
+  /*
+   * Function purpose: Tell vision_app about our death
+   */
+   
+  vision_app->PostMessage (M_ABOUT_CLOSE);
+  
   return true;
 }
 
@@ -256,9 +265,14 @@ AboutWindow::QuitRequested (void)
 void
 AboutWindow::DispatchMessage (BMessage *msg, BHandler *handler)
 {
+  /*
+   * Function purpose: Call Pulse() on B_PULSE messages
+   */
+   
   if (msg->what == B_PULSE)
     Pulse();
 
+  // pass the message on to the parent class' DispatchMessage()
   BWindow::DispatchMessage (msg, handler);
 }
 
@@ -266,6 +280,11 @@ AboutWindow::DispatchMessage (BMessage *msg, BHandler *handler)
 void
 AboutWindow::Pulse (void)
 {
+  /*
+   * Function purpose: Scroll the credits BTextView by 1 unit;
+   *                   If we are at the bottom, scroll to the top
+   */
+   
   BPoint point (credits->PointAt (credits->TextLength() - 1));
   credits->ScrollBy (0, 1);
 
@@ -277,6 +296,10 @@ AboutWindow::Pulse (void)
 void
 AboutWindow::AboutImage (const char *eggName, bool egg)
 {
+  /*
+   * Function purpose: Read image resource bits::{eggName} and display
+   */
+   
   BBitmap *bmp;
 
   if ((bmp = BTranslationUtils::GetBitmap ('bits', eggName)) != 0)

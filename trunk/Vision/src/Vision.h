@@ -56,7 +56,7 @@ class VisionApp : public BApplication
     
     void                    LoadURL (const char *);
 
-    BString                 VisionVersion (void);
+    BString                 VisionVersion (int);
     
     void                    LoadDefaults (int32);
 
@@ -117,5 +117,8 @@ const int SET_SERVER    = 1;
 const int SET_GENERAL   = 2;
 const int SET_WINDOW    = 3;
 const int SET_NOTIFY    = 4;
+
+const int VERSION_VERSION = 1;
+const int VERSION_DATE   = 2;
 
 #endif

@@ -26,7 +26,7 @@
 #define _ABOUTWINDOW_H_
 
 #ifdef GNOME_BUILD
-#  include "Window.h"
+#  include "gnome/Window.h"
 #elif BEOS_BUILD
 #  include <Window.h>
 #endif

@@ -125,7 +125,9 @@ ServerAgent::Init (void)
   wallColor    = vision_app->GetColor (C_WALLOPS);
 
   Display ("Vision ", 0);
-  Display (vision_app->VisionVersion().String(), &myNickColor);
+  Display (vision_app->VisionVersion(VERSION_VERSION).String(), &myNickColor);
+  Display (" built on ", 0);
+  Display (vision_app->VisionVersion(VERSION_DATE).String(), 0);
   Display ("\nThis agent goes by the name of Smith... err ", 0);
   BString temp;
   temp << id << " (sid: " << sid << ")";
@@ -881,7 +883,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				if (quitMsg.Length() == 0)
 				{
 					const char *expansions[1];
-					BString version (vision_app->VisionVersion());
+					BString version (vision_app->VisionVersion(VERSION_VERSION));
 					expansions[0] = version.String();
 					quitMsg << "QUIT :" << ExpandKeyed (vision_app->GetCommand (CMD_QUIT).String(), "V", expansions);
 				}

@@ -17,7 +17,8 @@
 # the file name, ...
 
 BINARY := Vision
-VERSION := 0.1.0402
+VERSION := 0.1.0409
+BUILDDATE := $(shell date +%b_%d_%Y)
 
 # system libs
 LIBS := -lbe -lnet -lnetapi -ltextencoding -ltranslation -ltracker
@@ -43,6 +44,7 @@ CC := g++ -c -pipe
 CFLAGS :=
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 CFLAGS += -DBEOS_BUILD
+CFLAGS += -DBUILD_DATE=\"$(BUILDDATE)\"
 CFLAGS += -O3
 CFLAGS += -fno-pic
 CFLAGS += -ffast-math

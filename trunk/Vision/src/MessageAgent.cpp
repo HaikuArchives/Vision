@@ -228,12 +228,14 @@ MessageAgent::Parser (const char *buffer)
     return;
 
   BFont msgFont (vision_app->GetClientFont (F_TEXT));
-  Display ("<", &textColor, &msgFont, vision_app->GetBool ("timestamp"));
-  Display (myNick.String(), &myNickColor);
-  Display ("> ", 0);
+  Display ("<", &myNickColor, &msgFont, vision_app->GetBool ("timestamp"));
+  Display (myNick.String(), &nickdisplayColor);
+  Display ("> ", &myNickColor);
 	
   BString sBuffer (buffer);
-
+  Display (sBuffer.String(), 0);
+  
+  #if 0
   int32 place;
   while ((place = FirstSingleKnownAs (sBuffer, chatee)) != B_ERROR)
   {
@@ -252,6 +254,7 @@ MessageAgent::Parser (const char *buffer)
 
   if (sBuffer.Length())
     Display (sBuffer.String(), 0);
+  #endif
 
   Display ("\n", 0);
 }

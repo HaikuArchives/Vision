@@ -107,7 +107,6 @@ ChannelOptions::Init (void)
                                               B_WILL_DRAW);
   privMsgView->SetHighColor (255,255,255);
   privMsgView->SetAlignment (B_ALIGN_CENTER);
-  //privMsgView->ResizeToPreferred();
   privilegesView->ResizeToPreferred();
   privilegesView->AddChild (privMsgView);
   

@@ -25,9 +25,9 @@
  */
 
 #ifdef GNOME_BUILD
-#  include "PopUpMenu.h"
-#  include "MenuItem.h"
-#  include "Window.h"
+#  include "gnome/PopUpMenu.h"
+#  include "gnome/MenuItem.h"
+#  include "gnome/Window.h"
 #elif BEOS_BUILD 
 #  include <PopUpMenu.h>
 #  include <MenuItem.h>
