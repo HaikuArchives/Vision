@@ -152,8 +152,8 @@ WindowList::MouseDown (BPoint myPoint)
       myPopUp->Go (
         ConvertToScreen (myPoint),
         true,
-        false,
-        ConvertToScreen (ItemFrame (selected)));
+        false);
+        //ConvertToScreen (ItemFrame (selected)));
     }
     handled = true;
   }

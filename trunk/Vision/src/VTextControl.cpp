@@ -27,6 +27,7 @@
 
 #include <PopUpMenu.h>
 #include <MenuItem.h>
+#include <View.h>
 
 #include <Window.h>
 
@@ -71,36 +72,7 @@ VTextControl::AllAttached (void)
   myPopUp->SetFont (be_plain_font);
   myPopUp->SetTargetForItems (TextView());
 
-}
-
-void
-VTextControl::MouseDown (BPoint myPoint)
-{
-  printf ("click\n");
-  bool handled (false);
-
-  BMessage *inputMsg (Window()->CurrentMessage());
-  int32 mousebuttons (0),
-        keymodifiers (0);
-
-  inputMsg->FindInt32 ("buttons", &mousebuttons);
-  inputMsg->FindInt32 ("modifiers", &keymodifiers);  
-
-  if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
-  && (keymodifiers & B_SHIFT_KEY)   == 0
-  && (keymodifiers & B_OPTION_KEY)  == 0
-  && (keymodifiers & B_COMMAND_KEY) == 0
-  && (keymodifiers & B_CONTROL_KEY) == 0)
-  {
-    myPopUp->Go (
-      ConvertToScreen (myPoint),
-      true,
-      false);
-    handled = true;
-  }
-  
-  if (!handled)
-    BTextControl::MouseDown (myPoint); 
+  TextView()->AddFilter (new VTextControlFilter (this));
 
 }
 
@@ -109,3 +81,59 @@ VTextControl::~VTextControl (void)
   delete myPopUp;
 }
 
+///////////////////////////
+// Filter //
+
+VTextControlFilter::VTextControlFilter (VTextControl *parentcontrol)
+ : BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE),
+
+  parent (parentcontrol)
+{
+  //
+}
+
+filter_result
+VTextControlFilter::Filter (BMessage *msg, BHandler **handler)
+{
+  filter_result result (B_DISPATCH_MESSAGE);
+  switch (msg->what)
+  {
+    case B_MOUSE_DOWN:
+    {
+      BPoint myPoint;
+      uint32 mousebuttons;
+      int32  keymodifiers (0);
+      parent->Parent()->GetMouse (&myPoint, &mousebuttons);
+      
+      bool handled (false);
+
+      msg->FindInt32 ("modifiers", &keymodifiers);  
+
+      if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
+      && (keymodifiers & B_SHIFT_KEY)   == 0
+      && (keymodifiers & B_OPTION_KEY)  == 0
+      && (keymodifiers & B_COMMAND_KEY) == 0
+      && (keymodifiers & B_CONTROL_KEY) == 0)
+      {
+        parent->myPopUp->Go (
+          parent->Parent()->ConvertToScreen (myPoint),
+          true,
+          false);
+        handled = true;
+      }
+      
+      if (handled)
+        result = B_SKIP_MESSAGE;
+      
+      break;   
+    }
+  }
+
+  return result;
+
+}
+
+VTextControlFilter::~VTextControlFilter (void)
+{
+ //
+}
