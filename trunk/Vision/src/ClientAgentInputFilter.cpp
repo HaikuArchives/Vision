@@ -36,6 +36,7 @@
 #include "ClientAgent.h"
 #include "ClientAgentInputFilter.h"
 #include "VTextControl.h"
+#include "Vision.h"
 
 ClientAgentInputFilter::ClientAgentInputFilter (ClientAgent *agent)
   : BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE),
@@ -72,7 +73,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
       
     case B_KEY_DOWN:
       {
-        result = HandleKeys (msg);
+       	result = HandleKeys (msg);
       }
       break;
 
@@ -236,6 +237,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
       break;
         
     case B_ESCAPE:
+	  window->fCancelMLPaste = true;
       result = B_SKIP_MESSAGE;
       break;
   }
@@ -435,9 +437,9 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
   msg.AddInt32 ("selstart", start);
   msg.AddInt32 ("selend", finish);
 
-  int32 result (0);
+  int32 result = 1;
 
-  if (lines > 1)
+  if (lines > 1 && (true == vision_app->GetBool("Newbie Spam Mode")) )
   {
     BString str;
 
@@ -463,14 +465,13 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
     invokeMsg->AddPointer ("invoker", invoker);
     result = alert->Go (invoker);
   }
-
-  if ((result > 0) || lines == 1)
+  else
   {
     msg.AddBool ("lines", result == 1);
+    msg.AddInt32 ("which", result);
     msgr.SendMessage (&msg);
     window->input->MakeFocus(false);
     window->input->MakeFocus(true);
   }
-
 }
 

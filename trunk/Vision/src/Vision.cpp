@@ -397,7 +397,10 @@ VisionApp::LoadDefaults (int32 section)
           visionSettings->AddBool ("log_filetimestamp", false);
         
         if (!visionSettings->HasBool ("stripcolors"))
-          visionSettings->AddBool ("stripcolors", true);  
+          visionSettings->AddBool ("stripcolors", true);
+          
+        if (!visionSettings->HasBool ("Newbie Spam Mode"))
+          visionSettings->AddBool("Newbie Spam Mode", true);  
       }
       break;
     
