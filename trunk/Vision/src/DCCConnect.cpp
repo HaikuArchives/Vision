@@ -377,9 +377,9 @@ DCCReceive::Transfer (void *arg)
     }
   }
 	
-  int32 bytes_received (file_size);
-  int32 size (atol (reply.FindString("size")));
-  int32 cps (0);
+  uint32 bytes_received (file_size);
+  uint32 size (atol (reply.FindString("size")));
+  uint32 cps (0);
 
   if (file.InitCheck() == B_NO_ERROR)
   {
@@ -658,7 +658,7 @@ DCCSend::Transfer (void *arg)
         UpdateStatus (msgr, S_DCC_WRITE_ERROR);
         break;
       }
-
+      
       uint32 confirm (0),
              newSize (bytes_sent + count);
       fd_set rset, eset;
@@ -670,7 +670,10 @@ DCCSend::Transfer (void *arg)
 
       while ((confirm < newSize)
           && (recv(dccSock, &confirm, sizeof (confirm), 0) > 0))
+      {
+        confirm = ntohl(confirm);
         bytes_sent = confirm;
+      }
       
       BMessage msg (M_DCC_UPDATE_TRANSFERRED);
       msg.AddInt32 ("transferred", bytes_sent);
