@@ -313,8 +313,8 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg
        
      
    }
-   if (transitcode == B_EXITED_VIEW)
-     _tracking = false;
+//   if (transitcode == B_EXITED_VIEW)
+//     _tracking = false;
  }
  else
    BListView::MouseMoved (myPoint, transitcode, mmMsg);
