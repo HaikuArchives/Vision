@@ -7,7 +7,7 @@
 
 system ("echo running commitinfo.pl");
 
-$last_dir_file = "/tmp/#visioncvs.files.lastdir";
+$last_dir_file = "/tmp/#cvs.files.lastdir";
 
 $my_pgrp_id = getpgrp();
 
