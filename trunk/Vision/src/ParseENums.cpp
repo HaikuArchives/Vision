@@ -24,7 +24,9 @@
  *                 Bjorn Oksholen
  */
 
+#include <Entry.h>
 #include <Menu.h>
+#include <Roster.h>
 
 #include "ClientWindow.h"
 #include "NotifyList.h"
@@ -47,6 +49,9 @@
 #  include <arpa/inet.h>
 #endif
 
+#ifdef USE_INFOPOPPER
+#include <libim/InfoPopper.h>
+#endif
 
 bool
 ServerAgent::ParseENums (const char *data, const char *sWord)
@@ -443,13 +448,36 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
         {
           NotifyListItem *item (((NotifyListItem *)fNotifyNicks.ItemAt(i)));
-          if (nicks.IFindFirst(item->Text()) >= 0)
+
+          int32 nickidx (nicks.IFindFirst(item->Text()));
+
+          // make sure that the nick isn't a partial match.
+          if ((nickidx >= 0) &&
+          	((nicks[nickidx + strlen(item->Text())] == ' ') || (nicks[nickidx + strlen(item->Text())] == '\0')))
           {
             if (item->GetState() != true)
             {
               item->SetState (true);
               hasChanged = 1;
-//              printf("TODO: print message that user has come online\n");
+#ifdef USE_INFOPOPPER
+              if (be_roster->IsRunning(InfoPopperAppSig) == true) {
+				entry_ref ref = vision_app->AppRef();
+                BMessage infoMsg(InfoPopper::AddMessage);
+                infoMsg.AddString("appTitle", S_INFOPOPPER_TITLE);
+                infoMsg.AddString("title", fId.String());
+                infoMsg.AddInt8("type", (int8)InfoPopper::Information);
+                
+                infoMsg.AddInt32("iconType", InfoPopper::Attribute);
+                infoMsg.AddRef("iconRef", &ref);              
+                
+                BString content;
+                content << item->Text() << " is online";
+                infoMsg.AddString("content", content);
+                
+                BMessenger(InfoPopperAppSig).SendMessage(infoMsg);
+              };
+#endif
+
             }
           }
           else
@@ -458,7 +486,25 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             {
               item->SetState (false);
               hasChanged = 2;
-//              printf("TODO: print message that user has gone offline\n");
+#ifdef USE_INFOPOPPER
+              if (be_roster->IsRunning(InfoPopperAppSig) == true) {
+				entry_ref ref = vision_app->AppRef();
+                BMessage infoMsg(InfoPopper::AddMessage);
+                infoMsg.AddString("appTitle", S_INFOPOPPER_TITLE);
+                infoMsg.AddString("title", fId.String());
+                infoMsg.AddInt8("type", (int8)InfoPopper::Information);
+                
+                infoMsg.AddInt32("iconType", InfoPopper::Attribute);
+                infoMsg.AddRef("iconRef", &ref);              
+                
+                BString content;
+                content << item->Text() << " is offline";
+                infoMsg.AddString("content", content);
+                
+                BMessenger(InfoPopperAppSig).SendMessage(infoMsg);
+              };
+#endif
+
             }
           }
         }

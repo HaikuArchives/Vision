@@ -1,7 +1,9 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.7-041704]
+[0.9.7-SF-010705]
+        * added InfoPopper support
+        * fixed duplicate notify bug
 	 * added JIS encoding support
 	 * modified tab completion to append a ":" if the nick is at the beginning of a line 
 	 * refined URL crunching logic (Alan Ellis)

@@ -28,6 +28,7 @@
 #include <FilePanel.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
+#include <Roster.h>
 #include <ScrollView.h>
 
 #include <stdio.h>
@@ -43,6 +44,9 @@
 #include "ChannelOptions.h"
 #include "ResizeView.h"
 
+#ifdef USE_INFOPOPPER
+#include <libim/InfoPopper.h>
+#endif
 
 ChannelAgent::ChannelAgent (
   const char *id_,
@@ -884,7 +888,37 @@ ChannelAgent::MessageReceived (BMessage *msg)
           FirstKnownAs (tempString, knownAs, &hasNick);
         
         if (IsHidden())
+        {
           UpdateStatus((hasNick) ? WIN_NICK_BIT : WIN_NEWS_BIT);
+#ifdef USE_INFOPOPPER
+          if (hasNick)
+          {
+            if (tempString[0] == '\1')
+            {
+              tempString.RemoveFirst("\1ACTION ");
+              tempString.RemoveLast ("\1");
+            }
+
+            if (be_roster->IsRunning(InfoPopperAppSig) == true) {
+              entry_ref ref = vision_app->AppRef();
+              BMessage infoMsg(InfoPopper::AddMessage);
+              infoMsg.AddString("appTitle", S_INFOPOPPER_TITLE);
+              infoMsg.AddString("title", fServerName.String());
+              infoMsg.AddInt8("type", (int8)InfoPopper::Important);
+           
+              infoMsg.AddInt32("iconType", InfoPopper::Attribute);
+              infoMsg.AddRef("iconRef", &ref);              
+          
+              BString content;
+              content << fId << " - " << theNick << " said: " << tempString;
+              infoMsg.AddString("content", content);
+          
+              BMessenger(InfoPopperAppSig).SendMessage(infoMsg);
+            };
+          }
+#endif
+
+        }
         else if (hasNick)
           system_beep(kSoundEventNames[(uint32)seNickMentioned]);
 

@@ -27,6 +27,7 @@
 #include <Entry.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
+#include <Roster.h>
 #include <UTF8.h>
  
 #include "MessageAgent.h"
@@ -46,6 +47,10 @@
 #elif NETSERVER_BUILD
 #include <socket.h>
 #include <netdb.h>
+#endif
+
+#ifdef USE_INFOPOPPER
+#include <libim/InfoPopper.h>
 #endif
 
 MessageAgent::MessageAgent (
@@ -547,11 +552,41 @@ MessageAgent::MessageReceived (BMessage *msg)
           msg->AddString ("nick", outNick.String());
         }
 
+        BWindow *window (Window());
+
         if (IsHidden())
           UpdateStatus (WIN_NICK_BIT);
         
-        BWindow *window (NULL);
-        if ((window = Window()) != NULL && !window->IsActive())
+        if (IsHidden() || (window && !window->IsActive()))
+        {
+#ifdef USE_INFOPOPPER
+              if (be_roster->IsRunning(InfoPopperAppSig) == true) {
+				entry_ref ref = vision_app->AppRef();
+                BMessage infoMsg(InfoPopper::AddMessage);
+                infoMsg.AddString("appTitle", S_INFOPOPPER_TITLE);
+                infoMsg.AddString("title", fServerName.String());
+                infoMsg.AddInt8("type", (int8)InfoPopper::Important);
+                
+                infoMsg.AddInt32("iconType", InfoPopper::Attribute);
+                infoMsg.AddRef("iconRef", &ref);              
+
+				BString tempString(msg->FindString("msgz"));
+                if (tempString[0] == '\1')
+                {
+                  tempString.RemoveFirst("\1ACTION ");
+                  tempString.RemoveLast ("\1");
+                }
+                
+                BString content;
+                content << nick << " said: " << tempString.String();
+                infoMsg.AddString("content", content);
+                
+                BMessenger(InfoPopperAppSig).SendMessage(infoMsg);
+              };
+#endif
+        }
+
+        if (window != NULL && !window->IsActive())
           system_beep(kSoundEventNames[(uint32)seNickMentioned]);
 
         // Send the rest of processing up the chain
