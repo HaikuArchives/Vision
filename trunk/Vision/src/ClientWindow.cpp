@@ -233,7 +233,7 @@ ClientWindow::Init (void)
   mServer->AddItem (item = new BMenuItem ("Setup" B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
-  mServer->AddItem (item = new BMenuItem ("ptions" B_UTF8_ELLIPSIS,
+  mServer->AddItem (item = new BMenuItem ("Options" B_UTF8_ELLIPSIS,
                     new BMessage (B_ABOUT_REQUESTED), 'O'));
   item->SetTarget (vision_app);
   mServer->AddSeparatorItem();
