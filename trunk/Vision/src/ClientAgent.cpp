@@ -692,7 +692,7 @@ ClientAgent::MessageReceived (BMessage *msg)
               hasNick = true;
           }
 
-          Display (tempString.String(), 0);
+          Display (tempString.String(), hasNick ? &myNickColor : 0);
         }
 
         if (IsHidden())
