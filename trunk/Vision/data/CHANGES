@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.3.07026]
+2001-07-26
+        * fixed crash bug in message agent
+
 [0.3.07025]
 2001-07-25
         * minor bugfixes
