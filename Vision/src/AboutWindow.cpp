@@ -69,7 +69,7 @@ AboutWindow::AboutWindow (void)
                     "image",
                     B_FOLLOW_LEFT | B_FOLLOW_TOP,
                     B_WILL_DRAW,
-                    "http://bowser.sourceforge.net");
+                    "http://vision.sourceforge.net");
     background->AddChild (graphic);
 
     graphic->SetViewBitmap (bmp);
