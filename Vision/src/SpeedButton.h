@@ -50,7 +50,7 @@ class TSpeedButton : public BControl
 	    TSpeedButton(BRect Frame, const char *Name, const char* Label,
 	                 BMessage *Message, BBitmap *EnabledBitmap,
 	                 TSBStyle Style = sbFlat,
-	                 BBitmap *DisabledBitmap = 0,
+	                 BBitmap *DisabledBitmap = NULL,
 	                 uint32 ResizingMask = B_FOLLOW_LEFT | B_FOLLOW_TOP,
 	                 uint32 Flags = B_WILL_DRAW);
 	
