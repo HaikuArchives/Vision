@@ -2,7 +2,7 @@ Vision
 http://vision.sourceforge.net
 
          
-[0.9-exp-0609]
+[0.9-exp-0619]
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
          * changed the PrefGeneral keyboard nav to be more standard. (Alan Ellis)
          * added file: and mailto: URL support (Alan Ellis)
@@ -11,12 +11,16 @@ http://vision.sourceforge.net
          * fixed bug where reordering by above shortcut would get undone
          * code cleanups
          * fixed crash bug when using /J in autoexec
+         * fixed crash bug when doing /query nick message
          * fixed incomplete DCC send bug
          * fixed URL parsing bug that would sometimes cause URLs to have trailing chars omitted
          * tweaked RunView to reduce memory usage
          * more code cleanups
-         * added GUI underpinnings for notify list (back end code to follow, GUI does not actually
-           do anything yet)
+         * added notify list 
+             - /notify nick1 nick2 etc. to add nicks to notify list for current network
+             - notify nicks are not currently saved to settings, they will be lost between sessions, will be fixed soon
+             - no way to remove notify nicks yet, also to be fixed soon
+             - lots of other misc GUI details still to be done
          * split off logging into its own section in prefs ; added features:
              - configurable log base path (no longer restricted to logs/ off the Vision dir)
              - configurable timestamp format (this applies to both the main textview and the logs themselves)

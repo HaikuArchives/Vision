@@ -751,9 +751,7 @@ ClientAgent::ParseCmd (const char *data)
       {
         BMessage msg (M_NOTIFYLIST_ADD);
         msg.AddString ("cmd", rest.String());
-        msg.AddBool ("add", true);
-        msg.AddString ("server", fServerName.String());
-        vision_app->PostMessage (&msg);
+        fSMsgr.SendMessage(&msg);
       }
     }
     return true;

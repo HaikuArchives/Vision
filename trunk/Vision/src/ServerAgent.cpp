@@ -54,6 +54,7 @@
 #include "DCCConnect.h"
 #include "ListAgent.h"
 #include "MessageAgent.h"
+#include "NotifyList.h"
 #include "ServerAgent.h"
 #include "StatusView.h"
 #include "Utilities.h"
@@ -131,6 +132,12 @@ ServerAgent::~ServerAgent (void)
 
   while (fPendingSends.CountItems() > 0)
     delete fPendingSends.RemoveItem (0L);
+  
+  while (fIgnoreNicks.CountItems() > 0)
+    delete fIgnoreNicks.RemoveItem(0L);
+
+  while (fNotifyNicks.CountItems() > 0)
+    delete fNotifyNicks.RemoveItem(0L);
 }
 
 void
@@ -1404,36 +1411,51 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_LAG_CHECK:
       {
-        if (fIsConnected && fNetworkData.FindBool ("lagCheck"))
+        if (fIsConnected)
         {
-          BMessage lagSend (M_SERVER_SEND);
-          AddSend (&lagSend, "VISION_LAG_CHECK");
-          AddSend (&lagSend, endl);
-          if (!fCheckingLag)
+          if (fNetworkData.FindBool ("lagCheck"))
           {
-            fLagCheck = system_time();
-            fLagCount = 1;
-            fCheckingLag = true;
-          }
-          else
-          {
-            if (fLagCount > 4)
+            BMessage lagSend (M_SERVER_SEND);
+            AddSend (&lagSend, "VISION_LAG_CHECK");
+            AddSend (&lagSend, endl);
+            if (!fCheckingLag)
             {
-              // we've waited 50 seconds
-              // connection problems?
-              fMyLag = S_SERVER_CONN_PROBLEM;
-              fMsgr.SendMessage (M_LAG_CHANGED);
+              fLagCheck = system_time();
+              fLagCount = 1;
+              fCheckingLag = true;
             }
             else
             {
-              // wait some more
-              char lag[15] = "";
-              sprintf (lag, "%ld0.000+", fLagCount);  // assuming a 10 second runner
-              fMyLag = lag;
-              ++fLagCount;
-              fMsgr.SendMessage (M_LAG_CHANGED);
+              if (fLagCount > 4)
+              {
+                // we've waited 50 seconds
+                // connection problems?
+                fMyLag = S_SERVER_CONN_PROBLEM;
+                fMsgr.SendMessage (M_LAG_CHANGED);
+              }
+              else
+              {
+                // wait some more
+                char lag[15] = "";
+                sprintf (lag, "%ld0.000+", fLagCount);  // assuming a 10 second runner
+                fMyLag = lag;
+                ++fLagCount;
+                fMsgr.SendMessage (M_LAG_CHANGED);
+              }
             }
           }
+        }
+        if (fNotifyNicks.CountItems() > 0)
+        {
+          BString cmd ("ISON ");
+          for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
+          {
+            cmd += " ";
+            cmd += ((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text();
+          }
+          BMessage dataSend (M_SERVER_SEND);
+          dataSend.AddString ("data", cmd.String());
+          fSMsgr.SendMessage (&dataSend);
         }	
       }
       break;
@@ -1610,9 +1632,55 @@ ServerAgent::MessageReceived (BMessage *msg)
         fLogger->Log (logName, data);
       }
       break;
+      
+    case M_NOTIFYLIST_ADD:
+      {
+        BString cmd (msg->FindString("cmd"));
+        BString curNick;
+        int32 idx (-1);
+        
+        // TODO: print notification message to user
+        while ((idx = cmd.IFindFirst(" ")) > 0)
+        {
+          cmd.MoveInto(curNick, 0, cmd.IFindFirst(" "));
+          // remove leading space
+          cmd.Remove(0, 1);
+          NotifyListItem *item (new NotifyListItem (curNick.String(), false));
+          fNotifyNicks.AddItem (item);
+          curNick = "";
+        }
+        // catch last one
+        if (cmd.Length() > 0)
+        {
+          NotifyListItem *item (new NotifyListItem (cmd.String(), false));
+          fNotifyNicks.AddItem (item);
+        }
+        BMessage updMsg (M_NOTIFYLIST_UPDATE);
+        updMsg.AddPointer ("list", &fNotifyNicks);
+        updMsg.AddPointer ("source", this);
+        Window()->PostMessage (&updMsg);
+      }
+      break;
     
     case M_IGNORE_ADD:
       {
+        BString cmd (msg->FindString("cmd"));
+        for (int32 i = 0; i < fIgnoreNicks.CountItems(); i++)
+        {
+          if (cmd == *((BString *)fIgnoreNicks.ItemAt(i)))
+            break;
+        }
+        fIgnoreNicks.AddItem (new BString(cmd));
+      }
+      break;
+    
+    case M_NOTIFYLIST_UPDATE:
+      {
+        // force agent to update (used for winlist switches)
+        BMessage newMsg (M_NOTIFYLIST_UPDATE);
+        newMsg.AddPointer("list", &fNotifyNicks);
+        newMsg.AddPointer("source", this);
+        Window()->PostMessage(&newMsg);
       }
       break;
     

@@ -34,6 +34,8 @@
 #include <Debug.h>
 #include <String.h>
 
+// TODO: resort these so they make more sense -- will break settings compat though
+
 #define C_TEXT											0
 #define C_BACKGROUND									1
 #define C_URL											2
@@ -88,7 +90,10 @@
 #define C_MIRC_GREY										49
 #define C_MIRC_SILVER									50
 
-#define MAX_COLORS										51
+#define C_NOTIFY_ON                                     51
+#define C_NOTIFY_OFF                                    52
+
+#define MAX_COLORS										53
 
 
 #define F_TEXT												0

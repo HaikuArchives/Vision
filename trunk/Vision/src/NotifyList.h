@@ -33,6 +33,8 @@ class NotifyList : public BListView
     NotifyList (BRect);
     virtual ~NotifyList (void);
     
+    void UpdateList (BList *);
+    
     virtual void AttachedToWindow (void);
     virtual void MessageReceived (BMessage *);
   

@@ -50,6 +50,7 @@ WindowList::WindowList (BRect frame)
     "windowList",
     B_SINGLE_SELECTION_LIST,
     B_FOLLOW_ALL),
+      fLastSelected (NULL),
       fActiveTheme (vision_app->ActiveTheme())
 {
   fActiveTheme->ReadLock();
@@ -96,6 +97,19 @@ WindowList::MessageReceived (BMessage *msg)
         CloseActive();
       }
       break;
+      
+    case M_WINLIST_NOTIFY_BLINKER:
+        {
+          int32 state (msg->FindInt32 ("state"));
+          WindowListItem *item (NULL);
+          msg->FindPointer ("source", reinterpret_cast<void **>(&item));
+          if (item != NULL)
+          {
+            int32 oldState (item->BlinkState());
+            item->SetBlinkState ((oldState == 0) ? state : 0);
+          }
+        }
+        break;
     
     case M_THEME_FONT_CHANGE:
       {
@@ -254,8 +268,47 @@ WindowList::SelectionChanged (void)
   if (currentIndex >= 0) // dont bother casting unless somethings selected
   {
     WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (currentIndex)));
-    if (myItem)
+    if (myItem != NULL)
+    {
+      ServerAgent *oldParent (NULL),
+                  *newParent (NULL);
+
+      if (fLastSelected != NULL)
+      {
+        BView *testAgent (fLastSelected->pAgent());
+        if (dynamic_cast<ListAgent *>(testAgent) != NULL)
+        {
+          oldParent = (ServerAgent *)((WindowListItem *)Superitem(fLastSelected));
+        }
+        else
+        {
+          ClientAgent *oldAgent ((ClientAgent *)fLastSelected->pAgent());
+          if (dynamic_cast<ServerAgent *>(oldAgent))
+            oldParent = (ServerAgent *)oldAgent;
+          else
+            oldParent = (ServerAgent *)oldAgent;
+        }
+        testAgent = myItem->pAgent();
+        if (dynamic_cast<ListAgent *>(testAgent) != NULL)
+        {
+          newParent = (ServerAgent *)((WindowListItem *)Superitem(myItem));
+        }
+        else
+        {
+          if (dynamic_cast<ServerAgent *>(myItem->pAgent()))
+            newParent = (ServerAgent *)myItem->pAgent();
+          else
+            newParent = (ServerAgent *)((WindowListItem *)Superitem(myItem))->pAgent();
+        }
+
+        if (oldParent != newParent)
+          BMessenger(newParent).SendMessage(M_NOTIFYLIST_UPDATE);
+      }
+      else
+        BMessenger(myItem->pAgent()).SendMessage(M_NOTIFYLIST_UPDATE);
+
       Activate (currentIndex);
+    }
   }
   BOutlineListView::SelectionChanged();
 }
@@ -284,6 +337,17 @@ WindowList::SelectLast (void)
   else
     Select (0);
   ScrollToSelection();
+}
+
+void
+WindowList::BlinkNotifyChange(int32 changeState, ServerAgent *victim)
+{
+  if (victim != NULL)
+  {
+    WindowListItem *item (victim->fAgentWinItem);
+    if (item != NULL)
+      item->SetNotifyBlinker(changeState);
+  }
 }
 
 void
@@ -750,7 +814,10 @@ WindowListItem::WindowListItem (
     fMyStatus (winStatus),
     fMyType (winType),
     fSubStatus (-1),
-    fMyAgent (agent)
+    fMyAgent (agent),
+    fBlinkState (0),
+    fBlinkStateCount (0),
+    fBlinker (NULL)
 {
 
 }
@@ -771,6 +838,12 @@ int32
 WindowListItem::SubStatus() const
 {
   return fSubStatus;
+}
+
+int32
+WindowListItem::BlinkState() const
+{
+  return fBlinkState;
 }
 
 int32
@@ -885,13 +958,47 @@ WindowListItem::DrawItem (BView *father, BRect frame, bool complete)
   if (IsSelected())
     color = fActiveTheme->ForegroundAt (C_WINLIST_NORMAL);
   
-  fActiveTheme->ReadUnlock();
-  
   father->SetHighColor (color);
 
   father->SetDrawingMode (B_OP_OVER);
   father->DrawString (drawString.String());
   father->SetDrawingMode (B_OP_COPY);
+
+  if (fBlinkState > 0)
+  {
+    color = fActiveTheme->ForegroundAt((fBlinkState == 1) ? C_NOTIFY_ON : C_NOTIFY_OFF);
+    father->SetHighColor (color);
+    father->StrokeRect(frame);
+  }
+
+  fActiveTheme->ReadUnlock();
+}
+
+void
+WindowListItem::SetNotifyBlinker(int32 state)
+{
+  BMessage *msg (new BMessage (M_WINLIST_NOTIFY_BLINKER));
+  msg->AddPointer ("source", this);
+  msg->AddInt32 ("state", state);
+  fBlinker = new BMessageRunner (BMessenger(vision_app->pClientWin()->pWindowList()),
+                                         msg, 300000, 6);
+}
+
+void
+WindowListItem::SetBlinkState(int32 state)
+{
+  fBlinkStateCount++;
+  vision_app->pClientWin()->Lock();
+  fBlinkState = state;
+  int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
+  vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
+  vision_app->pClientWin()->Unlock();
+  if (fBlinkStateCount == 6)
+  {
+    fBlinkStateCount = 0;
+    delete fBlinker;
+    fBlinker = NULL;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

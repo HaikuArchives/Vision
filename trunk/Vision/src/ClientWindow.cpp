@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 
+#include "NotifyList.h"
 #include "NetworkMenu.h"
 #include "WindowList.h"
 #include "StatusView.h"
@@ -395,6 +396,36 @@ ClientWindow::MessageReceived (BMessage *msg)
     }
     break;
 
+    case M_NOTIFYLIST_UPDATE:
+    {
+      BList *nickList (NULL);
+      BView *msgSource (NULL);
+      int32 hasChanged (0);
+      
+      // whether we're the active one or not, no difference in state, ignore
+      if (msg->HasInt32 ("change") && (hasChanged = msg->FindInt32("change")) == 0)
+        break;
+        
+      msg->FindPointer("source", reinterpret_cast<void **>(&msgSource));
+      msg->FindPointer("list", reinterpret_cast<void **>(&nickList));
+      WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt(pWindowList()->CurrentSelection()));
+      if (item != NULL)
+      {
+        if (item->pAgent() == msgSource)
+          pNotifyList()->UpdateList (nickList);
+        else if ((item = (WindowListItem *)(pWindowList()->Superitem(item))) != NULL)
+        {
+          if (item->pAgent() == msgSource)
+            pNotifyList()->UpdateList(nickList);
+          else
+          {
+            pWindowList()->BlinkNotifyChange(hasChanged, (ServerAgent *)msgSource);
+          }
+        }
+      }
+
+    }
+    break;
         
     default:
       BWindow::MessageReceived (msg);

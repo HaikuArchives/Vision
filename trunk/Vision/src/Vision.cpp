@@ -1613,6 +1613,45 @@ VisionApp::GetIdent (const char *server)
 }
 
 void
+VisionApp::AddNotifyNick (const char *network, const char *nick)
+{
+  BMessage netMsg (GetNetwork (network));
+  
+  type_code type;
+  int32 attrCount;
+  
+  // make sure this nick hasn't already been added
+  netMsg.GetInfo ("notify", &type, &attrCount);
+  for (int32 i = 0; i < attrCount; i++)
+  {
+    if (!strcmp(netMsg.FindString ("notify", i), nick))
+      return;
+  }
+  netMsg.AddString ("notify", nick);
+  SetNetwork (network, &netMsg);
+}
+
+void
+VisionApp::RemoveNotifyNick (const char *network, const char *nick)
+{
+  BMessage netMsg (GetNetwork (network));
+
+  type_code type;
+  int32 attrCount, i;
+  netMsg.GetInfo ("notify", &type, &attrCount);
+  for (i = 0; i < attrCount; i++)
+  {
+    if (!strcmp(netMsg.FindString ("notify", i), nick))
+    {
+      netMsg.RemoveData ("notify", i);
+      break;
+    }
+  }
+  if (i < attrCount)
+    SetNetwork (network, &netMsg);  
+}
+
+void
 VisionApp::AcquireDCCLock (void)
 {
   fDccLock.Lock();

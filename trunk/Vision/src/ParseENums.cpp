@@ -26,12 +26,13 @@
 
 #include <Menu.h>
 
-#include "ParseENums.h"
-#include "Vision.h"
-#include "Utilities.h"
-#include "StatusView.h"
 #include "ClientWindow.h"
+#include "NotifyList.h"
+#include "ParseENums.h"
 #include "ServerAgent.h"
+#include "StatusView.h"
+#include "Utilities.h"
+#include "Vision.h"
 #include "WindowList.h"
 
 #include <stdio.h>
@@ -422,15 +423,41 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     
     case RPL_ISON:           // 303
       {
-        BString nick (GetWord (data, 4));
-
-        nick.RemoveFirst (":");
+        BString nicks (RestOfString (data, 4));
+        
+        nicks.RemoveFirst (":");
+        
+        int hasChanged (0);
  
         BMessage msg (M_NOTIFYLIST_UPDATE);
+        
+        for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
+        {
+          NotifyListItem *item (((NotifyListItem *)fNotifyNicks.ItemAt(i)));
+          if (nicks.IFindFirst(item->Text()) >= 0)
+          {
+            if (item->GetState() != true)
+            {
+              item->SetState (true);
+              hasChanged = 1;
+//              printf("TODO: print message that user has come online\n");
+            }
+          }
+          else
+          {
+            if (item->GetState() == true)
+            {
+              item->SetState (false);
+              hasChanged = 2;
+//              printf("TODO: print message that user has gone offline\n");
+            }
+          }
+        }
 
-        msg.AddString ("nick", nick.String());
-        msg.AddString ("server", fServerName.String());
-        vision_app->PostMessage (&msg);
+        msg.AddPointer ("list", &fNotifyNicks);
+        msg.AddPointer ("source", this);
+        msg.AddInt32 ("change", hasChanged);
+        Window()->PostMessage (&msg);
       }
       return true;
     

@@ -29,7 +29,7 @@
 #include <OutlineListView.h>
 #include <String.h>
 
-
+class BMessageRunner;
 class BPopUpMenu;
 class BMenu;
 class BList;
@@ -50,6 +50,7 @@ class WindowListItem : public BListItem
     int32                           Type (void) const;
     int32                           Status (void) const;
     int32                           SubStatus (void) const;
+    int32                           BlinkState (void) const;
     BView                           *pAgent (void) const;
 
     void                            SetName (const char *);
@@ -60,6 +61,8 @@ class WindowListItem : public BListItem
     virtual void                    DrawItem (BView *,
                                               BRect,
                                               bool complete = false);
+    void                            SetNotifyBlinker(int32);
+    void                            SetBlinkState(int32);
                                               
   private:
     BString                         fMyName;
@@ -67,6 +70,9 @@ class WindowListItem : public BListItem
     int32                           fMyType;
     int32                           fSubStatus; // servers only -- status of collapsed children
     BView                           *fMyAgent;
+    int32                           fBlinkState;
+    int32                           fBlinkStateCount;
+    BMessageRunner                  *fBlinker;
 };
 
 
@@ -88,6 +94,8 @@ class WindowList : public BOutlineListView
     void                            SelectLast (void);
     void                            CollapseCurrentServer (void);
     void                            ExpandCurrentServer (void);
+    
+    void                            BlinkNotifyChange (int32, ServerAgent *);
     
     int32                           GetServer (int32);
     void                            SelectServer (void);

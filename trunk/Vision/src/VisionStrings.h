@@ -279,6 +279,8 @@
 #define S_PREFCOLOR_MIRCPINK        "mIRC Pink"
 #define S_PREFCOLOR_MIRCGREY        "mIRC Grey"
 #define S_PREFCOLOR_MIRCSILVER      "mIRC Silver"
+#define S_PREFCOLOR_NOTIFY_ON       "Notify Online"
+#define S_PREFCOLOR_NOTIFY_OFF      "Notify Offline"
 #define S_PREFCOLOR_REVERT          "Revert"
 
 // command prefs

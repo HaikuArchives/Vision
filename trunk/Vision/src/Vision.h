@@ -108,6 +108,9 @@ class VisionApp : public BApplication
     const char *            GetIdent (const char *);
     static int32            Identity (void *);
     
+    void                    AddNotifyNick(const char *, const char *);
+    void                    RemoveNotifyNick (const char *, const char *);
+    
     void                    AcquireDCCLock (void);
     void                    ReleaseDCCLock (void);
     

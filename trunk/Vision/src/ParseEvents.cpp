@@ -237,7 +237,8 @@ ServerAgent::ParseEvents (const char *data)
         &display,
         tempString.String(),
         C_JOIN);
-
+      
+      // add ignore code here
       bool ignored (false);
 
       BMessage msg (M_USER_ADD);
