@@ -89,8 +89,6 @@ class ServerAgent : public ClientAgent
 
     static int                  SortNotifyItems (const NotifyListItem *, const NotifyListItem *);
 
-    bool                        ServerThreadValid(thread_id);
-
     void                        HandleReconnect (void);
     static bool                 PrivateIPCheck (const char *);
     const char                  *GetNextNick (void);
