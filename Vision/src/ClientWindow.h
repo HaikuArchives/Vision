@@ -67,7 +67,7 @@ class ClientWindow : public BWindow
     virtual bool          QuitRequested (void);
     virtual void          ScreenChanged (BRect, color_space);
     
-    void                  ServerBroadcast (BMessage *);
+    bool                  ServerBroadcast (BMessage *);
       
     BRect                 *AgentRect (void);
     WindowList            *pWindowList (void);

@@ -58,19 +58,20 @@ class StatusView : public BView
 
 class StatusItem
 {
-  BString               label,
-                        value;
-  BRect                 frame;
-  int32                 alignment;
-
-  friend                StatusView;
-
   public:
                         StatusItem (const char *,
                                     const char *,
 								    int32 = STATUS_ALIGN_RIGHT);
 
-  virtual               ~StatusItem (void);
+    virtual               ~StatusItem (void);
+  
+  private:
+    BString               label,
+                        value;
+    BRect                 frame;
+    int32                 alignment;
+
+    friend                StatusView;
 };
 
 #endif
