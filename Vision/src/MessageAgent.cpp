@@ -565,7 +565,16 @@ MessageAgent::MessageReceived (BMessage *msg)
 
           if (fDChat)
             fId.Append(" [DCC]");
-        
+          
+          // set up new logging file for new nick
+          BMessage logMsg (M_UNREGISTER_LOGGER);
+          logMsg.AddString("name", oldId.String());
+          fSMsgr.SendMessage(&logMsg);
+          logMsg.MakeEmpty();
+          logMsg.what = M_REGISTER_LOGGER;
+          logMsg.AddString("name", fId.String());
+          fSMsgr.SendMessage(&logMsg);
+          
           fAgentWinItem->SetName (fId.String());
 
                  
