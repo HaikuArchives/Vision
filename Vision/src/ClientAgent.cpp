@@ -524,7 +524,8 @@ ClientAgent::ParsemIRCColors (
       // set start to text portion (we have recorded the mirc stuff)
       start = buffer;
     }
-    text->Append (start, buffer - start, mircFore, mircBack, mircFont);
+    if (buffer - start > 0)
+      text->Append (start, buffer - start, mircFore, mircBack, mircFont);
   }
 }
 
