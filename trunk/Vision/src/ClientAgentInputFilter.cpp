@@ -377,7 +377,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
         }
         break;
       
-      case 'U':
+      case 'u':
         {
           if (window->input->TextView()->TextLength())
           {
