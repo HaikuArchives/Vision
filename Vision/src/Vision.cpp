@@ -110,6 +110,7 @@ VisionApp::VisionApp (void)
   fDebugSettings = false;
   fNumBench = false;
   fShuttingDown = false;
+  fStartupTime = system_time();
 }
 
 VisionApp::~VisionApp (void)
@@ -1671,6 +1672,12 @@ void
 VisionApp::ReleaseDCCLock (void)
 {
   fDccLock.Unlock();
+}
+
+bigtime_t
+VisionApp::VisionUptime (void)
+{
+  return system_time() - fStartupTime;
 }
 
 //////////////////////////////////////////////////////////////////////////////
