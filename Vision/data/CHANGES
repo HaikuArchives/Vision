@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.3.07015]
+2001-07-15
+    * save settings data on prefs window close.    
+
 [0.3.07014]
 2001-07-14
    * 0.3 is here.....basic preferences implemented
