@@ -220,6 +220,11 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 
 	msg->FindString ("bytes", &keyStroke);
 	msg->FindInt32 ("modifiers", &keymodifiers);
+
+	if (keyStroke == NULL)
+	{
+		return result;
+	}
 	
 	switch (keyStroke[0])
 	{

@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.7-0909]
+[0.9.7-1213]
 	 * added JIS encoding support
 	 * modified tab completion to append a ":" if the nick is at the beginning of a line 
 	 * refined URL crunching logic (Alan Ellis)
@@ -10,6 +10,7 @@ http://vision.sourceforge.net
          * added parsing for PART reasons ($R in event string to use)
 	 * added ignore/exclude support (not yet finished)
          * fixed bug in DCC chat (encoding was not being used in one case)
+         * fixed crash bug in input filter for unmapped keys (thanks to Patrick/cartman for debugging assistance)
 
 [0.9.6-0207]
          * fixed crash bug during shutdown with notify blinkers
