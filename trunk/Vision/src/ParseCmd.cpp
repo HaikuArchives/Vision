@@ -425,6 +425,7 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
   
+  #if 0
   if (firstWord == "/EXEC" || firstWord == "/RUN")
   {
     {
@@ -437,6 +438,7 @@ ClientAgent::ParseCmd (const char *data)
     }
     return true;
   }
+  #endif 
 
 
   if (firstWord == "/PEXEC" || firstWord == "/RRUN") // piped exec
