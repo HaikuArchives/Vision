@@ -752,9 +752,18 @@ VisionApp::GetThreadName (int thread_type)
     /* 33 */ "threat_mode",
     /* 34 */ "dark_and_mysterious",
     /* 35 */ "I AM A GOLDEN GOD!",
+    /* 36 */ "catrec",
+    /* 37 */ "bork! bork! bork!",
+    /* 38 */ "geisha_slut_villainess",
+    /* 39 */ "ball_gravity_control",
+    /* 40 */ "exploding_cow",
+    /* 41 */ "naked scottish weathergirls"
+    /* 42 */ "gateway game^Wthread",
+    /* 43 */ "hello kitty",
+    /* 44 */ "please_fondle_my_buttocks"
   };
   
-  int rnd (rand() % 36);
+  int rnd (rand() % 45);
  
   static BString output;
   
