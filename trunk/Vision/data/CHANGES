@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.07011]
+ 2001-07-11
+   * cleaned up some network code
+
 [0.2.0708]
  2001-07-08
    * implemented on-connect commands

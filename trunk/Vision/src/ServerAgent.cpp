@@ -439,17 +439,18 @@ ServerAgent::Establish (void *arg)
   while ( (sMsgrE->Target (&looper) != NULL)
      && select (endPoint->Socket() + 1, &rset, 0, &eset, NULL) > 0)
   {
-    BNetBuffer inbuffer (1024);
+    char indata[1024];
     int32 length (0);
 
+    memset (indata, 0, 1024);
     if (FD_ISSET (endPoint->Socket(), &rset))
     {
-      if ((length = endPoint->Receive (inbuffer, 1024)) > 0)
+      if ((length = endPoint->Receive (indata, 1024)) > 0)
       {
         BString temp;
         int32 index;
 
-        temp.SetTo ((char *)inbuffer.Data(), inbuffer.Size());
+        temp.SetTo (indata, strlen(indata));
         buffer += temp;
 
         while ((index = buffer.FindFirst ('\n')) != B_ERROR)
@@ -487,23 +488,24 @@ ServerAgent::Establish (void *arg)
 #ifdef NETSERVER_BUILD
   while (sMsgrE->Target (&looper) != NULL)
   {
-    BNetBuffer inbuffer (1024);
+    char indata[1024];
     int32 length (0);
-
+    
     FD_SET (endPoint->Socket(), &eset);
     FD_SET (endPoint->Socket(), &rset);
     FD_SET (endPoint->Socket(), &wset);
+    memset (indata, 0, 1024);
     if (select (endPoint->Socket() + 1, &rset, 0, &eset, &tv) > 0
     &&  FD_ISSET (endPoint->Socket(), &rset))
     {
       endpointLock->Lock();
-      if ((length = endPoint->Receive (inbuffer, 1024)) > 0)
+      if ((length = endPoint->Receive (indata, 1024)) > 0)
       {
         endpointLock->Unlock();
         BString temp;
         int32 index;
 
-        temp.SetTo ((char *)inbuffer.Data(), inbuffer.Size());
+        temp.SetTo (indata, strlen(indata));
         buffer += temp;
 
         while ((index = buffer.FindFirst ('\n')) != B_ERROR)
