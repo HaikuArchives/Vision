@@ -430,7 +430,7 @@ WindowList::ContextSelectDown (void)
   for (iloop = currentsel; iloop < CountItems(); ++iloop)
   {
     aitem = (WindowListItem *)ItemAt (iloop);
-    if ((aitem->Status() == WIN_NICK_BIT))
+    if ((aitem->Status() == WIN_NEWS_BIT))
     {
       Select (IndexOf (aitem));
       foundone = true;
@@ -445,7 +445,7 @@ WindowList::ContextSelectDown (void)
   for (iloop = currentsel; iloop < CountItems(); ++iloop)
   {
     aitem = (WindowListItem *)ItemAt (iloop);
-    if ((aitem->Status() == WIN_NICK_BIT))
+    if ((aitem->Status() == WIN_PAGESIX_BIT))
     {
       Select (IndexOf (aitem));
       foundone = true;
