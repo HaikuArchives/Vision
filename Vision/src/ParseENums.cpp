@@ -947,12 +947,16 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 				
             line.Append (place, eol - place);
             msg.AddString ("data", line.String());
-
+            ParseAutoexecChans (line);
             place = eol + 1;
           }
 
           if (*place)
+          {
+            // check in case this was the only line
+            ParseAutoexecChans (BString(place));
             msg.AddString ("data", place);
+          }
 
           msg.AddInt32 ("which", 3);
           msg.AddBool ("autoexec", true);
@@ -1113,6 +1117,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BMessage msg (M_DISPLAY);
         PackDisplay (&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);
         PostActive (&msg);
+        RemoveAutoexecChan (theChan);
       }
       return true;
     
@@ -1130,6 +1135,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BMessage msg (M_DISPLAY);
         PackDisplay (&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);
         PostActive (&msg);
+        RemoveAutoexecChan (theChan);
       }
       return true;
     
@@ -1146,6 +1152,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BMessage msg (M_DISPLAY);
         PackDisplay (&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);
         PostActive (&msg);
+        RemoveAutoexecChan (theChan);
       }
       return true;
     

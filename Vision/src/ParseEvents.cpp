@@ -185,6 +185,18 @@ ServerAgent::ParseEvents (const char *data)
 
     if (nick == fMyNick)
     {
+      bool activateChan (true);
+      int32 chanCount (0);
+      if ((chanCount = fStartupChannels.CountItems()) > 0)
+      {
+        for (int32 i = 0; i < chanCount; i++)
+          if (((BString *)fStartupChannels.ItemAt (i))->ICompare (channel) == 0)
+          {
+             delete fStartupChannels.RemoveItem (i);
+             activateChan = false;
+             break;
+          }
+      }
       if (!client)
       {
         vision_app->pClientWin()->pWindowList()->AddAgent (
@@ -199,7 +211,7 @@ ServerAgent::ParseEvents (const char *data)
           fSid,
           channel.String(),
           WIN_CHANNEL_TYPE,
-          true);
+          activateChan);
 
         fClients.AddItem ((vision_app->pClientWin()->pWindowList()->Agent (fSid,
                             channel.String())));

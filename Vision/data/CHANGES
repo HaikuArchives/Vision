@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.8.6-0420]
+         * more tab completion fixes
+         * startup channels no longer grab away the active window
+
 [0.8.5-0418]
          * fixed incorrect behavior with spam paste dialog 
            (cancel was causing the same result as clicking single line)
