@@ -24,7 +24,6 @@
 #include <Button.h>
 #include <Bitmap.h>
 #include <View.h>
-#include <Menu.h>
 #include <MenuField.h>
 #include <MenuItem.h>
 #include <TranslationUtils.h>
@@ -33,46 +32,11 @@
 #include "ClientWindow.h"
 #include "SetupWindow.h"
 #include "Vision.h"
+#include "NetworkMenu.h"
 
 #include <stdio.h>
 
 const uint32 M_CHOOSE_NETWORK = 'swcn';
-
-class NetworkMenu : public BMenu
-{
-  public:
-    NetworkMenu (const char *);
-    virtual ~NetworkMenu (void);
-    virtual void AttachedToWindow (void);
-};
-
-NetworkMenu::NetworkMenu (const char *title)
-  : BMenu (title)
-{
-}
-
-NetworkMenu::~NetworkMenu (void)
-{
-}
-
-void
-NetworkMenu::AttachedToWindow (void)
-{
-  if (CountItems())
-  {
-    BMenuItem *item (NULL);
-    while ((item = RemoveItem(0L)) != NULL)
-      delete item;
-  }
-
-  BMessage msg;
-  for (int32 i = 0; (msg = vision_app->GetNetwork (i)), !msg.HasBool ("error"); i++)
-  {
-    BMenuItem *item (new BMenuItem (msg.FindString ("name"), new BMessage (M_CHOOSE_NETWORK)));
-    AddItem (item);
-  }
-  BMenu::AttachedToWindow();
-}
 
 SetupWindow::SetupWindow (void)
   : BWindow (
@@ -143,9 +107,8 @@ SetupWindow::QuitRequested (void)
 void
 SetupWindow::BuildNetworkMenu (void)
 {
-  BMenu *netMenu (new NetworkMenu ("Choose Network"));
+  BMenu *netMenu (new NetworkMenu ("Choose Network", M_CHOOSE_NETWORK, BMessenger(this)));
   netMenu->SetLabelFromMarked (true);
-  netMenu->SetTargetForItems (this);
   netList = new BMenuField (BRect (0,0,0,0), "Network List", "Network: ", netMenu);
   netList->ResizeToPreferred();
   netList->SetDivider (be_plain_font->StringWidth ("Network: ") + 5);

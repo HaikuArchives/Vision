@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 
+#include "NetworkMenu.h"
 #include "WindowList.h"
 #include "StatusView.h"
 #include "ServerAgent.h"
@@ -205,6 +206,7 @@ ClientWindow::HandleKey (BMessage *keyMsg)
 void
 ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
 {
+//  msg->PrintToStream();
   switch (msg->what)
   {
     case M_SEND_TO_AGENT:
@@ -536,9 +538,11 @@ ClientWindow::Init (void)
   menubar = new BMenuBar (frame, "menu_bar");
   
   BMenuItem *item;
-  
+  BMenu *menu;
   // Server menu
   mServer = new BMenu ("Server");
+  mServer->AddItem (menu = new NetworkMenu ("Connect to" B_UTF8_ELLIPSIS, M_CONNECT_NETWORK, BMessenger (vision_app)));
+  
   mServer->AddItem (item = new BMenuItem ("Setup" B_UTF8_ELLIPSIS,
                     new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
   item->SetTarget (vision_app);
