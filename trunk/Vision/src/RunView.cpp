@@ -1114,7 +1114,7 @@ RunView::RecalcScrollBar (bool constrain)
 	&& (bounds.Contains (BPoint (0.0, 0.0)) == false
 	||  bounds.Contains (BPoint (0.0, lines[line_count - 1]->bottom)) == false))
 	{
-		bottom = lines[line_count - 1]->bottom;
+		bottom = lines[line_count - 1]->bottom + 5.0;
 		bar->SetProportion (bounds.Height() / bottom);
 		bar->SetSteps (10.0, bounds.Height());
 
