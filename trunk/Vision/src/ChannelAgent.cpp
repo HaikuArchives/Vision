@@ -721,7 +721,6 @@ ChannelAgent::MessageReceived (BMessage *msg)
 		
 		case M_CLIENT_QUIT:
 		{
-			printf ("ChannelAgent::M_CLIENT_QUIT\n");
 			if ((msg->HasBool ("vision:part") && msg->FindBool ("vision:part"))
 			||  (msg->HasBool ("vision:winlist") && msg->FindBool ("vision:winlist")))
 			{

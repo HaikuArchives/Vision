@@ -60,18 +60,12 @@ ClientWindow::QuitRequested (void)
   if (!shutdown_in_progress)
   {
     shutdown_in_progress = true;
-    for (int32 i (1); i <= winList->CountItems(); ++i)
-    { 
-      WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
-      if (aitem->Type() == WIN_SERVER_TYPE)
-      {
-        printf ("nuking\n");
-        BMessage killMsg (M_CLIENT_QUIT);
-         killMsg.AddBool ("vision:winlist", true);
-        dynamic_cast<ServerAgent *>(aitem->pAgent())->msgr.SendMessage (&killMsg);
-        wait_for_quits = true;
-      }
-    }
+    BMessage killMsg (M_CLIENT_QUIT);
+    killMsg.AddBool ("vision:winlist", true);
+    
+    if (ServerBroadcast (&killMsg))
+      wait_for_quits = true;
+      
     if (wait_for_quits)
       return false;
   }
@@ -271,11 +265,13 @@ ClientWindow::AgentRect (void)
   return agentrect;
 }
 
+
 WindowList *
 ClientWindow::pWindowList (void)
 {
   return winList;
 }
+
 
 StatusView *
 ClientWindow::pStatusView (void)
@@ -284,10 +280,22 @@ ClientWindow::pStatusView (void)
 }
 
 
-void
-ClientWindow::ServerBroadcast (BMessage *outmsg)
+bool
+ClientWindow::ServerBroadcast (BMessage *outmsg_)
 {
-  //
+  bool reply (false);
+  
+  for (int32 i (1); i <= winList->CountItems(); ++i)
+    { 
+      WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
+      if (aitem->Type() == WIN_SERVER_TYPE)
+      {
+        dynamic_cast<ServerAgent *>(aitem->pAgent())->msgr.SendMessage (outmsg_);
+        reply = true;
+      }
+    }
+    
+  return reply;
 }
 
 

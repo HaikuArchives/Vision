@@ -845,7 +845,6 @@ ClientAgent::ParseCmd (const char *data)
 	
 	if (firstWord == "/QUIT")
 	{
-	    printf ("quitcmd\n");
 		BString theRest (RestOfString (data, 2)),
 		        buffer;
 		
