@@ -176,7 +176,7 @@ struct Line
 	int16					CountChars (int16 pos, int16 len);
 	size_t				SetStamp (const char *, bool);
 	
-	void				SelectWord (int32 *, int32 *);
+	void				SelectWord (int16 *, int16 *);
 };
 
 inline int32
@@ -410,9 +410,9 @@ RunView::Draw (BRect frame)
 
 					++font;
 				}
-
+				
 				int16 length (line->softies[sit].offset - place + last_len);
-
+				
 				if (fore < line->fc_count
 				&&  line->fcs[fore].offset - place < length)
 					length = line->fcs[fore].offset - place;
@@ -520,16 +520,13 @@ RunView::MouseDown (BPoint point)
 	&&       s.offset >= 0
     &&       clicks % 2 == 0)
 	{
-		int32 start (s.offset),
-					end (s.offset);
+		SelectPos start (s),
+					end (s);
 
 		// select word
-		lines[s.line]->SelectWord (&start, &end);
-		s.offset = start;
-		sp_start = s;
+		lines[s.line]->SelectWord (&start.offset, &end.offset);
 		
-		s.offset = end;
-		sp_end = s;
+		Select (start, end);
 	}
 
 	else if (buttons                    == B_PRIMARY_MOUSE_BUTTON
@@ -542,6 +539,7 @@ RunView::MouseDown (BPoint point)
 		SetMouseEventMask (B_POINTER_EVENTS);
 		tracking = 1;
 		track_offset = s;
+		Select (track_offset, track_offset);
 	}
 	else if (buttons					== B_PRIMARY_MOUSE_BUTTON
 	&&      (modifiers & B_SHIFT_KEY)   != 0
@@ -2134,9 +2132,9 @@ Line::SetStamp (const char *format, bool was_on)
 }
 
 void
-Line::SelectWord (int32 *start, int32 *end)
+Line::SelectWord (int16 *start, int16 *end)
 {
-	int32 start_tmp (*start), end_tmp (*end);
+	int16 start_tmp (*start), end_tmp (*end);
 
 	while(start_tmp > 0 && (isdigit (text[start_tmp-1]) || isalpha (text[start_tmp-1])))
 			start_tmp--;
