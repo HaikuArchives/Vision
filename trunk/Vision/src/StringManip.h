@@ -24,11 +24,7 @@
 #ifndef _STRINGMANIP_H_
 #define _STRINGMANIP_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/CString.h"
-#elif BEOS_BUILD
-#  include <String.h>
-#endif
+#include <String.h>
 
 BString      GetWord (const char *, int32);
 BString      RestOfString (const char *, int32);

@@ -16,7 +16,8 @@
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
  * 
- * Contributor(s): Todd Lair
+ * Contributor(s): Rene Gollent
+ *                 Todd Lair
  */
  
 #include <ctype.h>

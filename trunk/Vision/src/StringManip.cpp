@@ -24,15 +24,9 @@
 #include <stdio.h>
 #include <time.h>
 
-#ifdef GNOME_BUILD
-#  include "gnome/Roster.h"
-#  include "gnome/Entry.h"
-#  include "gnome/Path.h"
-#elif BEOS_BUILD
-#  include <Roster.h>
-#  include <Entry.h>
-#  include <Path.h>
-#endif
+#include <Roster.h>
+#include <Entry.h>
+#include <Path.h>
 
 #include "Vision.h"
 

@@ -22,17 +22,10 @@
  *                 Rene Gollent
  */
 
-#ifdef GNOME_BUILD
-#  include "gnome/Bitmap.h"
-#  include "gnome/Screen.h"
-#  include "gnome/TextView.h"
-#  include "gnome/TranslationUtils.h"
-#elif BEOS_BUILD
-#  include <Bitmap.h>
-#  include <Screen.h>
-#  include <TextView.h>
-#  include <TranslationUtils.h>
-#endif
+#include <Bitmap.h>
+#include <Screen.h>
+#include <TextView.h>
+#include <TranslationUtils.h>
 
 #include "AboutWindow.h"
 #include "Vision.h"

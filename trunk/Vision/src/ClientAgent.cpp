@@ -23,17 +23,10 @@
  *                 Jamie Wilkinson
  */
 
-#ifdef GNOME_BUILD
-#  include "gnome/ScrollView.h"
-#  include "gnome/PopUpMenu.h"
-#  include "gnome/MenuItem.h"
-#  define  system_beep(x)
-#elif BEOS_BUILD
-#  include <Beep.h>
-#  include <ScrollView.h>
-#  include <PopUpMenu.h>
-#  include <MenuItem.h>
-#endif
+#include <Beep.h>
+#include <ScrollView.h>
+#include <PopUpMenu.h>
+#include <MenuItem.h>
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -25,15 +25,9 @@
 #ifndef _WINDOWLIST_H_
 #define _WINDOWLIST_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/ListItem.h"
-#  include "gnome/ListView.h"
-#  include "gnome/String.h"
-#elif BEOS_BUILD
-#  include <ListItem.h>
-#  include <OutlineListView.h>
-#  include <String.h>
-#endif
+#include <ListItem.h>
+#include <OutlineListView.h>
+#include <String.h>
 
 
 class BPopUpMenu;

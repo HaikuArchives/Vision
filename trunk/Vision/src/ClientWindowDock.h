@@ -23,12 +23,8 @@
 #ifndef _CLIENTWINDOWDOCK_H_
 #define _CLIENTWINDOWDOCK_H_
 
-#ifdef GNOME_BUILD
-#  include "gnome/View.h"
-#elif BEOS_BUILD
-#  include <View.h>
-#  include <StringView.h>
-#endif
+#include <View.h>
+#include <StringView.h>
 
 class WindowList;
 class BScrollView;

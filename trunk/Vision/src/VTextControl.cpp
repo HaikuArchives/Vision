@@ -27,15 +27,9 @@
 // it's intention is to be fully compliant and portable, so it can easily
 // be dropped into other applications as well.
 
-/* #ifdef GNOME_BUILD
-#  include "gnome/PopUpMenu.h"
-#  include "gnome/MenuItem.h"
-#  include "gnome/Clipboard.h"
-#elif BEOS_BUILD */
-#  include <PopUpMenu.h>
-#  include <MenuItem.h>
-#  include <Clipboard.h>
-// #endif
+#include <PopUpMenu.h>
+#include <MenuItem.h>
+#include <Clipboard.h>
 
 #include "VTextControl.h"
 

@@ -23,15 +23,9 @@
  *                 Jamie Wilkinson
  */
 
-#ifdef GNOME_BUILD
-#  include "gnome/AppFileInfo.h"
-#  include "gnome/Alert.h"
-#  include "gnome/Invoker.h"
-#elif BEOS_BUILD
-#  include <AppFileInfo.h>
-#  include <Alert.h>
-#  include <Invoker.h>
-#endif
+#include <AppFileInfo.h>
+#include <Alert.h>
+#include <Invoker.h>
 
 #include <stdlib.h>
 

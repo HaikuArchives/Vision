@@ -22,19 +22,11 @@
  
 #include "SettingsFile.h"
 
-#ifdef GNOME_BUILD
-#  include "gnome/Path.h"
-#  include "gnome/File.h"
-#  include "gnome/Directory.h"
-#  include "gnome/Roster.h"
-#  include "gnome/Application.h"
-#elif BEOS_BUILD
-#  include <Path.h>
-#  include <File.h>
-#  include <Directory.h>
-#  include <Roster.h>
-#  include <Application.h>
-#endif
+#include <Path.h>
+#include <File.h>
+#include <Directory.h>
+#include <Roster.h>
+#include <Application.h>
 
 #include <string.h>
 #include <stdlib.h>

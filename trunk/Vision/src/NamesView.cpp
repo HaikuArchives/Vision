@@ -24,15 +24,9 @@
  *                 Seth Flaxman
  */
 
-#ifdef GNOME_BUILD
-#  include "gnome/PopUpMenu.h"
-#  include "gnome/MenuItem.h"
-#  include "gnome/Window.h"
-#elif BEOS_BUILD 
-#  include <PopUpMenu.h>
-#  include <MenuItem.h>
-#  include <Window.h>
-#endif
+#include <PopUpMenu.h>
+#include <MenuItem.h>
+#include <Window.h>
 
 #include "ChannelAgent.h"
 #include "Vision.h"
