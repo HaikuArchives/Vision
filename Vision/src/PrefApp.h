@@ -53,7 +53,8 @@ class AppWindowPrefsView : public BView
               *fEnc10,
               *fEnc11,
               *fEnc12,
-              *fEnc13;
+              *fEnc13,
+              *fEnc14;
     BCheckBox *fVersionParanoid,
               *fCatchAltW,
               *fTimeStamp,
