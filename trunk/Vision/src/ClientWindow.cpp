@@ -77,7 +77,6 @@ ClientWindow::ClientWindow (BRect frame)
 bool
 ClientWindow::QuitRequested (void)
 {
-  vision_app->SaveSettings();
   if (!fShutdown_in_progress)
   {
     fShutdown_in_progress = true;

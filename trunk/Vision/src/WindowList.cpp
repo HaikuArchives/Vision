@@ -464,6 +464,7 @@ WindowList::ContextSelectUp (void)
     if ((aitem->Status() == WIN_NICK_BIT))
     {
       Select (IndexOf (aitem));
+      ScrollToSelection();
       foundone = true;
       break; 
     }
@@ -479,6 +480,7 @@ WindowList::ContextSelectUp (void)
     if ((aitem->Status() == WIN_NEWS_BIT))
     {
       Select (IndexOf (aitem));
+      ScrollToSelection();
       foundone = true;
       break; 
     }
@@ -494,6 +496,7 @@ WindowList::ContextSelectUp (void)
     if ((aitem->Status() == WIN_PAGESIX_BIT))
     {
       Select (IndexOf (aitem));
+      ScrollToSelection();
       foundone = true;
       break; 
     }
@@ -525,6 +528,7 @@ WindowList::ContextSelectDown (void)
     if ((aitem->Status() == WIN_NICK_BIT))
     {
       Select (IndexOf (aitem));
+      ScrollToSelection();
       foundone = true;
       break; 
     }
@@ -540,6 +544,7 @@ WindowList::ContextSelectDown (void)
     if ((aitem->Status() == WIN_NEWS_BIT))
     {
       Select (IndexOf (aitem));
+      ScrollToSelection();
       foundone = true;
       break; 
     }
@@ -555,6 +560,7 @@ WindowList::ContextSelectDown (void)
     if ((aitem->Status() == WIN_PAGESIX_BIT))
     {
       Select (IndexOf (aitem));
+      ScrollToSelection();
       foundone = true;
       break; 
     }
@@ -587,6 +593,7 @@ WindowList::MoveCurrentUp (void)
       {
         SwapItems(currentsel, i);
         Select(IndexOf(item));
+        ScrollToSelection();
         break;
       }
   }
@@ -615,6 +622,7 @@ WindowList::MoveCurrentDown (void)
     {
       SwapItems(currentsel, i);
       Select(IndexOf(item));
+      ScrollToSelection();
     }
   }
 }
