@@ -272,8 +272,10 @@ VisionApp::InitDefaults (void)
   fColors[C_MIRC_PINK]                 = MIRC_PINK;
   fColors[C_MIRC_GREY]                 = MIRC_GREY;
   fColors[C_MIRC_SILVER]               = MIRC_SILVER;
-  
-  // TODO: add notify color defaults
+  fColors[C_NOTIFY_ON]                 = JOIN_COLOR;
+  fColors[C_NOTIFY_OFF]                = myBlack;
+  fColors[C_NOTIFYLIST_BACKGROUND]     = WINLIST_BG_COLOR;
+  fColors[C_NOTIFYLIST_SELECTION]      = WINLIST_SEL_COLOR;
   
   fClientFont[F_TEXT]    = new BFont (be_plain_font);
   fClientFont[F_SERVER]  = new BFont (be_plain_font);
@@ -594,7 +596,7 @@ VisionApp::QuitRequested (void)
   //  snooze (500000);  // 0.5 seconds
 
   //ThreadStates();
-  SaveSettings();
+  //SaveSettings();
 
   return true;
 }
@@ -1325,6 +1327,7 @@ VisionApp::SetNetwork (const char *network, BMessage *data)
      else ++i;
   }
   fVisionSettings->AddMessage ("network", data);
+  SaveSettings();
   return B_OK;
 
 }
@@ -1353,6 +1356,7 @@ VisionApp::RemoveNetwork (const char *network)
      }
      else ++i;
   }
+  SaveSettings();
   return B_OK;
 }
 
@@ -1645,7 +1649,7 @@ VisionApp::RemoveNotifyNick (const char *network, const char *nick)
   netMsg.GetInfo ("notify", &type, &attrCount);
   for (i = 0; i < attrCount; i++)
   {
-    if (!strcmp(netMsg.FindString ("notify", i), nick))
+    if (!strcasecmp(netMsg.FindString ("notify", i), nick))
     {
       netMsg.RemoveData ("notify", i);
       break;

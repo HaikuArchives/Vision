@@ -20,21 +20,31 @@
  *
  */
 
+#include <MenuItem.h>
+#include <PopUpMenu.h>
+
 #include "ClientWindow.h"
 #include "ClientWindowDock.h"
 #include "NotifyList.h"
 #include "Theme.h"
+#include "Utilities.h"
 #include "Vision.h"
+#include "WindowList.h"
 
 NotifyList::NotifyList (BRect _frame)
   : BListView (_frame,
       "NotifyList",
       B_SINGLE_SELECTION_LIST,
       B_FOLLOW_ALL ),
-      fActiveTheme (vision_app->ActiveTheme())
+      fActiveTheme (vision_app->ActiveTheme()),
+      fLastButton (0),
+      fClickCount (0),
+      fLastClick (0,0),
+      fLastClickTime (0),
+      fMyPopUp (NULL)
 {
   fActiveTheme->ReadLock();
-  SetViewColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+  SetViewColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_BACKGROUND));
   fActiveTheme->ReadUnlock();
 }
  
@@ -42,6 +52,7 @@ NotifyList::~NotifyList (void)
 {
   // empty for now
   MakeEmpty();
+  delete fMyPopUp;
 }
 
 void
@@ -54,8 +65,134 @@ NotifyList::UpdateList(BList *newList)
 void
 NotifyList::AttachedToWindow (void)
 {
-  
+  fActiveTheme->AddView(this);
   BListView::AttachedToWindow ();
+}
+
+void
+NotifyList::DetachedFromWindow (void)
+{
+  fActiveTheme->RemoveView(this);
+  BListView::DetachedFromWindow ();
+}
+
+void
+NotifyList::MouseDown (BPoint myPoint)
+{
+  BMessage *msg (Window()->CurrentMessage());
+  int32 selected (IndexOf (myPoint));
+  if (selected >= 0)
+  {
+    BMessage *inputMsg (Window()->CurrentMessage());
+    int32 mousebuttons (0),
+          keymodifiers (0);
+    
+    NotifyListItem *item ((NotifyListItem *)ItemAt(selected));
+    if (!item)
+      return;
+    
+    inputMsg->FindInt32 ("buttons", &mousebuttons);
+    inputMsg->FindInt32 ("modifiers", &keymodifiers);
+    
+    bigtime_t sysTime;
+    msg->FindInt64 ("when", &sysTime);
+    uint16 clicks = CheckClickCount (myPoint, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
+    
+    // slight kludge to make sure the expand/collapse triangles behave how they should
+    // -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
+    if (mousebuttons == B_PRIMARY_MOUSE_BUTTON)
+    {
+      if (((clicks % 2) == 0) && item->GetState())
+      {
+        // react to double click by creating a new messageagent or selecting
+        // an existing one (use /query logic in parsecmd)
+        BString data (item->Text());
+        data.Prepend ("/QUERY ");
+        BMessage submitMsg (M_SUBMIT);
+        submitMsg.AddString ("input", data.String());
+        submitMsg.AddBool ("history", false);
+        // don't clear in case user has something typed in text control
+        submitMsg.AddBool ("clear", false);
+        WindowListItem *winItem ((WindowListItem *)vision_app->pClientWin()->pWindowList()->ItemAt(
+          vision_app->pClientWin()->pWindowList()->CurrentSelection()));
+        if (winItem)
+        {
+          BMessenger msgr (winItem->pAgent());
+          if (msgr.IsValid())
+            msgr.SendMessage(&submitMsg);
+        }
+      }
+      else
+        Select (selected);
+    }
+    
+    if ((keymodifiers & B_SHIFT_KEY)  == 0
+    && (keymodifiers & B_OPTION_KEY)  == 0
+    && (keymodifiers & B_COMMAND_KEY) == 0
+    && (keymodifiers & B_CONTROL_KEY) == 0)
+    {
+      if (mousebuttons == B_SECONDARY_MOUSE_BUTTON)
+      {
+        if (item)
+        {
+          if(!item->IsSelected())
+            Select (IndexOf (myPoint));
+
+          BuildPopUp();
+
+          fMyPopUp->Go (
+            ConvertToScreen (myPoint),
+            true,
+            true,
+            ConvertToScreen (ItemFrame (selected)),
+            true);
+        }
+      }
+    }
+  }
+
+}
+
+void
+NotifyList::BuildPopUp(void)
+{
+  delete fMyPopUp;
+  fMyPopUp = new BPopUpMenu("Notify Selection", false, false);
+
+  int index (CurrentSelection());
+  if (index < 0)
+    return;
+  
+  NotifyListItem *item (dynamic_cast<NotifyListItem *>(ItemAt(index)));
+  if (item)
+  {
+    BString name (item->Text());
+    BMessage msg (M_SUBMIT);
+    BString data ("/QUERY ");
+    data.Append(name);
+    msg.AddString("input", data.String());
+    msg.AddBool ("history", false);
+    msg.AddBool ("clear", false);
+    fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_QUERY_ITEM, new BMessage (msg)));
+    data = "/WHOIS ";
+    data.Append(name);
+    msg.ReplaceString("input", data.String());
+    fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_WHOIS_ITEM, new BMessage (msg)));
+
+    WindowListItem *winItem (dynamic_cast<WindowListItem *>(
+      vision_app->pClientWin()->pWindowList()->ItemAt(
+        vision_app->pClientWin()->pWindowList()->CurrentSelection())));
+    if (winItem)
+      fMyPopUp->SetTargetForItems(winItem->pAgent());
+
+    if (!item->GetState())
+    {
+      // user is offline, do not allow whois and query
+      fMyPopUp->ItemAt(0)->SetEnabled(false);
+      fMyPopUp->ItemAt(1)->SetEnabled(false);
+    }
+    fMyPopUp->SetFont(be_plain_font);
+  }
 }
 
 void
@@ -69,6 +206,30 @@ NotifyList::MessageReceived (BMessage *msg)
         cWin->DispatchMessage (msg, cWin->pCwDock());
         break;
       }
+    
+    case M_THEME_FOREGROUND_CHANGE:
+      {
+        int16 which (msg->FindInt16 ("which"));
+        bool refresh (false);
+        switch (which)
+        {
+          case C_NOTIFYLIST_BACKGROUND:
+            fActiveTheme->ReadLock();
+            SetViewColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_BACKGROUND));
+            fActiveTheme->ReadUnlock();
+            refresh = true;
+            break;
+          
+          case C_NOTIFY_ON:
+          case C_NOTIFY_OFF:
+          case C_NOTIFYLIST_SELECTION:
+            refresh = true;
+            break;
+        }
+        if (refresh)
+          Invalidate();
+      }
+      break;
       
     default:
       BListView::MessageReceived (msg);
@@ -108,13 +269,13 @@ NotifyListItem::DrawItem (BView *father, BRect frame, bool complete)
 
   if (IsSelected())
   {
-    father->SetHighColor (fActiveTheme->ForegroundAt (C_WINLIST_SELECTION));
-    father->SetLowColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));    
+    father->SetHighColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_SELECTION));
+    father->SetLowColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_BACKGROUND));    
     father->FillRect (frame);
   }
   else if (complete)
   {
-    father->SetLowColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+    father->SetLowColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_BACKGROUND));
     father->FillRect (frame, B_SOLID_LOW);
   }
 
@@ -129,9 +290,6 @@ NotifyListItem::DrawItem (BView *father, BRect frame, bool complete)
 
   BString drawString (Text());
 
-  if (IsSelected())
-    color = fActiveTheme->ForegroundAt (C_NOTIFY_OFF);
-  
   fActiveTheme->ReadUnlock();
   
   father->SetHighColor (color);

@@ -636,6 +636,20 @@ ServerAgent::Establish (void *arg)
   return B_OK;
 }
 
+int
+ServerAgent::SortNotifyItems (const void *item1, const void *item2)
+{
+  const NotifyListItem *ptr1 (*((NotifyListItem * const *)item1));
+  const NotifyListItem *ptr2 (*((NotifyListItem * const *)item2));
+  
+  if (!ptr1 || !ptr2)
+    return 0;
+  
+  BString name (ptr1->Text());
+    
+  return name.ICompare(ptr2->Text());
+}
+
 void
 ServerAgent::AsyncSendData (const char *cData)
 {
@@ -1658,7 +1672,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           // remove leading space
           cmd.Remove(0, 1);
           for (i = 0; i < fNotifyNicks.CountItems(); i++)
-            if (curNick == ((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text())
+            if (curNick.ICompare(((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text()) == 0)
               break;
           // no dupes found, add it
           if (i == fNotifyNicks.CountItems())
@@ -1683,6 +1697,8 @@ ServerAgent::MessageReceived (BMessage *msg)
             fNotifyNicks.AddItem (item);
           }
         }
+        
+        fNotifyNicks.SortItems(SortNotifyItems);
         BMessage updMsg (M_NOTIFYLIST_UPDATE);
         updMsg.AddPointer ("list", &fNotifyNicks);
         updMsg.AddPointer ("source", this);
@@ -1704,7 +1720,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           cmd.Remove(0, 1);
           vision_app->RemoveNotifyNick(fNetworkData.FindString("name"), curNick.String());
           for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
-            if (curNick ==((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text())
+            if (curNick.ICompare(((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text()) == 0)
             {
               delete fNotifyNicks.RemoveItem(i);
             }
@@ -1715,7 +1731,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         {
           vision_app->RemoveNotifyNick(fNetworkData.FindString("name"), cmd.String());
           for (int32 i = 0; i < fNotifyNicks.CountItems(); i++)
-            if (cmd ==((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text())
+            if (cmd.ICompare(((NotifyListItem *)fNotifyNicks.ItemAt(i))->Text()))
             {
               delete fNotifyNicks.RemoveItem(i);
             }
@@ -1754,3 +1770,4 @@ ServerAgent::MessageReceived (BMessage *msg)
       ClientAgent::MessageReceived (msg);
   }
 }
+

@@ -996,7 +996,6 @@ ClientAgent::ParseCmd (const char *data)
       int32 count (rest.Length() - 1);
       while (rest[count--] == ' ')
         rest.RemoveLast(" ");
-      
 
       if (rest != "-9z99")
       {

@@ -111,18 +111,14 @@ void
 ClientAgent::AttachedToWindow (void)
 {
   BView::AttachedToWindow();
-  fActiveTheme->WriteLock();
   fActiveTheme->AddView (this);  
-  fActiveTheme->WriteUnlock();
 }
 
 void
 ClientAgent::DetachedFromWindow (void)
 {
   BView::DetachedFromWindow ();
-  fActiveTheme->WriteLock();
   fActiveTheme->RemoveView (this);  
-  fActiveTheme->WriteUnlock();
 }
 
 void

@@ -85,6 +85,9 @@ class ServerAgent : public ClientAgent
     void                        ParseCTCP (BString, BString, BString);
     void                        ParseCTCPResponse (BString, BString);
 
+    static int                  SortNotifyItems (const void *, const void *);
+
+
     void                        HandleReconnect (void);
     static bool                 PrivateIPCheck (const char *);
     const char                  *GetNextNick (void);
