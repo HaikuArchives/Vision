@@ -74,7 +74,7 @@ ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 			sysInfoString = "BeOS/";
 			sysInfoString += librootversion;
 			
-			if (librootversion.FindFirst("5.0") == 0)
+			if ((librootversion.FindFirst("5.0") == 0) || (librootversion == "5"))
 			{
 				// this is the way the BeOS 5.0.1 update checks for R5 Pro...
 				bool BePro;
