@@ -1,7 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
-[0.3.07017]
+[0.3.07019]
+2001-07-19
+       * slight fix to IRCView
+
+[0.3.07018]
 2001-07-18
       * reduced flicker on window switches, thanks to Alan Ellis
       * /part now works on message windows

@@ -267,12 +267,15 @@ IRCView::MouseDown (BPoint myPoint)
   && (keymodifiers & B_COMMAND_KEY) == 0
   && (keymodifiers & B_CONTROL_KEY) == 0)
   {
-    selstart = OffsetAt(myPoint);
-    Select(selstart, selstart);
-    int32 length = CreateSelection (selstart);
-    if (length)
-      Select(selstart, selstart + length);
-
+    if ((selfinish - selstart) == 0)
+    {
+      selstart = OffsetAt(myPoint);
+      Select(selstart, selstart);
+      int32 length = CreateSelection (selstart);
+      if (length)
+        Select(selstart, selstart + length);
+    }
+    
     MakeFocus (true);
     BuildPopUp();
     myPopUp->Go (
