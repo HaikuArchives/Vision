@@ -43,6 +43,9 @@ SetupWindow::SetupWindow (void)
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
+
+  AddShortcut('/', B_SHIFT_KEY, new BMessage(M_PREFS_SHOW));
+
   bgView = new BView (Bounds(), "background", B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
   AddChild (bgView);
   bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
@@ -137,6 +140,13 @@ SetupWindow::MessageReceived (BMessage *msg)
         vision_app->PostMessage (&connMsg);
       }
       break;
+      
+    case M_PREFS_SHOW:
+      {
+        // forwarding Cmd+Shift+/ message
+        vision_app->PostMessage (msg);
+      }
+      break; 
       
     default:
       BWindow::MessageReceived (msg);
