@@ -305,6 +305,7 @@ WindowList::SelectionChanged (void)
     }
   }
   BOutlineListView::SelectionChanged();
+  vision_app->pClientWin()->SetEditStates();
 }
 
 void

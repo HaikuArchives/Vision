@@ -7,7 +7,7 @@ http://vision.sourceforge.net
          * fix bug where items would get attached to the wrong server
          * fixed bug where font changes would update the font size but not spacing of list items
          * altered some semantics in how reconnects are handled, should fix some ping timeout issues that would happen now and then on reconnect.
-         * began redoing menus
+         * redoing menus (added IconMenu, thanks to Alan Ellis), rearranged some locations
 
 [0.9.4-0830]
          * fixed deadlock in DCC Transfers window
