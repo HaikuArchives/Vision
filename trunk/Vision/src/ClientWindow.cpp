@@ -44,11 +44,13 @@
 #include "WindowList.h"
 #include "StatusView.h"
 #include "ServerAgent.h"
+#include "ResizeView.h"
 #include "Vision.h"
 #include "SettingsFile.h"
 #include "ClientWindow.h"
 #include "ClientAgent.h"
 #include "ClientWindowDock.h"
+#include "Names.h"
 
 
 /*
@@ -77,6 +79,7 @@ ClientWindow::ClientWindow (BRect frame)
 bool
 ClientWindow::QuitRequested (void)
 {
+  vision_app->SetRect ("windowDockRect", cwDock->Frame());
   if (!shutdown_in_progress)
   {
     shutdown_in_progress = true;
@@ -393,6 +396,31 @@ ClientWindow::MessageReceived (BMessage *msg)
           true); // bring to front
       }
       break;
+    
+    case M_RESIZE_VIEW:
+      {
+        float offset (msg->FindFloat ("delta"));
+        BView *view (NULL);
+        msg->FindPointer ("view", reinterpret_cast<void **>(&view));
+        if (dynamic_cast<ClientWindowDock *>(view))
+        {
+          resize->MoveBy (offset, 0.0);
+          cwDock->ResizeBy (offset, 0.0);
+          int32 agentCount (pWindowList()->CountItems());
+          for (int32 i = 0; i < agentCount; i++)
+          {
+            WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (i));
+            BView *agent (item->pAgent());
+            agent->ResizeBy (-offset, 0.0);
+            agent->MoveBy (offset, 0.0);
+          }
+        }
+        else if (dynamic_cast<NamesView *>(view))
+        {
+          printf ("names view resize\n");
+        }
+      }
+      break;
         
     default:
       BWindow::MessageReceived (msg);
@@ -432,7 +460,7 @@ ClientWindow::GetTopServer (WindowListItem *request)
 BRect *
 ClientWindow::AgentRect (void)
 {
-  agentrect->left = cwDock->Frame().right - cwDock->Frame().left + 2;
+  agentrect->left = resize->Frame().right - cwDock->Frame().left + 1;
   agentrect->top = Bounds().top + 1;
   agentrect->right = Bounds().Width() - 1;
   agentrect->bottom = cwDock->Frame().Height();
@@ -569,12 +597,19 @@ ClientWindow::Init (void)
     "irc.elric.net", 0),
     true);
   
-  cwDock = new ClientWindowDock (BRect (0, frame.top, 130, status->Frame().top - 1));
+  BRect dockRect = vision_app->GetRect ("windowDockRect");
+  cwDock = new ClientWindowDock ((dockRect.Width() == 0.0) ?
+    BRect (0, frame.top, 130, status->Frame().top - 1) : dockRect);
   
   bgView->AddChild (cwDock);
+  
+  resize = new ResizeView (cwDock, BRect (cwDock->Frame().right + 1,
+    Bounds().top + 1, cwDock->Frame().right + 3, cwDock->Frame().Height()));
+  
+  bgView->AddChild (resize);
 
   agentrect = new BRect (
-    cwDock->Frame().right - cwDock->Frame().left + 2,
+    (resize->Frame().right - cwDock->Frame().left) + 1,
     Bounds().top + 1,
     Bounds().Width() - 1,
     cwDock->Frame().Height());

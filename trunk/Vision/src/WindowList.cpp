@@ -48,7 +48,7 @@ WindowList::WindowList (BRect frame)
     frame,
     "windowList",
     B_SINGLE_SELECTION_LIST,
-    B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM)
+    B_FOLLOW_ALL)
 {
   textColor   = vision_app->GetColor (C_WINLIST_NORMAL);
   newsColor   = vision_app->GetColor (C_WINLIST_NEWS);
