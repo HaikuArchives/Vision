@@ -33,9 +33,10 @@
 #include <MessageFilter.h>
 #include <stdlib.h>
 
-#include "Vision.h"
-#include "Utilities.h"
+#include "ClientWindow.h"
 #include "ServerAgent.h"
+#include "Utilities.h"
+#include "Vision.h"
 #include "VTextControl.h"
 
 class DCCFileFilter : public BMessageFilter
@@ -108,12 +109,14 @@ ServerAgent::DCCGetDialog (
       panel->SetButtonLabel (B_DEFAULT_BUTTON, "Accept");
       panel->SetButtonLabel (B_CANCEL_BUTTON, "Refuse");
       panel->SetSaveText (file.String());
+      
+      BWindow *panelWindow (panel->Window());
 
-      if (panel->Window()->Lock())
+      if (panelWindow->Lock())
       {
-        panel->Window()->SetTitle (text.String());
-        panel->Window()->SetFlags (panel->Window()->Flags() | B_AVOID_FOCUS);
-        panel->Window()->AddFilter (new DCCFileFilter (panel, msg));
+        panelWindow->SetTitle (text.String());
+        panelWindow->SetFlags (panelWindow->Flags() | B_AVOID_FOCUS); 
+        panelWindow->AddFilter (new DCCFileFilter (panel, msg));
         if (vision_app->GetBool ("dccAutoAccept"))
         {
           BDirectory path (vision_app->GetString ("dccDefPath"));
@@ -122,13 +125,17 @@ ServerAgent::DCCGetDialog (
         }
         if (vision_app->GetBool ("dccAutoAccept"))
         {
-          panel->Window()->Hide();
+          panelWindow->Hide();
           BButton *button (dynamic_cast<BButton *>(panel->Window()->FindView ("default button")));
           if (button)
             button->Invoke();
         }
-        panel->Window()->Unlock();
+        panelWindow->Unlock();
         panel->Show();
+        panelWindow->Lock();
+        panelWindow->SetFlags (panelWindow->Flags() & ~B_AVOID_FOCUS);
+        panelWindow->Unlock();
+//        vision_app->pClientWin()->Activate(true);
       }
 }
 
