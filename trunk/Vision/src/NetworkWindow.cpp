@@ -20,6 +20,7 @@
  */
 
 #include <View.h>
+#include <Messenger.h>
 
 #include "ClientWindow.h"
 #include "NetworkPrefsView.h"
@@ -57,14 +58,14 @@ NetworkWindow::QuitRequested (void)
   return true;  
 }
 
-NetPrefServerWindow::NetPrefServerWindow (void)
+NetPrefServerWindow::NetPrefServerWindow (BHandler *target)
   : BWindow (
       BRect (50, 50, 350, 250),
       "Servers",
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
-	AddChild ((serverView = new NetPrefsServerView (Bounds(), "server settings")));
+	AddChild ((serverView = new NetPrefsServerView (Bounds(), "server settings", BMessenger(target))));
 }
 
 

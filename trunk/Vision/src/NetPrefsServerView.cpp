@@ -124,13 +124,14 @@ ServerListItem::GetServerInfo (void)
 }
 // server window
 
-NetPrefsServerView::NetPrefsServerView (BRect bounds, const char *name)
+NetPrefsServerView::NetPrefsServerView (BRect bounds, const char *name, BMessenger target)
 	:	BView (
 			bounds,
 			name,
 			B_FOLLOW_ALL_SIDES,
 			B_WILL_DRAW),
-			entryWin (NULL)
+			entryWin (NULL),
+			netWin (target)
 {
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
 	BRect boundsRect (Bounds());
@@ -384,6 +385,8 @@ NetPrefsServerView::MessageReceived (BMessage *msg)
 			UpdateNetworkData (data);
 			AddServer (data);
 			Window()->EnableUpdates();
+			netWin.SendMessage (M_SERVER_DATA_CHANGED);
+			
 		}
 		break;
 		

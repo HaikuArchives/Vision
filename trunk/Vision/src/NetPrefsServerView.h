@@ -3,8 +3,10 @@
 
 #include <View.h>
 #include <Message.h>
+#include <Messenger.h>
 
 class BBox;
+class BMessenger;
 class BMenuItem;
 class BMenuField;
 class BButton;
@@ -18,7 +20,7 @@ struct ServerData;
 class NetPrefsServerView : public BView
 {
 	public:
-					NetPrefsServerView (BRect, const char *);
+					NetPrefsServerView (BRect, const char *, BMessenger);
 	virtual			~NetPrefsServerView (void);
 	virtual void	MessageReceived (BMessage *);
 	virtual void	AttachedToWindow (void);
@@ -37,6 +39,7 @@ class NetPrefsServerView : public BView
 	            *removeButton;
 	BWindow *entryWin;
 	BMessage *activeNetwork;
+	BMessenger netWin;
 };
 
 #endif

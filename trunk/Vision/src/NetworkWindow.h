@@ -24,8 +24,11 @@
 
 #include <Window.h>
 
+const uint32 M_SERVER_DATA_CHANGED = 'nsdc';
+
 class BView;
 class NetPrefsServerView;
+class BHandler;
 
 class NetworkWindow : public BWindow
 {
@@ -38,7 +41,7 @@ class NetworkWindow : public BWindow
 class NetPrefServerWindow : public BWindow
 {
   public:
-                              NetPrefServerWindow ();
+                              NetPrefServerWindow (BHandler *);
     virtual                   ~NetPrefServerWindow (void);
     void                      SetNetworkData (BMessage *);                
     virtual bool              QuitRequested (void);

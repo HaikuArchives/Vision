@@ -496,6 +496,12 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 			}
 			break;
 		
+		case M_SERVER_DATA_CHANGED:
+			{
+		      UpdateNetworkData (activeNetwork);
+		    }
+		    break;
+		
 		case M_SERVER_DIALOG:
 			{
 				BMessenger msgr (serverPrefs);
@@ -503,7 +509,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 					serverPrefs->Activate();
 				else
 				{
-					serverPrefs = new NetPrefServerWindow ();
+					serverPrefs = new NetPrefServerWindow (this);
 					serverPrefs->SetNetworkData (&activeNetwork);
 					serverPrefs->Show();
 				}
