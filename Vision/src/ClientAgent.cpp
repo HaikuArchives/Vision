@@ -726,7 +726,8 @@ ClientAgent::Id (void) const
 int32
 ClientAgent::Sid (void) const
 {
-  return const_cast<long int>(sid);
+  //return const_cast<long int>(sid);
+  return sid;
 }
 
 int32
