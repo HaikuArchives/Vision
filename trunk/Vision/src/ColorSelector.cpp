@@ -378,8 +378,8 @@ void ColorSelector::MessageReceived(BMessage *msg)
 				ColorMenuItem *item ((ColorMenuItem *)(fColorMenu->FindItem (fCurrentField.String())));
 				if (item)
 				{
-					BMessage *message (item->Message());
-					message->FindInt32 ("index", &index);
+					BMessage *curMsg (item->Message());
+					curMsg->FindInt32 ("index", &index);
 				}
 				c.alpha = 255;
 				colors.AddData ("color", B_RGB_COLOR_TYPE, &c, sizeof(rgb_color));
@@ -457,8 +457,8 @@ void ColorSelector::Update(const BMessage& changes)
 	ColorMenuItem *item ((ColorMenuItem *)(fColorMenu->FindItem (fCurrentField.String())));
 	if (item)
 	{
-		BMessage *message (item->Message());
-		message->FindInt32 ("index", &index);
+		BMessage *curMsg (item->Message());
+		curMsg->FindInt32 ("index", &index);
 	}
 			
 	if (fColors.FindData ("color", B_RGB_COLOR_TYPE, index,

@@ -1196,20 +1196,20 @@ ClientAgent::ExecPipe (void *arg)
 
   FILE *fp = popen (exec->String(), "r");
 
-  char read[768]; // should be long enough for any line...
+  char data[768]; // should be long enough for any line...
   
   // read one less just in case we need to offset by a char (prepended '/')
-  while (fgets(read, 767, fp))
+  while (fgets(data, 767, fp))
   {
-    read[strlen(read)-1] = '\0'; // strip termination
-    if (read[0] == '/')
+    data[strlen(data)-1] = '\0'; // strip termination
+    if (data[0] == '/')
     {
-      memmove(read + 1, read, strlen(read));
-      read[0] = ' ';      
+      memmove(data + 1, data, strlen(data));
+      data[0] = ' ';      
     }
     // ship off to agent
     agent->LockLooper();
-    agent->Submit (read);
+    agent->Submit (data);
     agent->UnlockLooper();
   }
 
