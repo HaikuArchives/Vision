@@ -27,7 +27,9 @@
 #  include "gnome/ScrollView.h"
 #  include "gnome/PopUpMenu.h"
 #  include "gnome/MenuItem.h"
+#  define  system_beep(x)
 #elif BEOS_BUILD
+#  include <Beep.h>
 #  include <ScrollView.h>
 #  include <PopUpMenu.h>
 #  include <MenuItem.h>
@@ -755,10 +757,12 @@ ClientAgent::MessageReceived (BMessage *msg)
             packed.FindPointer ("font", reinterpret_cast<void **>(&font));
 
           if (packed.HasData ("color", B_RGB_COLOR_TYPE))
+          {
             packed.FindData ("color",
               B_RGB_COLOR_TYPE,
               reinterpret_cast<const void **>(&color),
               &size);
+          }
 
           if (packed.HasBool ("timestamp"))
             packed.FindBool ("timestamp", &timeStamp);
@@ -838,7 +842,10 @@ ClientAgent::MessageReceived (BMessage *msg)
           statusMsg.AddPointer ("item", agentWinItem);
 
           if (hasNick || dynamic_cast<MessageAgent *>(this))
+          {
             statusMsg.AddInt32 ("status", WIN_NICK_BIT);
+            system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+          }
           else
             statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
 

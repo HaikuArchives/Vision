@@ -267,4 +267,12 @@ const uint32 M_CHANNEL_MODE							= 0x1604;
 const uint32 M_INPUT_FOCUS                          = 0x1605;
 const uint32 M_CHANNEL_GOT_KICKED					= 0x1606;
 
+// Sound event identifiers
+enum SoundEvent
+{
+  seNickMentioned = 0,
+  seSoundEventsNumber
+};
+
+extern const char *kSoundEventNames[];
 #endif
