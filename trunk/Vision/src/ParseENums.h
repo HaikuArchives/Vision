@@ -218,6 +218,7 @@ const int ERR_USERSDONTMATCH          = 502;
 const int ERR_SILELISTFULL            = 511;
 const int ERR_TOOMANYWATCH            = 512;
 const int ERR_TOOMANYDCC              = 514;
+const int ERR_CANTINVITE              = 518;
 const int ERR_LISTSYNTAX              = 521;
 const int ERR_WHOSYNTAX               = 522;
 const int ERR_WHOLIMEXCEED            = 523;
