@@ -89,7 +89,7 @@ ClientAgent::ClientAgent (
     frame_,
     id_,
     B_FOLLOW_ALL_SIDES,
-    B_WILL_DRAW | B_FRAME_EVENTS),
+    B_WILL_DRAW),
     
   id (id_),
   sid (sid_),

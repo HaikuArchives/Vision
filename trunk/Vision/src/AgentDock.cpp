@@ -30,6 +30,10 @@
 
 #include <stdio.h>
 
+const rgb_color HEADER_NORMAL  = ui_color (B_MENU_BACKGROUND_COLOR);
+const rgb_color HEADER_DARK_1  = tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT);
+const rgb_color HEADER_DARK_2  = tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT);
+
 //////////////////////////////////////////////////////////////////////////////
 /// Begin AgentDock functions
 //////////////////////////////////////////////////////////////////////////////
@@ -183,30 +187,130 @@ AgentDockNotifyList::~AgentDockNotifyList (void)
  * Class Purpose: Provides the visual header for AgentDock Agents
  */
 
+AgentDockHeaderString::AgentDockHeaderString (BRect frame_, const char *name)
+ : BStringView (
+   frame_,
+   "headerView",
+   name,
+   B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM)
+{
+
+}
+
+AgentDockHeaderString::~AgentDockHeaderString (void)
+{
+}
+
+void
+AgentDockHeaderString::MouseMoved (BPoint where, uint32 transitcode, const BMessage *mmMsg)
+{
+  switch (transitcode)
+  {
+    case B_ENTERED_VIEW:
+      SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+      Parent()->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+      Invalidate();
+      Parent()->Invalidate();
+      break;
+    
+    case B_EXITED_VIEW:
+      SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
+      Parent()->SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
+      Invalidate();
+      Parent()->Invalidate();
+      break;
+  }
+    
+  BStringView::MouseMoved (where, transitcode, mmMsg);
+}
+
+void
+AgentDockHeaderString::MouseDown (BPoint where)
+{
+  SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
+  Parent()->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
+  Invalidate();
+  Parent()->Invalidate();
+  BStringView::MouseDown (where);
+}
+
+void
+AgentDockHeaderString::MouseUp (BPoint where)
+{
+  SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+  Parent()->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+  Invalidate();
+  Parent()->Invalidate();
+  BStringView::MouseUp (where);
+}
+
+
+
 AgentDockHeader::AgentDockHeader (BRect frame, const char *name, uint32 resize)
   : BView (
     frame,
     "AgentDockHeader",
     resize,
     B_WILL_DRAW)
-{
-  
+{  
   SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
 
   BRect stringRect (frame);
   stringRect.left = stringRect.left + 3;
   stringRect.right = stringRect.right - 24;
     
-  headerView = new BStringView (stringRect,
-                                "headerView",
-                                name,
-                                B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
+  headerView = new AgentDockHeaderString (stringRect, name);
   AddChild (headerView);
 }
 
 AgentDockHeader::~AgentDockHeader (void)
 {
-  //
+  // nothing
+}
+
+void
+AgentDockHeader::MouseMoved (BPoint where, uint32 transitcode, const BMessage *mmMsg)
+{
+  switch (transitcode)
+  {
+    case B_ENTERED_VIEW:
+      SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+      headerView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+      Invalidate();
+      headerView->Invalidate();
+      break;
+    
+    case B_EXITED_VIEW:
+      SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
+      headerView->SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
+      Invalidate();
+      headerView->Invalidate();
+      break;
+  }
+    
+  BView::MouseMoved (where, transitcode, mmMsg);
+}
+
+void
+AgentDockHeader::MouseDown (BPoint where)
+{
+  SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
+  headerView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
+  Invalidate();
+  headerView->Invalidate();
+  
+  BView::MouseDown (where);
+}
+
+void
+AgentDockHeader::MouseUp (BPoint where)
+{
+  SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+  headerView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+  Invalidate();
+  headerView->Invalidate();
+  
+  BView::MouseUp (where);
 }
 
 //////////////////////////////////////////////////////////////////////////////
