@@ -1336,7 +1336,7 @@ const char *
 VisionApp::GetThreadName (int thread_type)
 {
   // random names for the connection thread
-  static BString tnames[] = {
+  static BString tnames[54] = {
     /*  0 */ "gummi_bear_orgy",
     /*  1 */ "complimentary_tote_bag",
     /*  2 */ "cheating_at_solitaire", 
