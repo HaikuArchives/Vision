@@ -38,7 +38,7 @@ class ClientAgentLogger
 {
   public:
                            ClientAgentLogger (BString);
-                           ~ClientAgentLogger (void);
+   virtual                 ~ClientAgentLogger (void);
    void                    StartLogging (void);
    void                    RegisterLogger (const char *);
    void                    UnregisterLogger (const char *);    

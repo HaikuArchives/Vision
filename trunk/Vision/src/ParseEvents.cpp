@@ -35,6 +35,14 @@
 
 #include <stdio.h>
 
+/* #6502 was here --
+<kurros> regurg, amiyumi?
+<regurg> Let's discuss further why your pizza NOW.
+<kurros> uh
+<slaad> ?
+<kurros> yeah
+*/
+
 bool
 ServerAgent::ParseEvents (const char *data)
 {

@@ -61,7 +61,7 @@ class Theme
 								int16,
 								int16,
 								int16);
-							~Theme (void);
+	virtual				~Theme (void);
 
 	const char			*Name (void) const
 							{ return name; }

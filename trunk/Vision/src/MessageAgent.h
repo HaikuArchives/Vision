@@ -50,7 +50,7 @@ class MessageAgent : public ClientAgent
                                        const char * = "",
                                        const char * = "");
                          
-                         ~MessageAgent (void);
+    virtual              ~MessageAgent (void);
     virtual void         AllAttached (void);
     virtual void         AddMenuItems (BPopUpMenu *);
     
