@@ -98,6 +98,8 @@ VisionApp::VisionApp (void)
       fPrefsWin (0),
       fNetWin (0),
       fDccFileWin (0),
+      fIdentThread (-1),
+      fWinThread (-1),
       fIdentSocket (-1),
       fActiveTheme (new Theme ("current", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
 {
@@ -585,15 +587,8 @@ VisionApp::QuitRequested (void)
     closesocket (fIdentSocket);
 #endif
   
-  BMessenger msgr (fClientWin);
-  if (msgr.IsValid() && msgr.LockTarget())
-  {
-    volatile thread_id winThread (fClientWin->Thread());
-    fClientWin->Unlock();
-    msgr.SendMessage (B_QUIT_REQUESTED);
-    status_t result;
-    wait_for_thread (winThread, &result);
-  }
+  status_t result;
+  wait_for_thread (fWinThread, &result);
 
   // give our child threads a chance to die gracefully
   //  snooze (500000);  // 0.5 seconds
@@ -798,18 +793,6 @@ VisionApp::MessageReceived (BMessage *msg)
       }
       break;
     
-    case M_WINLIST_EMPTY:
-      {
-        if (!fShuttingDown);
-        {
-          fClientWin->Lock();
-          fClientWin->Quit();
-          fClientWin = NULL;
-          PostMessage (M_SETUP_SHOW);
-        }
-      }
-      break;
-      
     case M_PREFS_SHOW:
       {
         if (fPrefsWin)
@@ -873,6 +856,7 @@ VisionApp::MessageReceived (BMessage *msg)
         if (fClientWin == NULL)
         {
           fClientWin = new ClientWindow (clientWinRect);
+          fWinThread = fClientWin->Thread();
           fClientWin->Show();
         }
         BMessage connMsg (M_MAKE_NEW_NETWORK);

@@ -39,7 +39,7 @@ const uint32 M_NOTIFYLIST_CHANGE					= 0x1019;
 const uint32 M_NOTIFYLIST_UPDATE					= 0x1020;
 const uint32 M_NOTIFYLIST_RESIZE					= 0x1021;
 const uint32 M_WINLIST_NOTIFY_BLINKER				= 0x1022;
-const uint32 M_WINLIST_EMPTY                        = 0x1023;
+// reserved                                         = 0x1023;
 // reserved                                         = 0x1024;
     
 const uint32 M_LIST_BEGIN							= 0x1025;
