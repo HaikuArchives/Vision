@@ -660,7 +660,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 		case M_NICK_SELECTED:
 		    {
 		      int32 index (msg->FindInt32 ("index"));
-		      if (index >= 0)
+		      if (index >= 0 && !nickDefaultsBox->Value())
 		      {
                 nickUpButton->SetEnabled (index > 0);
                 nickDnButton->SetEnabled (index != (listView->CountItems() - 1));
