@@ -242,7 +242,7 @@
 // app prefs
 
 #define S_PREFAPP_VERSION_PARANOID  "Show OS information in version reply"
-#define S_PREFAPP_CMDW              "Cmd+W closes Vision"
+#define S_PREFAPP_CMDW              "Require double Cmd+Q/W to close"
 #define S_PREFAPP_STRIP_MIRC        "Strip mIRC Colors"
 #define S_PREFAPP_WARN_MULTILINE    "Warn when multiline pasting"
 #define S_PREFAPP_QUERY_MSG         "Open new query on message"
