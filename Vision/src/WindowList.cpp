@@ -126,8 +126,11 @@ WindowList::MessageReceived (BMessage *msg)
         if (which == F_WINLIST)
         {
           fActiveTheme->ReadLock();
-          SetFont (&fActiveTheme->FontAt (F_WINLIST));
+          BFont newFont (fActiveTheme->FontAt (F_WINLIST));
           fActiveTheme->ReadUnlock();
+          SetFont (&newFont);
+          for (int32 i = 0; i < FullListCountItems(); i++)
+            FullListItemAt (i)->Update (this, &newFont);
           Invalidate();
         }
       }

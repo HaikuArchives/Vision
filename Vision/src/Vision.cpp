@@ -113,6 +113,7 @@ VisionApp::VisionApp (void)
   fNumBench = false;
   fShuttingDown = false;
   fDebugShutdown = false;
+  fDisableAutostart = false;
   fStartupTime = system_time();
 }
 
@@ -698,7 +699,10 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       
     else if (strcmp (av[i], "-n") == 0)
       fNumBench = true;
-    
+      
+    else if (strcmp (av[i], "-a") == 0)
+      fDisableAutostart = true;
+      
     else if (strcmp (av[i], "-T") == 0)
     {
 #ifdef __INTEL__
@@ -736,19 +740,20 @@ bool
 VisionApp::CheckStartupNetworks (void)
 {
   bool autoStarted (false);
-#if 1
-  BMessage netData;
-  for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
+  if (!fDisableAutostart)
   {
-    if (CheckNetworkValid (netData.FindString("name")) && netData.FindBool ("connectOnStartup"))
+    BMessage netData;
+    for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
     {
-      BMessage msg (M_CONNECT_NETWORK);
-      msg.AddString ("network", netData.FindString ("name"));
-      PostMessage (&msg);
-      autoStarted = true;
+      if (CheckNetworkValid (netData.FindString("name")) && netData.FindBool ("connectOnStartup"))
+      {
+        BMessage msg (M_CONNECT_NETWORK);
+        msg.AddString ("network", netData.FindString ("name"));
+        PostMessage (&msg);
+        autoStarted = true;
+      }
     }
   }
-#endif
   return autoStarted;
 }
 

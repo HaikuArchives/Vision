@@ -127,6 +127,7 @@ class VisionApp : public BApplication
     bool                    fDebugShutdown;
     bool                    fDebugSend;
     bool                    fDebugRecv;
+    bool                    fDisableAutostart;
     bool                    fSettingsLoaded;
     bool                    fNumBench;
 
