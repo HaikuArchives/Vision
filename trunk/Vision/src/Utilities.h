@@ -21,10 +21,13 @@
  *                 Andrew Bazan
  */
  
-#ifndef _STRINGMANIP_H_
-#define _STRINGMANIP_H_
+#ifndef _UTILITIES_H
+#define _UTILITIES_H_
 
 #include <String.h>
+
+class BMessage;
+class BPoint;
 
 BString      GetWord (const char *, int32);
 BString      RestOfString (const char *, int32);
@@ -38,6 +41,7 @@ BString      StringToURI (const char *);
 const char   *RelToAbsPath (const char *);
 BString      GetWordColon (const char *, int32);
 int32        Get440Len (const char *);
+uint16       CheckClickCount(BPoint, BPoint &, bigtime_t, bigtime_t &, int16 &);
 
 
 #endif

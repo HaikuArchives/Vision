@@ -65,12 +65,12 @@ class WindowListItem : public BListItem
                                               bool complete = false);
                                               
   private:
-    BString                         myName;
-    int32							mySid;
-    int32                           myStatus;
-    int32                           myType;
-    int32                           subStatus; // servers only -- status of collapsed children
-    BView                           *myAgent;
+    BString                         fMyName;
+    int32							fMySid;
+    int32                           fMyStatus;
+    int32                           fMyType;
+    int32                           fSubStatus; // servers only -- status of collapsed children
+    BView                           *fMyAgent;
 };
 
 
@@ -107,14 +107,19 @@ class WindowList : public BOutlineListView
 	
   private:
 
-    BPopUpMenu                      *myPopUp;
-    WindowListItem                  *lastSelected;
+    BPopUpMenu                      *fMyPopUp;
+    WindowListItem                  *fLastSelected;
     
-    Theme                           *activeTheme;
+    Theme                           *fActiveTheme;
     
     void                            BuildPopUp (void);
     
-    int32                           lastButton;
+    int16                           fLastButton,
+                                    fClickCount;
+    
+    BPoint                          fLastClick;
+    bigtime_t                       fLastClickTime;
+    
 
     static int                      SortListItems (const BListItem *, const BListItem *);
     

@@ -16,39 +16,39 @@
 #include "ColumnTypes.h"
 #include "Vision.h"
 
-const rgb_color serverItemNormalColor = { 0,0,0,255 };
-const rgb_color serverItemDefaultColor = { 0, 127, 0, 255 };
-const rgb_color serverItemDisabledColor = { 0, 0, 192, 255 };
+const rgb_color serverItemNormalColor = {0, 0, 0, 255};
+const rgb_color serverItemDefaultColor = {0, 127, 0, 255};
+const rgb_color serverItemDisabledColor = {0, 0, 192, 255};
 
 class ServerListItem : public BStringItem
 {
-	public:
-		ServerListItem (ServerData &);
-		~ServerListItem (void);
-		virtual void DrawItem (BView *, BRect, bool);
-		void SetState (uint32);
-		void SetServer (const char *);
-		void SetPort (uint32);
-		
-		ServerData GetServerInfo (void);
-	
-	private:
-		
-		void UpdateItemText (void);
-		inline rgb_color GetItemColor (void);
-		
-		uint32 state;
-		BString serverName;
-		uint32 port;
+  public:
+    ServerListItem (ServerData &);
+    ~ServerListItem (void);
+    virtual void DrawItem (BView *, BRect, bool);
+    void SetState (uint32);
+    void SetServer (const char *);
+    void SetPort (uint32);
+
+  ServerData GetServerInfo (void);
+
+    private:
+
+    void UpdateItemText (void);
+    inline rgb_color GetItemColor (void);
+
+    uint32 state;
+    BString serverName;
+    uint32 port;
 };
 
-ServerListItem::ServerListItem (ServerData &data)
-	: BStringItem ("")
+ServerListItem::ServerListItem (ServerData & data)
+  :  BStringItem ("")
 {
-	state = data.state;
-	serverName = data.serverName;
-	port = data.port;
-	UpdateItemText();
+  state = data.state;
+  serverName = data.serverName;
+  port = data.port;
+  UpdateItemText ();
 }
 
 ServerListItem::~ServerListItem (void)
@@ -56,383 +56,372 @@ ServerListItem::~ServerListItem (void)
 }
 
 void
-ServerListItem::UpdateItemText(void)
+ServerListItem::UpdateItemText (void)
 {
-	BString itemText;
-	itemText += serverName;
-	itemText += ":";
-	itemText << port;
-	SetText (itemText.String());
+  BString itemText;
+  itemText += serverName;
+  itemText += ":";
+  itemText << port;
+  SetText (itemText.String ());
 }
 
 inline rgb_color
 ServerListItem::GetItemColor (void)
 {
-	switch (state)
-	{
-		case 1:
-			return serverItemDefaultColor;
-		
-		case 2:
-			return serverItemDisabledColor;
-	}
-	
-	return serverItemNormalColor;
+  switch (state)
+  {
+    case 1:
+      return serverItemDefaultColor;
+
+    case 2:
+      return serverItemDisabledColor;
+  }
+
+  return serverItemNormalColor;
 }
 
 void
-ServerListItem::DrawItem (BView *parent, BRect frame, bool complete)
+ServerListItem::DrawItem (BView * parent, BRect frame, bool complete)
 {
-	parent->SetHighColor (GetItemColor());
-	BStringItem::DrawItem(parent, frame, complete);
+  parent->SetHighColor (GetItemColor ());
+  BStringItem::DrawItem (parent, frame, complete);
 }
 
 void
 ServerListItem::SetState (uint32 newState)
 {
-	state = newState;
-	UpdateItemText();
+  state = newState;
+  UpdateItemText ();
 }
 
 void
 ServerListItem::SetServer (const char *newServer)
 {
-	serverName = newServer;
-	UpdateItemText();
+  serverName = newServer;
+  UpdateItemText ();
 }
 
 void
 ServerListItem::SetPort (uint32 newPort)
 {
-	port = newPort;
-	UpdateItemText();
+  port = newPort;
+  UpdateItemText ();
 }
 
 ServerData
 ServerListItem::GetServerInfo (void)
 {
-	ServerData data;
-	data.port = port;
-	data.state = state;
-	strcpy (data.serverName, serverName.String());
-	return data;
+  ServerData data;
+  data.port = port;
+  data.state = state;
+  strcpy (data.serverName, serverName.String ());
+  return data;
 }
 // server window
 
 NetPrefsServerView::NetPrefsServerView (BRect bounds, const char *name, BMessenger target)
-	:	BView (
-			bounds,
-			name,
-			B_FOLLOW_ALL_SIDES,
-			B_WILL_DRAW),
-			entryWin (NULL),
-			netWin (target)
+  :  BView (
+	  bounds,
+	  name,
+	  B_FOLLOW_ALL_SIDES,
+	  B_WILL_DRAW),
+  fEntryWin (NULL),
+  fNetWin (target)
 {
-	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-	BRect boundsRect (Bounds());
-	BBox *mainBox (new BBox (bounds.InsetByCopy (-1, -1), NULL, B_FOLLOW_ALL_SIDES));
-	AddChild (mainBox);
-	selectTitleString = new BStringView (BRect (0,0,0,0), NULL, "Select servers for");
-	selectTitleString->ResizeToPreferred();
-	mainBox->AddChild (selectTitleString);
-	selectTitleString->MoveTo (11,11);
-	serverList = new BColumnListView (BRect (0, 0, boundsRect.Width() - 10,
-		boundsRect.Height() / 2), "serverList", B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW,
-		B_PLAIN_BORDER);
-	serverList->SetSelectionMessage (new BMessage (M_SERVER_ITEM_SELECTED));
-	mainBox->AddChild (serverList);
-	serverList->MoveTo (5, selectTitleString->Frame().bottom + 3);
-	BStringColumn *status (new BStringColumn (S_PREFSERVER_STATUS_COLUMN, be_plain_font->StringWidth ("Status") * 2,
-		0, bounds.Width(), 0, B_ALIGN_CENTER));
-	serverList->AddColumn (status, 0);
-	BStringColumn *data (new BStringColumn (S_PREFSERVER_SERVER_COLUMN, be_plain_font->StringWidth ("Server") * 2,
-		0, bounds.Width(), 0));
-	serverList->AddColumn (data, 1);
-	BStringColumn *port (new BStringColumn (S_PREFSERVER_PORT_COLUMN, be_plain_font->StringWidth ("Port") * 2,
-		0, bounds.Width(), 0));
-	serverList->AddColumn (port, 2);
-	addButton = new BButton (BRect (0,0,0,0), NULL, S_PREFSERVER_ADD_BUTTON B_UTF8_ELLIPSIS,
-		new BMessage (M_SERVER_ADD_ITEM));
-	removeButton = new BButton (BRect (0,0,0,0), NULL, S_PREFSERVER_REMOVE_BUTTON,
-		new BMessage (M_SERVER_REMOVE_ITEM));
-	editButton = new BButton (BRect (0,0,0,0), NULL, S_PREFSERVER_EDIT_BUTTON B_UTF8_ELLIPSIS,
-		new BMessage (M_SERVER_EDIT_ITEM));
-	addButton->ResizeToPreferred();
-	removeButton->ResizeToPreferred();
-	editButton->ResizeToPreferred();
-	removeButton->MoveTo (serverList->Frame().right - removeButton->Frame().Width(),
-		serverList->Frame().bottom + 5);
-	mainBox->AddChild (removeButton);
-	addButton->MoveTo (removeButton->Frame().left - (addButton->Frame().Width() + 5),
-		removeButton->Frame().top);
-	mainBox->AddChild (addButton);
-	editButton->MoveTo (addButton->Frame().left - (editButton->Frame().Width() +15),
-		addButton->Frame().top);
-	mainBox->AddChild (editButton);
-	BStringView *legend1 = new BStringView (BRect (0,0,0,0), "str1", S_PREFSERVER_DESC1);
-	legend1->ResizeToPreferred();
-	mainBox->AddChild (legend1);
-	legend1->MoveTo (serverList->Frame().left + 5, addButton->Frame().bottom + 5);
-	BStringView *legend2 = new BStringView (BRect (0,0,0,0), "str1", S_PREFSERVER_DESC2);
-	legend2->ResizeToPreferred();
-	mainBox->AddChild (legend2);
-	legend2->MoveTo (legend1->Frame().left, legend1->Frame().bottom);
-	BStringView *legend3 = new BStringView (BRect (0,0,0,0), "str1", S_PREFSERVER_DESC3);
-	legend3->ResizeToPreferred();
-	mainBox->AddChild (legend3);
-	legend3->MoveTo (legend2->Frame().left, legend2->Frame().bottom);
-	legend4 = new BStringView (BRect (0,0,0,0), "str1", S_PREFSERVER_DESC4);
-	legend4->ResizeToPreferred();
-	mainBox->AddChild (legend4);
-	legend4->MoveTo (legend3->Frame().left, legend3->Frame().bottom);
-	okButton = new BButton (BRect (0,0,0,0), NULL, S_PREFSERVER_OK_BUTTON,
-		new BMessage (B_QUIT_REQUESTED));
-	okButton->ResizeToPreferred();
-	mainBox->AddChild (okButton);
-	okButton->MoveTo (serverList->Frame().right - okButton->Frame().Width(),
-	  legend4->Frame().bottom + 5);
+  SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+  BRect boundsRect (Bounds ());
+  BBox *mainBox (new BBox (bounds.InsetByCopy (-1, -1), NULL, B_FOLLOW_ALL_SIDES));
+  AddChild (mainBox);
+  fSelectTitleString = new BStringView (BRect (0, 0, 0, 0), NULL, "Select servers for");
+  fSelectTitleString->ResizeToPreferred ();
+  mainBox->AddChild (fSelectTitleString);
+  fSelectTitleString->MoveTo (11, 11);
+  fServerList = new BColumnListView (BRect (0, 0, boundsRect.Width () - 10,
+    boundsRect.Height () / 2), "fServerList", B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW,
+    B_PLAIN_BORDER);
+  fServerList->SetSelectionMessage (new BMessage (M_SERVER_ITEM_SELECTED));
+  mainBox->AddChild (fServerList);
+  fServerList->MoveTo (5, fSelectTitleString->Frame ().bottom + 3);
+  BStringColumn *status (new BStringColumn (S_PREFSERVER_STATUS_COLUMN, be_plain_font->StringWidth ("Status") * 2,
+    0, bounds.Width (), 0, B_ALIGN_CENTER));
+  fServerList->AddColumn (status, 0);
+  BStringColumn *data (new BStringColumn (S_PREFSERVER_SERVER_COLUMN, be_plain_font->StringWidth ("Server") * 2,
+    0, bounds.Width (), 0));
+  fServerList->AddColumn (data, 1);
+  BStringColumn *port (new BStringColumn (S_PREFSERVER_PORT_COLUMN, be_plain_font->StringWidth ("Port") * 2,
+    0, bounds.Width (), 0));
+  fServerList->AddColumn (port, 2);
+  fAddButton = new BButton (BRect (0, 0, 0, 0), NULL, S_PREFSERVER_ADD_BUTTON B_UTF8_ELLIPSIS,
+    new BMessage (M_SERVER_ADD_ITEM));
+  fRemoveButton = new BButton (BRect (0, 0, 0, 0), NULL, S_PREFSERVER_REMOVE_BUTTON,
+    new BMessage (M_SERVER_REMOVE_ITEM));
+  fEditButton = new BButton (BRect (0, 0, 0, 0), NULL, S_PREFSERVER_EDIT_BUTTON B_UTF8_ELLIPSIS,
+    new BMessage (M_SERVER_EDIT_ITEM));
+  fAddButton->ResizeToPreferred ();
+  fRemoveButton->ResizeToPreferred ();
+  fEditButton->ResizeToPreferred ();
+  fRemoveButton->MoveTo (fServerList->Frame ().right - fRemoveButton->Frame ().Width (),
+   fServerList->Frame ().bottom + 5);
+  mainBox->AddChild (fRemoveButton);
+  fAddButton->MoveTo (fRemoveButton->Frame ().left - (fAddButton->Frame ().Width () + 5),
+    fRemoveButton->Frame ().top);
+  mainBox->AddChild (fAddButton);
+  fEditButton->MoveTo (fAddButton->Frame ().left - (fEditButton->Frame ().Width () + 15),
+    fAddButton->Frame ().top);
+  mainBox->AddChild (fEditButton);
+  BStringView *legend1 = new BStringView (BRect (0, 0, 0, 0), "str1", S_PREFSERVER_DESC1);
+  legend1->ResizeToPreferred ();
+  mainBox->AddChild (legend1);
+  legend1->MoveTo (fServerList->Frame ().left + 5, fAddButton->Frame ().bottom + 5);
+  BStringView *legend2 = new BStringView (BRect (0, 0, 0, 0), "str1", S_PREFSERVER_DESC2);
+  legend2->ResizeToPreferred ();
+  mainBox->AddChild (legend2);
+  legend2->MoveTo (legend1->Frame ().left, legend1->Frame ().bottom);
+  BStringView *legend3 = new BStringView (BRect (0, 0, 0, 0), "str1", S_PREFSERVER_DESC3);
+  legend3->ResizeToPreferred ();
+  mainBox->AddChild (legend3);
+  legend3->MoveTo (legend2->Frame ().left, legend2->Frame ().bottom);
+  fLegend4 = new BStringView (BRect (0, 0, 0, 0), "str1", S_PREFSERVER_DESC4);
+  fLegend4->ResizeToPreferred ();
+  mainBox->AddChild (fLegend4);
+  fLegend4->MoveTo (legend3->Frame ().left, legend3->Frame ().bottom);
+  fOkButton = new BButton (BRect (0, 0, 0, 0), NULL, S_PREFSERVER_OK_BUTTON,
+    new BMessage (B_QUIT_REQUESTED));
+  fOkButton->ResizeToPreferred ();
+  mainBox->AddChild (fOkButton);
+  fOkButton->MoveTo (fServerList->Frame ().right - fOkButton->Frame ().Width (),
+    fLegend4->Frame ().bottom + 5);
 }
 
 NetPrefsServerView::~NetPrefsServerView (void)
 {
-  BMessenger msgr (entryWin);
-  if (msgr.IsValid())
+  BMessenger msgr (fEntryWin);
+  if (msgr.IsValid ())
     msgr.SendMessage (B_QUIT_REQUESTED);
 }
 
 void
 NetPrefsServerView::AttachedToWindow (void)
 {
-	BView::AttachedToWindow();
-	addButton->SetTarget (this);
-	editButton->SetTarget (this);
-	removeButton->SetTarget (this);
-	serverList->SetTarget (this);
-	editButton->SetEnabled (false);
-	removeButton->SetEnabled (false);
-	okButton->SetTarget (Window());
+  BView::AttachedToWindow ();
+  fAddButton->SetTarget (this);
+  fEditButton->SetTarget (this);
+  fRemoveButton->SetTarget (this);
+  fServerList->SetTarget (this);
+  fEditButton->SetEnabled (false);
+  fRemoveButton->SetEnabled (false);
+  fOkButton->SetTarget (Window ());
 
-	if (okButton->Frame().bottom > Bounds().Height())
-	  Window()->ResizeTo (Bounds().Width(), okButton->Frame().bottom + 5);
+  if (fOkButton->Frame ().bottom > Bounds ().Height ())
+    Window ()->ResizeTo (Bounds ().Width (), fOkButton->Frame ().bottom + 5);
 }
 
 void
-NetPrefsServerView::DetachedFromWindow (void)
+NetPrefsServerView::AddServer (const ServerData * data)
 {
-  BView::DetachedFromWindow();
-}
+  BAutolock lock (Looper ());
+  if (!lock.IsLocked ())
+    return;
 
-void
-NetPrefsServerView::AddServer (const ServerData *data)
-{
-	BAutolock lock (Looper());
-	if (!lock.IsLocked())
-		return;
-		
-	BRow *row (new BRow);
-	switch (data->state)
-	{
-		case 0:
-			row->SetField (new BStringField ("*"), 0);
-			break;
-		
-		case 1:
-			row->SetField (new BStringField ("+"), 0);
-			break;
-		
-		case 2:
-			row->SetField (new BStringField ("-"), 0);
-			break;		
-	}
-	BString server ("");
-	server = data->serverName;
-	BStringField *serverField (new BStringField (server.String()));
-	row->SetField (serverField, 1);
-	server = "";
-	server << data->port;
-	BStringField *portField (new BStringField (server.String()));
-	row->SetField (portField, 2);
-	serverList->AddRow (row);
+  BRow *row (new BRow);
+  switch (data->state)
+    {
+      case 0:
+        row->SetField (new BStringField ("*"), 0);
+        break;
+
+      case 1:
+        row->SetField (new BStringField ("+"), 0);
+        break;
+
+      case 2:
+        row->SetField (new BStringField ("-"), 0);
+        break;
+    }
+  BString server ("");
+  server = data->serverName;
+  BStringField *serverField (new BStringField (server.String ()));
+  row->SetField (serverField, 1);
+  server = "";
+  server << data->port;
+  BStringField *portField (new BStringField (server.String ()));
+  row->SetField (portField, 2);
+  fServerList->AddRow (row);
 }
 
 void
 NetPrefsServerView::RemoveServer ()
 {
-	BAutolock lock (Looper());
-	
-	if (!lock.IsLocked())
-	  return;
+  BAutolock lock (Looper ());
 
-	BRow *row (serverList->CurrentSelection());
-	if (row)
-	{
-		BStringField *field ((BStringField *)row->GetField (1));
-		
-		int32 count, size;
-		type_code type;
-		activeNetwork->GetInfo ("server", &type, &count);
-		
-		const ServerData *data;
-		for (int32 i = 0; i < count; i++)
-		{
-			activeNetwork->FindData ("server", B_ANY_TYPE, i, reinterpret_cast<const void **>(&data),
-			 &size);
-			 
-			if (!strcmp (data->serverName, field->String()))
-			{
-				activeNetwork->RemoveData ("server", i);
-				break;
-			}
-		}
-		serverList->RemoveRow (row);
-		delete row;
+  if (!lock.IsLocked ())
+    return;
+
+  BRow *row (fServerList->CurrentSelection ());
+  if (row)
+  {
+    BStringField *field ((BStringField *) row->GetField (1));
+
+    int32 count, size;
+    type_code type;
+    fActiveNetwork->GetInfo ("server", &type, &count);
+
+    const ServerData *data;
+    for (int32 i = 0; i < count; i++)
+    {
+      fActiveNetwork->FindData ("server", B_ANY_TYPE, i, reinterpret_cast < const void **>(&data),
+        &size);
+
+      if (!strcmp (data->serverName, field->String ()))
+      {
+        fActiveNetwork->RemoveData ("server", i);
+        break;
+      }
 	}
+    fServerList->RemoveRow (row);
+    delete row;
+  }
 }
 
 void
-NetPrefsServerView::UpdateNetworkData (const ServerData *newServer)
+NetPrefsServerView::UpdateNetworkData (const ServerData * newServer)
 {
-	if (newServer == NULL)
-		return;
-	type_code type;
-	int32 count, size;
-	activeNetwork->GetInfo ("server", &type, &count);
-	const ServerData *data (NULL);
-	for (int32 i = 0; i < count; i++)
-	{
-		activeNetwork->FindData ("server", B_ANY_TYPE, i, reinterpret_cast<const void **>(&data), &size);
-		if (!strcmp (newServer->serverName, data->serverName))
-		{
-			activeNetwork->ReplaceData ("server", B_RAW_TYPE, i, newServer, sizeof(ServerData));
-			return;
-		}
-	}
-	activeNetwork->AddData ("server", B_RAW_TYPE, newServer, sizeof (ServerData));
+  if (newServer == NULL)
+    return;
+  type_code type;
+  int32 count, size;
+  fActiveNetwork->GetInfo ("server", &type, &count);
+  const ServerData *data (NULL);
+  for (int32 i = 0; i < count; i++)
+  {
+    fActiveNetwork->FindData ("server", B_ANY_TYPE, i, reinterpret_cast < const void **>(&data), &size);
+    if (!strcmp (newServer->serverName, data->serverName))
+    {
+      fActiveNetwork->ReplaceData ("server", B_RAW_TYPE, i, newServer, sizeof (ServerData));
+      return;
+    }
+  }
+  fActiveNetwork->AddData ("server", B_RAW_TYPE, newServer, sizeof (ServerData));
 }
 
 void
-NetPrefsServerView::SetNetworkData (BMessage *msg)
+NetPrefsServerView::SetNetworkData (BMessage * msg)
 {
-	BAutolock lock (Looper());
-	if (!lock.IsLocked())
-		return;
-	// clear previous servers (if any)
-	while (serverList->CountRows() > 0)
-	{
-		BRow *row (serverList->RowAt (0));
-		serverList->RemoveRow (row);
-		delete row;
-	}
-	
-	BString netString (S_PREFSERVER_SEL_STRING);
-	netString += msg->FindString ("name");
-	netString += ":";
-	type_code type;
-	int32 count, size;
-	const ServerData *data;
-	msg->GetInfo ("server", &type, &count);
-	for (int32 i = 0; i < count; i++)
-	{
-		msg->FindData ("server", B_ANY_TYPE, i, reinterpret_cast<const void **>(&data), &size);
-		AddServer (data);
-	}
-	activeNetwork = msg;
-	selectTitleString->SetText (netString.String());
-	selectTitleString->ResizeToPreferred();
+  BAutolock lock (Looper ());
+  if (!lock.IsLocked ())
+    return;
+  // clear previous servers (if any)
+  while (fServerList->CountRows () > 0)
+  {
+    BRow *row (fServerList->RowAt (0));
+    fServerList->RemoveRow (row);
+    delete row;
+  }
+
+  BString netString (S_PREFSERVER_SEL_STRING);
+  netString += msg->FindString ("name");
+  netString += ":";
+  type_code type;
+  int32 count, size;
+  const ServerData *data;
+  msg->GetInfo ("server", &type, &count);
+  for (int32 i = 0; i < count; i++)
+  {
+    msg->FindData ("server", B_ANY_TYPE, i, reinterpret_cast < const void **>(&data), &size);
+    AddServer (data);
+  }
+  fActiveNetwork = msg;
+  fSelectTitleString->SetText (netString.String ());
+  fSelectTitleString->ResizeToPreferred ();
 }
 
 void
-NetPrefsServerView::MessageReceived (BMessage *msg)
+NetPrefsServerView::MessageReceived (BMessage * msg)
 {
-	switch (msg->what)
-	{
-		case M_SERVER_ITEM_SELECTED:
-			{
-				BRow *row (serverList->CurrentSelection());
-				if (row)
-				{
-					editButton->SetEnabled (true);
-					removeButton->SetEnabled (true);
-				}
-				else
-				{
-					editButton->SetEnabled (false);
-					removeButton->SetEnabled (false);
-				}
-			}
-			break;
-			
-		case M_SERVER_ADD_ITEM:
-		{
-			BMessenger msgr (entryWin);
-			if (msgr.IsValid())
-			{
-				entryWin->Activate();
-			}
-			else
-			{
-				entryWin = new ServerEntryWindow(this, new BMessage (M_SERVER_RECV_DATA), NULL);
-				entryWin->Show();
-			}
-		}
-		break;
+  switch (msg->what)
+  {
+    case M_SERVER_ITEM_SELECTED:
+      {
+        BRow *row (fServerList->CurrentSelection ());
+        if (row)
+        {
+          fEditButton->SetEnabled (true);
+          fRemoveButton->SetEnabled (true);
+        }
+        else
+        {
+          fEditButton->SetEnabled (false);
+          fRemoveButton->SetEnabled (false);
+        }
+      }
+      break;
 
-		case M_SERVER_EDIT_ITEM:
-		{
-			BMessenger msgr (entryWin);
-			if (msgr.IsValid())
-			{
-				entryWin->Activate();
-			}
-			else
-			{
-				BRow *row (serverList->CurrentSelection());
-				if (!row)
-					break;
-				int32 count (0), size (0);
-				type_code type;
-				activeNetwork->GetInfo ("server", &type, &count);
-				const ServerData *compData; 
-				for (int32 i = 0; i < count; i++)
-				{
-					activeNetwork->FindData ("server", B_RAW_TYPE, i, reinterpret_cast<const void **>(&compData), &size);
-					if (!strcmp (compData->serverName, ((BStringField *)row->GetField(1))->String()))
-						break;
-				}
-				BMessage *invoke (new BMessage (M_SERVER_RECV_DATA));
-				invoke->AddBool ("edit", true);
-				entryWin = new ServerEntryWindow (this, invoke, compData);
-				entryWin->Show();
-			}
-		}
-		break;
+    case M_SERVER_ADD_ITEM:
+      {
+        BMessenger msgr (fEntryWin);
+        if (msgr.IsValid ())
+          fEntryWin->Activate ();
+        else
+        {
+          fEntryWin = new ServerEntryWindow (this, new BMessage (M_SERVER_RECV_DATA), NULL);
+          fEntryWin->Show ();
+        }
+      }
+      break;
 
-		
-		case M_SERVER_REMOVE_ITEM:
-		{
-			RemoveServer();
-			netWin.SendMessage (M_SERVER_DATA_CHANGED);
-		}
-		break;
-		
-		case M_SERVER_RECV_DATA:
-		{
-			const ServerData *data;
-			int32 size;
-			Window()->DisableUpdates();
-			msg->FindData ("server", B_RAW_TYPE, reinterpret_cast<const void **>(&data), &size);
-			if (msg->HasBool ("edit"))
-				RemoveServer();
-			UpdateNetworkData (data);
-			AddServer (data);
-			Window()->EnableUpdates();
-			netWin.SendMessage (M_SERVER_DATA_CHANGED);
-			
-		}
-		break;
-		
-		default:
-			BView::MessageReceived (msg);
-			break;
-	}
+    case M_SERVER_EDIT_ITEM:
+      {
+        BMessenger msgr (fEntryWin);
+        if (msgr.IsValid ())
+          fEntryWin->Activate ();
+        else
+        {
+          BRow *row (fServerList->CurrentSelection ());
+          if (!row)
+            break;
+          int32 count (0), size (0);
+          type_code type;
+          fActiveNetwork->GetInfo ("server", &type, &count);
+          const ServerData *compData;
+          for (int32 i = 0; i < count; i++)
+          {
+            fActiveNetwork->FindData ("server", B_RAW_TYPE, i, reinterpret_cast < const void **>(&compData), &size);
+            if (!strcmp (compData->serverName, ((BStringField *) row->GetField (1))->String ()))
+            break;
+	      }
+          BMessage *invoke (new BMessage (M_SERVER_RECV_DATA));
+          invoke->AddBool ("edit", true);
+          fEntryWin = new ServerEntryWindow (this, invoke, compData);
+          fEntryWin->Show ();
+          }
+      }
+      break;
+
+
+    case M_SERVER_REMOVE_ITEM:
+      {
+        RemoveServer ();
+        fNetWin.SendMessage (M_SERVER_DATA_CHANGED);
+      }
+      break;
+
+    case M_SERVER_RECV_DATA:
+      {
+        const ServerData *data;
+        int32 size;
+        Window ()->DisableUpdates ();
+        msg->FindData ("server", B_RAW_TYPE, reinterpret_cast < const void **>(&data), &size);
+        if (msg->HasBool ("edit"))
+          RemoveServer ();
+        UpdateNetworkData (data);
+        AddServer (data);
+        Window ()->EnableUpdates ();
+        fNetWin.SendMessage (M_SERVER_DATA_CHANGED);
+      }
+      break;
+
+    default:
+      BView::MessageReceived (msg);
+      break;
+  }
 }

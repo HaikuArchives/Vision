@@ -44,27 +44,27 @@ DCCPrefsView::DCCPrefsView (BRect frame)
   menu->AddItem (new BMenuItem ("2048", new BMessage (M_BLOCK_SIZE_CHANGED)));
   menu->AddItem (new BMenuItem ("4096", new BMessage (M_BLOCK_SIZE_CHANGED)));
   menu->AddItem (new BMenuItem ("8192", new BMessage (M_BLOCK_SIZE_CHANGED)));
-  blockSize = new BMenuField (BRect (0,0,0,0), NULL, S_PREFDCC_BLOCK_SIZE, menu);
-  autoAccept = new BCheckBox (BRect (0,0,0,0), NULL, S_PREFDCC_AUTOACK,
+  fBlockSize = new BMenuField (BRect (0,0,0,0), NULL, S_PREFDCC_BLOCK_SIZE, menu);
+  fAutoAccept = new BCheckBox (BRect (0,0,0,0), NULL, S_PREFDCC_AUTOACK,
     new BMessage (M_AUTO_ACCEPT_CHANGED));
-  defDir = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_DEFPATH, "", new BMessage (M_DEFAULT_PATH_CHANGED));
-  defDir->SetDivider (defDir->StringWidth (S_PREFDCC_DEFPATH + 5));
-  box = new BBox (BRect (0,0,0,0), NULL);
-  box->SetLabel (S_PREFDCC_PORTRANGE);
-  AddChild (defDir);
-  AddChild (autoAccept);
-  AddChild (blockSize);
-  AddChild (box);
-  dccPortMin = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_PORTMIN, "",
+  fDefDir = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_DEFPATH, "", new BMessage (M_DEFAULT_PATH_CHANGED));
+  fDefDir->SetDivider (fDefDir->StringWidth (S_PREFDCC_DEFPATH + 5));
+  fBox = new BBox (BRect (0,0,0,0), NULL);
+  fBox->SetLabel (S_PREFDCC_PORTRANGE);
+  AddChild (fDefDir);
+  AddChild (fAutoAccept);
+  AddChild (fBlockSize);
+  AddChild (fBox);
+  fDccPortMin = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_PORTMIN, "",
     new BMessage (M_DCC_MIN_PORT_CHANGED));
-  dccPortMin->TextView()->AddFilter (new NumericFilter());
-  dccPortMin->SetDivider (dccPortMin->StringWidth (S_PREFDCC_PORTMIN) + 5);
-  box->AddChild (dccPortMin);
-  dccPortMax = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_PORTMAX, "",
+  fDccPortMin->TextView()->AddFilter (new NumericFilter());
+  fDccPortMin->SetDivider (fDccPortMin->StringWidth (S_PREFDCC_PORTMIN) + 5);
+  fBox->AddChild (fDccPortMin);
+  fDccPortMax = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_PORTMAX, "",
     new BMessage (M_DCC_MAX_PORT_CHANGED));
-  dccPortMax->SetDivider (dccPortMax->StringWidth (S_PREFDCC_PORTMAX) + 5);
-  dccPortMax->TextView()->AddFilter (new NumericFilter());
-  box->AddChild (dccPortMax);
+  fDccPortMax->SetDivider (fDccPortMax->StringWidth (S_PREFDCC_PORTMAX) + 5);
+  fDccPortMax->TextView()->AddFilter (new NumericFilter());
+  fBox->AddChild (fDccPortMax);
 }
 
 DCCPrefsView::~DCCPrefsView (void)
@@ -75,48 +75,48 @@ void
 DCCPrefsView::AttachedToWindow (void)
 {
   BView::AttachedToWindow ();
-  blockSize->Menu()->SetTargetForItems (this);
-  autoAccept->SetTarget (this);
-  defDir->SetTarget (this);
-  defDir->ResizeToPreferred ();
-  defDir->ResizeTo (Bounds().Width() - 15, defDir->Bounds().Height());
-  defDir->MoveTo (10, 10);
-  autoAccept->ResizeToPreferred ();
-  autoAccept->MoveTo (defDir->Frame().left, defDir->Frame().bottom + 5);
-  blockSize->ResizeToPreferred ();
-  blockSize->ResizeTo (Bounds().Width() - 15, blockSize->Bounds().Height());
-  blockSize->SetDivider (blockSize->StringWidth (S_PREFDCC_BLOCK_SIZE) + 5);
-  blockSize->MoveTo (autoAccept->Frame().left, autoAccept->Frame().bottom + 5);
-  blockSize->Menu()->SetLabelFromMarked (true);
+  fBlockSize->Menu()->SetTargetForItems (this);
+  fAutoAccept->SetTarget (this);
+  fDefDir->SetTarget (this);
+  fDefDir->ResizeToPreferred ();
+  fDefDir->ResizeTo (Bounds().Width() - 15, fDefDir->Bounds().Height());
+  fDefDir->MoveTo (10, 10);
+  fAutoAccept->ResizeToPreferred ();
+  fAutoAccept->MoveTo (fDefDir->Frame().left, fDefDir->Frame().bottom + 5);
+  fBlockSize->ResizeToPreferred ();
+  fBlockSize->ResizeTo (Bounds().Width() - 15, fBlockSize->Bounds().Height());
+  fBlockSize->SetDivider (fBlockSize->StringWidth (S_PREFDCC_BLOCK_SIZE) + 5);
+  fBlockSize->MoveTo (fAutoAccept->Frame().left, fAutoAccept->Frame().bottom + 5);
+  fBlockSize->Menu()->SetLabelFromMarked (true);
   
   const char *defPath (vision_app->GetString ("dccDefPath"));
-  defDir->SetText (defPath);
+  fDefDir->SetText (defPath);
   
   if (vision_app->GetBool ("dccAutoAccept"))
-    autoAccept->SetValue (B_CONTROL_ON);
+    fAutoAccept->SetValue (B_CONTROL_ON);
   
   else
-    defDir->SetEnabled (false);
+    fDefDir->SetEnabled (false);
   
-  dccPortMin->ResizeToPreferred();
-  dccPortMax->ResizeToPreferred();
-  dccPortMin->SetTarget (this);
-  dccPortMax->SetTarget (this);
+  fDccPortMin->ResizeToPreferred();
+  fDccPortMax->ResizeToPreferred();
+  fDccPortMin->SetTarget (this);
+  fDccPortMax->SetTarget (this);
   
-  box->ResizeTo (Bounds().Width() - 20, dccPortMin->Bounds().Height()+30);
-  box->MoveTo (blockSize->Frame().left, blockSize->Frame().bottom + 25);
-  dccPortMin->ResizeTo ((box->Bounds().Width() / 2.0) - 15, dccPortMin->Bounds().Height());
-  dccPortMax->ResizeTo (dccPortMin->Bounds().Width(), dccPortMin->Bounds().Height());
+  fBox->ResizeTo (Bounds().Width() - 20, fDccPortMin->Bounds().Height()+30);
+  fBox->MoveTo (fBlockSize->Frame().left, fBlockSize->Frame().bottom + 25);
+  fDccPortMin->ResizeTo ((fBox->Bounds().Width() / 2.0) - 15, fDccPortMin->Bounds().Height());
+  fDccPortMax->ResizeTo (fDccPortMin->Bounds().Width(), fDccPortMin->Bounds().Height());
 
-  dccPortMin->MoveTo (5,20);
-  dccPortMax->MoveTo (dccPortMin->Frame().right + 5, dccPortMin->Frame().top);
+  fDccPortMin->MoveTo (5,20);
+  fDccPortMax->MoveTo (fDccPortMin->Frame().right + 5, fDccPortMin->Frame().top);
     
-  dccPortMin->SetText (vision_app->GetString ("dccMinPort"));
-  dccPortMax->SetText (vision_app->GetString ("dccMaxPort"));
+  fDccPortMin->SetText (vision_app->GetString ("dccMinPort"));
+  fDccPortMax->SetText (vision_app->GetString ("dccMaxPort"));
   
   const char *dccBlock (vision_app->GetString ("dccBlockSize"));
   
-  BMenuItem *item (blockSize->Menu()->FindItem (dccBlock));
+  BMenuItem *item (fBlockSize->Menu()->FindItem (dccBlock));
   if (item)
     dynamic_cast<BInvoker *>(item)->Invoke();
 }
@@ -149,7 +149,7 @@ DCCPrefsView::MessageReceived (BMessage *msg)
       
     case M_DEFAULT_PATH_CHANGED:
       {
-        const char *path (defDir->Text());
+        const char *path (fDefDir->Text());
         BPath testPath (path, NULL, true);
         if (testPath.InitCheck() == B_OK)
           vision_app->SetString ("dccDefPath", 0, path);
@@ -158,22 +158,22 @@ DCCPrefsView::MessageReceived (BMessage *msg)
       
     case M_AUTO_ACCEPT_CHANGED:
       {
-        int32 val (autoAccept->Value());
-        defDir->SetEnabled (val == B_CONTROL_ON);
+        int32 val (fAutoAccept->Value());
+        fDefDir->SetEnabled (val == B_CONTROL_ON);
         vision_app->SetBool ("dccAutoAccept", val);
       }
       break;
     
     case M_DCC_MIN_PORT_CHANGED:
       {
-        const char *portMin (dccPortMin->Text());
+        const char *portMin (fDccPortMin->Text());
         if (portMin != NULL)
           vision_app->SetString ("dccMinPort", 0, portMin);
       }
       break;
     case M_DCC_MAX_PORT_CHANGED:
       {
-        const char *portMax (dccPortMax->Text());
+        const char *portMax (fDccPortMax->Text());
         if (portMax != NULL)
           vision_app->SetString ("dccMaxPort", 0, portMax);
       }

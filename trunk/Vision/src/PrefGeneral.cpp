@@ -35,59 +35,59 @@
 
 GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redraw, uint32 flags)
   : BView (frame, title, redraw, flags),
-              lastindex (0)
+              fLastindex (0)
 {
   SetViewColor (ui_color(B_PANEL_BACKGROUND_COLOR));
-  prefsItems[0] = new AppWindowPrefsView (BRect(0,0,0,0));
-  prefsItems[1] = new ColorPrefsView (BRect (0,0,0,0));
-  prefsBox = new BBox (BRect (0.0, 0.0, prefsItems[1]->Bounds().right + 10 + be_plain_font->StringWidth("W"), prefsItems[0]->Bounds().bottom + be_plain_font->Size() / 2), "Bleat", B_FOLLOW_ALL_SIDES);
-  prefsBox->AddChild(prefsItems[0]);
-  prefsBox->AddChild(prefsItems[1]);
-  prefsList = new BListView (BRect (0.0, 0.0, prefsItems[0]->Bounds().right / 2, prefsItems[0]->Bounds().bottom), "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
-  prefsList->MoveTo(5, 5);
-  prefsList->AddItem (new BStringItem (S_PREFGEN_APP_ITEM));
-  prefsList->AddItem (new BStringItem (S_PREFGEN_COLOR_ITEM));
-  prefsList->AddItem (new BStringItem (S_PREFGEN_FONT_ITEM));
-  prefsList->AddItem (new BStringItem (S_PREFGEN_COMMAND_ITEM));
-  prefsList->AddItem (new BStringItem (S_PREFGEN_EVENT_ITEM));
-  prefsList->AddItem (new BStringItem (S_PREFGEN_DCC_ITEM));
-  prefsList->SetSelectionMessage (new BMessage (M_GENERALPREFS_SELECTION_CHANGED));
-  BScrollView *scroller (new BScrollView("list scroller", prefsList, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, 0, false, true));
+  fPrefsItems[0] = new AppWindowPrefsView (BRect(0,0,0,0));
+  fPrefsItems[1] = new ColorPrefsView (BRect (0,0,0,0));
+  fPrefsBox = new BBox (BRect (0.0, 0.0, fPrefsItems[1]->Bounds().right + 10 + be_plain_font->StringWidth("W"), fPrefsItems[0]->Bounds().bottom + be_plain_font->Size() / 2), "Bleat", B_FOLLOW_ALL_SIDES);
+  fPrefsBox->AddChild(fPrefsItems[0]);
+  fPrefsBox->AddChild(fPrefsItems[1]);
+  fPrefsList = new BListView (BRect (0.0, 0.0, fPrefsItems[0]->Bounds().right / 2, fPrefsItems[0]->Bounds().bottom), "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
+  fPrefsList->MoveTo(5, 5);
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_APP_ITEM));
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_COLOR_ITEM));
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_FONT_ITEM));
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_COMMAND_ITEM));
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_EVENT_ITEM));
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_DCC_ITEM));
+  fPrefsList->SetSelectionMessage (new BMessage (M_GENERALPREFS_SELECTION_CHANGED));
+  BScrollView *scroller (new BScrollView("list scroller", fPrefsList, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, 0, false, true));
   AddChild(scroller);
-  ResizeTo(scroller->Frame().right + prefsBox->Bounds().Width() + 10, prefsBox->Bounds().Height() + 5);
-  prefsBox->MoveTo(scroller->Frame().right + 5, 5);
-  AddChild (prefsBox);
-  BRect bounds (prefsBox->Bounds());
+  ResizeTo(scroller->Frame().right + fPrefsBox->Bounds().Width() + 10, fPrefsBox->Bounds().Height() + 5);
+  fPrefsBox->MoveTo(scroller->Frame().right + 5, 5);
+  AddChild (fPrefsBox);
+  BRect bounds (fPrefsBox->Bounds());
   bounds.left += 3;
   bounds.right -= 3;
   bounds.top += 12;
   bounds.bottom -= 5;
 
-  prefsItems[0]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
-  prefsItems[0]->ResizeBy(be_plain_font->StringWidth("i") * 3, -1.2 * (be_plain_font->Size()));
-  prefsItems[1]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
-  prefsItems[1]->ResizeTo(bounds.Width() - 3, bounds.Height() - 3);
+  fPrefsItems[0]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
+  fPrefsItems[0]->ResizeBy(be_plain_font->StringWidth("i") * 3, -1.2 * (be_plain_font->Size()));
+  fPrefsItems[1]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
+  fPrefsItems[1]->ResizeTo(bounds.Width() - 3, bounds.Height() - 3);
 
-  prefsItems[1]->Hide();
-  prefsItems[2] = new FontPrefsView (bounds);
-  prefsBox->AddChild (prefsItems[2]);
-  prefsItems[2]->Hide();
-  prefsItems[3] = new CommandPrefsView (bounds);
-  prefsBox->AddChild (prefsItems[3]);
-  prefsItems[3]->Hide();
-  prefsItems[4] = new EventPrefsView (bounds);
-  prefsBox->AddChild (prefsItems[4]);
-  prefsItems[4]->Hide();
+  fPrefsItems[1]->Hide();
+  fPrefsItems[2] = new FontPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[2]);
+  fPrefsItems[2]->Hide();
+  fPrefsItems[3] = new CommandPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[3]);
+  fPrefsItems[3]->Hide();
+  fPrefsItems[4] = new EventPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[4]);
+  fPrefsItems[4]->Hide();
   
-  prefsItems[5] = new DCCPrefsView (bounds);
-  prefsBox->AddChild (prefsItems[5]);
-  prefsItems[5]->Hide();
+  fPrefsItems[5] = new DCCPrefsView (bounds);
+  fPrefsBox->AddChild (fPrefsItems[5]);
+  fPrefsItems[5]->Hide();
 }
 
 GeneralPrefsView::~GeneralPrefsView (void)
 {
-  while (prefsList->CountItems() != 0)
-    delete prefsList->RemoveItem (0L);
+  while (fPrefsList->CountItems() != 0)
+    delete fPrefsList->RemoveItem (0L);
 }
 
 void
@@ -100,8 +100,8 @@ void
 GeneralPrefsView::AllAttached (void)
 {
   BView::AllAttached();
-  prefsList->SetTarget(this);
-  prefsList->Select(0);
+  fPrefsList->SetTarget(this);
+  fPrefsList->Select(0);
 }
 
 void
@@ -119,12 +119,12 @@ GeneralPrefsView::MessageReceived (BMessage *msg)
     {
       int32 index (msg->FindInt32 ("index"));
       if (index < 0) return;
-      prefsItems[lastindex]->Hide();
-      BStringItem *item ((BStringItem *)prefsList->ItemAt(index));
-      prefsBox->SetLabel (item->Text());
-      prefsItems[index]->Show();
-      prefsList->MakeFocus (false);
-      lastindex = index;
+      fPrefsItems[fLastindex]->Hide();
+      BStringItem *item ((BStringItem *)fPrefsList->ItemAt(index));
+      fPrefsBox->SetLabel (item->Text());
+      fPrefsItems[index]->Show();
+      fPrefsList->MakeFocus (false);
+      fLastindex = index;
       Invalidate();
     }
     break;

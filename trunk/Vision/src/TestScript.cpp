@@ -2,7 +2,7 @@
 
 #include "LuaScript.h"
 #include "TestScript.h"
-#include "StringManip.h"
+#include "Utilities.h"
 
 TestScript::TestScript (void)
 {

@@ -40,10 +40,10 @@ class FontPrefsView : public BView
     virtual void AllAttached (void);
     virtual void FrameResized (float, float);
   private:
-  	BMenuField *fontMenuField;
-  	BMenuField *fontElementField;
-  	BTextControl *textControl;
-  	int32 activeFont;
+  	BMenuField *fFontMenuField;
+  	BMenuField *fFontElementField;
+  	BTextControl *fTextControl;
+  	int32 fActiveFont;
 };
 
 #endif // _PREFFONT_H

@@ -31,15 +31,14 @@ class WindowSettings;
 
 class DCCFileWindow : public BWindow
 {
-	public:
+  public:
+                            DCCFileWindow (DCCConnect *);
+    virtual                 ~DCCFileWindow (void);
 
-								DCCFileWindow (DCCConnect *);
-	virtual						~DCCFileWindow (void);
-
-	virtual bool				QuitRequested (void);
-	virtual void				MessageReceived (BMessage *);
-	virtual void				Hide (void);
-	virtual void				Show (void);
+    virtual bool            QuitRequested (void);
+    virtual void            MessageReceived (BMessage *);
+    virtual void            Hide (void);
+    virtual void            Show (void);
 };
 
 #endif

@@ -39,21 +39,21 @@ NamesView::NamesView(BRect frame)
     "namesList",
     B_MULTIPLE_SELECTION_LIST,
     B_FOLLOW_ALL),
-      activeTheme (vision_app->ActiveTheme())
+      fActiveTheme (vision_app->ActiveTheme())
 {
-  activeTheme->ReadLock();
-  SetFont (&activeTheme->FontAt (F_NAMES));
+  fActiveTheme->ReadLock();
+  SetFont (&fActiveTheme->FontAt (F_NAMES));
 
-  SetViewColor (activeTheme->ForegroundAt (C_NAMES_BACKGROUND));
-  activeTheme->ReadUnlock();
+  SetViewColor (fActiveTheme->ForegroundAt (C_NAMES_BACKGROUND));
+  fActiveTheme->ReadUnlock();
 
-  _tracking = false;
+  fTracking = false;
 }
 
 NamesView::~NamesView (void)
 {
-  if (myPopUp)
-    delete myPopUp;
+  if (fMyPopUp)
+    delete fMyPopUp;
 }
 
 void 
@@ -65,85 +65,85 @@ NamesView::KeyDown (const char * bytes, int32 numBytes)
   buffer.Append (bytes, numBytes); 
   inputMsg.AddString ("text", buffer.String()); 
   
-  reinterpret_cast<ChannelAgent *>(Parent()->Parent())->msgr.SendMessage (&inputMsg);
+  reinterpret_cast<ChannelAgent *>(Parent()->Parent())->fMsgr.SendMessage (&inputMsg);
 }
 
 void NamesView::AttachedToWindow (void)
 {
-  myPopUp = new BPopUpMenu("User selection", false, false);
+  fMyPopUp = new BPopUpMenu("User selection", false, false);
 
 
   BMessage *myMessage = new BMessage (M_NAMES_POPUP_WHOIS);
-  myPopUp->AddItem(new BMenuItem("Whois", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("Whois", myMessage));
 
   myMessage = new BMessage (M_OPEN_MSGAGENT);
-  myPopUp->AddItem(new BMenuItem("Query", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("Query", myMessage));
 
-  myPopUp->AddSeparatorItem();
+  fMyPopUp->AddSeparatorItem();
 
   myMessage = new BMessage(M_NAMES_POPUP_DCCSEND);
-  myPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_DCCCHAT);
-  myPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
 
-  CTCPPopUp = new BMenu("CTCP");
-  myPopUp->AddItem( CTCPPopUp );
+  fCTCPPopUp = new BMenu("CTCP");
+  fMyPopUp->AddItem( fCTCPPopUp );
 
   myMessage = new BMessage(M_NAMES_POPUP_CTCP);
   myMessage->AddString("action", "ping");
-  CTCPPopUp->AddItem(new BMenuItem("PING", myMessage));
+  fCTCPPopUp->AddItem(new BMenuItem("PING", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_CTCP);
   myMessage->AddString("action", "version");
-  CTCPPopUp->AddItem(new BMenuItem("VERSION", myMessage));
+  fCTCPPopUp->AddItem(new BMenuItem("VERSION", myMessage));
 
-  CTCPPopUp->AddSeparatorItem();
+  fCTCPPopUp->AddSeparatorItem();
 
   myMessage = new BMessage(M_NAMES_POPUP_CTCP);
   myMessage->AddString("action", "finger");
-  CTCPPopUp->AddItem(new BMenuItem("FINGER", myMessage));
+  fCTCPPopUp->AddItem(new BMenuItem("FINGER", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_CTCP);
   myMessage->AddString("action", "time");
-  CTCPPopUp->AddItem(new BMenuItem("TIME", myMessage));
+  fCTCPPopUp->AddItem(new BMenuItem("TIME", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_CTCP);
   myMessage->AddString("action", "clientinfo");
-  CTCPPopUp->AddItem(new BMenuItem("CLIENTINFO", myMessage));
+  fCTCPPopUp->AddItem(new BMenuItem("CLIENTINFO", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_CTCP);
   myMessage->AddString("action", "userinfo");
-  CTCPPopUp->AddItem(new BMenuItem("USERINFO", myMessage));
+  fCTCPPopUp->AddItem(new BMenuItem("USERINFO", myMessage));
 
-  myPopUp->AddSeparatorItem();
+  fMyPopUp->AddSeparatorItem();
 
   myMessage = new BMessage(M_NAMES_POPUP_MODE);
   myMessage->AddString("action", "op");
-  myPopUp->AddItem(new BMenuItem("Op", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("Op", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_MODE);
   myMessage->AddString("action", "deop");
-  myPopUp->AddItem(new BMenuItem("Deop", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("Deop", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_MODE);
   myMessage->AddString("action", "voice");
-  myPopUp->AddItem(new BMenuItem("Voice", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("Voice", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_MODE);
   myMessage->AddString("action", "devoice");
-  myPopUp->AddItem(new BMenuItem("Devoice", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("Devoice", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_KICK);
-  myPopUp->AddItem(new BMenuItem("Kick", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("Kick", myMessage));
 
 
   // PopUp Menus tend to have be_plain_font
-  myPopUp->SetFont (be_plain_font);
-  CTCPPopUp->SetFont (be_plain_font);
+  fMyPopUp->SetFont (be_plain_font);
+  fCTCPPopUp->SetFont (be_plain_font);
 
-  myPopUp->SetTargetForItems (this);
-  CTCPPopUp->SetTargetForItems (this);
+  fMyPopUp->SetTargetForItems (this);
+  fCTCPPopUp->SetTargetForItems (this);
 }
 
 void
@@ -178,8 +178,8 @@ NamesView::MouseDown (BPoint myPoint)
       {
         // "double" clicked away from another selection
         Select (IndexOf (myPoint), false);
-        currentindex = IndexOf (myPoint);
-        _tracking = true;
+        fCurrentindex = IndexOf (myPoint);
+        fTracking = true;
       }
       else if (item && item->IsSelected())
       {
@@ -189,7 +189,7 @@ NamesView::MouseDown (BPoint myPoint)
         BMessage msg (M_OPEN_MSGAGENT);
 
         msg.AddString ("nick", theNick.String());
-        reinterpret_cast<ChannelAgent *>(Parent()->Parent())->msgr.SendMessage (&msg);
+        reinterpret_cast<ChannelAgent *>(Parent()->Parent())->fMsgr.SendMessage (&msg);
       }
       
       handled = true;
@@ -208,8 +208,8 @@ NamesView::MouseDown (BPoint myPoint)
       if (item && !item->IsSelected())
         Select (IndexOf (myPoint), false);
       
-      _tracking = true;
-      currentindex = IndexOf (myPoint);
+      fTracking = true;
+      fCurrentindex = IndexOf (myPoint);
       handled = true;
     }
     
@@ -226,8 +226,8 @@ NamesView::MouseDown (BPoint myPoint)
       if (item)
         Select (IndexOf (myPoint), false);
       
-      _tracking = true;
-      currentindex = IndexOf (myPoint);
+      fTracking = true;
+      fCurrentindex = IndexOf (myPoint);
       handled = true;
     }
 
@@ -242,7 +242,7 @@ NamesView::MouseDown (BPoint myPoint)
       if (item && !item->IsSelected())
         Select (IndexOf (myPoint), false);
 
-      myPopUp->Go (
+      fMyPopUp->Go (
         ConvertToScreen (myPoint),
         true,
         false,
@@ -253,7 +253,7 @@ NamesView::MouseDown (BPoint myPoint)
       BListView::MouseDown (myPoint);
   }
 
-  lastSelected = selected; 
+  fLastSelected = selected; 
   if (!handled)
     BListView::MouseDown (myPoint);
 }
@@ -261,8 +261,8 @@ NamesView::MouseDown (BPoint myPoint)
 void
 NamesView::MouseUp (BPoint myPoint)
 {
- if (_tracking)
-   _tracking = false;
+ if (fTracking)
+   fTracking = false;
  
  BListView::MouseUp (myPoint);
 }
@@ -270,7 +270,7 @@ NamesView::MouseUp (BPoint myPoint)
 void
 NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg)
 {
- if (_tracking)
+ if (fTracking)
  {
    if (transitcode == B_INSIDE_VIEW)
    {
@@ -281,7 +281,7 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg
        int32 first (CurrentSelection (0)),
              last (IndexOf (myPoint));
                    
-       if (currentindex != last)
+       if (fCurrentindex != last)
        {
              
          Select (last, true);
@@ -299,23 +299,23 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *mmMsg
            Select (last, first, true);
          }
        }
-       currentindex = last;
+       fCurrentindex = last;
      }
      else if (item && item->IsSelected())
      {
        // user is backtracking
        int32 last (IndexOf (myPoint));
        
-       if (currentindex != last)
+       if (fCurrentindex != last)
          DeselectExcept (CurrentSelection (0), last);
           
-       currentindex = last;
+       fCurrentindex = last;
      }       
        
      
    }
    if (transitcode == B_EXITED_VIEW)
-     _tracking = false;
+     fTracking = false;
  }
  else
    BListView::MouseMoved (myPoint, transitcode, mmMsg);
@@ -342,12 +342,13 @@ NamesView::MessageReceived (BMessage *msg)
     {
       int16 which (msg->FindInt16 ("which"));
       bool refresh (false);
-      activeTheme->ReadLock();
+      fActiveTheme->ReadLock();
       switch (which)
       {
         case C_NAMES_BACKGROUND:
-          SetViewColor (activeTheme->ForegroundAt (C_NAMES_BACKGROUND));
+          SetViewColor (fActiveTheme->ForegroundAt (C_NAMES_BACKGROUND));
           refresh = true;
+          fActiveTheme->ReadUnlock();
           break;
         
         case C_OP:
@@ -355,12 +356,12 @@ NamesView::MessageReceived (BMessage *msg)
         case C_HELPER:
         case C_NAMES_SELECTION:
           refresh = true;
+          fActiveTheme->ReadUnlock();
           break;
           
         default:
           break;
       }
-      activeTheme->ReadUnlock();
       if (refresh)
         Invalidate();
     }
@@ -371,9 +372,9 @@ NamesView::MessageReceived (BMessage *msg)
       int16 which (msg->FindInt16 ("which"));
       if (which == F_NAMES)
       {
-        activeTheme->ReadLock();
-        SetFont (&activeTheme->FontAt (F_NAMES));
-        activeTheme->ReadUnlock();
+        fActiveTheme->ReadLock();
+        SetFont (&fActiveTheme->FontAt (F_NAMES));
+        fActiveTheme->ReadUnlock();
         Invalidate();
       }
     }

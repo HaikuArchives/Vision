@@ -93,22 +93,22 @@ class ClientWindow : public BWindow
     void                  Init (void);
     void                  HandleKey (BMessage *);
     
-    bool                  shutdown_in_progress;
-    bool                  wait_for_quits;
+    bool                  fShutdown_in_progress;
+    bool                  fWait_for_quits;
     
-    bool                  altw_catch;    
+    bool                  fAltw_catch;    
     
-    BMessageRunner        *altwRunner;
+    BMessageRunner        *fAltwRunner;
     
-    BRect                 *agentrect;
+    BRect                 *fAgentrect;
     
-    StatusView            *status;
+    StatusView            *fStatus;
     
-    ClientWindowDock      *cwDock;
+    ClientWindowDock      *fCwDock;
     
-    ResizeView            *resize;
+    ResizeView            *fResize;
     
-    sem_id                shutdownSem;
+    sem_id                fShutdownSem;
 
 };
 

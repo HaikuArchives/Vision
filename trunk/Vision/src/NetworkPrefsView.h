@@ -46,56 +46,56 @@ class NetworkPrefsView : public BView
 {
 	public:
 
-					NetworkPrefsView (BRect, const char *);
-	virtual			~NetworkPrefsView (void);
-	virtual void	MessageReceived (BMessage *);
-	virtual void	AttachedToWindow (void);
-	virtual void	DetachedFromWindow (void);
+					    NetworkPrefsView (BRect, const char *);
+	virtual			    ~NetworkPrefsView (void);
+	virtual void	    MessageReceived (BMessage *);
+	virtual void	    AttachedToWindow (void);
+	virtual void        DetachedFromWindow (void);
 
 	private:
 	
-	void			SetConnectServer (const char *);
-	void			SetAlternateCount (uint32);
-	void			UpdateNetworkData (BMessage &);
-	void			UpdatePersonalData (BMessage &);
-	void			SetupDefaults (BMessage &);
-	void            BuildNetworkList (void);
-	void            SaveCurrentNetwork();
-	BMenuField *networkMenu;
-	BScrollView *execScroller,
-				*nickScroller;
+	void			    SetConnectServer (const char *);
+	void			    SetAlternateCount (uint32);
+	void			    UpdateNetworkData (BMessage &);
+	void			    UpdatePersonalData (BMessage &);
+	void			    SetupDefaults (BMessage &);
+	void                BuildNetworkList (void);
+	void                SaveCurrentNetwork();
+	BMenuField          *fNetworkMenu;
+	BScrollView         *fExecScroller,
+				        *fNickScroller;
 	
-	BBox *mainNetBox,
-		*netDetailsBox,
-		*personalBox;
+	BBox                *fMainNetBox,
+		                *fNetDetailsBox,
+		                *fPersonalBox;
 	
-	BButton *serverButton,
-			*execButton,
-			*nickAddButton,
-			*nickRemoveButton;
+	BButton             *fServerButton,
+			            *fNickAddButton,
+			            *fNickRemoveButton;
 	
-	TSpeedButton *nickUpButton,
-	             *nickDnButton;
+	TSpeedButton        *fNickUpButton,
+	                    *fNickDnButton;
 	
-	BCheckBox *nickDefaultsBox,
-			  *startupBox;
+	BCheckBox           *fNickDefaultsBox,
+	                    *fLagCheckBox,
+			            *fStartupBox;
 			  
-	BTextView *textView;
-	BListView *listView;
+	BTextView           *fTextView;
+	BListView           *fListView;
 	
-	BTextControl *ident,
-				*realName;
+	BTextControl        *fIdent,
+				        *fRealName;
 	
-	BStringView *connectServer,
-				*alternates;
+	BStringView         *fConnectServer,
+				        *fAlternates;
 	
-	BMessage	activeNetwork;
-	PromptWindow *nickPrompt;
-	PromptWindow *netPrompt;
-	PromptWindow *dupePrompt;
-	BMenuItem   *removeItem;
-	BMenuItem   *dupeItem;
-	NetPrefServerWindow *serverPrefs;
+	BMessage	        fActiveNetwork;
+	PromptWindow        *fNickPrompt;
+	PromptWindow        *fNetPrompt;
+	PromptWindow        *fDupePrompt;
+	BMenuItem           *fRemoveItem;
+	BMenuItem           *fDupeItem;
+	NetPrefServerWindow *fServerPrefs;
 };
 
 #endif

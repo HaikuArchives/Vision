@@ -23,6 +23,7 @@
  */
 
 #include <Bitmap.h>
+#include <MessageRunner.h>
 #include <Screen.h>
 #include <TextView.h>
 #include <TranslationUtils.h>
@@ -30,9 +31,6 @@
 #include "AboutWindow.h"
 #include "Vision.h"
 #include "ClickView.h"
-
-
-#define PULSE_RATE 100000
 
 class ClickView;
 
@@ -49,53 +47,52 @@ AboutWindow::AboutWindow (void)
 
   
   BRect bounds (Bounds());
-  BBitmap *bmp;
+  BBitmap *bmp (NULL);
 
-  background = new BView (
+  fBackground = new BView (
                      bounds,
                      "background",
                      B_FOLLOW_ALL_SIDES,
                      B_WILL_DRAW);
-  background->SetViewColor (255, 255, 255);
-  AddChild (background);
+  fBackground->SetViewColor (255, 255, 255);
+  AddChild (fBackground);
 
 
   if ((bmp = BTranslationUtils::GetBitmap ('bits', "vision")) != 0)
   {
     //BRect logo_bounds (bmp->Bounds());
 
-    logo = new ClickView (
+    fLogo = new ClickView (
                     bmp->Bounds().OffsetByCopy (16, 16),
                     "image",
                     B_FOLLOW_LEFT | B_FOLLOW_TOP,
                     B_WILL_DRAW,
                     "http://vision.sourceforge.net");
-    background->AddChild (logo);
-    logo->SetViewBitmap (bmp);
+    fBackground->AddChild (fLogo);
+    fLogo->SetViewBitmap (bmp);
     delete bmp;
 
     bounds.Set (
       0.0,
-      logo->Frame().bottom + 12, 
+      fLogo->Frame().bottom + 12, 
       Bounds().right,
       Bounds().bottom);
   }
 
-  credits = new BTextView (
+  fCredits = new BTextView (
                   bounds,
                   "credits",
                   bounds.OffsetToCopy (B_ORIGIN).InsetByCopy (20, 0),
                   B_FOLLOW_LEFT | B_FOLLOW_TOP,
                   B_WILL_DRAW); 
 
-  //credits->SetViewColor (myBlack);
-  credits->MakeSelectable (false);
-  credits->MakeEditable (false);
-  credits->SetStylable (true);
-  credits->SetAlignment (B_ALIGN_CENTER);
-  background->AddChild (credits);
+  fCredits->MakeSelectable (false);
+  fCredits->MakeEditable (false);
+  fCredits->SetStylable (true);
+  fCredits->SetAlignment (B_ALIGN_CENTER);
+  fBackground->AddChild (fCredits);
 
-  creditsText =
+  fCreditsText =
     "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
     "Unit A\n[Vision]\n"
     "{A-Z}\n"
@@ -159,23 +156,21 @@ AboutWindow::AboutWindow (void)
     "is for insects.\" -- Robert A. Heinlein"
   ;
 
-  fixedFont = *be_fixed_font;
   rgb_color myBlack = {0,0,0,255};
-  textRun.count          = 1;
-  textRun.runs[0].offset = 0;
-  textRun.runs[0].font   = fixedFont;
-  textRun.runs[0].color  = myBlack;
+  fTextRun.count          = 1;
+  fTextRun.runs[0].offset = 0;
+  fTextRun.runs[0].font   = *be_fixed_font;
+  fTextRun.runs[0].color  = myBlack;
 
-  credits->Insert (creditsText, &textRun);
+  fCredits->Insert (fCreditsText, &fTextRun);
 
   // Center window
   BRect frame (BScreen().Frame());
   MoveTo (
     frame.Width()/2 - Frame().Width()/2,
-    frame.Height()/2 - Frame().Height()/2); 
- 
-
-  SetPulseRate (PULSE_RATE);
+    frame.Height()/2 - Frame().Height()/2);
+  fScrollRunner = new BMessageRunner (BMessenger (this), new BMessage (M_ABOUT_SCROLL),
+  	100000);
 }
 
 
@@ -191,43 +186,11 @@ AboutWindow::QuitRequested (void)
   /*
    * Function purpose: Tell vision_app about our death
    */
-  
+  delete fScrollRunner;
   vision_app->PostMessage (M_ABOUT_CLOSE);
   
   return true;
 }
-
-
-void
-AboutWindow::DispatchMessage (BMessage *msg, BHandler *handler)
-{
-  /*
-   * Function purpose: Call Pulse() on B_PULSE messages
-   */
-   
-  if (msg->what == B_PULSE)
-    Pulse();
-
-  // pass the message on to the parent class' DispatchMessage()
-  BWindow::DispatchMessage (msg, handler);
-}
-
-
-void
-AboutWindow::Pulse (void)
-{
-  /*
-   * Function purpose: Scroll the credits BTextView by 1 unit;
-   *                   If we are at the bottom, scroll to the top
-   */
-   
-  BPoint point (credits->PointAt (credits->TextLength() - 1));
-  credits->ScrollBy (0, 1);
-
-  if (credits->Bounds().bottom > point.y + Bounds().Height())
-    credits->ScrollTo (0, 0);
-}
-
 
 void
 AboutWindow::AboutImage (const char *, bool)
@@ -250,4 +213,25 @@ AboutWindow::AboutImage (const char *, bool)
     delete bmp;
   }
 */
+}
+
+void
+AboutWindow::MessageReceived (BMessage *msg)
+{
+  switch (msg->what)
+  {
+    case M_ABOUT_SCROLL:
+    {
+      BPoint point (fCredits->PointAt (fCredits->TextLength() - 1));
+      fCredits->ScrollBy (0, 1);
+
+      if (fCredits->Bounds().bottom > point.y + Bounds().Height())
+        fCredits->ScrollTo (0, 0);
+    }
+    break;
+    
+    default:
+      BWindow::MessageReceived (msg);
+      break;
+  }
 }

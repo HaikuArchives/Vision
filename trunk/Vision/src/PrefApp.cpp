@@ -37,95 +37,95 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   BRect checkboxRect(Bounds());
   checkboxRect.bottom = checkboxRect.top;
   msg.AddString ("setting", "versionParanoid");
-  versionParanoid = new BCheckBox (checkboxRect, "version Paranoid",
+  fVersionParanoid = new BCheckBox (checkboxRect, "version Paranoid",
     S_PREFAPP_VERSION_PARANOID,
     new BMessage (msg));
-  versionParanoid->SetValue ((!vision_app->GetBool ("versionParanoid")) ? B_CONTROL_ON : B_CONTROL_OFF);
-  versionParanoid->MoveBy(be_plain_font->StringWidth("S"), 0);
-  versionParanoid->ResizeToPreferred();
-  trackingBoundsRect = versionParanoid->Bounds();
+  fVersionParanoid->SetValue ((!vision_app->GetBool ("versionParanoid")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fVersionParanoid->MoveBy(be_plain_font->StringWidth("S"), 0);
+  fVersionParanoid->ResizeToPreferred();
+  trackingBoundsRect = fVersionParanoid->Bounds();
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxHeight += trackingBoundsRect.Height(); 
-  AddChild (versionParanoid);
+  AddChild (fVersionParanoid);
   
-  checkboxRect.top += versionParanoid->Bounds().Height() * 1.2;
+  checkboxRect.top += fVersionParanoid->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "catchAltW");
-  catchAltW = new BCheckBox (checkboxRect, "catch AltW",
+  fCatchAltW = new BCheckBox (checkboxRect, "catch AltW",
     S_PREFAPP_CMDW,
     new BMessage (msg));
-  catchAltW->SetValue ((!vision_app->GetBool ("catchAltW")) ? B_CONTROL_ON : B_CONTROL_OFF);
-  catchAltW->MoveBy(be_plain_font->StringWidth("S"), 0);
-  catchAltW->ResizeToPreferred();
-  trackingBoundsRect = catchAltW->Bounds();
+  fCatchAltW->SetValue ((!vision_app->GetBool ("catchAltW")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fCatchAltW->MoveBy(be_plain_font->StringWidth("S"), 0);
+  fCatchAltW->ResizeToPreferred();
+  trackingBoundsRect = fCatchAltW->Bounds();
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxHeight += trackingBoundsRect.Height() * 1.2; 
-  AddChild (catchAltW);
+  AddChild (fCatchAltW);
   
-  checkboxRect.top += catchAltW->Bounds().Height() * 1.2;
+  checkboxRect.top += fCatchAltW->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "timestamp");
-  timeStamp = new BCheckBox (checkboxRect, "timeStamp",
+  fTimeStamp = new BCheckBox (checkboxRect, "timestamp",
     S_PREFAPP_SHOW_TIMESTAMP,
     new BMessage (msg));
-  timeStamp->SetValue ((vision_app->GetBool ("timestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
-  timeStamp->MoveBy(be_plain_font->StringWidth("S"), 0);
-  timeStamp->ResizeToPreferred();
-  trackingBoundsRect = timeStamp->Bounds();
+  fTimeStamp->SetValue ((vision_app->GetBool ("timestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fTimeStamp->MoveBy(be_plain_font->StringWidth("S"), 0);
+  fTimeStamp->ResizeToPreferred();
+  trackingBoundsRect = fTimeStamp->Bounds();
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxHeight += trackingBoundsRect.Height() * 1.5; 
-  AddChild (timeStamp);
+  AddChild (fTimeStamp);
   
-  checkboxRect.top += timeStamp->Bounds().Height() * 1.2;
+  checkboxRect.top += fTimeStamp->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "log_enabled");
-  logEnabled = new BCheckBox (checkboxRect, "logEnabled",
+  fLogEnabled = new BCheckBox (checkboxRect, "fLogEnabled",
     S_PREFAPP_USE_LOGGING,
     new BMessage (msg));
-  logEnabled->SetValue ((vision_app->GetBool ("log_enabled")) ? B_CONTROL_ON : B_CONTROL_OFF);
-  logEnabled->MoveBy(be_plain_font->StringWidth("S"), 0);
-  logEnabled->ResizeToPreferred();
-  trackingBoundsRect = logEnabled->Bounds();
+  fLogEnabled->SetValue ((vision_app->GetBool ("log_enabled")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fLogEnabled->MoveBy(be_plain_font->StringWidth("S"), 0);
+  fLogEnabled->ResizeToPreferred();
+  trackingBoundsRect = fLogEnabled->Bounds();
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxHeight += trackingBoundsRect.Height() * 1.5; 
-  AddChild (logEnabled);
+  AddChild (fLogEnabled);
   
-  checkboxRect.top += logEnabled->Bounds().Height() * 1.2;
+  checkboxRect.top += fLogEnabled->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "log_filetimestamp");
-  logFileTimestamp = new BCheckBox (checkboxRect, "logFileTimestamp",
+  fLogFileTimestamp = new BCheckBox (checkboxRect, "fLogFileTimestamp",
     S_PREFAPP_LOG_TIMESTAMP,
     new BMessage (msg));
-  logFileTimestamp->SetValue (vision_app->GetBool (("log_filetimestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
-  logFileTimestamp->MoveBy(be_plain_font->StringWidth("S"), 0);
-  logFileTimestamp->ResizeToPreferred();
-  trackingBoundsRect = logFileTimestamp->Bounds();
+  fLogFileTimestamp->SetValue (vision_app->GetBool (("log_filetimestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fLogFileTimestamp->MoveBy(be_plain_font->StringWidth("S"), 0);
+  fLogFileTimestamp->ResizeToPreferred();
+  trackingBoundsRect = fLogFileTimestamp->Bounds();
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxWidth *= 1.2;
   maxHeight += trackingBoundsRect.Height() * 1.5;
-  AddChild (logFileTimestamp);
+  AddChild (fLogFileTimestamp);
   
-  checkboxRect.top += logFileTimestamp->Bounds().Height() * 1.2;
+  checkboxRect.top += fLogFileTimestamp->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "stripcolors");
-  stripColors = new BCheckBox (checkboxRect, "stripcolors",
+  fStripColors = new BCheckBox (checkboxRect, "stripcolors",
     S_PREFAPP_STRIP_MIRC,
     new BMessage (msg));
-  stripColors->SetValue ((vision_app->GetBool ("stripcolors")) ? B_CONTROL_ON : B_CONTROL_OFF);
-  stripColors->MoveBy(be_plain_font->StringWidth("S"), 0);
-  stripColors->ResizeToPreferred();
-  trackingBoundsRect = stripColors->Bounds();
+  fStripColors->SetValue ((vision_app->GetBool ("stripcolors")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fStripColors->MoveBy(be_plain_font->StringWidth("S"), 0);
+  fStripColors->ResizeToPreferred();
+  trackingBoundsRect = fStripColors->Bounds();
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxHeight += trackingBoundsRect.Height() * 1.5; 
-  AddChild (stripColors);
+  AddChild (fStripColors);
 
-  checkboxRect.top += stripColors->Bounds().Height() * 1.2;
+  checkboxRect.top += fStripColors->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "Newbie Spam Mode");
-  spamMode = new BCheckBox (checkboxRect, "newbiespammode",
+  fSpamMode = new BCheckBox (checkboxRect, "newbiespammode",
     S_PREFAPP_WARN_MULTILINE,
     new BMessage (msg));
-  spamMode->SetValue ((vision_app->GetBool ("Newbie Spam Mode")) ? B_CONTROL_ON : B_CONTROL_OFF);
-  spamMode->MoveBy(be_plain_font->StringWidth("S"), 0);
-  spamMode->ResizeToPreferred();
-  trackingBoundsRect = spamMode->Bounds();
+  fSpamMode->SetValue ((vision_app->GetBool ("Newbie Spam Mode")) ? B_CONTROL_ON : B_CONTROL_OFF);
+  fSpamMode->MoveBy(be_plain_font->StringWidth("S"), 0);
+  fSpamMode->ResizeToPreferred();
+  trackingBoundsRect = fSpamMode->Bounds();
   maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
   maxHeight += trackingBoundsRect.Height() * 1.5; 
-  AddChild (spamMode);
+  AddChild (fSpamMode);
 
   
   ResizeTo(maxWidth, maxHeight);
@@ -144,13 +144,13 @@ AppWindowPrefsView::AttachedToWindow (void)
 void
 AppWindowPrefsView::AllAttached (void)
 {
-  versionParanoid->SetTarget (this);
-  catchAltW->SetTarget (this);
-  timeStamp->SetTarget (this);
-  logEnabled->SetTarget (this);
-  logFileTimestamp->SetTarget (this);
-  stripColors->SetTarget (this);
-  spamMode->SetTarget (this);
+  fVersionParanoid->SetTarget (this);
+  fCatchAltW->SetTarget (this);
+  fTimeStamp->SetTarget (this);
+  fLogEnabled->SetTarget (this);
+  fLogFileTimestamp->SetTarget (this);
+  fStripColors->SetTarget (this);
+  fSpamMode->SetTarget (this);
   BView::AllAttached();
 }
 

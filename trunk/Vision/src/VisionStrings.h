@@ -30,7 +30,7 @@
 
 #define S_CHANNEL_INIT              "*** Now talking in "
 #define S_CHANNEL_REJOIN            "*** Attempting to rejoin"
-#define S_CHANNEL_RECON_REJOIN      "[@] Attempting to rejoin\n"
+#define S_CHANNEL_RECON_REJOIN      "[@] Attempting to rejoin"
 #define S_CHANNEL_GOT_KICKED        "*** You have been kicked from "
 #define S_CHANNEL_GOT_KICKED2       "by"
 #define S_CHANNEL_SET_MODE          " set mode "
@@ -137,7 +137,7 @@
 #define S_NETPREFS_CONN2            "falling back to 9 others."
 #define S_NETPREFS_CHANGE_SERVER    "Change servers"
 #define S_NETPREFS_AUTOEXEC         "Autoexec:"
-#define S_NETPREFS_ADD_COMMON       "Add Common"
+#define S_NETPREFS_LAG_CHECK        "Enable lag checking"
 #define S_NETPREFS_STARTUP_CONN     "Connect to this network when Vision starts up"
 #define S_NETPREFS_USE_DEFAULTS     "Use Defaults"
 #define S_NETPREFS_PREFNICK         "Preferred Nicks:"
@@ -359,6 +359,7 @@
 #define S_SERVER_DISCONNECT         "[@] Disconnected from "
 #define S_SERVER_DISCON_STATUS      "Disconnected"
 #define S_SERVER_CONN_PROBLEM       "CONNECTION PROBLEM"
+#define S_SERVER_LAG_DISABLED       "Disabled"
 
 // server entry window
 

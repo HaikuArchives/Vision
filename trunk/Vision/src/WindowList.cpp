@@ -37,6 +37,7 @@
 #include "ClientAgent.h"
 #include "ServerAgent.h"
 #include "ListAgent.h"
+#include "Utilities.h"
 #include <stdio.h>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,15 +50,15 @@ WindowList::WindowList (BRect frame)
     "windowList",
     B_SINGLE_SELECTION_LIST,
     B_FOLLOW_ALL),
-      activeTheme (vision_app->ActiveTheme())
+      fActiveTheme (vision_app->ActiveTheme())
 {
-  activeTheme->ReadLock();
+  fActiveTheme->ReadLock();
   
-  SetFont (&activeTheme->FontAt (F_WINLIST));
+  SetFont (&fActiveTheme->FontAt (F_WINLIST));
 
-  SetViewColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+  SetViewColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));
   
-  activeTheme->ReadUnlock();
+  fActiveTheme->ReadUnlock();
   
   SetTarget (this);
 }
@@ -89,9 +90,9 @@ WindowList::MessageReceived (BMessage *msg)
         int16 which (msg->FindInt16 ("which"));
         if (which == F_WINLIST)
         {
-          activeTheme->ReadLock();
-          SetFont (&activeTheme->FontAt (F_WINLIST));
-          activeTheme->ReadUnlock();
+          fActiveTheme->ReadLock();
+          SetFont (&fActiveTheme->FontAt (F_WINLIST));
+          fActiveTheme->ReadUnlock();
           Invalidate();
         }
       }
@@ -101,11 +102,11 @@ WindowList::MessageReceived (BMessage *msg)
       {
         int16 which (msg->FindInt16 ("which"));
         bool refresh (false);
-        activeTheme->ReadLock();
+        fActiveTheme->ReadLock();
         switch (which)
         {
           case C_WINLIST_BACKGROUND:
-            SetViewColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+            SetViewColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));
             refresh = true;
             break;
           
@@ -117,7 +118,7 @@ WindowList::MessageReceived (BMessage *msg)
             refresh = true;
             break;
         }
-        activeTheme->ReadUnlock();
+        fActiveTheme->ReadUnlock();
         if (refresh)
           Invalidate();
       }
@@ -158,9 +159,13 @@ WindowList::MouseDown (BPoint myPoint)
     inputMsg->FindInt32 ("buttons", &mousebuttons);
     inputMsg->FindInt32 ("modifiers", &keymodifiers);
     
+    bigtime_t sysTime;
+    message->FindInt64 ("when", &sysTime);
+    uint16 clicks = CheckClickCount (myPoint, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
+    
     // slight kludge to make sure the expand/collapse triangles behave how they should
     // -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
-    if ((myPoint.x < 10.0) || ((message->FindInt32 ("clicks") % 2) == 0))
+    if ((myPoint.x < 10.0) || ((clicks % 2) == 0))
     {
       // since Expand/Collapse are not virtual, override them by taking over processing
       // the collapse triangle logic manually
@@ -195,7 +200,7 @@ WindowList::MouseDown (BPoint myPoint)
 
         BuildPopUp();
 
-        myPopUp->Go (
+        fMyPopUp->Go (
           ConvertToScreen (myPoint),
           true,
           true,
@@ -226,7 +231,7 @@ WindowList::KeyDown (const char *, int32)
   WindowListItem *activeitem ((WindowListItem *)ItemAt (CurrentSelection()));
   ClientAgent *activeagent (dynamic_cast<ClientAgent *>(activeitem->pAgent()));
   if (activeagent)
-    activeagent->msgr.SendMessage (&inputMsg);
+    activeagent->fMsgr.SendMessage (&inputMsg);
   #endif
 }
 
@@ -262,7 +267,7 @@ WindowList::SelectLast (void)
    * Function purpose: Select the last active agent
    */
   LockLooper();
-  int32 lastInt (IndexOf (lastSelected));
+  int32 lastInt (IndexOf (fLastSelected));
   if (lastInt >= 0)
     Select (lastInt);
   else
@@ -277,14 +282,14 @@ WindowList::Collapse (BListItem *collapseItem)
 {
       WindowListItem *citem ((WindowListItem *)collapseItem),
                        *item (NULL);
-      int32 substatus (-1);
+      int32 fSubstatus (-1);
       int32 itemcount (CountItemsUnder (citem, true));
 
       for (int32 i = 0; i < itemcount; i++)
-        if (substatus < (item = (WindowListItem *)ItemUnderAt(citem, true, i))->Status())
-          substatus = item->Status();
+        if (fSubstatus < (item = (WindowListItem *)ItemUnderAt(citem, true, i))->Status())
+          fSubstatus = item->Status();
 
-      citem->SetSubStatus (substatus);
+      citem->SetSubStatus (fSubstatus);
       BOutlineListView::Collapse (collapseItem);
 }
 
@@ -547,11 +552,11 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
     BLooper *looper (NULL);
     ServerAgent *agentParent (NULL);
     if (dynamic_cast<ClientAgent *>(agent) != NULL)
-      agentParent = (ServerAgent *)((ClientAgent *)agent)->sMsgr.Target(&looper);
+      agentParent = (ServerAgent *)((ClientAgent *)agent)->fSMsgr.Target(&looper);
     else
-      agentParent = (ServerAgent *)((ListAgent *)agent)->sMsgr->Target(&looper);
-    AddUnder (newagentitem, agentParent->agentWinItem);
-    SortItemsUnder (agentParent->agentWinItem, false, SortListItems);
+      agentParent = (ServerAgent *)((ListAgent *)agent)->fSMsgr->Target(&looper);
+    AddUnder (newagentitem, agentParent->fAgentWinItem);
+    SortItemsUnder (agentParent->fAgentWinItem, false, SortListItems);
   }
   
   BView *newagent;
@@ -575,7 +580,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
       if ((strcasecmp (name, item->Name().String()) == 0)
       &&  (item->Sid() == serverId)) 
       {
-        dynamic_cast<ClientAgent *>(newagent)->agentWinItem = item;
+        dynamic_cast<ClientAgent *>(newagent)->fAgentWinItem = item;
         break;      
       }
     }
@@ -591,7 +596,7 @@ WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winT
        WindowListItem *item = (WindowListItem *)FullListItemAt (i);
        if ((item->Sid() == serverId) && (item->Name().ICompare("Channels") == 0))
        {
-         dynamic_cast<ListAgent *>(newagent)->agentWinItem = item;
+         dynamic_cast<ListAgent *>(newagent)->fAgentWinItem = item;
          break;
        }
      }
@@ -637,7 +642,7 @@ WindowList::Activate (int32 index)
     if (!aitem->pAgent()->IsHidden())
     {
       activeagent = aitem->pAgent();
-      lastSelected = aitem;
+      fLastSelected = aitem;
       break;
     }
   }
@@ -673,7 +678,7 @@ WindowList::Activate (int32 index)
  
   // activate the input box (if it has one)
   if ( (newagent = dynamic_cast<ClientAgent *>(newagent)) )
-    reinterpret_cast<ClientAgent *>(newagent)->msgr.SendMessage (M_INPUT_FOCUS);
+    reinterpret_cast<ClientAgent *>(newagent)->fMsgr.SendMessage (M_INPUT_FOCUS);
 
   // set ClientWindow's title
   BString agentid;
@@ -696,7 +701,7 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   FullListSortItems (SortListItems);
   delete agent;
   SelectLast();
-  lastSelected = NULL;
+  fLastSelected = NULL;
   Window()->EnableUpdates();
   UnlockLooper();
 }
@@ -744,7 +749,7 @@ WindowList::SortListItems (const BListItem *name1, const BListItem *name2)
 void
 WindowList::BuildPopUp (void)
 {
-  myPopUp = new BPopUpMenu("Window Selection", false, false);
+  fMyPopUp = new BPopUpMenu("Window Selection", false, false);
   BMenuItem *item;
   
   WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (CurrentSelection())));
@@ -752,14 +757,14 @@ WindowList::BuildPopUp (void)
   {
     ClientAgent *activeagent (dynamic_cast<ClientAgent *>(myItem->pAgent()));
     if (activeagent)
-      activeagent->AddMenuItems (myPopUp);
+      activeagent->AddMenuItems (fMyPopUp);
   }
   
   item = new BMenuItem(S_WINLIST_CLOSE_ITEM, new BMessage (M_MENU_NUKE));
   item->SetTarget (this);
-  myPopUp->AddItem (item);
+  fMyPopUp->AddItem (item);
   
-  myPopUp->SetFont (be_plain_font);
+  fMyPopUp->SetFont (be_plain_font);
 }
 
 
@@ -780,12 +785,12 @@ WindowListItem::WindowListItem (
   BView *agent)
 
   : BListItem (),
-    myName (name),
-    mySid (serverId),
-    myStatus (winStatus),
-    myType (winType),
-    subStatus (-1),
-    myAgent (agent)
+    fMyName (name),
+    fMySid (serverId),
+    fMyStatus (winStatus),
+    fMyType (winType),
+    fSubStatus (-1),
+    fMyAgent (agent)
 {
 
 }
@@ -793,43 +798,43 @@ WindowListItem::WindowListItem (
 BString
 WindowListItem::Name (void) const
 {
-  return myName;
+  return fMyName;
 }
 int32
 WindowListItem::Sid (void) const
 {
-  return mySid;
+  return fMySid;
 }
 
 int32
 WindowListItem::Status() const
 {
-  return myStatus;
+  return fMyStatus;
 }
 
 int32
 WindowListItem::SubStatus() const
 {
-  return subStatus;
+  return fSubStatus;
 }
 
 int32
 WindowListItem::Type() const
 {
-  return myType;
+  return fMyType;
 }
 
 BView *
 WindowListItem::pAgent() const
 {
-  return myAgent;
+  return fMyAgent;
 }
 
 void
 WindowListItem::SetName (const char *name)
 {
   vision_app->pClientWin()->Lock();
-  myName = name;
+  fMyName = name;
   int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
   vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
   
@@ -847,14 +852,14 @@ WindowListItem::SetName (const char *name)
 void
 WindowListItem::SetSid (int32 newSid)
 {
-  mySid = newSid;
+  fMySid = newSid;
 }
 
 void
 WindowListItem::SetSubStatus (int32 winStatus)
 {
   vision_app->pClientWin()->Lock();
-  subStatus = winStatus;
+  fSubStatus = winStatus;
   int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
   vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
   vision_app->pClientWin()->Unlock();
@@ -864,7 +869,7 @@ void
 WindowListItem::SetStatus (int32 winStatus)
 {
   vision_app->pClientWin()->Lock();
-  myStatus = winStatus;
+  fMyStatus = winStatus;
   int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
   vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
   vision_app->pClientWin()->Unlock();
@@ -880,32 +885,32 @@ WindowListItem::ActivateItem (void)
 void
 WindowListItem::DrawItem (BView *father, BRect frame, bool complete)
 {
-  Theme *activeTheme (vision_app->ActiveTheme());
+  Theme *fActiveTheme (vision_app->ActiveTheme());
   
-  activeTheme->ReadLock();
+  fActiveTheme->ReadLock();
 
-  if (subStatus > WIN_NORMAL_BIT)
+  if (fSubStatus > WIN_NORMAL_BIT)
   {
     rgb_color color;
-    if ((subStatus & WIN_NEWS_BIT) != 0)
-      color = activeTheme->ForegroundAt (C_WINLIST_NEWS);
-    else if ((subStatus & WIN_PAGESIX_BIT) != 0)
-      color = activeTheme->ForegroundAt (C_WINLIST_PAGESIX);
-    else if ((subStatus & WIN_NICK_BIT) != 0)
-      color = activeTheme->ForegroundAt (C_WINLIST_NICK);
+    if ((fSubStatus & WIN_NEWS_BIT) != 0)
+      color = fActiveTheme->ForegroundAt (C_WINLIST_NEWS);
+    else if ((fSubStatus & WIN_PAGESIX_BIT) != 0)
+      color = fActiveTheme->ForegroundAt (C_WINLIST_PAGESIX);
+    else if ((fSubStatus & WIN_NICK_BIT) != 0)
+      color = fActiveTheme->ForegroundAt (C_WINLIST_NICK);
     
     father->SetHighColor (color);
     father->StrokeRect (BRect (0.0, frame.top, 10.0, frame.top + 10.0));
   }
   if (IsSelected())
   {
-    father->SetHighColor (activeTheme->ForegroundAt (C_WINLIST_SELECTION));
-    father->SetLowColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));    
+    father->SetHighColor (fActiveTheme->ForegroundAt (C_WINLIST_SELECTION));
+    father->SetLowColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));    
     father->FillRect (frame);
   }
   else if (complete)
   {
-    father->SetLowColor (activeTheme->ForegroundAt (C_WINLIST_BACKGROUND));
+    father->SetLowColor (fActiveTheme->ForegroundAt (C_WINLIST_BACKGROUND));
     father->FillRect (frame, B_SOLID_LOW);
   }
 
@@ -916,22 +921,22 @@ WindowListItem::DrawItem (BView *father, BRect frame, bool complete)
     frame.left + 4,
     frame.bottom - fh.descent);
 
-  BString drawString (myName);
-  rgb_color color = activeTheme->ForegroundAt (C_WINLIST_NORMAL);
+  BString drawString (fMyName);
+  rgb_color color = fActiveTheme->ForegroundAt (C_WINLIST_NORMAL);
 
-  if ((myStatus & WIN_NEWS_BIT) != 0)
-    color = activeTheme->ForegroundAt (C_WINLIST_NEWS);
+  if ((fMyStatus & WIN_NEWS_BIT) != 0)
+    color = fActiveTheme->ForegroundAt (C_WINLIST_NEWS);
 
-  else if ((myStatus & WIN_PAGESIX_BIT) != 0)
-    color = activeTheme->ForegroundAt (C_WINLIST_PAGESIX);
+  else if ((fMyStatus & WIN_PAGESIX_BIT) != 0)
+    color = fActiveTheme->ForegroundAt (C_WINLIST_PAGESIX);
 
-  else if ((myStatus & WIN_NICK_BIT) != 0)
-    color = activeTheme->ForegroundAt (C_WINLIST_NICK);
+  else if ((fMyStatus & WIN_NICK_BIT) != 0)
+    color = fActiveTheme->ForegroundAt (C_WINLIST_NICK);
 
   if (IsSelected())
-    color = activeTheme->ForegroundAt (C_WINLIST_NORMAL);
+    color = fActiveTheme->ForegroundAt (C_WINLIST_NORMAL);
   
-  activeTheme->ReadUnlock();
+  fActiveTheme->ReadUnlock();
   
   father->SetHighColor (color);
 

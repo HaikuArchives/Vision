@@ -40,10 +40,10 @@ class CommandPrefsView : public BView
     virtual void AllAttached (void);
     virtual void FrameResized (float, float);
   private:
-    VTextControl **commands;
-    BScrollView *scroller;
-    float maxheight;
-    float proportionheight;
+    VTextControl **fCommands;
+    BScrollView *fScroller;
+    float fMaxheight;
+    float fProportionheight;
 };
 
 #endif // _PREFCOMMAND_H

@@ -1,13 +1,20 @@
 Vision
 http://vision.sourceforge.net
 
-[0.8-exp-1125]
+[0.8-exp-1130]
          * cleaned up message constants
          * fixed crash bug in mirc color parser
          * fixed bug in control code stripper where too many digits would get removed
          * tweaked textview drawing performance
          * moved program UI strings to a common header file for easier localization 
          * fixed thread-safety issue in thread name generator
+         * rewrote About Window to use a BMessageRunner 
+         * rewrote logging system
+         * fixed crash bug in DCC Chat
+         * fixed double-click bug in window list
+         * added disable lag check option (NOTE: you will have to manually enable lag checking on all
+           your nets, if the setting isn't present it will assume disabled)
+         * style cleanups
 
 [0.7.8-0113]
          * fixed crash bug in ParseEvents

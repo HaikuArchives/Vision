@@ -50,8 +50,8 @@ class ColorSwatch : public BView
 	rgb_color			Inverted (void) const;
 
 	protected:
-	rgb_color			color;
-	rgb_color			alpha;
+	rgb_color			fColor;
+	rgb_color			fAlpha;
 };
 
 #endif

@@ -46,20 +46,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ServerAgent.h"
+#include "ClientAgent.h"
+#include "ClientAgentLogger.h"
+#include "ClientWindow.h"
 #include "ChannelAgent.h"
 #include "DCCConnect.h"
-#include "Vision.h"
-#include "ClientWindow.h"
-#include "MessageAgent.h"
-#include "WindowList.h"
-#include "StringManip.h"
-#include "StatusView.h"
 #include "ListAgent.h"
+#include "MessageAgent.h"
+#include "ServerAgent.h"
+#include "StatusView.h"
+#include "Utilities.h"
+#include "Vision.h"
+#include "WindowList.h"
 
 class failToLock { /* exception in Establish */ };
 
-int32 ServerAgent::ServerSeed = 0;
+int32 ServerAgent::fServerSeed = 0;
 
 ServerAgent::ServerAgent (
   const char *id_,
@@ -68,61 +70,77 @@ ServerAgent::ServerAgent (
 
   : ClientAgent (
     id_,
-    ServerSeed++,
+    fServerSeed++,
     id_,
     net.FindString ("nick"),
     frame_),
-    localip (""),
-    localip_private (false),
-    getLocalIP (false),
-    lname (net.FindString ("realname")),
-    lident (net.FindString ("ident")),
-    nickAttempt (0),
-    myNick (net.FindString ("nick")),
-    myLag ("0.000"),
-    isConnected (false),
-    isConnecting (true),
-    reconnecting (false),
-    isQuitting (false),
-    checkingLag (false),
-    reacquiredNick (true),
-    establishHasLock (false),
-    retry (0),
-    retryLimit (47),
-    lagCheck (0),
-    lagCount (0),
-    serverSocket (-1),
-    parse_buffer (NULL),
-    parse_size (0),
-    events (vision_app->events),
-    serverHostName (id_),
-    initialMotd (true),
-    cmds (net.FindString ("autoexec")),
-    pListAgent (NULL),
-    networkData (net),
-    serverIndex (-1),
-    nickIndex (1)
+    fLocalip (""),
+    fMyNick (net.FindString ("nick")),
+    fMyLag ((net.FindBool ("lagCheck")) ? "0.000" : S_SERVER_LAG_DISABLED),
+    fLname (net.FindString ("realname")),
+    fLident (net.FindString ("ident")),
+    fLocalip_private (false),
+    fGetLocalIP (false),
+    fIsConnected (false),
+    fIsConnecting (true),
+    fReconnecting (false),
+    fIsQuitting (false),
+    fCheckingLag (false),
+    fReacquiredNick (true),
+    fEstablishHasLock (false),
+    fRetry (0),
+    fRetryLimit (47),
+    fLagCheck (0),
+    fLagCount (0),
+    fNickAttempt (0),
+    fServerSocket (-1),
+    fParse_buffer (NULL),
+    fParse_size (0),
+    fEvents (vision_app->events),
+    fServerHostName (id_),
+    fInitialMotd (true),
+    fCmds (net.FindString ("autoexec")),
+    fListAgent (NULL),
+    fNetworkData (net),
+    fServerIndex (-1),
+    fNickIndex (1),
+    fLogger (NULL)
 {
-
+  fLogger = new ClientAgentLogger(fId);
 }
 
 ServerAgent::~ServerAgent (void)
 {
-//  if (send_buffer)
-//    delete [] send_buffer;
-  if (parse_buffer)
-    delete [] parse_buffer;
-  if (lagRunner)
-    delete lagRunner;
+//  if (fSend_buffer)
+//    delete [] fSend_buffer;
+  if (fParse_buffer)
+    delete [] fParse_buffer;
+  if (fLagRunner)
+    delete fLagRunner;
 
-  if (!establishHasLock && endPointLock)
-    delete endPointLock;
+  if (!fEstablishHasLock && fEndPointLock)
+    delete fEndPointLock;
+    
+  delete fLogger;
 }
 
 void
 ServerAgent::AttachedToWindow(void)
 {
   Init();
+}
+
+void
+ServerAgent::AllAttached (void)
+{
+  fSMsgr = BMessenger (this);
+  ClientAgent::AllAttached ();
+}
+
+// do nothing for now
+void
+ServerAgent::AddMenuItems(BPopUpMenu *)
+{
 }
 
 
@@ -138,34 +156,33 @@ ServerAgent::Init (void)
   Display (vision_app->VisionVersion(VERSION_DATE).String());
   Display ("\nThis agent goes by the name of Smith... err ");
   BString temp;
-  temp << id << " (sid: " << sid << ")";
+  temp << fId << " (sid: " << fSid << ")";
   Display (temp.String(), C_NICK);
   Display ("\nHave fun!\n");
-
-  lagRunner = new BMessageRunner (
+  
+  fLagRunner = new BMessageRunner (
     this,       // target ServerAgent
     new BMessage (M_LAG_CHECK),
     10000000,   // 10 seconds
     -1);        // forever
   
   BString name;
-  
+
   vision_app->GetThreadName(THREAD_S, name);
   
-  loginThread = spawn_thread (
+  fLoginThread = spawn_thread (
     Establish,
     name.String(),
     B_NORMAL_PRIORITY,
     new BMessenger(this));
 
-  resume_thread (loginThread);
-
+  resume_thread (fLoginThread);
 }
 
 int
 ServerAgent::IRCDType (void)
 {
-  return ircdtype;
+  return fIrcdtype;
 }
 
 
@@ -543,31 +560,31 @@ ServerAgent::SendData (const char *cData)
   data.Append("\r\n");
   length = data.Length();
 
-  memset(send_buffer, 0, sizeof(send_buffer));
+  memset(fSend_buffer, 0, sizeof(fSend_buffer));
 
-  int32 dest_length (sizeof(send_buffer)), state (0);
+  int32 dest_length (sizeof(fSend_buffer)), state (0);
 
   convert_from_utf8 (
     B_ISO1_CONVERSION,
     data.String(), 
     &length,
-    send_buffer,
+    fSend_buffer,
     &dest_length,
     &state);
 #ifdef NETSERVER_BUILD
   endPointLock->Lock();
 #endif
-  if (serverSocket > 0 &&
+  if (fServerSocket > 0 &&
 #ifdef BONE_BUILD  
-  (length = send (serverSocket, send_buffer, length, MSG_DONTWAIT) < 0)
+  (length = send (fServerSocket, fSend_buffer, length, MSG_DONTWAIT) < 0)
 #elif NETSERVER_BUILD
-  (length = send (serverSocket, send_buffer, length, 0) < 0)
+  (length = send (fServerSocket, fSend_buffer, length, 0) < 0)
 #endif
-  || serverSocket < 0)
+  || fServerSocket < 0)
   {
     // doh, we aren't even connected.
-    if (!reconnecting && !isConnecting)
-      msgr.SendMessage (M_SERVER_DISCONNECT);
+    if (!fReconnecting && !fIsConnecting)
+      fMsgr.SendMessage (M_SERVER_DISCONNECT);
   }
 #ifdef NETSERVER_BUILD
   endPointLock->Unlock();
@@ -576,7 +593,7 @@ ServerAgent::SendData (const char *cData)
   {
     data.RemoveAll ("\n");
     data.RemoveAll ("\r");
-    printf("    SENT: (%ld:%03ld) \"%s\"\n", sid, length, data.String());
+    printf("    SENT: (%ld:%03ld) \"%s\"\n", fSid, length, data.String());
   }
 }
 
@@ -586,28 +603,28 @@ ServerAgent::ParseLine (const char *cData)
   BString data = FilterCrap (cData);
   int32 length (data.Length() + 1);
 
-  if (parse_size < length * 3UL)
+  if (fParse_size < length * 3UL)
   {
-    if (parse_buffer)
-      delete [] parse_buffer;
-    parse_buffer = new char [length * 3];
-    parse_size = length * 3;
+    if (fParse_buffer)
+      delete [] fParse_buffer;
+    fParse_buffer = new char [length * 3];
+    fParse_size = length * 3;
   }
 
-  int32 dest_length (parse_size), state (0);
+  int32 dest_length (fParse_size), state (0);
 
   convert_to_utf8 (
     B_ISO1_CONVERSION,
     data.String(), 
     &length,
-    parse_buffer,
+    fParse_buffer,
     &dest_length,
     &state);
   
   if (vision_app->numBench)
   {
     vision_app->bench1 = system_time();
-    if (ParseEvents (parse_buffer))
+    if (ParseEvents (fParse_buffer))
     {
       vision_app->bench2 = system_time();
       BString bencht (GetWord (data.String(), 2));
@@ -617,7 +634,7 @@ ServerAgent::ParseLine (const char *cData)
   }
   else
   {
-    if (ParseEvents (parse_buffer))
+    if (ParseEvents (fParse_buffer))
       return;
   }
   
@@ -631,9 +648,9 @@ ServerAgent::Client (const char *cName)
 {
   ClientAgent *client (0);
 
-  for (int32 i = 0; i < clients.CountItems(); ++i)
+  for (int32 i = 0; i < fClients.CountItems(); ++i)
   {
-    ClientAgent *item ((ClientAgent *)clients.ItemAt (i));
+    ClientAgent *item ((ClientAgent *)fClients.ItemAt (i));
     if (strcasecmp (cName, item->Id().String()) == 0)
     {
       
@@ -650,9 +667,9 @@ ServerAgent::ActiveClient (void)
 {
   ClientAgent *client (0);
 
-  for (int32 i = 0; i < clients.CountItems(); ++i)
-    if (!((ClientAgent *)clients.ItemAt (i))->IsHidden())
-      client = (ClientAgent *)clients.ItemAt (i);
+  for (int32 i = 0; i < fClients.CountItems(); ++i)
+    if (!((ClientAgent *)fClients.ItemAt (i))->IsHidden())
+      client = (ClientAgent *)fClients.ItemAt (i);
 
   return client;
 }
@@ -661,15 +678,15 @@ ServerAgent::ActiveClient (void)
 void
 ServerAgent::Broadcast (BMessage *msg)
 {
-  for (int32 i = 0; i < clients.CountItems(); ++i)
+  for (int32 i = 0; i < fClients.CountItems(); ++i)
   {
-    ClientAgent *client ((ClientAgent *)clients.ItemAt (i));
+    ClientAgent *client ((ClientAgent *)fClients.ItemAt (i));
 
     if (client != this)
-      client->msgr.SendMessage (msg);
+      client->fMsgr.SendMessage (msg);
   }
-  if (pListAgent)
-    vision_app->pClientWin()->DispatchMessage(msg, (BView *)pListAgent);
+  if (fListAgent)
+    vision_app->pClientWin()->DispatchMessage(msg, (BView *)fListAgent);
 }
 
 void
@@ -679,15 +696,15 @@ ServerAgent::RepliedBroadcast (BMessage *)
 //  BMessage cMsg (*msg);
 //  BAutolock lock (this);
 //
-//  for (int32 i = 0; i < clients.CountItems(); ++i)
+//  for (int32 i = 0; i < fClients.CountItems(); ++i)
 //  {
-//    ClientAgent *client ((ClientAgent *)clients.ItemAt (i));
+//    ClientAgent *client ((ClientAgent *)fClients.ItemAt (i));
 //
 //    if (client != this)
 //    {
-//      BMessenger msgr (client);
+//      BMessenger fMsgr (client);
 //      BMessage reply;
-//      msgr.SendMessage (&cMsg, &reply);
+//      fMsgr.SendMessage (&cMsg, &reply);
 //    }
 //  }
 }
@@ -700,13 +717,13 @@ ServerAgent::DisplayAll (
   const uint32 back,
   const uint32 font)
 {
-  for (int32 i = 0; i < clients.CountItems(); ++i)
+  for (int32 i = 0; i < fClients.CountItems(); ++i)
   {
-    ClientAgent *client ((ClientAgent *)clients.ItemAt (i));
+    ClientAgent *client ((ClientAgent *)fClients.ItemAt (i));
 
     BMessage msg (M_DISPLAY);
     PackDisplay (&msg, buffer, fore, back, font);
-    client->msgr.SendMessage (&msg);
+    client->fMsgr.SendMessage (&msg);
   }
 
   return;
@@ -719,9 +736,9 @@ ServerAgent::PostActive (BMessage *msg)
   ClientAgent *client (ActiveClient());
 
   if (client)
-    client->msgr.SendMessage (msg);
+    client->fMsgr.SendMessage (msg);
   else
-    msgr.SendMessage (msg);
+    fMsgr.SendMessage (msg);
 }
 
 void
@@ -732,41 +749,41 @@ ServerAgent::HandleReconnect (void)
    * to the server 
    */
    
-  if (isConnected)
+  if (fIsConnected)
   {
     // what's going on here?!
     printf (":ERROR: HandleReconnect() called when we're already connected! Whats up with that?!");
     return;
   }
 
-  if (retry < retryLimit)
+  if (fRetry < fRetryLimit)
   {
     BString name;
     vision_app->GetThreadName(THREAD_S, name);
     // we are go for main engine start
-    reconnecting = true;
-    isConnecting = true;
-    nickAttempt = 0;
-    establishHasLock = false;
+    fReconnecting = true;
+    fIsConnecting = true;
+    fNickAttempt = 0;
+    fEstablishHasLock = false;
 #ifdef NETSERVER_BUILD
     endPointLock = new BLocker();
 #endif
-    loginThread = spawn_thread (
+    fLoginThread = spawn_thread (
       Establish,
       name.String(),
       B_NORMAL_PRIORITY,
       new BMessenger(this));
     
-    close (serverSocket);  
-    serverSocket = -1;
+    close (fServerSocket);  
+    fServerSocket = -1;
 
-    resume_thread (loginThread);
+    resume_thread (fLoginThread);
   }
   else
   {
-    // we've hit our retry limit. throw in the towel
-    reconnecting = false;
-    retry = 0;
+    // we've hit our fRetry limit. throw in the towel
+    fReconnecting = false;
+    fRetry = 0;
     const char *soSorry;
     soSorry = S_SERVER_RETRY_LIMIT "\n";
     Display (soSorry, C_ERROR);
@@ -782,19 +799,19 @@ ServerAgent::GetNextServer ()
   type_code type;
   int32 count,
     size;
-  networkData.GetInfo ("server", &type, &count);
-  uint32 state = (reconnecting) ? 1 : 0;
+  fNetworkData.GetInfo ("server", &type, &count);
+  uint32 state = (fReconnecting) ? 1 : 0;
 
   for (;;)
   {
-    if (serverIndex >= count)
+    if (fServerIndex >= count)
     {
-      serverIndex = -1;
+      fServerIndex = -1;
       state = 0;
     }
     
     const ServerData *server (NULL);
-    for (; ++serverIndex, networkData.FindData ("server", B_RAW_TYPE, serverIndex, 
+    for (; ++fServerIndex, fNetworkData.FindData ("server", B_RAW_TYPE, fServerIndex, 
       reinterpret_cast<const void **>(&server), &size) == B_OK;)
         if (server->state == state)
           return server;
@@ -806,12 +823,12 @@ ServerAgent::GetNextNick ()
 {
   type_code type;
   int32 count;
-  networkData.GetInfo ("nick", &type, &count);
-  if (nickIndex < count)
-    return networkData.FindString ("nick", nickIndex++);
+  fNetworkData.GetInfo ("nick", &type, &count);
+  if (fNickIndex < count)
+    return fNetworkData.FindString ("nick", fNickIndex++);
   else
   {
-    nickIndex = 0;
+    fNickIndex = 0;
     return "";
   }
 }
@@ -820,8 +837,8 @@ bool
 ServerAgent::PrivateIPCheck (const char *ip)
 {
   /*
-   * Function purpose: Compare against localip to see if it is a private address
-   *                   if so, set localip_private to true;
+   * Function purpose: Compare against fLocalip to see if it is a private address
+   *                   if so, set fLocalip_private to true;
    *
    * Private ranges: 10.0.0.0    - 10.255.255.255
    *                 172.16.0.0  - 172.31.255.255
@@ -885,7 +902,7 @@ ServerAgent::AddResumeData (BMessage *msg)
 	
   //PRINT(("%s %s %s %s %s", data->nick.String(), data->file.String(), 
   //	data->size.String(), data->ip.String(), data->port.String()));
-  resumes.AddItem (data);
+  fResumes.AddItem (data);
 
   BString buffer;
 
@@ -923,6 +940,7 @@ ServerAgent::MessageReceived (BMessage *msg)
         ClientAgent::MessageReceived (msg);
       }
       break;
+    
       
     case M_SEND_RAW:
       {
@@ -944,55 +962,49 @@ ServerAgent::MessageReceived (BMessage *msg)
       {
         BMessage reply (B_REPLY);
         reply.AddData ("server", B_RAW_TYPE, GetNextServer(), sizeof (ServerData));
-        reply.AddString  ("ident", lident.String());
-        reply.AddString  ("name", lname.String());
-        reply.AddString  ("nick", myNick.String());
+        reply.AddString  ("ident", fLident.String());
+        reply.AddString  ("name", fLname.String());
+        reply.AddString  ("nick", fMyNick.String());
 #ifdef NETSERVER_BUILD
         reply.AddPointer ("lock", endPointLock);
 #endif
-        reply.AddInt32   ("sid", sid);
+        reply.AddInt32   ("sid", fSid);
         msg->SendReply (&reply); 
-        establishHasLock = true;
+        fEstablishHasLock = true;
       }
       break;
     
     case M_SET_ENDPOINT:
-      msg->FindInt32 ("socket", &serverSocket);
+      msg->FindInt32 ("socket", &fServerSocket);
       break;
       
     case M_NOT_CONNECTING:
-      isConnecting = false;
+      fIsConnecting = false;
       break;
      
     case M_CONNECTED:
-      isConnected = true;
+      fIsConnected = true;
       break;
     
     case M_INC_RECONNECT:
-      ++retry;
-      break;
-     
-    case M_INIT_LAG:
-      myLag = "0.000";
-      if (!IsHidden())
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), false);
+      ++fRetry;
       break;
     
     case M_SET_IP:
       {
         static BString ip;
         msg->FindString("ip", &ip);
-        localip = ip.String();
-        localip_private = msg->FindBool("private");
-        getLocalIP = localip_private;
+        fLocalip = ip.String();
+        fLocalip_private = msg->FindBool("private");
+        fGetLocalIP = fLocalip_private;
       }
       break;
     
     case M_GET_IP:
       {
         BMessage reply;
-        reply.AddBool ("private", localip_private);
-        reply.AddString ("ip", localip);
+        reply.AddBool ("private", fLocalip_private);
+        reply.AddString ("ip", fLocalip);
         msg->SendReply (&reply);
       }
       break;
@@ -1000,8 +1012,8 @@ ServerAgent::MessageReceived (BMessage *msg)
     case M_GET_RECONNECT_STATUS:
       {
         BMessage reply (B_REPLY);
-        reply.AddInt32 ("retries", retry);
-        reply.AddInt32 ("max_retries", retryLimit);
+        reply.AddInt32 ("retries", fRetry);
+        reply.AddInt32 ("max_retries", fRetryLimit);
         msg->SendReply(&reply); 
       }
       break;
@@ -1064,7 +1076,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           size,
           ip,
           port,
-          sMsgr,
+          fSMsgr,
           cont);
 	
           BMessage aMsg (M_DCC_FILE_WIN);
@@ -1102,7 +1114,7 @@ ServerAgent::MessageReceived (BMessage *msg)
                 nick,
                 path.Path(),
                 ssize.String(),
-                sMsgr);
+                fSMsgr);
             BMessage msg (M_DCC_FILE_WIN);
             msg.AddPointer ("view", view);
             vision_app->PostMessage (&msg);
@@ -1144,22 +1156,22 @@ ServerAgent::MessageReceived (BMessage *msg)
           new MessageAgent (
             *vision_app->pClientWin()->AgentRect(),
             theNick.String(),
-            sid,
-            id.String(),
-            sMsgr,
-            myNick.String(),
+            fSid,
+            fId.String(),
+            fSMsgr,
+            fMyNick.String(),
             "",
             true,
             false,
             theIP,
             thePort),
-          sid,
+          fSid,
           theNick.String(),
           WIN_MESSAGE_TYPE,
           true);
           
-          ClientAgent *client (vision_app->pClientWin()->pWindowList()->Agent (sid, theNick.String()));
-          clients.AddItem (client);
+          ClientAgent *client (vision_app->pClientWin()->pWindowList()->Agent (fSid, theNick.String()));
+          fClients.AddItem (client);
       }
       break;	
 
@@ -1180,44 +1192,44 @@ ServerAgent::MessageReceived (BMessage *msg)
             new MessageAgent (
               *vision_app->pClientWin()->AgentRect(),
               theId.String(),
-              sid,
-              id.String(),
-              sMsgr,
-              myNick.String(),
+              fSid,
+              fId.String(),
+              fSMsgr,
+              fMyNick.String(),
               "",
               true,
               true,
               "",
               thePort != "" ? thePort.String() : ""),
-            sid,
+            fSid,
             theId.String(),
             WIN_MESSAGE_TYPE,
             true);
-         client = vision_app->pClientWin()->pWindowList()->Agent (sid, theId.String());
-         clients.AddItem (client);
+         client = vision_app->pClientWin()->pWindowList()->Agent (fSid, theId.String());
+         fClients.AddItem (client);
        }
      }
      break;
 
     case M_SLASH_RECONNECT:
-      if (!isConnected && !isConnecting)
-        msgr.SendMessage (M_SERVER_DISCONNECT);
+      if (!fIsConnected && !fIsConnecting)
+        fMsgr.SendMessage (M_SERVER_DISCONNECT);
       break;
 
     case M_SERVER_DISCONNECT:
       {
         // store current nick for reconnect use (might be an away nick, etc)
-        if (reacquiredNick)
+        if (fReacquiredNick)
         {
-          reconNick = myNick;
-          reacquiredNick = false;
+          fReconNick = fMyNick;
+          fReacquiredNick = false;
         }
         // let the user know
-        if (isConnected)
+        if (fIsConnected)
         {
           BString sAnnounce;
           sAnnounce += S_SERVER_DISCONNECT;
-          sAnnounce += serverName;
+          sAnnounce += fServerName;
           sAnnounce += "\n";
           Display (sAnnounce.String(), C_ERROR);
           ClientAgent *agent (ActiveClient());
@@ -1225,15 +1237,15 @@ ServerAgent::MessageReceived (BMessage *msg)
             agent->Display (sAnnounce.String(), C_ERROR, C_BACKGROUND, F_SERVER);
         }
 			
-        isConnected = false;
-
-        myLag = S_SERVER_DISCON_STATUS;
-        msgr.SendMessage (M_LAG_CHANGED);
-        checkingLag = false;
-        serverSocket = -1;
+        fIsConnected = false;
+       
+        fMyLag = S_SERVER_DISCON_STATUS;
+        fMsgr.SendMessage (M_LAG_CHANGED);
+        fCheckingLag = false;
+        fServerSocket = -1;
       
         // attempt a reconnect
-        if (!isConnecting)
+        if (!fIsConnecting)
           HandleReconnect();
       }
       break;
@@ -1258,42 +1270,42 @@ ServerAgent::MessageReceived (BMessage *msg)
 
         // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
         // We send true on the last SetItemValue().
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, id.String(), false);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), false);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, fId.String(), false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String(), false);
+        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String(), true);
       }
       break;
 
     case M_LAG_CHECK:
       {
-        if (isConnected)
+        if (fIsConnected && fNetworkData.FindBool ("lagCheck"))
         {
           BMessage lagSend (M_SERVER_SEND);
           AddSend (&lagSend, "VISION_LAG_CHECK");
           AddSend (&lagSend, endl);
-          if (!checkingLag)
+          if (!fCheckingLag)
           {
-            lagCheck = system_time();
-            lagCount = 1;
-            checkingLag = true;
+            fLagCheck = system_time();
+            fLagCount = 1;
+            fCheckingLag = true;
           }
           else
           {
-            if (lagCount > 4)
+            if (fLagCount > 4)
             {
               // we've waited 50 seconds
               // connection problems?
-              myLag = S_SERVER_CONN_PROBLEM;
-              msgr.SendMessage (M_LAG_CHANGED);
+              fMyLag = S_SERVER_CONN_PROBLEM;
+              fMsgr.SendMessage (M_LAG_CHANGED);
             }
             else
             {
               // wait some more
               char lag[15] = "";
-              sprintf (lag, "%ld0.000+", lagCount);  // assuming a 10 second runner
-              myLag = lag;
-              ++lagCount;
-              msgr.SendMessage (M_LAG_CHANGED);
+              sprintf (lag, "%ld0.000+", fLagCount);  // assuming a 10 second runner
+              fMyLag = lag;
+              ++fLagCount;
+              fMsgr.SendMessage (M_LAG_CHANGED);
             }
           }
         }	
@@ -1303,25 +1315,25 @@ ServerAgent::MessageReceived (BMessage *msg)
     case M_LAG_CHANGED:
       {
         if (!IsHidden())
-          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), true);
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String(), true);
           
         BMessage newmsg (M_LAG_CHANGED);
-        newmsg.AddString ("lag", myLag);
+        newmsg.AddString ("lag", fMyLag);
         Broadcast (&newmsg);        
       }
       break;
 
     case M_REJOIN_ALL:
       {
-        for (int32 i = 0; i < clients.CountItems(); ++i)
+        for (int32 i = 0; i < fClients.CountItems(); ++i)
         {
-          ClientAgent *client ((ClientAgent *)clients.ItemAt (i));
+          ClientAgent *client ((ClientAgent *)fClients.ItemAt (i));
           
           if (dynamic_cast<ChannelAgent *>(client))
           {
             BMessage rejoinMsg (M_REJOIN);
-            rejoinMsg.AddString ("nickname", myNick.String());
-            client->msgr.SendMessage (&rejoinMsg);
+            rejoinMsg.AddString ("nickname", fMyNick.String());
+            client->fMsgr.SendMessage (&rejoinMsg);
           }        
         }    
       }
@@ -1340,27 +1352,27 @@ ServerAgent::MessageReceived (BMessage *msg)
             (client = new MessageAgent (
               *vision_app->pClientWin()->AgentRect(),
               theNick,
-              sid,
-              id.String(),
-              sMsgr,
-              myNick.String(),
+              fSid,
+              fId.String(),
+              fSMsgr,
+              fMyNick.String(),
               "")),
-            sid,
+            fSid,
             theNick,
             WIN_MESSAGE_TYPE,
             true);
 
-          clients.AddItem (client);
+          fClients.AddItem (client);
         }
         else
-          client->agentWinItem->ActivateItem();
+          client->fAgentWinItem->ActivateItem();
         
         if (msg->HasMessage ("msg"))
         {
           BMessage buffer;
 
           msg->FindMessage ("msg", &buffer);
-          client->msgr.SendMessage (&buffer);
+          client->fMsgr.SendMessage (&buffer);
         }
       }
       break;
@@ -1377,31 +1389,31 @@ ServerAgent::MessageReceived (BMessage *msg)
         {
           const char *quitstr;
           msg->FindString ("vision:quit", &quitstr);
-          quitMsg = quitstr;
+          fQuitMsg = quitstr;
         }
 
-        isQuitting = true;
+        fIsQuitting = true;
 
-        if (isConnected && serverSocket)
+        if (fIsConnected && fServerSocket)
         {
-          if (quitMsg.Length() == 0)
+          if (fQuitMsg.Length() == 0)
           {
             const char *expansions[1];
             BString version (vision_app->VisionVersion(VERSION_VERSION));
             expansions[0] = version.String();
-            quitMsg << "QUIT :" << ExpandKeyed (vision_app->GetCommand (CMD_QUIT).String(), "V", expansions);
+            fQuitMsg << "QUIT :" << ExpandKeyed (vision_app->GetCommand (CMD_QUIT).String(), "V", expansions);
           }
  
-          SendData (quitMsg.String());
+          SendData (fQuitMsg.String());
         }
 
         Broadcast (new BMessage (M_CLIENT_QUIT));
-		BMessenger listMsgr(pListAgent);
+		BMessenger listMsgr(fListAgent);
 		listMsgr.SendMessage(M_CLIENT_QUIT);
 		
         BMessage deathchant (M_OBITUARY);
         deathchant.AddPointer ("agent", this);
-        deathchant.AddPointer ("item", agentWinItem);
+        deathchant.AddPointer ("item", fAgentWinItem);
         vision_app->pClientWin()->PostMessage (&deathchant);
       }
       break;
@@ -1416,34 +1428,60 @@ ServerAgent::MessageReceived (BMessage *msg)
           break;
         }
     
-        clients.RemoveItem (deadagent);
+        fClients.RemoveItem (deadagent);
 
-        if (isQuitting && clients.CountItems() <= 1)
-          sMsgr.SendMessage (M_CLIENT_QUIT);
+        if (fIsQuitting && fClients.CountItems() <= 1)
+          fSMsgr.SendMessage (M_CLIENT_QUIT);
       }
       break;
     
     case M_LIST_COMMAND:
       {
-        if (pListAgent)
+        if (fListAgent)
           break;
         vision_app->pClientWin()->pWindowList()->AddAgent (
-          (pListAgent = new ListAgent (
+          (fListAgent = new ListAgent (
             *vision_app->pClientWin()->AgentRect(),
-            serverHostName.String(), new BMessenger(this))),
-          sid,
+            fServerHostName.String(), new BMessenger(this))),
+          fSid,
           "Channels",
           WIN_LIST_TYPE,
           true);
         // kind of a hack since Agent() returns a pointer of type ClientAgent, of which
         // ListAgent is not a subclass...
-        BMessenger listMsgr(pListAgent);
+        BMessenger listMsgr(fListAgent);
         listMsgr.SendMessage(M_LIST_COMMAND);
       }
       break;
     
     case M_LIST_SHUTDOWN:
-      pListAgent = NULL;
+      fListAgent = NULL;
+      break;
+    
+    case M_REGISTER_LOGGER:
+      {
+        const char *logName;
+        msg->FindString ("name", &logName);
+        fLogger->RegisterLogger (logName);
+      }
+      break;
+    
+    case M_UNREGISTER_LOGGER:
+      {
+        const char *logName;
+        msg->FindString ("name", &logName);
+        fLogger->UnregisterLogger (logName);
+      }
+      break;
+    
+    case M_CLIENT_LOG:
+      {
+        const char *logName;
+        const char *data;
+        msg->FindString ("name", &logName);
+        msg->FindString ("data", &data);
+        fLogger->Log (logName, data);
+      }
       break;
 
     default:

@@ -27,6 +27,6 @@
 void
 ClickView::MouseDown (BPoint)
 {
-  vision_app->LoadURL (launch_url.String());
+  vision_app->LoadURL (fLaunchUrl.String());
 }
 

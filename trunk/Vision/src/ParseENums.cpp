@@ -28,7 +28,7 @@
 
 #include "ParseENums.h"
 #include "Vision.h"
-#include "StringManip.h"
+#include "Utilities.h"
 #include "StatusView.h"
 #include "ClientWindow.h"
 #include "ServerAgent.h"
@@ -67,17 +67,17 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 		
         if (badCmd == "VISION_LAG_CHECK")
         {
-          int32 difference (system_time() - lagCheck);
+          int32 difference (system_time() - fLagCheck);
           if (difference > 0)
           {
             int32 secs (difference / 1000000);
             int32 milli (difference / 1000 - secs * 1000);
             char lag[15] = "";
             sprintf (lag, "%ld.%03ld", secs, milli);
-            myLag = lag;
-            lagCount = 0;
-            checkingLag = false;
-            msgr.SendMessage (M_LAG_CHANGED);
+            fMyLag = lag;
+            fLagCount = 0;
+            fCheckingLag = false;
+            fMsgr.SendMessage (M_LAG_CHANGED);
           }			
         }
         else
@@ -95,17 +95,19 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_CREATED:          // 003
     case RPL_MYINFO:           // 004
       {
-        isConnecting = false;
-        isConnected = true;
-        sMsgr.SendMessage (M_CONNECTED);
-        initialMotd = true;
-        retry = 0;
+        fIsConnecting = false;
+        fIsConnected = true;
+        fSMsgr.SendMessage (M_CONNECTED);
+        fInitialMotd = true;
+        fRetry = 0;
         
-        myLag = "0.000";
-        msgr.SendMessage (M_LAG_CHANGED);
-
+        if (fNetworkData.FindBool ("lagCheck"))
+        {
+          fMyLag = "0.000";
+          fMsgr.SendMessage (M_LAG_CHANGED);
+        }
         BString theNick (GetWord (data, 3));
-        myNick = theNick;
+        fMyNick = theNick;
       
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK,
@@ -121,33 +123,33 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         if (num == RPL_MYINFO)
         {
           // set "real" hostname
-          serverHostName = (GetWord (data, 1));
-          serverHostName.RemoveFirst (":");
-          BString hostName (id.String());
+          fServerHostName = (GetWord (data, 1));
+          fServerHostName.RemoveFirst (":");
+          BString hostName (fId.String());
           hostName += " - [";
-          hostName += serverHostName.String();
+          hostName += fServerHostName.String();
           hostName += "]";
-          agentWinItem->SetName (hostName.String());
+          fAgentWinItem->SetName (hostName.String());
         
           // detect IRCd
-          ircdtype = IRCD_STANDARD;
+          fIrcdtype = IRCD_STANDARD;
         
           if (theMsg.FindFirst("hybrid") > 0)
-            ircdtype = IRCD_HYBRID;
+            fIrcdtype = IRCD_HYBRID;
           // ultimate and unreal share the same numerics, so treat them with the same
           // identifier for now
           else if ((theMsg.FindFirst("UltimateIRCd") > 0) || (theMsg.FindFirst("Unreal") > 0))
-            ircdtype = IRCD_ULTIMATE;
+            fIrcdtype = IRCD_ULTIMATE;
           else if (theMsg.FindFirst("comstud") > 0)
-            ircdtype = IRCD_COMSTUD;
+            fIrcdtype = IRCD_COMSTUD;
           else if (theMsg.FindFirst("u2.") > 0)
-            ircdtype = IRCD_UNDERNET;
+            fIrcdtype = IRCD_UNDERNET;
           else if (theMsg.FindFirst("PTlink") > 0)
-            ircdtype = IRCD_PTLINK;
+            fIrcdtype = IRCD_PTLINK;
           else if (theMsg.FindFirst ("CR") > 0)
-            ircdtype = IRCD_CONFERENCEROOM;
+            fIrcdtype = IRCD_CONFERENCEROOM;
           else if (theMsg.FindFirst ("nn-") > 0)
-            ircdtype = IRCD_NEWNET;
+            fIrcdtype = IRCD_NEWNET;
         } 
       }
       return true;
@@ -161,7 +163,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         theMsg.RemoveFirst (":");
         theMsg.Append ("\n");      
       
-        switch (ircdtype)
+        switch (fIrcdtype)
         {
           case IRCD_NEWNET:
             {
@@ -364,26 +366,26 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         tempString.Append ("\n");
         Display (tempString.String());
 		
-		if (getLocalIP && (tempString.IFindFirst (myNick.String()) == 0))
+		if (fGetLocalIP && (tempString.IFindFirst (fMyNick.String()) == 0))
 		{
-		  getLocalIP = false;
+		  fGetLocalIP = false;
           hostent *hp = gethostbyname (theHostname.String());
 		  if (hp != NULL)
 		  {
 		    char addr_buf[16];
             in_addr *addr = (in_addr *)hp->h_addr_list[0];
             strcpy(addr_buf, inet_ntoa(*addr));
-            localip = addr_buf;
+            fLocalip = addr_buf;
 #if 0
-            printf("hostname found: %s\n", localip.String());
+            printf("hostname found: %s\n", fLocalip.String());
 #endif
             return true;
 		  }
 		  else if (isdigit(theHostname[0]))
 		  {
-              localip = theHostname;
+              fLocalip = theHostname;
 #if 0
-              printf("hostname found: %s\n", localip.String());
+              printf("hostname found: %s\n", fLocalip.String());
 #endif
               return true;
           }
@@ -426,7 +428,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BMessage msg (M_NOTIFY_END);
 
         msg.AddString ("nick", nick.String());
-        msg.AddString ("server", serverName.String());
+        msg.AddString ("server", fServerName.String());
         vision_app->PostMessage (&msg);
       }
       return true;
@@ -610,8 +612,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_LISTSTART:       // 321
       {
         BMessage msg (M_LIST_BEGIN);
-        if (pListAgent)
-          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)pListAgent);
+        if (fListAgent)
+          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)fListAgent);
       }
       return true;
     
@@ -627,8 +629,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         msg.AddString ("users", users.String());
         msg.AddString ("topic", topic.String());
 
-        if (pListAgent)
-          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)pListAgent);
+        if (fListAgent)
+          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)fListAgent);
       }
       return true;    
     
@@ -636,8 +638,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       {
         BMessage msg (M_LIST_DONE);
 
-        if (pListAgent)
-          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)pListAgent);
+        if (fListAgent)
+          vision_app->pClientWin()->DispatchMessage(&msg, (BView *)fListAgent);
       }
       return true;
     
@@ -669,9 +671,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         msg.AddString ("mode", theMode.String());
 
         if (theClient)
-          theClient->msgr.SendMessage (&msg);
+          theClient->fMsgr.SendMessage (&msg);
         else if (aClient)
-          aClient->msgr.SendMessage (&msg);
+          aClient->fMsgr.SendMessage (&msg);
         else
           Display (tempString.String(), C_OP);
       }
@@ -736,8 +738,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           msg.AddString ("topic", theTopic.String());
           msg.AddMessage ("display", &display);
 
-          if (client->msgr.IsValid())
-            client->msgr.SendMessage (&msg);
+          if (client->fMsgr.IsValid())
+            client->fMsgr.SendMessage (&msg);
         }
       }
       return true;
@@ -771,8 +773,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           buffer += theTimeParsed;
           buffer += '\n';
           PackDisplay (&display, buffer.String(), C_WHOIS);
-          if (client->msgr.IsValid())
-            client->msgr.SendMessage (&display);
+          if (client->fMsgr.IsValid())
+            client->fMsgr.SendMessage (&display);
         }
       }
       return true;
@@ -843,7 +845,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
             ignored = false;
             // BMessage aMsg (M_IS_IGNORED), reply;
-            // aMsg.AddString ("server", serverName.String());
+            // aMsg.AddString ("server", fServerName.String());
             // aMsg.AddString ("nick", sNick);
 
             // be_app_messenger.SendMessage (&aMsg, &reply);
@@ -857,8 +859,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             ++place;
           }
 
-          if (client->msgr.IsValid())
-            client->msgr.SendMessage (&msg);
+          if (client->fMsgr.IsValid())
+            client->fMsgr.SendMessage (&msg);
         }
         else // not in the channel
         {
@@ -898,20 +900,20 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
 	      Display (tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
       		
-        if (reconnecting)
+        if (fReconnecting)
         {
           const char *reString;
           reString = S_PENUM_RECON_SUCCESS "\n";
           Display (reString, C_ERROR);
           DisplayAll (reString, C_ERROR, C_BACKGROUND, F_SERVER);
-          msgr.SendMessage (M_REJOIN_ALL);
-          reconnecting = false;
+          fMsgr.SendMessage (M_REJOIN_ALL);
+          fReconnecting = false;
         }
 
-        if (initialMotd && cmds.Length())
+        if (fInitialMotd && fCmds.Length())
         {
           BMessage msg (M_SUBMIT_INPUT);
-          const char *place (cmds.String()), *eol;
+          const char *place (fCmds.String()), *eol;
 
           msg.AddBool ("lines", true);
  
@@ -930,16 +932,16 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
           msg.AddInt32 ("which", 3);
           msg.AddBool ("autoexec", true);
-          msgr.SendMessage (&msg);
+          fMsgr.SendMessage (&msg);
         }
         
-        if (localip_private)
+        if (fLocalip_private)
         {
           BString IPCommand ("/userhost ");
-          IPCommand += myNick;
+          IPCommand += fMyNick;
           ParseCmd (IPCommand.String());
         }
-        initialMotd = false;
+        fInitialMotd = false;
       }
       return true;
     
@@ -947,7 +949,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       {
         BMessage msg (M_NOTIFY_START);
 
-        msg.AddString ("server", serverName.String());
+        msg.AddString ("server", fServerName.String());
         vision_app->PostMessage (&msg);
 	  }	
       return true;
@@ -957,7 +959,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BMessage msg (M_NOTIFY_USER);
         BString buffer (RestOfString (data, 4));
 
-        msg.AddString ("server", serverName.String());
+        msg.AddString ("server", fServerName.String());
         msg.AddString ("user", buffer.String());
         vision_app->PostMessage (&msg);
       }
@@ -968,7 +970,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       {
         BString theNick (GetWord (data, 4));
       
-        if (isConnecting)
+        if (fIsConnecting)
         {
           BString nextNick (GetNextNick());
           if (nextNick != "")
@@ -1157,7 +1159,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         theMessage.RemoveFirst (":");
         theMessage.Append ("\n");
       
-        switch (ircdtype)
+        switch (fIrcdtype)
         {
           case IRCD_ULTIMATE:
             {

@@ -40,10 +40,10 @@ class GeneralPrefsView : public BView
     virtual void Show (void);
   
   private:
-    BListView *prefsList;
-    BBox *prefsBox;
-    BView *prefsItems[C_PREFS_COUNT];
-    int32 lastindex;
+    BListView *fPrefsList;
+    BBox *fPrefsBox;
+    BView *fPrefsItems[C_PREFS_COUNT];
+    int32 fLastindex;
 };
 
 #endif // _PREFGENERAL_H

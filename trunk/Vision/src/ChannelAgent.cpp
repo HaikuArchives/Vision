@@ -23,8 +23,11 @@
  *                 Jamie Wilkinson
  */
 
-#include <ScrollView.h>
+#include <Beep.h>
 #include <FilePanel.h>
+#include <MenuItem.h>
+#include <PopUpMenu.h>
+#include <ScrollView.h>
 
 #include <stdio.h>
 
@@ -33,9 +36,8 @@
 #include "ChannelAgent.h"
 #include "Vision.h"
 #include "StatusView.h"
-#include "ServerAgent.h"
 #include "ClientWindow.h"
-#include "StringManip.h"
+#include "Utilities.h"
 #include "VTextControl.h"
 #include "ChannelOptions.h"
 #include "ResizeView.h"
@@ -58,16 +60,16 @@ ChannelAgent::ChannelAgent (
     sMsgr_,
     frame_),
 
-  chanMode (""),
-  chanLimit (""),
-  chanLimitOld (""),
-  chanKey (""),
-  chanKeyOld (""),
-  lastExpansion (""),
-  userCount (0),
-  opsCount (0),
-  ircdtype (ircdtype_),
-  chanOpt (0)
+  fChanMode (""),
+  fChanLimit (""),
+  fChanLimitOld (""),
+  fChanKey (""),
+  fChanKeyOld (""),
+  fLastExpansion (""),
+  fUserCount (0),
+  fOpsCount (0),
+  fIrcdtype (ircdtype_),
+  fChanOpt (0)
 
 {
   /*
@@ -81,7 +83,7 @@ ChannelAgent::~ChannelAgent (void)
    * Function purpose: Clean up
    */
    
-  namesList->ClearList();
+  fNamesList->ClearList();
   
 }
 
@@ -94,6 +96,7 @@ ChannelAgent::AttachedToWindow(void)
    */
    
   Init();
+  ClientAgent::AttachedToWindow();
 }
 
 void
@@ -105,38 +108,55 @@ ChannelAgent::Init (void)
    
   const BRect namesRect (vision_app->GetRect ("nameListRect"));
 
-  textScroll->ResizeTo (
+  fTextScroll->ResizeTo (
     Frame().Width() - ((namesRect.Width() == 0.0) ? 100 : namesRect.Width()),
-    textScroll->Frame().Height());
+    fTextScroll->Frame().Height());
   
-  frame = Bounds();
-  frame.left   = textScroll->Frame().right + 4;
-  frame.right -= B_V_SCROLL_BAR_WIDTH + 1;
-  frame.bottom = textScroll->Frame().bottom - 1;
+  fFrame = Bounds();
+  fFrame.left   = fTextScroll->Frame().right + 4;
+  fFrame.right -= B_V_SCROLL_BAR_WIDTH + 1;
+  fFrame.bottom = fTextScroll->Frame().bottom - 1;
   
-  namesList = new NamesView (frame);
+  fNamesList = new NamesView (fFrame);
   
-  activeTheme->AddView (namesList);
+  fActiveTheme->AddView (fNamesList);
   
-  namesScroll = new BScrollView(
+  fNamesScroll = new BScrollView(
     "scroll_names",
-    namesList,
+    fNamesList,
     B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM,
     0,
     false,
     true,
     B_PLAIN_BORDER);
 
-  resize = new ResizeView (namesList, BRect (textScroll->Frame().right + 1,
-    Bounds().top + 1, textScroll->Frame().right + 3, textScroll->Frame().Height()), "resize", B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM);
+  fResize = new ResizeView (fNamesList, BRect (fTextScroll->Frame().right + 1,
+    Bounds().top + 1, fTextScroll->Frame().right + 3, fTextScroll->Frame().Height()), "resize", B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM);
 
-  AddChild (namesScroll);
+  AddChild (fNamesScroll);
 
-  AddChild (resize);
+  AddChild (fResize);
 
   Display (S_CHANNEL_INIT, C_JOIN);
-  Display (id.String(), C_JOIN);
+  Display (fId.String(), C_JOIN);
   Display ("\n", C_JOIN);
+}
+
+void
+ChannelAgent::Show (void)
+{
+  const BRect namesListRect (vision_app->GetRect ("namesListRect"));
+  int32 difference ((int32)(fNamesList->Bounds().Width() - namesListRect.Width()));
+  if (difference != 0)
+  {
+    fResize->MoveBy (difference, 0.0);
+    fTextScroll->ResizeBy (difference, 0.0);
+    fNamesScroll->ResizeBy (-difference, 0.0);
+    fNamesScroll->MoveBy (difference, 0.0);
+    Sync();
+  }
+  
+  ClientAgent::Show();
 }
 
 int
@@ -148,14 +168,14 @@ ChannelAgent::FindPosition (const char *data)
    *                   ChannelAgent's NamesView
    */
    
-  if (namesList == NULL)
+  if (fNamesList == NULL)
     return -1;
    
-  int32 count (namesList->CountItems());
+  int32 count (fNamesList->CountItems());
 
   for (int32 i = 0; i < count; ++i)
   {
-    NameItem *item ((NameItem *)(namesList->ItemAt (i)));
+    NameItem *item ((NameItem *)(fNamesList->ItemAt (i)));
     BString nick (item->Name());
 
     if ((nick[0] == '@' || nick[0] == '+' || nick[0] == '%')
@@ -183,7 +203,7 @@ ChannelAgent::RemoveUser (const char *data)
    */
    
   
-  if (namesList == NULL)
+  if (fNamesList == NULL)
     return false;
   
   int32 myIndex (FindPosition (data));
@@ -192,15 +212,15 @@ ChannelAgent::RemoveUser (const char *data)
   {
     NameItem *item;
 
-    namesList->Deselect (myIndex);
-    if ((item = (NameItem *)namesList->RemoveItem (myIndex)) != NULL)
+    fNamesList->Deselect (myIndex);
+    if ((item = (NameItem *)fNamesList->RemoveItem (myIndex)) != NULL)
     {
       BString buffer;
 
       if ((item->Status() & STATUS_OP_BIT) != 0)
       {
-        --opsCount;
-        buffer << opsCount;
+        --fOpsCount;
+        buffer << fOpsCount;
         
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
@@ -208,8 +228,8 @@ ChannelAgent::RemoveUser (const char *data)
         buffer = "";
       }
 
-      --userCount;
-      buffer << userCount;
+      --fUserCount;
+      buffer << fUserCount;
       if (!IsHidden())
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
 
@@ -268,7 +288,7 @@ ChannelAgent::TabExpansion (void)
 {
   /*
    * Function purpose: Get the characters before the caret's current position,
-   *                   and update the input VTextControl with a relevant match
+   *                   and update the fInput VTextControl with a relevant match
    *                   from the ChannelAgent's NamesView 
    */
    
@@ -276,16 +296,16 @@ ChannelAgent::TabExpansion (void)
   static int32 lastindex;
   static BString lastNick;
   static BList myList;
-  input->TextView()->GetSelection (&start, &finish);
+  fInput->TextView()->GetSelection (&start, &finish);
 
-  if (input->TextView()->TextLength()
+  if (fInput->TextView()->TextLength()
   &&  start == finish
-  &&  start == input->TextView()->TextLength())
+  &&  start == fInput->TextView()->TextLength())
   {
-    const char *inputText (input->TextView()->Text() + input->TextView()->TextLength());
-    const char *place (inputText);
+    const char *fInputText (fInput->TextView()->Text() + fInput->TextView()->TextLength());
+    const char *place (fInputText);
 
-    while (place > input->TextView()->Text())
+    while (place > fInput->TextView()->Text())
     {
       if (*(place - 1) == '\x20')
         break;
@@ -293,28 +313,28 @@ ChannelAgent::TabExpansion (void)
       --place;
     }
 
-    if (lastExpansion == "" 
-    || lastExpansion.ICompare(place, strlen(lastExpansion.String())) != 0
+    if (fLastExpansion == "" 
+    || fLastExpansion.ICompare(place, strlen(fLastExpansion.String())) != 0
     || lastNick != place)
     {
       lastindex = 0;
-      lastExpansion = place;
+      fLastExpansion = place;
       if (!myList.IsEmpty())
         myList.MakeEmpty();
       
-      int32 count (namesList->CountItems());
+      int32 count (fNamesList->CountItems());
       
       for (int32 i = 0; i < count ; i++)
-        if (!((NameItem *)namesList->ItemAt(i))->Name().ICompare(lastExpansion.String(), strlen(lastExpansion.String())))
-         myList.AddItem(namesList->ItemAt(i));
+        if (!((NameItem *)fNamesList->ItemAt(i))->Name().ICompare(fLastExpansion.String(), strlen(fLastExpansion.String())))
+         myList.AddItem(fNamesList->ItemAt(i));
     }
   
     // We first check if what the user typed matches the channel
     // If that doesn't match, we check the names
     BString insertion;
 
-    if (!id.ICompare (place, strlen (place)))
-      insertion = id;
+    if (!fId.ICompare (place, strlen (place)))
+      insertion = fId;
     else
     {
       int32 count (myList.CountItems());
@@ -329,18 +349,28 @@ ChannelAgent::TabExpansion (void)
 
     if (insertion.Length())
     {
-      input->TextView()->Delete (
-        place - input->TextView()->Text(),
-        input->TextView()->TextLength());
+      fInput->TextView()->Delete (
+        place - fInput->TextView()->Text(),
+        fInput->TextView()->TextLength());
 
-      input->TextView()->Insert (insertion.String());
-      input->TextView()->Select (
-        input->TextView()->TextLength(),
-        input->TextView()->TextLength());
+      fInput->TextView()->Insert (insertion.String());
+      fInput->TextView()->Select (
+        fInput->TextView()->TextLength(),
+        fInput->TextView()->TextLength());
     }
   }
 }
 
+
+void
+ChannelAgent::AddMenuItems (BPopUpMenu *pMenu)
+{
+    BMenuItem *item (NULL);
+    item = new BMenuItem("Channel Options", new BMessage (M_CHANNEL_OPTIONS_SHOW));
+    item->SetTarget (this);
+    pMenu->AddItem (item);
+    pMenu->AddSeparatorItem();
+}
 
 void
 ChannelAgent::MessageReceived (BMessage *msg)
@@ -351,7 +381,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
   {
     case M_USER_QUIT:
       {
-        const char *nick;
+        const char *nick (NULL);
 
         msg->FindString ("nick", &nick);
  
@@ -367,8 +397,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
     case M_USER_ADD:
       {
-        const char *nick;
-        bool ignore;
+        const char *nick (NULL);
+        bool ignore (false);
+        
         int32 iStatus (STATUS_NORMAL_BIT);
 
         msg->FindString ("nick", &nick);
@@ -376,12 +407,12 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
         if (ignore) iStatus |= STATUS_IGNORE_BIT;
  
-        namesList->AddItem (new NameItem (nick, iStatus));
-        namesList->SortItems (SortNames);
+        fNamesList->AddItem (new NameItem (nick, iStatus));
+        fNamesList->SortItems (SortNames);
 
-        ++userCount;
+        ++fUserCount;
         BString buffer;
-        buffer << userCount;
+        buffer << fUserCount;
   
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
@@ -405,14 +436,14 @@ ChannelAgent::MessageReceived (BMessage *msg)
             break;
           }
 
-        if (myNick.ICompare (oldNick) == 0 && !IsHidden())
+        if (fMyNick.ICompare (oldNick) == 0 && !IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
 
         if (((thePos = FindPosition (oldNick)) >= 0)
-        &&  ((item = (static_cast<NameItem *>(namesList->ItemAt (thePos)))) != 0))
+        &&  ((item = (static_cast<NameItem *>(fNamesList->ItemAt (thePos)))) != 0))
         {
           item->SetName (newNick);
-          namesList->SortItems (SortNames);
+          fNamesList->SortItems (SortNames);
         }
         else
           break;
@@ -446,7 +477,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
             if (op)
             {
               ++nick;
-              ++opsCount;
+              ++fOpsCount;
               iStatus |= STATUS_OP_BIT;
             }
             else if (voice)
@@ -462,53 +493,70 @@ ChannelAgent::MessageReceived (BMessage *msg)
             else
               iStatus |= STATUS_NORMAL_BIT;
  
-            userCount++;
+            fUserCount++;
  
-            namesList->AddItem (new NameItem (nick, iStatus));
+            fNamesList->AddItem (new NameItem (nick, iStatus));
             hit = true;
           }
         }
       
-        namesList->SortItems (SortNames);
+        fNamesList->SortItems (SortNames);
 
         if (hit && !IsHidden())
         {
           BString buffer;
-          buffer << opsCount;
+          buffer << fOpsCount;
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 
           buffer = "";
-          buffer << userCount;
+          buffer << fUserCount;
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
         }
       }
       break;
     
+    case M_RESIZE_VIEW:
+      {
+          BPoint point;
+          msg->FindPoint ("loc", &point);
+          point.x -= Frame().left;
+          int32 offset ((int32)(point.x - (fNamesScroll->Frame().left)));
+          fResize->MoveBy (offset, 0.0);
+          fTextScroll->ResizeBy (offset, 0.0);
+          fNamesScroll->ResizeBy (-offset, 0.0);
+          fNamesScroll->MoveBy (offset, 0.0);
+          BRect namesRect (0, 0, fNamesScroll->Bounds().Width(), 0);
+          vision_app->SetRect ("namesListRect", namesRect);
+      }
+      break;
+
+    
     case M_REJOIN:
       {
         const char *newNick (NULL);
+        
         if (msg->FindString ("nickname", &newNick) != B_OK)
         {
           printf("Error: ChannelAgent::MessageReceived, M_REJOIN: invalid pointer\n");
           break;
         }
-        myNick = newNick;  // update nickname (might have changed on reconnect)
+        fMyNick = newNick;  // update nickname (might have changed on reconnect)
 			                    
-        Display (S_CHANNEL_RECON_REJOIN B_UTF8_ELLIPSIS, C_ERROR, C_BACKGROUND, F_SERVER);
+        Display (S_CHANNEL_RECON_REJOIN B_UTF8_ELLIPSIS "\n", C_ERROR, C_BACKGROUND, F_SERVER);
 		
 		// clean up
-        namesList->ClearList();
-        opsCount = 0;
-        userCount = 0;
+        fNamesList->ClearList();
+        fOpsCount = 0;
+        fUserCount = 0;
         
         // send join cmd		
         BMessage send (M_SERVER_SEND);	
         AddSend (&send, "JOIN ");
-        AddSend (&send, id);	
-        if (chanKey != "")
+        AddSend (&send, fId);	
+        if (fChanKey != "")
         {
           AddSend (&send, " ");
-          AddSend (&send, chanKey);
+          AddSend (&send, fChanKey);
         }
         AddSend (&send, endl);
       }
@@ -524,7 +572,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
           printf("ChannelAgent::MessageReceived, M_CHANNEL_TOPIC: invalid pointer\n");
           break;
         }
-        topic = theTopic;
+        fTopic = theTopic;
       
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, FilterCrap(theTopic, true).String());
@@ -544,16 +592,16 @@ ChannelAgent::MessageReceived (BMessage *msg)
         if (theNick == NULL)
         {
           NameItem *myUser;
-          int32 pos = namesList->CurrentSelection();
+          int32 pos = fNamesList->CurrentSelection();
           if (pos >= 0)
           {
-            myUser = static_cast<NameItem *>(namesList->ItemAt (pos));
+            myUser = static_cast<NameItem *>(fNamesList->ItemAt (pos));
             BString targetNick = myUser->Name();
             msg->AddString ("nick", targetNick.String());
           }
         }
       
-        sMsgr.SendMessage (msg);
+        fSMsgr.SendMessage (msg);
       }
       break;
 
@@ -561,6 +609,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
       {
         const char *theChannel (NULL),
           *kicker (NULL), *rest (NULL);
+          
         if ((msg->FindString ("channel", &theChannel) != B_OK) ||
           (msg->FindString ("kicker", &kicker) != B_OK) || 
           (msg->FindString ("rest", &rest) != B_OK))
@@ -573,33 +622,33 @@ ChannelAgent::MessageReceived (BMessage *msg)
         BString buffer;
         buffer += S_CHANNEL_GOT_KICKED;
         buffer += theChannel;
-        buffer += S_CHANNEL_GOT_KICKED2;
+        buffer += " " S_CHANNEL_GOT_KICKED2 " ";
         buffer += kicker;
         buffer += " (";
         buffer += rest;
         buffer += ")\n";
         PackDisplay (&wegotkicked, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
         // clean up
-        namesList->ClearList();
-        opsCount = 0;
-        userCount = 0;
+        fNamesList->ClearList();
+        fOpsCount = 0;
+        fUserCount = 0;
         
-        msgr.SendMessage (&wegotkicked);
+        fMsgr.SendMessage (&wegotkicked);
 
         BMessage attemptrejoin (M_DISPLAY); // "you were kicked"
         buffer = S_CHANNEL_REJOIN;
         buffer += theChannel;
-        buffer += B_UTF8_ELLIPSIS"\n";
+        buffer += B_UTF8_ELLIPSIS "\n";
         PackDisplay (&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
-        msgr.SendMessage (&attemptrejoin);
+        fMsgr.SendMessage (&attemptrejoin);
 
         BMessage send (M_SERVER_SEND);
         AddSend (&send, "JOIN ");
         AddSend (&send, theChannel);
-        if (chanKey != "")
+        if (fChanKey != "")
         {
           AddSend (&send, " ");
-          AddSend (&send, chanKey);
+          AddSend (&send, fChanKey);
         }     
         AddSend (&send, endl);
       }
@@ -610,12 +659,30 @@ ChannelAgent::MessageReceived (BMessage *msg)
         ModeEvent (msg);
       }
       break;
+    
+    case M_CHANNEL_MSG:
+      {
+        bool hasNick (false);
+        BString tempString,
+                  knownAs;
+        msg->FindString ("msgz", &tempString);
+        FirstKnownAs (tempString, knownAs, &hasNick);
+
+        if (IsHidden())
+          UpdateStatus((hasNick) ? WIN_NICK_BIT : WIN_NEWS_BIT);
+        else if (hasNick)
+          system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+
+        ClientAgent::MessageReceived (msg);
+      }
+      break;
 
     case M_CHANNEL_MODES:
       {
         const char *mode (NULL),
           *chan (NULL),
           *msgz (NULL);
+          
         if ((msg->FindString ("mode", &mode) != B_OK) ||
           (msg->FindString ("chan", &chan) != B_OK) ||
           (msg->FindString ("msgz", &msgz) != B_OK))
@@ -624,23 +691,23 @@ ChannelAgent::MessageReceived (BMessage *msg)
             break;
           }
 
-        if (id.ICompare (chan) == 0)
+        if (fId.ICompare (chan) == 0)
         {
           BString realMode (GetWord (mode, 1));
           int32 place (2);
  
           if (realMode.FindFirst ("l") >= 0)
-            chanLimit = GetWord (mode, place++);
+            fChanLimit = GetWord (mode, place++);
 
           if (realMode.FindFirst ("k") >= 0)
           {
-            chanKey = GetWord (mode, place++);
+            fChanKey = GetWord (mode, place++);
             
             // u2 may not send the channel key, thats why we stored the /join cmd
             // in a string in ParseCmd
-            if (chanKey == "*" && ircdtype == IRCD_UNDERNET)
+            if (fChanKey == "*" && fIrcdtype == IRCD_UNDERNET)
             {
-              BString tempId (id);
+              BString tempId (fId);
               tempId.Remove (0, 1); // remove any #, &, !, blah.
               
               if (vision_app->pClientWin()->joinStrings.FindFirst (tempId) < 1)
@@ -657,14 +724,14 @@ ChannelAgent::MessageReceived (BMessage *msg)
                 BString tempKeyString;
                 joinStringsL.MoveInto (tempKeyString, idPos, joinStringsL.Length());
                 
-                chanKey = GetWord (tempKeyString.String(), 2);
+                fChanKey = GetWord (tempKeyString.String(), 2);
               }
             } // end u2-kludge stuff
               
           }
-          chanMode = mode;
+          fChanMode = mode;
           if (!IsHidden())
-            vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());  
+            vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, fChanMode.String());  
         }
       
         BMessage dispMsg (M_DISPLAY);
@@ -677,6 +744,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
     case M_NAMES_POPUP_MODE:
       {
         const char *inaction (NULL);
+        
         msg->FindString ("action", &inaction);
 
         int32 count (0), index (0);
@@ -704,9 +772,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
           polarity += " +";
 
         /// iterate ///
-        while ((i = namesList->CurrentSelection (index++)) >= 0)
+        while ((i = fNamesList->CurrentSelection (index++)) >= 0)
         { 
-          myUser = static_cast<NameItem *>(namesList->ItemAt (i));
+          myUser = static_cast<NameItem *>(fNamesList->ItemAt (i));
           targetNick = myUser->Name();
 
           victims += " ";
@@ -716,7 +784,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
 
         BString command ("/mode ");
-        command += id;
+        command += fId;
         command += polarity;
 
         for (i = 0; i < count; i++)
@@ -731,6 +799,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
     case M_NAMES_POPUP_CTCP:
       {
         const char *inaction (NULL);
+        
         msg->FindString ("action", &inaction);
 
         int32 index (0);
@@ -741,9 +810,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
         action.ToUpper();
 
         /// iterate ///
-        while ((i = namesList->CurrentSelection (index++)) >= 0)
+        while ((i = fNamesList->CurrentSelection (index++)) >= 0)
         { 
-          myUser = static_cast<NameItem *>(namesList->ItemAt (i));
+          myUser = static_cast<NameItem *>(fNamesList->ItemAt (i));
           targetNick = myUser->Name();
 
           victims += targetNick;
@@ -769,9 +838,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
         NameItem *myUser (NULL);
 
         /// iterate ///
-        while ((i = namesList->CurrentSelection (index++)) >= 0)
+        while ((i = fNamesList->CurrentSelection (index++)) >= 0)
         { 
-          myUser = static_cast<NameItem *>(namesList->ItemAt (i));
+          myUser = static_cast<NameItem *>(fNamesList->ItemAt (i));
           targetNick = myUser->Name();
 
           victims += targetNick;
@@ -794,9 +863,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
         NameItem *myUser (NULL); 
 
         /// iterate /// 
-        while ((i = namesList->CurrentSelection(index++)) >= 0) 
+        while ((i = fNamesList->CurrentSelection(index++)) >= 0) 
         { 
-          myUser = static_cast<NameItem *>(namesList->ItemAt(i)); 
+          myUser = static_cast<NameItem *>(fNamesList->ItemAt(i)); 
           targetNick = myUser->Name(); 
  
            BString command ("/dcc chat "); 
@@ -814,9 +883,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
         NameItem *myUser (NULL); 
 
         /// iterate /// 
-        while ((i = namesList->CurrentSelection(index++)) >= 0) 
+        while ((i = fNamesList->CurrentSelection(index++)) >= 0) 
         { 
-          myUser = static_cast<NameItem *>(namesList->ItemAt(i)); 
+          myUser = static_cast<NameItem *>(fNamesList->ItemAt(i)); 
           targetNick = myUser->Name(); 
  
            BString command ("/dcc send "); 
@@ -835,9 +904,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
         NameItem *myUser (NULL); 
 
         /// iterate ///
-        while ((i = namesList->CurrentSelection(index++)) >= 0)
+        while ((i = fNamesList->CurrentSelection(index++)) >= 0)
         { 
-          myUser = static_cast<NameItem *>(namesList->ItemAt(i));
+          myUser = static_cast<NameItem *>(fNamesList->ItemAt(i));
           targetNick = myUser->Name();
  
            BString command ("/kick ");
@@ -875,36 +944,36 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
          // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
          // We send true on the last SetItemValue().
-         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String(), false);
-         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, myLag.String(), false);
-         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), false);
-         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String(), false);
-         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, FilterCrap(topic.String(), true).String());
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, fServerName.String(), false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String(), false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String(), false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, fChanMode.String(), false);
+         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_META, FilterCrap(fTopic.String(), true).String());
 
          BString buffer;
-         buffer << userCount;
+         buffer << fUserCount;
          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String(), false);
          buffer = "";
-         buffer << opsCount;
+         buffer << fOpsCount;
          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String(), true);
        }
        break;
 
      case M_CHANNEL_OPTIONS_SHOW:
        {
-         if (chanOpt)
-           chanOpt->Activate();
+         if (fChanOpt)
+           fChanOpt->Activate();
          else
          {
-           chanOpt = new ChannelOptions (id.String(), this);
-           chanOpt->Show();
+           fChanOpt = new ChannelOptions (fId.String(), this);
+           fChanOpt->Show();
          }
        }
        break;
 
      case M_CHANNEL_OPTIONS_CLOSE:
        {
-         chanOpt = NULL;
+         fChanOpt = NULL;
        }
        break;
 
@@ -917,17 +986,17 @@ ChannelAgent::MessageReceived (BMessage *msg)
          {
            BMessage send (M_SERVER_SEND);
            AddSend (&send, "PART ");
-           AddSend (&send, id);
+           AddSend (&send, fId);
            AddSend (&send, endl);
          }  
   
          BMessage deathchant (M_OBITUARY);
          deathchant.AddPointer ("agent", this);
-         deathchant.AddPointer ("item", agentWinItem);
+         deathchant.AddPointer ("item", fAgentWinItem);
          vision_app->pClientWin()->PostMessage (&deathchant);
   
          deathchant.what = M_CLIENT_SHUTDOWN;
-         sMsgr.SendMessage (&deathchant);
+         fSMsgr.SendMessage (&deathchant);
        }
        break;
 
@@ -943,16 +1012,16 @@ ChannelAgent::Parser (const char *buffer)
    * Function purpose: Send the text in {buffer} to the server
    */
    
-  lastExpansion = "";  // used by ChannelAgent::TabExpansion()
+  fLastExpansion = "";  // used by ChannelAgent::TabExpansion()
 
   BMessage send (M_SERVER_SEND);
 
   AddSend (&send, "PRIVMSG ");
-  AddSend (&send, id);
+  AddSend (&send, fId);
   AddSend (&send, " :");
 
   Display ("<", C_MYNICK);
-  Display (myNick.String(), C_NICKDISPLAY);
+  Display (fMyNick.String(), C_NICKDISPLAY);
   Display ("> ", C_MYNICK);  
   
   BString sBuffer (buffer);
@@ -989,36 +1058,43 @@ ChannelAgent::UpdateMode(char theSign, char theMode)
   char modeString[2]; // necessary C-style string
   memset(modeString, 0, sizeof(modeString));
   sprintf (modeString, "%c", theMode);
+  BString myTemp;
   
   if (theSign == '-')
   {
-    if (theMode == 'l')
+    switch (theMode)
     {
-      BString myTemp (chanLimit);
-      myTemp.Append (" ");
-      chanMode.RemoveLast (myTemp);
-      myTemp = chanLimit;
-      myTemp.Prepend (" ");
-      chanMode.RemoveLast (myTemp);
-      chanMode.RemoveLast (chanLimit);
-    }
-    else if (theMode == 'k')
-    {
-      BString myTemp (chanKey);
-      myTemp.Append(" ");
-      chanMode.RemoveLast (myTemp);
-      myTemp = chanKey;
-      myTemp.Prepend (" ");
-      chanMode.RemoveLast (myTemp);
-      chanMode.RemoveLast (chanKey);
+      case 'l':
+        {
+          myTemp = fChanLimit;
+          myTemp.Append (" ");
+          fChanMode.RemoveLast (myTemp);
+          myTemp = fChanLimit;
+          myTemp.Prepend (" ");
+          fChanMode.RemoveLast (myTemp);
+          fChanMode.RemoveLast (fChanLimit);
+        }
+        break;
+
+      case 'k':
+        {
+          myTemp = fChanKey;
+          myTemp.Append(" ");
+          fChanMode.RemoveLast (myTemp);
+          myTemp = fChanKey;
+          myTemp.Prepend (" ");
+          fChanMode.RemoveLast (myTemp);
+          fChanMode.RemoveLast (fChanKey);
+        }
+        break;
     }
     
-    chanMode.RemoveFirst (modeString);
+    fChanMode.RemoveFirst (modeString);
   }
   else
   {
-    BString theReal (GetWord(chanMode.String(), 1)),
-            theRest (RestOfString(chanMode.String(), 2));
+    BString theReal (GetWord(fChanMode.String(), 1)),
+            theRest (RestOfString(fChanMode.String(), 2));
     theReal.RemoveFirst(modeString);
     theReal.Append(modeString);
     BString tempString(theReal);
@@ -1030,36 +1106,36 @@ ChannelAgent::UpdateMode(char theSign, char theMode)
 
     if (theMode == 'l')
     {
-      if (chanLimitOld != "")
+      if (fChanLimitOld != "")
       {
         BString theOld (" ");
-        theOld += chanLimitOld;
+        theOld += fChanLimitOld;
         tempString.RemoveFirst (theOld);
       }
       
       tempString.Append (" ");
-      tempString.Append (chanLimit);
-      chanLimitOld = chanLimit;
+      tempString.Append (fChanLimit);
+      fChanLimitOld = fChanLimit;
     }
     else if (theMode == 'k')
     {
-      if (chanKeyOld != "")
+      if (fChanKeyOld != "")
       {
         BString theOld (" ");
-        theOld += chanKeyOld;
+        theOld += fChanKeyOld;
         tempString.RemoveFirst (theOld);
       }
       
       tempString.Append (" ");
-      tempString.Append (chanKey);
-      chanKeyOld = chanKey;
+      tempString.Append (fChanKey);
+      fChanKeyOld = fChanKey;
     }
     
-    chanMode = tempString;
+    fChanMode = tempString;
   }
 
   if (!IsHidden())
-    vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
+    vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, fChanMode.String());
 }
 
 
@@ -1070,7 +1146,6 @@ ChannelAgent::ModeEvent (BMessage *msg)
   const char *mode (0), *target (0), *theNick (0);
   char theOperator (0);
   bool hit (false);
-
 
   // TODO Change Status to bitmask -- Too hard this way
   msg->FindString ("mode", &mode);
@@ -1117,7 +1192,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
       int32 pos;
 
       if ((pos = FindPosition (myTarget.String())) < 0
-      ||  (item = static_cast<NameItem *>(namesList->ItemAt (pos))) == 0)
+      ||  (item = static_cast<NameItem *>(fNamesList->ItemAt (pos))) == 0)
       {
         printf("[ERROR] Couldn't find %s in NamesView\n", myTarget.String());
         return;
@@ -1132,10 +1207,10 @@ ChannelAgent::ModeEvent (BMessage *msg)
         if ((iStatus & STATUS_OP_BIT) == 0)
         {
           item->SetStatus ((iStatus & ~STATUS_NORMAL_BIT) | STATUS_OP_BIT);
-          ++opsCount;
+          ++fOpsCount;
 
           buffer = "";
-          buffer << opsCount;
+          buffer << fOpsCount;
           if (!IsHidden())
             vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
         }
@@ -1151,10 +1226,10 @@ ChannelAgent::ModeEvent (BMessage *msg)
           if ((iStatus & STATUS_VOICE_BIT) == 0)
             iStatus |= STATUS_NORMAL_BIT;
           item->SetStatus (iStatus);
-          --opsCount;
+          --fOpsCount;
 
           buffer = "";
-          buffer << opsCount;
+          buffer << fOpsCount;
           
           if (!IsHidden())
             vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
@@ -1197,25 +1272,25 @@ ChannelAgent::ModeEvent (BMessage *msg)
     {
       BString myTarget (GetWord (target, targetPos++));
       UpdateMode ('-', 'l');
-      chanLimit = "";
+      fChanLimit = "";
     }
     else if (theModifier == 'l')
     {
       BString myTarget (GetWord (target, targetPos++));
-      chanLimitOld = chanLimit;
-      chanLimit = myTarget;
+      fChanLimitOld = fChanLimit;
+      fChanLimit = myTarget;
       UpdateMode ('+', 'l');
     }
     else if (theModifier == 'k' && theOperator == '-')
     {
       UpdateMode('-', 'k');
-      chanKey = "";
+      fChanKey = "";
     }
     else if (theModifier == 'k')
     {
       BString myTarget (GetWord (target, targetPos++));
-      chanKeyOld = chanKey;
-      chanKey = myTarget;
+      fChanKeyOld = fChanKey;
+      fChanKey = myTarget;
       UpdateMode ('+', 'k');
     }
     else if (theModifier == 'b' || theModifier == 'a' || theModifier == 'q') 
@@ -1235,7 +1310,7 @@ ChannelAgent::ModeEvent (BMessage *msg)
  
   if (hit)
   {
-    namesList->SortItems (SortNames);
-    namesList->Invalidate();
+    fNamesList->SortItems (SortNames);
+    fNamesList->Invalidate();
   }
 }

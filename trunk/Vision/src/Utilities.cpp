@@ -30,6 +30,8 @@
 
 #include "Vision.h"
 
+const float doubleClickThresh = 6;
+
 BString
 GetWord (const char *cData, int32 wordNeeded)
 {
@@ -338,12 +340,38 @@ int32
 Get440Len (const char *cData)
 {
   BString data (cData);
-  int32 place;
-  
-  place = data.FindLast ('\x20', 440);
 
-  if (place == B_ERROR)
-    return 440;
+  if (data.Length() < 440)
+    return data.Length();
   else
+  {
+    int32 place (data.FindLast ('\x20', 440));
+    if (place == B_ERROR)
+      return 440;
     return place;
+  }
 }
+
+uint16
+CheckClickCount(BPoint point, BPoint &lastClick, bigtime_t sysTime, bigtime_t &lastClickTime, int16 &clickCount)
+{
+  // check time and proximity
+  BPoint delta = point - lastClick;
+
+  bigtime_t timeDelta = sysTime - lastClickTime;
+
+  bigtime_t doubleClickSpeed;
+  get_click_speed(&doubleClickSpeed);
+
+  lastClickTime = sysTime;
+
+  if (timeDelta < doubleClickSpeed
+    && fabs(delta.x) < doubleClickThresh
+    && fabs(delta.y) < doubleClickThresh)
+      return (++clickCount);
+
+  lastClick = point;
+  clickCount = 1;
+  return clickCount;
+}
+

@@ -34,7 +34,6 @@ class VTextControl;
 
 class BPopUpMenu;
 class ClientAgentInputFilter;
-class ClientAgentLogger;
 class RunView;
 class Theme;
 class HistoryList;
@@ -69,9 +68,10 @@ class ClientAgent : public BView
     virtual void                MessageReceived (BMessage *);
     virtual void                AttachedToWindow (void);
     virtual void                AllAttached (void);
+    virtual void                DetachedFromWindow (void);
     virtual void                Show (void);
 
-    void                        AddMenuItems (BPopUpMenu *);
+    virtual void                AddMenuItems (BPopUpMenu *) = 0;
 
     float                       ScrollPos(void);
     void                        SetScrollPos(float);
@@ -88,7 +88,7 @@ class ClientAgent : public BView
     const BString               &Id (void) const;
     int32                       Sid (void) const;
     
-    BMessenger              msgr;
+    BMessenger                  fMsgr;
     
     void                        ChannelMessage (
                                   const char *,
@@ -102,7 +102,7 @@ class ClientAgent : public BView
     void                        CTCPAction (BString theTarget, BString theMsg);
 	bool						CancelMultilineTextPaste() {  return fCancelMLPaste; }
 
-    WindowListItem                 *agentWinItem;
+    WindowListItem                 *fAgentWinItem;
     
     
   private:
@@ -111,11 +111,11 @@ class ClientAgent : public BView
     bool						fCancelMLPaste;
                             
   protected:
-    HistoryList                 *history;
-    RunView                     *text;
-    BScrollView                 *textScroll;
-    VTextControl                *input;
-    Theme                       *activeTheme;
+    HistoryList                 *fHistory;
+    RunView                     *fText;
+    BScrollView                 *fTextScroll;
+    VTextControl                *fInput;
+    Theme                       *fActiveTheme;
 
     static const char               *endl;
 
@@ -128,6 +128,8 @@ class ClientAgent : public BView
                                       uint32 = 0,
                                       uint32 = 0,
                                       uint32 = 0);
+                                      
+    void                            UpdateStatus (int32);
 
     void                            ParsemIRCColors (
                                       const char *,
@@ -162,20 +164,19 @@ class ClientAgent : public BView
     void                            AddSend (BMessage *, const BString &);
     void                            AddSend (BMessage *, int32);
 
-    BString                         id;
-    const int32                     sid;
-    BString                         serverName;
-    BString                         myNick,
-                                      myLag;
+    BString                         fId;
+    const int32                     fSid;
+    BString                         fServerName;
+    BString                         fMyNick,
+                                      fMyLag;
 
-    bool                             timeStampState,
-                                       canNotify,
-                                       scrolling,
-                                       isLogging;
+    bool                             fTimeStampState,
+                                       fCanNotify,
+                                       fScrolling,
+                                       fIsLogging;
                                        
-    BRect                            frame;
-    BMessenger                       sMsgr;
-    ClientAgentLogger                *logger;
+    BRect                            fFrame;
+    BMessenger                       fSMsgr;
     friend class                     WindowList;
 
 };

@@ -25,7 +25,7 @@
  */
  
 #include "Vision.h"
-#include "StringManip.h"
+#include "Utilities.h"
 #include "StatusView.h"
 #include "ServerAgent.h"
 #include "ChannelAgent.h"
@@ -83,19 +83,19 @@ ServerAgent::ParseEvents (const char *data)
       client = new MessageAgent (
         *vision_app->pClientWin()->AgentRect(),
         theNick.String(),
-        sid,
-        id.String(),
-        sMsgr,
-        myNick.String(),
+        fSid,
+        fId.String(),
+        fSMsgr,
+        fMyNick.String(),
         addy.String()),
 
       vision_app->pClientWin()->pWindowList()->AddAgent (client,
-        sid,
+        fSid,
         theNick.String(),
         WIN_MESSAGE_TYPE,
         false);
 
-      clients.AddItem (client);
+      fClients.AddItem (client);
     }
 
     if (client)
@@ -121,9 +121,9 @@ ServerAgent::ParseEvents (const char *data)
     BString tempString;
     
     const char *expansions[2];
-    expansions[0] = serverHostName.String();
+    expansions[0] = fServerHostName.String();
     expansions[1] = theNotice.String();
-    tempString = ExpandKeyed (events[E_SNOTICE].String(), "NR", expansions);
+    tempString = ExpandKeyed (fEvents[E_SNOTICE].String(), "NR", expansions);
     Display (tempString.String(), C_NOTICE);
     
     return true;
@@ -138,12 +138,12 @@ ServerAgent::ParseEvents (const char *data)
 
     firstWord.RemoveFirst (":");
 
-    if (firstWord.ICompare (serverHostName) == 0)
+    if (firstWord.ICompare (fServerHostName) == 0)
     {
       const char *expansions[2];
-      expansions[0] = serverHostName.String();
+      expansions[0] = fServerHostName.String();
       expansions[1] = theNotice.String();
-      tempString = ExpandKeyed (events[E_SNOTICE].String(), "NR", expansions);
+      tempString = ExpandKeyed (fEvents[E_SNOTICE].String(), "NR", expansions);
       Display (tempString.String(), C_NOTICE);
 
       return true;
@@ -167,7 +167,7 @@ ServerAgent::ParseEvents (const char *data)
       expansions[2] = ident.String();
       expansions[3] = address.String();
 
-      tempString = ExpandKeyed (events[E_UNOTICE].String(), "NRIA", expansions);
+      tempString = ExpandKeyed (fEvents[E_UNOTICE].String(), "NRIA", expansions);
       BMessage display (M_DISPLAY);
       PackDisplay (&display, tempString.String(), C_NOTICE);
       PostActive (&display);
@@ -183,25 +183,25 @@ ServerAgent::ParseEvents (const char *data)
     channel.RemoveFirst (":");
     ClientAgent *client (Client (channel.String()));
 
-    if (nick == myNick)
+    if (nick == fMyNick)
     {
       if (!client)
       {
         vision_app->pClientWin()->pWindowList()->AddAgent (
           new ChannelAgent (
             channel.String(),
-            sid,
-            id.String(),
-            ircdtype,
-            myNick.String(),
-            sMsgr,
+            fSid,
+            fId.String(),
+            fIrcdtype,
+            fMyNick.String(),
+            fSMsgr,
             *vision_app->pClientWin()->AgentRect()),
-          sid,
+          fSid,
           channel.String(),
           WIN_CHANNEL_TYPE,
           true);
 
-        clients.AddItem ((vision_app->pClientWin()->pWindowList()->Agent (sid,
+        fClients.AddItem ((vision_app->pClientWin()->pWindowList()->Agent (fSid,
                             channel.String())));
       }
 
@@ -221,7 +221,7 @@ ServerAgent::ParseEvents (const char *data)
       expansions[1] = ident.String();
       expansions[2] = address.String();
 
-      tempString = ExpandKeyed (events[E_JOIN].String(), "NIA", expansions);
+      tempString = ExpandKeyed (fEvents[E_JOIN].String(), "NIA", expansions);
       
       BMessage display (M_DISPLAY);
       
@@ -236,7 +236,7 @@ ServerAgent::ParseEvents (const char *data)
       msg.AddString ("nick",  nick.String());
       msg.AddBool ("ignore", ignored);
       msg.AddMessage ("display", &display);
-      client->msgr.SendMessage (&msg);
+      client->fMsgr.SendMessage (&msg);
     }
 
     return true;
@@ -260,7 +260,7 @@ ServerAgent::ParseEvents (const char *data)
       expansions[1] = ident.String();
       expansions[2] = address.String();
 
-      buffer = ExpandKeyed (events[E_PART].String(), "NIA", expansions);
+      buffer = ExpandKeyed (fEvents[E_PART].String(), "NIA", expansions);
 
       BMessage display (M_DISPLAY);
       PackDisplay (&display, buffer.String(), C_JOIN);
@@ -268,7 +268,7 @@ ServerAgent::ParseEvents (const char *data)
       BMessage msg (M_USER_QUIT);
       msg.AddString ("nick", nick.String());
       msg.AddMessage ("display", &display);
-      client->msgr.SendMessage (&msg);
+      client->fMsgr.SendMessage (&msg);
     }
 
     return true;
@@ -290,7 +290,7 @@ ServerAgent::ParseEvents (const char *data)
     expansions[2] = ident.String();
     expansions[3] = address.String();
 
-    buffer = ExpandKeyed (events[E_NICK].String(), "NnIA", expansions);
+    buffer = ExpandKeyed (fEvents[E_NICK].String(), "NnIA", expansions);
     BMessage display (M_DISPLAY);
     PackDisplay (&display, buffer.String(), C_NICK);
 
@@ -304,11 +304,11 @@ ServerAgent::ParseEvents (const char *data)
     Broadcast (&msg);
 
     // Gotta change the server as well!
-    if (myNick.ICompare (oldNick) == 0)
+    if (fMyNick.ICompare (oldNick) == 0)
     {
-      myNick = newNick;
-      if (!reacquiredNick && (myNick == reconNick))
-        reacquiredNick = true;
+      fMyNick = newNick;
+      if (!fReacquiredNick && (fMyNick == fReconNick))
+        fReacquiredNick = true;
       if (!IsHidden())
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK,
                                                                newNick.String());
@@ -334,7 +334,7 @@ ServerAgent::ParseEvents (const char *data)
     expansions[2] = ident.String();
     expansions[3] = address.String();
 
-    theMsg = ExpandKeyed (events[E_QUIT].String(), "NRIA", expansions);
+    theMsg = ExpandKeyed (fEvents[E_QUIT].String(), "NRIA", expansions);
     
     BMessage display (M_DISPLAY);
     PackDisplay (&display, theMsg.String(), C_QUIT);
@@ -348,10 +348,10 @@ ServerAgent::ParseEvents (const char *data)
     // see if we had this nickname previously.
     // (we might have been disconnected and this could be a
     //  connection waiting to time out)
-    if (theNick == reconNick)
+    if (theNick == fReconNick)
     {
       BString tempCmd ("/nick ");
-      tempCmd += reconNick;
+      tempCmd += fReconNick;
       ParseCmd (tempCmd.String());
     }
 
@@ -366,7 +366,7 @@ ServerAgent::ParseEvents (const char *data)
     theServer.RemoveFirst(":");
 
     tempString += "PONG ";
-    tempString += myNick;
+    tempString += fMyNick;
     tempString += " ";
     tempString += theServer;
     SendData (tempString.String());
@@ -395,16 +395,16 @@ ServerAgent::ParseEvents (const char *data)
     rest.RemoveFirst (":");
 
     if ((client = Client (channel.String())) != 0
-    &&   kickee == myNick)
+    &&   kickee == fMyNick)
     {
       BMessage msg (M_CHANNEL_GOT_KICKED);
       msg.AddString ("channel", channel.String());
       msg.AddString ("kicker", kicker.String());
       msg.AddString ("rest", rest.String());
-      client->msgr.SendMessage (&msg);
+      client->fMsgr.SendMessage (&msg);
     }
 
-    if (client && kickee != myNick)
+    if (client && kickee != fMyNick)
     {
       BMessage display (M_DISPLAY);
       const char *expansions[4];
@@ -415,13 +415,13 @@ ServerAgent::ParseEvents (const char *data)
       expansions[2] = kicker.String();
       expansions[3] = rest.String();
 
-      buffer = ExpandKeyed (events[E_KICK].String(), "NCnR", expansions);
+      buffer = ExpandKeyed (fEvents[E_KICK].String(), "NCnR", expansions);
       PackDisplay (&display, buffer.String(), C_QUIT);
 
       BMessage msg (M_USER_QUIT);
       msg.AddString ("nick", kickee.String());
       msg.AddMessage ("display", &display);
-      client->msgr.SendMessage (&msg);
+      client->fMsgr.SendMessage (&msg);
     }
 
     return true;
@@ -456,10 +456,10 @@ ServerAgent::ParseEvents (const char *data)
 
       BMessage display (M_DISPLAY);
 
-      buffer = ExpandKeyed (events[E_TOPIC].String(), "NTCIA", expansions);
+      buffer = ExpandKeyed (fEvents[E_TOPIC].String(), "NTCIA", expansions);
       PackDisplay (&display, buffer.String(), C_WHOIS);
       topic.AddMessage("display", &display);
-      client->msgr.SendMessage (&topic);
+      client->fMsgr.SendMessage (&topic);
     }
 
     return true;
@@ -482,7 +482,7 @@ ServerAgent::ParseEvents (const char *data)
       msg.AddString("mode", theMode.String());
       msg.AddString("target", theTarget.String());
 
-      client->msgr.SendMessage (&msg);
+      client->fMsgr.SendMessage (&msg);
     }
     else
     {
@@ -531,7 +531,7 @@ ServerAgent::ParseEvents (const char *data)
     if (IsHidden())
     {
       BMessage statusMsg (M_CW_UPDATE_STATUS);
-      statusMsg.AddPointer ("item", agentWinItem);
+      statusMsg.AddPointer ("item", fAgentWinItem);
       statusMsg.AddInt32 ("status", WIN_NEWS_BIT);
       Window()->PostMessage (&statusMsg);
     }

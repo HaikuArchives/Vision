@@ -74,18 +74,18 @@ ClientWindow::ClientWindow (BRect frame)
 bool
 ClientWindow::QuitRequested (void)
 {
-  vision_app->SetRect ("windowDockRect", cwDock->Bounds());
+  vision_app->SetRect ("windowDockRect", fCwDock->Bounds());
   vision_app->SetRect ("clientWinRect", Frame());
-  if (!shutdown_in_progress)
+  if (!fShutdown_in_progress)
   {
-    shutdown_in_progress = true;
+    fShutdown_in_progress = true;
     BMessage killMsg (M_CLIENT_QUIT);
     killMsg.AddBool ("vision:winlist", true);
-    killMsg.AddBool ("vision:shutdown_in_progress", shutdown_in_progress);
+    killMsg.AddBool ("vision:fShutdown_in_progress", fShutdown_in_progress);
     if (ServerBroadcast (&killMsg))
-      wait_for_quits = true;
+      fWait_for_quits = true;
       
-    if (wait_for_quits)
+    if (fWait_for_quits)
       return false;
   }
   else
@@ -103,7 +103,7 @@ ClientWindow::QuitRequested (void)
 
 
   vision_app->PostMessage (B_QUIT_REQUESTED);
-  delete_sem(shutdownSem);
+  delete_sem(fShutdownSem);
 
   return true;
 }
@@ -303,7 +303,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_STATUS_CLEAR:
       {
-        status->Clear();
+        fStatus->Clear();
       }
       break;
     
@@ -321,7 +321,7 @@ ClientWindow::MessageReceived (BMessage *msg)
         int32 agentType (agentitem->Type());
         pWindowList()->RemoveAgent (agentview, agentitem);
         
-        if ((shutdown_in_progress) && (agentType == WIN_SERVER_TYPE))
+        if ((fShutdown_in_progress) && (agentType == WIN_SERVER_TYPE))
           PostMessage (B_QUIT_REQUESTED);
       }  
       break;
@@ -329,11 +329,11 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_CW_ALTW:
       {
-        if (!altw_catch && vision_app->GetBool ("catchAltW"))
+        if (!fAltw_catch && vision_app->GetBool ("catchAltW"))
         {
-           altw_catch = true;
+           fAltw_catch = true;
            
-           altwRunner = new BMessageRunner (
+           fAltwRunner = new BMessageRunner (
              this,
              new BMessage (M_CW_ALTW_RESET),
              400000, // 0.4 seconds
@@ -346,9 +346,9 @@ ClientWindow::MessageReceived (BMessage *msg)
 
     case M_CW_ALTW_RESET:
       {
-        altw_catch = false;
-        if (altwRunner)
-          delete altwRunner;
+        fAltw_catch = false;
+        if (fAltwRunner)
+          delete fAltwRunner;
       }
       break;
     
@@ -390,8 +390,8 @@ ClientWindow::MessageReceived (BMessage *msg)
         {
           BPoint point;
           msg->FindPoint ("loc", &point);
-          resize->MoveTo (point.x, resize->Frame().top);
-          cwDock->ResizeTo (point.x - 1, cwDock->Frame().Height());
+          fResize->MoveTo (point.x, fResize->Frame().top);
+          fCwDock->ResizeTo (point.x - 1, fCwDock->Frame().Height());
           BRect *agRect (AgentRect());
           if (agent)
           {
@@ -444,25 +444,25 @@ ClientWindow::GetTopServer (WindowListItem *request)
 BRect *
 ClientWindow::AgentRect (void)
 {
-  agentrect->left = resize->Frame().right - cwDock->Frame().left + 1;
-  agentrect->top = Bounds().top + 1;
-  agentrect->right = Bounds().Width() - 1;
-  agentrect->bottom = cwDock->Frame().Height();
-  return agentrect;
+  fAgentrect->left = fResize->Frame().right - fCwDock->Frame().left + 1;
+  fAgentrect->top = Bounds().top + 1;
+  fAgentrect->right = Bounds().Width() - 1;
+  fAgentrect->bottom = fCwDock->Frame().Height();
+  return fAgentrect;
 }
 
 
 WindowList *
 ClientWindow::pWindowList (void)
 {
-  return cwDock->pWindowList();
+  return fCwDock->pWindowList();
 }
 
 
 StatusView *
 ClientWindow::pStatusView (void)
 {
-  return status;
+  return fStatus;
 }
 
 /*
@@ -485,7 +485,7 @@ ClientWindow::ServerBroadcast (BMessage *outmsg_)
       WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i - 1));
       if (aitem->Type() == WIN_SERVER_TYPE)
       {
-        dynamic_cast<ServerAgent *>(aitem->pAgent())->msgr.SendMessage (outmsg_);
+        dynamic_cast<ServerAgent *>(aitem->pAgent())->fMsgr.SendMessage (outmsg_);
         reply = true;
       }
     }
@@ -514,10 +514,10 @@ ClientWindow::Init (void)
 {
   SetSizeLimits (330,2000,150,2000);
 
-  shutdown_in_progress = false;
-  wait_for_quits = false;
-  altw_catch = false;
-  shutdownSem = vision_app->GetShutdownSem();
+  fShutdown_in_progress = false;
+  fWait_for_quits = false;
+  fAltw_catch = false;
+  fShutdownSem = vision_app->GetShutdownSem();
 
   AddShortcut ('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
   
@@ -582,28 +582,28 @@ ClientWindow::Init (void)
 
   frame = bgView->Bounds();
 
-  status = new StatusView (frame);
-  bgView->AddChild (status);
+  fStatus = new StatusView (frame);
+  bgView->AddChild (fStatus);
   
-  status->AddItem (new StatusItem (
+  fStatus->AddItem (new StatusItem (
     "irc.elric.net", 0),
     true);
   
   BRect cwDockRect (vision_app->GetRect ("windowDockRect"));
-  cwDock = new ClientWindowDock (BRect (0, frame.top, (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(), status->Frame().top - 1));
+  fCwDock = new ClientWindowDock (BRect (0, frame.top, (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(), fStatus->Frame().top - 1));
   
-  bgView->AddChild (cwDock);
+  bgView->AddChild (fCwDock);
   
-  resize = new ResizeView (cwDock, BRect (cwDock->Frame().right + 1,
-    Bounds().top + 1, cwDock->Frame().right + 3, status->Frame().top - 1));
+  fResize = new ResizeView (fCwDock, BRect (fCwDock->Frame().right + 1,
+    Bounds().top + 1, fCwDock->Frame().right + 3, fStatus->Frame().top - 1));
   
-  bgView->AddChild (resize);
+  bgView->AddChild (fResize);
 
-  agentrect = new BRect (
-    (resize->Frame().right - cwDock->Frame().left) + 1,
+  fAgentrect = new BRect (
+    (fResize->Frame().right - fCwDock->Frame().left) + 1,
     Bounds().top + 1,
     Bounds().Width() - 1,
-    cwDock->Frame().Height());
+    fCwDock->Frame().Height());
 }
 
 //////////////////////////////////////////////////////////////////////////////

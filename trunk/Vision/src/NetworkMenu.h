@@ -34,8 +34,8 @@ class NetworkMenu : public BMenu
     virtual void AttachedToWindow (void);
   
   private:
-    uint32 msgConst;
-    BMessenger target;
+    uint32 fMsgConst;
+    BMessenger fTarget;
 };
 
 #endif // _NETWORK_MENU_H

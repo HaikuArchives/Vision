@@ -40,12 +40,12 @@ class DCCPrefsView : public BView
     virtual void FrameResized (float, float);
   
   private:
-    BMenuField *blockSize;
-    VTextControl *defDir,
-                 *dccPortMin,
-                 *dccPortMax;
-    BCheckBox *autoAccept;
-    BBox *box;
+    BMenuField *fBlockSize;
+    VTextControl *fDefDir,
+                 *fDccPortMin,
+                 *fDccPortMax;
+    BCheckBox *fAutoAccept;
+    BBox *fBox;
 };
 
 #endif // _PREFDCC_H

@@ -35,13 +35,13 @@ class AppWindowPrefsView : public BView
     virtual void AttachedToWindow (void);
     virtual void AllAttached (void);
   private:
-    BCheckBox *versionParanoid,
-              *catchAltW,
-              *timeStamp,
-              *logEnabled,
-              *logFileTimestamp,
-              *stripColors,
-              *spamMode;
+    BCheckBox *fVersionParanoid,
+              *fCatchAltW,
+              *fTimeStamp,
+              *fLogEnabled,
+              *fLogFileTimestamp,
+              *fStripColors,
+              *fSpamMode;
 };
 
 #endif // _PREFAPP_H

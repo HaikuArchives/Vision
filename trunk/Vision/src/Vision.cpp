@@ -25,6 +25,7 @@
 
 class VisionApp * vision_app;
 
+
 /*
   -- #beos was here --
   <Brazilian> And then I says to the gnu, "Is that a horn on your head or
@@ -65,6 +66,11 @@ class VisionApp * vision_app;
 #include "Theme.h"
 
 #include "TestScript.h"
+
+#if B_BEOS_VERSION_DANO
+#define _IMPEXP_ROOT
+extern "C" _IMPEXP_ROOT int _kset_fd_limit_ (int num);
+#endif
 
 // sound event name definitions
 const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
@@ -571,9 +577,9 @@ VisionApp::QuitRequested (void)
 
   if (identSocket >= 0)
 #ifdef BONE_BUILD
-  close (identSocket);
+    close (identSocket);
 #elif NETSERVER_BUILD
-  closesocket (identSocket);
+    closesocket (identSocket);
 #endif
   
   if(clientWin)
@@ -712,6 +718,8 @@ VisionApp::ReadyToRun (void)
   if(shutdownSem < B_OK) //that's an error
   	vision_app->Quit();
   
+  _kset_fd_limit_ (256);
+  
   if (!CheckStartupNetworks())
   {  
     setupWin = new SetupWindow ();
@@ -818,6 +826,7 @@ VisionApp::MessageReceived (BMessage *msg)
         BRect clientWinRect;
         visionSettings->FindRect ("clientWinRect", &clientWinRect);
         BMessage netData = GetNetwork (msg->FindString ("network"));
+
         if (netData.FindBool ("useDefaults"))
         {
           netData.RemoveName ("nick");
@@ -1478,7 +1487,7 @@ VisionApp::Identity (void *)
     struct linger lng = { 0, 0 }; 
     setsockopt (identSock, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
 #endif
-    listen (identSock, 10);
+    listen (identSock, 1);
 
     while (!vision_app->ShuttingDown) 
     {

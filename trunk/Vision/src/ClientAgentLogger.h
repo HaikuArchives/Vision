@@ -24,33 +24,42 @@
 #ifndef _CLIENTAGENTLOGGER_H_
 #define _CLIENTAGENTLOGGER_H_
 
-#include <Locker.h>
-#include <String.h>
-#include <List.h>
 #include <File.h>
+#include <List.h>
+#include <Locker.h>
+#include <Path.h>
+#include <String.h>
+
+#include <map>
+
+typedef map<BString, BFile *> filemap;
 
 class ClientAgentLogger
 {
   public:
-                       ClientAgentLogger (BString, BString);
-                       ~ClientAgentLogger (void);
-   void                StartLogging (void);    
-   void                Log (const char *);
-   void                StopLogging (void);
-   bool                isQuitting;
-   bool                isLogging;
+                           ClientAgentLogger (BString);
+                           ~ClientAgentLogger (void);
+   void                    StartLogging (void);
+   void                    RegisterLogger (const char *);
+   void                    UnregisterLogger (const char *);    
+   void                    Log (const char *, const char *);
+   void                    StopLogging (void);
+   bool                    fIsQuitting;
+   bool                    fIsLogging;
   
   private:
-   void                SetupLogging (void);
-   static int32        AsyncLogger (void *);
-   thread_id           logThread;
-   BString             logName;
-   BString             serverName;
-   BList               *logBuffer;
-   BLocker             *logBufferLock;
-   sem_id              logSyncherLock;
-   BFile               *logFile;
-   bool                newLine;
+   void                    SetupLogging (void);
+   void                    CloseSession (BFile *);
+   static int32            AsyncLogger (void *);
+
+   thread_id               fLogThread;
+   BString                 fServerName;
+   BPath                   fLogPath;
+   BList                   *fLogBuffer;
+   BLocker                 *fLogBufferLock;
+   sem_id                  fLogSyncherLock;
+   bool                    fNewLine;
+   filemap                 fLogFiles; 
 };
 
 #endif

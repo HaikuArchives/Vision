@@ -44,7 +44,7 @@ ClientWindowDock::ClientWindowDock (BRect frame)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   
-  workingFrame = Bounds();
+  fWorkingFrame = Bounds();
   
   // add collapsed agent first
   AddNotifyList();
@@ -61,26 +61,26 @@ ClientWindowDock::~ClientWindowDock (void)
 void
 ClientWindowDock::AddWinList (void)
 {
-  winListAgent = new AgentDockWinList (workingFrame);
-  AddChild (winListAgent);
+  fWinListAgent = new AgentDockWinList (fWorkingFrame);
+  AddChild (fWinListAgent);
 }
 
 void
 ClientWindowDock::AddNotifyList (void)
 {
-  BRect notifyFrame (workingFrame);
-  notifyFrame.top = workingFrame.bottom - 15;
+  BRect notifyFrame (fWorkingFrame);
+  notifyFrame.top = fWorkingFrame.bottom - 15;
   
-  workingFrame.bottom = workingFrame.bottom - (notifyFrame.Height() + 1);
+  fWorkingFrame.bottom = fWorkingFrame.bottom - (notifyFrame.Height() + 1);
   
-  notifyAgent = new AgentDockNotifyList (notifyFrame);
-  AddChild (notifyAgent);
+  fNotifyAgent = new AgentDockNotifyList (notifyFrame);
+  AddChild (fNotifyAgent);
 }
 
 WindowList *
 ClientWindowDock::pWindowList (void)
 {
-  return winListAgent->pWindowList();
+  return fWinListAgent->pWindowList();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -105,28 +105,28 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   headerFrame.top = 1;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
-  aHeader = new AgentDockHeader (headerFrame, S_CWD_WINLIST_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
-  AddChild (aHeader);
+  fAHeader = new AgentDockHeader (headerFrame, S_CWD_WINLIST_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+  AddChild (fAHeader);
    
   frame.top = frame.top + headerFrame.Height() + 4;  // make room for header
   frame.right = frame.right - B_V_SCROLL_BAR_WIDTH; // scrollbar
   frame.bottom = frame.bottom - 2; // room for "fancy" border
 
-  winList = new WindowList (frame);
+  fWinList = new WindowList (frame);
 
   Theme *activeTheme (vision_app->ActiveTheme());
 
-  activeTheme->AddView (winList);
+  activeTheme->AddView (fWinList);
   
-  winListScroll = new BScrollView (
-    "winListScroll",
-    winList,
+  fWinListScroll = new BScrollView (
+    "fWinListScroll",
+    fWinList,
     B_FOLLOW_ALL,
     0,
     false,
     true,
     B_PLAIN_BORDER);
-  AddChild (winListScroll);
+  AddChild (fWinListScroll);
   
   
 }
@@ -139,7 +139,7 @@ AgentDockWinList::~AgentDockWinList (void)
 WindowList *
 AgentDockWinList::pWindowList (void)
 {
-  return winList;
+  return fWinList;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -165,8 +165,8 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   headerFrame.top = 0;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
-  aHeader = new AgentDockHeader (headerFrame, S_CWD_NOTIFY_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
-  AddChild (aHeader);
+  fAHeader = new AgentDockHeader (headerFrame, S_CWD_NOTIFY_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+  AddChild (fAHeader);
 }
 
 AgentDockNotifyList::~AgentDockNotifyList (void)
@@ -190,7 +190,7 @@ AgentDockNotifyList::~AgentDockNotifyList (void)
 AgentDockHeaderString::AgentDockHeaderString (BRect frame_, const char *name)
  : BStringView (
    frame_,
-   "headerView",
+   "fHeaderView",
    name,
    B_FOLLOW_LEFT | B_FOLLOW_BOTTOM)
 {
@@ -259,8 +259,8 @@ AgentDockHeader::AgentDockHeader (BRect frame, const char *name, uint32 resize)
   stringRect.left = stringRect.left + 3;
   stringRect.right = stringRect.right - 24;
     
-  headerView = new AgentDockHeaderString (stringRect, name);
-  AddChild (headerView);
+  fHeaderView = new AgentDockHeaderString (stringRect, name);
+  AddChild (fHeaderView);
 }
 
 AgentDockHeader::~AgentDockHeader (void)
@@ -275,16 +275,16 @@ AgentDockHeader::MouseMoved (BPoint where, uint32 transitcode, const BMessage *m
   {
     case B_ENTERED_VIEW:
       SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-      headerView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+      fHeaderView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
       Invalidate();
-      headerView->Invalidate();
+      fHeaderView->Invalidate();
       break;
     
     case B_EXITED_VIEW:
       SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
-      headerView->SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
+      fHeaderView->SetViewColor (ui_color (B_MENU_BACKGROUND_COLOR));
       Invalidate();
-      headerView->Invalidate();
+      fHeaderView->Invalidate();
       break;
   }
     
@@ -295,9 +295,9 @@ void
 AgentDockHeader::MouseDown (BPoint where)
 {
   SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
-  headerView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
+  fHeaderView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
   Invalidate();
-  headerView->Invalidate();
+  fHeaderView->Invalidate();
   
   BView::MouseDown (where);
 }
@@ -306,9 +306,9 @@ void
 AgentDockHeader::MouseUp (BPoint where)
 {
   SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-  headerView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+  fHeaderView->SetViewColor (tint_color (ui_color (B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
   Invalidate();
-  headerView->Invalidate();
+  fHeaderView->Invalidate();
   
   BView::MouseUp (where);
 }
