@@ -76,7 +76,12 @@ ClientAgent::ParseCmd (const char *data)
     AddSend (&sendMsg, endl);
     return true;
   }
-  
+
+  if (firstWord == "/NUTMEAT")
+  {
+    ParseCmd("/VISIT http://www.sanitarium.co.nz/recipe/recipe.do?rec-id=201");
+    return true;
+  }  
 
   if (firstWord == "/KILL") // we need to insert a ':' before parm3
   {                         // for the user
