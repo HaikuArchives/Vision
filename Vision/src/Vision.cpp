@@ -79,7 +79,8 @@ main (void)
 
 VisionApp::VisionApp (void)
   : BApplication ("application/x-vnd.Ink-Vision"),
-      aboutWin (0)
+      aboutWin (0),
+      identEndpoint (0)
 {
   // some setup
   settingsloaded = false;
@@ -340,6 +341,8 @@ VisionApp::QuitRequested (void)
 
   if ((clientWin) && (!quitRequest->HasBool ("real_thing")))
   {
+    if (identEndpoint)
+      identEndpoint->Close();
     clientWin->PostMessage (B_QUIT_REQUESTED);
     return false;
   }
@@ -859,7 +862,8 @@ VisionApp::Identity (void *)
   if (identPoint.InitCheck()    == B_OK 
   &&  identPoint.Bind (113)     == B_OK) 
   { 
-    identPoint.Listen (2048); 
+    identPoint.Listen (2048);
+    vision_app->identEndpoint = &identPoint; 
     while (!vision_app->ShuttingDown) 
     { 
       accepted = identPoint.Accept (-1); 

@@ -4,6 +4,7 @@ http://vision.sourceforge.net
 [0.2.0608]
  2001-06-08
    * fixed intermittently incorrect names list after kick/rejoin
+   * another minor ident fix
 
 [0.2.0606]
  2001-06-06
