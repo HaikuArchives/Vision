@@ -341,8 +341,6 @@ WindowList::SelectLast (void)
   int32 lastInt (IndexOf (fLastSelected));
   if (lastInt >= 0)
     Select (lastInt);
-  else if (CountItems() == 0)
-    vision_app->PostMessage (M_WINLIST_EMPTY);
   else
     Select (0);
   ScrollToSelection();

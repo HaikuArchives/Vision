@@ -153,7 +153,8 @@ class VisionApp : public BApplication
 	BLocker                 fIdentLock,
 	                          fSettingsLock,
 	                        fDccLock;
-	thread_id               fIdentThread;
+	volatile thread_id      fIdentThread,
+	                        fWinThread;
 	int32                   fIdentSocket;
 	Theme                   *fActiveTheme;
 };
