@@ -1,8 +1,7 @@
 Vision
 http://vision.sourceforge.net
-
          
-[0.9-exp-0622]
+[0.9-exp-0626]
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
          * changed the PrefGeneral keyboard nav to be more standard. (Alan Ellis)
          * added file: and mailto: URL support (Alan Ellis)
@@ -19,8 +18,7 @@ http://vision.sourceforge.net
          * fixed a crash on shutdown bug
          * added notify list 
              - /notify nick1 nick2 etc. to add nicks to notify list for current network
-             - notify nicks are not currently saved to settings, they will be lost between sessions, will be fixed soon
-             - no way to remove notify nicks yet, also to be fixed soon
+             - /unnotify nick1 nick2, etc. to remove nicks from notify list for current network
              - lots of other misc GUI details still to be done
          * split off logging into its own section in prefs ; added features:
              - configurable log base path (no longer restricted to logs/ off the Vision dir)
