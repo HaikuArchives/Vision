@@ -22,6 +22,7 @@
  *                 Andrew Bazan
  *                 Jamie Wilkinson
  *                 Bjorn Oksholen
+ *                 Alan Ellis <alan@cgsoftware.org>
  */
  
 #include "Vision.h"
@@ -198,7 +199,7 @@ ServerAgent::ParseEvents (const char *data)
         for (int32 i = 0; i < chanCount; i++)
           if (((BString *)fStartupChannels.ItemAt (i))->ICompare (channel) == 0)
           {
-             delete fStartupChannels.RemoveItem (i);
+             delete static_cast<BString *>(fStartupChannels.RemoveItem (i));
              activateChan = false;
              break;
           }

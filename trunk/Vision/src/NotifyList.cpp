@@ -17,6 +17,7 @@
  * Reserved.
  *
  * Contributor(s): Rene Gollent
+ *                 Alan Ellis <alan@cgsoftware.org>
  *
  */
 
@@ -52,7 +53,7 @@ NotifyList::NotifyList (BRect _frame)
 NotifyList::~NotifyList (void)
 {
   while (CountItems() > 0)
-    delete RemoveItem (0L);
+    delete static_cast<NotifyListItem *>(RemoveItem (0L));
   delete fMyPopUp;
 }
 
@@ -60,7 +61,7 @@ void
 NotifyList::UpdateList(BList *newList)
 {
   while (CountItems() > 0)
-    delete RemoveItem (0L);
+    delete static_cast<NotifyListItem *>(RemoveItem (0L));
   BList updateList;
   // make private copy of list items otherwise things go bad
   for (int32 i = 0; i < newList->CountItems(); i++)

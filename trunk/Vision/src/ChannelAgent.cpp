@@ -21,6 +21,7 @@
  *                 Todd Lair
  *                 Andrew Bazan
  *                 Jamie Wilkinson
+ *                 Alan Ellis <alan@cgsoftware.org>
  */
 
 #include <Beep.h>
@@ -84,11 +85,11 @@ ChannelAgent::~ChannelAgent (void)
   
   // empty recent nick list
   while (fRecentNicks.CountItems() > 0)
-    delete fRecentNicks.RemoveItem (0L);
+    delete static_cast<BString *>(fRecentNicks.RemoveItem (0L));
   
   // empty nick completion list
   while (fCompletionNicks.CountItems() > 0)
-    delete fCompletionNicks.RemoveItem (0L);
+    delete static_cast<BString *>(fCompletionNicks.RemoveItem (0L));
 }
 
 void
@@ -213,7 +214,7 @@ ChannelAgent::RemoveNickFromList (BList &list, const char *data)
   {
     if (static_cast<BString *>(list.ItemAt(i))->ICompare(data) == 0)
     {
-      delete list.RemoveItem (i);
+      delete static_cast<BString *>(list.RemoveItem (i));
       break;
     }
   }
@@ -328,8 +329,7 @@ ChannelAgent::ChannelMessage (
      int32 count (fRecentNicks.CountItems());
      if (count > MAX_RECENT_NICKS)
      {
-       delete fRecentNicks.RemoveItem (0L);
-       --count;
+       delete static_cast<BString *>(fRecentNicks.RemoveItem (0L));
      }
      // scan for presence of nick in list, and remove duplicate if found
      RemoveNickFromList (fRecentNicks, nick);
@@ -443,7 +443,7 @@ ChannelAgent::TabExpansion (void)
       fLastExpansion = place;
 
       while (!fCompletionNicks.IsEmpty())
-        delete fCompletionNicks.RemoveItem(0L);
+        delete static_cast<BString *>(fCompletionNicks.RemoveItem(0L));
       
       int32 count (fNamesList->CountItems()),
             i (0);
@@ -472,7 +472,7 @@ ChannelAgent::TabExpansion (void)
           {
             if (!(name->ICompare(*(BString *)fCompletionNicks.ItemAt (j))))
             {
-              delete fCompletionNicks.RemoveItem(j);
+              delete static_cast<BString *>(fCompletionNicks.RemoveItem(j));
               break;
             }
           }
@@ -606,7 +606,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
                 if (fLastExpansion.ICompare (newNick, fLastExpansion.Length()) == 0)
                   name->SetTo (newNick);
                 else
-                  delete fRecentNicks.RemoveItem (i);
+                  delete static_cast<BString *>(fRecentNicks.RemoveItem (i));
                 break;
               }
             count = fCompletionNicks.CountItems();
@@ -616,7 +616,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
                 if (fLastExpansion.ICompare (newNick, fLastExpansion.Length()) == 0)
                   name->SetTo (newNick);
                 else
-                  delete fCompletionNicks.RemoveItem (i);
+                  delete static_cast<BString *>(fCompletionNicks.RemoveItem (i));
                 break;
               }
           }
@@ -714,7 +714,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
         // over in it after reconnect -- list will quickly be rebuilt anyhow if there
         // is any conversation whatsoever going on
         while (fRecentNicks.CountItems() > 0)
-          delete fRecentNicks.RemoveItem(0L);
+          delete static_cast<BString *>(fRecentNicks.RemoveItem(0L));
         
       }
       break;

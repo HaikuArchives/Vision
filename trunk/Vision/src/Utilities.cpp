@@ -304,15 +304,15 @@ DurationString (int64 value)
 
 	char message[512] = "";
 	if (days)
-		sprintf(message, "%Ldday%s ",days,days!=1?"s":"");
+		sprintf(message, "%Ld day%s ",days,days!=1?"s":"");
 	
 	if (hours%24)
-		sprintf(message, "%s%Ldhr%s ",message, hours%24,(hours%24)!=1?"s":"");
+		sprintf(message, "%s%Ld hr%s ",message, hours%24,(hours%24)!=1?"s":"");
 	
 	if (min%60)
-		sprintf(message, "%s%Ldmin%s ",message, min%60, (min%60)!=1?"s":"");
+		sprintf(message, "%s%Ld min%s ",message, min%60, (min%60)!=1?"s":"");
 
-	sprintf(message, "%s%Ldsec%s",message, sec%60,(sec%60)!=1?"s":"");
+	sprintf(message, "%s%Ld.%Ld sec%s",message, sec%60, (milli%1000), (sec%60)!=1?"s":"");
 
 	duration += message;
 
