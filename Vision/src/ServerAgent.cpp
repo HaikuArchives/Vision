@@ -464,6 +464,7 @@ ServerAgent::Establish (void *arg)
     if (select (endPoint->Socket() + 1, &rset, 0, &eset, &tv) > 0
     &&  FD_ISSET (endPoint->Socket(), &rset))
     {
+      endpointLock->Lock();
       if ((length = endPoint->Receive (inbuffer, 1024)) > 0)
       {
         endpointLock->Unlock();
@@ -969,6 +970,9 @@ ServerAgent::MessageReceived (BMessage *msg)
         msgr.SendMessage (M_LAG_CHANGED);
         checkingLag = false;
         lEndpoint = 0;
+        
+        // store current nick for reconnect use (might be an away nick, etc)
+        reconNick = myNick;
         
         // let the user know
         if (isConnected)

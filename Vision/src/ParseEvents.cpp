@@ -342,12 +342,13 @@ ServerAgent::ParseEvents (const char *data)
 
     Broadcast (&msg);
 
-    // see if it was our first nickname. if so, change
-    firstNick = lnick1;
-    if (theNick == firstNick)
+    // see if we had this nickname previously.
+    // (we might have been disconnected and this could be a
+    //  connection waiting to time out)
+    if (theNick == reconNick)
     {
       BString tempCmd ("/nick ");
-      tempCmd << firstNick;
+      tempCmd += reconNick;
       ParseCmd (tempCmd.String());
     }
 

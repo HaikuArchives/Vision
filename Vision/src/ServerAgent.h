@@ -111,6 +111,7 @@ class ServerAgent : public ClientAgent
 	
 	
 	BString						myNick;
+	BString                     reconNick; // used when reconnecting
 	BString						quitMsg;
 	BString                     myLag;
 
