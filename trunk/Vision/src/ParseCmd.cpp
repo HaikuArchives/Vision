@@ -313,6 +313,8 @@ ClientAgent::ParseCmd (const char *data)
       if (secondWord.ICompare ("CHAT") == 0
       &&       theNick != "-9z99")
       {
+        if (theNick.ICompare(myNick) == 0)
+          return false;
         BString thePort (GetWord (data, 4));
         BMessage msg (M_CHAT_ACTION);
         msg.AddString ("nick", theNick.String());
