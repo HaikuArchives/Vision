@@ -1,6 +1,6 @@
 Vision
 http://vision.sourceforge.net
-[0.9.4-0821]
+[0.9.4-0822]
          * fixed deadlock in DCC Transfers window
          * fixed memleak in logger
          * fixed some shutdown/cleanups that weren't happening
