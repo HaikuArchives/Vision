@@ -437,7 +437,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 				else
 				{
 					netPrompt = new PromptWindow (BPoint (Window()->Frame().left + Window()->Frame().Width() /2, Window()->Frame().top + Window()->Frame().Height() / 2),
-					"Network: ", "Add Network", NULL, this, new BMessage (M_ADD_NEW_NETWORK), NULL, false);
+					"Network Name: ", "Add Network", NULL, this, new BMessage (M_ADD_NEW_NETWORK), NULL, false);
 					netPrompt->Show();
 				}
 			}
@@ -490,7 +490,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 				else
 				{
 					dupePrompt = new PromptWindow (BPoint (Window()->Frame().left + Window()->Frame().Width() /2, Window()->Frame().top + Window()->Frame().Height() / 2),
-					"Network: ", "Duplicate Network", NULL, this, new BMessage (M_DUPE_CURRENT_NETWORK), NULL, false);
+					"Network Name: ", "Duplicate Network", NULL, this, new BMessage (M_DUPE_CURRENT_NETWORK), NULL, false);
 					dupePrompt->Show();
 				}
 			}
