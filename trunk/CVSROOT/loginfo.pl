@@ -14,10 +14,10 @@ $cvsroot    = $ENV{CVSROOT}."/";
 $my_pgrp_id = getpgrp();
 
 $MAILER = "/usr/sbin/sendmail";
+$subject = "CVS Commit";
 
 $mailfrom = shift;
 $mailto   = shift;
-$subject  = shift;
 $user     = shift;
 
 $directory = shift;
