@@ -122,12 +122,12 @@ ClientAgentLogger::RegisterLogger (const char *logName)
   if (filePath.InitCheck() != B_OK)
     return;
     
-  BFile *logFile = new BFile (filePath.Path(), B_READ_WRITE | B_CREATE_FILE | B_OPEN_AT_END);
+  BFile logFile(filePath.Path(), B_READ_WRITE | B_CREATE_FILE | B_OPEN_AT_END);
  
-  if (logFile->InitCheck() == B_OK)
+  if (logFile.InitCheck() == B_OK)
   {
     char tempTime[96];
-    if (logFile->Position() == 0) // new file
+    if (logFile.Position() == 0) // new file
     {
       strftime (tempTime, 96, "Session Start: %a %b %d %H:%M %Y\n", &ptr);
     }
@@ -137,20 +137,20 @@ ClientAgentLogger::RegisterLogger (const char *logName)
     }
 
     BString timeString(tempTime);
-    logFile->Write (timeString.String(), timeString.Length());
+    logFile.Write (timeString.String(), timeString.Length());
     update_mime_info (filePath.Path(), false, false, true);
     BString filename (logName);
     fLogFiles[filename] = logFile;
   }
   else
-    logFile->Unset();
+    logFile.Unset();
 }
 
 void
 ClientAgentLogger::UnregisterLogger (const char *name)
 {
-  BFile *logFile (fLogFiles[name]);
-  if (logFile != NULL)
+  BFile logFile (fLogFiles[name]);
+  if (logFile.InitCheck() == B_OK)
   {
     if (fIsLogging)
     {
@@ -162,12 +162,12 @@ ClientAgentLogger::UnregisterLogger (const char *name)
         // read through buffer and find all strings that belonged to this file,
         // then write and remove them
         
-        if (((currentLog = (BString *)fLogBuffer->ItemAt(i)) != NULL)
+        if (((currentLog = fLogBuffer->ItemAt(i)) != NULL)
         && (currentLog->ICompare (name) == 0))
         {
           delete fLogBuffer->RemoveItemAt (i);
           currentLog = fLogBuffer->RemoveItemAt (i);
-          logFile->Write (currentLog->String(), currentLog->Length());
+          logFile.Write (currentLog->String(), currentLog->Length());
           delete currentLog;
         }
         else
@@ -183,10 +183,10 @@ ClientAgentLogger::UnregisterLogger (const char *name)
 }
 
 void
-ClientAgentLogger::CloseSession (BFile *logFile)
+ClientAgentLogger::CloseSession (BFile &logFile)
 {
   // write Session Close and close/clean up
-  if (logFile->InitCheck() != B_NO_INIT)
+  if (logFile.InitCheck() != B_NO_INIT)
   {
     time_t myTime (time (0));
     struct tm ptr;
@@ -194,9 +194,8 @@ ClientAgentLogger::CloseSession (BFile *logFile)
     char tempTime[96];
     strftime (tempTime, 96, "Session Close: %a %b %d %H:%M %Y\n", &ptr);
     off_t len = strlen (tempTime);
-    logFile->Write (tempTime, len);
-    logFile->Unset();
-    delete logFile;
+    logFile.Write (tempTime, len);
+    logFile.Unset();
   }
 }
 
@@ -266,7 +265,7 @@ ClientAgentLogger::AsyncLogger (void *arg)
   BString *currentString (NULL);
   BLocker *myLogBufferLock ((logger->fLogBufferLock));
   BObjectList<BString> *myLogBuffer ((logger->fLogBuffer));
-  BFile *myLogFile (NULL);  
+  BFile myLogFile;  
   
   // initialize the log file if it doesn't already exist
   logger->SetupLogging();
@@ -283,8 +282,8 @@ ClientAgentLogger::AsyncLogger (void *arg)
       currentString = myLogBuffer->RemoveItemAt (0L);
       myLogBufferLock->Unlock();
       myLogFile = logger->fLogFiles[*currentLogger];
-      if (myLogFile && myLogFile->InitCheck() != B_NO_INIT)
-        myLogFile->Write (currentString->String(), currentString->Length());
+      if (myLogFile.InitCheck() != B_NO_INIT)
+        myLogFile.Write (currentString->String(), currentString->Length());
       delete currentLogger;
       delete currentString;
     }
@@ -297,8 +296,8 @@ ClientAgentLogger::AsyncLogger (void *arg)
     currentLogger = (BString *)(myLogBuffer->RemoveItemAt (0L));
     currentString = (BString *)(myLogBuffer->RemoveItemAt (0L));
     myLogFile = logger->fLogFiles[*currentLogger];
-    if (myLogFile && myLogFile->InitCheck() != B_NO_INIT)
-      myLogFile->Write (currentString->String(), currentString->Length());
+    if (myLogFile.InitCheck() != B_NO_INIT)
+      myLogFile.Write (currentString->String(), currentString->Length());
     delete currentLogger;
     delete currentString;
   }

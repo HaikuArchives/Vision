@@ -33,7 +33,7 @@
 
 #include <map>
 
-typedef map<BString, BFile *> filemap;
+typedef map<BString, BFile> filemap;
 
 class ClientAgentLogger
 {
@@ -50,7 +50,7 @@ class ClientAgentLogger
   
   private:
    void                    SetupLogging (void);
-   void                    CloseSession (BFile *);
+   void                    CloseSession (BFile &);
    static int32            AsyncLogger (void *);
 
    thread_id               fLogThread;
