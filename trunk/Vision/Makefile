@@ -20,7 +20,7 @@ VERSION := 0.7.6-1217
 BUILDDATE := $(shell date +%b_%d_%Y)
 
 # system libs
-REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -L./lib -lcolumnlistview
+REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker
 
 # net_server libs
 NET_LIBS := -lnet -lnetapi
