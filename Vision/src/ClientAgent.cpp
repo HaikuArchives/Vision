@@ -805,6 +805,7 @@ ClientAgent::MessageReceived (BMessage *msg)
           theNick.RemoveFirst (" [DCC]");
         
         BString tempString;
+        BString nickString;
         
         if (theMessage[0] == '\1')
         {
@@ -815,10 +816,9 @@ ClientAgent::MessageReceived (BMessage *msg)
           tempString = " ";
           tempString += aMessage;
           tempString += "\n";
-            
-          BString nickString = "* ";
+          
+          nickString = "* ";
           nickString += theNick;
-          Display (nickString.String(), C_ACTION);
           isAction = true;
         }
         else
@@ -832,7 +832,8 @@ ClientAgent::MessageReceived (BMessage *msg)
         }
 
         // soley for the purpose of iterating through the words
-        int32 place;
+        // TODO: rewrite this so nicks highlight without breaking URLs
+/*        int32 place;
         while ((place = FirstKnownAs (tempString, knownAs, &hasNick)) != B_ERROR)
         {
           BString buffer;
@@ -846,9 +847,21 @@ ClientAgent::MessageReceived (BMessage *msg)
           tempString.MoveInto (buffer, 0, knownAs.Length());
           Display (buffer.String(), C_MYNICK);
           buffer = "";
-        }
+        } */
         
-        Display (tempString.String(), isAction ? C_ACTION : C_TEXT);
+        
+        // scan for presence of nickname, highlight if present
+        FirstKnownAs (tempString, knownAs, &hasNick);
+
+        tempString.Prepend (nickString);
+ 
+        int32 dispColor = C_TEXT;
+        if (hasNick)
+          dispColor = C_MYNICK;
+        else if (isAction)
+          dispColor = C_ACTION;
+        
+        Display (tempString.String(), dispColor);
 
         if (IsHidden())
         {
