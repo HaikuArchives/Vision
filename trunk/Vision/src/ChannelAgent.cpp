@@ -833,7 +833,27 @@ ChannelAgent::MessageReceived (BMessage *msg)
            ParseCmd (command.String()); 
          } 
        } 
-       break; 
+       break;
+     
+    case POPUP_DCCSEND:
+      {
+        int32 index (0); 
+        BString targetNick; 
+        NameItem *myUser (NULL); 
+
+        /// iterate /// 
+        while ((i = namesList->CurrentSelection(index++)) >= 0) 
+        { 
+          myUser = static_cast<NameItem *>(namesList->ItemAt(i)); 
+          targetNick = myUser->Name(); 
+ 
+           BString command ("/dcc send "); 
+           command += targetNick; 
+
+           ParseCmd (command.String()); 
+         } 
+      }
+      break;
 
     case POPUP_KICK:
       {

@@ -84,8 +84,8 @@ void NamesView::AttachedToWindow (void)
 
   myPopUp->AddSeparatorItem();
 
-//  myMessage = new BMessage(SEND_ACTION);
-//  myPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
+  myMessage = new BMessage(POPUP_DCCSEND);
+  myPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
 
   myMessage = new BMessage(POPUP_DCCCHAT);
   myPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
