@@ -224,7 +224,7 @@ ChannelAgent::AddUser (const char *nick, const int32 status)
   
   // check if new nickname matches against tab completion sequence and update nick list
   // if so
-  if (fLastExpansion != "" && fLastExpansion.ICompare(nick, fLastExpansion.Length()) == 0)
+  if (fLastExpansion.Length() > 0 && fLastExpansion.ICompare(nick, fLastExpansion.Length()) == 0)
   {
     BString *string (new BString (nick));
     int32 count (fCompletionNicks.CountItems());
@@ -413,7 +413,7 @@ ChannelAgent::TabExpansion (void)
       --place;
     }
 
-    if (fLastExpansion == "" 
+    if (fLastExpansion.Length() == 0
     || fLastExpansion.ICompare(place, fLastExpansion.Length()) != 0
     || lastNick != place)
     {
