@@ -71,7 +71,7 @@ class ClientAgent : public BView
     void                        SetScrollPos(float);
     void                        ScrollRange(float *, float *) const;
     void                        SetServerName(const char *);
-    void                        SetEditStates(BMenu *);
+    void                        SetEditStates(BMenu *, bool);
     
     bool                        ParseCmd (const char *);
     virtual void                TabExpansion (void);
