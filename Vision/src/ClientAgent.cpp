@@ -41,7 +41,8 @@
 #include "VTextControl.h"
 #include "Vision.h"
 #include "HistoryMenu.h"
-#include "IRCView.h"
+#include "Theme.h"
+#include "RunView.h"
 #include "MessageAgent.h"
 #include "ChannelAgent.h"
 #include "ClientWindow.h"
@@ -118,6 +119,7 @@ ClientAgent::~ClientAgent (void)
 void
 ClientAgent::AttachedToWindow (void)
 {
+  BView::AttachedToWindow();
 }
 
 void
@@ -133,7 +135,8 @@ ClientAgent::AllAttached (void)
 
   // we initialize the color constants for the input control here
   // because BTextControl ignores them prior to being attached for some reason
-  input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
+  rgb_color inputColor (vision_app->GetColor (C_INPUT));
+  input->TextView()->SetFontAndColor (vision_app->GetClientFont (F_INPUT), B_FONT_ALL,
     &inputColor);
   input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
   input->TextView()->SetColorSpace (B_RGB32);
@@ -158,23 +161,6 @@ ClientAgent::Show (void)
 void
 ClientAgent::Init (void)
 {
-  textColor        = vision_app->GetColor (C_TEXT);
-  nickColor        = vision_app->GetColor (C_NICK);
-  ctcpReqColor     = vision_app->GetColor (C_CTCP_REQ);
-  quitColor        = vision_app->GetColor (C_QUIT);
-  errorColor       = vision_app->GetColor (C_ERROR);
-  whoisColor       = vision_app->GetColor (C_WHOIS);
-  joinColor        = vision_app->GetColor (C_JOIN);
-  myNickColor      = vision_app->GetColor (C_MYNICK);
-  nickdisplayColor = vision_app->GetColor (C_NICKDISPLAY);
-  actionColor      = vision_app->GetColor (C_ACTION);
-  opColor          = vision_app->GetColor (C_OP);
-  inputColor       = vision_app->GetColor (C_INPUT);
-
-  myFont     = *(vision_app->GetClientFont (F_TEXT));
-  serverFont = *(vision_app->GetClientFont (F_SERVER));
-  inputFont  = *(vision_app->GetClientFont (F_INPUT));
-
   input = new VTextControl (
                 BRect (
                   0,
@@ -206,24 +192,31 @@ ClientAgent::Init (void)
     frame.top - 2,
     frame.right - frame.left - 1 - B_V_SCROLL_BAR_WIDTH,
     frame.bottom - input->Frame().Height() - 1);
-
-  text = new IRCView (
+  
+  Theme *activeTheme (vision_app->ActiveTheme());
+  text = new RunView (
     textrect,
-    textrect.InsetByCopy (5, 3),
-    input,
-    this);
-  text->SetViewColor (vision_app->GetColor (C_BACKGROUND));
-
-
+    id.String(),
+    activeTheme,
+    B_FOLLOW_ALL);
+  
+    if (vision_app->GetBool ("timestamp"))
+      text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
+ 
+  activeTheme->AddView (text);
+  
   textScroll = new BScrollView (
     "textscroll",
     text,
-    B_FOLLOW_ALL_SIDES,
+    B_FOLLOW_ALL,
     0,
     false,
     true,
     B_PLAIN_BORDER);
+  
   AddChild (textScroll);
+  
+  
 
   if (isLogging)
     logger = new ClientAgentLogger (id, serverName);
@@ -365,32 +358,18 @@ void
 ClientAgent::PackDisplay (
   BMessage *msg,
   const char *buffer,
-  const int32 whichColor,
-  const BFont *font,
-  bool timestamp)
+  uint32 fore,
+  uint32 back,
+  uint32 font)
 {
   BMessage packed;
   
-  rgb_color color;
-   
   packed.AddString ("msgz", buffer);
 
-  if (whichColor >= 0)
-  {
-    color = vision_app->GetColor (whichColor);
-    packed.AddData (
-      "color",
-      B_RGB_COLOR_TYPE,
-      &color,
-      sizeof (rgb_color));
-  }
-
-  if (font)
-    packed.AddPointer ("font", font);
-
-  if (timestamp)
-    packed.AddBool ("timestamp", timestamp);
-
+  packed.AddInt32 ("fore", fore);
+  packed.AddInt32 ("back", back);
+  packed.AddInt32 ("font", font);
+  
   if (msg->HasMessage ("packed"))
     msg->ReplaceMessage ("packed", &packed);
   else
@@ -401,32 +380,22 @@ ClientAgent::PackDisplay (
 void
 ClientAgent::Display (
   const char *buffer,
-  const rgb_color *color,
-  const BFont *font,
-  bool timeStamp)
+  uint32 fore,
+  uint32 back,
+  uint32 font)
 {
 
   if (isLogging)
   {
     BString printbuf;
-    if (timeStamp)
-      printbuf += TimeStamp().String();
+    printbuf += TimeStamp().String();
 
     printbuf += buffer;
     logger->Log (printbuf.String());
   }
-
-  if (timeStamp && timeStampState)
-    text->DisplayChunk (
-      TimeStamp().String(),
-      &textColor,
-      &myFont);
-
-  text->DisplayChunk (
-    buffer,
-    color ? color : &textColor,
-    font  ? font  : &myFont);
-
+  
+  text->Append(buffer, fore, back, font);
+  
   if (IsHidden())
   {
     BMessage statusMsg (M_UPDATE_STATUS);
@@ -509,58 +478,9 @@ ClientAgent::MessageReceived (BMessage *msg)
         {
           switch (which)
           {
-            case C_TEXT:
-              textColor = vision_app->GetColor (C_TEXT);
-              break;
-            
-            case C_BACKGROUND:
-              text->SetViewColor (vision_app->GetColor (C_BACKGROUND));
-              text->Invalidate();
-              break;
-              
-            case C_NICK:
-              nickColor = vision_app->GetColor (C_NICK);
-              break;
-            
-            case C_CTCP_REQ:
-              ctcpReqColor = vision_app->GetColor (C_CTCP_REQ);
-              break;
-            
-            case C_QUIT:
-              quitColor = vision_app->GetColor (C_QUIT);
-              break;
-              
-            case C_ERROR:
-              errorColor = vision_app->GetColor (C_ERROR);
-              break;
-            
-            case C_WHOIS:
-              whoisColor = vision_app->GetColor (C_WHOIS);
-              break;
-            
-            case C_JOIN:
-              joinColor = vision_app->GetColor (C_JOIN);
-              break;
-            
-            case C_MYNICK:
-              myNickColor = vision_app->GetColor (C_MYNICK);
-              break;
-            
-            case C_NICKDISPLAY:
-              nickdisplayColor = vision_app->GetColor (C_NICKDISPLAY);
-              break;
-            
-            case C_ACTION:
-              actionColor = vision_app->GetColor (C_ACTION);
-              break;
-            
-            case C_OP:
-              opColor = vision_app->GetColor (C_OP);
-              break;
-            
             case C_INPUT:
-              inputColor = vision_app->GetColor (C_INPUT);
-              input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
+              rgb_color inputColor (vision_app->GetColor (C_INPUT));
+              input->TextView()->SetFontAndColor (vision_app->GetClientFont(F_INPUT), B_FONT_ALL,
                 &inputColor);
               input->TextView()->Invalidate();
               break;
@@ -579,33 +499,23 @@ ClientAgent::MessageReceived (BMessage *msg)
         {
           switch (which)
           {
-            case F_TEXT:
-              myFont = *(vision_app->GetClientFont (F_TEXT));
-              break;
-              
-            case F_SERVER:
-              serverFont = *(vision_app->GetClientFont (F_SERVER));
-              if (dynamic_cast<ServerAgent *>(this))
-                myFont = serverFont;
-              break;
-            
             case F_INPUT:
-              inputFont = *(vision_app->GetClientFont (F_INPUT));
-              input->TextView()->SetFontAndColor (&inputFont, B_FONT_ALL,
+              rgb_color inputColor (vision_app->GetColor (C_INPUT));
+              input->TextView()->SetFontAndColor (vision_app->GetClientFont (F_INPUT), B_FONT_ALL,
                 &inputColor);
               break;
             
-            case F_URL:
-              text->SetFont (F_URL, vision_app->GetClientFont (F_URL));
-              break;
-              
             default:
               break;
           }
         }
         else if (msg->HasBool ("bool"))
         {
-          timeStampState = vision_app->GetBool ("timestamp");
+          if (timeStampState = vision_app->GetBool ("timestamp"))
+            text->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
+          else
+            text->SetTimeStampFormat (NULL);
+         
           bool logging (vision_app->GetBool ("log_enabled"));
           if (logging != isLogging)
           {
@@ -749,30 +659,11 @@ ClientAgent::MessageReceived (BMessage *msg)
 
         for (int32 i = 0; msg->HasMessage ("packed", i); ++i)
         {
-          BFont *font (&myFont);
-          const rgb_color *color (&textColor);
-          ssize_t size (sizeof (rgb_color));
-          bool timeStamp (false);
           BMessage packed;
 
           msg->FindMessage ("packed", i, &packed);
-
-          if (packed.HasPointer ("font"))
-            packed.FindPointer ("font", reinterpret_cast<void **>(&font));
-
-          if (packed.HasData ("color", B_RGB_COLOR_TYPE))
-          {
-            packed.FindData ("color",
-              B_RGB_COLOR_TYPE,
-              reinterpret_cast<const void **>(&color),
-              &size);
-          }
-
-          if (packed.HasBool ("timestamp"))
-            packed.FindBool ("timestamp", &timeStamp);
-
           packed.FindString ("msgz", &buffer);
-          Display (buffer, color, font, timeStamp);
+          Display (buffer, packed.FindInt32 ("fore"), packed.FindInt32 ("back"), packed.FindInt32 ("font"));
         }
       }
       break;
@@ -812,13 +703,13 @@ ClientAgent::MessageReceived (BMessage *msg)
           tempString += " ";
           tempString += aMessage;
           tempString += '\n';
-          Display (tempString.String(), &actionColor, 0, true);
+          Display (tempString.String(), C_ACTION);
         }
         else
         {
-          Display ("<", theNick == myNick ? &myNickColor : &nickColor, 0, true);
-          Display (theNick.String(), &nickdisplayColor);
-          Display (">", theNick == myNick ? &myNickColor : &nickColor);
+          Display ("<", theNick == myNick ? C_MYNICK : C_NICK);
+          Display (theNick.String(), C_NICKDISPLAY);
+          Display (">", theNick == myNick ? C_MYNICK : C_NICK);
 
           BString tempString;
           tempString += " ";
@@ -841,7 +732,7 @@ ClientAgent::MessageReceived (BMessage *msg)
               hasNick = true;
           }
 
-          Display (tempString.String(), hasNick ? &myNickColor : 0);
+          Display (tempString.String(), hasNick ? C_MYNICK : C_TEXT);
         }
 
         if (IsHidden())
@@ -1067,5 +958,5 @@ ClientAgent::CTCPAction (BString theTarget, BString theMsg)
   else
     tempString += '\n';
 
-  Display (tempString.String(), &ctcpReqColor, &serverFont);
+  Display (tempString.String(), C_CTCP_REQ, C_BACKGROUND, F_SERVER);
 }

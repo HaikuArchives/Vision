@@ -50,8 +50,8 @@ class AppearancePrefsView : public BView
     void SetSampleColors (int32);
     void SetFontControlState (int32);
 
-    BMenuField  *clientFont[7],
-                *fontSize[7],
+    BMenuField  *clientFont[8],
+                *fontSize[8],
                 *fontMenu;
     BaseColorControl *sample;
     BStringView *sampleText;

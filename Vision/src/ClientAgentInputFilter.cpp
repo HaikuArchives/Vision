@@ -39,7 +39,7 @@
 
 #include <stdio.h>
 
-#include "IRCView.h"
+#include "RunView.h"
 #include "VisionBase.h"
 #include "ClientAgent.h"
 #include "ClientAgentInputFilter.h"
@@ -315,7 +315,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
           // scroll the IRCView up by 1 line
           if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != 0)
           {
-            window->text->ScrollBy (0.0, window->text->LineHeight() * -1);
+            // window->text->ScrollBy (0.0, window->text->LineHeight() * -1);
             result = B_SKIP_MESSAGE;
           }
         }
@@ -328,7 +328,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
           window->textScroll->ScrollBar (B_VERTICAL)->GetRange (&min, &max);
           if (window->textScroll->ScrollBar (B_VERTICAL)->Value() != max)
           { 
-            window->text->ScrollBy (0.0, window->text->LineHeight());
+            // window->text->ScrollBy (0.0, window->text->LineHeight());
             result = B_SKIP_MESSAGE;
           }
         }

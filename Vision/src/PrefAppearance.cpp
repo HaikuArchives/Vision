@@ -83,6 +83,9 @@ static const char *ColorLabels[] =
 	"Winlist event status",
 	"Winlist background",
 	"Wallops",
+	"Timestamp",
+	"Timestamp background",
+	"Selection"
 };
 
 static struct {
@@ -176,14 +179,14 @@ AppearancePrefsView::AttachedToWindow (void)
              }
            }
         }
-        BMenu *parentMenu[2][7];
+        BMenu *parentMenu[2][8];
         font_height fh;
         float height;
 
         GetFontHeight (&fh);
         height = fh.ascent + fh.descent + fh.leading + 20;
 
-        for (i = 0; i < 7; ++i)
+        for (i = 0; i < 8; ++i)
         {
           font_family cur_family;
           font_style  cur_style;
@@ -276,13 +279,13 @@ AppearancePrefsView::AttachedToWindow (void)
          delete [] font_stat[i].styles;
       delete [] font_stat;
 
-      for (i = 1; i < 7; i++)
+      for (i = 1; i < 8; i++)
       {
          clientFont[i]->Hide();
          fontSize[i]->Hide();
       }
 
-      for (i = 0; i < 7; ++i)
+      for (i = 0; i < 8; ++i)
       {
          fontSize[i]->Menu()->SetLabelFromMarked (true);
 		 fontSize[i]->MenuItem()->SetLabel (fontSize[i]->Menu()->FindMarked()->Label());
@@ -303,7 +306,7 @@ AppearancePrefsView::AttachedToWindow (void)
       
       if ((clientFont[0]->Frame().right - fontBox->Frame().right) <= be_plain_font->StringWidth("Size: "))
       {
-         for (i = 0; i < 7; i++)
+         for (i = 0; i < 8; i++)
            fontSize[i]->MoveTo (1.5 * (label->Frame().right + be_plain_font->StringWidth (" gP ")), be_plain_font->Size() * 5.5);
       }      
 
@@ -341,6 +344,9 @@ AppearancePrefsView::AttachedToWindow (void)
       SetColorPair (C_WINLIST_SELECTION, C_WINLIST_SELECTION, C_WINLIST_NORMAL);
       SetColorPair (C_WALLOPS, C_BACKGROUND, C_WALLOPS);
       SetColorPair (C_NICKDISPLAY, C_BACKGROUND, C_NICKDISPLAY);
+      SetColorPair (C_TIMESTAMP, C_TIMESTAMP_BACKGROUND, C_TIMESTAMP);
+      SetColorPair (C_TIMESTAMP_BACKGROUND, C_TIMESTAMP_BACKGROUND, C_TIMESTAMP);
+      SetColorPair (C_SELECTION, C_SELECTION, C_TEXT);
    }
 }
 
@@ -430,6 +436,7 @@ AppearancePrefsView::MessageReceived (BMessage *msg)
 
      case M_FONT_SIZE_CHANGE:
      {
+        msg->PrintToStream();
         int32 which, size;
 
         msg->FindInt32 ("which", &which);
@@ -482,6 +489,10 @@ AppearancePrefsView::MessageReceived (BMessage *msg)
            case C_WINLIST_NORMAL:
              SetFontControlState (5);
              break;
+            
+           case C_TIMESTAMP:
+             SetFontControlState (7);
+             break;
            
            default:
              SetFontControlState (-1);
@@ -500,7 +511,7 @@ AppearancePrefsView::MessageReceived (BMessage *msg)
 void
 AppearancePrefsView::SetFontControlState(int32 which)
 {
-  for (int32 i = 0; i < 7; i++)
+  for (int32 i = 0; i < 8; i++)
   {
       if (!clientFont[i]->IsHidden())
       {

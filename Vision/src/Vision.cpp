@@ -36,7 +36,6 @@ class VisionApp * vision_app;
 #include <Font.h>
 #include <Autolock.h>
 #include <Roster.h>
-#include <NetworkKit.h>
 #include <Beep.h>
 
 #include <algorithm>
@@ -45,10 +44,12 @@ class VisionApp * vision_app;
 
 #ifdef NETSERVER_BUILD
 #  include <netdb.h>
+#  include <socket.h>
 #endif
 
 #ifdef BONE_BUILD
 #  include <arpa/inet.h>
+#  include <sys/socket.h>
 #endif
 
 #include "AboutWindow.h"
@@ -57,6 +58,7 @@ class VisionApp * vision_app;
 #include "SettingsFile.h"
 #include "SetupWindow.h"
 #include "PrefsWindow.h"
+#include "Theme.h"
 
 #include "TestScript.h"
 
@@ -87,7 +89,8 @@ VisionApp::VisionApp (void)
   : BApplication ("application/x-vnd.Ink-Vision"),
       aboutWin (0),
       prefsWin (0),
-      identEndpoint (0)
+      identSocket (-1),
+      activeTheme (new Theme ("current", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
 {
   // some setup
   settingsloaded = false;
@@ -226,7 +229,10 @@ VisionApp::InitDefaults (void)
   colors[C_WINLIST_PAGESIX]           = WINLIST_PAGE6_COLOR;
   colors[C_WALLOPS]                   = WALLOPS_COLOR;
   colors[C_NICKDISPLAY]               = NICK_DISPLAY;
-
+  colors[C_TIMESTAMP]                 = myBlack;
+  colors[C_TIMESTAMP_BACKGROUND]      = myWhite;
+  colors[C_SELECTION]                 = myBlack;
+  
   client_font[F_TEXT]    = new BFont (be_plain_font);
   client_font[F_SERVER]  = new BFont (be_plain_font);
   client_font[F_URL]     = new BFont (be_plain_font);
@@ -234,6 +240,7 @@ VisionApp::InitDefaults (void)
   client_font[F_INPUT]   = new BFont (be_plain_font);
   client_font[F_WINLIST] = new BFont (be_plain_font);
   client_font[F_LISTAGENT] = new BFont (be_plain_font);
+  client_font[F_TIMESTAMP] = new BFont (be_plain_font);
   
   events[E_JOIN]            = "*** $N ($I@$A) has joined the channel.";
   events[E_PART]            = "*** $N has left the channel.";
@@ -267,6 +274,17 @@ VisionApp::InitSettings (void)
   // initialize arrays with Vision's default settings in case of new user
   InitDefaults();
   
+  Theme::TimestampFore = C_TIMESTAMP;
+  Theme::TimestampBack = C_TIMESTAMP;
+  Theme::TimespaceFore = MAX_COLORS;
+  Theme::TimespaceBack = MAX_COLORS;
+  Theme::TimespaceFont = MAX_FONTS;
+  Theme::TimestampFont = F_TIMESTAMP;
+  Theme::NormalFore = C_TEXT;
+  Theme::NormalBack = C_TEXT;
+  Theme::NormalFont = F_TEXT;
+  Theme::SelectionBack = C_SELECTION;
+  
   if (debugsettings)
     printf (":SETTINGS: loading...\n");
       
@@ -276,7 +294,7 @@ VisionApp::InitSettings (void)
     visionSettings->Load();
   else
     printf(":ERROR: Error Loading /Vision/VisionSettings\n");
-  
+
   LoadDefaults (SET_SERVER);
   LoadDefaults (SET_GENERAL);
   LoadDefaults (SET_WINDOW);
@@ -287,8 +305,22 @@ VisionApp::InitSettings (void)
   settingsloaded = true;  
   if (debugsettings)
     printf (":SETTINGS: done loading\n");
-      
-
+  
+  // initialize theme, TODO: move to separate function
+  int32 i (0);
+  
+  for (i = 0; i < MAX_COLORS; i++)
+  {
+    activeTheme->SetForeground (i, colors[i]);
+    activeTheme->SetBackground (i, colors[C_BACKGROUND]);
+  }
+  activeTheme->SetBackground (C_TIMESTAMP, colors[C_TIMESTAMP_BACKGROUND]);
+  activeTheme->SetBackground (MAX_COLORS, colors[C_BACKGROUND]);
+  activeTheme->SetForeground (MAX_COLORS, colors[C_TEXT]);
+  activeTheme->SetFont (MAX_FONTS, client_font[F_TEXT]);
+  for (i = 0; i < MAX_FONTS; i++)
+    activeTheme->SetFont (i, client_font[i]);
+  
 }
 
 void
@@ -323,8 +355,10 @@ VisionApp::LoadDefaults (int32 section)
           visionSettings->AddBool ("timestamp", false);
           
         if (!visionSettings->HasString ("timestamp_format"))
-          visionSettings->AddString ("timestamp_format", "[%02d:%02d]");
-        
+          visionSettings->AddString ("timestamp_format", "[%H:%M]");
+        else
+          visionSettings->ReplaceString ("timestamp_format", "[%H:%M]");
+          
         if (!visionSettings->HasBool ("log_enabled"))
           visionSettings->AddBool ("log_enabled", false);
 
@@ -358,25 +392,26 @@ VisionApp::LoadDefaults (int32 section)
        float  size (0.0);
        be_plain_font->GetFamilyAndStyle (&default_family, &default_style);
        size = be_plain_font->Size();
-       if (!visionSettings->HasString ("family"))
+       int32 i (0);
+       
+       for (i = 0; i < MAX_FONTS; i++)
        {
-          for (int32 i = 0; i < MAX_FONTS; i++)
-          {
-            visionSettings->AddString ("family", default_family);
-            visionSettings->AddString ("style", default_style);
-            visionSettings->AddFloat ("size", size);
-          }
-       }
-       else
-       {
-         for (int32 i = 0; i < MAX_FONTS; i++)
+         if (!visionSettings->HasString ("family", i))
+         {
+           visionSettings->AddString ("family", default_family);
+           visionSettings->AddString ("style", default_style);
+           visionSettings->AddFloat ("size", size);
+         }
+         else
          {
            BString family;
            BString style;
+           size = 0.0;
                   
            visionSettings->FindString ("family", i, &family);
            visionSettings->FindString ("style", i, &style);
            visionSettings->FindFloat ("size", i, &size);
+           
            ClientFontFamilyAndStyle (i, family.String(), style.String());
            ClientFontSize (i, size); 
          }
@@ -386,23 +421,19 @@ VisionApp::LoadDefaults (int32 section)
      
    case SET_COLOR:
      {
-       if (!visionSettings->HasData ("color", B_RGB_COLOR_TYPE))
-       {
-         // load defaults from color array into settings file
-         for (int32 i = 0; i < MAX_COLORS; i++)
-           visionSettings->AddData ("color", B_RGB_COLOR_TYPE, &colors[i], sizeof (rgb_color));
-       }
-       else
-       {
-         for (int32 i = 0; i < MAX_COLORS; i++)
+       // load defaults from color array into settings file
+       for (int32 i = 0; i < MAX_COLORS; i++)
+         if (!visionSettings->HasData ("color", B_RGB_COLOR_TYPE, i))
          {
-           // overwrite color array with data loaded from settings file
+           visionSettings->AddData ("color", B_RGB_COLOR_TYPE, &colors[i], sizeof (rgb_color));
+         }
+         else
+         {
            const rgb_color *color;
            ssize_t size (0);
            if (visionSettings->FindData ("color", B_RGB_COLOR_TYPE, i, reinterpret_cast<const void **>(&color), &size) == B_OK)
              colors[i] = *color;
          }
-       }
      }
      break;
    
@@ -440,7 +471,6 @@ bool
 VisionApp::QuitRequested (void)
 {
   ShuttingDown = true;
-  
   BMessage *quitRequest (CurrentMessage());
 
   if ((clientWin) && (!quitRequest->HasBool ("real_thing")))
@@ -451,8 +481,16 @@ VisionApp::QuitRequested (void)
 
   // give our child threads a chance to die gracefully
   snooze (500000);  // 0.5 seconds
+
+  if (identSocket >= 0)
+#ifdef BONE_BUILD
+  close (identSocket);
+#elif NETSERVER_BUILD
+  closesocket (identSocket);
+#endif
   
   status_t result;
+
   wait_for_thread (identThread, &result);
   
   //ThreadStates();
@@ -720,6 +758,17 @@ VisionApp::SetColor (int32 which, const rgb_color color)
     visionSettings->ReplaceData ("color", B_RGB_COLOR_TYPE, which,
       reinterpret_cast<void * const *>(&color), sizeof(rgb_color));
     
+    if (which == C_BACKGROUND)
+    {
+      for (int32 i = 0; i < C_TIMESTAMP; i++)
+        activeTheme->SetBackground (i , color);
+       activeTheme->SetBackground (MAX_COLORS, color);
+    }
+    else if (which == C_TIMESTAMP_BACKGROUND)
+      activeTheme->SetBackground (C_TIMESTAMP, color);
+    else
+      activeTheme->SetForeground (which, color);
+    
     BMessage msg (M_STATE_CHANGE);
 
     msg.AddInt32 ("which", which);
@@ -745,7 +794,10 @@ VisionApp::ClientFontFamilyAndStyle (
   if (which < MAX_FONTS && which >= 0)
   {
     client_font[which]->SetFamilyAndStyle (family, style);
-
+    
+    activeTheme->SetFont (which, client_font[which]);
+    if (which == F_TEXT)
+      activeTheme->SetFont (MAX_FONTS, client_font[which]);
     BMessage msg (M_STATE_CHANGE);
     
     SetString ("family", which, family);
@@ -771,9 +823,11 @@ VisionApp::ClientFontSize (int32 which, float size)
     client_font[which]->SetSize (size);
     BMessage msg (M_STATE_CHANGE);
     
+    activeTheme->SetFont (which, client_font[which]);
+    
     if (visionSettings->ReplaceFloat ("size", which, size) != B_OK)
       printf("error, could not set font size\n");
-    
+
     msg.AddBool ("font", true);
     msg.AddInt32 ("which", which);
     Broadcast (&msg);
@@ -921,6 +975,12 @@ VisionApp::SetBool (const char *settingName, bool value)
  return B_ERROR;
 }
 
+Theme *
+VisionApp::ActiveTheme (void)
+{
+  return activeTheme;
+}
+
 const char *
 VisionApp::GetThreadName (int thread_type)
 {
@@ -1051,43 +1111,64 @@ VisionApp::Broadcast (BMessage *, const char *, bool)
 
 int32 
 VisionApp::Identity (void *) 
-{ 
-  BNetEndpoint identPoint, *accepted; 
-  BNetBuffer buffer; 
+{
+  int32 identSock (0), accepted (0);
   const char *ident (NULL); 
-  char received[64]; 
+  char received[64];
+ 
+  struct sockaddr_in localAddr;
+  localAddr.sin_family = AF_INET;
+  localAddr.sin_port = htons (113);
+  localAddr.sin_addr.s_addr = INADDR_ANY;
       
-  if (identPoint.InitCheck()    == B_OK 
-  &&  identPoint.Bind (113)     == B_OK) 
+  if ((identSock = socket (AF_INET, SOCK_STREAM, 0)) >= 0 
+  &&  bind (identSock, (struct sockaddr *)&localAddr, sizeof (localAddr)) == 0) 
   {
-    vision_app->identEndpoint = &identPoint;
-    identPoint.Listen ();
+    if (vision_app)
+      vision_app->identSocket = identSock;
+    else
+      printf("aborting, vision_app = NULL\n");
+
+#ifdef BONE_BUILD
+    struct linger lng = { 0, 0 }; 
+    setsockopt (identSock, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
+#endif
+    struct timeval tv = { 10 , 0 };
+    listen (identSock, 2048);
+
     while (!vision_app->ShuttingDown) 
     {
-      accepted = identPoint.Accept (2 * 1000);
-      
-      if (accepted) 
+      struct fd_set rset, eset;
+      struct sockaddr_in remoteSock;
+      int size (sizeof (sockaddr_in));
+      accepted = accept (identSock, (struct sockaddr *)&remoteSock, &size);
+      if (accepted >= 0) 
       {
-        BNetAddress remoteAddr (accepted->RemoteAddr()); 
-        struct sockaddr_in remoteSock; 
-        remoteAddr.GetAddr (remoteSock); 
-        BString remoteIP (inet_ntoa (remoteSock.sin_addr)); 
-        ident = vision_app->GetIdent (remoteIP.String()); 
+        FD_ZERO (&rset);
+        FD_ZERO (&eset);
+        
+        BString remoteIP (inet_ntoa (remoteSock.sin_addr));
+        ident = vision_app->GetIdent (remoteIP.String());
+#ifdef BONE_BUILD
+        setsockopt (accepted, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
+#endif 
         if (ident) 
         {
-          accepted->SetTimeout(5);
-
-          if (accepted->Receive (buffer, 64) > 0)
+          memset (received, 0, 64);
+          FD_SET (accepted, &rset);
+          FD_SET (accepted, &eset);
+          if (select (accepted + 1, &rset, 0, &eset, &tv) > 0
+            && FD_ISSET (accepted, &rset))
           {
-            buffer.RemoveString (received, 64); 
-            int32 len; 
- 
+            
+            recv (accepted, received, 64, 0);
+            int32 len (0); 
+     
             received[63] = 0; 
             while ((len = strlen (received)) 
             &&     isspace (received[len - 1])) 
-              received[len - 1] = 0; 
- 
-            BNetBuffer output; 
+              received[len - 1] = 0;
+              
             BString string; 
             
             string.Append (received); 
@@ -1095,28 +1176,30 @@ VisionApp::Identity (void *)
             string.Append (ident); 
             string.Append ("\r\n"); 
                 
-            output.AppendString (string.String()); 
-            accepted->Send (output); 
+            send (accepted, string.String(), string.Length(), 0); 
           }
         } 
         else 
         { 
-          BNetBuffer output; 
-          output.AppendString ("0 , 0 : UNKNOWN : UNKNOWN-ERROR"); 
-          accepted->Send (output); 
+          BString string ("0 , 0 : UNKNOWN : UNKNOWN-ERROR");
+          send (accepted, string.String(), string.Length(), 0);
         } 
-              
-        accepted->Close(); 
-        delete accepted; 
+#ifdef NETSERVER_BUILD
+        closesocket (accepted);
+#elif BONE_BUILD
+        close (accepted);
+#endif              
         if (ident) 
           ident = NULL; 
       } 
     }
   }
 #ifdef BONE_BUILD
-  shutdown(identPoint.Socket(), SHUTDOWN_BOTH);
+  shutdown(identSock, SHUTDOWN_BOTH);
+  close (identSock);
+#elif NETSERVER_BUILD
+  closesocket (identSock);
 #endif
-  identPoint.Close();
   return 0; 
 } 
  

@@ -73,14 +73,13 @@ SetupWindow::InitServerStartup (void)
   // iterates through servers that have connect on startup enabled
   // and adds them to ClientWindow
   
-  
   // temp
   BMessage newserver (M_MAKE_NEW_SERVER);
-  newserver.AddString ("hostname", "irc.exodusirc.net");
+  newserver.AddString ("hostname", "irc.reefer.org");
   newserver.AddString ("port", "6667");
   newserver.AddString ("autoexec", "");
   newserver.AddBool   ("enidentd", true);
   vision_app->pClientWin()->PostMessage (&newserver);
-  
+
   QuitRequested();
 }

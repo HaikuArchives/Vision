@@ -150,7 +150,7 @@ WindowList::MouseDown (BPoint myPoint)
   else
   {
     // find the active agent and select it
-    WindowListItem *activeagent (0);
+    WindowListItem *activeagent (NULL);
     for (int32 i (1); i <= CountItems(); ++i)
     { 
       WindowListItem *aitem ((WindowListItem *)ItemAt (i - 1));
@@ -212,6 +212,13 @@ void
 WindowList::SetColor (int32 which, rgb_color color)
 {
   // TODO: should we maybe be locking first on these invalidates?
+  BLooper *looper (Looper());
+  bool hasLock (false);
+  if (looper && !looper->IsLocked())
+  {
+    LockLooper();
+    hasLock = true;
+  }
   
   switch (which)
   {
@@ -286,6 +293,8 @@ WindowList::SetColor (int32 which, rgb_color color)
       }
       break;    
   }
+  if (hasLock)
+    UnlockLooper();
 }
 
 rgb_color
@@ -387,7 +396,7 @@ WindowList::ContextSelectUp (void)
   if (currentsel < 0)
     return;
           
-  WindowListItem *aitem;
+  WindowListItem *aitem (NULL);
   bool foundone (false);
   int iloop;
         
@@ -505,7 +514,7 @@ WindowList::ContextSelectDown (void)
 ClientAgent *
 WindowList::Agent (int32 serverId, const char *aName)
 {
-  ClientAgent *agent (0);
+  ClientAgent *agent (NULL);
 
   for (int32 i = 0; i < CountItems(); ++i)
   {
@@ -544,7 +553,7 @@ WindowList::Agent (int32 serverId, const char *aName)
 void
 WindowList::AddAgent (BView *agent, int32 serverId, const char *name, int32 winType, bool activate)
 {
-  int32 itemindex;
+  int32 itemindex (-1);
   WindowListItem *currentitem ((WindowListItem *)ItemAt (CurrentSelection()));
   
   WindowListItem *newagentitem (new WindowListItem (name, serverId, winType, WIN_NORMAL_BIT, agent));

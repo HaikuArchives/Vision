@@ -22,6 +22,7 @@
  */
  
 #include <stdio.h>
+#include <time.h>
 
 #ifdef GNOME_BUILD
 #  include "gnome/Roster.h"
@@ -219,7 +220,7 @@ TimeStamp()
   tm curTime = *localtime (&myTime);
 	
   char tempTime[32];
-  sprintf (tempTime, ts_format, curTime.tm_hour, curTime.tm_min);
+  tempTime[strftime (tempTime, 31, ts_format, &curTime)] = '\0'; 
 	
   return BString (tempTime).Append('\x20', 1);
 }

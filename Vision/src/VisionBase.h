@@ -32,6 +32,8 @@
 #  include <GraphicsDefs.h>
 #endif
 
+#include <Debug.h>
+
 // horizontal resize cursor taken from OpenTracker, see www.opentracker.org for license
 
 const unsigned char kHorizontalResizeCursor[] = {
@@ -104,7 +106,6 @@ enum {
   VK_NUMPADRETURN = 0x5b,
 };
 
-
 #define C_TEXT											0
 #define C_BACKGROUND									1
 #define C_URL											2
@@ -137,8 +138,11 @@ enum {
 #define C_WINLIST_PAGESIX                               29
 #define C_WINLIST_BACKGROUND                            30
 #define C_WALLOPS                                       31
+#define C_TIMESTAMP                                     32
+#define C_TIMESTAMP_BACKGROUND                          33
+#define C_SELECTION                                     34
 
-#define MAX_COLORS										32
+#define MAX_COLORS										35
 
 
 #define F_TEXT												0
@@ -148,8 +152,9 @@ enum {
 #define F_INPUT												4
 #define F_WINLIST                                           5
 #define F_LISTAGENT                                         6
+#define F_TIMESTAMP                                         7
 
-#define MAX_FONTS											7
+#define MAX_FONTS											8
 
 #define E_JOIN												0
 #define E_PART												1

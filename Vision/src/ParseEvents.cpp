@@ -121,7 +121,7 @@ ServerAgent::ParseEvents (const char *data)
     expansions[0] = serverHostName.String();
     expansions[1] = theNotice.String();
     tempString = ExpandKeyed (events[E_SNOTICE].String(), "NR", expansions);
-    Display (tempString.String(), &noticeColor, 0, true);
+    Display (tempString.String(), C_NOTICE);
     
     return true;
   }
@@ -141,7 +141,7 @@ ServerAgent::ParseEvents (const char *data)
       expansions[0] = serverHostName.String();
       expansions[1] = theNotice.String();
       tempString = ExpandKeyed (events[E_SNOTICE].String(), "NR", expansions);
-      Display (tempString.String(), &noticeColor, 0, true);
+      Display (tempString.String(), C_NOTICE);
 
       return true;
     }
@@ -166,7 +166,7 @@ ServerAgent::ParseEvents (const char *data)
 
       tempString = ExpandKeyed (events[E_UNOTICE].String(), "NRIA", expansions);
       BMessage display (M_DISPLAY);
-      PackDisplay (&display, tempString.String(), C_NOTICE, 0, true);
+      PackDisplay (&display, tempString.String(), C_NOTICE);
       PostActive (&display);
       return true;
     }
@@ -225,9 +225,7 @@ ServerAgent::ParseEvents (const char *data)
       PackDisplay (
         &display,
         tempString.String(),
-        C_JOIN,
-        0,
-        true);
+        C_JOIN);
 
       bool ignored (false);
 
@@ -262,7 +260,7 @@ ServerAgent::ParseEvents (const char *data)
       buffer = ExpandKeyed (events[E_PART].String(), "NIA", expansions);
 
       BMessage display (M_DISPLAY);
-      PackDisplay (&display, buffer.String(), C_JOIN, 0, true);
+      PackDisplay (&display, buffer.String(), C_JOIN);
 
       BMessage msg (M_USER_QUIT);
       msg.AddString ("nick", nick.String());
@@ -291,8 +289,7 @@ ServerAgent::ParseEvents (const char *data)
 
     buffer = ExpandKeyed (events[E_NICK].String(), "NnIA", expansions);
     BMessage display (M_DISPLAY);
-    PackDisplay (&display, buffer.String(), C_NICK, 0,
-                  timeStampState);
+    PackDisplay (&display, buffer.String(), C_NICK);
 
     BMessage msg (M_CHANGE_NICK);
     msg.AddString ("oldnick", oldNick.String());
@@ -337,7 +334,7 @@ ServerAgent::ParseEvents (const char *data)
     theMsg = ExpandKeyed (events[E_QUIT].String(), "NRIA", expansions);
     
     BMessage display (M_DISPLAY);
-    PackDisplay (&display, theMsg.String(), C_QUIT, 0, true);
+    PackDisplay (&display, theMsg.String(), C_QUIT);
 
     BMessage msg (M_USER_QUIT);
     msg.AddMessage ("display", &display);
@@ -417,7 +414,7 @@ ServerAgent::ParseEvents (const char *data)
       expansions[3] = rest.String();
 
       buffer = ExpandKeyed (events[E_KICK].String(), "NCnR", expansions);
-      PackDisplay (&display, buffer.String(), C_QUIT, 0, true);
+      PackDisplay (&display, buffer.String(), C_QUIT);
 
       BMessage msg (M_USER_QUIT);
       msg.AddString ("nick", kickee.String());
@@ -458,7 +455,7 @@ ServerAgent::ParseEvents (const char *data)
       BMessage display (M_DISPLAY);
 
       buffer = ExpandKeyed (events[E_TOPIC].String(), "NTCIA", expansions);
-      PackDisplay (&display, buffer.String(), C_WHOIS, 0, true);
+      PackDisplay (&display, buffer.String(), C_WHOIS);
       topic.AddMessage("display", &display);
       client->msgr.SendMessage (&topic);
     }
@@ -496,7 +493,7 @@ ServerAgent::ParseEvents (const char *data)
       buffer += theMode;
       buffer += "\n";
       
-      PackDisplay (&msg, buffer.String(), -1, 0, true);
+      PackDisplay (&msg, buffer.String());
       PostActive (&msg);
     }
 
@@ -510,7 +507,7 @@ ServerAgent::ParseEvents (const char *data)
     theError.RemoveFirst (":");
     theError.Append ("\n");
 
-    Display (theError.String(), &quitColor);
+    Display (theError.String(), C_QUIT);
     
     if (!isConnected) // we got the error on connect
       isConnecting = false;
@@ -540,7 +537,7 @@ ServerAgent::ParseEvents (const char *data)
       Window()->PostMessage (&statusMsg);
     }
     
-    Display (tempString.String(), &wallColor);
+    Display (tempString.String(), C_WALLOPS);
     return true;      
   }
 
@@ -559,8 +556,7 @@ ServerAgent::ParseEvents (const char *data)
 
     BMessage msg (M_DISPLAY);
 
-    PackDisplay (&msg, tempString.String(), C_WHOIS, 0,
-                   timeStampState);
+    PackDisplay (&msg, tempString.String(), C_WHOIS);
     PostActive (&msg);
 
     return true;
@@ -585,8 +581,7 @@ ServerAgent::ParseEvents (const char *data)
 
     BMessage msg (M_DISPLAY);
 
-    PackDisplay (&msg, tempString.String(), C_WHOIS, 0,
-                   timeStampState);
+    PackDisplay (&msg, tempString.String(), C_WHOIS);
     PostActive (&msg);
 
     return true;

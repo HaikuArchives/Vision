@@ -40,7 +40,7 @@ class VTextControl;
 class BPopUpMenu;
 class ClientAgentInputFilter;
 class ClientAgentLogger;
-class IRCView;
+class RunView;
 class HistoryMenu;
 class AgentSettings;
 class WindowListItem;
@@ -113,7 +113,7 @@ class ClientAgent : public BView
                             
   protected:
     HistoryMenu                 *history;
-    IRCView                     *text;
+    RunView                     *text;
     BScrollView                 *textScroll;
     VTextControl                *input;
 
@@ -124,18 +124,18 @@ class ClientAgent : public BView
  
     virtual void                    Display (
                                       const char *,
-                                      const rgb_color *,
-                                      const BFont * = 0,
-                                      bool = false);
-
+                                      uint32 = 0,
+                                      uint32 = 0,
+                                      uint32 = 0);
+                                      
     virtual void                    Submit (const char *, bool = true, bool = true);
 
     static int32                    TimedSubmit (void *);
     static void                     PackDisplay (BMessage *,
                                       const char *,
-                                      const int32 = -1,
-                                      const BFont * = 0,
-                                      bool = false);
+                                      const uint32 = 1,
+                                      const uint32 = 1,
+                                      const uint32 = 1);
 
     int32                           FirstKnownAs (
                                       const BString &,
@@ -159,23 +159,6 @@ class ClientAgent : public BView
     BString                         myNick,
                                       myLag;
 
-    rgb_color                       textColor,
-                                      ctcpReqColor,
-                                      nickColor,
-                                      quitColor,
-                                      errorColor,
-                                      joinColor,
-                                      whoisColor,
-                                      myNickColor,
-                                      actionColor,
-                                      opColor,
-                                      inputbgColor,
-                                      inputColor,
-                                      nickdisplayColor;
-
-    BFont                            myFont,
-                                      serverFont,
-                                      inputFont;
     bool                             timeStampState,
                                        canNotify,
                                        scrolling,

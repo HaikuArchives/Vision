@@ -37,6 +37,7 @@
 #include "VisionBase.h"
 
 class BFont;
+class Theme;
 class AboutWindow;
 class SetupWindow;
 class PrefsWindow;
@@ -88,6 +89,8 @@ class VisionApp : public BApplication
     bool                    GetBool (const char *);
     status_t                SetBool (const char *, bool);
     
+    Theme *                 ActiveTheme(void);
+    
     const char              *GetThreadName (int);
     
     void                    BenchOut (const char *);
@@ -135,7 +138,8 @@ class VisionApp : public BApplication
 	BLocker                 identLock,
 	                          settingsLock;
 	thread_id               identThread;
-	BNetEndpoint            *identEndpoint;
+	int32                   identSocket;
+	Theme                   *activeTheme;
 };
 
 const uint32 M_SETUP_CLOSE           = 'vasc';

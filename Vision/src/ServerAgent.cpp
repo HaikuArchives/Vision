@@ -24,17 +24,18 @@
  *                 John Robinson
  */
 
-#include <NetworkKit.h>
 #include <UTF8.h>
 #include <Autolock.h>
 #include <MessageRunner.h>
 
-#ifdef NETSERVER_BUILD
+#ifdef NETSERVER_BUILD 
 #  include <netdb.h>
 #endif
 
 #ifdef BONE_BUILD
 #  include <arpa/inet.h>
+#  include <sys/socket.h>
+#  include <netdb.h>
 #endif
 
 #include <ctype.h>
@@ -89,7 +90,7 @@ ServerAgent::ServerAgent (
     retryLimit (47),
     lagCheck (0),
     lagCount (0),
-    lEndpoint (0),
+    serverSocket (-1),
     send_buffer (0),
     send_size (0),
     parse_buffer (0),
@@ -112,8 +113,10 @@ ServerAgent::~ServerAgent (void)
     delete [] parse_buffer;
   if (lagRunner)
     delete lagRunner;
+#ifdef NETSERVER_BUILD
   if (!establishHasLock && endPointLock)
     delete endPointLock;
+#endif
 }
 
 void
@@ -126,30 +129,18 @@ ServerAgent::AttachedToWindow(void)
 void
 ServerAgent::Init (void)
 {
-  myFont = *(vision_app->GetClientFont (F_SERVER));
-  ctcpReqColor = vision_app->GetColor (C_CTCP_REQ);
-  ctcpRpyColor = vision_app->GetColor (C_CTCP_RPY);
-  whoisColor   = vision_app->GetColor (C_WHOIS);
-  errorColor   = vision_app->GetColor (C_ERROR);
-  quitColor    = vision_app->GetColor (C_QUIT);
-  joinColor    = vision_app->GetColor (C_JOIN);
-  noticeColor  = vision_app->GetColor (C_NOTICE);
-  textColor    = vision_app->GetColor (C_SERVER);
-  wallColor    = vision_app->GetColor (C_WALLOPS);
-
-#ifdef NETSERVER_BUILD  
+#ifdef NETSERVER_BUILD
   endPointLock = new BLocker();
 #endif
-  
-  Display ("Vision ", 0);
-  Display (vision_app->VisionVersion(VERSION_VERSION).String(), &myNickColor);
-  Display (" built on ", 0);
-  Display (vision_app->VisionVersion(VERSION_DATE).String(), 0);
-  Display ("\nThis agent goes by the name of Smith... err ", 0);
+  Display ("Vision ");
+  Display (vision_app->VisionVersion(VERSION_VERSION).String(), C_MYNICK);
+  Display (" built on ");
+  Display (vision_app->VisionVersion(VERSION_DATE).String());
+  Display ("\nThis agent goes by the name of Smith... err ");
   BString temp;
   temp << id << " (sid: " << sid << ")";
-  Display (temp.String(), &nickColor);
-  Display ("\nHave fun!\n", 0);
+  Display (temp.String(), C_NICK);
+  Display ("\nHave fun!\n");
 
   lagRunner = new BMessageRunner (
     this,       // target ServerAgent
@@ -208,15 +199,14 @@ int32
 ServerAgent::Establish (void *arg)
 {
   BMessenger *sMsgrE (reinterpret_cast<BMessenger *>(arg));
-  BNetEndpoint *endPoint (NULL);
   BMessage getMsg;
-  rgb_color errColor (vision_app->GetColor (C_ERROR));
 #ifdef NETSERVER_BUILD
   BLocker *endpointLock (NULL);
 #endif
   BLocker *establishLock (NULL);
   BString remoteIP;
   int32 serverSid;
+  int32 serverSock (-1);
   bool identRegistered (false);
   if (sMsgrE->IsValid())
     sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg);
@@ -275,7 +265,7 @@ ServerAgent::Establish (void *arg)
       
       BMessage data (M_DISPLAY_ALL);
       data.AddString ("data", statString.String());
-      data.AddInt32 ("color", C_ERROR);
+      data.AddInt32 ("fore", C_ERROR);
       sMsgrE->SendMessage (&data);
 
     }
@@ -290,18 +280,27 @@ ServerAgent::Establish (void *arg)
     ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
     sMsgrE->SendMessage (&statMsg);
 
-    BNetAddress address;
- 
-    if (address.SetTo (connectId.String(), atoi (connectPort.String())) != B_NO_ERROR)
-    {
-      ClientAgent::PackDisplay (&statMsg, "[@] The address and port seem to be invalid. Make sure your Internet connection is operational.\n", C_ERROR);
-      sMsgrE->SendMessage (&statMsg);
-      sMsgrE->SendMessage (M_SERVER_DISCONNECT);
-      throw failToLock();
-    }
-    
     struct sockaddr_in remoteAddr;
-    address.GetAddr (remoteAddr);
+    remoteAddr.sin_family = AF_INET;
+#ifdef BONE_BUILD
+    if (inet_aton (connectId.String(), &remoteAddr.sin_addr) == 0)
+#elif NETSERVER_BUILD
+    if ((remoteAddr.sin_addr.s_addr = inet_addr (connectId.String())) == 0)
+#endif
+    {
+       struct hostent *remoteInet (gethostbyname (connectId.String()));
+       if (remoteInet)
+         remoteAddr.sin_addr = *((in_addr *)remoteInet->h_addr_list[0]);
+       else 
+       {
+         ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", C_ERROR);
+         sMsgrE->SendMessage (&statMsg);
+         sMsgrE->SendMessage (M_NOT_CONNECTING);
+         throw failToLock();
+       }
+    }
+
+    remoteAddr.sin_port = htons(atoi (connectPort.String()));
     remoteIP = inet_ntoa (remoteAddr.sin_addr);
     
 
@@ -310,30 +309,29 @@ ServerAgent::Establish (void *arg)
       identRegistered = true;
       vision_app->AddIdent (remoteIP.String(), ident.String());      
     }
-    endPoint = new BNetEndpoint;
 
-    if (!endPoint || endPoint->InitCheck() != B_NO_ERROR)
+    if ((serverSock = socket (AF_INET, SOCK_STREAM, 0)) < 0)
     {
-      ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", C_ERROR);
-      sMsgrE->SendMessage (&statMsg);
-      sMsgrE->SendMessage (M_NOT_CONNECTING);
-      throw failToLock();
+         ClientAgent::PackDisplay (&statMsg, "[@] Could not create connection to address and port. Make sure your Internet connection is operational.\n", C_ERROR);
+         sMsgrE->SendMessage (&statMsg);
+         sMsgrE->SendMessage (M_NOT_CONNECTING);
+         throw failToLock();
     }
-
+    
     // just see if he's still hanging around before
     // we got blocked for a minute
     ClientAgent::PackDisplay (&statMsg, "[@] Connection open, waiting for reply from server\n", C_ERROR);
     sMsgrE->SendMessage (&statMsg);
     sMsgrE->SendMessage (M_LAG_CHANGED);
 
-    if (endPoint->Connect (address) == B_NO_ERROR)
+    if (connect (serverSock, (struct sockaddr *)&remoteAddr, sizeof(remoteAddr)) >= 0)
     {
       BString ip ("");  
       struct sockaddr_in sockin;
 
       // store local ip address for future use (dcc, etc)
       int addrlength (sizeof (struct sockaddr_in));
-      if (getsockname (endPoint->Socket(),(struct sockaddr *)&sockin,&addrlength)) {
+      if (getsockname (serverSock,(struct sockaddr *)&sockin,&addrlength)) {
         ClientAgent::PackDisplay (&statMsg, "[@] Error getting Local IP\n", C_ERROR);
         sMsgrE->SendMessage (&statMsg);
         BMessage setIP (M_SET_IP);
@@ -373,7 +371,7 @@ ServerAgent::Establish (void *arg)
       string.Append (name);
 
       BMessage endpointMsg (M_SET_ENDPOINT);
-      endpointMsg.AddPointer ("endpoint", endPoint);
+      endpointMsg.AddInt32 ("socket", serverSock);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
       BMessage dataSend (M_SERVER_SEND);
@@ -400,12 +398,10 @@ ServerAgent::Establish (void *arg)
     }
   } catch (failToLock)
   {
-    if (endPoint)
-    {
-      endPoint->Close();
-      delete endPoint;
-    }
-#ifdef NETSERVER_BUILD
+#ifdef BONE_BUILD
+    close (serverSock);
+#elif NETSERVER_BUILD
+    closesocket (serverSock);
     if (endpointLock)
       delete endpointLock;
 #endif
@@ -419,86 +415,41 @@ ServerAgent::Establish (void *arg)
 #ifdef NETSERVER_BUILD
   struct timeval tv = {0, 0};
 #endif
-
   FD_ZERO (&eset);
   FD_ZERO (&rset);
   FD_ZERO (&wset);
 
   BString buffer;
-
-  FD_SET (endPoint->Socket(), &eset);
-  FD_SET (endPoint->Socket(), &rset);
-  FD_SET (endPoint->Socket(), &wset);
- 
+  
+  FD_SET (serverSock, &eset);
+  FD_SET (serverSock, &rset);
+  FD_SET (serverSock, &wset);
   BLooper *looper;
   
-#ifdef BONE_BUILD
-  while ( (sMsgrE->Target (&looper) != NULL)
-     && select (endPoint->Socket() + 1, &rset, 0, &eset, NULL) > 0)
-  {
-    char indata[1024];
-    int32 length (0);
-
-    memset (indata, 0, 1024);
-    if (FD_ISSET (endPoint->Socket(), &rset))
-    {
-      if ((length = endPoint->Receive (indata, 1024)) > 0)
-      {
-        BString temp;
-        int32 index;
-
-        temp.SetTo (indata, strlen(indata));
-        buffer += temp;
-
-        while ((index = buffer.FindFirst ('\n')) != B_ERROR)
-        {
-          temp.SetTo (buffer, index);
-          buffer.Remove (0, index + 1);
-    
-          temp.RemoveLast ("\r");
-
-          if (vision_app->debugrecv)
-          {
-            printf ("RECEIVED: (%ld:%03ld) \"", serverSid, temp.Length());
-            for (int32 i = 0; i < temp.Length(); ++i)
-            {
-              if (isprint (temp[i]))
-                printf ("%c", temp[i]);
-              else
-                printf ("[0x%02x]", temp[i]);
-            }
-            printf ("\"\n");
-          }
-
-
-          // We ship it off this way because
-          // we want this thread to loop relatively
-          // quickly.  Let ServerWindow's main thread
-          // handle the processing of incoming data!
-         BMessage msg (M_PARSE_LINE);
-         msg.AddString ("line", temp.String());
-         sMsgrE->SendMessage (&msg);
-       }
-     }
-#endif
-
-#ifdef NETSERVER_BUILD
   while (sMsgrE->Target (&looper) != NULL)
   {
     char indata[1024];
     int32 length (0);
     
-    FD_SET (endPoint->Socket(), &eset);
-    FD_SET (endPoint->Socket(), &rset);
-    FD_SET (endPoint->Socket(), &wset);
+    FD_SET (serverSock, &eset);
+    FD_SET (serverSock, &rset);
+    FD_SET (serverSock, &wset);
     memset (indata, 0, 1024);
-    if (select (endPoint->Socket() + 1, &rset, 0, &eset, &tv) > 0
-    &&  FD_ISSET (endPoint->Socket(), &rset))
+#ifdef BONE_BUILD
+    if (select (serverSock + 1, &rset, 0, &eset, NULL) > 0
+#elif NETSERVER_BUILD
+    if (select (serverSock + 1, &rset, 0, &eset, &tv) > 0
+#endif
+    &&  FD_ISSET (serverSock, &rset))
     {
+#ifdef NETSERVER_BUILD
       endpointLock->Lock();
-      if ((length = endPoint->Receive (indata, 1024)) > 0)
+#endif
+      if ((length = recv (serverSock, indata, 1024, 0)) > 0)
       {
+#ifdef NETSERVER_BUILD
         endpointLock->Unlock();
+#endif
         BString temp;
         int32 index;
 
@@ -535,12 +486,12 @@ ServerAgent::Establish (void *arg)
          sMsgrE->SendMessage (&msg);
        }
      }
+#ifdef NETSERVER_BUILD
      else endpointLock->Unlock();
 #endif
-     
-     if (FD_ISSET (endPoint->Socket(), &eset)
-     || (FD_ISSET (endPoint->Socket(), &rset) && length == 0)
-     || !FD_ISSET (endPoint->Socket(), &wset)
+     if (FD_ISSET (serverSock, &eset)
+     || (FD_ISSET (serverSock, &rset) && length == 0)
+     || !FD_ISSET (serverSock, &wset)
      || length < 0)
      {
         // we got disconnected :(
@@ -549,12 +500,10 @@ ServerAgent::Establish (void *arg)
         {
           // print interesting info          
           printf ("Negative from endpoint receive! (%ld)\n", length);
-          printf ("(%d) %s\n", endPoint->Error(), endPoint->ErrorStr());
-
           printf ("eset : %s\nrset: %s\nwset: %s\n",
-            FD_ISSET (endPoint->Socket(), &eset) ? "true" : "false",
-            FD_ISSET (endPoint->Socket(), &rset) ? "true" : "false",
-            FD_ISSET (endPoint->Socket(), &wset) ? "true" : "false");
+            FD_ISSET (serverSock, &eset) ? "true" : "false",
+            FD_ISSET (serverSock, &rset) ? "true" : "false",
+            FD_ISSET (serverSock, &wset) ? "true" : "false");
 		}
 		
         // tell the user all about it
@@ -564,12 +513,6 @@ ServerAgent::Establish (void *arg)
     }
     
   // take a nap, so the ServerAgent can do things
-#ifdef BONE_BUILD
-    FD_SET (endPoint->Socket(), &eset);
-    FD_SET (endPoint->Socket(), &rset);
-    FD_SET (endPoint->Socket(), &wset);
-#endif
-
 #ifdef NETSERVER_BUILD
     snooze(20000);
 #endif
@@ -579,8 +522,7 @@ ServerAgent::Establish (void *arg)
 // HandleReconnect() will.
   if (!sMsgrE->IsValid())
   {
-    endPoint->Close();
-    delete endPoint;
+    close (serverSock);
   }
 #ifdef NETSERVER_BUILD
   delete endpointLock;
@@ -622,22 +564,19 @@ ServerAgent::SendData (const char *cData)
     send_buffer,
     &dest_length,
     &state);
-    
 #ifdef NETSERVER_BUILD
   endPointLock->Lock();
 #endif
-
-  if ((lEndpoint != 0 && (length = lEndpoint->Send (send_buffer, strlen (send_buffer))) < 0)
-  || lEndpoint == 0)
+  if (serverSocket > 0 && (length = send (serverSocket, send_buffer, strlen (send_buffer), 0) < 0)
+  || serverSocket < 0)
   {
     // doh, we aren't even connected.
     if (!reconnecting && !isConnecting)
       msgr.SendMessage (M_SERVER_DISCONNECT);
   }
-#ifdef NETSERVER_BUILD  
+#ifdef NETSERVER_BUILD
   endPointLock->Unlock();
 #endif
-
   if (vision_app->debugsend)
   {
     data.RemoveAll ("\n");
@@ -670,7 +609,7 @@ ServerAgent::ParseLine (const char *cData)
     parse_buffer,
     &dest_length,
     &state);
-
+  
   if (vision_app->numBench)
   {
     vision_app->bench1 = system_time();
@@ -763,15 +702,16 @@ ServerAgent::RepliedBroadcast (BMessage *)
 void
 ServerAgent::DisplayAll (
   const char *buffer,
-  const int32 color,
-  const BFont *font)
+  const uint32 fore,
+  const uint32 back,
+  const uint32 font)
 {
   for (int32 i = 0; i < clients.CountItems(); ++i)
   {
     ClientAgent *client ((ClientAgent *)clients.ItemAt (i));
 
     BMessage msg (M_DISPLAY);
-    PackDisplay (&msg, buffer, color, font);
+    PackDisplay (&msg, buffer, fore, back, font);
     client->msgr.SendMessage (&msg);
   }
 
@@ -860,19 +800,18 @@ ServerAgent::HandleReconnect (void)
     isConnecting = true;
     nickAttempt = 0;
     establishHasLock = false;
-
 #ifdef NETSERVER_BUILD
     endPointLock = new BLocker();
 #endif
-
     loginThread = spawn_thread (
       Establish,
       vision_app->GetThreadName(THREAD_S),
       B_NORMAL_PRIORITY,
       new BMessenger(this));
-	
-	delete lEndpoint;
-	lEndpoint = 0;
+    
+    close (serverSocket);  
+    serverSocket = -1;
+
     resume_thread (loginThread);
   }
   else
@@ -882,8 +821,8 @@ ServerAgent::HandleReconnect (void)
     retry = 0;
     const char *soSorry;
     soSorry = "[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n";
-    Display (soSorry, &errorColor);
-    DisplayAll (soSorry, C_ERROR, &serverFont);    
+    Display (soSorry, C_ERROR);
+    DisplayAll (soSorry, C_ERROR, C_BACKGROUND, F_SERVER);    
   }
 }
 
@@ -947,7 +886,7 @@ ServerAgent::MessageReceived (BMessage *msg)
   {
     case M_PARSE_LINE:
       {
-        const char *buffer;
+        const char *buffer (NULL);
         msg->FindString ("line", &buffer);
         ParseLine (buffer);
       }
@@ -971,10 +910,8 @@ ServerAgent::MessageReceived (BMessage *msg)
     case M_DISPLAY_ALL:
       {
         BString data;
-        int32 color (-1);
         msg->FindString  ("data", &data);
-        msg->FindInt32 ("color", &color);
-        DisplayAll (data.String(), color, &serverFont);
+        DisplayAll (data.String(), msg->FindInt32 ("fore"), msg->FindInt32 ("back"), msg->FindInt32 ("font"));
       }
       break;
       
@@ -987,7 +924,6 @@ ServerAgent::MessageReceived (BMessage *msg)
         reply.AddString  ("name", lname.String());
         reply.AddString  ("nick", myNick.String());
         reply.AddBool    ("identd", identd);
-
 #ifdef NETSERVER_BUILD
         reply.AddPointer ("lock", endPointLock);
 #endif
@@ -999,7 +935,7 @@ ServerAgent::MessageReceived (BMessage *msg)
       break;
     
     case M_SET_ENDPOINT:
-      msg->FindPointer("endpoint", reinterpret_cast<void **>(&lEndpoint));
+      msg->FindInt32 ("socket", &serverSocket);
       break;
       
     case M_NOT_CONNECTING:
@@ -1145,8 +1081,8 @@ ServerAgent::MessageReceived (BMessage *msg)
         myLag = "CONNECTION PROBLEM";
         msgr.SendMessage (M_LAG_CHANGED);
         checkingLag = false;
-        lEndpoint = 0;
-        
+        serverSocket = -1;
+
         // store current nick for reconnect use (might be an away nick, etc)
         if (reacquiredNick)
         {
@@ -1160,8 +1096,8 @@ ServerAgent::MessageReceived (BMessage *msg)
           sAnnounce += "[@] Disconnected from ";
           sAnnounce += serverName;
           sAnnounce += "\n";
-          Display (sAnnounce.String(), &errorColor);
-          DisplayAll (sAnnounce.String(), C_ERROR, &serverFont);
+          Display (sAnnounce.String(), C_ERROR);
+          DisplayAll (sAnnounce.String(), C_ERROR, C_BACKGROUND, F_SERVER);
         }
 			
         isConnected = false;
@@ -1316,8 +1252,8 @@ ServerAgent::MessageReceived (BMessage *msg)
         }
 
         isQuitting = true;
- 
-        if (isConnected && lEndpoint)
+
+        if (isConnected && serverSocket)
         {
           if (quitMsg.Length() == 0)
           {
