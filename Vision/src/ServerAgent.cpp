@@ -900,6 +900,13 @@ ServerAgent::MessageReceived (BMessage *msg)
       }
       break;
 
+    case M_SLASH_RECONNECT:
+      {
+        if (!isConnected && !isConnecting)
+          msgr.SendMessage (M_SERVER_DISCONNECT);
+      }
+      break;
+
     case M_SERVER_DISCONNECT:
       {
         // let the user know

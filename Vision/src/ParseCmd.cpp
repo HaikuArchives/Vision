@@ -909,18 +909,12 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 0
   if (firstWord == "/RECONNECT")
   {
-    {
-      BMessage msg (M_SLASH_RECONNECT);
-      msg.AddString ("server", serverName.String());
-      vision_app->PostMessage (&msg);
-      return true;
-    }
+    sMsgr.SendMessage (M_SLASH_RECONNECT);
     return true;
   }
-  #endif
+
 
   if (firstWord == "/SETBOOL")
   {
