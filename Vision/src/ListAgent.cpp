@@ -67,7 +67,11 @@ ListAgent::ListAgent (
   filter (""),
   find (""),
   processing (false),
-  channelWidth (0.0)
+  channelWidth (0.0),
+  topicWidth (0.0),
+  sChannelWidth (0.0),
+  sTopicWidth (0.0),
+  sLineWidth (0.0)
 {
   frame = Bounds();
 
@@ -121,7 +125,7 @@ ListAgent::ListAgent (
     frame.left,
     frame.top,
     frame.right - B_V_SCROLL_BAR_WIDTH,
-    frame.bottom),
+    frame.bottom - B_H_SCROLL_BAR_HEIGHT),
     "list",
     B_SINGLE_SELECTION_LIST,
     B_FOLLOW_ALL_SIDES,
@@ -321,9 +325,8 @@ ListAgent::MessageReceived (BMessage *msg)
 
         BScrollBar *bar (scroller->ScrollBar (B_HORIZONTAL));
         bar->SetRange (0.0, sLineWidth - listView->Frame().Width());
-
+ 
         float low (min_c (Frame().Width() / sLineWidth, 1.0));
-
         if (low == 1.0)
           bar->SetRange (0.0, 0.0);
         else
