@@ -37,6 +37,7 @@ class AboutWindow;
 class SetupWindow;
 class PrefsWindow;
 class ClientWindow;
+class NetworkWindow;
 class SettingsFile;
 class BLocker;
 class BNetEndpoint;
@@ -85,6 +86,12 @@ class VisionApp : public BApplication
     bool                    GetBool (const char *);
     status_t                SetBool (const char *, bool);
     
+    BMessage                GetNetwork (const char *);
+    BMessage				GetNetwork (int32);
+    status_t                SetNetwork (const char *, BMessage *);
+    status_t                RemoveNetwork (const char *);
+    bool                    CheckNetworkValid (const char *);
+
     sem_id                  GetShutdownSem(void);
     
     Theme *                 ActiveTheme(void);
@@ -119,6 +126,7 @@ class VisionApp : public BApplication
   private:
 	void					InitSettings (void);
     void                    ThreadStates (void);
+    bool                    CheckStartupNetworks (void);
     
     volatile bool           ShuttingDown;
 
@@ -126,6 +134,7 @@ class VisionApp : public BApplication
     SetupWindow             *setupWin;
     ClientWindow            *clientWin;
     PrefsWindow             *prefsWin;
+    NetworkWindow           *netWin;
     
     SettingsFile			*visionSettings;
     
@@ -143,6 +152,15 @@ class VisionApp : public BApplication
 
 const uint32 M_SETUP_CLOSE           = 'vasc';
 const uint32 M_SETUP_SHOW            = 'vass';
+const uint32 M_NETWORK_SHOW          = 'vans';
+const uint32 M_NETWORK_CLOSE         = 'vanc';
+const uint32 M_PREFS_SHOW            = 'vaps';
+const uint32 M_PREFS_CLOSE           = 'vapc';
+
+const uint32 M_CONNECT_NETWORK       = 'vacn';
+
+const uint32 VIS_NETWORK_DATA        = 'vndc';
+const uint32 VIS_NETWORK_DEFAULTS    = 'vndd';
 
 const int SET_SERVER    = 1;
 const int SET_GENERAL   = 2;

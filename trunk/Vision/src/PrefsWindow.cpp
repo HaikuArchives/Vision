@@ -63,7 +63,7 @@ bool
 PrefsWindow::QuitRequested(void)
 {
   vision_app->SetRect ("GenPrefWinRect", Frame());
-  be_app_messenger.SendMessage (M_SETUP_CLOSE);
+  be_app_messenger.SendMessage (M_PREFS_CLOSE);
   return true;  
 }
 void

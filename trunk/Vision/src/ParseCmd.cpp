@@ -729,30 +729,6 @@ ClientAgent::ParseCmd (const char *data)
     return true;
   }
 
-  if (firstWord == "/NEWSERVER")
-  {
-    {
-      BString newServer (GetWord (data, 2)),
-              newPort (GetWord (data, 3));
-    
-      if (newPort == "-9z99")
-        newPort = "6667";    
-
-      if (newServer != "-9z99")
-      {
-        BMessage newserver (M_MAKE_NEW_SERVER);
-        newserver.AddString ("hostname", newServer);
-        newserver.AddString ("port", newPort);
-        newserver.AddString ("autoexec", "");
-        newserver.AddBool   ("enidentd", true);
-        vision_app->pClientWin()->PostMessage (&newserver);
-      }
-      else
-        Display ("[x] /newserver: Error: Invalid parameters\n", C_ERROR);
-    }
-    return true;
-  }
-
   if (firstWord == "/NICK")
   {
     {

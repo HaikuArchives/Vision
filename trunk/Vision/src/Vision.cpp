@@ -34,6 +34,7 @@ class VisionApp * vision_app;
 #include <Alert.h>
 #include <Resources.h>
 #include <Font.h>
+#include <MenuItem.h>
 #include <Autolock.h>
 #include <Roster.h>
 #include <Beep.h>
@@ -55,6 +56,7 @@ class VisionApp * vision_app;
 #include "AboutWindow.h"
 #include "Vision.h"
 #include "ClientWindow.h"
+#include "NetworkWindow.h"
 #include "SettingsFile.h"
 #include "SetupWindow.h"
 #include "PrefsWindow.h"
@@ -88,7 +90,10 @@ main (void)
 VisionApp::VisionApp (void)
   : BApplication ("application/x-vnd.Ink-Vision"),
       aboutWin (0),
+      setupWin (0),
+      clientWin (0),
       prefsWin (0),
+      netWin (0),
       identSocket (-1),
       activeTheme (new Theme ("current", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
 {
@@ -363,17 +368,15 @@ VisionApp::LoadDefaults (int32 section)
   {
     case SET_SERVER:
       {
-        if (!visionSettings->HasString ("nickname1"))
-          visionSettings->AddString ("nickname1", "vision");
-
-        if (!visionSettings->HasString ("nickname2"))
-          visionSettings->AddString ("nickname2", "vision2");
-
-        if (!visionSettings->HasString ("realname"))
-          visionSettings->AddString ("realname", "Heisenberg may have slept here");
-
-        if (!visionSettings->HasString ("username"))
-          visionSettings->AddString ("username", "vision");
+        if (!visionSettings->HasMessage ("defaults"))
+        {
+          BMessage defaults (VIS_NETWORK_DEFAULTS);
+          defaults.AddString ("nick", "vision");
+          defaults.AddString ("nick", "vision2");
+          defaults.AddString ("ident", "vision");
+          defaults.AddString ("realname", "Heisenberg may have slept here");
+          visionSettings->AddMessage ("defaults", &defaults);
+        }
       }
       break;
     
@@ -414,6 +417,9 @@ VisionApp::LoadDefaults (int32 section)
         
         if (!visionSettings->HasRect ("windowDockRect"))
           visionSettings->AddRect ("windowDockRect", BRect (0, 0, 0, 0));
+          
+        if (!visionSettings->HasRect ("NetPrefWinRect"))
+          visionSettings->AddRect ("NetPrefWinRect", BRect (0, 0, 0, 0));
         
         if (!visionSettings->HasRect ("namesListRect"))
           visionSettings->AddRect ("namesListRect", BRect (0, 0, 100, 0));
@@ -608,6 +614,42 @@ VisionApp::ArgvReceived (int32 ac, char **av)
 }
 
 
+// check if any networks have the connect on startup flag marked...
+// if they do, start them
+
+bool
+VisionApp::CheckStartupNetworks (void)
+{
+  bool autoStarted (false);
+  BMessage netData;
+  for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
+  {
+    if (CheckNetworkValid (netData.FindString("name")) && netData.FindBool ("connectOnStartup"))
+    {
+      BMessage msg (M_CONNECT_NETWORK);
+      msg.AddString ("network", netData.FindString ("name"));
+      PostMessage (&msg);
+      autoStarted = true;
+    }
+  }
+
+  return autoStarted;
+}
+
+bool
+VisionApp::CheckNetworkValid (const char *name)
+{
+  BMessage netData (GetNetwork (name));
+  if ( ((netData.HasString ("nick")
+      && netData.HasString ("realname")
+      && netData.HasString ("ident"))
+      || netData.FindBool ("useDefaults"))
+    && netData.HasData ("server", B_ANY_TYPE)
+    && netData.HasString ("name"))
+      return true;
+  return false;
+}
+
 void
 VisionApp::ReadyToRun (void)
 {
@@ -617,16 +659,15 @@ VisionApp::ReadyToRun (void)
   if (identThread >= B_OK)
     resume_thread (identThread);
 
-  BRect clientWinRect;
-  visionSettings->FindRect ("clientWinRect", &clientWinRect);
-  
   shutdownSem = create_sem(0, "ShutdownSem");
   if(shutdownSem < B_OK) //that's an error
   	vision_app->Quit();
   
-  clientWin = new ClientWindow (clientWinRect);
-  setupWin = new SetupWindow (true);
-  clientWin->Show();
+  if (!CheckStartupNetworks())
+  {  
+    setupWin = new SetupWindow ();
+    setupWin->Show();
+  }
 }
 
 void
@@ -664,19 +705,42 @@ VisionApp::MessageReceived (BMessage *msg)
     
     case M_SETUP_SHOW:
       {
+        if (setupWin)
+          setupWin->Activate();
+        else
+        {
+          setupWin = new SetupWindow ();
+          setupWin->Show();
+        }
+      }
+      break;
+
+    case M_SETUP_CLOSE:
+      {
+        settingsLock.Lock();
+        if ((visionSettings->Save() == B_OK) && debugsettings)
+          printf (":SETTINGS: saved to file\n");
+        settingsLock.Unlock();
+        setupWin = 0;
+        if (clientWin == NULL)
+          PostMessage (B_QUIT_REQUESTED);
+      }
+      break;
+    
+      
+    case M_PREFS_SHOW:
+      {
         if (prefsWin)
           prefsWin->Activate();
         else
         {
           prefsWin = new PrefsWindow();
-          prefsWin->MoveTo ( clientWin->Frame().left + (clientWin->Frame().Width() / 2) - (prefsWin->Frame().Width() / 2),
-            clientWin->Frame().top + (clientWin->Frame().Height() / 2) - (prefsWin->Frame().Height() / 2)); 
           prefsWin->Show();
         }
       }      
       break;
     
-    case M_SETUP_CLOSE:
+    case M_PREFS_CLOSE:
       {
         settingsLock.Lock();
         if ((visionSettings->Save() == B_OK) && debugsettings)
@@ -685,7 +749,46 @@ VisionApp::MessageReceived (BMessage *msg)
         prefsWin = 0;
       }
       break;
+    
+    case M_NETWORK_SHOW:
+      {
+        if (netWin)
+          netWin->Activate();
+        else
+        {
+          netWin = new NetworkWindow();
+          netWin->Show();
+        }
+      }      
+      break;
 
+    case M_NETWORK_CLOSE:
+      {
+        settingsLock.Lock();
+        if ((visionSettings->Save() == B_OK) && debugsettings)
+          printf (":SETTINGS: saved to file\n");
+        settingsLock.Unlock();
+        netWin = 0;
+      }
+      break;
+    
+    case M_CONNECT_NETWORK:
+      {
+        BRect clientWinRect;
+        visionSettings->FindRect ("clientWinRect", &clientWinRect);
+
+        BMessage netData = GetNetwork (msg->FindString ("network"));
+        if (clientWin == NULL)
+        {
+          clientWin = new ClientWindow (clientWinRect);
+          clientWin->Show();
+        }
+        BMessage connMsg (M_MAKE_NEW_NETWORK);
+        connMsg.AddMessage ("network", &netData);
+        clientWin->PostMessage (&connMsg);
+      }
+      break;
+      
     default:
       BApplication::MessageReceived (msg);
   }
@@ -1059,6 +1162,108 @@ VisionApp::SetBool (const char *settingName, bool value)
  return B_ERROR;
 }
 
+BMessage
+VisionApp::GetNetwork (const char *network)
+{
+  BMessage msg (VIS_NETWORK_DATA);
+
+  BAutolock netLock (const_cast<BLocker *>(&settingsLock));
+  
+  if (netLock.IsLocked())
+  {
+    if (!strcmp (network, "defaults"))
+    {
+      visionSettings->FindMessage ("defaults", &msg);
+      return msg;
+    }
+    type_code type;
+    int32 count (0);
+    visionSettings->GetInfo ("network", &type, &count);
+    for (int32 i = 0; i < count; i++)
+    {
+       BMessage tempMsg;
+       visionSettings->FindMessage ("network", i, &tempMsg);
+       if (!strcmp (tempMsg.FindString ("name"), network))
+       {
+         msg = tempMsg;
+         break;
+       }
+    }
+  }
+  return msg;
+}
+
+BMessage
+VisionApp::GetNetwork (int32 index)
+{
+  BMessage msg (VIS_NETWORK_DATA);
+
+  BAutolock netLock (const_cast<BLocker *>(&settingsLock));
+
+  if (netLock.IsLocked())
+    if (visionSettings->FindMessage ("network", index, &msg) != B_OK)
+      msg.AddBool ("error", true);
+  return msg;
+}
+
+status_t
+VisionApp::SetNetwork (const char *network, BMessage *data)
+{
+  BAutolock netLock (const_cast<BLocker *>(&settingsLock));
+
+  if (!netLock.IsLocked())
+    return B_ERROR;
+  
+  if (!strcmp (network, "defaults"))
+  {
+    visionSettings->ReplaceMessage ("defaults", data);
+    return B_OK;
+  }
+
+  type_code type;
+  int32 count (0);
+  visionSettings->GetInfo ("network", &type, &count);
+  for (int32 i = 0; i < count; i++)
+  {
+     BMessage tempMsg;
+     visionSettings->FindMessage ("network", i, &tempMsg);
+     if (!strcmp (tempMsg.FindString ("name"), network))
+     {
+       visionSettings->ReplaceMessage ("network", i, data);
+       return B_OK;
+     }
+  }
+  visionSettings->AddMessage ("network", data);
+  return B_OK;
+
+}
+
+status_t
+VisionApp::RemoveNetwork (const char *network)
+{
+  BMessage msg (VIS_NETWORK_DATA);
+
+  BAutolock netLock (const_cast<BLocker *>(&settingsLock));
+
+  if (!netLock.IsLocked())
+    return B_ERROR;
+
+  type_code type;
+  int32 count (0);
+  visionSettings->GetInfo ("network", &type, &count);
+  for (int32 i = 0; i < count; i++)
+  {
+     BMessage tempMsg;
+     visionSettings->FindMessage ("network", i, &tempMsg);
+     if (!strcmp (tempMsg.FindString ("name"), network))
+     {
+       visionSettings->RemoveData ("network", i);
+       break;
+     }
+  }
+  return B_OK;
+}
+
 Theme *
 VisionApp::ActiveTheme (void)
 {
@@ -1220,7 +1425,7 @@ VisionApp::Identity (void *)
     struct linger lng = { 0, 0 }; 
     setsockopt (identSock, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
 #endif
-    listen (identSock, 5);
+    listen (identSock, 10);
 
     while (!vision_app->ShuttingDown) 
     {

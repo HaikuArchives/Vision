@@ -31,7 +31,7 @@
 #include <MenuBar.h>
 #include <MenuField.h>
 #include <MenuItem.h>
-#include <MessageFilter.h>
+#include "NumericFilter.h"
 #include <TextControl.h>
 
 const uint32 M_FONT_ELEMENT_CHANGE = 'mfec';
@@ -44,57 +44,6 @@ struct FontStat
   int32						style_count;
   font_style				*styles;
 };
-
-class NumericFilter : public BMessageFilter
-{
-  public:
-    NumericFilter (void);
-    virtual ~NumericFilter (void);
-    virtual filter_result Filter (BMessage *, BHandler **);
-};
-
-NumericFilter::NumericFilter (void)
-    : BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE)
-{
-}
-
-NumericFilter::~NumericFilter (void)
-{
-}
-
-filter_result 
-NumericFilter::Filter (BMessage *msg, BHandler **)
-{
-  filter_result result = B_DISPATCH_MESSAGE;
-  switch (msg->what)
-  {
-    case B_KEY_DOWN:
-    {
-      uint32 modifier (msg->FindInt32 ("modifiers"));
-      const char *bytes (msg->FindString ("bytes"));
-      
-      if (!modifier)
-      {
-        if (bytes[0] != B_ENTER
-        &&  bytes[0] != B_BACKSPACE
-        &&  !isdigit (bytes[0]))
-          result = B_SKIP_MESSAGE;
-      }
-      else if (modifier & B_SHIFT_KEY)
-      {
-        if (bytes[0] == B_LEFT_ARROW
-        ||  bytes[0] == B_RIGHT_ARROW
-        ||  bytes[0] == B_HOME
-        ||  bytes[0] == B_END)
-          break;
-        else
-          result = B_SKIP_MESSAGE;
-      }
-    }
-    break;
-  }
-  return result;
-}
 
 class FontMenuItem : public BMenuItem
 {

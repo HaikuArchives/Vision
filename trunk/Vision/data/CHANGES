@@ -1,6 +1,18 @@
 Vision
 http://vision.sourceforge.net
 
+[0.6-exp-1109]
+         * added Network Preferences
+            -- ability to organize networks as groups of servers that will
+               automatically be cycled through on dis/reconnect
+            -- arbitrary number of nicks, configurable per network
+            -- special thanks to Be, Inc. for contributing BColumnListView,
+               Dan Sandler for his assistance with UI design,
+               and Alan Ellis for miscellaneous support and makefile magic :)
+            -- NOTE: still work in progress, stability is not guaranteed at the moment,
+               and some aspects of the GUI are not done yet.
+            
+
 [0.5-1103]
          * added option to disable the spam flood dialog (thanks to Alan Ellis)
          * minor bugfix here and there

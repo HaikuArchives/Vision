@@ -82,7 +82,7 @@ ServerAgent::ParseEvents (const char *data)
           *vision_app->pClientWin()->AgentRect(),
           theNick.String(),
           sid,
-          serverHostName.String(),
+          id.String(),
           sMsgr,
           myNick.String(),
           addy.String()),
@@ -188,7 +188,7 @@ ServerAgent::ParseEvents (const char *data)
           new ChannelAgent (
             channel.String(),
             sid,
-            serverHostName.String(),
+            id.String(),
             ircdtype,
             myNick.String(),
             sMsgr,

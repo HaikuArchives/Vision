@@ -114,15 +114,11 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           // set "real" hostname
           serverHostName = (GetWord (data, 1));
           serverHostName.RemoveFirst (":");
-        
-          agentWinItem->SetName (serverHostName.String());
-        
-          if (!IsHidden())
-            vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER,
-              serverHostName.String());
-          
-          for (int32 i = 0; i < clients.CountItems(); i++)
-            ((ClientAgent *)clients.ItemAt(i))->SetServerName(serverHostName.String());
+          BString hostName (id.String());
+          hostName += " - [";
+          hostName += serverHostName.String();
+          hostName += "]";
+          agentWinItem->SetName (hostName.String());
         
           // detect IRCd
           ircdtype = IRCD_STANDARD;
@@ -941,29 +937,17 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       
         if (isConnecting)
         {
-          if (theNick == lnick1)
+          BString nextNick (GetNextNick());
+          if (nextNick != "")
           {
             Display ("* Nickname \"");
-            Display (lnick1.String());
+            Display (theNick.String());
             Display ("\" in use or unavailable.. trying \"");
-            Display (lnick2.String());
+            Display (nextNick.String());
             Display ("\"\n");
 
             BString tempString ("NICK ");
-            tempString += lnick2;
-            SendData (tempString.String());
-            return true;
-          }
-          else if (theNick == lnick2)
-          {
-            Display ("* Nickname \"");
-            Display (lnick2.String());
-            Display ("\" in use.. trying \"_");
-            Display (lnick1.String());
-            Display ("\"\n");
-
-            BString tempString ("NICK _");
-            tempString += lnick1;
+            tempString += nextNick;
             SendData (tempString.String());
             return true;
           }
@@ -972,9 +956,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             Display ("* All your pre-selected nicknames are in use.\n");
             Display ("* Please type /NICK <NEWNICK> to try another.\n");
             return true;
-          }                         
+          }
         }
-
         BString tempString;
         tempString += "[x] Nickname/Channel ";
         tempString += theNick;
@@ -1165,31 +1148,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       return true;
       
     default:
-      {
-        BString theTarget (GetWord (data, 4)),
-                  theMessage (RestOfString (data, 5)),
-                  tempString;
-        
-        theMessage.RemoveFirst (":");
-        
-        tempString += "*** ";
-        tempString += theMessage;
-        tempString += "\n";
-        
-        ClientAgent *client (Client (theTarget.String()));
-
-        BMessage display (M_DISPLAY);
-        PackDisplay (&display, tempString.String(), C_OP);
-
-        if (client)
-        {
-          if (client->msgr.IsValid())
-            client->msgr.SendMessage (&display);
-        }
-        else
-          PostActive (&display);
-      }
-      return true;
+      break;
   }
   
   return false;

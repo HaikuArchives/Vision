@@ -357,29 +357,17 @@ ClientWindow::MessageReceived (BMessage *msg)
       }
       break;
       
-    case M_MAKE_NEW_SERVER:
+    case M_MAKE_NEW_NETWORK:
       {
-        const char *hostname, *port, *autoexec;
-        bool enidentd;
-      
-        if ((msg->FindString ("hostname", &hostname) != B_OK)
-        ||  (msg->FindString ("port", &port) != B_OK)
-        ||  (msg->FindString ("autoexec", &autoexec) != B_OK)
-        ||  (msg->FindBool   ("enidentd", &enidentd) != B_OK))
-        {
-          printf (":ERROR: recieved incomplete data to M_MAKE_NEW_SERVER -- bailing\n");
-          return;
-        }
-       
+        BMessage network;
+        msg->FindMessage ("network", &network);
+        BString netName (network.FindString ("name"));
         pWindowList()->AddAgent (
-          new ServerAgent (
-            const_cast<const char *>(hostname),
-            const_cast<const char *>(port),
-            enidentd,
-            const_cast<const char *>(autoexec),
+          new ServerAgent (netName.String(),
+            network,
             *AgentRect()),
           ID_SERVER,
-          hostname,
+          netName.String(),
           WIN_SERVER_TYPE,
           true); // bring to front
       }
@@ -551,11 +539,8 @@ ClientWindow::Init (void)
   
   // Server menu
   mServer = new BMenu ("Server");
-  mServer->AddItem (item = new BMenuItem ("Preferences" B_UTF8_ELLIPSIS,
+  mServer->AddItem (item = new BMenuItem ("Setup" B_UTF8_ELLIPSIS,
                     new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
-  item->SetTarget (vision_app);
-  mServer->AddItem (item = new BMenuItem ("Options" B_UTF8_ELLIPSIS,
-                    new BMessage (B_ABOUT_REQUESTED), 'O'));
   item->SetTarget (vision_app);
   mServer->AddSeparatorItem();
   mServer->AddItem (item = new BMenuItem ("Channel List" B_UTF8_ELLIPSIS,

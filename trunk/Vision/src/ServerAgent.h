@@ -35,6 +35,7 @@
 
 class BMessageRunner;
 class ListAgent;
+struct ServerData;
 
 class ServerAgent : public ClientAgent
 {
@@ -42,9 +43,7 @@ class ServerAgent : public ClientAgent
 
                                 ServerAgent (
                                   const char *,  // id_
-                                  const char *,  // port
-                                  bool identd_,  // enable identd?
-                                  const char *,  // connect commands
+                                  BMessage &,
                                   BRect);        // frame
     virtual                     ~ServerAgent (void);
 
@@ -73,6 +72,8 @@ class ServerAgent : public ClientAgent
 
     void                        HandleReconnect (void);
 	static bool                 PrivateIPCheck (const char *);
+	const char                  *GetNextNick (void);
+	const ServerData            *GetNextServer (void);
 	
  	ClientAgent					*Client (const char *);
 	ClientAgent					*ActiveClient (void);
@@ -90,10 +91,7 @@ class ServerAgent : public ClientAgent
 	bool                        localip_private;    // if localip is private
 	                                                // (set by PrivateIPCheck)
 	
-	const BString				lnick1,
-									lnick2,
-									lport,		
-									lname,
+	const BString					lname,
 									lident;
 
 	int32							nickAttempt;		// going through list
@@ -156,6 +154,9 @@ class ServerAgent : public ClientAgent
     
     ListAgent                   *pListAgent;
     
+    BMessage                    networkData;
+    int32                       serverIndex,
+                                nickIndex;
 };
 
 const uint32 M_GET_ESTABLISH_DATA           = 'saed'; // used by Establish()
