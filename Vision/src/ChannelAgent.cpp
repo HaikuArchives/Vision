@@ -550,6 +550,11 @@ ChannelAgent::MessageReceived (BMessage *msg)
         buffer += rest;
         buffer += ")\n";
         PackDisplay (&wegotkicked, buffer.String(), &quitColor, 0, true);
+        // clean up
+        namesList->ClearList();
+        opsCount = 0;
+        userCount = 0;
+        
         msgr.SendMessage (&wegotkicked);
 
         BMessage attemptrejoin (M_DISPLAY); // "you were kicked"
