@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0420]
+ 2001-04-20
+   * Identd socket is properly closed before being deleted.
+
 [0.2.0419]
  2001-04-19
    * Auto reconnect is working
