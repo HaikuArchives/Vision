@@ -18,6 +18,7 @@
  *
  * Contributor(s): Rene Gollent
  *                 Todd Lair
+ *                 Alan Ellis <alan@cgsoftware.org>
  */
 
 #define FORE_WHICH        0
@@ -230,6 +231,8 @@ RunView::~RunView (void)
 
   delete fWorking;
   delete fURLCursor;
+  delete [] fStamp_format;
+  delete [] fClipping_name;
 }
 
 void

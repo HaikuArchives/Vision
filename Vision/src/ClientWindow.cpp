@@ -72,7 +72,10 @@ ClientWindow::ClientWindow (BRect frame)
   Init();
 }
 
-
+ClientWindow::~ClientWindow (void)
+{
+  delete fAgentrect;
+}
 
 bool
 ClientWindow::QuitRequested (void)

@@ -65,6 +65,7 @@ class ClientWindow : public BWindow
 
   public:
                           ClientWindow (BRect);
+    virtual               ~ClientWindow (void);
     virtual void          FrameMoved (BPoint);
     virtual void          FrameResized (float width, float height);
     virtual void          MessageReceived (BMessage *);
