@@ -332,7 +332,7 @@ ServerAgent::Establish (void *arg)
   thread_id currentThread (find_thread(NULL));
 #ifdef NETSERVER_BUILD
   BLocker *endpointLock (NULL);
-  AutoDestructor<BLocker *> lockKiller (NULL);
+  AutoDestructor<BLocker> lockKiller (NULL);
 #endif
   BString remoteIP;
   int32 serverSid;
