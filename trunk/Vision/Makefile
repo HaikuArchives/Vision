@@ -38,6 +38,7 @@ CFLAGS :=
 CFLAGS += -O3
 CFLAGS += -fno-pic
 CFLAGS += -ffast-math
+CFLAGS += -march=pentium -mcpu=pentium
 CFLAGS += -Wall -W -Wno-multichar -Wshadow -Wpointer-arith
 CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith
