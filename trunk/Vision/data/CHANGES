@@ -1,6 +1,11 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0708]
+ 2001-07-08
+   * implemented on-connect commands
+   * fixed bug in reconnect/nick retaking logic
+ 
 [0.2.0704]
  2001-07-04
    * fixed mistakes in some connect messages

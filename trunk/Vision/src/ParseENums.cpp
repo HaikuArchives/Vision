@@ -909,6 +909,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           if (*place)
             msg.AddString ("data", place);
 
+          msg.AddInt32 ("which", 3);
           msgr.SendMessage (&msg);
         }
 
