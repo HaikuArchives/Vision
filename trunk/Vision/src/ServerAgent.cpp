@@ -102,8 +102,12 @@ ServerAgent::ServerAgent (
 
 ServerAgent::~ServerAgent (void)
 {
-  if (send_buffer)  delete [] send_buffer;
-  if (parse_buffer) delete [] parse_buffer;
+  if (send_buffer)
+    delete [] send_buffer;
+  if (parse_buffer)
+    delete [] parse_buffer;
+  if (lagRunner)
+    delete lagRunner;
 }
 
 void
