@@ -27,6 +27,9 @@
 #define MELTDOWN_BYTES      500000 
 #define REMOVE_BYTES        786
 
+#include <PopUpMenu.h>
+#include <MenuItem.h>
+
 #include <Roster.h>
 #include <Window.h>
 
@@ -126,32 +129,114 @@ IRCView::~IRCView (void)
   delete settings; 
 }
 
+void
+IRCView::BuildPopUp (void)
+{
+  // This function checks certain criteria (text is selected,
+  // TextView is editable, etc) to determine which MenuItems
+  // to enable and disable
+  
+  bool enablecopy (true),
+       enablepaste (false), // check clipboard contents first
+       enablecut (true),
+       enableselectall (true);
+       
+  int32 selstart, selfinish;
+  GetSelection (&selstart, &selfinish);
+  if (selstart == selfinish)
+    enablecopy = false; // no selection
+  
+  if (!IsEditable() || !enablecopy)
+    enablecut = false; // no selection or not editable
+  
+  if (!IsSelectable() || (TextLength() == 0))
+    enableselectall = false; // not selectable
+  
+  if (IsEditable())
+  {
+    BClipboard clipboard("system");
+    BMessage *clip = (BMessage *)NULL;
+    if (clipboard.Lock()) {
+      if ((clip = clipboard.Data()))
+        if (clip->HasData ("text/plain", B_MIME_TYPE))
+          enablepaste = true; // has text on clipboard
+    }
+    clipboard.Unlock();
+    delete clip;
+  }
+  
+  myPopUp = new BPopUpMenu("Context Menu", false, false); 
+
+  BMenuItem *item; 
+  item = new BMenuItem("Cut", new BMessage (B_CUT));
+  item->SetEnabled (enablecut);
+  myPopUp->AddItem (item);
+  
+  item = new BMenuItem("Copy", new BMessage (B_COPY));
+  item->SetEnabled (enablecopy);
+  myPopUp->AddItem (item);
+
+  item = new BMenuItem("Paste", new BMessage (B_PASTE));
+  item->SetEnabled (enablepaste);
+  myPopUp->AddItem (item);
+  
+  myPopUp->AddSeparatorItem(); 
+  
+  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL));
+  item->SetEnabled (enableselectall);
+  myPopUp->AddItem (item);  
+  
+  myPopUp->SetFont (be_plain_font); 
+  myPopUp->SetTargetForItems (this); 
+}
 
 void 
 IRCView::MouseDown (BPoint myPoint) 
 { 
-  int32 start,
-        finish;
+  int32 selstart,
+        selfinish;
 
-  BTextView::MouseDown (myPoint); 
-  GetSelection (&start, &finish);
-  if (start == finish) 
-  { 
-    list<URL> &urls (settings->urls); 
-    list<URL>::const_iterator it; 
-    int32 offset (OffsetAt (myPoint)); 
+  GetSelection (&selstart, &selfinish);
+  BMessage *inputMsg (Window()->CurrentMessage());
+  int32 mousebuttons (0),
+        keymodifiers (0);
 
-    for (it = urls.begin(); it != urls.end(); ++it) 
+  inputMsg->FindInt32 ("buttons", &mousebuttons);
+  inputMsg->FindInt32 ("modifiers", &keymodifiers); 
 
-    if (offset >= it->offset 
-    &&  offset <  it->offset + it->display.Length()) 
+  if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
+  && (keymodifiers & B_SHIFT_KEY)   == 0
+  && (keymodifiers & B_OPTION_KEY)  == 0
+  && (keymodifiers & B_COMMAND_KEY) == 0
+  && (keymodifiers & B_CONTROL_KEY) == 0)
+  {
+    BuildPopUp();
+    myPopUp->Go (
+      ConvertToScreen (myPoint),
+      true,
+      false);
+  }
+  else
+  {
+    BTextView::MouseDown (myPoint);   
+    if (selstart == selfinish) 
     { 
-      const char *arguments[] = {it->url.String(), 0}; 
-
-      be_roster->Launch ("text/html", 
-        1, const_cast<char **>(arguments)); 
-
-      settings->parentInput->MakeFocus (true); 
+      list<URL> &urls (settings->urls); 
+      list<URL>::const_iterator it; 
+      int32 offset (OffsetAt (myPoint)); 
+  
+      for (it = urls.begin(); it != urls.end(); ++it) 
+ 
+      if (offset >= it->offset 
+      &&  offset <  it->offset + it->display.Length()) 
+      { 
+        const char *arguments[] = {it->url.String(), 0}; 
+ 
+        be_roster->Launch ("text/html", 
+          1, const_cast<char **>(arguments)); 
+ 
+        settings->parentInput->MakeFocus (true); 
+      }
     }
   }
 } 
