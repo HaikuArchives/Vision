@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.9.7-0508]
+	 * added JIS encoding support
+	 * modified tab completion to append a ":" if the nick is at the beginning of a line 
+
 [0.9.6-0207]
          * fixed crash bug during shutdown with notify blinkers
          * fixed crash bug in sender thread
