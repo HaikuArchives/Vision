@@ -63,7 +63,7 @@ ResizeView::MouseUp (BPoint)
 }
  
 void
-ResizeView::MouseMoved (BPoint current, uint32 transit, const BMessage *)
+ResizeView::MouseMoved (BPoint, uint32, const BMessage *)
 {
   SetViewCursor (&cursor);
   if (mousePressed)

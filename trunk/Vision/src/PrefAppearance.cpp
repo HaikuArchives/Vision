@@ -138,7 +138,8 @@ AppearancePrefsView::AttachedToWindow (void)
   {
      int32 i (0);
      BRect frame(Bounds());
-     BBox *fontBox (new BBox(frame.InsetByCopy(5,5), "Sample"));
+     BBox *fontBox (new BBox(frame.InsetByCopy(5,5), "Sample", B_FOLLOW_LEFT | B_FOLLOW_TOP,
+       B_WILL_DRAW | B_FRAME_EVENTS | B_NAVIGABLE_JUMP, B_NO_BORDER));
      fontBox->ResizeBy (0, 5);
      sample = new BaseColorControl(BRect(0,0,0,0), "", "", colors[0], new BMessage (M_COLOR_CHANGED));
      sampleText = new BStringView (BRect (0,0,0,0), NULL,
