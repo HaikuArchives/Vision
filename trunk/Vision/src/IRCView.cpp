@@ -173,7 +173,7 @@ IRCView::BuildPopUp (void)
   
   lookup = new BMessage (M_LOOKUP_WEBSTER);
   lookup->AddString ("string", querystring);
-  item = new BMenuItem("Lookup (Webster)", lookup);
+  item = new BMenuItem("Lookup (Dictionary)", lookup);
   item->SetEnabled (enablelookup);
   item->SetTarget (settings->parentAgent);
   myPopUp->AddItem (item);

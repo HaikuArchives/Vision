@@ -55,11 +55,11 @@ class ChannelAgent : public ClientAgent
                               BRect &);             // frame
     virtual                 ~ChannelAgent (void);
 
-	virtual void			AttachedToWindow (void);
-	virtual void			MessageReceived (BMessage *);
-	virtual void            Parser (const char *);
-	virtual void            TabExpansion (void);
-	
+    virtual void            AttachedToWindow (void);
+    virtual void            MessageReceived (BMessage *);
+    virtual void            Parser (const char *);
+    virtual void            TabExpansion (void);
+
     bool                    RemoveUser (const char *);
     int                     FindPosition (const char *);
     void                    UpdateMode (char, char);
@@ -70,7 +70,7 @@ class ChannelAgent : public ClientAgent
 
     
   private:
-	void                    Init();
+   void                    Init();
 
     BString                 chanMode,
                             chanLimit,
