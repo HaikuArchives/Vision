@@ -29,7 +29,7 @@
 #ifdef GNOME_BUILD
 #  include "gnome/Rect.h"
 #  include "gnome/CString.h"
-#ifdef BEOS_BUILD
+#elif BEOS_BUILD
 #  include <Rect.h>
 #  include <String.h>
 #endif
