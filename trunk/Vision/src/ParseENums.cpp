@@ -146,8 +146,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           ircdtype = IRCD_CONFERENCEROOM;
         else if (theMsg.FindFirst ("nn-") > 0)
           ircdtype = IRCD_NEWNET;
-        
-        printf ("IRCD TYPE: %d\n", ircdtype);
       } 
       
       

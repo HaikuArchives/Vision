@@ -290,7 +290,7 @@ ServerAgent::Establish (void *arg)
 		// Here we save off the local address for DCC and stuff
 		// (Need to make sure that the address we use to connect
 		//  is the one that we use to accept on)
-		if (sMsgrE->IsValid() && sMsgrE->LockTarget())
+		if (sMsgrE->IsValid() && server->Window()->Lock())
 		{
 			getsockname (endPoint->Socket(), (struct sockaddr *)&sockin, &namelen);
 			server->localuIP = sockin.sin_addr.s_addr;
@@ -359,7 +359,7 @@ ServerAgent::Establish (void *arg)
 		string.Append (" :");
 		string.Append (name);
 		
-		if (sMsgrE->IsValid() && sMsgrE->LockTarget())
+		if (sMsgrE->IsValid() && server->Window()->Lock())
 		{
 			server->lEndpoint = endPoint;
 			server->SendData (string.String());
@@ -371,6 +371,7 @@ ServerAgent::Establish (void *arg)
 		}
 		else
 		{
+			identLock.Unlock();
 			endPoint->Close();
 			delete endPoint;
 			delete sMsgrE;
