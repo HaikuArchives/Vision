@@ -20,8 +20,10 @@
  */
 
 // Class description:
-// VTextControl is a derivative of BTextControl which adds context menus
-
+// VTextControl is a derivative of BTextControl which adds a standard clipboard
+// related context menu (eg: Every TextControl in Windows has a right click menu
+// with Cut/Copy/Paste/Select All)
+ 
 // it's intention is to be fully compliant and portable, so it can easily
 // be dropped into other applications as well.
 
@@ -33,7 +35,7 @@
 
 VTextControl::VTextControl (BRect frame, const char *name, const char *label,
                             const char *text, BMessage *vtcmessage,
-                            uint32 resizingMode, uint32 flags)
+                            uint32 resizingMode, uint32 flags, bool nomenu_)
   : BTextControl(
     frame,
     name,
@@ -41,14 +43,16 @@ VTextControl::VTextControl (BRect frame, const char *name, const char *label,
     text,
     vtcmessage,
     resizingMode,
-    flags)
+    flags),
+  nomenu (nomenu_)
 {
   // Usage is identical to BTextControl 
 }
 
-VTextControl::VTextControl (BMessage *data)
+VTextControl::VTextControl (BMessage *data, bool nomenu_)
   : BTextControl(
-    data)
+    data),
+  nomenu (nomenu_)
 {
   // Usage is identical to BTextControl 
 }
@@ -149,27 +153,31 @@ VTextControlFilter::Filter (BMessage *msg, BHandler **)
   {
     case B_MOUSE_DOWN:
     {
-      BPoint myPoint;
-      uint32 mousebuttons;
-      int32  keymodifiers (0);
-      parent->Parent()->GetMouse (&myPoint, &mousebuttons);
-      
       bool handled (false);
-
-      msg->FindInt32 ("modifiers", &keymodifiers);  
-
-      if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
-      && (keymodifiers & B_SHIFT_KEY)   == 0
-      && (keymodifiers & B_OPTION_KEY)  == 0
-      && (keymodifiers & B_COMMAND_KEY) == 0
-      && (keymodifiers & B_CONTROL_KEY) == 0)
+      
+      if (!parent->nomenu)
       {
-        parent->BuildPopUp();
-        parent->myPopUp->Go (
-          parent->Parent()->ConvertToScreen (myPoint),
-          true,
-          false);
-        handled = true;
+        BPoint myPoint;
+        uint32 mousebuttons;
+        int32  keymodifiers (0);
+        parent->Parent()->GetMouse (&myPoint, &mousebuttons);
+      
+
+        msg->FindInt32 ("modifiers", &keymodifiers);  
+ 
+        if (mousebuttons == B_SECONDARY_MOUSE_BUTTON
+        && (keymodifiers & B_SHIFT_KEY)   == 0
+        && (keymodifiers & B_OPTION_KEY)  == 0
+        && (keymodifiers & B_COMMAND_KEY) == 0
+        && (keymodifiers & B_CONTROL_KEY) == 0)
+        {
+          parent->BuildPopUp();
+          parent->myPopUp->Go (
+            parent->Parent()->ConvertToScreen (myPoint),
+            true,
+            false);
+          handled = true;
+        }
       }
       
       if (handled)
