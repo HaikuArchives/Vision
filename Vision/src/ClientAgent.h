@@ -39,7 +39,7 @@
 class BScrollView;
 class VTextControl;
 
-class ClientInputFilter;
+class ClientAgentInputFilter;
 class IRCView;
 class HistoryMenu;
 class AgentSettings;
@@ -115,13 +115,11 @@ class ClientAgent : public BView
     IRCView                     *text;
     BScrollView                 *textScroll;
     VTextControl                *input;
-    
-    //AgentSettings             *settings;
 
     static const char               *endl;
 
 
-    friend                          ClientInputFilter;
+    friend                          ClientAgentInputFilter;
  
     virtual void                    Display (
                                       const char *,

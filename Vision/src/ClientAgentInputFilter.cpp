@@ -42,10 +42,10 @@
 #include "IRCView.h"
 #include "VisionBase.h"
 #include "ClientAgent.h"
-#include "ClientInputFilter.h"
+#include "ClientAgentInputFilter.h"
 #include "VTextControl.h"
 
-ClientInputFilter::ClientInputFilter (ClientAgent *agent)
+ClientAgentInputFilter::ClientAgentInputFilter (ClientAgent *agent)
   : BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE),
     window (agent),
     handledDrop (false)
@@ -53,7 +53,7 @@ ClientInputFilter::ClientInputFilter (ClientAgent *agent)
 }
 
 filter_result
-ClientInputFilter::Filter (BMessage *msg, BHandler **)
+ClientAgentInputFilter::Filter (BMessage *msg, BHandler **)
 {
   filter_result result (B_DISPATCH_MESSAGE);
   switch (msg->what)
@@ -196,7 +196,7 @@ ClientInputFilter::Filter (BMessage *msg, BHandler **)
 }
 
 filter_result
-ClientInputFilter::HandleKeys (BMessage *msg)
+ClientAgentInputFilter::HandleKeys (BMessage *msg)
 {
   filter_result result (B_DISPATCH_MESSAGE);
   int8 keyStroke;
@@ -405,7 +405,7 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 }
 
 void
-ClientInputFilter::HandleDrop (const char *buffer)
+ClientAgentInputFilter::HandleDrop (const char *buffer)
 {
   BMessage msg (M_SUBMIT_RAW);
   const char *place;

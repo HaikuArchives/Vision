@@ -23,8 +23,8 @@
  *                 Jamie Wilkinson
  */
 
-#ifndef _CLIENTINPUTFILTER_H_
-#define _CLIENTINPUTFILTER_H_
+#ifndef _CLIENTAGENTINPUTFILTER_H_
+#define _CLIENTAGENTINPUTFILTER_H_
 
 #ifdef GNOME_BUILD
 #  include "gnome/MessageFilter.h"
@@ -35,13 +35,13 @@
 class ClientWindow;
 
 
-class ClientInputFilter : public BMessageFilter
+class ClientAgentInputFilter : public BMessageFilter
 {
     ClientAgent                     *window;
     bool                            handledDrop;
 
   public:
-                                    ClientInputFilter (ClientAgent *);
+                                    ClientAgentInputFilter (ClientAgent *);
     virtual filter_result           Filter (BMessage *, BHandler **);
 
     filter_result                   HandleKeys (BMessage *);

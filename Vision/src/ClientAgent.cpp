@@ -45,7 +45,7 @@
 #include "ClientWindow.h"
 #include "StatusView.h"
 #include "ClientAgent.h"
-#include "ClientInputFilter.h"
+#include "ClientAgentInputFilter.h"
 #include "StringManip.h"
 #include "ServerAgent.h"
 #include "WindowList.h"
@@ -183,7 +183,7 @@ ClientAgent::Init (void)
            0,
            frame.bottom - input->Frame().Height() + 1);
 
-  input->TextView()->AddFilter (new ClientInputFilter (this));
+  input->TextView()->AddFilter (new ClientAgentInputFilter (this));
   AddChild (input);
 
   input->TextView()->SetViewColor (vision_app->GetColor (C_INPUT_BACKGROUND));
