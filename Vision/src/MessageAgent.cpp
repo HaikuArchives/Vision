@@ -36,6 +36,7 @@
 
 #ifdef BONE_BUILD
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <arpa/inet.h>
 #elif NETSERVER_BUILD
 #include <socket.h>
@@ -69,7 +70,14 @@ MessageAgent::MessageAgent (
   dPort (port),
   dChat (chat),
   dInitiate (initiate),
-  dConnected (false)
+  dConnected (false),
+  mySocket (0),
+#ifdef NETSERVER_BUILD
+  acceptSocket (0),
+  locker (NULL)
+#elif BONE_BUILD
+  acceptSocket (0)
+#endif
 {
   Init();
 }
@@ -79,12 +87,17 @@ MessageAgent::~MessageAgent (void)
   dConnected = false;
   if (dChat)
   {
+    if (mySocket)
 #ifdef BONE_BUILD
-    close (mySocket);
-    close (acceptSocket);
+      close (mySocket);
 #elif NETSERVER_BUILD
-    closesocket (mySocket);
-    closesocket (acceptSocket);
+      closesocket (mySocket);
+#endif
+    if (acceptSocket)
+#ifdef BONE_BUILD 
+      close (acceptSocket);
+#elif NETSERVER_BUILD
+      closesocket (acceptSocket);
 #endif
   }
 }
@@ -183,7 +196,9 @@ MessageAgent::DCCIn (void *arg)
   MessageAgent *agent ((MessageAgent *)arg);
   BMessenger sMsgrE (agent->sMsgr);
   BMessenger mMsgr (agent);
-  
+#ifdef NETSERVER_BUILD
+  BLocker *myLocker (agent->locker);
+#endif  
   agent->DCCServerSetup();
     
   int dccSocket (agent->mySocket);
@@ -209,8 +224,42 @@ MessageAgent::DCCIn (void *arg)
   BString inputBuffer;
   int32 recvReturn (0);
   
+  struct fd_set rset, eset;
+#ifdef NETSERVER_BUILD
+  struct timeval tv = { 0, 0 };
+#endif
+  FD_ZERO (&rset);
+  FD_ZERO (&eset);
+  FD_SET (dccAcceptSocket, &rset);
+  FD_SET (dccAcceptSocket, &eset);
+  
   while (agent->dConnected)
   {
+#ifdef NETSERVER_BUILD 
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) <= 0)
+#elif BONE_BUILD
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) <= 0)
+#endif
+    {
+      if (FD_ISSET (dccAcceptSocket, &eset))
+      {
+        BMessage termMsg (M_DISPLAY);
+        
+        agent->dConnected = false;
+        ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n");
+        mMsgr.SendMessage (&termMsg);
+        goto outta_there; // I hate goto, but this is a good use.
+      }
+      if (!FD_ISSET (dccAcceptSocket, &rset))
+#ifdef NETSERVER_BUILD
+      snooze (20000);
+#endif
+      continue;
+    }
+#ifdef NETSERVER_BUILD
+    myLocker->Lock();
+#endif
+
     if ((recvReturn = recv(dccAcceptSocket, tempBuffer, 1, 0)) == 0)
     {
       BMessage termMsg (M_DISPLAY);
@@ -220,10 +269,14 @@ MessageAgent::DCCIn (void *arg)
       mMsgr.SendMessage (&termMsg);
       goto outta_there; // I hate goto, but this is a good use.
     }
+#ifdef NETSERVER_BUILD
+    myLocker->Unlock();
+#endif
     if (recvReturn > 0)
     {
       if (tempBuffer[0] == '\n')
         {
+          inputBuffer.RemoveLast ("\r");
           agent->ChannelMessage (inputBuffer.String());
           inputBuffer = "";
         }
@@ -235,12 +288,9 @@ MessageAgent::DCCIn (void *arg)
 	
   outta_there: // GOTO MARKER
 
-#ifdef BONE_BUILD
-  close (dccSocket);
-  close (dccAcceptSocket);
-#elif NETSERVER_BUILD
-  closesocket (dccSocket);
-  closesocket (dccAcceptSocket);
+#ifdef NETSERVER_BUILD
+  myLocker->Unlock();
+  delete myLocker;
 #endif
 
   return 0;
@@ -252,7 +302,9 @@ MessageAgent::DCCOut (void *arg)
   MessageAgent *agent ((MessageAgent *)arg);
   
   BMessenger mMsgr (agent);
-
+#ifdef NETSERVER_BUILD
+  BLocker *myLocker (agent->locker);
+#endif
   struct sockaddr_in sa;
   int status;
   int dccAcceptSocket (0);
@@ -315,9 +367,41 @@ MessageAgent::DCCOut (void *arg)
   char tempBuffer[2];
   BString inputBuffer;
   int32 recvReturn (0);
+
+  struct fd_set rset, eset;
+#ifdef NETSERVER_BUILD
+  struct timeval tv = { 0, 0 };
+#endif
+  FD_ZERO (&rset);
+  FD_ZERO (&eset);
+  FD_SET (dccAcceptSocket, &rset);
+  FD_SET (dccAcceptSocket, &eset);
   
   while (agent->dConnected)
   {
+#ifdef NETSERVER_BUILD
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) <= 0)
+#elif BONE_BUILD
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) <= 0)
+#endif
+    {
+      if (FD_ISSET (dccAcceptSocket, &eset))
+      {
+        BMessage termMsg (M_DISPLAY);
+        agent->dConnected = false;
+        ClientAgent::PackDisplay (&termMsg, "DCC chat terminated.\n");
+        mMsgr.SendMessage (&termMsg);
+        goto outta_loop; // I hate goto, but this is a good use.
+      }
+      if (!FD_ISSET (dccAcceptSocket, &rset))
+#ifdef NETSERVER_BUILD
+      snooze (20000);
+#endif
+      continue;
+    }
+#ifdef NETSERVER_BUILD
+    myLocker->Lock();
+#endif
     if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
     {
       BMessage termMsg (M_DISPLAY);
@@ -327,11 +411,14 @@ MessageAgent::DCCOut (void *arg)
       mMsgr.SendMessage (&termMsg);
       goto outta_loop; // I hate goto, but this is a good use.
     }
-
+#ifdef NETSERVER_BUILD
+    myLocker->Unlock();
+#endif
     if (recvReturn > 0)
     {
       if (tempBuffer[0] == '\n')
       {
+      	inputBuffer.RemoveLast ("\r");
         agent->ChannelMessage (inputBuffer.String());
         inputBuffer = "";
       }
@@ -342,10 +429,9 @@ MessageAgent::DCCOut (void *arg)
 	
   outta_loop: // GOTO MARKER
 
-#ifdef BONE_BUILD
-  close (dccAcceptSocket);
-#elif NETSERVER_BUILD
-  closesocket (dccAcceptSocket);
+#ifdef NETSERVER_BUILD
+  myLocker->Unlock();
+  delete myLocker;
 #endif  
   return 0;
 }
@@ -495,14 +581,21 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
     outTemp += msg;
     outTemp += "\1";
     outTemp += "\n";
-
+#ifdef NETSERVER_BUILD
+    locker->Lock();
+#endif
     if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
     {
       dConnected = false;
       Display ("DCC chat terminated.\n");
+#ifdef NETSERVER_BUILD
+      locker->Unlock();
+#endif
       return;
     }
-    
+#ifdef NETSERVER_BUILD
+    locker->Unlock();
+#endif    
     ChannelMessage (outTemp.String(), nick);
   }
   
@@ -525,12 +618,21 @@ MessageAgent::Parser (const char *buffer)
     BString outTemp (buffer);
 
     outTemp << "\r\n";
+#ifdef NETSERVER_BUILD
+    locker->Lock();
+#endif
     if (send(acceptSocket, outTemp.String(), outTemp.Length(), 0) < 0)
     {
       dConnected = false;
       Display ("DCC chat terminated.\n");
+#ifdef NETSERVER_BUILD
+      locker->Unlock();
+#endif
       return;
     }
+#ifdef NETSERVER_BUILD
+    locker->Unlock();
+#endif
   }
   else
     return;

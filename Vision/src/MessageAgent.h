@@ -36,6 +36,10 @@
 
 #include "ClientAgent.h"
 
+#ifdef NETSERVER_BUILD
+class BLocker;
+#endif
+
 class MessageAgent : public ClientAgent
 {
   public:
@@ -88,7 +92,9 @@ class MessageAgent : public ClientAgent
                                 acceptSocket;
 
     thread_id                   dataThread;
-
+#ifdef NETSERVER_BUILD
+    BLocker                     *locker;
+#endif
 };
 
 const uint32 M_MSG_WHOIS    = 'mamw';
