@@ -281,8 +281,11 @@ ListAgent::MessageReceived (BMessage *msg)
       
     case M_LIST_DONE:
       {
-        delete listUpdateTrigger;
-        listUpdateTrigger = 0;
+        if (listUpdateTrigger)
+        {
+          delete listUpdateTrigger;
+          listUpdateTrigger = 0;
+        }
         statusStr = "Sorting";
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
@@ -296,8 +299,13 @@ ListAgent::MessageReceived (BMessage *msg)
           for (int32 i = 0; i < list.CountItems(); ++i)
           {
             ChannelItem *item ((ChannelItem *)list.ItemAt (i));
+            BString chanLine = item->Channel();
+            chanLine += " ";
+            chanLine += item->Users();
+            chanLine += " ";
+            chanLine += item->Topic();
 
-            if (regexec (&re, item->Channel(), 0, 0, 0) != REG_NOMATCH)
+            if (regexec (&re, chanLine.String(), 0, 0, 0) != REG_NOMATCH)
             {
               float width;
               showing.AddItem (item);
