@@ -194,7 +194,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     {
       BString theMode (GetWord (data, 4)),
               tempString ("[x] Your current mode is: ");
-      tempString << theMode << '\n';
+      tempString += theMode;
+      tempString += '\n';
       
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &whoisColor);
@@ -216,9 +217,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     {
       BString tempString ("[x] ");
       if (num == ERR_CHANOPRIVSNEEDED)
-        tempString << RestOfString (data, 5);
+        tempString += RestOfString (data, 5);
       else
-        tempString << RestOfString (data, 4);
+        tempString += RestOfString (data, 4);
       tempString.RemoveFirst (":");
       tempString.Append ("\n");
 		
@@ -233,7 +234,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BString tempString ("[x] "),
 	          theReason (RestOfString(data, 5));
       theReason.RemoveFirst(":");
-      tempString << "Away: " << theReason << '\n';
+      tempString += "Away: ";
+      tempString += theReason;
+      tempString += '\n';
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
@@ -307,7 +310,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BMessage display (M_DISPLAY);
       BString buffer;
 		
-      buffer << "[x] " << theInfo << "\n";
+      buffer += "[x] ";
+      buffer += theInfo;
+      buffer += "\n";
       PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
       PostActive (&display);      
       return true;
@@ -324,10 +329,17 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BMessage display (M_DISPLAY);
       BString buffer;
 
-      buffer << "[x] " << theNick << " (" << theIdent
-             << "@" << theAddress << ")\n" << "[x] "
-             << theName << "\n";
-
+      buffer += "[x] ";
+      buffer += theNick;
+      buffer += " (";
+      buffer += theIdent;
+      buffer += "@";
+      buffer += theAddress;
+      buffer += ")\n";
+      buffer += "[x] ";
+      buffer += theName;
+      buffer += "\n";
+      
       PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
       PostActive (&display);
 	  return true;    
@@ -343,7 +355,11 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BMessage display (M_DISPLAY);
       BString buffer;
 
-      buffer << "[x] Server: " << theServer << " (" << theInfo << ")\n";
+      buffer += "[x] Server: ";
+      buffer += theServer;
+      buffer += " (";
+      buffer += theInfo;
+      buffer += ")\n";
       PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
       PostActive (&display);
       return true;    
@@ -357,7 +373,12 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
               theName (RestOfString (data, 8)),
               tempString ("[x] ");
       theName.RemoveFirst (":");
-      tempString << theNick << " [was] (" << theIdent << "@" << theAddress << ")\n";
+      tempString += theNick;
+      tempString += " [was] (";
+      tempString += theIdent;
+      tempString += "@";
+      tempString += theAddress;
+      tempString += ")\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
@@ -374,7 +395,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
               signOnTime (GetWord (data, 6));
 				
       int64 idleTime (strtoul(theTime.String(), NULL, 0));
-      tempString << "Idle: " << DurationString(idleTime * 1000 * 1000) << "\n";
+      tempString += "Idle: ";
+      tempString += DurationString(idleTime * 1000 * 1000);
+      tempString += "\n";
 		
       int32 serverTime = strtoul(signOnTime.String(), NULL, 0);
       struct tm *ptr; 
@@ -386,7 +409,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BString signOnTimeParsed (str);
       signOnTimeParsed.RemoveAll ("\n");
 		
-      tempString2 << "Signon: " << signOnTimeParsed << "\n";
+      tempString2 += "Signon: ";
+      tempString2 += signOnTimeParsed;
+      tempString2 += "\n";
 		
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);
@@ -411,7 +436,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BMessage display (M_DISPLAY);
       BString buffer;
 
-      buffer << "[x] Channels: " << theChannels << "\n";
+      buffer += "[x] Channels: ";
+      buffer += theChannels;
+      buffer += "\n";
       PackDisplay (&display, buffer.String(), &whoisColor, &serverFont);
       PostActive (&display);
       return true;    
@@ -468,7 +495,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
                   *theClient (Client (theChan.String())); 
 
       BString tempString("*** Channel mode for ");
-      tempString << theChan << ": " << theMode << '\n';
+      tempString += theChan;
+      tempString += ": ";
+      tempString += theMode;
+      tempString += '\n';
 		
       BMessage msg (M_CHANNEL_MODES);
 
@@ -502,7 +532,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BString theTimeParsed (str);
       theTimeParsed.RemoveAll ("\n");
     	
-      tempString << theChan << " created " << theTimeParsed << "\n";
+      tempString += theChan;
+      tempString += " created ";
+      tempString += theTimeParsed;
+      tempString += '\n';
       Display (tempString.String(), 0);		
       return true;    
     }
@@ -511,7 +544,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     {
       BString theChan (GetWord (data, 4)),
               tempString ("[x] No topic set in ");
-      tempString << theChan << '\n';
+      tempString += theChan;
+      tempString += '\n';
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &errorColor);
@@ -532,7 +566,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BMessage display (M_DISPLAY);
         BString buffer;
 
-        buffer << "*** Topic: " << theTopic << "\n";
+        buffer += "*** Topic: ";
+        buffer += theTopic;
+        buffer += '\n';
         PackDisplay (&display, buffer.String(), &whoisColor, 0, vision_app->GetBool ("timestamp"));
 
         BMessage msg (M_CHANNEL_TOPIC);
@@ -569,8 +605,11 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         BMessage display (M_DISPLAY);
         BString buffer;
 
-        buffer << "*** Topic set by " << user << " @ "
-               << theTimeParsed << "\n";
+        buffer += "*** Topic set by ";
+        buffer += user;
+        buffer += " @ ";
+        buffer += theTimeParsed;
+        buffer += '\n';
         PackDisplay (&display, buffer.String(), &whoisColor, 0, vision_app->GetBool ("timestamp"));
         if (client->msgr.IsValid())
           client->msgr.SendMessage (&display);
@@ -589,7 +628,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       if (client) // in the channel
       {
         BString tempString ("*** Users in ");
-        tempString << channel << ": " << names << '\n';
+        tempString += channel;
+        tempString += ": ";
+        tempString += names;
+        tempString += '\n';
         Display (tempString.String(), &textColor);
 			
         BMessage msg (M_CHANNEL_NAMES);
@@ -636,7 +678,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       else // not in the channel
       {
         BString tempString ("*** Users in ");
-        tempString << channel << ": " << names << '\n';
+        tempString += channel;
+        tempString += ": ";
+        tempString += names;
+        tempString += '\n';
         Display (tempString.String(), &textColor);
         return true;
       }    
@@ -670,7 +715,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       if (reconnecting)
       {
         BString reString;
-        reString << "[@] Successful reconnect\n";
+        reString += "[@] Successful reconnect\n";
         Display (reString.String(), &errorColor);
         DisplayAll (reString.String(), &errorColor, &serverFont);
         // msgr.SendMessage (M_REJOIN_ALL);
@@ -680,7 +725,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       if (initialMotd)
       {
         BString command ("USERHOST ");
-        command << myNick << "\n";
+        command += myNick;
+        command += '\n';
         SendData (command.String());
         hostnameLookup = true;
       }
@@ -774,7 +820,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       }
 
       BString tempString;
-      tempString << "[x] Nickname " << theNick << " is already in use.\n";
+      tempString += "[x] Nickname ";
+      tempString += theNick;
+      tempString += " is already in use.\n";
 
       BMessage display (M_DISPLAY);
       PackDisplay (&display, tempString.String(), &nickColor);
@@ -787,7 +835,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BString theChannel (GetWord (data, 5)),
               theNick (GetWord (data, 4)),
               tempString ("[x] ");
-      tempString << theNick << " is not in " << theChannel << ".\n";
+      tempString += theNick;
+      tempString += " is not in ";
+      tempString += theChannel;
+      tempString += ".\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &errorColor);
@@ -799,7 +850,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     {
       BString theChannel (GetWord (data, 4)),
               tempString ("[x] You're not in ");
-      tempString << theChannel << ".\n";
+      tempString += theChannel;
+      tempString += ".\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &errorColor);
@@ -812,7 +864,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BString theChannel (GetWord (data, 5)),
               theNick (GetWord (data, 4)),
       tempString ("[x] ");
-      tempString << theNick << " is already in " << theChannel << ".\n";
+      tempString += theNick;
+      tempString += " is already in ";
+      tempString += theChannel;
+      tempString += ".\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &errorColor);
@@ -824,7 +879,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     {
       BString theChannel (GetWord (data, 4)),
               tempString ("[x] Channel key already set in ");
-      tempString << theChannel << ".\n";
+      tempString += theChannel;
+      tempString += ".\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &errorColor);
@@ -836,7 +892,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     {
       BString theMode (GetWord (data, 4)),
               tempString ("[x] Unknown channel mode: '");
-      tempString << theMode << "'\n";
+      tempString += theMode;
+      tempString += "'\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &quitColor);
@@ -851,7 +908,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
               theReason (RestOfString (data, 5));
       theReason.RemoveFirst(":");
       theReason.ReplaceLast("channel", theChan.String());
-      tempString << theReason << " (invite only)\n";
+      tempString += theReason;
+      tempString += " (invite only)\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
@@ -867,7 +925,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       theReason.RemoveFirst(":");
       theReason.ReplaceLast("channel", theChan.String());
 
-      tempString << theReason << " (you're banned)\n";
+      tempString += theReason;
+      tempString += " (you're banned)\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
@@ -882,7 +941,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
               tempString("[x] ");
       theReason.RemoveFirst(":");
       theReason.ReplaceLast("channel", theChan.String());
-      tempString << theReason << " (bad channel key)\n";
+      tempString += theReason;
+      tempString += " (bad channel key)\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &quitColor, &serverFont);
@@ -895,7 +955,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       BMessage msg (M_DISPLAY);
       BString buffer;
 		
-      buffer << "[x] Unknown MODE flag.\n";
+      buffer += "[x] Unknown MODE flag.\n";
       PackDisplay (&msg, buffer.String(), &quitColor);
       PostActive (&msg);
       return true;    
@@ -924,7 +984,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
               theMessage (RestOfString (data, 5)),
               tempString ("[x] ");
       theMessage.RemoveFirst (":");
-      tempString << theMessage << "\n";
+      tempString += theMessage;
+      tempString += "\n";
 
       BMessage msg (M_DISPLAY);
       PackDisplay (&msg, tempString.String(), &whoisColor, &serverFont);

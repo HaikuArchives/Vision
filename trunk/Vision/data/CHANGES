@@ -1,7 +1,7 @@
-Vision 0.1
+Vision
 http://vision.sourceforge.net
 
-[0.1]
-2001-02-27
- * Log started
- * Initial CVS checkin
+[0.1.0315]
+ 2001-03-18
+   * Changed some BString <<'s to +='s in ParseENums (faster)
+   
