@@ -335,7 +335,7 @@ ServerAgent::Establish (void *arg)
       delete sMsgrE;
       return B_ERROR;
     }
-
+    
     if (useIdent)
     {
       server->PackDisplay (&statMsg, "[@] Spawning Ident daemon (10 sec timeout)\n", &(server->errorColor));
@@ -370,6 +370,7 @@ ServerAgent::Establish (void *arg)
 
         output.AppendString (string.String());
         accepted->Send (output);
+        accepted->Close();
         delete accepted;
 
         server->PackDisplay (&statMsg, "[@] Replied to Ident request\n", &(server->errorColor));
@@ -909,6 +910,10 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_SERVER_DISCONNECT:
       {
+        myLag = "CONNECTION PROBLEM";
+        msgr.SendMessage (M_LAG_CHANGED);
+        checkingLag = false;
+        
         // let the user know
         if (isConnected)
         {
