@@ -27,9 +27,10 @@
 
 #include <PopUpMenu.h>
 #include <MenuItem.h>
-#include <View.h>
+#include <Clipboard.h>
+#include <View.h> // needed?
 
-#include <Window.h>
+#include <Window.h> // needed?
 
 #include <stdio.h>
 
@@ -47,38 +48,92 @@ VTextControl::VTextControl (BRect frame, const char *name, const char *label,
     resizingMode,
     flags)
 {
+  // Usage is identical to BTextControl 
 }
 
 VTextControl::VTextControl (BMessage *data)
   : BTextControl(
     data)
 {
-
+  // Usage is identical to BTextControl 
 }
 
 void
 VTextControl::AllAttached (void)
 {
-
-  myPopUp = new BPopUpMenu("Context Menu", false, false);
-
-  //BMenuItem *item;
-  myPopUp->AddItem (new BMenuItem("Cut", new BMessage (B_CUT)));
-  myPopUp->AddItem (new BMenuItem("Copy", new BMessage (B_COPY)));
-  myPopUp->AddItem (new BMenuItem("Paste", new BMessage (B_PASTE)));
-  myPopUp->AddSeparatorItem();
-  myPopUp->AddItem (new BMenuItem("Select All", new BMessage (B_SELECT_ALL)));
+  // This function adds the BMessageFilter which catches B_MOUSE_DOWNs
   
-  myPopUp->SetFont (be_plain_font);
-  myPopUp->SetTargetForItems (TextView());
-
   TextView()->AddFilter (new VTextControlFilter (this));
+}
+
+void
+VTextControl::BuildPopUp (void)
+{
+  // This function checks certain criteria (text is selected,
+  // TextView is editable, etc) to determine which MenuItems
+  // to enable and disable
+  
+  bool enablecopy (true),
+       enablepaste (false), // check clipboard contents first
+       enablecut (true),
+       enableselectall (true);
+       
+  int32 selstart, selfinish;
+  TextView()->GetSelection (&selstart, &selfinish);
+  if (selstart == selfinish)
+    enablecopy = false; // no selection
+  
+  if (!TextView()->IsEditable() || !enablecopy)
+    enablecut = false; // no selection or not editable
+  
+  if (!TextView()->IsSelectable() || (TextView()->TextLength() == 0))
+    enableselectall = false; // not selectable
+  
+  if (TextView()->IsEditable())
+  {
+    BClipboard clipboard("system");
+    BMessage *clip = (BMessage *)NULL;
+    if (clipboard.Lock()) {
+      if ((clip = clipboard.Data()))
+        if (clip->HasData ("text/plain", B_MIME_TYPE))
+          enablepaste = true; // has text on clipboard
+    }
+    clipboard.Unlock();
+    delete clip;
+  }
+  
+  myPopUp = new BPopUpMenu("Context Menu", false, false); 
+
+  BMenuItem *item; 
+  item = new BMenuItem("Cut", new BMessage (B_CUT));
+  item->SetEnabled (enablecut);
+  myPopUp->AddItem (item);
+  
+  item = new BMenuItem("Copy", new BMessage (B_COPY));
+  item->SetEnabled (enablecopy);
+  myPopUp->AddItem (item);
+
+  item = new BMenuItem("Paste", new BMessage (B_PASTE));
+  item->SetEnabled (enablepaste);
+  myPopUp->AddItem (item);
+  
+  myPopUp->AddSeparatorItem(); 
+  
+  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL));
+  item->SetEnabled (enableselectall);
+  myPopUp->AddItem (item);  
+  
+  myPopUp->SetFont (be_plain_font); 
+  myPopUp->SetTargetForItems (TextView()); 
 
 }
 
+
 VTextControl::~VTextControl (void)
 {
-  delete myPopUp;
+  // Clean up
+  
+  //delete myPopUp;
 }
 
 ///////////////////////////
@@ -89,11 +144,10 @@ VTextControlFilter::VTextControlFilter (VTextControl *parentcontrol)
 
   parent (parentcontrol)
 {
-  //
 }
 
 filter_result
-VTextControlFilter::Filter (BMessage *msg, BHandler **handler)
+VTextControlFilter::Filter (BMessage *msg, BHandler **)
 {
   filter_result result (B_DISPATCH_MESSAGE);
   switch (msg->what)
@@ -115,6 +169,7 @@ VTextControlFilter::Filter (BMessage *msg, BHandler **handler)
       && (keymodifiers & B_COMMAND_KEY) == 0
       && (keymodifiers & B_CONTROL_KEY) == 0)
       {
+        parent->BuildPopUp();
         parent->myPopUp->Go (
           parent->Parent()->ConvertToScreen (myPoint),
           true,
