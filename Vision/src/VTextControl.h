@@ -21,7 +21,9 @@
  
 
 // Class description:
-// VTextControl is a derivative of BTextControl which adds context menus
+// VTextControl is a derivative of BTextControl which adds a standard clipboard
+// related context menu (eg: Every TextControl in Windows has a right click menu
+// with Cut/Copy/Paste/Select All)
 
 // it's intention is to be fully compliant and portable, so it can easily
 // be dropped into other applications as well.
@@ -44,13 +46,16 @@ class VTextControl : public BTextControl
                                          const char *,
                                          BMessage *,
                                          uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP,
-                                         uint32 = B_WILL_DRAW | B_NAVIGABLE);
-                           VTextControl (BMessage *);
+                                         uint32 = B_WILL_DRAW | B_NAVIGABLE,
+                                         bool = false);
+                           VTextControl (BMessage *, bool = false);
     virtual                ~VTextControl (void);
     virtual void           AllAttached (void);
     void                   BuildPopUp (void);
 
     BPopUpMenu             *myPopUp;
+    
+    bool                   nomenu;
 };
 
 class VTextControlFilter : public BMessageFilter
