@@ -9,6 +9,7 @@ http://vision.sourceforge.net
    
    * Status bar for ListAgent working
    * fixed memleak in StatusView
+   * fixed crash in net_server identd
 
 [0.2.0523]
  2001-05-23
