@@ -93,7 +93,7 @@ class ClientWindow : public BWindow
 
 };
 
-const uint32 M_UPDATE_STATUS				= 'cwus';
+const uint32 M_UPDATE_STATUS                = 'cwus';
 const uint32 M_OBITUARY                     = 'cwob';
 const uint32 M_CW_ALTW                      = 'cwaw';
 const uint32 M_CW_ALTP                      = 'cwap';
@@ -101,6 +101,8 @@ const uint32 M_MAKE_NEW_SERVER              = 'cwms';
 
 const uint32 M_MOVE_UP                      = 'cwmu';
 const uint32 M_MOVE_DOWN                    = 'cwmd';
+const uint32 M_MOVE_UP_SHIFT                = 'cmus';
+const uint32 M_MOVE_DOWN_SHIFT              = 'cmds';
 const uint32 M_MOVE_TOP_SERVER              = 'cwmt';
 
 const uint32 M_STATUS_CLEAR                 = 'cwsc';

@@ -112,28 +112,28 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     BString tempString ("NOTICE ");
     tempString += theNick;
     tempString += " :\1VERSION Vision-"; 
-    tempString += vision_app->VisionVersion(VERSION_VERSION);
+    tempString += vision_app->VisionVersion (VERSION_VERSION);
     tempString += sysInfoString;
     tempString += "http://vision.sourceforge.net";
-			
+
 
     tempString += '\1';
     SendData (tempString.String());
   }
-	
+
 
   else if (theCTCP == "UPTIME")
   {
     BString uptime (DurationString(system_time()));
     BString expandedString;
-		
+
     const char *expansions[1];
     expansions[0] = uptime.String();
 
     expandedString = ExpandKeyed (vision_app->GetCommand (CMD_UPTIME).String(), "U",
     expansions);
     expandedString.RemoveFirst ("\n");
-		
+
     BString tempString ("NOTICE ");
     tempString += theNick;
     tempString += " :\1UPTIME ";
@@ -142,146 +142,148 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     SendData (tempString.String());
   }
 
-    #if 0
-	else if(theCTCP == "DCC")
-	{
-		BString theType = GetWord(theMsg.String(), 2);
-		if(theType == "SEND")
-		{
-			BString theFile = GetWord(theMsg.String(), 3);
-			BString theIP = GetWord(theMsg.String(), 4);
-			BString thePort = GetWord(theMsg.String(), 5);
-			BString theSize = GetWord(theMsg.String(), 6);
-			theSize.RemoveLast("\1"); // strip CTCP char
-			DCCGetDialog(theNick, theFile, theSize, theIP, thePort);
-		}
-		else if(theType == "CHAT")
-		{
-			BString theIP = GetWord(theMsg.String(), 4);
-			BString thePort = GetWord(theMsg.String(), 5);
-			thePort.RemoveLast("\1");
-			DCCChatDialog(theNick, theIP, thePort);
-		}
-		else if (theType == "ACCEPT")
-		{
-			BString file (GetWord (theMsg.String(), 3));
-			BString port (GetWord (theMsg.String(), 4));
-			BString poss (GetWord (theMsg.String(), 5));
-			poss.RemoveLast("\1");
+  #if 0
+  else if(theCTCP == "DCC")
+  {
+    BString theType = GetWord(theMsg.String(), 2);
+    if (theType == "SEND")
+    {
+      BString theFile (GetWord(theMsg.String(), 3)),
+              theIP   (GetWord(theMsg.String(), 4)),
+              thePort (GetWord(theMsg.String(), 5)),
+              theSize (GetWord(theMsg.String(), 6));
+      theSize.RemoveLast ("\1"); // strip CTCP char
+      DCCGetDialog (theNick, theFile, theSize, theIP, thePort);
+    }
+    else if (theType == "CHAT")
+    {
+      BString theIP   (GetWord(theMsg.String(), 4)),
+              thePort (GetWord(theMsg.String(), 5));
+      thePort.RemoveLast ("\1");
+      DCCChatDialog(theNick, theIP, thePort);
+    }
+    else if (theType == "ACCEPT")
+    {
+      BString file (GetWord (theMsg.String(), 3)),
+              port (GetWord (theMsg.String(), 4)),
+              poss (GetWord (theMsg.String(), 5));
+      poss.RemoveLast("\1");
 
-			off_t pos (0LL);
-			for (int32 i = 0; i < poss.Length(); ++i)
-				pos = pos * 10 + poss[i] - '0';
+      off_t pos (0LL);
+      for (int32 i = 0; i < poss.Length(); ++i)
+        pos = pos * 10 + poss[i] - '0';
 
-			for (int32 i = 0; i < resumes.CountItems(); ++i)
-			{
-				ResumeData *data ((ResumeData *)resumes.ItemAt (i));
+      for (int32 i = 0; i < resumes.CountItems(); ++i)
+      {
+        ResumeData *data ((ResumeData *)resumes.ItemAt (i));
 
-				if (data->nick == theNick
-				&&  data->pos  == pos
-				&&  data->port == port);
-				{
-					resumes.RemoveItem (i);
+        if (data->nick == theNick
+        &&  data->pos  == pos
+        &&  data->port == port);
+        {
+          resumes.RemoveItem (i);
 
-					BMessage msg (DCC_ACCEPT);
-					msg.AddString ("bowser:nick", data->nick.String());
-					msg.AddString ("bowser:file", data->file.String());
-					msg.AddString ("bowser:size", data->size.String());
-					msg.AddString ("bowser:ip",   data->ip.String());
-					msg.AddString ("bowser:port", data->port.String());
-					msg.AddString ("path",        data->path.String());
-					msg.AddBool   ("continue",    true);
+          BMessage msg (DCC_ACCEPT);
+          msg.AddString ("bowser:nick", data->nick.String());
+          msg.AddString ("bowser:file", data->file.String());
+          msg.AddString ("bowser:size", data->size.String());
+          msg.AddString ("bowser:ip",   data->ip.String());
+          msg.AddString ("bowser:port", data->port.String());
+          msg.AddString ("path",        data->path.String());
+          msg.AddBool   ("continue",    true);
 
-					PostMessage(&msg);
+          PostMessage(&msg);
 					
-					delete data;
-					break;
-				}
-			}
-		}
-		else if (theType == "RESUME")
-		{
-			BString file (GetWord (theMsg.String(), 3));
-			BString port (GetWord (theMsg.String(), 4));
-			BString poss (GetWord (theMsg.String(), 5));
-			poss.RemoveLast("\1");
+          delete data;
+          break;
+        }
+      }
+    }
+    else if (theType == "RESUME")
+    {
+      BString file (GetWord (theMsg.String(), 3)),
+              port (GetWord (theMsg.String(), 4)),
+              poss (GetWord (theMsg.String(), 5));
+      poss.RemoveLast("\1");
 
-			off_t pos (0LL);
-			for (int32 i = 0; i < poss.Length(); ++i)
-				pos = pos * 10 + poss[i] - '0';
+      off_t pos (0LL);
+      for (int32 i = 0; i < poss.Length(); ++i)
+        pos = pos * 10 + poss[i] - '0';
 
-			// Have to tell the sender we can resume
-			BString tempString("PRIVMSG ");
-			tempString << theNick << " :\1DCC ACCEPT " << file << " "
-			           << port << " " << poss << "\1";
-			SendData (tempString.String());
+      // Have to tell the sender we can resume
+      BString tempString("PRIVMSG ");
+      tempString += theNick;
+      tempString += " :\1DCC ACCEPT ";
+      tempString += file;
+      tempString += " ";
+      tempString += port;
+      tempString += " ";
+      tempString += poss;
+      tempString += "\1";
+      SendData (tempString.String());
 
-			BMessage bMsg (M_DCC_MESSENGER), bReply;
-			be_app_messenger.SendMessage (&bMsg, &bReply);
+      BMessage bMsg (M_DCC_MESSENGER), bReply;
+      be_app_messenger.SendMessage (&bMsg, &bReply);
 
-			BMessenger msgr;
-			bReply.FindMessenger ("msgr", &msgr);
+      BMessenger msgr;
+      bReply.FindMessenger ("msgr", &msgr);
 
-			BMessage msg (M_ADD_RESUME_DATA), reply;
-			msg.AddString ("bowser:nick", theNick.String());
-			msg.AddString ("bowser:port", port.String());
-			msg.AddString ("bowser:file", file.String());
-			msg.AddInt64 ("bowser:pos", pos);
+      BMessage msg (M_ADD_RESUME_DATA), reply;
+      msg.AddString ("bowser:nick", theNick.String());
+      msg.AddString ("bowser:port", port.String());
+      msg.AddString ("bowser:file", file.String());
+      msg.AddInt64 ("bowser:pos", pos);
 
-			// do sync.. we do not want to have the transfer
-			// start before we tell it okay
-			msgr.SendMessage (&msg, &reply);
-			if (reply.HasBool ("hit")
-			&&  reply.FindBool ("hit"))
-			{
+      // do sync.. we do not want to have the transfer
+      // start before we tell it okay
+      msgr.SendMessage (&msg, &reply);
+      if (reply.HasBool ("hit")
+      &&  reply.FindBool ("hit"))
+      {
+        BString buffer;
+        buffer += "PRIVMSG ";
+        buffer += theNick;
+        buffer += " :\1DCC ACCEPT ";
+        buffer += file;
+        buffer += " ";
+        buffer += port;
+        buffer += " ";
+        buffer += poss;
+        buffer += "\1";
+        SendData (buffer.String());
+      }
+    }
+  }
+  #endif
 
-				BString buffer;
+  BMessage display (M_DISPLAY);
+  BString buffer;
 
-				buffer << "PRIVMSG "
-					<< theNick
-					<< " :\1DCC ACCEPT "
-					<< file
-					<< " "
-					<< port
-					<< " "
-					<< poss
-					<< "\1";
-				SendData (buffer.String());
-			}
-		}
-	}
-	
-	#endif
+  buffer += "[";
+  buffer += theNick;
+  buffer += " ";
+  if (theTarget != myNick)
+  {
+    buffer += theTarget;
+    buffer += ":";
+  }
+  buffer << theCTCP;
 
-	BMessage display (M_DISPLAY);
-	BString buffer;
-
-	buffer += "[";
-	buffer += theNick;
-	buffer += " ";
-	if (theTarget != myNick)
-	{
-		buffer += theTarget;
-		buffer += ":";
-	}
-	buffer << theCTCP;
-	
-	if (theCTCP == "PING" || theRest == "-9z99")
-		buffer += "]\n";
-	else
-	{
-		int32 theChars = theRest.Length();
-		if (theRest[theChars - 1] == '\1')
-		{
-			theRest.Truncate(theChars - 1, false);
-		}
-		buffer += "] ";
-		buffer += theRest;
-		buffer += '\n';
-	}
+  if (theCTCP == "PING" || theRest == "-9z99")
+    buffer += "]\n";
+  else
+  {
+    int32 theChars = theRest.Length();
+    if (theRest[theChars - 1] == '\1')
+      theRest.Truncate (theChars - 1);
+      
+    buffer += "] ";
+    buffer += theRest;
+    buffer += '\n';
+  }
 		
-	PackDisplay (&display, buffer.String(), &ctcpReqColor, &serverFont);
-	PostActive (&display);
+  PackDisplay (&display, buffer.String(), &ctcpReqColor, &serverFont);
+  PostActive (&display);
 }
 
 void

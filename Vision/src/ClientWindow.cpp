@@ -107,7 +107,7 @@ ClientWindow::ScreenChanged (BRect screenframe, color_space mode)
 
   // user might have lowered resolution, may need to
   // move the window to a visible pos.
-	
+
   if (Frame().top > screenframe.bottom)
     MoveTo (Frame().left, 110); // move up
   if (Frame().left > screenframe.right)
@@ -123,25 +123,25 @@ ClientWindow::DispatchMessage (BMessage *msg, BHandler *handler)
   switch (msg->what)
   {
     case M_SEND_TO_AGENT:
-	{
-      uint32 newWhat;
-      BView *target;
-
-      if (msg->FindInt32 ("covertops", ((int32 *) &newWhat)) != B_OK)
       {
-        printf (":ERROR: no valid covertops found in M_SEND_TO_AGENT, bailing...\n");
-        return;
-      }
-      if (msg->FindPointer ("pointer", reinterpret_cast<void **>(&target)) != B_OK)
-      {
-        printf (":ERROR: no valid pointer found in M_SEND_TO_AGENT, bailing...\n");
-        return;
-      }
+        uint32 newWhat;
+        BView *target;
 
-      msg->what = newWhat;
-      target->MessageReceived (msg);
+        if (msg->FindInt32 ("covertops", ((int32 *) &newWhat)) != B_OK)
+        {
+          printf (":ERROR: no valid covertops found in M_SEND_TO_AGENT, bailing...\n");
+          return;
+        }
+        if (msg->FindPointer ("pointer", reinterpret_cast<void **>(&target)) != B_OK)
+        {
+          printf (":ERROR: no valid pointer found in M_SEND_TO_AGENT, bailing...\n");
+          return;
+        }
+
+        msg->what = newWhat;
+        target->MessageReceived (msg);
+      }
       break;
-    }
     
     default:
       BWindow::DispatchMessage (msg, handler);
@@ -154,145 +154,148 @@ ClientWindow::MessageReceived (BMessage *msg)
   switch (msg->what)
   {
     case M_MOVE_DOWN:
-    {
-      winList->Select (winList->CurrentSelection() + 1);
-      winList->ScrollToSelection();
+      {
+        winList->Select (winList->CurrentSelection() + 1);
+        winList->ScrollToSelection();
+      }
       break;
-    }
-    
+      
     case M_MOVE_UP:
-    {
-      winList->Select (winList->CurrentSelection() - 1);
-      winList->ScrollToSelection();
+      {
+        winList->Select (winList->CurrentSelection() - 1);
+        winList->ScrollToSelection();
+      }
       break;
-    }
+
+    case M_MOVE_UP_SHIFT:
+      {
+        printf ("m_move_up_shift\n");
+      }
+      break;
     
     case M_MOVE_TOP_SERVER:
-    {
+      {
+        int32 currentsel (winList->CurrentSelection());
+        if (currentsel < 0)
+          break;
       
-      int32 currentsel (winList->CurrentSelection());
-      if (currentsel < 0)
-        break;
+        int32 currentsid;
       
-      int32 currentsid;
+        WindowListItem *citem ((WindowListItem *)winList->ItemAt (currentsel));
       
-      WindowListItem *citem ((WindowListItem *)winList->ItemAt (currentsel));
+        if (citem)
+          currentsid = citem->Sid();
+        else
+          break;
       
-      if (citem)
-        currentsid = citem->Sid();
-      else
-        break;
-      
-      for (int32 i (1); i <= winList->CountItems(); ++i)
-      { 
-        WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
-        if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
-        {
-          winList->Select (winList->IndexOf (aitem));
-          break; 
+        for (int32 i (1); i <= winList->CountItems(); ++i)
+        { 
+          WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
+          if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == currentsid))
+          {
+            winList->Select (winList->IndexOf (aitem));
+            break; 
+          }
         }
       }
       break;
-    }
     
     case M_UPDATE_STATUS:
-    {
-       WindowListItem *item;
-       int32 newstatus;
+      {
+         WindowListItem *item;
+         int32 newstatus;
       
-       if ((msg->FindPointer ("item", reinterpret_cast<void **>(&item)) != B_OK)
-       || (msg->FindInt32 ("status", ((int32 *)&newstatus)) != B_OK))
-       {
-         printf (":ERROR: no valid pointer and int found in M_UPDATE_STATUS, bailing...\n");
-         return;
-       }
+         if ((msg->FindPointer ("item", reinterpret_cast<void **>(&item)) != B_OK)
+         || (msg->FindInt32 ("status", ((int32 *)&newstatus)) != B_OK))
+         {
+           printf (":ERROR: no valid pointer and int found in M_UPDATE_STATUS, bailing...\n");
+           return;
+         }
        
-       if (!winList->HasItem (item))
-         break;
+         if (!winList->HasItem (item))
+           break;
        
-       if (msg->HasBool("hidden"))
-       {
-       	 item->SetStatus (newstatus);
-         break;
-       }
+         if (msg->HasBool("hidden"))
+         {
+           item->SetStatus (newstatus);
+           break;
+         }
            
-       if (item->Status() != WIN_NICK_BIT)
-       {
-       	 item->SetStatus (newstatus);
-       }
-       
+         if (item->Status() != WIN_NICK_BIT)
+         {
+           item->SetStatus (newstatus);
+         }
+       } 
        break;
-    }
     
     case M_STATUS_CLEAR:
-    {
-      status->Clear();
+      {
+        status->Clear();
+      }
       break;
-    }
     
     case M_OBITUARY:
-    {
-       WindowListItem *agentitem;
-       BView *agentview;
-       if ((msg->FindPointer ("agent", reinterpret_cast<void **>(&agentview)) != B_OK)
-       || (msg->FindPointer ("item", reinterpret_cast<void **>(&agentitem)) != B_OK))
-       {
-         printf (":ERROR: no valid pointers found in M_OBITUARY, bailing...\n");
-         return;
-       } 
+      {
+        WindowListItem *agentitem;
+        BView *agentview;
+        if ((msg->FindPointer ("agent", reinterpret_cast<void **>(&agentview)) != B_OK)
+        || (msg->FindPointer ("item", reinterpret_cast<void **>(&agentitem)) != B_OK))
+        {
+          printf (":ERROR: no valid pointers found in M_OBITUARY, bailing...\n");
+          return;
+        } 
        
-       int32 agentType (agentitem->Type());
-       winList->RemoveAgent (agentview, agentitem);
-       
-       if ((shutdown_in_progress) && (agentType == WIN_SERVER_TYPE))
-         PostMessage (B_QUIT_REQUESTED);
-       
-       break;
-    }
+        int32 agentType (agentitem->Type());
+        winList->RemoveAgent (agentview, agentitem);
+        
+        if ((shutdown_in_progress) && (agentType == WIN_SERVER_TYPE))
+          PostMessage (B_QUIT_REQUESTED);
+      }  
+      break;
+ 
     
     case M_CW_ALTW:
-    {
-      if (vision_app->GetBool("catchAltW"))
-        printf (":TODO: Alert box baby!\n");
-      else
-        PostMessage (B_QUIT_REQUESTED);
+      {
+        if (vision_app->GetBool("catchAltW"))
+          printf (":TODO: Alert box baby!\n");
+        else
+          PostMessage (B_QUIT_REQUESTED);
+      }
       break;
-    }
     
     case M_CW_ALTP:
-    {
-      winList->CloseActive();
+      {
+        winList->CloseActive();
+      }
       break;
-    }
     
     case M_MAKE_NEW_SERVER:
-    {
-      const char *hostname, *port, *autoexec;
-      bool enidentd;
-      
-      if ((msg->FindString ("hostname", &hostname) != B_OK)
-      ||  (msg->FindString ("port", &port) != B_OK)
-      ||  (msg->FindString ("autoexec", &autoexec) != B_OK)
-      ||  (msg->FindBool   ("enidentd", &enidentd) != B_OK))
       {
-        printf (":ERROR: recieved incomplete data to M_MAKE_NEW_SERVER -- bailing\n");
-        return;
+        const char *hostname, *port, *autoexec;
+        bool enidentd;
+      
+        if ((msg->FindString ("hostname", &hostname) != B_OK)
+        ||  (msg->FindString ("port", &port) != B_OK)
+        ||  (msg->FindString ("autoexec", &autoexec) != B_OK)
+        ||  (msg->FindBool   ("enidentd", &enidentd) != B_OK))
+        {
+          printf (":ERROR: recieved incomplete data to M_MAKE_NEW_SERVER -- bailing\n");
+          return;
+        }
+       
+        winList->AddAgent (
+          new ServerAgent (
+            const_cast<const char *>(hostname),
+            const_cast<const char *>(port),
+            enidentd,
+            const_cast<const char *>(autoexec),
+            *AgentRect()),
+          ID_SERVER,
+          hostname,
+          WIN_SERVER_TYPE,
+          true); // bring to front
       }
-      
-      winList->AddAgent (
-        new ServerAgent (
-          const_cast<const char *>(hostname),
-          const_cast<const char *>(port),
-          enidentd,
-          const_cast<const char *>(autoexec),
-          *AgentRect()),
-        ID_SERVER,
-        hostname,
-        WIN_SERVER_TYPE,
-        true); // bring to front
-      
       break;
-    }
         
     default:
       BWindow::MessageReceived (msg);
@@ -375,6 +378,8 @@ ClientWindow::Init (void)
   // bowser-habit-friendly nav shortcuts
   AddShortcut (',', B_COMMAND_KEY, new BMessage (M_MOVE_UP));
   AddShortcut ('.', B_COMMAND_KEY, new BMessage (M_MOVE_DOWN));
+  
+  AddShortcut (B_UP_ARROW, B_COMMAND_KEY && B_SHIFT_KEY, new BMessage (M_MOVE_UP_SHIFT));
    
   shutdown_in_progress = false;
   wait_for_quits = false;
@@ -452,13 +457,13 @@ ClientWindow::Init (void)
   winList = new WindowList (BRect (0, frame.top, 100, status->Frame().top - 1));
   
   winListScroll = new BScrollView (
-		"winListScroll",
-		winList,
-		B_FOLLOW_TOP_BOTTOM,
-		0,
-		false,
-		true,
-		B_NO_BORDER);
+    "winListScroll",
+    winList,
+    B_FOLLOW_TOP_BOTTOM,
+    0,
+    false,
+    true,
+    B_NO_BORDER);
   bgView->AddChild (winListScroll);
   
   agentrect = new BRect (

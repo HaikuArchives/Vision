@@ -29,108 +29,107 @@
 #include "Names.h"
 
 NameItem::NameItem (
-	const char *name,
-	int32 userStatus)
+  const char *name,
+  int32 userStatus)
 
-	: BListItem (),
-	  myName (name),
-	  myAddress (""),
-	  myStatus (userStatus)
+  : BListItem (),
+    myName (name),
+    myAddress (""),
+    myStatus (userStatus)
 {
 }
 
 BString
 NameItem::Name (void) const
 {
-	return myName;
+  return myName;
 }
 
 BString
 NameItem::Address (void) const
 {
-	return myAddress;
+  return myAddress;
 }
 
 int32
 NameItem::Status() const
 {
-	return myStatus;
+  return myStatus;
 }
 
 void
 NameItem::SetName (const char *name)
 {
-	myName = name;
+  myName = name;
 }
 
 void
 NameItem::SetAddress (const char *address)
 {
-	myAddress = address;
+  myAddress = address;
 }
 
 void
 NameItem::SetStatus (int32 userStatus)
 {
-	myStatus = userStatus;
+  myStatus = userStatus;
 }
 
 void
 NameItem::DrawItem (BView *passedFather, BRect frame, bool complete)
 {
-	NamesView *father (static_cast<NamesView *>(passedFather));
-	
-	if (IsSelected())
-	{
-		father->SetLowColor (180, 180, 180);
-		father->FillRect (frame, B_SOLID_LOW);
-	}
-	else if (complete)
-	{
-		father->SetLowColor (father->GetColor (C_NAMES_BACKGROUND));
-		father->FillRect (frame, B_SOLID_LOW);
-	}
+  NamesView *father (static_cast<NamesView *>(passedFather));
 
-	font_height fh;
-	father->GetFontHeight (&fh);
+  if (IsSelected())
+  {
+    father->SetLowColor (180, 180, 180);
+    father->FillRect (frame, B_SOLID_LOW);
+  }
+  else if (complete)
+  {
+    father->SetLowColor (father->GetColor (C_NAMES_BACKGROUND));
+    father->FillRect (frame, B_SOLID_LOW);
+  }
 
-	father->MovePenTo (
-		frame.left + 4,
-		frame.bottom - fh.descent);
+  font_height fh;
+  father->GetFontHeight (&fh);
 
-	BString drawString (myName);
-	rgb_color color = father->GetColor (C_NAMES);
+  father->MovePenTo (
+  frame.left + 4,
+  frame.bottom - fh.descent);
 
-	if ((myStatus & STATUS_OP_BIT) != 0)
-	{
-		drawString.Prepend ("@");
-		color = father->GetColor (C_OP);
-	}
-	else if ((myStatus & STATUS_HELPER_BIT) != 0)
-	{
-		drawString.Prepend ("%");
-		color = father->GetColor (C_HELPER);
-	}
-	else if ((myStatus & STATUS_VOICE_BIT) != 0)
-	{
-		drawString.Prepend("+");
-		color = father->GetColor (C_VOICE);
-	}
-	
+  BString drawString (myName);
+  rgb_color color = father->GetColor (C_NAMES);
 
-	if ((myStatus & STATUS_IGNORE_BIT) != 0)
-		color = father->GetColor (C_IGNORE);
+  if ((myStatus & STATUS_OP_BIT) != 0)
+  {
+    drawString.Prepend ("@");
+    color = father->GetColor (C_OP);
+  }
+  else if ((myStatus & STATUS_HELPER_BIT) != 0)
+  {
+    drawString.Prepend ("%");
+    color = father->GetColor (C_HELPER);
+  }
+  else if ((myStatus & STATUS_VOICE_BIT) != 0)
+  {
+    drawString.Prepend("+");
+    color = father->GetColor (C_VOICE);
+  }
 
-	if (IsSelected())
-	{
-		color.red   = 0;
-		color.green = 0;
-		color.blue  = 0;
-	}
+  if ((myStatus & STATUS_IGNORE_BIT) != 0)
+    color = father->GetColor (C_IGNORE);
 
-	father->SetHighColor (color);
+  if (IsSelected())
+  {
+    color.red   = 0;
+    color.green = 0;
+    color.blue  = 0;
+  }
 
-	father->SetDrawingMode (B_OP_OVER);
-	father->DrawString (drawString.String());
-	father->SetDrawingMode (B_OP_COPY);
+  father->SetHighColor (color);
+
+  father->SetDrawingMode (B_OP_OVER);
+  father->DrawString (drawString.String());
+  father->SetDrawingMode (B_OP_COPY);
 }

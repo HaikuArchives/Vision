@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.1.0414
+VERSION := 0.2.0417
 BUILDDATE := $(shell date +%b_%d_%Y)
 
 # system libs
@@ -44,7 +44,7 @@ CFLAGS :=
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 CFLAGS += -DBEOS_BUILD
 CFLAGS += -DBUILD_DATE=\"$(BUILDDATE)\"
-CFLAGS += -O3
+CFLAGS += -O2
 CFLAGS += -fno-pic
 CFLAGS += -ffast-math
 CFLAGS += -march=pentium -mcpu=pentium

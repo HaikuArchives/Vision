@@ -40,67 +40,66 @@ class BPopUpMenu;
 
 class NameItem : public BListItem
 {
-	public:
+  public:
 
-									NameItem (
-										const char *,
-										int32);
-	BString							Name (void) const;
-	BString							Address (void) const;
-	int32								Status (void) const;
+                                    NameItem (
+                                      const char *,
+                                      int32);
+    BString                         Name (void) const;
+    BString                         Address (void) const;
+    int32                           Status (void) const;
 
-	void								SetName (const char *);
-	void								SetAddress (const char *);
-	void								SetStatus (int32);
+    void                            SetName (const char *);
+    void                            SetAddress (const char *);
+    void                            SetStatus (int32);
 
-	virtual void					DrawItem (BView *, BRect ,
-										bool = false);
+    virtual void                    DrawItem (BView *, BRect , bool = false);
 
-	private:
+  private:
 
-	BString							myName,
-									myAddress;
-	int32							myStatus;
+    BString                         myName,
+                                      myAddress;
+    int32                           myStatus;
 };
 
 class NamesView : public BListView
 {
   public:
 
-										NamesView (BRect);
-	virtual							~NamesView (void);
-	virtual void					AttachedToWindow (void);
-	virtual void					MouseDown (BPoint);
-	virtual void					MouseMoved (BPoint, uint32, const BMessage *);
-	virtual void					MouseUp (BPoint);
-	virtual void                    KeyDown (const char *, int32);
+                                    NamesView (BRect);
+    virtual                         ~NamesView (void);
+    virtual void                    AttachedToWindow (void);
+    virtual void                    MouseDown (BPoint);
+    virtual void                    MouseMoved (BPoint, uint32, const BMessage *);
+    virtual void                    MouseUp (BPoint);
+    virtual void                    KeyDown (const char *, int32);
 
-	void								SetColor (int32, rgb_color);
-	rgb_color						GetColor (int32) const;
-	void								SetFont (int32, const BFont *);
-	void							ClearList (void);
-	
-	private:
+    void                            SetColor (int32, rgb_color);
+    rgb_color                       GetColor (int32) const;
+    void                            SetFont (int32, const BFont *);
+    void                            ClearList (void);
+
+  private:
 
     bool                            _tracking;
 
-	BPopUpMenu						*myPopUp;
-	BMenu 							*CTCPPopUp;
-	int32								lastSelected;
-	int32								lastButton;
-	int32                           currentindex;
+    BPopUpMenu                      *myPopUp;
+    BMenu                           *CTCPPopUp;
+    int32                           lastSelected,
+                                      lastButton,
+                                      currentindex;
 
-	rgb_color						opColor,
-										voiceColor,
-										helperColor,
-										textColor,
-										ignoreColor,
-										bgColor;
+    rgb_color                       opColor,
+                                      voiceColor,
+                                      helperColor,
+                                      textColor,
+                                      ignoreColor,
+                                      bgColor;
 };
 
-const uint32 POPUP_MODE								= 'pumo';
-const uint32 POPUP_CTCP								= 'puct';
-const uint32 POPUP_WHOIS							= 'puwh';
-const uint32 POPUP_KICK								= 'puki';
+const uint32 POPUP_MODE               = 'pumo';
+const uint32 POPUP_CTCP               = 'puct';
+const uint32 POPUP_WHOIS              = 'puwh';
+const uint32 POPUP_KICK               = 'puki';
 
 #endif

@@ -57,7 +57,6 @@ class ServerAgent : public ClientAgent
 
 	virtual void				MessageReceived (BMessage *);
 	virtual void				AttachedToWindow (void);
-    virtual void                Pulse (void);
     void						PostActive (BMessage *);
 
 
@@ -73,6 +72,8 @@ class ServerAgent : public ClientAgent
 	bool						ParseENums (const char *, const char *);
 	void						ParseCTCP (BString theNick, BString theTarget, BString theMsg);
 	void						ParseCTCPResponse (BString theNick, BString theMsg);
+
+	void                        PrivateIPCheck (void);
 	
  	ClientAgent					*Client (const char *);
 	ClientAgent					*ActiveClient (void);
@@ -83,6 +84,10 @@ class ServerAgent : public ClientAgent
 	BLocker						endPointLock;
 
 	static int32				ServerSeed;
+	
+	const char                  *localip;           // our local ip
+	bool                        localip_private;    // if localip is private
+	                                                // (set by PrivateIPCheck)
 	
 	const BString				lnick1,
 									lnick2,
@@ -135,17 +140,12 @@ class ServerAgent : public ClientAgent
 	BString						*events;
 	
 	BString                     serverHostName;
-//	uint32						localAddress;
 	
 	
 	
 	bool						initialMotd,
-									identd,
-									hostnameLookup;
+									identd;
 	BString						cmds;
-	BString						localAddress,
-								localIP;
-	uint32						localuIP;
 	int32 s; 				// socket
 	
 	BList                       timers;
