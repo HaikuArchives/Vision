@@ -874,25 +874,27 @@ VisionApp::Identity (void *)
         {
           accepted->SetTimeout(5);
 
-          accepted->Receive (buffer, 64); 
-          buffer.RemoveString (received, 64); 
-          int32 len; 
+          if (accepted->Receive (buffer, 64) > 0)
+          { 
+            buffer.RemoveString (received, 64); 
+            int32 len; 
  
-          received[63] = 0; 
-          while ((len = strlen (received)) 
-          &&     isspace (received[len - 1])) 
-            received[len - 1] = 0; 
+            received[63] = 0; 
+            while ((len = strlen (received)) 
+            &&     isspace (received[len - 1])) 
+              received[len - 1] = 0; 
  
-          BNetBuffer output; 
-          BString string; 
+            BNetBuffer output; 
+            BString string; 
             
-          string.Append (received); 
-          string.Append (" : USERID : BeOS : "); 
-          string.Append (ident); 
-          string.Append ("\r\n"); 
+            string.Append (received); 
+            string.Append (" : USERID : BeOS : "); 
+            string.Append (ident); 
+            string.Append ("\r\n"); 
                 
-          output.AppendString (string.String()); 
-          accepted->Send (output); 
+            output.AppendString (string.String()); 
+            accepted->Send (output); 
+          }
         } 
         else 
         { 
