@@ -123,9 +123,7 @@ WindowList::MouseDown (BPoint myPoint)
     
     // slight kludge to make sure the expand/collapse triangles behave how they should
     // -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
-    if ((myPoint.x > 10.0) || Superitem(ItemAt(selected)) != NULL)
-      Select (selected);
-    else
+    if ((myPoint.x < 10.0) && Superitem(ItemAt(selected)) == NULL)
     {
       // since Expand/Collapse are not virtual, override them by taking over processing
       // the collapse triangle logic manually
@@ -140,6 +138,8 @@ WindowList::MouseDown (BPoint myPoint)
         }
       }
     }
+    else if (mousebuttons == B_PRIMARY_MOUSE_BUTTON)
+      Select (selected);
 
     if ((keymodifiers & B_SHIFT_KEY)  == 0
     && (keymodifiers & B_OPTION_KEY)  == 0
@@ -162,20 +162,6 @@ WindowList::MouseDown (BPoint myPoint)
       }
     }
   }
-  // find the active agent and select it
-  WindowListItem *activeagent (NULL);
-  for (int32 i (1); i <= CountItems(); ++i)
-  { 
-    WindowListItem *aitem ((WindowListItem *)ItemAt (i - 1));
-    if (!aitem->pAgent()->IsHidden())
-    {
-      activeagent = aitem;
-      break;
-    }
-  }
-    
-  if (activeagent)
-    Activate (IndexOf (activeagent));
 }
 
 void 
