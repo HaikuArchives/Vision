@@ -151,13 +151,19 @@ ServerAgent::Init (void)
 
 }
 
+int
+ServerAgent::IRCDType (void)
+{
+  return ircdtype;
+}
+
+
 status_t
 ServerAgent::NewTimer (const char *cmd, int32 sleep, int32 loops)
 {
 
   return B_OK;
 }
-
 
 int32
 ServerAgent::Timer (void *arg)
@@ -902,10 +908,8 @@ ServerAgent::MessageReceived (BMessage *msg)
       break;
 
     case M_SLASH_RECONNECT:
-      {
-        if (!isConnected && !isConnecting)
-          msgr.SendMessage (M_SERVER_DISCONNECT);
-      }
+      if (!isConnected && !isConnecting)
+        msgr.SendMessage (M_SERVER_DISCONNECT);
       break;
 
     case M_SERVER_DISCONNECT:

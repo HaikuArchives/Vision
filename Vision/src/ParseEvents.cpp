@@ -220,6 +220,7 @@ ServerAgent::ParseEvents (const char *data)
       					//const_cast<long int>(sid),
       					sid,
       					serverHostName.String(),
+      					ircdtype,
       					myNick.String(),
       					sMsgr,
       					*vision_app->pClientWin()->AgentRect()),

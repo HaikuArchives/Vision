@@ -312,6 +312,7 @@ ClientAgent::TimedSubmit (void *arg)
     return -1;
   }
 
+  BMessenger agentMsgr (agent);
   for (i = 0; msg->HasString ("data", i); ++i)
   {
     const char *data;
@@ -319,7 +320,7 @@ ClientAgent::TimedSubmit (void *arg)
     msg->FindString ("data", i, &data);
 
     // :TODO: wade 020101 move locks to ParseCmd?
-    if (window->Lock())
+    if (agentMsgr.IsValid() && window->Lock())
     {
       if (!agent->SlashParser (data))
         agent->Parser (data);

@@ -30,6 +30,7 @@
 #  include "gnome/Window.h"
 #elif BEOS_BUILD
 #  include <Window.h>
+#  include <String.h>
 #endif
 
 #define STATUS_SERVER               0
@@ -49,6 +50,7 @@ class ServerAgent;
 class StatusView;
 class WindowList;
 class WindowListItem;
+
 
 class ClientWindow : public BWindow
 {
@@ -72,6 +74,8 @@ class ClientWindow : public BWindow
     virtual void          ScreenChanged (BRect, color_space);
     virtual void          Show (void);
     
+    ServerAgent           *GetTopServer (WindowListItem *);
+    
     bool                  ServerBroadcast (BMessage *);
       
     BRect                 *AgentRect (void);
@@ -79,6 +83,9 @@ class ClientWindow : public BWindow
     StatusView            *pStatusView (void);
     
     BView                 *bgView;
+    
+    BString               joinStrings;  // used to keep track of channel
+                                        // keys on u2 ircds
 
   private:
     void                  Init (void);

@@ -47,6 +47,7 @@ ChannelAgent::ChannelAgent (
   const char *id_,
   int32 sid_,
   const char *serverName_,
+  int ircdtype_,
   const char *nick,
   BMessenger &sMsgr_,
   BRect &frame_)
@@ -67,6 +68,7 @@ ChannelAgent::ChannelAgent (
   lastExpansion (""),
   userCount (0),
   opsCount (0),
+  ircdtype (ircdtype_),
   chanOpt (0)
 
 {
@@ -141,6 +143,9 @@ ChannelAgent::FindPosition (const char *data)
    * Function purpose: Find the index of nickname {data} in the
    *                   ChannelAgent's NamesView
    */
+  
+  if (namesList == NULL)
+    return -1;
    
   int32 count (namesList->CountItems());
 
@@ -172,6 +177,10 @@ ChannelAgent::RemoveUser (const char *data)
    *                   NamesView and update the status counts
    */
    
+  
+  if (namesList == NULL)
+    return false;
+  
   int32 myIndex (FindPosition (data));
 
   if (myIndex != -1)
@@ -584,8 +593,35 @@ ChannelAgent::MessageReceived (BMessage *msg)
             chanLimit = GetWord (mode, place++);
 
           if (realMode.FindFirst ("k") >= 0)
+          {
             chanKey = GetWord (mode, place++);
-
+            
+            // u2 may not send the channel key, thats why we stored the /join cmd
+            // in a string in ParseCmd
+            if (chanKey == "-9z99" && ircdtype == IRCD_UNDERNET)
+            {
+              BString tempId (id);
+              tempId.Remove (0, 1); // remove any #, &, !, blah.
+              
+              if (vision_app->pClientWin()->joinStrings.FindFirst (tempId) < 1)
+              {
+                // can't find the join cmd for this channel in joinStrings!
+              }
+              else
+              {
+                BString joinStringsL (vision_app->pClientWin()->joinStrings);
+                
+                // FindLast to make sure we get the last attempt (user might have
+                // tried several keys)
+                int32 idPos (joinStringsL.FindLast (tempId));                
+                BString tempKeyString;
+                joinStringsL.MoveInto (tempKeyString, idPos, joinStringsL.Length());
+                
+                chanKey = GetWord (tempKeyString.String(), 2);
+              }
+            } // end u2-kludge stuff
+              
+          }
           chanMode = mode;
           if (!IsHidden())
             vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());  
