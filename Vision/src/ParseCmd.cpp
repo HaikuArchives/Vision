@@ -108,8 +108,10 @@ ClientAgent::ParseCmd (const char *data)
 		else
 			path.Append ("cl-amp-clr");
 		
+		BString *theCmd = new BString(path.Path());
+				
 		BMessage *execmsg (new BMessage);
-		execmsg->AddString ("exec", path.Path());
+		execmsg->AddPointer ("exec", theCmd);
 		execmsg->AddPointer ("agent", this);
 		
 		thread_id execThread = spawn_thread (
@@ -119,7 +121,7 @@ ClientAgent::ParseCmd (const char *data)
 			execmsg);
 
 		resume_thread (execThread);
-	
+
 		return true;
 	}
 		
@@ -440,12 +442,12 @@ ClientAgent::ParseCmd (const char *data)
 	if (firstWord == "/PEXEC") // piped exec
 	{
 		
-		BString theCmd (RestOfString (data, 2));
+		BString *theCmd (new BString(RestOfString (data, 2)));
 		
-		if (theCmd != "-9z99")
+		if (*theCmd != "-9z99")
 		{
 			BMessage *msg (new BMessage);
-			msg->AddString ("exec", theCmd.String());
+			msg->AddPointer ("exec", theCmd);
 			msg->AddPointer ("agent", this);
 			
 			thread_id execThread = spawn_thread (
@@ -457,6 +459,8 @@ ClientAgent::ParseCmd (const char *data)
 			resume_thread (execThread);
 		
 		}
+		else
+		  delete theCmd;
 		
 		return true;
 	
@@ -1085,21 +1089,19 @@ int32
 ClientAgent::ExecPipe (void *arg)
 {
 	BMessage *msg (reinterpret_cast<BMessage *>(arg));
-	const char *exec;
+	BString *exec;
 	ClientAgent *agent;
 	
-	if ((msg->FindString ("exec", &exec) != B_OK)
+	if ((msg->FindPointer ("exec", reinterpret_cast<void **>(&exec)) != B_OK)
 	||  (msg->FindPointer ("agent", reinterpret_cast<void **>(&agent)) != B_OK))
 	{
 	  printf (":ERROR: couldn't find valid data in BMsg to ExecPipe() -- bailing\n");
 	  return B_ERROR;
 	}
 	
-	
 	delete msg;
 	
-	
-	FILE *fp = popen(exec, "r");
+	FILE *fp = popen(exec->String(), "r");
 
 	char read[768]; // should be long enough for any line...
 		
@@ -1114,6 +1116,7 @@ ClientAgent::ExecPipe (void *arg)
 	}
 		
 	pclose(fp);
+	delete exec;
 	
 	return B_OK;
 
