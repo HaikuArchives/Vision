@@ -532,9 +532,7 @@ ServerAgent::Establish (void *arg)
   }
   
   struct fd_set eset, rset, wset;
-#ifdef NETSERVER_BUILD
-  struct timeval tv = {0, 0};
-#endif
+
   FD_ZERO (&eset);
   FD_ZERO (&rset);
   FD_ZERO (&wset);

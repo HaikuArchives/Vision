@@ -283,17 +283,6 @@ status_t SettingsFile::Save() const {
 	if (vision_app->fDebugSettings)
 	  PrintToStream();
 
-	file.RewindAttrs();
-	char name[B_ATTR_NAME_LENGTH];
-	
-	// delete old attr data
-	// since they seem to not always get updated properly
-	// this is ensures that a fresh, unmangled copy of the message's contents always
-	// gets written
- 	while (file.GetNextAttrName (name) == B_OK)
-		file.RemoveAttr (name);
-	
-	
 	ret=Flatten(&file);
 	if (ret!=B_OK) {
 		file.Unlock();
