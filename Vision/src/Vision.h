@@ -105,7 +105,7 @@ class VisionApp : public BApplication
     
     void                    AddIdent (const char *, const char *);
     void                    RemoveIdent (const char *);
-    const char *            GetIdent (const char *);
+    BString                 GetIdent (const char *);
     static int32            Identity (void *);
     
     void                    AddNotifyNick(const char *, const char *);

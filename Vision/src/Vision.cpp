@@ -273,6 +273,8 @@ VisionApp::InitDefaults (void)
   fColors[C_MIRC_GREY]                 = MIRC_GREY;
   fColors[C_MIRC_SILVER]               = MIRC_SILVER;
   
+  // TODO: add notify color defaults
+  
   fClientFont[F_TEXT]    = new BFont (be_plain_font);
   fClientFont[F_SERVER]  = new BFont (be_plain_font);
   fClientFont[F_URL]     = new BFont (be_plain_font);
@@ -1489,7 +1491,7 @@ int32
 VisionApp::Identity (void *) 
 {
   int32 identSock (0), accepted (0);
-  const char *ident (NULL); 
+  BString ident; 
   char received[64];
  
   struct sockaddr_in localAddr;
@@ -1532,7 +1534,7 @@ VisionApp::Identity (void *)
           BString remoteIP (inet_ntoa (remoteSock.sin_addr));
           ident = vision_app->GetIdent (remoteIP.String());
 
-          if (ident) 
+          if (ident.Length() > 0) 
           {
             memset (received, 0, 64);
             FD_SET (accepted, &rset);
@@ -1569,8 +1571,6 @@ VisionApp::Identity (void *)
 #elif BONE_BUILD
           close (accepted);
 #endif              
-          if (ident) 
-            ident = NULL; 
         }
       }
     }
@@ -1600,10 +1600,10 @@ VisionApp::RemoveIdent (const char *server)
   fIdentLock.Unlock(); 
 } 
  
-const char * 
-VisionApp::GetIdent (const char *server) 
-{ 
-  const char *ident (NULL); 
+BString 
+VisionApp::GetIdent (const char *server)
+{
+  BString ident;
   fIdentLock.Lock(); 
   if (fIdents.HasString (server)) 
     ident = fIdents.FindString (server); 
