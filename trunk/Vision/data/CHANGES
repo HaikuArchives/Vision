@@ -6,6 +6,7 @@ http://vision.sourceforge.net
         * hopefully fixed stupid "item doesn't notice nick change" bug.
         * added DCC chat
         * added DCC chat item in popups menu, thanks to EnochRoot
+        * fixed hanging bug on net_server
         
 [0.3.07023]
 2001-07-23
