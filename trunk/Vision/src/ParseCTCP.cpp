@@ -38,7 +38,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
           theRest (RestOfString(theMsg.String(), 2));
   theCTCP.RemoveFirst ("\1");
   theCTCP.RemoveLast ("\1");
-
+  
   if (theCTCP == "PING")
   {
     if (theMsg == "-9z99")
@@ -236,10 +236,11 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
               port (GetWord (theMsg.String(), 4)),
               poss (GetWord (theMsg.String(), 5));
       poss.RemoveLast("\1");
-
       off_t pos (0LL);
+
       for (int32 i = 0; i < poss.Length(); ++i)
         pos = pos * 10 + poss[i] - '0';
+        
 
       // Have to tell the sender we can resume
       BString tempString("PRIVMSG ");
@@ -252,22 +253,23 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       tempString += poss;
       tempString += "\1";
       SendData (tempString.String());
+      
 
       BMessage bMsg (M_DCC_MESSENGER), bReply;
       be_app_messenger.SendMessage (&bMsg, &bReply);
-
+      
       BMessenger msgr;
       bReply.FindMessenger ("msgr", &msgr);
-
+      
       BMessage msg (M_ADD_RESUME_DATA), reply;
       msg.AddString ("vision:nick", theNick.String());
       msg.AddString ("vision:port", port.String());
       msg.AddString ("vision:file", file.String());
       msg.AddInt64 ("vision:pos", pos);
-
+      
       // do sync.. we do not want to have the transfer
       // start before we tell it okay
-      fMsgr.SendMessage (&msg, &reply);
+      msgr.SendMessage (&msg, &reply);
       if (reply.HasBool ("hit")
       &&  reply.FindBool ("hit"))
       {
