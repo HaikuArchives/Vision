@@ -41,25 +41,27 @@ URLCrunch::Crunch (BString *url)
 	if (current_pos >= buffer.Length())
 		return B_ERROR;
 
-	const char *tags[5] =
+	const int32 tagNum = 6;
+	const char *tags[tagNum] =
 	{
 		"http://",
 		"https://",
 		"www.",
 		"ftp://",
-		"ftp."
+		"ftp.",
+		"file:/"
 	};
 
 	int32 marker (buffer.Length());
 	int32 pos (current_pos);
 	int32 url_length (0);
-	int32 markers[5],
-	      i (0);
+	int32 markers[tagNum];
+	int32 i(0);
 
-	for (i = 0; i < 5; ++i)
+	for (i = 0; i < tagNum; ++i)
 		markers[i] = buffer.IFindFirst (tags[i], pos);
 
-	for (i = 0; i < 5; ++i)
+	for (i = 0; i < tagNum; ++i)
 	
 		if (markers[i] != B_ERROR
 		&&  markers[i] < marker)
