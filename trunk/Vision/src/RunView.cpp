@@ -613,9 +613,10 @@ RunView::BuildPopUp (void)
   myPopUp->SetFont (be_plain_font);
 }
 
-bool
-RunView::WasDoubleClick(BPoint point)
+uint16
+RunView::CheckClickCount(BPoint point)
 {
+	static int clickCount (1);
 	// check time and proximity
 	BPoint delta = point - lastClick;
 
@@ -627,15 +628,16 @@ RunView::WasDoubleClick(BPoint point)
 	bigtime_t doubleClickSpeed;
 	get_click_speed(&doubleClickSpeed);
 
-	lastClick = point;
 	lastClickTime = sysTime;
 
 	if (timeDelta < doubleClickSpeed
 		&& fabs(delta.x) < doubleClickThresh
 		&& fabs(delta.y) < doubleClickThresh)
-		  return true;
+		  return (++clickCount);
 
-	return false;
+	lastClick = point;
+	clickCount = 1;
+	return clickCount;
 }
 
 void
@@ -647,15 +649,12 @@ RunView::MouseDown (BPoint point)
 	BMessage *msg (Window()->CurrentMessage());
 	uint32 buttons;
 	uint32 modifiers;
-	uint32 clicks;
+	uint16 clicks = CheckClickCount (point) % 3; 
 
 	msg->FindInt32 ("buttons", reinterpret_cast<int32 *>(&buttons));
-	msg->FindInt32 ("clicks", reinterpret_cast<int32 *>(&clicks));
 	msg->FindInt32 ("modifiers", reinterpret_cast<int32 *>(&modifiers));
 
 	SelectPos s (PositionAt (point));
-	
-	clicks = clicks % 3;
 	
 	if (buttons == B_SECONDARY_MOUSE_BUTTON
 	&&		(modifiers & B_SHIFT_KEY) == 0
@@ -696,9 +695,9 @@ RunView::MouseDown (BPoint point)
 		SelectPos start (s),
 					end (s);
 		
-		if (WasDoubleClick (point))
+		switch (clicks)
 		{
-			if (clicks == 2)
+			case 2:
 			{
 				if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
 				&& (point.y <= lines[s.line]->bottom))
@@ -710,17 +709,25 @@ RunView::MouseDown (BPoint point)
 					return;
 				}
 			}
-			else if (clicks == 0)
+
+			case 0:
 			{
 				start.offset = 0;
 				end.offset = lines[s.line]->length - 1;
 				Select (start, end);
 				return;
 			}
+			
+			default:
+			{
+				if (!IntersectSelection (s, s))
+					Select (s,s);
+				SetMouseEventMask (B_POINTER_EVENTS);
+				tracking = 1;
+				track_offset = s;
+				return;
+			}
 		}
-		SetMouseEventMask (B_POINTER_EVENTS);
-		tracking = 1;
-		track_offset = s;
 	}
 	else if (buttons					== B_PRIMARY_MOUSE_BUTTON
 	&&      (modifiers & B_SHIFT_KEY)   != 0
