@@ -28,11 +28,6 @@
 #include <PopUpMenu.h>
 #include <MenuItem.h>
 #include <Clipboard.h>
-#include <View.h> // needed?
-
-#include <Window.h> // needed?
-
-#include <stdio.h>
 
 #include "VTextControl.h"
 
