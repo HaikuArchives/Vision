@@ -100,9 +100,6 @@ VisionApp::VisionApp (void)
   numBench = false;
   ShuttingDown = false;
   
-  identThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
-  if (identThread >= B_OK)
-    resume_thread (identThread);
 }
 
 void
@@ -574,6 +571,11 @@ VisionApp::ReadyToRun (void)
 
   BRect clientWinRect;
   visionSettings->FindRect ("clientWinRect", &clientWinRect);
+  
+  identThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
+  if (identThread >= B_OK)
+    resume_thread (identThread);
+
   
   clientWin = new ClientWindow (clientWinRect);
   setupWin = new SetupWindow (true);
@@ -1124,10 +1126,7 @@ VisionApp::Identity (void *)
   if ((identSock = socket (AF_INET, SOCK_STREAM, 0)) >= 0 
   &&  bind (identSock, (struct sockaddr *)&localAddr, sizeof (localAddr)) == 0) 
   {
-    if (vision_app)
-      vision_app->identSocket = identSock;
-    else
-      printf("aborting, vision_app = NULL\n");
+    vision_app->identSocket = identSock;
 
 #ifdef BONE_BUILD
     struct linger lng = { 0, 0 }; 
