@@ -873,12 +873,24 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
           while ((nick = GetWord (names.String(), place)) != "-9z99")
           {
             const char *sNick (nick.String());
-            bool op (false),
+            bool founder (false),
+                 protect (false),
+                 op (false),
                  voice (false),
                  helper (false),
 	             ignored;
 
-            if (nick[0] == '@')
+            if (nick[0] == '*')
+            {
+              ++sNick;
+              founder = true;
+            }
+            else if (nick[0] == '!')
+            {
+              ++sNick;
+              protect = true;
+            }
+            else if (nick[0] == '@')
             {
               ++sNick;
               op = true;
@@ -903,6 +915,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
             // reply.FindBool ("ignored", &ignored);
 					
             msg.AddString ("nick", nick.String());
+            msg.AddBool ("founder", founder);
+            msg.AddBool ("protect", protect);
             msg.AddBool ("op", op);
             msg.AddBool ("voice", voice);
             msg.AddBool ("helper", helper);

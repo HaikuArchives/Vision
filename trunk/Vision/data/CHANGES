@@ -8,6 +8,7 @@ http://vision.sourceforge.net
          * added /voice and /devoice
          * added text encoding support (Preferences, App)  -- not really tested much yet
          * added server password support (Network Setup, Change Servers, Edit/Add New Server)
+         * added support for euIRC's * and ! channel modes
 
 [0.9.3-0817]
          * unbroke auto-rejoin on disconnect
