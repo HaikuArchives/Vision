@@ -782,7 +782,10 @@ VisionApp::MessageReceived (BMessage *msg)
         else
         {
           netWin = new NetworkWindow();
+          if (setupWin)
+            netWin->AddToSubset (setupWin);
           netWin->Show();
+          
         }
       }      
       break;

@@ -34,7 +34,8 @@ NetworkWindow::NetworkWindow (void)
   : BWindow (
       BRect (50, 50, 500, 350),
       "Network Setup",
-      B_TITLED_WINDOW,
+      B_TITLED_WINDOW_LOOK,
+      B_MODAL_SUBSET_WINDOW_FEEL,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
   AddChild (new NetworkPrefsView (Bounds(), "network"));
