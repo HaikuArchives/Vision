@@ -170,6 +170,9 @@ struct Line
 								Theme * theme,
 								float width);
 
+	void				AddSoftBreak (SoftBreakEnd , float &, 
+		int16 &, int16 &, float &, float &, Theme *);
+
 	int16					CountChars (int16 pos, int16 len);
 	size_t				SetStamp (const char *, bool);
 
@@ -2163,98 +2166,12 @@ Line::FigureEdges (
 	SoftBreaks (theme, width);
 }
 
+
 void
-Line::SoftBreaks (Theme *theme, float start_width)
+Line::AddSoftBreak (SoftBreakEnd sbe, float &start, int16 &text_place,
+	int16 &font, float &width, float &start_width, Theme *theme)
 {
-	float margin (ceil (MARGIN_WIDTH / 2.0));
-	float width (start_width);
-	float start (0.0);
-	int16 text_place (0);
-	int16 space_place (0);
-	int16 font (0);
-
-	softie_used = 0;
-	bottom = top;
-
-	// find first font
-	while (font < fc_count && fcs[font].which != FONT_WHICH)
-		++font;
-
-	while (text_place < length)
-	{
-		try
-		{
-			while (space_place < space_count)
-			{
-				if (edges[spaces[space_place]] - start > width)
-					break;
-
-				++space_place;
-			}
-
-			// we've reached the end of the line (but it might not all fit)
-			// or we only have one space, so we check if we need to split the word
-			if (space_place == space_count
-			||  space_place == 0
-			||  spaces[space_place - 1] < text_place)
-			{
-				// everything fits.. how wonderful (but we want at least one softbreak)
-				if (edge_count == 0)
-					throw SoftBreakEnd (length - 1);
-
-				int16 i (edge_count - 1);
-
-				while (edges[i] == 0)
-					--i;
-
-				if (edges[i] - start <= width)
-					throw SoftBreakEnd (length - 1);
-
-				// we force at least one character
-				// your font may be a little too large for your window!
-				text_place += UTF8_CHAR_LEN (text[text_place]);
-
-				while (text_place < length)
-				{
-					if (edges[text_place] - start > width - margin)
-						break;
-
-					text_place += UTF8_CHAR_LEN (text[text_place]);
-				}
-
-				throw SoftBreakEnd (text_place);
-			}
-
-			// we encountered more than one space, so we rule out having to
-			// split the word, if the current word will fit within the bounds
-			int16 ccount1, ccount2;
-
-			ccount1 = spaces[space_place - 1];
-			ccount2 = spaces[space_place] - spaces[space_place - 1];
-
-			int16 i (ccount1 - 1);
-			while (edges[i] == 0)
-				--i;
-
-			--space_place; // TODO we probably have to move this up a bit
-			if (edges[ccount1 + ccount2] - edges[i] < width - margin)
-				throw SoftBreakEnd (spaces[space_place]);
-
-			// We need to break up the really long word
-			text_place = spaces[space_place];
-			while (text_place < edge_count)
-			{
-				if ((edges[text_place] - start) > width)
-					break;
-
-				text_place += UTF8_CHAR_LEN (text[text_place]);
-			}
-			--text_place;
-		}
-		catch (SoftBreakEnd &sbe)
-		{
-			text_place = sbe.offset;
-		}
+		text_place = sbe.offset;
 
 		if (softie_size < softie_used + 1)
 		{
@@ -2311,11 +2228,108 @@ Line::SoftBreaks (Theme *theme, float start_width)
 		}
 
 		if (text_place < length)
-			start = (float)edges[text_place];
+			start = edges[text_place];
 
 		bottom += softies[softie_used++].height;
 		text_place += UTF8_CHAR_LEN (text[text_place]);
 		width = start_width - MARGIN_INDENT;
+}
+
+void
+Line::SoftBreaks (Theme *theme, float start_width)
+{
+	float margin (ceil (MARGIN_WIDTH / 2.0));
+	float width (start_width);
+	float start (0.0);
+	int16 text_place (0);
+	int16 space_place (0);
+	int16 font (0);
+
+	softie_used = 0;
+	bottom = top;
+
+	// find first font
+	while (font < fc_count && fcs[font].which != FONT_WHICH)
+		++font;
+
+	while (text_place < length)
+	{
+			while (space_place < space_count)
+			{
+				if (edges[spaces[space_place]] - start > width)
+					break;
+
+				++space_place;
+			}
+
+			// we've reached the end of the line (but it might not all fit)
+			// or we only have one space, so we check if we need to split the word
+			if (space_place == space_count
+			||  space_place == 0
+			||  spaces[space_place - 1] < text_place)
+			{
+				// everything fits.. how wonderful (but we want at least one softbreak)
+				if (edge_count == 0)
+				{
+					AddSoftBreak (SoftBreakEnd(length - 1), start, text_place, font, width, start_width, theme);
+					break;
+				}
+
+				int16 i (edge_count - 1);
+
+				while (edges[i] == 0)
+					--i;
+
+				if (edges[i] - start <= width)
+				{
+					AddSoftBreak (SoftBreakEnd(length - 1), start, text_place, font, width, start_width, theme);
+					continue;
+				}
+
+				// we force at least one character
+				// your font may be a little too large for your window!
+				text_place += UTF8_CHAR_LEN (text[text_place]);
+
+				while (text_place < length)
+				{
+					if (edges[text_place] - start > width - margin)
+						break;
+
+					text_place += UTF8_CHAR_LEN (text[text_place]);
+				}
+
+				AddSoftBreak (SoftBreakEnd(text_place), start, text_place, font, width, start_width, theme);
+				continue;
+			}
+
+			// we encountered more than one space, so we rule out having to
+			// split the word, if the current word will fit within the bounds
+			int16 ccount1, ccount2;
+
+			ccount1 = spaces[space_place - 1];
+			ccount2 = spaces[space_place] - spaces[space_place - 1];
+
+			int16 i (ccount1 - 1);
+			while (edges[i] == 0)
+				--i;
+
+			--space_place; // TODO we probably have to move this up a bit
+			if (edges[ccount1 + ccount2] - edges[i] < width - margin)
+				{
+					AddSoftBreak (SoftBreakEnd(spaces[space_place]), start, text_place, font, width, start_width, theme);
+					continue;
+				}
+
+			// We need to break up the really long word
+			text_place = spaces[space_place];
+			while (text_place < edge_count)
+			{
+				if ((edges[text_place] - start) > width)
+					break;
+
+				text_place += UTF8_CHAR_LEN (text[text_place]);
+			}
+			--text_place;
 	}
 
 	bottom -= 1.0;

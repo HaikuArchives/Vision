@@ -86,9 +86,7 @@ ServerAgent::ServerAgent (
     lagCheck (0),
     lagCount (0),
     serverSocket (-1),
-    send_buffer (0),
-    send_size (0),
-    parse_buffer (0),
+    parse_buffer (NULL),
     parse_size (0),
     events (vision_app->events),
     serverHostName (id_),
@@ -104,8 +102,8 @@ ServerAgent::ServerAgent (
 
 ServerAgent::~ServerAgent (void)
 {
-  if (send_buffer)
-    delete [] send_buffer;
+//  if (send_buffer)
+//    delete [] send_buffer;
   if (parse_buffer)
     delete [] parse_buffer;
   if (lagRunner)
@@ -527,28 +525,17 @@ ServerAgent::Establish (void *arg)
 void
 ServerAgent::SendData (const char *cData)
 {
-  int32 length;
+  int32 length (0);
   if (!cData)
     return;
   BString data (cData);
 
   data.Append("\r\n");
-  length = data.Length() + 1;
+  length = data.Length();
 
-  // The most it could be is that every
-  // stinking character is a utf8 character.
-  // Which can be at most 3 bytes.  Hence
-  // our multiplier of 3
+  memset(send_buffer, 0, sizeof(send_buffer));
 
-  if (send_size < length * 3UL)
-  {
-    if (send_buffer)
-      delete [] send_buffer;
-    send_buffer = new char [length * 3];
-    send_size = length * 3;
-  }
-
-  int32 dest_length (send_size), state (0);
+  int32 dest_length (sizeof(send_buffer)), state (0);
 
   convert_from_utf8 (
     B_ISO1_CONVERSION,
@@ -560,7 +547,12 @@ ServerAgent::SendData (const char *cData)
 #ifdef NETSERVER_BUILD
   endPointLock->Lock();
 #endif
-  if (serverSocket > 0 && (length = send (serverSocket, send_buffer, strlen (send_buffer), 0) < 0)
+  if (serverSocket > 0 &&
+#ifdef BONE_BUILD  
+  (length = send (serverSocket, send_buffer, length, MSG_DONTWAIT) < 0)
+#elif NETSERVER_BUILD
+  (length = send (serverSocket, send_buffer, length, 0) < 0)
+#endif
   || serverSocket < 0)
   {
     // doh, we aren't even connected.

@@ -126,8 +126,7 @@ class ServerAgent : public ClientAgent
 								lagCount;			// passes made waiting
 
     int32                       serverSocket;
-	char							*send_buffer;		// dynamic buffer for sending
-	size_t						send_size;			// size of buffer
+	char						send_buffer[4096];		// dynamic buffer for sending
 
 	char							*parse_buffer;		// dynamic buffer for parsing
 	size_t						parse_size;			// size of buffer
