@@ -173,6 +173,7 @@ VisionApp::InitSettings(void)
     
     visionSettings->AddBool ("timestamp", false);
     visionSettings->AddBool ("versionParanoid", false);
+    visionSettings->AddBool ("catchAltW", true);
     
     settingsloaded = true;
     if (debugsettings)
