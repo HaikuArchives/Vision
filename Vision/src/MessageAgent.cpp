@@ -31,7 +31,6 @@
 #include "Vision.h"
 #include "VTextControl.h"
 
-
 MessageAgent::MessageAgent (
   BRect &frame_,
   const char *id_,
