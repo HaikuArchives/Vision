@@ -319,7 +319,7 @@ ServerAgent::ParseEvents (const char *data)
 		if (myNick.ICompare (oldNick) == 0)
 		{
 			myNick = newNick;
-			if (!IsHidden());
+			if (!IsHidden())
 			  vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick.String());
 		}
 

@@ -158,14 +158,16 @@ ChannelAgent::RemoveUser (const char *data)
 			{
 				--opsCount;
 				buffer << opsCount;
-				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
+				if (!IsHidden())
+					vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 
 				buffer = "";
 			}
 
 			--userCount;
 			buffer << userCount;
-			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
+			if (!IsHidden())
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_USERS, buffer.String());
 
 			delete item;
 			return true;
@@ -875,8 +877,8 @@ ChannelAgent::UpdateMode(char theSign, char theMode)
 		}
 		chanMode = tempString;
 	}
-
-	vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
+	if (!IsHidden())
+		vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());
 }
 
 
@@ -958,7 +960,8 @@ ChannelAgent::ModeEvent (BMessage *msg)
 
 					buffer = "";
 					buffer << opsCount;
-					vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
+					if (!IsHidden())
+						vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 				}
 			}
 
@@ -976,7 +979,8 @@ ChannelAgent::ModeEvent (BMessage *msg)
 				
 					buffer = "";
 					buffer << opsCount;
-					vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
+					if (!IsHidden())
+						vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_OPS, buffer.String());
 				}
 			}
 
