@@ -92,7 +92,6 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
         retry = 0;
         
         myLag = "0.000";
-        msgr.SendMessage (M_CONNECTED);
         msgr.SendMessage (M_LAG_CHANGED);
 
         BString theNick (GetWord (data, 3));
