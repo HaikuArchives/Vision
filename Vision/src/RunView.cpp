@@ -171,7 +171,7 @@ struct Line
 								float width);
 
 	void				AddSoftBreak (SoftBreakEnd , float &, 
-		int16 &, int16 &, float &, float &, Theme *);
+		uint16 &, int16 &, float &, float &, Theme *);
 
 	int16					CountChars (int16 pos, int16 len);
 	size_t				SetStamp (const char *, bool);
@@ -2168,7 +2168,7 @@ Line::FigureEdges (
 
 
 void
-Line::AddSoftBreak (SoftBreakEnd sbe, float &start, int16 &text_place,
+Line::AddSoftBreak (SoftBreakEnd sbe, float &start, uint16 &text_place,
 	int16 &font, float &width, float &start_width, Theme *theme)
 {
 		text_place = sbe.offset;
@@ -2241,7 +2241,7 @@ Line::SoftBreaks (Theme *theme, float start_width)
 	float margin (ceil (MARGIN_WIDTH / 2.0));
 	float width (start_width);
 	float start (0.0);
-	int16 text_place (0);
+	uint16 text_place (0);
 	int16 space_place (0);
 	int16 font (0);
 
@@ -2279,7 +2279,7 @@ Line::SoftBreaks (Theme *theme, float start_width)
 
 				while (edges[i] == 0)
 					--i;
-
+				
 				if (edges[i] - start <= width)
 				{
 					AddSoftBreak (SoftBreakEnd(length - 1), start, text_place, font, width, start_width, theme);
@@ -2289,7 +2289,6 @@ Line::SoftBreaks (Theme *theme, float start_width)
 				// we force at least one character
 				// your font may be a little too large for your window!
 				text_place += UTF8_CHAR_LEN (text[text_place]);
-
 				while (text_place < length)
 				{
 					if (edges[text_place] - start > width - margin)
@@ -2297,7 +2296,6 @@ Line::SoftBreaks (Theme *theme, float start_width)
 
 					text_place += UTF8_CHAR_LEN (text[text_place]);
 				}
-
 				AddSoftBreak (SoftBreakEnd(text_place), start, text_place, font, width, start_width, theme);
 				continue;
 			}
@@ -2312,7 +2310,7 @@ Line::SoftBreaks (Theme *theme, float start_width)
 			int16 i (ccount1 - 1);
 			while (edges[i] == 0)
 				--i;
-
+				
 			--space_place; // TODO we probably have to move this up a bit
 			if (edges[ccount1 + ccount2] - edges[i] < width - margin)
 				{
@@ -2329,7 +2327,6 @@ Line::SoftBreaks (Theme *theme, float start_width)
 
 				text_place += UTF8_CHAR_LEN (text[text_place]);
 			}
-			--text_place;
 	}
 
 	bottom -= 1.0;
