@@ -1,0 +1,458 @@
+/*
+ * The contents of this file are subject to the Mozilla Public 
+ * License Version 1.1 (the "License"); you may not use this file 
+ * except in compliance with the License. You may obtain a copy of 
+ * the License at http://www.mozilla.org/MPL/ 
+ * 
+ * Software distributed under the License is distributed on an "AS 
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * rights and limitations under the License. 
+ * 
+ * The Original Code is Vision. 
+ * 
+ * The Initial Developer of the Original Code is The Vision Team.
+ * Portions created by The Vision Team are
+ * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Reserved.
+ * 
+ * Contributor(s): Wade Majors <wade@ezri.org>
+ *                 Rene Gollent
+ *                 Todd Lair
+ *                 Andrew Bazan
+ *                 Jamie Wilkinson
+ */
+ 
+/*		Info Traduction (FR) Février 2003, à Lyon	
+ * Pour info: J'ai laissé le texte original en commentaire. 
+ * J'ai mis des ????????? là ou je ne suis vraiment pas sur et  
+ * des ????----- Là ou ce n'est pas traduit :)
+ *
+ * La traduction est peut parfois un peu "exotique" c'est pourquoi 
+ * vous pouvez corriger ou changer ce qui vous semble faux. 
+ *
+ * La traduction faite par Ludovic Drouard {ludovic.drouard@wanadoo.fr} 
+ * Si vous effectué des changements, pouvez vous m'envoyer les modifs 
+ * de manière à tout centraliser, et a l'envoyer à l'équipe de dev
+ */
+
+#ifndef _VISIONSTRINGS_H_
+#define _VISIONSTRINGS_H_
+
+// channel agent
+
+#define S_CHANNEL_INIT              "*** Connexion réussi à "	//*** Now talking in //
+#define S_CHANNEL_REJOIN            "*** Essaye de rejoindre "	//*** Attempting to rejoin //
+#define S_CHANNEL_RECON_REJOIN      "[@] Essaye de rejoindre "	//[@] Attempting to rejoin //
+#define S_CHANNEL_GOT_KICKED        "*** Vous avez été kicker de " //*** You have been kicked from //
+#define S_CHANNEL_GOT_KICKED2       "par"	//by//
+#define S_CHANNEL_SET_MODE          " met le mode "	// set mode //
+
+// channel options
+
+#define S_CHANOPTS_TITLE            " Options"	//Options//
+#define S_CHANOPTS_OPID1            "Tu es maintenant opérateur (OP). "	//You are currently a channel operator. // ????
+#define S_CHANOPTS_OPID2            "Vous pouvez changer ces options."	//You may change any of these options.//
+
+// client agent
+
+#define S_CLIENT_DCC_SUCCESS        "Terminé "	//Completed //
+#define S_CLIENT_DCC_FAILED         "Erreur de transmission "	//Terminated //
+#define S_CLIENT_DCC_SENDTYPE       "send of "	//??????????????
+#define S_CLIENT_DCC_RECVTYPE       "receive of "	//???????????,
+#define S_CLIENT_DCC_TO             " to "	//????????????
+#define S_CLIENT_DCC_FROM           " from "	//????????????????
+#define S_CLIENT_DCC_SIZE_UNITS     " octets"	// bytes//
+#define S_CLIENT_DCC_SPEED_UNITS    " cps"	//??????????????
+
+// client window
+
+#define S_CW_APP_ABOUT              "A propos de"	//About//
+#define S_CW_APP_PREFS              "Préférences"	//Preferences//
+#define S_CW_APP_CHANLIST           "Liste des Channels"	//List Channels//
+#define S_CW_APP_TERMINAL           "Nouveau Terminal"	//New Terminal//
+#define S_CW_APP_QUIT               "Quitter"	//Quit//
+#define S_CW_SERVER_MENU            "Serveur"	//Server//
+#define S_CW_SERVER_CONNECT         "Se connecter à"	//Connect to//
+#define S_CW_SERVER_SETUP           "Options"	//Setup//
+#define S_CW_EDIT_MENU              "Edition"	//Edit//
+#define S_CW_EDIT_CUT               "Couper"	//Cut//
+#define S_CW_EDIT_COPY              "Copier"	//Copy//
+#define S_CW_EDIT_PASTE             "Coller"	//Paste//
+#define S_CW_EDIT_SELECT_ALL        "Tout sélectionner"	//Select All//
+#define S_CW_WINDOW_MENU            "Fenêtre"	//Window//
+#define S_CW_WINDOW_PART            "Fermer la fenêtre active"	//Close Subwindow// ?????
+#define S_CW_WINDOW_UP              "Monter"	//Up//
+#define S_CW_WINDOW_DOWN            "Descendre"	//Down//
+#define S_CW_WINDOW_SM_UP           "Aller à la fenêtre active plus haut"	//Smart Up//	??????
+#define S_CW_WINDOW_SM_DOWN         "Aller à la fenêtre active plus bas"	//Smart Down//??????
+#define S_CW_WINDOW_NETWORK         "Status réseau"	//Network Window//	????
+#define S_CW_WINDOW_PREVIOUS        "Fenêtre précédente"	//Previous Window//
+#define S_CW_WINDOW_NET_UP          "Aller à la fenêtre de status plus haut"	//Move Network Up//
+#define S_CW_WINDOW_NET_DOWN        "Aller à la fenêtre de status plus bas"	//Move Network Down//
+#define S_CW_WINDOW_COLLAPSE        "Réduire la fenêtre du réseau"	//Collapse Network//
+#define S_CW_WINDOW_EXPAND          "Développer la fenêtre du réseau"	//Expand Network//
+
+// client window dock
+
+#define S_CWD_WINLIST_HEADER        "Liste des fenêtres"	//Window List//
+#define S_CWD_NOTIFY_HEADER         "Liste de notification"	//Notify List//
+
+// DCC messages
+
+#define S_DCC_SPEED                 "octets/sec: "	//bps: //
+#define S_DCC_ESTABLISH_ERROR       "Impossible d'établir une connexion."	//Unable to establish connection.//
+#define S_DCC_ESTABLISH_SUCCEEDED   "Connexion établie."	//Established connection.//
+#define S_DCC_CONNECT_TO_SENDER     "Connecté à l'envoyeur."	//Connecting to sender.//
+#define S_DCC_RECV1                 "Réception \""	//Receiving \"//
+#define S_DCC_RECV2                 "\" de "	//\" from //
+#define S_DCC_SEND1                 "Envoi \""	//Sending \"//
+#define S_DCC_SEND2                 "\" à "	//\" to //
+#define S_DCC_LOCK_ACQUIRE          "Acquiring DCC lock"	//Acquiring DCC lock// ?????-------------------
+#define S_DCC_ACK_WAIT              "En attente d'acceptation"	//Waiting for acceptance//
+#define S_DCC_LISTEN_CALL           "Doing listen call."	//Doing listen call.// ?????????----------------
+#define S_DCC_WAIT_FOR_CONNECTION   "En attente de connexion "	//Waiting for connection //
+#define S_DCC_WRITE_ERROR           "Erreur d'écriture."	//Error writing data.// ????
+#define S_DCC_SOCKET_ERROR          "Erreur de création de socket. \n"	//Error creating socket.\n//
+#define S_DCC_BIND_ERROR            "Error binding socket.\n"	//Error binding socket.\n//	??????------------------
+#define S_DCC_CONN_ERROR            "Erreur dans la connexion du socket. \n"	//Error connecting socket.\n//
+#define S_DCC_CHAT_LISTEN           "Connexion à l'adresse "	//Accepting connection on address //
+#define S_DCC_CHAT_TRY              "Essai de connexion à l'adresse "	//Trying to connect to address //
+#define S_DCC_CHAT_PORT             ", port "	//, port //
+#define S_DCC_CHAT_CONNECTED        "Connecté !\n"	//Connected!\n//
+#define S_DCC_CHAT_TERM             "DCC Chat Terminé. \n"	//DCC Chat Terminated. \n//
+
+// list agent
+
+#define S_LIST_MENU                 "Channels"	//Channels//??????????
+#define S_LIST_MENU_FIND            "Chercher"	//Find//
+#define S_LIST_MENU_FINDNEXT        "Chercher le suivant"	//Find Next//
+#define S_LIST_MENU_FILTER          "Filtre"	//Filter//
+#define S_LIST_COLUMN_CHAN          "Channel"	//Channel//?????????
+#define S_LIST_COLUMN_USER          "Utilisateurs"	//Users//
+#define S_LIST_COLUMN_TOPIC         "Topic"	//Topic//?????????????
+#define S_LIST_STATUS_LOADING       "Chargement"	//Loading//
+#define S_LIST_STATUS_DONE          "Chargé !"	//Done//
+#define S_LIST_PROMPT_TITLE         "Chercher"	//Find//
+#define S_LIST_PROMPT_LABEL         "    Chercher:"	//    Find://
+
+// network prefs -- server list :::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+#define S_PREFSERVER_STATUS_COLUMN  "Status"	//Status//
+#define S_PREFSERVER_SERVER_COLUMN  "Serveur"	//Server//
+#define S_PREFSERVER_PORT_COLUMN    "Port"	//Port//
+#define S_PREFSERVER_ADD_BUTTON     "Ajouter"	//Add//
+#define S_PREFSERVER_REMOVE_BUTTON  "Supprimer"	//Remove//
+#define S_PREFSERVER_EDIT_BUTTON    "Editer"	//Edit//
+#define S_PREFSERVER_DESC1          "Clé: "	//Key: //
+#define S_PREFSERVER_DESC2          "  * = primaire"	//  * = primary//
+#define S_PREFSERVER_DESC3          "  + = secondaire (Secour)"	//  + = secondary (fallback)//
+#define S_PREFSERVER_DESC4          "  - = Désactivé"	//  - = disabled//
+#define S_PREFSERVER_OK_BUTTON      "OK"	//OK//
+#define S_PREFSERVER_SEL_STRING     "Choisissez vos serveurs pour "	//Select servers for //
+
+// network prefs -- main view
+
+#define S_NETPREFS_NETMENU          "Réseaux"	//Networks//
+#define S_NETPREFS_DEFAULTS_ITEM    "Défaut"	//Defaults//
+#define S_NETPREFS_ADD_NEW          "Ajouter"	//Add New//
+#define S_NETPREFS_REMOVE           "Supprimer"	//Remove current//
+#define S_NETPREFS_DUPE             "Dupliquer"	//Duplicate current//
+#define S_NETPREFS_NET_BOX          "Détails réseau"	//Network Details//
+#define S_NETPREFS_PERSONAL_BOX     "Profil"	//Personal Details//
+#define S_NETPREFS_CONN1            "Connexion à"	//Will connect to//
+#define S_NETPREFS_CONN2            "échec de connexion aux 9 serveurs."	//falling back to 9 others.//
+#define S_NETPREFS_CHANGE_SERVER    "Changer de serveur"	//Change servers//
+#define S_NETPREFS_AUTOEXEC         "Autoexec:"	//Autoexec://
+#define S_NETPREFS_LAG_CHECK        "Mesure du Lag"	//Enable lag checking//
+#define S_NETPREFS_STARTUP_CONN     "Exécuter ce script de connexion au démarrage de Vision"	//Connect to this network when Vision starts up//
+#define S_NETPREFS_USE_DEFAULTS     "Paramètre par défaut"	//Use Defaults//
+#define S_NETPREFS_PREFNICK         "Pseudo préféré:"	//Preferred Nicks://
+#define S_NETPREFS_ADD_BUTTON       "Ajouter"	//Add//
+#define S_NETPREFS_REMOVE_BUTTON    "Supprimer"	//Remove//
+#define S_NETPREFS_IDENT            "Ident: "	//Ident: //
+#define S_NETPREFS_REALNAME         "Nom réel: "	//Real name: //
+#define S_NETPREFS_FALLBACK1        "en cas d'échec, essai avec "	//falling back to //?????????
+#define S_NETPREFS_FALLBACK2        " autre"	// other//
+#define S_NETPREFS_FALLBACK2_PLURAL "s"	//s//
+#define S_NETPREFS_ADDNET_TITLE     "Ajouter un réseau"	//Add Network//
+#define S_NETPREFS_DUPENET_TITLE    "Dupliquer un réseau"	//Duplicate Network//
+#define S_NETPREFS_NET_PROMPT       "Nom du réseau: "	//Network Name: //
+#define S_NETPREFS_ADDNICK_TITLE    "Ajouter un pseudo"	//Add Nickname//
+#define S_NETPREFS_ADDNICK_PROMPT   "Pseudo: "	//Nickname: //
+
+// network windows
+
+#define S_NETWORK_WINDOW_TITLE      "Paramètre réseau"	//Network Setup//
+#define S_SERVERPREFS_TITLE         "Serveurs"	//Servers//
+
+// notify list
+
+#define S_NOTIFYLIST_QUERY_ITEM     "Parler avec"	//Query//
+#define S_NOTIFYLIST_WHOIS_ITEM     "Infos"	//Whois//
+#define S_NOTIFYLIST_REMOVE_ITEM    "Supprimer"	//Remove//
+#define S_NOTIFYLIST_DCC_ITEM       "Chat DCC"	//DCC Chat//
+// command parser
+
+#define S_PCMD_PARAMETER_ERROR      "Erreur: Paramètres invalides"	//Error: Invalid parameters//
+#define S_PCMD_SEND_TITLE           "Envoi un fichier à "	//Sending a file to //
+#define S_PCMD_SEND_BUTTON          "Envoi"	//Send//
+#define S_PCMD_TRY_NEW_NICK         "*** Essai de changement de pseudo en "	//*** Trying new nick //
+#define S_PCMD_SET_BOOL_SUCCESS     "Bool has been set"	//Bool has been set//
+#define S_PCMD_SET_BOOL_FAILURE     "Error setting bool"	//Error setting bool//
+#define S_PCMD_DNS1                 "Le nom DNS "	//Resolved //
+#define S_PCMD_DNS2                 " correspond à "	// to //
+#define S_PCMD_DNS_ERROR            "Impossible de résoudre le nom DNS"	//Unable to resolve //
+#define S_PCMD_PEXEC_ERROR          "/pexec: la commande a échouée"	///pexec: command failed//
+#define S_PCMD_VIS_UPTIME           "Vision est éxécuté depuis "	//Vision has been running for //??????
+// ctcp parser
+
+#define S_PCTCP_RESPONSE            " Réponse"	// response//
+#define S_PCTCP_SECOND              "seconde"	//second//
+#define S_PCTCP_SECOND_PLURAL       "secondes"	//seconds//
+
+// numerics parser
+
+#define S_PENUM_CURMODE             "[x] le mode courant est: "	//[x] your current mode is: //
+#define S_PENUM_WHOWAS              "[was]"	//[was]//	?????
+#define S_PENUM_IDLE                "Idle: "	//Idle: //
+#define S_PENUM_SIGNON              "Signon: "	//Signon: //???????????-------------------
+#define S_PENUM_WHOIS_CHANNELS      "[x] Channel: "	//[x] Channels: //
+#define S_PENUM_CHANMODE            "*** Le mode du Channel est "	//*** Channel mode for //
+#define S_PENUM_MLOCK               "*** Le channel est vérouillé "	//*** Channel lock for //
+#define S_PENUM_CHANCREATED         "crée le"	//created//
+#define S_PENUM_NO_TOPIC            "[x] Il n'y a pas de topic sur "	//[x] No topic set in //
+#define S_PENUM_DISP_TOPIC          "*** Topic: "	//*** Topic: //
+#define S_PENUM_TOPIC_SET_BY        "*** Topic posté par "	//*** Topic set by //
+#define S_PENUM_INVITING            " a été invité sur "	// has been invited to //
+#define S_PENUM_NAMEREPLY           "*** Voici les utilisateurs présent sur "	//*** Users in //
+#define S_PENUM_SERVER_MOTD         "- Voici la pensée du jour :"	//- Server Message Of The Day://
+#define S_PENUM_RECON_SUCCESS       "[@] Reconnexion réussie"	//[@] Successful reconnect//
+#define S_PENUM_NICKINUSE1          "* Le pseudo \""	//* Nickname \"//
+#define S_PENUM_NICKINUSE2          "\" est déjà utilisé ou indisponible... essaye \""	//\" in use or unavailable.. trying \"//
+#define S_PENUM_NICKINUSE3          "[x] Pseudo/Channel "	//[x] Nickname/Channel //
+#define S_PENUM_NICKINUSE4          " est encore utilisé ou indisponible."	// is already in use or unavailable.//
+#define S_PENUM_ALLNICKSUSED1       "* Toute la liste de pseudo prédéfini est déjà utilisée."	//* All your pre-selected nicknames are in use.//
+#define S_PENUM_ALLNICKSUSED2       "* Pour essayer un autre pseudo utiliser: /nick <votre_nouveau_pseudo>."	//* Please type /NICK <NEWNICK> to try another.//
+#define S_PENUM_NOTINCHANNEL        " n'est pas sur "	// is not in //
+#define S_PENUM_ME_NOTINCHANNEL     "[x] Tu n'es pas sur "	//[x] You're not in //
+#define S_PENUM_ALREADYINCHANNEL    " est déjà sur "	// is already in //
+#define S_PENUM_KEY_ALREADY_SET     "[x] Le mot de passe du Channel est déja défini sur "	//[x] Channel key already set in //
+#define S_PENUM_UNKNOWNCHANMODE     "[x] Le mode du Channel est inconnu: '"	//[x] Unknown channel mode: '//
+#define S_PENUM_INVITE_ONLY         " (Invité seulement)"	// (invite only)//
+#define S_PENUM_BANNED              " (Vous êtes banni)"	// (you're banned)//
+#define S_PENUM_BADCHANKEY          " (Mot de passe incorrecte pour ce channel)"// (bad channel key)//
+#define S_PENUM_UNKNOWNMODE         "[x] MODE flag inconnu."	//[x] Unknown MODE flag.//????????
+
+// events parser
+
+#define S_PEVENTS_UMODE_CHANGE      "*** Mode utilisateur changé en: "	//*** User mode changed: //
+#define S_PEVENTS_INVITE1           "*** Vous avez été invité sur "	//*** You have been invited to //
+#define S_PEVENTS_INVITE2           " par "	// by //
+#define S_PEVENTS_SILENCE_ADDED     "*** L'HOST a été ajouté à la liste 'SILENCE': "	//*** Hostmask added to SILENCE list: //
+#define S_PEVENTS_SILENCE_REMOVED   "*** L'HOST a été supprimé de la liste 'SILENCE': "	//*** Hostmask removed from SILENCE list: //
+
+// app prefs
+
+#define S_PREFAPP_VERSION_PARANOID  "Affichage des informations systèmes CTCP"	//Show OS information in version reply//
+#define S_PREFAPP_CMDW              "Cmd+W Ferme Vision"	//Cmd+W closes Vision//
+#define S_PREFAPP_STRIP_MIRC        "Strip mIRC Colors"	//Strip mIRC Colors//???????????----------------
+#define S_PREFAPP_WARN_MULTILINE    "Avertir quand on colle plusieurs lignes"	//Warn when multiline pasting//
+#define S_PREFAPP_QUERY_MSG         "Ouvrir une nouvelle fenêtre pour les 'Private'"	//Open new query on message//????????????
+
+// color prefs
+
+#define S_PREFCOLOR_TEXT            "Texte"	//Text//
+#define S_PREFCOLOR_BACKGROUND      "Fond de la fenêtre"	//Background//
+#define S_PREFCOLOR_URL             "URL"	//URL//
+#define S_PREFCOLOR_SERVERTEXT      "Message du serveur"	//Server Text//
+#define S_PREFCOLOR_NOTICE          "Notice"	//Notice//
+#define S_PREFCOLOR_ACTION          "Action"	//Action//
+#define S_PREFCOLOR_QUIT            "Quit"	//Quit//
+#define S_PREFCOLOR_ERROR           "Erreur"	//Error//
+#define S_PREFCOLOR_NICK_EDGES      "Délimiteur de pseudo (< >)"	//Nickname edges//
+#define S_PREFCOLOR_UNICK_EDGES     "Highlight de votre pseudo"	//User nickname edges//
+#define S_PREFCOLOR_NICK_TEXT       "Pseudo"	//Nickname text//
+#define S_PREFCOLOR_JOIN            "Join"	//Join//
+#define S_PREFCOLOR_KICK            "Kick"	//Kick//
+#define S_PREFCOLOR_WHOIS           "Whois"	//Whois//
+#define S_PREFCOLOR_NAMES_NORM      "Noms (Normal)"	//Names (Normal)//
+#define S_PREFCOLOR_NAMES_OP        "Noms (Op)"	//Names (Op)//
+#define S_PREFCOLOR_NAMES_HELP      "Noms (Helper)"	//Names (Helper)//
+#define S_PREFCOLOR_NAMES_VOICE     "Noms (Voice)"	//Names (Voice)//
+#define S_PREFCOLOR_NAMES_SEL       "Noms (Sélection)"	//Names selection//
+#define S_PREFCOLOR_NAMES_BG        "Fond des noms"	//Names Background//
+#define S_PREFCOLOR_CTCP_REQ        "Requête CTCP"	//CTCP Request//
+#define S_PREFCOLOR_CTCP_RPY        "Réponse CTCP"	//CTCP Reply//
+#define S_PREFCOLOR_IGNORE          "Ignore"	//Ignore//
+#define S_PREFCOLOR_INPUT_TXT       "Texte de saisie"	//Input text//
+#define S_PREFCOLOR_INPUT_BG        "Fond du texte de saisie"	//Input background//
+#define S_PREFCOLOR_WLIST_NORM      "Liste des fenêtres (Normal)"	//Winlist normal status//
+#define S_PREFCOLOR_WLIST_TXT       "Liste des fenêtres (Texte)"	//Winlist text status//
+#define S_PREFCOLOR_WLIST_NICK      "Liste des fenêtres (Alerte)"	//Winlist nick alert status//
+#define S_PREFCOLOR_WLIST_SEL       "Liste des fenêtres (Sélection)"	//Winlist selection status//
+#define S_PREFCOLOR_WLIST_EVT       "Liste des fenêtres (Evénement)"	//Winlist event status//
+#define S_PREFCOLOR_WLIST_BG        "Liste des fenêtres (Fond)"	//Winlist background//
+#define S_PREFCOLOR_WALLOPS         "Wallops"	//Wallops//?????????????---------------------
+#define S_PREFCOLOR_TIMESTAMP       "Horodatage"	//Timestamp//
+#define S_PREFCOLOR_TIMESTAMP_BG    "Fond de l'horodatage"	//Timestamp background//
+#define S_PREFCOLOR_SELECTION       "Sélection"	//Selection//
+#define S_PREFCOLOR_MIRCWHITE       "mIRC: Blanc"	//mIRC White//
+#define S_PREFCOLOR_MIRCBLACK       "mIRC: Noir"	//mIRC Black//
+#define S_PREFCOLOR_MIRCDBLUE       "mIRC: Bleu foncé"	//mIRC Dark Blue//
+#define S_PREFCOLOR_MIRCGREEN       "mIRC: Vert"	//mIRC Green//
+#define S_PREFCOLOR_MIRCRED         "mIRC: Rouge"	//mIRC Red//
+#define S_PREFCOLOR_MIRCBROWN       "mIRC: Marron"	//mIRC Brown//
+#define S_PREFCOLOR_MIRCPURPLE      "mIRC: Violet"	//mIRC Purple//
+#define S_PREFCOLOR_MIRCORANGE      "mIRC: Orange"	//mIRC Orange//
+#define S_PREFCOLOR_MIRCYELLOW      "mIRC: Jaune"	//mIRC Yellow//
+#define S_PREFCOLOR_MIRCLIME        "mIRC: Jaune citron"	//mIRC Lime//
+#define S_PREFCOLOR_MIRCTEAL        "mIRC: Bleu-vert"	//mIRC Teal//
+#define S_PREFCOLOR_MIRCAQUA        "mIRC: Bleu clair"	//mIRC Aqua//
+#define S_PREFCOLOR_MIRCLBLUE       "mIRC: Bleu"	//mIRC Light Blue//
+#define S_PREFCOLOR_MIRCPINK        "mIRC: Rose"	//mIRC Pink//
+#define S_PREFCOLOR_MIRCGREY        "mIRC: Gris"	//mIRC Grey//
+#define S_PREFCOLOR_MIRCSILVER      "mIRC: Argent"	//mIRC Silver//
+#define S_PREFCOLOR_NOTIFY_ON       "Liste de notification (Connecté)"	//Notify Online//
+#define S_PREFCOLOR_NOTIFY_OFF      "Liste de notification (Non connecté)"	//Notify Offline//
+#define S_PREFCOLOR_NOTIFY_BG       "Liste de notification (Fond)"	//Notify List background//
+#define S_PREFCOLOR_NOTIFY_SEL      "Liste de notification (Sélection)"	//Notify List selection//
+#define S_PREFCOLOR_REVERT          "Annuler tout"	//Revert//
+
+// command prefs		//Je ne sais pas si je dois le traduire ... A voir !
+
+#define S_PREFCOMMAND_QUIT          "Quit:"
+#define S_PREFCOMMAND_KICK          "Kick:"
+#define S_PREFCOMMAND_IGNORE        "Ignore:"
+#define S_PREFCOMMAND_UNIGNORE      "Unignore:"
+#define S_PREFCOMMAND_AWAY          "Away:"
+#define S_PREFCOMMAND_BACK          "Back:"
+#define S_PREFCOMMAND_UPTIME        "Uptime:"
+
+// dcc prefs
+
+#define S_PREFDCC_BLOCK_SIZE        "Taille des block DCC"	//DCC Block Size: //??????
+#define S_PREFDCC_AUTOACK           "Accepter automatiquement le transfert DCC"	//Automatically accept incoming sends//
+#define S_PREFDCC_PRIVATE           "Vérifier automatiquement le NAT IP"//Automatically check for NAT IP//?????????????
+#define S_PREFDCC_DEFPATH           "Chemin par défaut: "	//Default path: //
+#define S_PREFDCC_PORTRANGE         "Plage des ports DCC"	//DCC Port Range//?????????????
+#define S_PREFDCC_PORTMIN           "Min: "	//Min: //
+#define S_PREFDCC_PORTMAX           "Max: "	//Max: //
+
+// event prefs		//Idem pour command prefs
+
+#define S_PREFEVENT_JOIN            "Join:"
+#define S_PREFEVENT_PART            "Part:"
+#define S_PREFEVENT_NICK            "Nick:"
+#define S_PREFEVENT_QUIT            "Quit:"
+#define S_PREFEVENT_KICK            "Kick:"
+#define S_PREFEVENT_TOPIC           "Topic:"
+#define S_PREFEVENT_SNOTICE         "Server Notice:"
+#define S_PREFEVENT_UNOTICE         "User Notice:"
+#define S_PREFEVENT_NOTIFYON        "Notify On:"
+#define S_PREFEVENT_NOTIFYOFF       "Notify Off:"
+
+// font prefs
+
+#define S_PREFFONT_TEXT             "Texte"	//Text//
+#define S_PREFFONT_SMESSAGES        "Messages Serveur"	//Server Messages//
+#define S_PREFFONT_URLS             "URLs"	//URLs//
+#define S_PREFFONT_NAMESLIST        "Liste des noms"	//Names list//
+#define S_PREFFONT_INPUT_TEXT       "Ligne de saisie"	//Input text//
+#define S_PREFFONT_WINLIST          "Liste des fenêtres"	//Window List//
+#define S_PREFFONT_CHANLIST         "Liste des Channels"	//Channel List//
+#define S_PREFFONT_TSTAMP           "Horodatage"	//Timestamp//
+#define S_PREFFONT_FONTLABEL        "Police: "	//Font: //
+#define S_PREFFONT_SIZELABEL        "Taille: "	//Size: //
+
+// log prefs
+
+#define S_PREFLOG_LOGPATH           "Répertoire des logs"	//Log base path://
+#define S_PREFLOG_TS_FORMAT         "Format de l'horodatage"	//Timestamp format://
+#define S_PREFLOG_SHOW_TIMESTAMP    "Afficher l'horodatage dans la fenêtre IRC"	//Show timestamps in IRC window//
+#define S_PREFLOG_USE_LOGGING       "Activer les logs"	//Enable logging//
+#define S_PREFLOG_LOG_TIMESTAMP     "Horodater le nom du log"	//Append timestamp to log filenames//
+#define S_PREFLOG_ALERT_TITLE       "Erreur"	//Error//
+#define S_PREFLOG_ALERT_TEXT        "Le répertoire des logs est invalide"	//The log path you have entered is invalid.//
+#define S_PREFLOG_ALERT_BUTTON      "OK"	//OK//
+
+// main prefs view
+
+#define S_PREFGEN_APP_ITEM          "Application"	//Application//
+#define S_PREFGEN_COLOR_ITEM        "Couleurs"	//Colors//
+#define S_PREFGEN_FONT_ITEM         "Polices"	//Fonts//
+#define S_PREFGEN_COMMAND_ITEM      "Commandes"	//Commands//
+#define S_PREFGEN_EVENT_ITEM        "Evénements"	//Events//
+#define S_PREFGEN_DCC_ITEM          "DCC"	//DCC//
+#define S_PREFGEN_LOG_ITEM          "Journal"	//Logging//????????
+
+// preferences window
+
+#define S_PREFSWIN_TITLE            "Préférences"	//Preferences//
+
+// server agent
+
+#define S_SERVER_ATTEMPT1           "[@] Essai de "	//[@] Attempting to //
+#define S_SERVER_ATTEMPT2           "re"	//re//??????----------------
+#define S_SERVER_ATTEMPT3           "connexion (essai "	//connect (attempt //
+#define S_SERVER_ATTEMPT4           " sur "	// of //
+#define S_SERVER_ATTEMPT5           "[@] Essai de connexion au serveur : "	//[@] Attempting a connection to //
+#define S_SERVER_CONN_ERROR1        "[@] Impossible de se connecter à cette adresse ou à ce port. Vérifier votre connexion à Internet."	//[@] Could not create connection to address and port. Make sure your Internet connection is operational.//
+#define S_SERVER_CONN_ERROR2        "[@] Impossible d'établir une connexion avec le serveur. Désolé."	//[@] Could not establish a connection to the server. Sorry.//
+#define S_SERVER_CONN_OPEN          "[@] Connexion établie, en attente de réponse du serveur."	//[@] Connection open, waiting for reply from server//
+#define S_SERVER_LOCALIP_ERROR      "[@] Erreur d'optention de l'IP locale"        //[@] Error getting Local IP//
+#define S_SERVER_LOCALIP            "[@] Adresse IP locale: "  //[@] Local IP: //
+									//[@] (It looks like you are behind an Internet gateway. Vision will query the IRC server upon successful connection for your gateway's Internet address. This will be used for DCC communication.)//
+#define S_SERVER_PROXY_MSG          "[@] (Il semble que vous soyez derrière un passerelle. Vision interrogera le serveur IRC sur l'adresse IP de la connexion à votre passerelle Internet. Cette adresse sera utilisé pour l'envoi/réception par DCC.)"
+#define S_SERVER_PASS_MSG           "[@] Envoi du mot de passe"	//[@] Sending Password//
+#define S_SERVER_HANDSHAKE          "[@] Handshaking"	//[@] Handshaking//?????????------------------
+#define S_SERVER_ESTABLISH          "[@] Connexion établie"	//[@] Established//
+#define S_SERVER_RETRY_LIMIT        "[@] Nombre d'essai de connexion dépassé; abandon. Tapper /reconnect pour recommencer la connexion."	//[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.//
+#define S_SERVER_DISCONNECT         "[@] Déconnecté de "	//[@] Disconnected from //
+#define S_SERVER_DISCON_STATUS      "Déconnecté"	//Disconnected//
+#define S_SERVER_CONN_PROBLEM       "*** PROBLEME DE CONNECTION ***"	//CONNECTION PROBLEM//
+#define S_SERVER_LAG_DISABLED       "Désactivé"	//Disabled//
+#define S_SERVER_DCC_CHAT_PROMPT    " veut initialiser un Chat DCC avec vous."	// wants to begin a DCC chat with you.//
+#define S_SERVER_WAITING_RETRY      "[@] Attendez "	//[@] Waiting //
+#define S_SERVER_WAITING_SECONDS    " seconds"	// second//
+#define S_SERVER_WAITING_PLURAL     "s"	//s//
+#define S_SERVER_WAITING_ENDING     " before next attempt"	// avant le prochain réessai//
+
+// server entry window
+
+#define S_SERVERWIN_TITLE           "Ajouter un serveur"	//Add Server//
+#define S_SERVERWIN_SERVER          "Serveur: "	//Server: //
+#define S_SERVERWIN_PORT            "Port: "	//Port: //
+#define S_SERVERWIN_MENU1           " son status"	//Choose status//
+#define S_SERVERWIN_MENU_PRI        "Primaire"	//Primary//
+#define S_SERVERWIN_MENU_SEC        "Secondaire"	//Secondary//
+#define S_SERVERWIN_MENU_DIS        "Désactivé"	//Disabled//
+#define S_SERVERWIN_STATE           "Etat: "	//State: //
+#define S_SERVERWIN_DONE_BUTTON     "Ok"	//Done//
+#define S_SERVERWIN_CANCEL_BUTTON   "Annuler"	//Cancel//
+#define S_SERVERWIN_PASS_CHECK      "Mot de passe: "	//Use Password: //
+
+// setup window
+
+#define S_SETUP_TITLE               "Options..."	//Setup Window//
+#define S_SETUP_CONNECT_BUTTON      "Connexion"	//Connect//
+#define S_SETUP_NETPREFS            "Paramètre réseau"	//Network Setup//
+#define S_SETUP_GENPREFS            "Préférences"	//Preferences//
+#define S_SETUP_CHOOSENET           "Script de connexion"	//Choose Network//
+#define S_SETUP_CHOOSELABEL         "Réseau: "	//Network: //
+
+// status bar
+
+#define S_STATUS_LAG                "Lag: "	//Lag: //
+#define S_STATUS_USERS              "Utilisateurs: "	//Users: //
+#define S_STATUS_OPS                "OP: "	//Ops: //
+#define S_STATUS_MODES              "Modes: "	//Modes: //
+#define S_STATUS_LISTCOUNT          "Compteur: "	//Count: //
+#define S_STATUS_LISTSTAT           "Status: "	//Status: //
+#define S_STATUS_LISTFILTER         "Filtre: "	//Filter: //
+
+// window list
+
+#define S_WINLIST_CLOSE_ITEM        "Fermer"		//Close//
+
+#endif _VISIONSTRINGS_H_
