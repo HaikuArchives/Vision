@@ -31,8 +31,6 @@ const uint32 M_REMOVE_NICK = 'mnrn';
 const uint32 M_ADD_NICK = 'mnai';
 const uint32 M_NICK_ADDED = 'mnna';
 const uint32 M_USE_NICK_DEFAULTS = 'mnun';
-const uint32 M_CHANGE_IDENT = 'mnci';
-const uint32 M_CHANGE_REALNAME = 'mncr';
 
 NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	:	BView (
@@ -142,8 +140,8 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	nickAddButton->MoveTo (nickRemoveButton->Frame().left - (nickAddButton->Frame().Width() + 5),
 		nickRemoveButton->Frame().top);
 	personalBox->AddChild (nickAddButton);
-	ident = new BTextControl (listScroll->Frame(), NULL, "Ident: ", NULL, new BMessage (M_CHANGE_IDENT));
-	realName = new BTextControl (listScroll->Frame(), NULL, "Real name: ", NULL, new BMessage (M_CHANGE_REALNAME));
+	ident = new BTextControl (listScroll->Frame(), NULL, "Ident: ", NULL, NULL);
+	realName = new BTextControl (listScroll->Frame(), NULL, "Real name: ", NULL, NULL);
 	realName->ResizeTo (listScroll->Frame().Width(), realName->Frame().Height());
 	realName->MoveTo (listScroll->Frame().left, nickAddButton->Frame().bottom + 5);
 	realName->SetDivider (realName->StringWidth (realName->Label()) + 5);
@@ -182,48 +180,13 @@ NetworkPrefsView::AttachedToWindow (void)
 	BuildNetworkList();
 }
 
-static void
-InsertionSort (BMenu *menu, BMenuItem *item)
-{
-	if ((menu == NULL) || (item == NULL))
-		return;
-	
-	const char *itemLabel (NULL);
-	const char *network (item->Label());
-	for (int32 i = 0; i < menu->CountItems(); i++)
-	{
-		itemLabel = menu->ItemAt(i)->Label();
-		if (!strcmp (itemLabel, "Defaults"))
-		{
-			if (i)
-				i -= 1;
-			menu->AddItem(item, i);
-			break;
-		}
-		if (strcmp (itemLabel, network) > 0)
-		{
-			if (i)
-				i -= 1;
-			menu->AddItem (item, i);
-			break;
-		}
-	}
-}
-
 void
 NetworkPrefsView::DetachedFromWindow (void)
 {
     // save changes to active network
     // get autoexec commands
-    const char *autoexec = textView->Text();
-    if (!activeNetwork.HasString ("autoexec"))
-      activeNetwork.AddString ("autoexec", autoexec);
-    else
-      activeNetwork.ReplaceString ("autoexec", autoexec);
-
-    const char *name (activeNetwork.FindString ("name"));
-    if (name)
-      vision_app->SetNetwork (name, &activeNetwork);
+    
+    SaveCurrentNetwork();
 }
 
 void
@@ -239,7 +202,7 @@ NetworkPrefsView::BuildNetworkList (void)
   for (int32 i = 0; (msg = vision_app->GetNetwork (i)), !msg.HasBool ("error"); i++)
   {
     BMenuItem *item (new BMenuItem (msg.FindString ("name"), new BMessage (M_CHOOSE_NETWORK)));
-    InsertionSort (menu, item);
+    menu->AddItem(item, 0);
     item->SetTarget (this);
   }
 }
@@ -371,6 +334,52 @@ NetworkPrefsView::SetupDefaults (BMessage &msg)
 }
 
 void
+NetworkPrefsView::SaveCurrentNetwork (void)
+{
+    if (activeNetwork.FindString ("name") == NULL)
+      return;
+      
+	if (!strcmp (activeNetwork.FindString ("name"), "defaults"))
+	{
+	  vision_app->SetNetwork ("defaults", &activeNetwork);
+	  return;
+	}
+
+	// check real name and ident, update if needed
+	if (nickDefaultsBox->Value() == 0)
+	{
+		const char *curRname (realName->Text());
+		if (curRname != NULL)
+		{
+			if (!activeNetwork.HasString ("realname"))
+				activeNetwork.AddString ("realname", curRname);
+			else
+				activeNetwork.ReplaceString ("realname", curRname);
+		}
+
+		const char *curIdent (ident->Text());
+		if (curIdent != NULL)
+		{
+			if (!activeNetwork.HasString ("ident"))
+				activeNetwork.AddString ("ident", curIdent);
+			else
+				activeNetwork.ReplaceString ("ident", curIdent);
+		}
+	}
+	
+    const char *autoexec = textView->Text();
+    if (!activeNetwork.HasString ("autoexec"))
+      activeNetwork.AddString ("autoexec", autoexec);
+    else
+      activeNetwork.ReplaceString ("autoexec", autoexec);
+
+    const char *name (activeNetwork.FindString ("name"));
+
+    if (name)
+      vision_app->SetNetwork (name, &activeNetwork);
+}
+
+void
 NetworkPrefsView::MessageReceived (BMessage *msg)
 {
 	switch (msg->what)
@@ -389,25 +398,13 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 			{
 		    	BMenuItem *item (NULL);
 		    	msg->FindPointer ("source", reinterpret_cast<void **>(&item));
-		    	if (item && strcmp(item->Label(), networkMenu->MenuItem()->Label()) != 0)
-		    	{
-		    	    const char *exec (textView->Text());
-
-		    	    if (activeNetwork.HasString ("autoexec"))
-		    	      activeNetwork.ReplaceString ("autoexec", exec);
-		    	    else
-		    	      activeNetwork.AddString ("autoexec", exec);
-		    	    
-		    	    if (activeNetwork.HasString ("name"))
-	 		    	  vision_app->SetNetwork (activeNetwork.FindString ("name"), &activeNetwork);
-
-			    	activeNetwork = vision_app->GetNetwork (item->Label());
-			    	networkMenu->MenuItem()->SetLabel (item->Label());
-		    		UpdatePersonalData (activeNetwork);
-		    		UpdateNetworkData (activeNetwork);
-		    		if (BMessenger (serverPrefs).IsValid())
-		    			serverPrefs->SetNetworkData (&activeNetwork);
-		    	}
+		    	SaveCurrentNetwork();
+		    	activeNetwork = vision_app->GetNetwork (item->Label());
+		    	networkMenu->MenuItem()->SetLabel (item->Label());
+	    		UpdatePersonalData (activeNetwork);
+	    		UpdateNetworkData (activeNetwork);
+	    		if (BMessenger (serverPrefs).IsValid())
+	    			serverPrefs->SetNetworkData (&activeNetwork);
    				dupeItem->SetEnabled (true);
 				removeItem->SetEnabled (true);
 		    }
@@ -434,7 +431,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 					newNet.AddString ("name", network.String());
 					vision_app->SetNetwork (network.String(), &newNet);
 					BMenuItem *item (new BMenuItem (network.String(), new BMessage (M_CHOOSE_NETWORK)));
-					InsertionSort (menu, item);
+					menu->AddItem (item,0);
 					item->SetTarget (this);
 					dynamic_cast<BInvoker *>(item)->Invoke();
 				}
@@ -487,7 +484,7 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 					newNet.ReplaceString ("name", network.String());
 					vision_app->SetNetwork (network.String(), &newNet);
 					BMenuItem *item (new BMenuItem (network.String(), new BMessage (M_CHOOSE_NETWORK)));
-					InsertionSort (menu, item);
+					menu->AddItem (item,0);
 					item->SetTarget (this);
 					dynamic_cast<BInvoker *>(item)->Invoke();
 				}
@@ -583,30 +580,6 @@ NetworkPrefsView::MessageReceived (BMessage *msg)
 				nickRemoveButton->SetEnabled (false);
 			break;
 		
-		case M_CHANGE_REALNAME:
-			{
-				const char *curRname (realName->Text());
-				if (curRname == NULL)
-					break;
-				if (!activeNetwork.HasString ("realname"))
-					activeNetwork.AddString ("realname", curRname);
-				else
-					activeNetwork.ReplaceString ("realname", curRname);
-			}
-			break;
-		
-		case M_CHANGE_IDENT:
-			{
-				const char *curIdent (ident->Text());
-				if (curIdent == NULL)
-					break;
-				if (!activeNetwork.HasString ("ident"))
-					activeNetwork.AddString ("ident", curIdent);
-				else
-					activeNetwork.ReplaceString ("ident", curIdent);
-			}
-			break;
-			
 		default:
 			BView::MessageReceived (msg);
 			break;
