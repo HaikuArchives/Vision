@@ -1,9 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.6-1204]
+[0.9.6-0106]
          * fixed crash bug during shutdown with notify blinkers
          * fixed crash bug in sender thread
+	 * added /netclear and /aclear to clear all windows in the current network and for all networks, respectively.
   
 [0.9.5-0906]
          * fix stupid crash bug
