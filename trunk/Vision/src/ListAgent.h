@@ -87,6 +87,7 @@ class ListAgent : public BView
                               *mFindAgain;
 
     WindowSettings          *settings;
+    friend class WindowList;
 };
 
 const uint32 M_LIST_FIND               = 'lalf';
