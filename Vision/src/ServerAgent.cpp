@@ -194,8 +194,6 @@ ServerAgent::AddMenuItems(BPopUpMenu *)
 void
 ServerAgent::Init (void)
 {
-  fPendingSends = new BObjectList<BString>();
-  fSendLock = new BLocker();
 #ifdef NETSERVER_BUILD
   fEndPointLock = new BLocker();
 #endif
@@ -212,24 +210,25 @@ ServerAgent::Init (void)
   Display (temp.String(), C_NICK);
   Display ("Have fun!\n");
   
-  fSendSyncSem = create_sem (0, "VisionSendSync");
-  
   fLagRunner = new BMessageRunner (
     this,       // target ServerAgent
     new BMessage (M_LAG_CHECK),
     10000000,   // 10 seconds
     -1);        // forever
-  
+
+  CreateSenderThread();
+  CreateEstablishThread();
+}
+
+void
+ServerAgent::CreateSenderThread (void)
+{
+  fPendingSends = new BObjectList<BString>();
+  fSendLock = new BLocker();
+  fSendSyncSem = create_sem (0, "VisionSendSync");
+
   BString name;
 
-  vision_app->GetThreadName(THREAD_S, name);
-
-  fLoginThread = spawn_thread (
-    Establish,
-    name.String(),
-    B_NORMAL_PRIORITY,
-    new BMessenger(this));
-  
   name = "t>";
   
   name += (rand() %2) ? "Tima" : "Kenichi";
@@ -239,9 +238,35 @@ ServerAgent::Init (void)
     name.String(),
     B_NORMAL_PRIORITY,
     this);
+    
+  if (fSenderThread >= B_OK)
+    resume_thread (fSenderThread);
+  else
+  {
+    printf("ERROR: could not create transmitter thread, aborting\n");
+    delete_sem (fSendSyncSem);
+  }
+}
 
-  resume_thread (fLoginThread);
-  resume_thread (fSenderThread);
+void
+ServerAgent::CreateEstablishThread (void)
+{
+  BString name;
+
+  vision_app->GetThreadName(THREAD_S, name);
+
+  fLoginThread = spawn_thread (
+    Establish,
+    name.String(),
+    B_NORMAL_PRIORITY,
+    new BMessenger(this));
+
+  if (fLoginThread >= B_OK)
+    resume_thread (fLoginThread);
+  else
+  {
+    printf("ERROR: could not create login/establish thread, aborting\n");
+  }
 }
 
 int
@@ -812,19 +837,20 @@ ServerAgent::Client (const char *cName)
       break;
     }
   }
-
   return client;
 }
 
 ClientAgent *
 ServerAgent::ActiveClient (void)
 {
-  ClientAgent *client (0);
+  ClientAgent *client (NULL);
 
   for (int32 i = 0; i < fClients.CountItems(); ++i)
     if (!fClients.ItemAt (i)->IsHidden())
+    {
       client = fClients.ItemAt (i);
-
+      break;
+    }
   return client;
 }
 
@@ -887,10 +913,10 @@ ServerAgent::PostActive (BMessage *msg)
   BAutolock activeLock (Window());
   ClientAgent *client (ActiveClient());
 
-  if (client)
+  if (client != NULL)
     client->fMsgr.SendMessage (msg);
   else
-    fMsgr.SendMessage (msg);
+    fSMsgr.SendMessage (msg);
 }
 
 void
@@ -907,17 +933,13 @@ ServerAgent::HandleReconnect (void)
     printf (":ERROR: HandleReconnect() called when we're already connected! Whats up with that?!");
     return;
   }
+
+  delete_sem(fSendSyncSem);
   
-  // empty out old send buffer to ensure no erroneous strings get sent
-  fSendLock->Lock();
-  while (fPendingSends->CountItems() > 0)
-    delete fPendingSends->RemoveItemAt (0L);
-  fSendLock->Unlock();
+  CreateSenderThread();
   
   if (fRetry < fRetryLimit)
   {
-    BString name;
-    vision_app->GetThreadName(THREAD_S, name);
     // we are go for main engine start
     fReconnecting = true;
     fIsConnecting = true;
@@ -926,13 +948,7 @@ ServerAgent::HandleReconnect (void)
 #ifdef NETSERVER_BUILD
     fEndPointLock = new BLocker();
 #endif
-    fLoginThread = spawn_thread (
-      Establish,
-      name.String(),
-      B_NORMAL_PRIORITY,
-      new BMessenger(this));
-
-    resume_thread (fLoginThread);
+    CreateEstablishThread();
   }
   else
   {

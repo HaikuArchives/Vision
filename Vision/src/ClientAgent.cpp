@@ -413,6 +413,11 @@ ClientAgent::TimedSubmit (void *arg)
   return 0;
 }
 
+VTextControl *
+ClientAgent::pInput(void) const
+{
+  return fInput;
+}
 
 void
 ClientAgent::PackDisplay (

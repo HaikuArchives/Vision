@@ -33,6 +33,7 @@
 
 #include "ClientAgent.h"
 #include "ClientAgentInputFilter.h"
+#include "ClientWindow.h"
 #include "RunView.h"
 #include "Vision.h"
 #include "VisionBase.h"
@@ -52,7 +53,9 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 	switch (msg->what)
 	{
 	case B_MOUSE_MOVED:
+		break;
 	case B_KEY_UP:
+  		vision_app->pClientWin()->SetEditStates();
 		break;
 
 	case B_COPY:
@@ -79,6 +82,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 
 	case B_MOUSE_UP:
 		{
+	   		vision_app->pClientWin()->SetEditStates();
 			if (fHandledDrop)
 			{
 				fHandledDrop = false;

@@ -65,6 +65,10 @@
 #define S_CW_TOOLS_TERMINAL         "New Terminal"
 #define S_CW_WINDOW_MENU            "Window"
 #define S_CW_WINDOW_PART            "Part Agent"
+#define S_CW_EDIT_CUT               "Cut"
+#define S_CW_EDIT_COPY              "Copy"
+#define S_CW_EDIT_PASTE             "Paste"
+#define S_CW_EDIT_PREFS             "Preferences"
 
 // client window dock
 

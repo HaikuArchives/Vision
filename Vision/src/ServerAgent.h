@@ -104,6 +104,8 @@ class ServerAgent : public ClientAgent
     
     void                        RemoveAutoexecChan (const BString &);
     void                        ParseAutoexecChans (const BString &);
+    void                        CreateSenderThread (void);
+    void                        CreateEstablishThread (void);
 
     BLocker                     *fEndPointLock,
                                  *fSendLock;

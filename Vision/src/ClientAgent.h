@@ -64,6 +64,8 @@ class ClientAgent : public BView
     virtual void                DetachedFromWindow (void);
     virtual void                Show (void);
 
+    VTextControl                *pInput() const;
+
     virtual void                AddMenuItems (BPopUpMenu *) = 0;
 
     float                       ScrollPos(void) const;

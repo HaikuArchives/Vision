@@ -81,6 +81,8 @@ class ClientWindow : public BWindow
     ServerAgent           *GetTopServer (WindowListItem *) const;
     
     bool                  ServerBroadcast (BMessage *) const;
+    
+    void                  SetEditStates(void);
 
     BView                 *bgView;
       
@@ -89,7 +91,6 @@ class ClientWindow : public BWindow
     NotifyList            *pNotifyList (void) const;
     ClientWindowDock      *pCwDock (void) const;
     StatusView            *pStatusView (void) const;
-    
     BString               joinStrings;  // used to keep track of channel
                                         // keys on u2 ircds
 

@@ -33,20 +33,21 @@
 
 #include <stdio.h>
 
-#include "NotifyList.h"
-#include "NetworkMenu.h"
-#include "WindowList.h"
-#include "StatusView.h"
-#include "ServerAgent.h"
-#include "ResizeView.h"
-#include "Vision.h"
-#include "SettingsFile.h"
-#include "ClientWindow.h"
 #include "ChannelAgent.h"
 #include "ClientAgent.h"
+#include "ClientWindow.h"
 #include "ClientWindowDock.h"
 #include "ListAgent.h"
 #include "Names.h"
+#include "NetworkMenu.h"
+#include "NotifyList.h"
+#include "ResizeView.h"
+#include "ServerAgent.h"
+#include "SettingsFile.h"
+#include "StatusView.h"
+#include "Vision.h"
+#include "VTextControl.h"
+#include "WindowList.h"
 
 
 /*
@@ -296,6 +297,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_STATUS_CLEAR:
       {
         fStatus->Clear();
+        SetEditStates();
       }
       break;
     
@@ -476,6 +478,44 @@ ClientWindow::GetTopServer (WindowListItem *request) const
   return target;
 }
 
+void
+ClientWindow::SetEditStates (void)
+{
+  WindowListItem *item (dynamic_cast<WindowListItem *>(pWindowList()->ItemAt(pWindowList()->CurrentSelection())));
+  
+  if (item != NULL)
+  {
+    ClientAgent *agent (dynamic_cast<ClientAgent *>(item->pAgent()));
+    VTextControl *input (NULL);
+    if (agent != NULL)
+      input = agent->pInput();
+    BMenuItem *menuItem (fEdit->FindItem(S_CW_EDIT_CUT));
+    if (input != NULL)
+      menuItem->SetTarget (input->TextView());
+    int32 start (0), finish (0);
+    if (input != NULL)
+      input->TextView()->GetSelection(&start, &finish);
+    menuItem->SetEnabled (start != finish);
+    menuItem = fEdit->FindItem(S_CW_EDIT_COPY);
+    menuItem->SetEnabled (start != finish);
+    if (input != NULL)
+      menuItem->SetTarget (input->TextView());
+    menuItem = fEdit->FindItem(S_CW_EDIT_PASTE);
+    if (input != NULL)
+      menuItem->SetTarget (input->TextView());
+    BClipboard clipboard("system");
+    BMessage *clip ((BMessage *)NULL);
+    if (clipboard.Lock()) {
+      if ((clip = clipboard.Data()))
+      if (clip->HasData ("text/plain", B_MIME_TYPE))
+        menuItem->SetEnabled(true);
+      else
+        menuItem->SetEnabled(false);
+      clipboard.Unlock();
+    }
+  }
+}
+
 BRect *
 ClientWindow::AgentRect (void) const
 {
@@ -585,6 +625,14 @@ ClientWindow::Init (void)
   
   // Edit menu
   fEdit = new BMenu (S_CW_EDIT_MENU);
+
+  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_CUT, new BMessage (B_CUT)));
+  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_COPY, new BMessage (B_COPY)));
+  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_PASTE, new BMessage (B_PASTE)));
+  fEdit->AddSeparatorItem();
+  fEdit->AddItem (item = new BMenuItem (S_CW_EDIT_PREFS B_UTF8_ELLIPSIS, new BMessage (M_PREFS_SHOW)));
+  item->SetTarget (vision_app);
+ 
   fMenuBar->AddItem (fEdit);
   
   // Tools menu
