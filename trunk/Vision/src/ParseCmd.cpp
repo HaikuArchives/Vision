@@ -446,7 +446,7 @@ ClientAgent::ParseCmd (const char *data)
 		{
 			BMessage *msg (new BMessage);
 			msg->AddString ("exec", theCmd.String());
-			msg->AddPointer ("client", this);
+			msg->AddPointer ("agent", this);
 			
 			thread_id execThread = spawn_thread (
 				ExecPipe,
