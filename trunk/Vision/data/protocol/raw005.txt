@@ -1,3 +1,4 @@
+
 Some ircds send numeric 005 as part of the welcome message on connect. It contains
 a list of tags that identify options the server supports, and is intended to help
 scripters and client coders. I've seen more ircds sending this recently, and with
