@@ -465,6 +465,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     case RPL_WHOISOPERATOR:       // 313
     case RPL_WHOISACTUALLY:       // 338
     case RPL_WHOISMASK:           // 550
+    case RPL_WHOISUSERMODESALT:   // 614
     case RPL_WHOISUSERMODES:      // 615
     case RPL_WHOISREALHOSTNAME:   // 616
       {
@@ -679,6 +680,27 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       }
       return true;
     
+    case RPL_CHANNELMLOCK:    // 325
+      {
+        BString theChan (GetWord (data, 4)),
+                mLock (GetWord (data, 8)),
+                lockMessage (S_PENUM_MLOCK);
+        lockMessage += theChan;
+        lockMessage += ":";
+        lockMessage += mLock;
+        lockMessage += "\n";
+        
+        BMessage display (M_DISPLAY);
+        
+        PackDisplay (&display, lockMessage.String(), C_OP, C_BACKGROUND, F_TEXT);
+        ClientAgent *theClient (Client (theChan.String()));
+        if (theClient)
+          theClient->fMsgr.SendMessage (&display);
+        else
+          fMsgr.SendMessage (&display);
+      }
+      return true;
+    
     case RPL_CHANNELCREATED:       // 329
       {
         BString theChan (GetWord (data, 4)),
@@ -876,6 +898,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     
     case RPL_MOTD:            // 372
     case RPL_MOTDALT:         // 378
+    case RPL_OPERMOTDSTART:   // 609
+    case RPL_OPERMOTD:        // 610
+    case RPL_OPERENDOFMOTD:   // 611
       {
         BString tempString (RestOfString(data, 4));
         tempString.RemoveFirst (":");
