@@ -1,6 +1,9 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.07012]
+   * text control properly retrieves its color/font settings now
+
 [0.2.07011]
  2001-07-11
    * cleaned up some network code
