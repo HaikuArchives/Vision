@@ -668,7 +668,8 @@ RunView::MouseDown (BPoint point)
 					end (s);
 
 		// select word
-		if (sp_start == sp_end)
+		if ((point.x <= lines[s.line]->edges[lines[s.line]->length - 1])
+			&& (point.y <= lines[s.line]->bottom) && !IntersectSelection (s,s))
 		{
 			lines[s.line]->SelectWord (&start.offset, &end.offset);
 
