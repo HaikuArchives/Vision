@@ -417,12 +417,8 @@ VisionApp::QuitRequested (void)
   // give our child threads a chance to die gracefully
   snooze (500000);  // 0.5 seconds
   
-  if (identEndpoint)
-  {
-    status_t result;
-    identEndpoint->Close();
-    wait_for_thread (identThread, &result);
-  }
+  status_t result;
+  wait_for_thread (identThread, &result);
   
   //ThreadStates();
   
@@ -573,24 +569,19 @@ VisionApp::pClientWin() const
 BString
 VisionApp::VisionVersion (int typebit)
 {
+  static BString versionReply;
   switch (typebit)
   {
     case VERSION_VERSION:
-      {
-        static BString version_version (VERSION_STRING);
-        return version_version;
-      }
+      versionReply = VERSION_STRING;
       break;
       
     case VERSION_DATE:
-      {
-        static BString version_builddate (BUILD_DATE);
-        version_builddate.ReplaceAll ("_", " ");
-        return version_builddate;
-      }
+      versionReply = BUILD_DATE;
+      versionReply.ReplaceAll ("_", " ");
       break;
   }
-  
+  return versionReply;
 }
 
 const char *
@@ -902,8 +893,9 @@ VisionApp::Broadcast (BMessage *msg)
 }
 
 void
-VisionApp::Broadcast (BMessage *msg, const char *serverName, bool active)
+VisionApp::Broadcast (BMessage *, const char *, bool)
 {
+//  TODO: implement or remove this
 //  Lock();
 //
 //  for (int32 i = 0; i < CountWindows(); ++i)
@@ -933,10 +925,10 @@ VisionApp::Identity (void *)
   &&  identPoint.Bind (113)     == B_OK) 
   {
     vision_app->identEndpoint = &identPoint;
-    identPoint.Listen (2048);
+    identPoint.Listen ();
     while (!vision_app->ShuttingDown) 
     {
-      accepted = identPoint.Accept (-1);
+      accepted = identPoint.Accept (2 * 1000);
       
       if (accepted) 
       {

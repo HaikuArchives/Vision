@@ -391,7 +391,7 @@ ClientWindow::GetTopServer (WindowListItem *request)
 {
   int32 requestindex;
   int32 requestsid;
-
+  ServerAgent *target (NULL);
   if (pWindowList()->HasItem (request))
   {
     requestindex = pWindowList()->IndexOf (request);
@@ -409,9 +409,11 @@ ClientWindow::GetTopServer (WindowListItem *request)
     WindowListItem *aitem ((WindowListItem *)pWindowList()->ItemAt (i - 1));
     if ((aitem->Type() == WIN_SERVER_TYPE) && (aitem->Sid() == requestsid))
     {
-      return (ServerAgent *)aitem->pAgent();
+      target = (ServerAgent *)aitem->pAgent();
+      break;
     }
   }
+  return target;
 }
 
 BRect *

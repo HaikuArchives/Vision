@@ -230,28 +230,31 @@ ChannelAgent::SortNames(const void *name1, const void *name2)
    *   Normal User
    */
    
-  NameItem **firstPtr ((NameItem **)name1);
-  NameItem **secondPtr ((NameItem **)name2);
+   // clunky way to get around C++ warnings re casting from const void * to NameItem *
+   
+  void **interim1 ((void **)const_cast<void *>(name1));
+  void **interim2 ((void **)const_cast<void *>(name2));
+   
+  NameItem *firstPtr ((NameItem *)*interim1);
+  NameItem *secondPtr ((NameItem *)*interim2);
 
   // Not sure if this can happen, and we
   // are assuming that if one is NULL
   // we return them as equal.  What if one
   // is NULL, and the other isn't?
   if (!firstPtr
-  ||  !secondPtr
-  ||  !(*firstPtr)
-  ||  !(*secondPtr))
+  ||  !secondPtr)
     return 0;
 
   BString first, second;
 
-  first += (((*firstPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (*firstPtr)->Status()); 
-  second += (((*secondPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (*secondPtr)->Status()); 
+  first += (((firstPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (firstPtr)->Status()); 
+  second += (((secondPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (secondPtr)->Status()); 
   first.Prepend ('0', 10 - first.Length());
   second.Prepend ('0', 10 - second.Length());
 
-  first  += (*firstPtr)->Name();
-  second += (*secondPtr)->Name();
+  first  += (firstPtr)->Name();
+  second += (secondPtr)->Name();
 
   return first.ICompare (second);
 }

@@ -43,12 +43,13 @@ Script_LOG(lua_State* state)
   return 0;
 }
 
-
+/* TODO: get this working
 static void
 FatalError()
 {
   throw -1;
 }
+*/
 
 static const char*
 LuaScript_CopyTable = 
