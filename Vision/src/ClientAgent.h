@@ -99,12 +99,15 @@ class ClientAgent : public BView
                                   const char *);
 
     void                        CTCPAction (BString theTarget, BString theMsg);
+	bool						CancelMultilineTextPaste() {  return fCancelMLPaste; }
 
     WindowListItem                 *agentWinItem;
     
     
   private:
     void                        Init (void);
+
+    bool						fCancelMLPaste;
                             
   protected:
     HistoryMenu                 *history;
@@ -115,7 +118,7 @@ class ClientAgent : public BView
     static const char               *endl;
 
 
-    friend                          ClientAgentInputFilter;
+    friend class                    ClientAgentInputFilter;
     friend class                    ServerAgent;
  
     virtual void                    Display (

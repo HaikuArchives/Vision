@@ -64,6 +64,7 @@ ClientAgent::ClientAgent (
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW | B_FRAME_EVENTS),
 
+  fCancelMLPaste(false),
   id (id_),
   sid (sid_),
   serverName (serverName_),
@@ -398,7 +399,7 @@ ClientAgent::TimedSubmit (void *arg)
 
   BMessenger agentMsgr (agent);
   BMessage submitMsg (M_SUBMIT);
-  for (i = 0; msg->HasString ("data", i); ++i)
+  for (i = 0; (msg->HasString ("data", i)) && (false == agent->CancelMultilineTextPaste()); ++i)
   {
     const char *data;
 
@@ -657,6 +658,7 @@ ClientAgent::MessageReceived (BMessage *msg)
      
     case M_SUBMIT_INPUT:
       {
+      	fCancelMLPaste = false;
         bool lines (false);
         int32 which (0);
         msg->FindBool ("lines", &lines);
@@ -931,6 +933,9 @@ ClientAgent::MessageReceived (BMessage *msg)
       }
       break;
 
+	case B_ESCAPE:
+	  	fCancelMLPaste = true;
+		break;
 
     default:
       BView::MessageReceived (msg);
