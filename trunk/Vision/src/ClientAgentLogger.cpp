@@ -149,7 +149,7 @@ ClientAgentLogger::RegisterLogger (const char *logName)
 void
 ClientAgentLogger::UnregisterLogger (const char *name)
 {
-  BFile logFile (fLogFiles[name]);
+  BFile &logFile (fLogFiles[name]);
   if (logFile.InitCheck() == B_OK)
   {
     if (fIsLogging)
@@ -265,7 +265,7 @@ ClientAgentLogger::AsyncLogger (void *arg)
   BString *currentString (NULL);
   BLocker *myLogBufferLock ((logger->fLogBufferLock));
   BObjectList<BString> *myLogBuffer ((logger->fLogBuffer));
-  BFile myLogFile;  
+  BFile *myLogFile;  
   
   // initialize the log file if it doesn't already exist
   logger->SetupLogging();
@@ -281,9 +281,9 @@ ClientAgentLogger::AsyncLogger (void *arg)
       currentLogger = myLogBuffer->RemoveItemAt (0L);
       currentString = myLogBuffer->RemoveItemAt (0L);
       myLogBufferLock->Unlock();
-      myLogFile = logger->fLogFiles[*currentLogger];
-      if (myLogFile.InitCheck() != B_NO_INIT)
-        myLogFile.Write (currentString->String(), currentString->Length());
+      myLogFile = &logger->fLogFiles[*currentLogger];
+      if (myLogFile->InitCheck() != B_NO_INIT)
+        myLogFile->Write (currentString->String(), currentString->Length());
       delete currentLogger;
       delete currentString;
     }
@@ -295,9 +295,9 @@ ClientAgentLogger::AsyncLogger (void *arg)
   {
     currentLogger = (BString *)(myLogBuffer->RemoveItemAt (0L));
     currentString = (BString *)(myLogBuffer->RemoveItemAt (0L));
-    myLogFile = logger->fLogFiles[*currentLogger];
-    if (myLogFile.InitCheck() != B_NO_INIT)
-      myLogFile.Write (currentString->String(), currentString->Length());
+    myLogFile = &logger->fLogFiles[*currentLogger];
+    if (myLogFile->InitCheck() != B_NO_INIT)
+      myLogFile->Write (currentString->String(), currentString->Length());
     delete currentLogger;
     delete currentString;
   }
