@@ -239,7 +239,8 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       printf ("\t-s\t\tPrint data sent across the network\n");
       printf ("\t-S\t\tPrint settings debug information\n");
       printf ("\n");
-      Quit();
+      if (IsLaunching())
+        Quit();
     }
          
   }
