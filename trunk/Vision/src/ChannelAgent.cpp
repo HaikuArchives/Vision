@@ -500,7 +500,7 @@ ChannelAgent::TabExpansion (void)
       // check if we are at the beginning of a line
       // (ignoring whitespace). if we are, prepend a colon to the nick being
       // inserted
-      char *place2 = place;
+      const char *place2 = place;
       while (place2 > fInput->TextView()->Text())
       {
         --place2;
