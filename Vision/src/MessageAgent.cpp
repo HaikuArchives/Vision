@@ -82,6 +82,9 @@ MessageAgent::~MessageAgent (void)
 #ifdef BONE_BUILD
     shutdown (mySocket, SHUTDOWN_BOTH);
     shutdown (acceptSocket, SHUTDOWN_BOTH);
+#elif NETSERVER_BUILD
+    closesocket (mySocket);
+    closesocket (acceptSocket);
 #endif
     wait_for_thread (dataThread, &result);
   }
@@ -414,12 +417,13 @@ MessageAgent::MessageReceived (BMessage *msg)
 
           BString oldId (id);
           chatee = id = newNick;
-        
-          agentWinItem->SetName (id.String());
 
           if (dChat)
             id.Append(" [DCC]");
-       
+        
+          agentWinItem->SetName (id.String());
+
+                 
           ClientAgent::MessageReceived (msg);
         }
       
