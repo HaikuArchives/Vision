@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.7-041004]
+[0.9.7-041704]
 	 * added JIS encoding support
 	 * modified tab completion to append a ":" if the nick is at the beginning of a line 
 	 * refined URL crunching logic (Alan Ellis)
@@ -14,7 +14,16 @@ http://vision.sourceforge.net
          * added /find and /search for finding text in the textview.
          * added ISO-8859-13 encoding support
          * added repeat away message suppression support 
-	 
+	 * added simple substitution alias support
+	   -- commands as follows:
+	   1) /addalias /aliasname /whataliasshouldmapto with params
+	   2) /delalias /aliasname
+	   
+	   Substitution aliases can take the following forms:
+	     - $C (channel name)
+	     - $x (where x == 1-based index of parameter that should be substituted in)
+	     - $x- (rest of command starting from param #x)
+
 [0.9.6-0207]
          * fixed crash bug during shutdown with notify blinkers
          * fixed crash bug in sender thread

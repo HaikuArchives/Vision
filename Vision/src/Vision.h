@@ -25,6 +25,8 @@
 #ifndef _VISION_H_
 #define _VISION_H_
 
+#include <map>
+
 #include <Application.h>
 #include <String.h>
 #include <Locker.h>
@@ -122,6 +124,13 @@ class VisionApp : public BApplication
 	bool                    SaveSettings (void);
 	
 	bigtime_t               VisionUptime (void);
+	
+	bool					HasAlias(const BString &) const;
+	BString					ParseAlias(const char *, const BString &);
+	status_t				AddAlias(const BString &, const BString &);
+	void					RemoveAlias(const BString &);
+	void					LoadAliases();
+	void					SaveAliases();					
     
     BString                 fEvents[MAX_EVENTS];
 
@@ -159,6 +168,7 @@ class VisionApp : public BApplication
     BFont                   *fClientFont[MAX_FONTS];
 	BString					fCommands[MAX_COMMANDS];
 	BMessage                fIdents;
+	map<BString, BString>   fAliases;
 	BLocker                 fIdentLock,
 	                          fSettingsLock,
 	                        fDccLock;

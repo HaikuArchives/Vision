@@ -65,12 +65,15 @@ class VisionApp * vision_app;
 #include "SetupWindow.h"
 #include "PrefsWindow.h"
 #include "Theme.h"
+#include "Utilities.h"
 #include "WindowList.h"
 #ifdef __INTEL__
 #include "TestScript.h"
 #endif
 // sound event name definitions
 const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
+
+const char *kAliasPathName = "/boot/home/config/settings/Vision/Aliases";
 
 // And so it begins....
 int
@@ -371,9 +374,13 @@ VisionApp::InitSettings (void)
   fVisionSettings = new SettingsFile ("VisionSettings", "Vision");
     
   if (fVisionSettings->InitCheck() == B_OK)
+  {
     fVisionSettings->Load();
+  }
   else
     printf(":ERROR: Error Loading /Vision/VisionSettings\n");
+
+  LoadAliases();
 
   int32 i (0);
   
@@ -421,6 +428,8 @@ VisionApp::SaveSettings (void)
   
   if (!saveLock.IsLocked())
     return false;
+
+  SaveAliases();  
     
   if ((fVisionSettings->Save() == B_OK) && fDebugSettings)
   {
@@ -1869,6 +1878,142 @@ VisionApp::VisionUptime (void)
 {
   return system_time() - fStartupTime;
 }
+
+bool
+VisionApp::HasAlias(const BString &cmd) const
+{
+  return fAliases.find(cmd) != fAliases.end();
+}
+
+BString
+VisionApp::ParseAlias(const char *cmd, const BString &channel)
+{
+  BString command(GetWord(cmd, 1).ToUpper());
+  BString newcmd = fAliases[command];
+  const char *parse = newcmd.String();
+  
+  int32 replidx (0);
+  int32 varidx (0);
+
+  newcmd.ReplaceAll("$C", channel.String());
+  
+  while (*parse != '\0')
+  {
+    if (*parse != '$')
+    {
+      ++parse;
+      continue;
+    }
+    else
+    {
+      replidx = parse - newcmd.String();
+      ++parse;
+      if (isdigit(*parse))
+      {
+        varidx = atoi(parse);
+        BString replString = "$";
+        replString << varidx;
+        if (*(parse + replString.Length() - 1) != '-')
+        {
+          newcmd.ReplaceAll(replString.String(), GetWord(cmd, varidx + 1).String());
+        }
+        else
+        {
+          replString += "-";
+          newcmd.ReplaceAll(replString.String(), RestOfString(cmd, varidx + 1).String());
+        }
+      }
+    }
+  }
+  return newcmd;
+}
+
+status_t
+VisionApp::AddAlias(const BString &cmd, const BString &value)
+{
+  status_t result (B_OK);
+  if (cmd != "" && value != "")
+  {
+    fAliases[cmd] = value;
+  }
+  else
+  {
+    result = B_ERROR;
+  }
+  
+  return result;
+}
+
+void
+VisionApp::RemoveAlias(const BString &cmd)
+{
+  map<BString, BString>::iterator it = fAliases.find(cmd);
+  if (it != fAliases.end())
+  {
+    fAliases.erase(it);
+  }
+}
+
+void
+VisionApp::LoadAliases(void)
+{
+  BFile file (kAliasPathName, B_READ_ONLY);
+  if (file.InitCheck() == B_OK)
+  {
+    BString data;
+    char buffer[2048];
+    memset(buffer, 0, sizeof(buffer));
+    while (file.Read((void *)buffer, 2048) > 0)
+    {
+       data += buffer;
+       memset(buffer, 0, sizeof(buffer));
+    }
+    file.Unset();
+    while (data.Length() > 0)
+    {
+      BString cmd, value;
+      int32 idx = data.IFindFirst("\t");
+      if (idx != B_ERROR)
+      {
+        data.MoveInto(cmd, 0, idx);
+        data.Remove(0,1);
+      }
+      else
+      {
+        break;
+      }
+      idx = data.IFindFirst("\n");
+      if (idx != B_ERROR)
+      {
+        data.MoveInto(value, 0, idx);
+        data.Remove(0,1);
+      }
+      else
+      {
+        break;
+      }
+      fAliases[cmd.ToUpper()] = value;
+    }
+  }
+}
+
+void
+VisionApp::SaveAliases(void)
+{
+  BFile file (kAliasPathName, B_READ_WRITE | B_CREATE_FILE | B_ERASE_FILE);
+  if (file.InitCheck() == B_OK)
+  {
+    for (map<BString, BString>::iterator it = fAliases.begin(); it != fAliases.end(); ++it)
+    {
+      file.Write(it->first.String(), it->first.Length());
+      file.Write("\t", 1);
+      file.Write(it->second.String(), it->second.Length());
+      file.Write("\n", 1);
+    }
+    file.Unset();
+  }
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 /// End Public Functions
