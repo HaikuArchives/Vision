@@ -142,6 +142,7 @@ ChannelAgent::Init (void)
 	AddChild (namesScroll);
 
 	joinColor = vision_app->GetColor (C_JOIN);
+	quitColor = vision_app->GetColor (C_QUIT);
 
 	Display ("*** Now talking in ", &joinColor);
 	Display (id.String(), &joinColor);
@@ -471,20 +472,24 @@ ChannelAgent::MessageReceived (BMessage *msg)
 		case M_CHANNEL_GOT_KICKED:
 		{
 		    
-			BMessage display; // "you were kicked"
-			if (msg->FindMessage ("display", &display) == B_NO_ERROR)
-			{
-				ClientAgent::MessageReceived (&display);
-			}
-				
-			const char *theChannel;
-			msg->FindString ("channel", &theChannel);			    
-			    
-			BMessage display2; // "attempting auto rejoin"
-			if (msg->FindMessage ("display2", &display2) == B_NO_ERROR)
-			{
-				ClientAgent::MessageReceived (&display2);
-			}
+			const char *theChannel, *kicker, *rest;
+			msg->FindString ("channel", &theChannel);
+			msg->FindString ("kicker", &kicker);
+			msg->FindString ("rest", &rest);	    
+
+			BMessage wegotkicked (M_DISPLAY); // "you were kicked"
+			BString buffer;
+			buffer << "*** You have been kicked from "
+				<< " by " << kicker << " (" << rest << ")\n";
+			PackDisplay (&wegotkicked, buffer.String(), &quitColor, 0, true);
+			msgr.SendMessage (&wegotkicked);
+
+			BMessage attemptrejoin (M_DISPLAY); // "you were kicked"
+			buffer = "*** Attempting to rejoin ";
+			buffer << theChannel << "...\n";
+			PackDisplay (&attemptrejoin, buffer.String(), &quitColor, 0, true);
+			msgr.SendMessage (&attemptrejoin);			
+			
 				
 			BMessage send (M_SERVER_SEND);	
 			AddSend (&send, "JOIN ");
