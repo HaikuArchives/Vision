@@ -34,6 +34,8 @@
 #  include <Messenger.h>
 #endif
 
+#include "Logger.h"
+
 class BScrollView;
 class VTextControl;
 
@@ -182,6 +184,7 @@ class ClientAgent : public BView
                                        
     BRect                            frame;
     BMessenger                       sMsgr;
+    Logger                           *logger;
 
 };
 

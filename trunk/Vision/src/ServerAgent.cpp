@@ -140,10 +140,10 @@ ServerAgent::Init (void)
     new BMessage (M_LAG_CHECK),
     10000000,   // 10 seconds
     -1);        // forever
-    
+  
   loginThread = spawn_thread (
     Establish,
-    vision_app->GetThreadName(),
+    vision_app->GetThreadName(THREAD_S),
     B_NORMAL_PRIORITY,
     new BMessenger(this));
 
@@ -784,7 +784,7 @@ ServerAgent::HandleReconnect (void)
 
     loginThread = spawn_thread (
       Establish,
-      vision_app->GetThreadName(),
+      vision_app->GetThreadName(THREAD_S),
       B_NORMAL_PRIORITY,
       new BMessenger(this));
 	

@@ -175,7 +175,7 @@ VisionApp::ThreadStates (void)
   thread_info info;
 
   BString buffer;
-  int32 count (0);
+  int32 t_count (0);
 
   while (get_next_thread_info (team, &cookie, &info) == B_NO_ERROR)
   {
@@ -226,7 +226,7 @@ VisionApp::ThreadStates (void)
           buffer << "???\n";
         }
     }
-    ++count;
+    ++t_count;
   }
 
   if (buffer.Length())
@@ -234,11 +234,11 @@ VisionApp::ThreadStates (void)
     BAlert *alert (new BAlert (
       "Too many threads",
       buffer.String(),
-      count > 1 ? "Damn" : "Cool",
+      t_count > 1 ? "Damn" : "Cool",
       0,
       0,
       B_WIDTH_AS_USUAL,
-      count > 1 ? B_STOP_ALERT : B_INFO_ALERT));
+      t_count > 1 ? B_STOP_ALERT : B_INFO_ALERT));
       alert->Go();
   }
     
@@ -711,7 +711,7 @@ VisionApp::SetBool (const char *settingName, bool value)
 
 
 const char *
-VisionApp::GetThreadName (void)
+VisionApp::GetThreadName (int thread_type)
 {
   // random names for the connection thread
   static BString tnames[] = {
@@ -756,7 +756,22 @@ VisionApp::GetThreadName (void)
   
   int rnd (rand() % 35);
  
-  return tnames[rnd].String();
+  BString output (tnames[rnd]);
+  
+  switch (thread_type)
+  {
+    case THREAD_S:
+      output.Prepend ("s>");
+      break;
+    case THREAD_L:
+      output.Prepend ("l>");
+      break;
+  }
+  
+  return output.String();
+  
+  snooze (2250); // bad hack so the pointer doesnt get deleted (most of the time)
+                 // before spawn_thread is done. FIXME!
 }
 
 void

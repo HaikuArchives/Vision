@@ -82,7 +82,7 @@ class VisionApp : public BApplication
     bool                    GetBool (const char *);
     status_t                SetBool (const char *, bool);
     
-    const char              *GetThreadName (void);
+    const char              *GetThreadName (int);
 
     void                    Broadcast (BMessage *);
     void                    Broadcast (BMessage *, const char *, bool = false);
@@ -122,6 +122,9 @@ const int SET_WINDOW    = 3;
 const int SET_NOTIFY    = 4;
 
 const int VERSION_VERSION = 1;
-const int VERSION_DATE   = 2;
+const int VERSION_DATE    = 2;
+
+const int THREAD_S = 1;  // socket
+const int THREAD_L = 2;  // thread
 
 #endif
