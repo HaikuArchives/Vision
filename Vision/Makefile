@@ -46,7 +46,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 
 CC := g++ -c -pipe
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
-ifeq ($(wildcard /system/lib/libbind.so),)
+ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
 CFLAGS += -DNETSERVER_BUILD
 else
 CFLAGS += -DBONE_BUILD
@@ -62,6 +62,11 @@ endif
 
 ifndef VIS_BUILD
 CFLAGS += -Wcast-qual -Wshadow
+endif
+
+ifeq ($(CHECK_MEM), true)
+	CFLAGS += -fcheck-memory-usage -D_NO_INLINE_ASM=1
+	BUILD_DEBUG=true
 endif
 
 ifeq ($(BUILD_DEBUG),true)
@@ -82,7 +87,7 @@ CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
 
 LD := g++
 
-ifeq ($(wildcard /system/lib/libbind.so),)
+ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
 LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(NET_LIBS)
 else
 LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(BONE_LIBS) -nodefaultlibs
@@ -140,6 +145,7 @@ ifeq ($(wildcard ./src/lua/lib/liblua.a),)
 	@echo Building...
 	@cd $(SRCDIR)/lua && make >/dev/null && cd $(SRCDIR)/..
 endif
+	@rm start.tmp middle.tmp end.tmp
 	@echo linking $@
 	@$(LD) -o $@ $(OBJECTS) $(LDFLAGS)
 	@echo merging resources
@@ -154,8 +160,12 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
 	@echo generating dependencies for $<
 	@mkdir -p $(DEPDIR)
-	@$(DEP) $< > $@
-	@echo -e yf.i$(OBJDIR)/\\033t:a$(DEPDIR)/\\033pad \\033f:a $(MAKEFILE)\\033ZZ | vi $@ >/dev/null 2>/dev/null
+	@$(DEP) $< > middle.tmp
+	@echo -n "$@ " > start.tmp
+	@echo $(basename $(subst $(DEPDIR),$(OBJDIR),$@))".o : Makefile" > end.tmp
+	@cat start.tmp middle.tmp end.tmp > $@
+# This line slows the dep gen down...
+#	@echo -e yf.i$(OBJDIR)/\\033t:a$(DEPDIR)/\\033pad \\033f:a $(MAKEFILE)\\033ZZ | vi $@ >/dev/null 2>/dev/null
 
 $(FULLNAME).zip : $(BINARY) $(DATA) $(EXTRADATA) $(MAKEFILE)
 	@rm -rf $@~
@@ -193,3 +203,4 @@ include $(DEPENDS)
 endif
 endif
 endif
+
