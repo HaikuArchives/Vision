@@ -409,15 +409,6 @@ VisionApp::LoadDefaults (int32 section)
           defaults.AddString ("realname", "Heisenberg may have slept here");
           fVisionSettings->AddMessage ("defaults", &defaults);
         }
-        // remove this eventually, stupid bug
-        else
-        {
-          BMessage defaults (GetNetwork ("defaults"));
-          if (!defaults.HasString ("name"))
-            defaults.AddString ("name", "defaults");
-          SetNetwork ("defaults", &defaults);
-        }
-
       }
       break;
     
@@ -431,8 +422,6 @@ VisionApp::LoadDefaults (int32 section)
           
         if (!fVisionSettings->HasString ("timestamp_format"))
           fVisionSettings->AddString ("timestamp_format", "[%H:%M]");
-        else
-          fVisionSettings->ReplaceString ("timestamp_format", "[%H:%M]");
         
         if (!fVisionSettings->HasBool ("log_enabled"))
           fVisionSettings->AddBool ("log_enabled", false);
@@ -444,7 +433,10 @@ VisionApp::LoadDefaults (int32 section)
           fVisionSettings->AddBool ("stripcolors", true);
           
         if (!fVisionSettings->HasBool ("Newbie Spam Mode"))
-          fVisionSettings->AddBool("Newbie Spam Mode", true);  
+          fVisionSettings->AddBool("Newbie Spam Mode", true);
+        
+        if (!fVisionSettings->HasString ("logBaseDir"))
+          fVisionSettings->AddString("logBaseDir", "logs");
       }
       break;
     
@@ -987,6 +979,14 @@ VisionApp::SetString (const char *stringName, int32 index, const char *value)
   
   if (!stringLock.IsLocked())
     return B_ERROR;
+
+  if (!strcmp(stringName, "timestamp_format"))
+  {
+    BMessage msg (M_STATE_CHANGE);
+    msg.AddBool ("string", true);
+    msg.AddString ("which", stringName);
+    Broadcast (&msg);
+  }
   
   if (fVisionSettings->ReplaceString (stringName, index, value) == B_OK)
     return B_OK;

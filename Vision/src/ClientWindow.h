@@ -46,6 +46,8 @@ class BMessageRunner;
 class ServerAgent;
 class StatusView;
 class WindowList;
+class NotifyList;
+class NotifyListItem;
 class WindowListItem;
 class ClientWindowDock;
 class ResizeView;
@@ -84,6 +86,8 @@ class ClientWindow : public BWindow
       
     BRect                 *AgentRect (void);
     WindowList            *pWindowList (void);
+    NotifyList            *pNotifyList (void);
+    ClientWindowDock      *pCwDock (void);
     StatusView            *pStatusView (void);
     
     BString               joinStrings;  // used to keep track of channel

@@ -426,7 +426,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
         nick.RemoveFirst (":");
  
-        BMessage msg (M_NOTIFY_END);
+        BMessage msg (M_NOTIFYLIST_UPDATE);
 
         msg.AddString ("nick", nick.String());
         msg.AddString ("server", fServerName.String());
@@ -977,21 +977,13 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
     
     case RPL_USERSSTART:       // 392
       {
-        BMessage msg (M_NOTIFY_START);
-
-        msg.AddString ("server", fServerName.String());
-        vision_app->PostMessage (&msg);
+        // empty for now
 	  }	
       return true;
     
     case RPL_USERS:            // 393
       {
-        BMessage msg (M_NOTIFY_USER);
-        BString buffer (RestOfString (data, 4));
-
-        msg.AddString ("server", fServerName.String());
-        msg.AddString ("user", buffer.String());
-        vision_app->PostMessage (&msg);
+        // empty for now
       }
       return true;
       

@@ -33,14 +33,17 @@ const uint32 M_NEWS_CLIENT							= 0x1014;
 const uint32 M_NICK_CLIENT							= 0x1015;
 const uint32 M_ID_CHANGE							= 0x1016;
 
-const uint32 M_NOTIFY_SELECT						= 0x1017;
-const uint32 M_NOTIFY_PULSE							= 0x1018;
-const uint32 M_NOTIFY_END							= 0x1019;
-const uint32 M_NOTIFY_START							= 0x1020;
-const uint32 M_NOTIFY_USER							= 0x1021;
-const uint32 M_NOTIFY_COMMAND						= 0x1022;
-const uint32 M_NOTIFY_WINDOW						= 0x1023;
-const uint32 M_NOTIFY_SHUTDOWN						= 0x1024;
+const uint32 M_NOTIFYLIST_ADD      	 				= 0x1017;
+const uint32 M_NOTIFYLIST_REMOVE					= 0x1018;
+const uint32 M_NOTIFYLIST_CHANGE					= 0x1019;
+const uint32 M_NOTIFYLIST_UPDATE					= 0x1020;
+const uint32 M_NOTIFYLIST_RESIZE					= 0x1021;
+
+/* reserved for future use */
+
+//const uint32 M_NOTIFY_								= 0x1022;
+//const uint32 M_NOTIFY_WINDOW						= 0x1023;
+//const uint32 M_NOTIFY_SHUTDOWN						= 0x1024;
 
 const uint32 M_LIST_BEGIN							= 0x1025;
 const uint32 M_LIST_EVENT							= 0x1026;
@@ -64,8 +67,7 @@ const uint32 M_STATE_CHANGE							= 0x1041;
 const uint32 M_SERVER_STARTUP						= 0x1042;
 const uint32 M_SERVER_CONNECTED						= 0x1043;
 const uint32 M_RESIZE_VIEW                          = 0x1044;
-const uint32 M_SEND_TO_AGENT                        = 0x1045;
-const uint32 M_ABOUT_SCROLL                         = 0x1046;
+const uint32 M_ABOUT_SCROLL                         = 0x1045;
 
 const uint32 M_PREVIOUS_CLIENT						= 0x1300;
 const uint32 M_NEXT_CLIENT							= 0x1301;
@@ -151,7 +153,6 @@ const uint32 M_OPEN_TERM                            = 0x2005;
 const uint32 M_MAKE_NEW_NETWORK                     = 0x2006;
 const uint32 M_STATUS_CLEAR                         = 0x2007;
 const uint32 M_STATUS_ADDITEMS                      = 0x2008;
-
 // names view
 
 const uint32 M_NAMES_POPUP_MODE                     = 0x2100;
@@ -213,6 +214,9 @@ const uint32 M_FONT_ELEMENT_CHANGE                  = 0x2309;
 const uint32 M_FONT_CHANGE                          = 0x2310;
 const uint32 M_FONT_SIZE_CHANGE                     = 0x2311;
 const uint32 M_GENERALPREFS_SELECTION_CHANGED       = 0x2312;
+const uint32 M_PREFLOG_CHECKBOX_CHANGED             = 0x2313;
+const uint32 M_PREFLOG_LOGPATH_CHANGED              = 0x2314;
+const uint32 M_PREFLOG_TS_FORMAT_CHANGED            = 0x2315;
 
 // misc
 

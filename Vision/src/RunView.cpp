@@ -117,7 +117,7 @@ struct Line
   time_t         fStamp;
   urllist        *fUrls;
   int16          *fSpaces;
-  float          *fEdges;
+  int16          *fEdges;
   FontColor      *fFcs;
   SoftBreak      *fSofties;
   float          fTop;
@@ -2039,7 +2039,7 @@ Line::FigureEdges (
   float width)
 {
   delete [] fEdges;
-  fEdges = new float [fLength];
+  fEdges = new int16 [fLength];
 
   int16 cur_fFcs (0), next_fFcs (0), cur_font (0);
 
@@ -2111,8 +2111,8 @@ Line::FigureEdges (
 
     for (i = 0; i < ccount; ++i)
     {
-      fEdges[fEdge_count + i] = ((fEdge_count + i > 0) ? fEdges[fEdge_count + i - 1] : 0) +
-        (eshift[i] * f.Size());
+      fEdges[fEdge_count + i] = (int16) ((float)((fEdge_count + i > 0) ? fEdges[fEdge_count + i - 1] : 0) +
+        (eshift[i] * f.Size()));
       
       // this little backfTracking routine is necessary in the case where an fFcs change
       // comes immediately after a UTF8-char, since all but the first edge will be 0

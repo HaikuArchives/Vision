@@ -588,10 +588,12 @@ WindowList::AddAgent (BView *agent, const char *name, int32 winType, bool activa
 
   // give the agent its own pointer to its WinListItem,
   // so it can quickly update it's status entry
-  if (dynamic_cast<ClientAgent *>(agent))
-    ((ClientAgent *)agent)->fAgentWinItem = newagentitem;
-  else if (dynamic_cast<ListAgent *>(agent))
-    ((ListAgent *)agent)->fAgentWinItem = newagentitem;
+  ClientAgent *clicast (NULL);
+  ListAgent *listcast (NULL);
+  if ((clicast = dynamic_cast<ClientAgent *>(agent)) != NULL)
+    clicast->fAgentWinItem = newagentitem;
+  else if ((listcast = dynamic_cast<ListAgent *>(agent)) != NULL)
+    listcast->fAgentWinItem = newagentitem;
 
   vision_app->pClientWin()->DisableUpdates();
   agent->Hide(); // get it out of the way
@@ -600,10 +602,12 @@ WindowList::AddAgent (BView *agent, const char *name, int32 winType, bool activa
   vision_app->pClientWin()->EnableUpdates();
 
   if (activate && itemindex >= 0)  // if activate is true, show the new view now.
+  {
     if (CurrentSelection() == -1)
       Select (itemindex); // first item, let SelectionChanged() activate it
     else
       Activate (itemindex);
+  }
   else
     Select (IndexOf (currentitem));
 }
