@@ -52,7 +52,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   maxHeight += trackingBoundsRect.Height(); 
   AddChild (fVersionParanoid);
   
-  checkboxRect.top += fVersionParanoid->Bounds().Height() * 1.2;
+  checkboxRect.OffsetBy(0.0, fVersionParanoid->Bounds().Height() * 1.2);
   msg.ReplaceString ("setting", "catchAltW");
   fCatchAltW = new BCheckBox (checkboxRect, "catch AltW",
     S_PREFAPP_CMDW,
@@ -65,7 +65,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   maxHeight += trackingBoundsRect.Height() * 1.2; 
   AddChild (fCatchAltW);
   
-  checkboxRect.top += fCatchAltW->Bounds().Height() * 1.2;
+  checkboxRect.OffsetBy(0.0, fCatchAltW->Bounds().Height() * 1.2);
   msg.ReplaceString ("setting", "stripcolors");
   fStripColors = new BCheckBox (checkboxRect, "stripcolors",
     S_PREFAPP_STRIP_MIRC,
@@ -78,7 +78,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   maxHeight += trackingBoundsRect.Height() * 1.5; 
   AddChild (fStripColors);
 
-  checkboxRect.top += fStripColors->Bounds().Height() * 1.2;
+  checkboxRect.OffsetBy(0.0, fStripColors->Bounds().Height() * 1.2);
   msg.ReplaceString ("setting", "Newbie Spam Mode");
   fSpamMode = new BCheckBox (checkboxRect, "newbiespammode",
     S_PREFAPP_WARN_MULTILINE,
@@ -91,7 +91,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   maxHeight += trackingBoundsRect.Height() * 1.5; 
   AddChild (fSpamMode);
 
-  checkboxRect.top += fSpamMode->Bounds().Height() * 1.2;
+  checkboxRect.OffsetBy(0.0, fSpamMode->Bounds().Height() * 1.2);
   msg.ReplaceString ("setting", "queryOnMsg");
   fQueryMsg = new BCheckBox (checkboxRect, "queryOnMsg",
     S_PREFAPP_QUERY_MSG,
@@ -104,9 +104,12 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   maxHeight += trackingBoundsRect.Height() * 1.5; 
   AddChild (fQueryMsg);
 
-  checkboxRect.top += fQueryMsg->Bounds().Height() * 1.2;
-  
+  checkboxRect.OffsetBy(0.0, fQueryMsg->Bounds().Height() * 1.2);
   BMenu *encMenu(CreateEncodingMenu());
+  
+  checkboxRect.left = 0.0;
+  checkboxRect.right = Bounds().Width();
+  checkboxRect.bottom += fQueryMsg->Bounds().Height() * 1.2;
   
   fEncodings = new BMenuField(checkboxRect, "encoding", "Encoding: ", encMenu);
 
@@ -138,10 +141,10 @@ AppWindowPrefsView::AllAttached (void)
   fStripColors->SetTarget (this);
   fSpamMode->SetTarget (this);
   fQueryMsg->SetTarget (this);
-  fEncodings->SetDivider(StringWidth("Encoding: ") + 5);
-  fEncodings->ResizeToPreferred();
   fEncodings->Menu()->SetTargetForItems (this);
-  fEncodings->MoveBy(5.0, 0.0);
+  fEncodings->ResizeTo(Bounds().Width() - 15, fEncodings->Bounds().Height());
+  fEncodings->SetDivider(StringWidth("Encoding: ") + 5);
+  fEncodings->MoveTo (fQueryMsg->Frame().left + 5, fQueryMsg->Frame().bottom + 5);
   SetEncodingItem(vision_app->GetInt32("encoding"));
   BView::AllAttached();
 }
