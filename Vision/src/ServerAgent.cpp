@@ -430,6 +430,18 @@ ServerAgent::Establish (void *arg)
       sMsgrE->SendMessage (&statMsg);
 
       BString string;
+      BMessage dataSend (M_SERVER_SEND);
+      dataSend.AddString ("data", "blah");
+      
+      // temporary hack
+      if (connectId.ICompare("64.156.75", 9) == 0)
+      {      
+        string = "PASS 2legit2quit";
+        dataSend.ReplaceString ("data", string.String());
+        sMsgrE->SendMessage (&dataSend);
+      }
+
+
       string = "USER ";
       string.Append (ident);
       string.Append (" localhost ");
@@ -441,12 +453,14 @@ ServerAgent::Establish (void *arg)
       endpointMsg.AddInt32 ("socket", serverSock);
       if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
         throw failToLock();
-      BMessage dataSend (M_SERVER_SEND);
-      dataSend.AddString ("data", string.String());
+
+      dataSend.ReplaceString ("data", string.String());
       if (sMsgrE->SendMessage (&dataSend) != B_OK)
         throw failToLock();
+
       string = "NICK ";
       string.Append (connectNick);
+        
       dataSend.ReplaceString ("data", string.String());
       if (sMsgrE->SendMessage (&dataSend) != B_OK)
         throw failToLock();
@@ -1472,6 +1486,8 @@ ServerAgent::MessageReceived (BMessage *msg)
             theNick,
             WIN_MESSAGE_TYPE,
             true);
+            
+          client = newAgent;
 
           fClients.AddItem (newAgent);
         }
@@ -1594,6 +1610,13 @@ ServerAgent::MessageReceived (BMessage *msg)
         fLogger->Log (logName, data);
       }
       break;
+    
+    case M_IGNORE_ADD:
+      {
+      }
+      break;
+    
+    
 
     default:
       ClientAgent::MessageReceived (msg);
