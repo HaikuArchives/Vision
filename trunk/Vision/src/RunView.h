@@ -43,10 +43,10 @@ class SelectPos
 	int16					offset;
 
 							SelectPos (
-								int16 line = 0,
-								int16 offset = 0)
-								:	line (line),
-									offset (offset)
+								int16 selLine = 0,
+								int16 selOffset = 0)
+								:	line (selLine),
+									offset (selOffset)
 							{ }
 
 							SelectPos (const SelectPos &pos)

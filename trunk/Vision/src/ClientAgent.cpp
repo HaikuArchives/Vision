@@ -80,6 +80,7 @@ ClientAgent::ClientAgent (
   frame (frame_)
 {
   Init();
+  SetViewColor (B_TRANSPARENT_COLOR);
 }
 
 ClientAgent::ClientAgent (

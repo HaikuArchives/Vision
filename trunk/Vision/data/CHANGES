@@ -6,7 +6,7 @@ http://vision.sourceforge.net
             -- prefs window is now resizable
             -- Appearance prefs replaced by Color prefs (*HUGE* thanks to Be, Inc. for
                  contributing the ColorSelector control!)
-            -- rewritten Font prefs still in progress, to be added soon
+            -- rewritten Font prefs still in progress
 
 [0.4-1001]
 2001-10-01
