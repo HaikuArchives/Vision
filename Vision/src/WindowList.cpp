@@ -94,7 +94,6 @@ WindowList::MessageReceived (BMessage *msg)
   {
     case M_MENU_NUKE:
     {
-      printf ("M_MENU_NUKE\n");
       CloseActive();
       break;
     }
@@ -107,7 +106,6 @@ WindowList::MessageReceived (BMessage *msg)
 void
 WindowList::CloseActive (void)
 {
-  printf ("CloseActive()\n");
   WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (CurrentSelection())));
   if (myItem)
   {
@@ -415,7 +413,6 @@ WindowList::Activate (int32 index)
 void
 WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
 {
-  printf ("ho!\n");
   vision_app->pClientWin()->Lock();
   agent->Hide();
   agent->RemoveSelf();

@@ -57,9 +57,43 @@ ClientWindow::ClientWindow (BRect frame)
 bool
 ClientWindow::QuitRequested (void)
 {
-  vision_app->SetRect ("clientWinRect", Frame());
+  if (!shutdown_in_progress)
+  {
+    shutdown_in_progress = true;
+    for (int32 i (1); i <= winList->CountItems(); ++i)
+    { 
+      WindowListItem *aitem ((WindowListItem *)winList->ItemAt (i - 1));
+      if (aitem->Type() == WIN_SERVER_TYPE)
+      {
+        printf ("nuking\n");
+        BMessage killMsg (M_CLIENT_QUIT);
+         killMsg.AddBool ("vision:winlist", true);
+        dynamic_cast<ServerAgent *>(aitem->pAgent())->msgr.SendMessage (&killMsg);
+        wait_for_quits = true;
+      }
+    }
+    if (wait_for_quits)
+      return false;
+  }
+  else
+  {
+    for (int32 o (1); o <= winList->CountItems(); ++o)
+    { 
+      WindowListItem *aitem ((WindowListItem *)winList->ItemAt (o - 1));
+      if (aitem->Type() == WIN_SERVER_TYPE)
+      {
+        // wait some more
+        return false;
+      }
+    }
+  }    
 
-  vision_app->PostMessage (B_QUIT_REQUESTED);
+
+  vision_app->SetRect ("clientWinRect", Frame());
+  
+  BMessage killMeNow (B_QUIT_REQUESTED);
+  killMeNow.AddBool ("real_thing", true);  
+  vision_app->PostMessage (&killMeNow);
 
   return true;
 }
@@ -160,7 +194,6 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_OBITUARY:
     {
-       printf ("heave!\n");
        WindowListItem *agentitem;
        BView *agentview;
        if ((msg->FindPointer ("agent", reinterpret_cast<void **>(&agentview)) != B_OK)
@@ -170,7 +203,11 @@ ClientWindow::MessageReceived (BMessage *msg)
          return;
        } 
        
+       int32 agentType (agentitem->Type());
        winList->RemoveAgent (agentview, agentitem);
+       
+       if ((shutdown_in_progress) && (agentType == WIN_SERVER_TYPE))
+         PostMessage (B_QUIT_REQUESTED);
        
        break;
     }
@@ -250,6 +287,9 @@ ClientWindow::Init (void)
   SetSizeLimits (330,2000,150,2000);
 
   AddShortcut('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
+  
+  shutdown_in_progress = false;
+  wait_for_quits = false;
   
   BRect frame (Bounds());
   menubar = new BMenuBar (frame, "menu_bar");

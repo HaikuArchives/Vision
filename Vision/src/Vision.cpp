@@ -225,6 +225,15 @@ VisionApp::LoadDefaults (int32 section)
 bool
 VisionApp::QuitRequested (void)
 {
+
+  BMessage *quitRequest (CurrentMessage());
+
+  if ((clientWin) && (!quitRequest->HasBool ("real_thing")))
+  {
+    clientWin->PostMessage (B_QUIT_REQUESTED);
+    return false;
+  }
+
   if (settingsloaded)
     if ((visionSettings->Save() == B_OK) && debugsettings)
       printf (":SETTINGS: saved to file\n");
