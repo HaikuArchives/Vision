@@ -36,6 +36,9 @@ $user     = shift;
 $subject  = shift;
 $cvsdirectory = shift;
 
+system("echo user: $user");
+system("echo subject: $subject");
+
 system("echo directory: $cvsdirectory");
 
 if (!open(LD_FD, "$last_dir_file.$my_pgrp_id")) {
