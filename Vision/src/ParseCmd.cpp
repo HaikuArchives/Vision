@@ -249,14 +249,13 @@ ClientAgent::ParseCmd (const char *data)
   }
 
 
-  #if 0
   if (firstWord == "/DCC")
   {
     {
       BString secondWord (GetWord (data, 2)),
               theNick (GetWord (data, 3)),
               theFile (RestOfString(data, 4));
-
+#if 0
       if (secondWord.ICompare ("SEND") == 0
       &&  theNick != "-9z99")
       {
@@ -310,18 +309,20 @@ ClientAgent::ParseCmd (const char *data)
         myPanel->SetTarget (sMsgr);
         myPanel->Show();
       }
-      else if (secondWord.ICompare ("CHAT") == 0
+#endif
+      if (secondWord.ICompare ("CHAT") == 0
       &&       theNick != "-9z99")
       {
-        BMessage msg (CHAT_ACTION);
+        BString thePort (GetWord (data, 4));
+        BMessage msg (M_CHAT_ACTION);
         msg.AddString ("nick", theNick.String());
+        if (thePort != "-9z99")
+          msg.AddString ("port", thePort.String());
         sMsgr.SendMessage (&msg);
       }
     }
     return true;
   }
-  #endif
-  
 
   if (firstWord == "/DOP" || firstWord == "/DEOP")
   {
