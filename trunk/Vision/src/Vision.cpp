@@ -630,10 +630,13 @@ VisionApp::GetThreadName (void)
     /* 29 */ "5038",
     /* 30 */ "talk_to_the_hand",
     /* 31 */ "manah, manah!",
-    /* 32 */ "magic 8-nipple"
+    /* 32 */ "magic 8-nipple",
+    /* 33 */ "threat_mode",
+    /* 34 */ "dark_and_mysterious",
+    /* 35 */ "I AM A GOLDEN GOD!"
   };
   
-  int rnd (rand() % 32);
+  int rnd (rand() % 35);
  
   return tnames[rnd].String();
 }

@@ -284,6 +284,8 @@ MessageAgent::TabExpansion (void)
       insertion = id;
       insertion.RemoveLast(" [DCC]");
     }
+    else if (!myNick.ICompare (place, strlen (place)))
+      insertion = myNick;
 		
     if (insertion.Length())
     {

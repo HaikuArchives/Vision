@@ -1,6 +1,20 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0329]
+ 2001-03-29
+   * Tab complete now works on your own nick as well in MessageAgents
+   * /exit .... exits.
+   * M_OPEN_MSGAGENT will activate the query window if it already exists
+   * /query will now send any text after the nick to the new query window (or the
+     query window already open, if that's the case)
+   * Reverse the default behavior of /msg, doesn't create a new /msg window on
+     /msg
+   * Make WindowListItem->SetName and SetStatus only Invalidate themselves and
+     not the whole view.
+   * Squeeze a half a microsecond of performance out of /setbool by changing
+     an if to an else if.
+
 [0.1.0328]
  2001-03-28
    * Add a Window Lock() to WindowListItem->SetName and SetStatus to try and
