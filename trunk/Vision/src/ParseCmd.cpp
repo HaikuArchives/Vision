@@ -1147,7 +1147,7 @@ ClientAgent::ExecPipe (void *arg)
   if( ((int)fp) <= 0)
   {
     msg->what = M_DISPLAY;
-    PackDisplay(msg, "/pexec: command failed\n", C_ERROR);
+    PackDisplay(msg, "[x] " S_PCMD_PEXEC_ERROR "\n", C_ERROR);
     self_destruct_in_15_seconds.SendMessage(msg);
   }
   else
