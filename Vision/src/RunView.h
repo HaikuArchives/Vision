@@ -33,6 +33,7 @@ class RunView;
 class BScrollView;
 class BCursor;
 class BMessageRunner;
+class BPopUpMenu;
 
 class SelectPos
 {
@@ -95,7 +96,7 @@ class RunView : public BView
 
 	bool 				resizedirty;
 	bool				fontsdirty;
-
+	BPopUpMenu			*myPopUp;
 
 	bool					RecalcScrollBar (bool constrain);
 	void					ResizeRecalc (void);
@@ -124,7 +125,8 @@ class RunView : public BView
 							{ rgb_color color = {red, green, blue, alpha}; SetViewColor (color); }
 
 	void					CheckURLCursor (BPoint);
-
+	void					BuildPopUp (void);
+	
 	virtual void		MouseDown (BPoint);
 	virtual void		MouseMoved (BPoint, uint32, const BMessage *);
 	virtual void		MouseUp (BPoint);
