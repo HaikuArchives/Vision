@@ -809,7 +809,9 @@ ServerAgent::MessageReceived (BMessage *msg)
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000", false);
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String(), true);
 			
-			break;		
+			break;
+			
+					
 		}
 		
 		case M_LAG_CHECK:
