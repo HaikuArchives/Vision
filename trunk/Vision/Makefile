@@ -46,7 +46,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 
 # compiler, linker, ...
 
-CC := g++ -c -pipe
+CC := gcc -c -pipe
 CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
 CFLAGS += -DNETSERVER_BUILD
@@ -60,10 +60,6 @@ endif
 
 ifeq ($(VIS_BUILD),be)
 CFLAGS += -DBE_INC_BUILD=1
-endif
-
-ifndef VIS_BUILD
-CFLAGS += -Wcast-qual -Wshadow
 endif
 
 ifeq ($(CHECK_MEM), true)
@@ -86,8 +82,9 @@ CFLAGS += -Wall -W -Wno-multichar -Wpointer-arith
 CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
+CFLAGS += -Wcast-qual -Wshadow
 
-LD := g++
+LD := gcc
 
 ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
 LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(NET_LIBS)
@@ -162,9 +159,9 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	@$(CC) $< $(CFLAGS) -o $@
 
 $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
-	@echo generating dependencies for $<
-	@echo $@ $(OBJDIR)/$(basename $(@F))".o" $(shell $(DEP) $<) > $(TEMPDEPFILE)
-	@echo $(OBJDIR)/$(basename $(@F))".o : $(MAKEFILE)" | cat - $(TEMPDEPFILE) > $@
+	@/bin/echo generating dependencies for $<
+	@/bin/echo $@ $(OBJDIR)/$(basename $(@F))".o" $(shell $(DEP) $<) > $(TEMPDEPFILE)
+	@/bin/echo $(OBJDIR)/$(basename $(@F))".o : $(MAKEFILE)" | /bin/cat - $(TEMPDEPFILE) > $@
 
 $(FULLNAME).zip : $(BINARY) $(DATA) $(EXTRADATA) $(MAKEFILE)
 	@rm -rf $@~
