@@ -71,6 +71,7 @@ ServerEntryView::ServerEntryView (BHandler *handler, BMessage *invoked, const Se
 		B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE_JUMP, true);
 	BString strPort ("");
 	if (data) strPort << data->port;
+	else strPort << 6667;
 	port = new VTextControl (BRect (0,0,0,0), "portVal", "Port: ",
 		strPort.String(), new BMessage (M_SERVER_PORT_CHANGED),
 		B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE, true);
@@ -80,13 +81,14 @@ ServerEntryView::ServerEntryView (BHandler *handler, BMessage *invoked, const Se
     stateMenu->AddItem (new BMenuItem ("Primary", new BMessage (M_SERVER_STATE)));
     stateMenu->AddItem (new BMenuItem ("Secondary", new BMessage (M_SERVER_STATE)));
     stateMenu->AddItem (new BMenuItem ("Disabled" , new BMessage (M_SERVER_STATE)));
-    statusField = new BMenuField (BRect (0,0,0,0), "states", "State: ", stateMenu);
+    statusField = new BMenuField (BRect (0,0,0,0), "states", "State: ", stateMenu,
+      B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE_JUMP | B_WILL_DRAW);
 
     okButton = new BButton (BRect (0,0,0,0), "serverOk", "Done",
-      new BMessage (M_SERVER_DONE));
+      new BMessage (M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE | B_WILL_DRAW);
     
     cancelButton = new BButton (BRect (0,0,0,0), "serverCancel", "Cancel",
-      new BMessage (M_SERVER_CANCEL));
+      new BMessage (M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_NAVIGABLE | B_WILL_DRAW);
 
     AddChild (serverName);
     AddChild (port);
