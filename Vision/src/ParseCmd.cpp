@@ -485,8 +485,14 @@ ClientAgent::ParseCmd (const char *data)
 		
 		return true;
 	}
+	#endif
 	
+	if (firstWord == "/EXIT")
+	{
+		vision_app->PostMessage (B_QUIT_REQUESTED);
+	}
 	
+	#if 0
 	if (firstWord == "/IGNORE")
 	{
 		BString rest (RestOfString (data, 2));
@@ -660,7 +666,7 @@ ClientAgent::ParseCmd (const char *data)
 		if (theRest != "-9z99"
 		&&  myNick.ICompare (theNick))
 		{
-			if (!vision_app->GetBool ("messageactiveagent"))
+			if (vision_app->GetBool ("queryOnMsg"))
 			{
 				BMessage msg (M_OPEN_MSGAGENT);
 				BMessage buffer (M_SUBMIT);
@@ -829,16 +835,23 @@ ClientAgent::ParseCmd (const char *data)
 	
 	if (firstWord == "/QUERY" || firstWord == "/Q")
 	{
-		BString theNick (GetWord (data, 2));
-
+		BString theNick (GetWord (data, 2)),
+		        theMsg (RestOfString (data, 3));
+		        
 		if (theNick != "-9z99")
 		{
-			BMessage msg (M_OPEN_MSGAGENT);
-	
+			BMessage msg (M_OPEN_MSGAGENT);			
 			msg.AddString ("nick", theNick.String());
+			
+			if (theMsg != "-9z99")
+			{
+			  BMessage buffer (M_SUBMIT);
+			  buffer.AddString ("input", theMsg.String());
+			  msg.AddMessage ("msg", &buffer);
+			}
+			
 			sMsgr.SendMessage (&msg);
 		}
-	
 		return true;	
 	}
 	
@@ -906,12 +919,12 @@ ClientAgent::ParseCmd (const char *data)
 		if (value != "-9z99")
 		{
 			
-			if (value == "true" || value == "1" || value == "yes")
+			if (value == "true")
 			{
 				caught = true;
 			  	newvalue = true;
 			}
-			if (value == "false" || value == "0" || value == "no")
+			else if (value == "false")
 			{
 				caught = true;
 				newvalue = false;

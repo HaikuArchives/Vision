@@ -533,7 +533,8 @@ WindowListItem::SetName (const char *name)
 {
   vision_app->pClientWin()->Lock();
   myName = name;
-  vision_app->pClientWin()->pWindowList()->Invalidate();
+  int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
+  vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
   vision_app->pClientWin()->Unlock();
 }
 
@@ -548,8 +549,16 @@ WindowListItem::SetStatus (int32 winStatus)
 {
   vision_app->pClientWin()->Lock();
   myStatus = winStatus;
-  vision_app->pClientWin()->pWindowList()->Invalidate();
+  int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
+  vision_app->pClientWin()->pWindowList()->InvalidateItem (myIndex);
   vision_app->pClientWin()->Unlock();
+}
+
+void
+WindowListItem::ActivateItem (void)
+{
+  int32 myIndex (vision_app->pClientWin()->pWindowList()->IndexOf (this));
+  vision_app->pClientWin()->pWindowList()->Activate (myIndex);
 }
 
 void
@@ -597,7 +606,7 @@ WindowListItem::DrawItem (BView *passedFather, BRect frame, bool complete)
     color.green = 0;
     color.blue  = 0;
   }
-
+  
   father->SetHighColor (color);
 
   father->SetDrawingMode (B_OP_OVER);

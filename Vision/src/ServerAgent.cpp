@@ -839,8 +839,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 			}
 			else
 			{
-				// TODO: Activation/MakeFocus/Blah
-				//client->Activate (true);
+				client->agentWinItem->ActivateItem();
 			}
 						
 			if (msg->HasMessage ("msg"))

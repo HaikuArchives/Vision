@@ -56,6 +56,7 @@ class WindowListItem : public BListItem
     void                            SetName (const char *);
     void                            SetSid (int32);
     void                            SetStatus (int32);
+    void                            ActivateItem (void);
 
     virtual void                    DrawItem (BView *,
                                               BRect,
