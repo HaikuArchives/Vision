@@ -1083,19 +1083,13 @@ VisionApp::ClientFontSize (int32 which, float size)
   if (which < MAX_FONTS && which >= 0)
   {
     client_font[which]->SetSize (size);
-    BMessage msg (M_STATE_CHANGE);
     
     activeTheme->SetFont (which, client_font[which]);
     
     if (visionSettings->ReplaceFloat ("size", which, size) != B_OK)
       printf("error, could not set font size\n");
-
-    msg.AddBool ("font", true);
-    msg.AddInt32 ("which", which);
-    Broadcast (&msg);
   }
 }
-
 
 const BFont *
 VisionApp::GetClientFont (int32 which) const
@@ -1142,13 +1136,6 @@ VisionApp::SetEvent (int32 which, const char *event)
     events[which] = event;
 
     visionSettings->ReplaceString ("event", which, event);
-    
-    BMessage msg (M_STATE_CHANGE);
-    
-    msg.AddBool ("event", true);
-    msg.AddInt32 ("which", which);
-
-    Broadcast (&msg);
   }
 }
 
@@ -1183,14 +1170,6 @@ VisionApp::SetCommand (int32 which, const char *command)
     commands[which] = command;
     
     visionSettings->ReplaceString ("command", which, command);
-    
-    BMessage msg (M_STATE_CHANGE);
-    
-    msg.AddBool ("command", true);
-    msg.AddInt32 ("which", which);
-    
-    Broadcast (&msg);
-
   }
 }
 
