@@ -509,7 +509,7 @@ ClientAgent::MessageReceived (BMessage *msg)
           delete invoker;
         }
 
-        if (which == 0)
+        if ((which == 0) && msg->HasInt32 ("which"))
           break;
 
         if (which == 1 || which == 3)
