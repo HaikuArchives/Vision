@@ -25,6 +25,7 @@
  
  
 #include "MessageAgent.h"
+#include "WindowList.h"
 #include "ServerAgent.h"
 #include "ClientWindow.h"
 #include "StatusView.h"
@@ -73,6 +74,17 @@ MessageAgent::Init (void)
   // TODO handle & initiate dcc stuff here
 }
 
+void
+MessageAgent::ChannelMessage (
+	const char *msgz,
+	const char *nick,
+	const char *ident,
+	const char *address)
+{
+//  agentWinItem->SetName (nick);
+
+  ClientAgent::ChannelMessage (msgz, nick, ident, address);
+}
 
 void
 MessageAgent::MessageReceived (BMessage *msg)
@@ -90,6 +102,8 @@ MessageAgent::MessageReceived (BMessage *msg)
         nick = chatee.String();
         msg->AddString ("nick", nick);
       }
+      
+      agentWinItem->SetName (nick);      
       
       // Send the rest of processing up the chain
       ClientAgent::MessageReceived (msg);
@@ -114,6 +128,8 @@ MessageAgent::MessageReceived (BMessage *msg)
 
         BString oldId (id);
         chatee = id = newNick;
+        
+        agentWinItem->SetName (id.String());
 
         if (dChat)
           id.Append(" [DCC]");

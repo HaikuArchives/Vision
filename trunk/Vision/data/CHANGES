@@ -2,6 +2,12 @@ Vision
 http://vision.sourceforge.net
 
 [0.1.0322]
+ 2001-03-23
+   * Fix "function race" issues with the random thread names used by Establish()
+   * Fix Home+End to work in the Input control, use Alt+ for the IRCView
+   * Completed implemention of WindowList::SetName(). MessageAgents now update
+     their WindowList entry on new incommgin messages (case adjustment for example)
+     and nick change. Channel name's to follow.
  2001-03-22
    * Added support for !channels to /j|/join (the ID is still shown everywhere
      though--todo for later) 
