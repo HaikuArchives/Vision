@@ -264,8 +264,8 @@ ClientInputFilter::HandleKeys (BMessage *msg)
 
 	else if ((keymodifiers & B_OPTION_KEY)  == 0
 	&&  (keymodifiers & B_COMMAND_KEY) == 0
-	&&  (keymodifiers & B_CONTROL_KEY) == 0
-	&&  (keymodifiers & B_SHIFT_KEY) != 0)
+	&&  (keymodifiers & B_CONTROL_KEY) != 0
+	&&  (keymodifiers & B_SHIFT_KEY) == 0)
 	{
 		switch (keyStroke)
 		{
