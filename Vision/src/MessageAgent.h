@@ -48,11 +48,13 @@ class MessageAgent : public ClientAgent
                                        const char *,
                                        const char *,
                                        bool = false,
+                                       bool = false,
                                        const char * = "",
                                        const char * = "");
                          
                          ~MessageAgent (void);
-
+    virtual void         AttachedToWindow (void);
+    
     virtual void         MessageReceived (BMessage *);
     virtual void         Parser (const char *);
     virtual void         DroppedFile (BMessage *);
@@ -65,8 +67,12 @@ class MessageAgent : public ClientAgent
 
 
   private:
-  
+   
     void                 Init (void);
+    void                 DCCServerSetup (void);
+    static status_t      DCCIn (void *);
+    static status_t      DCCOut (void *);
+    
     
     BString                     chatAddy,
                                 chatee,

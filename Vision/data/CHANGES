@@ -4,6 +4,7 @@ http://vision.sourceforge.net
 [0.3.07024]
 2001-07-24
         * hopefully fixed stupid "item doesn't notice nick change" bug.
+        * added DCC chat
         
 [0.3.07023]
 2001-07-23
