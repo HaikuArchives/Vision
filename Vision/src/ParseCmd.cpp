@@ -900,6 +900,44 @@ ClientAgent::ParseCmd (const char *data)
 	}
 	#endif
 	
+	if (firstWord == "/SETBOOL")
+	{
+		BString var (GetWord (data, 2));
+		BString value (GetWord (data, 3));
+		bool newvalue (false);
+		bool caught (false);		
+		value.ToLower();
+		
+		if (value != "-9z99")
+		{
+			
+			if (value == "true" || value == "1" || value == "yes")
+			{
+				caught = true;
+			  	newvalue = true;
+			}
+			if (value == "false" || value == "0" || value == "no")
+			{
+				caught = true;
+				newvalue = false;
+			}
+		}
+		
+		if (!caught || value == "-9z99")
+		{
+			Display ("[x] /setbool: Error: Invalid parmameters\n", &errorColor);
+			return true;
+		}
+		
+		status_t returned (vision_app->SetBool (var.String(), newvalue));
+		if (returned == B_OK)
+			Display ("[x] /setbool: Bool has been set\n", &errorColor);
+		else
+			Display ("[x] /setbool: Error setting bool\n", &errorColor);
+	
+		return true;
+	}			
+	
 	if (firstWord == "/SLEEP")
 	{
 		BString rest (RestOfString (data, 2));
