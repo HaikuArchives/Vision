@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.2.0704]
+ 2001-07-04
+   * fixed mistakes in some connect messages
+
 [0.2.0702]
  2001-07-02
    * more fun with cleanups
