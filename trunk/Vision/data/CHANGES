@@ -14,6 +14,8 @@ http://vision.sourceforge.net
          * fixed double-click bug in window list
          * added disable lag check option (NOTE: you will have to manually enable lag checking on all
            your nets, if the setting isn't present it will assume disabled)
+         * fixed DCC chat bugs from cleanups
+         * fixed DCC file send path issue
          * style cleanups
 
 [0.7.8-0113]
