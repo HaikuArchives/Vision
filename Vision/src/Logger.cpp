@@ -34,6 +34,8 @@ Logger::Logger (BString currentLog, BString server)
 {
   logName = currentLog;
   serverName = server;
+  isQuitting = false;
+  logFile = new BFile();
   SetupLogging();
   logSyncherLock = create_sem (0, "logSynchLock_sem");
   logThread = spawn_thread (AsyncLogger,
@@ -47,25 +49,14 @@ Logger::~Logger (void)
 {
   delete_sem (logSyncherLock);
   status_t result;
-  wait_for_thread (logThread, &result);
-  if (logFile.InitCheck() != B_NO_INIT)
-  {
-    time_t myTime (time (0));
-    struct tm *ptr;
-    ptr = localtime (&myTime);
-    char tempTime[96];
-    strftime (tempTime, 96, "Session Close: %a %b %d %H:%M %Y\n", ptr);
-    off_t len = strlen (tempTime);
-    logFile.Write (tempTime, len);
-    logFile.Unset();
-  }
-
+  if (isQuitting)
+    wait_for_thread (logThread, &result);
 }
 
 void
 Logger::SetupLogging (void)
 {
-  if (logFile.InitCheck() == B_NO_INIT)
+  if (logFile->InitCheck() == B_NO_INIT)
   {
     time_t myTime (time (0));
     struct tm *ptr;
@@ -105,12 +96,12 @@ Logger::SetupLogging (void)
 
     path.Append (wName.String());
  
-    logFile.SetTo (path.Path(), B_READ_WRITE | B_CREATE_FILE | B_OPEN_AT_END);
+    logFile->SetTo (path.Path(), B_READ_WRITE | B_CREATE_FILE | B_OPEN_AT_END);
 
-    if (logFile.InitCheck() == B_OK)
+    if (logFile->InitCheck() == B_OK)
     {
       char tempTime[96];
-      if (logFile.Position() == 0) // new file
+      if (logFile->Position() == 0) // new file
       {
         strftime (tempTime, 96, "Session Start: %a %b %d %H:%M %Y\n", ptr);
       }
@@ -119,11 +110,11 @@ Logger::SetupLogging (void)
         strftime (tempTime, 96, "\n\nSession Start: %a %b %d %H:%M %Y\n", ptr);
       }
       BString timeString(tempTime);
-      logFile.Write (timeString.String(), timeString.Length());
+      logFile->Write (timeString.String(), timeString.Length());
       update_mime_info (path.Path(), false, false, true);
     }
     else
-      logFile.Unset();
+      logFile->Unset();
   }
 
   return;
@@ -146,7 +137,7 @@ Logger::AsyncLogger (void *arg)
   BString *currentString (NULL);
   BLocker *myLogBufferLock (&(logger->logBufferLock));
   BList *myLogBuffer (&(logger->logBuffer));
-  BFile *myLogFile (&(logger->logFile));
+  BFile *myLogFile ((logger->logFile));
   
   while (acquire_sem (logger->logSyncherLock) == B_NO_ERROR)
   {
@@ -168,6 +159,19 @@ Logger::AsyncLogger (void *arg)
     if (myLogFile->InitCheck() != B_NO_INIT)
       myLogFile->Write (currentString->String(), currentString->Length());
     delete currentString;
+  }
+
+  if (myLogFile->InitCheck() != B_NO_INIT)
+  {
+    time_t myTime (time (0));
+    struct tm *ptr;
+    ptr = localtime (&myTime);
+    char tempTime[96];
+    strftime (tempTime, 96, "Session Close: %a %b %d %H:%M %Y\n", ptr);
+    off_t len = strlen (tempTime);
+    myLogFile->Write (tempTime, len);
+    myLogFile->Unset();
+    delete myLogFile;
   }
 
   return 0;

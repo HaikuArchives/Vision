@@ -760,10 +760,13 @@ VisionApp::GetThreadName (int thread_type)
     /* 41 */ "naked scottish weathergirls"
     /* 42 */ "gateway game^Wthread",
     /* 43 */ "hello kitty",
-    /* 44 */ "please_fondle_my_buttocks"
+    /* 44 */ "please_fondle_my_buttocks",
+    /* 45 */ "the_game's_afoot_watson!",
+    /* 46 */ "stop_making_that_big_face!",
+    /* 47 */ "hush"
   };
   
-  int rnd (rand() % 44);
+  int rnd (rand() % 48);
  
   static BString output;
   

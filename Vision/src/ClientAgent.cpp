@@ -473,17 +473,32 @@ ClientAgent::MessageReceived (BMessage *msg)
         input->TextView()->TextLength()); 
       }
       break;
-
+    
+    case M_CLIENT_QUIT:
+      {
+        bool shuttingdown (false);
+        if (msg->HasBool ("vision:shutdown_in_progress"))
+          msg->FindBool ("vision:shutdown_in_progress", &shuttingdown);
+        logger->isQuitting = shuttingdown;
+      }
+      break;
 
     // This could probably be used for some scripting
     // capability -- oooh, neato!
     case M_SUBMIT_RAW:
       {
-        bool lines;
-
+        bool lines (false);
+        int32 which (0);
         msg->FindBool ("lines", &lines);
+        msg->FindInt32 ("which", &which);
+        if (msg->HasPointer ("invoker"))
+        {
+          BInvoker *invoker;
+          msg->FindPointer ("invoker", reinterpret_cast<void **>(&invoker));
+          delete invoker;
+        }
 
-        if (lines)
+        if (which == 1)
         {
           BMessage *buffer (new BMessage (*msg));
           thread_id tid;
@@ -499,7 +514,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           resume_thread (tid);
         }
-        else
+        else if ((which == 2) || (!lines))
         {
           BString buffer;
           for (int32 i = 0; msg->HasString ("data", i); ++i)

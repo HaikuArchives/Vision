@@ -35,6 +35,7 @@ class Logger
                        Logger (BString, BString);
                        ~Logger (void);
    void                Log (const char *);
+   bool                isQuitting;
   
   private:
    void                SetupLogging (void);
@@ -45,7 +46,7 @@ class Logger
    BList               logBuffer;
    BLocker             logBufferLock;
    sem_id              logSyncherLock;
-   BFile               logFile;
+   BFile               *logFile;
 };
 
 #endif

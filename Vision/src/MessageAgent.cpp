@@ -156,6 +156,7 @@ MessageAgent::MessageReceived (BMessage *msg)
 
     case M_CLIENT_QUIT:
       {
+        ClientAgent::MessageReceived(msg);
         BMessage deathchant (M_OBITUARY);
         deathchant.AddPointer ("agent", this);
         deathchant.AddPointer ("item", agentWinItem);
