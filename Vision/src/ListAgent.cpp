@@ -173,6 +173,15 @@ ListAgent::Show (void)
   
   vision_app->pClientWin()->AddMenu (listMenu);
   listMenu->SetTargetForItems (this);
+
+  const BRect *agentRect (dynamic_cast<ClientWindow *>(Window())->AgentRect());
+  
+  if (*agentRect != Frame())
+  {
+    ResizeTo (agentRect->Width(), agentRect->Height());
+    MoveTo (agentRect->left, agentRect->top);
+  }
+
   BView::Show();
 }
 
