@@ -732,7 +732,7 @@ RunView::MouseDown (BPoint point)
 
 			default:
 			{
-				if (!IntersectSelection (s, s))
+				if (!inBounds || !IntersectSelection (s, s))
 					Select (s,s);
 				SetMouseEventMask (B_POINTER_EVENTS);
 				tracking = 1;
@@ -1697,23 +1697,28 @@ RunView::GetSelectionText (BString &string) const
 bool
 RunView::IntersectSelection (const SelectPos &start, const SelectPos &end) const
 {
-	if (start.line == sp_start.line && start.offset >= sp_start.offset)
-		return true;
-
-	if (end.line == sp_start.line && end.offset >= sp_start.offset)
-		return true;
-
-	if (start.line > sp_start.line && start.line < sp_end.line)
-		return true;
-
-	if (end.line > sp_start.line && end.line < sp_end.line)
-		return true;
-
-	if (start.line == sp_end.line && start.offset < sp_end.offset)
-		return true;
-
-	if (end.line == sp_end.line && end.offset < sp_end.offset)
-		return true;
+	if (sp_start.line == sp_end.line)
+	{
+		if (start.line == sp_start.line && start.offset >= sp_start.offset && start.offset < sp_end.offset)
+			return true;
+		if (end.line == sp_start.line && end.offset >= sp_start.offset && end.offset < sp_end.offset)
+			return true;
+	}
+	else
+	{
+		if (start.line > sp_start.line && start.line < sp_end.line)
+			return true;
+		if (end.line > sp_start.line && end.line < sp_end.line)
+			return true;
+		if (start.line == sp_start.line && start.offset >= sp_start.offset)
+			return true;
+		if (end.line == sp_start.line && end.offset >= sp_start.offset)
+			return true;
+		if (start.line == sp_end.line && start.offset < sp_end.offset)
+			return true;
+		if (end.line == sp_end.line && end.offset < sp_end.offset)
+			return true; 
+	}
 
 	return false;
 }
