@@ -136,7 +136,7 @@ MessageAgent::DCCServerSetup(void)
   }
 
   sa.sin_family = AF_INET;
-  inet_aton (address.String(), &sa.sin_addr);
+  sa.sin_addr.s_addr = inet_addr (address.String());
   
   sa.sin_port = htons(myPort);
   
@@ -167,7 +167,7 @@ MessageAgent::DCCServerSetup(void)
   BString dataBuffer;
   struct in_addr addr;
 		
-  inet_aton (address.String(), &addr);
+  addr.s_addr = inet_addr (address.String());
   dataBuffer << "Accepting connection on address "
     << address.String() << ", port " << myPort << "\n";
   LockLooper();
