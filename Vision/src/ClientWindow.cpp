@@ -80,7 +80,7 @@ ClientWindow::QuitRequested (void)
         return false;
       }
     }
-  }    
+  }
 
 
   vision_app->SetRect ("clientWinRect", Frame());

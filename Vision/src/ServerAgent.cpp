@@ -92,8 +92,6 @@ ServerAgent::ServerAgent (
 
 ServerAgent::~ServerAgent (void)
 {
-  kill_thread (loginThread);
-  
   if (send_buffer)  delete [] send_buffer;
   if (parse_buffer) delete [] parse_buffer;
 }
@@ -117,6 +115,7 @@ ServerAgent::Init (void)
   joinColor    = vision_app->GetColor (C_JOIN);
   noticeColor  = vision_app->GetColor (C_NOTICE);
   textColor    = vision_app->GetColor (C_SERVER);
+  wallColor    = vision_app->GetColor (C_WALLOPS);
 
   Display ("Vision ", 0);
   Display (vision_app->VisionVersion().String(), &myNickColor);
@@ -380,20 +379,21 @@ ServerAgent::Establish (void *arg)
 	BString buffer;
 
 	while (sMsgrE->IsValid() 
-		&& (establishThread == server->loginThread)
-		&& sMsgrE->LockTarget())
+		&& (establishThread == server->loginThread))
 	{
 		BNetBuffer inbuffer (1024);
 		int32 length (0);
-
+		
 		FD_SET (endPoint->Socket(), &eset);
 		FD_SET (endPoint->Socket(), &rset);
 		FD_SET (endPoint->Socket(), &wset);
 		if (select (endPoint->Socket() + 1, &rset, 0, &eset, &tv) > 0
 		&&  FD_ISSET (endPoint->Socket(), &rset))
-		{	
+		{
+			server->endPointLock.Lock();
 			if ((length = endPoint->Receive (inbuffer, 1024)) > 0)
 			{
+				server->endPointLock.Unlock();
 				BString temp;
 				int32 index;
 	
@@ -430,6 +430,7 @@ ServerAgent::Establish (void *arg)
 					sMsgrE->SendMessage (&msg);
 				}
 			}
+			server->endPointLock.Unlock();
 			if (FD_ISSET (endPoint->Socket(), &eset)
 			|| (FD_ISSET (endPoint->Socket(), &rset) && length == 0)
 			|| !FD_ISSET (endPoint->Socket(), &wset)
@@ -451,12 +452,10 @@ ServerAgent::Establish (void *arg)
 
 				// tell the user all about it
 				sMsgrE->SendMessage (M_SERVER_DISCONNECT);
-				server->Window()->Unlock();
 				break;
 			}
 		}
 		// take a nap, so the ServerAgent can do things
-		server->Window()->Unlock();
 		snooze (20000);
 	}
 	server->lEndpoint = 0;
@@ -497,7 +496,8 @@ ServerAgent::SendData (const char *cData)
 		send_buffer,
 		&dest_length,
 		&state);
-
+		
+	endPointLock.Lock();
 	if ((lEndpoint != 0 && (length = lEndpoint->Send (send_buffer, strlen (send_buffer))) < 0)
 		|| lEndpoint == 0)
 	{
@@ -506,9 +506,8 @@ ServerAgent::SendData (const char *cData)
 		if (!reconnecting && !isConnecting) {
 			msgr.SendMessage (M_SERVER_DISCONNECT);
 		}
-		
-		
 	}
+	endPointLock.Unlock();
 	
 	if (vision_app->debugsend)
 	{

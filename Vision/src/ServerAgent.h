@@ -29,6 +29,7 @@
 #include <Rect.h>
 #include <String.h>
 #include <List.h>
+#include <Locker.h>
 
 #include "ClientAgent.h"
 
@@ -71,7 +72,8 @@ class ServerAgent : public ClientAgent
 
 	void						DisplayAll (const char *, const rgb_color * = 0, const BFont * = 0);
 	BString						FilterCrap (const char *);
-
+	
+	BLocker						endPointLock;
 
 	static int32				ServerSeed;
 	
@@ -121,7 +123,8 @@ class ServerAgent : public ClientAgent
 									errorColor,
 									quitColor,
 									joinColor,
-									noticeColor;
+									noticeColor,
+									wallColor;
 	BString						*events;
 //	uint32						localAddress;
 	

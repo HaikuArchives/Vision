@@ -103,7 +103,8 @@ MessageAgent::MessageReceived (BMessage *msg)
         msg->AddString ("nick", nick);
       }
       
-      agentWinItem->SetName (nick);      
+      if (myNick.ICompare (nick) != 0)
+        agentWinItem->SetName (nick);      
       
       // Send the rest of processing up the chain
       ClientAgent::MessageReceived (msg);
@@ -148,13 +149,13 @@ MessageAgent::MessageReceived (BMessage *msg)
 
 	case M_CLIENT_QUIT:
 	{
-	  	BMessage deathchant (M_OBITUARY);
-	  	deathchant.AddPointer ("agent", this);
-	  	deathchant.AddPointer ("item", agentWinItem);
-	  	vision_app->pClientWin()->PostMessage (&deathchant);
+	  BMessage deathchant (M_OBITUARY);
+	  deathchant.AddPointer ("agent", this);
+	  deathchant.AddPointer ("item", agentWinItem);
+	  vision_app->pClientWin()->PostMessage (&deathchant);
 	  
-	  	deathchant.what = M_CLIENT_SHUTDOWN;
-	  	sMsgr.SendMessage (&deathchant);
+	  deathchant.what = M_CLIENT_SHUTDOWN;
+	  sMsgr.SendMessage (&deathchant);
 	  break;
 	}
      

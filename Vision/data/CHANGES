@@ -1,6 +1,20 @@
 Vision
 http://vision.sourceforge.net
 
+[0.1.0324]
+ 2001-03-24
+   * Do some reshuffling with locks in ServerAgent and Establish()
+   * Fix a bug in MessageAgent where doing /me would change the WindowListItem's
+     name to yours
+   * Implemented /map support on various ircds (005, 006, 007, 115, 117)
+   * Shift+Enter won't select all text anymore in the Input control, it will
+     be treated as a normal Enter keypress.
+   * Add support for server wallops messages
+   * Add support for bahamut's /stats n (226)
+   * Add support for bahamut's /stats e (223)
+   * Add support for bahamut's /stats f (224)
+   * Fix support for password mismatch (464)
+
 [0.1.0322]
  2001-03-23
    * Fix "function race" issues with the random thread names used by Establish()

@@ -34,9 +34,15 @@ const int RPL_WELCOME                 = 001;
 const int RPL_WELCOME2                = 002;
 const int RPL_WELCOME3                = 003;
 const int RPL_WELCOME4                = 004;
+
 const int RPL_WELCOME5                = 005;
+const int RPL_NNMAP                   = 005; // MAPEND is 007 like Ul.
 
+const int RPL_ULMAP                   = 006;
+const int RPL_ULMAPEND                = 007;
 
+const int RPL_U2MAP                   = 015;
+const int RPL_U2MAPEND                = 017;
 const int RPL_TRACELINK               = 200;
 const int RPL_TRACECONNECTING         = 201;
 const int RPL_TRACEHANDSHAKE          = 202;
@@ -56,6 +62,9 @@ const int RPL_STATSQLINE              = 217;
 const int RPL_STATSYLINE              = 218;
 const int RPL_ENDOFSTATS              = 219;
 const int RPL_UMODEIS                 = 221;
+const int RPL_DALSTATSE               = 223;
+const int RPL_DALSTATSF               = 224;
+const int RPL_DALSTATSN               = 226;
 const int RPL_SERVICEINFO             = 231;
 const int RPL_ENDOFSERVICES           = 232;
 const int RPL_SERVICE                 = 233;
@@ -90,6 +99,7 @@ const int RPL_ISON                    = 303;
 const int RPL_UNAWAY                  = 305;
 const int RPL_NOWAWAY                 = 306;
 const int RPL_WHOISIDENTIFIED         = 307;
+const int RPL_U2USERIP                = 307;
 const int RPL_WHOISUSER               = 311;
 const int RPL_WHOISSERVER             = 312;
 const int RPL_WHOISOPERATOR           = 313;

@@ -40,7 +40,7 @@ ServerAgent::ParseEvents (const char *data)
 	BString firstWord = GetWord(data, 1).ToUpper();
 	BString secondWord = GetWord(data, 2).ToUpper();
 
-	if(secondWord == "PRIVMSG")
+	if (secondWord == "PRIVMSG")
 	{
 		BString theNick (GetNick (data)),
 			ident (GetIdent (data)),
@@ -128,7 +128,7 @@ ServerAgent::ParseEvents (const char *data)
 		return true;
 	}
 
-	if(firstWord == "NOTICE") // _server_ notice
+	if (firstWord == "NOTICE") // _server_ notice
 	{
 		BString theNotice (RestOfString(data, 3));
 		const char *expansions[1];
@@ -142,7 +142,7 @@ ServerAgent::ParseEvents (const char *data)
 		return true;
 	}
 
-	if(secondWord == "NOTICE") // _user_ notice
+	if (secondWord == "NOTICE") // _user_ notice
 	{
 		BString theNick (GetNick (data)),
 			ident (GetIdent (data)),
@@ -496,7 +496,7 @@ ServerAgent::ParseEvents (const char *data)
 	{
 		BString theError (RestOfString (data, 2));
 
-		theError.RemoveAll (":");
+		theError.RemoveFirst (":");
 		theError.Append ("\n");
 
 		Display (theError.String(), &quitColor);
@@ -504,7 +504,23 @@ ServerAgent::ParseEvents (const char *data)
 		return true;
 	}
 
-	if(firstWord == "PING")
+    if (secondWord == "WALLOPS")
+    {
+    	BString theNick (GetNick (data)),
+		        theWall (RestOfString (data, 3)),
+		        tempString;
+		theWall.RemoveFirst (":");
+		theWall.Append ("\n");
+		
+		tempString += "!";
+		tempString += theNick;
+		tempString += "! ";
+		tempString += theWall;
+		Display (tempString.String(), &wallColor);
+		return true;      
+    }
+
+	if (firstWord == "PING")
 	{
 		BString tempString,
 		        theServer (GetWord(data, 2));
