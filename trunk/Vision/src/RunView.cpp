@@ -1396,16 +1396,99 @@ RunView::GetSelectionText (BString &string) const
 	}
 }
 
-void
-RunView::GetSelection (SelectPos *, SelectPos *) const
+bool
+RunView::IntersectSelection (const SelectPos &start, const SelectPos &end) const
 {
+	if (start.line == sp_start.line && start.offset >= sp_start.offset)
+		return true;
+	
+	if (end.line == sp_start.line && end.offset >= sp_start.offset)
+		return true;
+	
+	if (start.line > sp_start.line && start.line < sp_end.line)
+		return true;
+	
+	if (end.line > sp_start.line && end.line < sp_end.line)
+		return true;
+	
+	if (start.line == sp_end.line && start.offset < sp_end.offset)
+		return true;
+		
+	if (end.line == sp_end.line && end.offset < sp_end.offset)
+		return true;
+	
+	return false;
 }
 
-void
-RunView::Select (SelectPos start, SelectPos end)
+BRect
+RunView::GetTextFrame(const SelectPos &start, const SelectPos &end) const
 {
-	sp_start = start;
-	sp_end = end;
+	return BRect (0.0, lines[start.line]->top, Bounds().Width(), lines[end.line]->bottom);
+}	
+
+void
+RunView::Select (const SelectPos &start, const SelectPos &end)
+{
+	if (sp_start != sp_end)
+	{
+		if (start == end || !IntersectSelection (start, end))
+		{
+			BRect frame (GetTextFrame (sp_start, sp_end));
+
+			sp_start = start;
+			sp_end   = start;
+			Invalidate (frame);
+		}
+		else
+		{
+			if (sp_start.line < start.line || (sp_start.line == start.line && sp_start.offset < start.offset))
+			{
+				BRect frame (GetTextFrame (sp_start, start));
+
+				sp_start = start;
+				Invalidate (frame);
+			}
+
+			if (end.line < sp_end.line || (sp_end.line == end.line && end.offset < sp_end.offset))
+			{
+				BRect frame (GetTextFrame (end, sp_end));
+
+				sp_end = end;
+				Invalidate (frame);
+			}
+		}
+	}
+
+	if (sp_start == sp_end)
+	{
+		sp_start = start;
+		sp_end   = end;
+
+		if (sp_start != sp_end)
+		{
+			BRect frame (GetTextFrame (start, end));
+
+			Invalidate (frame);
+		}
+	}
+	else // extension
+	{
+		if (start.line < sp_start.line || (start.line == sp_start.line && start.offset < sp_start.offset))
+		{
+			BRect frame (GetTextFrame (start, sp_start));
+
+			sp_start = start;
+			Invalidate (frame);
+		}
+
+		if (end.line > sp_end.line || (end.line == sp_end.line && end.offset > sp_end.offset))
+		{
+			BRect frame (GetTextFrame (sp_end, end));
+
+			sp_end = end;
+			Invalidate (frame);
+		}
+	}
 }
 
 void

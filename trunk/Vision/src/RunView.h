@@ -144,9 +144,11 @@ class RunView : public BView
 
 	SelectPos			PositionAt (BPoint) const;
 	BPoint				PointAt (SelectPos) const;
-	void					GetSelection (SelectPos *, SelectPos *) const;
+	
+	BRect					GetTextFrame (const SelectPos &, const SelectPos &) const;
+	bool					IntersectSelection (const SelectPos &, const SelectPos &) const;
 	void					GetSelectionText (BString &) const;
-	void					Select (SelectPos, SelectPos);
+	void					Select (const SelectPos &, const SelectPos &);
 	void					SelectAll (void);
 };
 
