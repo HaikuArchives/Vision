@@ -775,14 +775,6 @@ RunView::Append (
 				fore,
 				back,
 				font);
-			else
-				working->Append ("\n", 1, &boxbuf,
-				 &boxbuf_size,
-				 width,
-				 theme,
-				 fore,
-				 back,
-				 font);
 		}
 		else
 		{
@@ -846,15 +838,6 @@ RunView::Append (
 									fore,
 									back,
 									font);
-			else 
-				working->Append ("\n", 1, &boxbuf,
-				 &boxbuf_size,
-				 width,
-				 theme,
-				 fore,
-				 back,
-				 font);
-
 		}
 		
 		if (working->length
