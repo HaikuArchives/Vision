@@ -112,10 +112,14 @@ StatusView::SetItemValue (int32 which, const char *value, bool redraw)
 {
   StatusItem *item (ItemAt (which));
   StatusItem *nextitem;
+  bool completeInvalidate (false);
   
   if (item)
   {
     item->value = value;
+    if (item->frame.left + StringWidth(value) != item->frame.right)
+      completeInvalidate = true;
+      
     item->frame.right = item->frame.left + StringWidth(value);
     for (int32 i = which+1; (nextitem = ItemAt(i)) != NULL ; i++)
     {
@@ -124,8 +128,10 @@ StatusView::SetItemValue (int32 which, const char *value, bool redraw)
       item = nextitem;
     }
     if (redraw)
-      Invalidate(BRect (ItemAt (which)->frame.left, item->frame.top, item->frame.right, item->frame.bottom));
-
+    {
+      Invalidate(BRect (ItemAt (which)->frame.left, item->frame.top,
+        (completeInvalidate) ? Bounds().right : item->frame.right, item->frame.bottom));
+    }
   }
 }
 
