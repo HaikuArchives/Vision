@@ -3,8 +3,11 @@ http://vision.sourceforge.net
 
 [0.3.07017]
 2001-07-17
+     * color picker now comes to front if color control is clicked while picker is in the background (appearance prefs)
+[0.3.07017]
+2001-07-17
      * workaround for BTextView colorspace bug (thanks adi!)
-
+    
 [0.3.07016]
 2001-07-16
     * fix to Appearance prefs to account for extremely long fonts
