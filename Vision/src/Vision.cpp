@@ -371,12 +371,22 @@ VisionApp::LoadDefaults (int32 section)
         if (!visionSettings->HasMessage ("defaults"))
         {
           BMessage defaults (VIS_NETWORK_DEFAULTS);
+          defaults.AddString ("name", "defaults");
           defaults.AddString ("nick", "vision");
           defaults.AddString ("nick", "vision2");
           defaults.AddString ("ident", "vision");
           defaults.AddString ("realname", "Heisenberg may have slept here");
           visionSettings->AddMessage ("defaults", &defaults);
         }
+        // remove this eventually, stupid bug
+        else
+        {
+          BMessage defaults (GetNetwork ("defaults"));
+          if (!defaults.HasString ("name"))
+            defaults.AddString ("name", "defaults");
+          SetNetwork ("defaults", &defaults);
+        }
+
       }
       break;
     
@@ -621,6 +631,7 @@ bool
 VisionApp::CheckStartupNetworks (void)
 {
   bool autoStarted (false);
+#if 0
   BMessage netData;
   for (int32 i = 0; (netData = GetNetwork(i)), !netData.HasBool ("error"); i++)
   {
@@ -632,7 +643,7 @@ VisionApp::CheckStartupNetworks (void)
       autoStarted = true;
     }
   }
-
+#endif
   return autoStarted;
 }
 
