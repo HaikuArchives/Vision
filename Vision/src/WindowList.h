@@ -87,6 +87,7 @@ class WindowList : public BListView
     void                            SetFont (int32, const BFont *);
     void                            ClearList (void);
     void                            Activate (int32);
+    void                            CloseActive (void);
     //int32                       	GetActiveAgent (void);
     
     ClientAgent                     *Agent (int32, const char *);

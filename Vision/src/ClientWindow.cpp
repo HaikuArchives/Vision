@@ -175,6 +175,11 @@ ClientWindow::MessageReceived (BMessage *msg)
        
        break;
     }
+    
+    case M_CW_ALTW:
+    {
+      winList->CloseActive();    
+    }
         
     default:
       BWindow::MessageReceived (msg);
@@ -203,6 +208,8 @@ void
 ClientWindow::Init (void)
 {
   SetSizeLimits (330,2000,150,2000);
+
+  AddShortcut('W', B_COMMAND_KEY, new BMessage(M_CW_ALTW)); 
   
   BRect frame (Bounds());
   menubar = new BMenuBar (frame, "menu_bar");

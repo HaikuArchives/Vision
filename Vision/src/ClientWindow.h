@@ -85,5 +85,6 @@ class ClientWindow : public BWindow
 
 const uint32 M_UPDATE_STATUS				= 'cwus';
 const uint32 M_OBITUARY                     = 'cwob';
+const uint32 M_CW_ALTW                      = 'cwaw';
 
 #endif

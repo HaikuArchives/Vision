@@ -47,13 +47,13 @@ WindowList::WindowList (BRect frame)
     B_SINGLE_SELECTION_LIST,
     B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM)
 {
-  myPopUp = new BPopUpMenu("Window Selection", false, false);
-
-  BMenuItem *item;
-  myPopUp->AddItem (item = new BMenuItem("Close", new BMessage (M_MENU_NUKE)));
-  item->SetTarget (this);
-  
-  myPopUp->SetFont (be_plain_font);
+//  myPopUp = new BPopUpMenu("Window Selection", false, false);
+//
+//  BMenuItem *item;
+//  myPopUp->AddItem (item = new BMenuItem("Close", new BMessage (M_MENU_NUKE)));
+//  item->SetTarget (this);
+//  
+//  myPopUp->SetFont (be_plain_font);
   
   textColor   = vision_app->GetColor (C_WINLIST_TEXT);
   newsColor   = vision_app->GetColor (C_WINLIST_NEWS);
@@ -77,7 +77,15 @@ void
 WindowList::AllAttached (void)
 {
   parent = dynamic_cast<ClientWindow *>(Window());
-  myPopUp->SetTargetForItems (vision_app);
+  myPopUp = new BPopUpMenu("Window Selection", false, false);
+
+  BMenuItem *item;
+  myPopUp->AddItem (item = new BMenuItem("Close", new BMessage (M_MENU_NUKE)));
+//  item->SetTarget (this);
+  
+  myPopUp->SetFont (be_plain_font);
+  myPopUp->SetTargetForItems (this);
+
 }
 
 void
@@ -88,24 +96,32 @@ WindowList::MessageReceived (BMessage *msg)
     case M_MENU_NUKE:
     {
       printf ("M_MENU_NUKE\n");
-      WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (CurrentSelection())));
-      if (myItem)
-      {
-        BMessage killMsg (M_CLIENT_QUIT);
-        killMsg.AddBool ("vision:winlist", true);
-        //BMessenger killMsgr (myItem->pAgent);
-        
-        BView *killTarget (myItem->pAgent());
-        
-        if ((killTarget = dynamic_cast<ClientAgent *>(killTarget)))
-          dynamic_cast<ClientAgent *>(killTarget)->msgr.SendMessage (&killMsg);
-      }
+      CloseActive();
       break;
     }
     
     default:
       BListView::MessageReceived (msg);
   }
+}
+
+void
+WindowList::CloseActive (void)
+{
+  printf ("CloseActive()\n");
+  WindowListItem *myItem (dynamic_cast<WindowListItem *>(ItemAt (CurrentSelection())));
+  if (myItem)
+  {
+    BMessage killMsg (M_CLIENT_QUIT);
+    killMsg.AddBool ("vision:winlist", true);
+        
+    BView *killTarget (myItem->pAgent());
+        
+    if ((killTarget = dynamic_cast<ClientAgent *>(killTarget)))
+      dynamic_cast<ClientAgent *>(killTarget)->msgr.SendMessage (&killMsg);
+  }
+  else
+    printf (":ERROR: error creating pointer to active agent in WindowList::CloseActive()\n");
 }
 
 void
