@@ -223,6 +223,7 @@ const int ERR_LISTSYNTAX              = 521;
 const int ERR_WHOSYNTAX               = 522;
 const int ERR_WHOLIMEXCEED            = 523;
 
+const int RPL_WHOISMASK               = 550; // Sorcery.net host masking
 const int RPL_LOGON                   = 600;
 const int RPL_LOGOFF                  = 601;
 const int RPL_WATCHOFF                = 602;
