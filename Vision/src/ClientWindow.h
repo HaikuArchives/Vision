@@ -52,7 +52,7 @@ class StatusView;
 class WindowList;
 class WindowListItem;
 class ClientWindowDock;
-
+class ResizeView;
 
 class ClientWindow : public BWindow
 {
@@ -105,6 +105,8 @@ class ClientWindow : public BWindow
     StatusView            *status;
     
     ClientWindowDock      *cwDock;
+    
+    ResizeView            *resize;
     
     sem_id                shutdownSem;
 

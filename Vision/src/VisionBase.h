@@ -34,16 +34,6 @@
 
 #include <Debug.h>
 
-// horizontal resize cursor taken from OpenTracker, see www.opentracker.org for license
-
-const unsigned char kHorizontalResizeCursor[] = {
-	16, 1, 7, 7,
-	0, 0, 1, 0, 1, 0, 1, 0, 9, 32, 25, 48, 57, 56, 121, 60,
-	57, 56, 25, 48, 9, 32, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
-	3, 128, 3, 128, 3, 128, 15, 224, 31, 240, 63, 248, 127, 252, 255, 254,
-	127, 252, 63, 248, 31, 240, 15, 224, 3, 128, 3, 128, 3, 128, 0, 0
-};
-
   // keycodes can be viewed at
   // http://www.be.com/documentation/be_book/Keyboard/KeyboardKeyCodes.html
 enum {
@@ -258,6 +248,7 @@ const uint32 M_IGNORE_WINDOW						= 0x1035;
 const uint32 M_STATE_CHANGE							= 0x1036;
 const uint32 M_SERVER_STARTUP						= 0x1037;
 const uint32 M_SERVER_CONNECTED						= 0x1038;
+const uint32 M_RESIZE_VIEW                          = 0x1039;
 
 const uint32 M_SEND_TO_AGENT                        = 0x2000;
 

@@ -20,6 +20,7 @@ http://vision.sourceforge.net
          * names list font updates correctly again
          * fixed topic color stripping bug (thanks to Brad Froehle)
          * fixed timestamp format bug
+         * window list is now resizable
 
 [0.3.0828]
 2001-08-28

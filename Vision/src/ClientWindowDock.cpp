@@ -38,8 +38,8 @@ ClientWindowDock::ClientWindowDock (BRect frame)
   : BView (
     frame,
     "agentDock",
-    B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM,
-    B_WILL_DRAW)
+    B_FOLLOW_ALL,
+    B_WILL_DRAW | B_FRAME_EVENTS)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   
@@ -94,7 +94,7 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   : BView (
     frame_,
     "agentDockWinList",
-    B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP_BOTTOM,
+    B_FOLLOW_ALL,
     B_WILL_DRAW)
 {
 
@@ -105,7 +105,7 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   headerFrame.top = 1;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
-  aHeader = new AgentDockHeader (headerFrame, "Window List", B_FOLLOW_NONE);
+  aHeader = new AgentDockHeader (headerFrame, "Window List", B_FOLLOW_LEFT_RIGHT);
   AddChild (aHeader);
    
   frame.top = frame.top + headerFrame.Height() + 4;  // make room for header
@@ -117,7 +117,7 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   winListScroll = new BScrollView (
     "winListScroll",
     winList,
-    B_FOLLOW_TOP_BOTTOM,
+    B_FOLLOW_ALL,
     0,
     false,
     true,
@@ -150,7 +150,7 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   : BView (
     frame_,
     "agentDockNotifyList",
-    B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM,
+    B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM,
     B_WILL_DRAW)
 {
 
@@ -161,7 +161,7 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   headerFrame.top = 0;
   headerFrame.bottom = 14;
   headerFrame.right = headerFrame.right;
-  aHeader = new AgentDockHeader (headerFrame, "Notify List", B_FOLLOW_LEFT | B_FOLLOW_BOTTOM);
+  aHeader = new AgentDockHeader (headerFrame, "Notify List", B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
   AddChild (aHeader);
 }
 
@@ -188,7 +188,7 @@ AgentDockHeaderString::AgentDockHeaderString (BRect frame_, const char *name)
    frame_,
    "headerView",
    name,
-   B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM)
+   B_FOLLOW_LEFT | B_FOLLOW_BOTTOM)
 {
 
 }

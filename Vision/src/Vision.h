@@ -72,6 +72,7 @@ class VisionApp : public BApplication
     void                    ClientFontSize (int32, float);
     const BFont             *GetClientFont (int32) const;
     
+    const BRect             GetRect (const char *);
     status_t                SetRect (const char *, BRect);
     
     const char              *GetString (const char *) const; 

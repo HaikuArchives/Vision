@@ -407,6 +407,9 @@ VisionApp::LoadDefaults (int32 section)
 
         if (!visionSettings->HasRect ("clientWinRect"))
           visionSettings->AddRect ("clientWinRect", BRect (100, 100, 600, 460));
+        
+        if (!visionSettings->HasRect ("windowDockRect"))
+          visionSettings->AddRect ("windowDockRect", BRect (0, 0, 0, 0));
       }
       break;
 
@@ -736,6 +739,17 @@ VisionApp::SetString (const char *stringName, int32 index, const char *value)
     return B_OK;
   
   return B_ERROR;  
+}
+
+const BRect
+VisionApp::GetRect (const char *settingName)
+{
+  BRect rect (0.0, 0.0, 0.0, 0.0);
+  
+  if (visionSettings->HasRect (settingName))
+    visionSettings->FindRect (settingName, &rect);
+  
+  return rect;
 }
 
 status_t
