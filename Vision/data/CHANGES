@@ -1,7 +1,7 @@
 Vision
 http://vision.sourceforge.net
          
-[0.9-exp-0626]
+[0.9-exp-0627]
          * removed numeric constants from code of PrefGeneral. (Alan Ellis)
          * changed the PrefGeneral keyboard nav to be more standard. (Alan Ellis)
          * added file: and mailto: URL support (Alan Ellis)
@@ -16,6 +16,7 @@ http://vision.sourceforge.net
          * tweaked RunView to reduce memory usage
          * more code cleanups
          * fixed a crash on shutdown bug
+         * fixed bug where servers would ignore changes to text input colors
          * added notify list 
              - /notify nick1 nick2 etc. to add nicks to notify list for current network
              - /unnotify nick1 nick2, etc. to remove nicks from notify list for current network
