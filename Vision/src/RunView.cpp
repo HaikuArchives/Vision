@@ -470,10 +470,10 @@ RunView::Draw (BRect frame)
 					// case 3: last line of selection, with multiple lines in between
 					else if (i == sp_end.line && i != sp_start.line)
 					{
-						if (place < (sp_end.offset - 1))
+						if (place < (sp_end.offset))
 						{
 							if (sp_end.offset - place < length)
-								length = (sp_end.offset - place) - 1;
+								length = (sp_end.offset - place);
 							drawSelection = true;
 						}
 						else
