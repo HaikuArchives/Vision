@@ -682,7 +682,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 		case M_STATUS_ADDITEMS:
 		{
 			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-	     		serverName.String(), 0),
+	     		0, ""),
 				true);
 		
 			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
@@ -714,7 +714,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
 				"", "", 
 				STATUS_ALIGN_LEFT),
 				true);
-				
+			
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverName.String());	
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000");
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_MODES, chanMode.String());

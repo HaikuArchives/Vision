@@ -31,7 +31,9 @@
 #include "Vision.h"
 #include "StringManip.h"
 #include "StatusView.h"
+#include "ClientWindow.h"
 #include "ServerAgent.h"
+#include "WindowList.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -115,9 +117,18 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
       
       if (num == RPL_WELCOME4)
       {
-        ircdtype = IRCD_STANDARD;
+        // set "real" hostname
+        serverHostName = (GetWord (data, 1));
+        serverHostName.RemoveFirst (":");
+        
+        agentWinItem->SetName (serverHostName.String());
+        
+        if (!IsHidden())
+          vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverHostName.String());
+        
         
         // detect IRCd
+        ircdtype = IRCD_STANDARD;
         
         if (theMsg.FindFirst("hybrid") > 0)
           ircdtype = IRCD_HYBRID;

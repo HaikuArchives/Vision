@@ -80,6 +80,7 @@ ServerAgent::ServerAgent (
 		parse_buffer (0),
 		parse_size (0),
 		events (vision_app->events),
+		serverHostName (id_),
 		initialMotd (true),
 		identd (identd_),
 		hostnameLookup (false),
@@ -753,7 +754,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 		case M_STATUS_ADDITEMS:
 		{
 			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-	     		serverName.String(), 0),
+	     		0, ""),
 				true);
 		
 			vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
@@ -768,6 +769,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				STATUS_ALIGN_LEFT),
 			true);
 			
+			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, serverHostName.String());
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, "0.000");
 			vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, myNick.String());
 		
@@ -796,7 +798,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 					*vision_app->pClientWin()->AgentRect(),
 					theNick,
 					sid,
-					serverName.String(),
+					serverHostName.String(),
 					sMsgr,
 					myNick.String(),
 					""),
