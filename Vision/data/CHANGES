@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.6.1-1123]
+         * fixed a few network prefs interface bugs
+         * fixed a bug where the lag meter would go haywire
+
 [0.6-1120]
          * added Network Preferences
             -- ability to organize networks as groups of servers that will
