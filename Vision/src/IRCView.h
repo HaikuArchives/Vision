@@ -36,9 +36,6 @@ struct IRCViewSettings;
 
 class IRCView : public BTextView
 {
-  bool     tracking;
-  float    lasty;
-
   public:
     IRCView (
       BRect,
@@ -69,6 +66,9 @@ class IRCView : public BTextView
     void                    BuildPopUp();
     int32                   URLLength (const char *);
     int32                   FirstMarker (const char *);
+    bool     tracking;
+    float    lasty;
+
 
 };
 

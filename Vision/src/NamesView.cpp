@@ -48,6 +48,8 @@ NamesView::NamesView(BRect frame)
   ignoreColor = vision_app->GetColor (C_IGNORE);
 
   SetViewColor (bgColor);
+
+  _tracking = false;
 }
 
 NamesView::~NamesView (void)
@@ -184,7 +186,6 @@ NamesView::MouseDown (BPoint myPoint)
     && (keymodifiers & B_COMMAND_KEY) == 0
     && (keymodifiers & B_CONTROL_KEY) == 0)
     {
-      //Select (selected, false);
 
       BListItem *item = ItemAt(IndexOf(myPoint));
       if (item && !item->IsSelected())
