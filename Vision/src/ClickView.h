@@ -30,7 +30,7 @@
 #elif BEOS_BUILD
 #  include <View.h>
 #  include <String.h>
-#elif
+#endif
 
 class ClickView : public BView
 {
