@@ -133,7 +133,7 @@ ClientWindow::MessageReceived (BMessage *msg)
        bool hidden (true);
       
        if ((msg->FindPointer ("item", reinterpret_cast<void **>(&item)) != B_OK)
-       &&  (msg->FindInt32 ("status", ((int32 *) &newstatus)) != B_OK))
+       || (msg->FindInt32 ("status", ((int32 *)&newstatus)) != B_OK))
        {
          printf (":ERROR: no valid pointer and int found in M_UPDATE_STATUS, bailing...\n");
          return;
@@ -166,7 +166,7 @@ ClientWindow::MessageReceived (BMessage *msg)
        WindowListItem *agentitem;
        BView *agentview;
        if ((msg->FindPointer ("agent", reinterpret_cast<void **>(&agentview)) != B_OK)
-       &&  (msg->FindPointer ("item", reinterpret_cast<void **>(&agentview)) != B_OK))
+       &&  (msg->FindPointer ("item", reinterpret_cast<void **>(&agentitem)) != B_OK))
        {
          printf (":ERROR: no valid pointers found in M_OBITUARY, bailing...\n");
          return;

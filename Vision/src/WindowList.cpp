@@ -347,7 +347,7 @@ WindowList::Activate (int32 index)
   {
     parent->Lock();
     
-    if (activeagent != 0)
+    if (activeagent)
     {
       activeagent->Hide(); // you arent wanted anymore!
       activeagent->Sync(); // and take your damned pixels with you!
