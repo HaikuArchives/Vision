@@ -977,8 +977,9 @@ VisionApp::Identity (void *)
       } 
     }
   }
+  shutdown(identPoint->Socket(), SHUTDOWN_BOTH);
+  identPoint.Close();
   return 0; 
-
 } 
  
 void 
