@@ -256,7 +256,11 @@ FontPrefsView::AllAttached (void)
   it = menu->FindItem (family);
 
   if (it)
-  	dynamic_cast<BInvoker *>(it)->Invoke();
+  {
+    it = it->Submenu()->FindItem (style);
+    if (it)
+    	dynamic_cast<BInvoker *>(it)->Invoke();
+  }
 }
 
 void
@@ -324,7 +328,11 @@ FontPrefsView::MessageReceived (BMessage *msg)
        textControl->TextView()->SetText (line);
        BMenuItem *it = fontMenuField->Menu()->FindItem (family);
        if (it)
-         it->SetMarked (true);
+       {
+         it = it->Submenu()->FindItem (style);
+         if (it)
+           it->SetMarked (true);
+       }
   	}
   	break;
   	
