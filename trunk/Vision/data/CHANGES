@@ -3,6 +3,7 @@ http://vision.sourceforge.net
 
 [0.7.8-0113]
          * fixed crash bug in ParseEvents
+         * fixed /me trailing line bug in DCC chats
 
 [0.7.7-0109]
          * fixed DCC deadlock bug

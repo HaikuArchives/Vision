@@ -618,7 +618,8 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
     }
 #ifdef NETSERVER_BUILD
     locker->Unlock();
-#endif    
+#endif
+    outTemp.RemoveLast("\n");
     ChannelMessage (outTemp.String(), nick);
   }
   
