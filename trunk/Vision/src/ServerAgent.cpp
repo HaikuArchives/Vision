@@ -36,6 +36,7 @@
 #include "Vision.h"
 #include "ClientWindow.h"
 #include "StringManip.h"
+#include "StatusView.h"
 
 int32 ServerAgent::ServerSeed = 0;
 BLocker ServerAgent::identLock;
@@ -704,6 +705,31 @@ ServerAgent::MessageReceived (BMessage *msg)
 			SendData (buffer.String());
 
 			break;
+		}
+		
+		case M_STATUS_ADDITEMS:
+		{
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+	     		serverName.String(), 0),
+				true);
+		
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+				"Lag: ",
+				"",
+				STATUS_ALIGN_LEFT),
+				true);
+
+			vision_app->pClientWin()->status->AddItem (new StatusItem (
+				0,
+				"",
+				STATUS_ALIGN_LEFT),
+			true);
+			
+			vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, myNick.String());
+		
+			break;
+		
+		
 		}
 		
 		case M_CLIENT_QUIT:
