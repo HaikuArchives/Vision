@@ -166,7 +166,7 @@ ClientWindow::MessageReceived (BMessage *msg)
        WindowListItem *agentitem;
        BView *agentview;
        if ((msg->FindPointer ("agent", reinterpret_cast<void **>(&agentview)) != B_OK)
-       &&  (msg->FindPointer ("item", reinterpret_cast<void **>(&agentitem)) != B_OK))
+       || (msg->FindPointer ("item", reinterpret_cast<void **>(&agentitem)) != B_OK))
        {
          printf (":ERROR: no valid pointers found in M_OBITUARY, bailing...\n");
          return;
