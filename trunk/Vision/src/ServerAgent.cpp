@@ -620,11 +620,10 @@ ClientAgent *
 ServerAgent::Client (const char *cName)
 {
   ClientAgent *client (0);
-
   for (int32 i = 0; i < clients.CountItems(); ++i)
   {
     ClientAgent *item ((ClientAgent *)clients.ItemAt (i));
-
+    
     if (strcasecmp (cName, item->Id().String()) == 0)
     {
       client = item;
@@ -1187,20 +1186,19 @@ ServerAgent::MessageReceived (BMessage *msg)
         if (!(client = Client (theNick)))
         {
           vision_app->pClientWin()->pWindowList()->AddAgent (
-            new MessageAgent (
+            (client = new MessageAgent (
               *vision_app->pClientWin()->AgentRect(),
               theNick,
               sid,
               id.String(),
               sMsgr,
               myNick.String(),
-              ""),
+              "")),
             sid,
             theNick,
             WIN_MESSAGE_TYPE,
             true);
 
-          client = (vision_app->pClientWin()->pWindowList()->Agent (sid, theNick));
           clients.AddItem (client);
         }
         else
