@@ -386,13 +386,7 @@ ClientAgent::Display (
 {
 
   if (isLogging)
-  {
-    BString printbuf;
-    printbuf += TimeStamp().String();
-
-    printbuf += buffer;
-    logger->Log (printbuf.String());
-  }
+    logger->Log (buffer);
   
   text->Append(buffer, fore, back, font);
   

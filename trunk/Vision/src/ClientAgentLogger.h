@@ -57,6 +57,7 @@ class ClientAgentLogger
    BLocker             *logBufferLock;
    sem_id              logSyncherLock;
    BFile               *logFile;
+   bool                newLine;
 };
 
 #endif
