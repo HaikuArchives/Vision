@@ -285,14 +285,17 @@ FontPrefsView::AllAttached (void)
   if (it)
   	dynamic_cast<BInvoker *>(it)->Invoke();
 
-  
   BRect frame (fontElementField->Frame());
   fontMenuField->MoveTo (frame.left + 20, frame.bottom + 20);
-  textControl->ResizeToPreferred();
-  textControl->MoveTo (fontMenuField->Frame().right + 5, fontMenuField->Frame().top);
   menu = fontMenuField->Menu();
   menu->SetTargetForItems (this);
   menu->SetLabelFromMarked (true);
+  float width;
+  float height;
+  fontMenuField->GetPreferredSize(&width, &height);
+  textControl->ResizeToPreferred();
+  textControl->MoveTo (fontMenuField->Frame().left + width + 5,
+    fontMenuField->Frame().top);
 
   for (int32 i = 0; i < menu->CountItems(); i++)
   	menu->ItemAt(i)->Submenu()->SetTargetForItems (this);
