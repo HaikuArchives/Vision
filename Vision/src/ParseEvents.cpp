@@ -321,7 +321,8 @@ ServerAgent::ParseEvents (const char *data)
 		if (myNick.ICompare (oldNick) == 0)
 		{
 			myNick = newNick;
-			//status->SetItemValue (STATUS_NICK, newNick.String());
+			if (!IsHidden());
+			  vision_app->pClientWin()->status->SetItemValue (STATUS_NICK, newNick.String());
 		}
 
 		vision_app->PostMessage (&msg); // for ignores
