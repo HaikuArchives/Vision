@@ -1472,6 +1472,16 @@ RunView::Append (
 				working->bottom -= shift;
 
 				delete first;
+				
+				if (sp_start.line > 0)
+					sp_start.line--;
+				else
+					sp_start.offset = 0;
+				
+				if (sp_end.line > 0)
+					sp_end.line--;
+				else
+					sp_end.offset = 0;
 
 				// Recalc the scrollbar so that we have clean drawing
 				// after the line has been removed
