@@ -28,7 +28,6 @@
 #include <ListItem.h>
 #include <ListView.h>
 #include <String.h>
-//#include <List.h>
 
 
 class BPopUpMenu;
@@ -77,7 +76,6 @@ class WindowList : public BListView
    public:
                                     WindowList (BRect);
     virtual                         ~WindowList (void);
-    //virtual void                    AttachedToWindow (void);
     virtual void                    AllAttached (void);
     virtual void                    MouseDown (BPoint);
     virtual void 					SelectionChanged (void);
@@ -94,7 +92,6 @@ class WindowList : public BListView
     
     void                            AddAgent (BView *, int32, const char *, int32, bool);
 
-    //BList                           winroster;
 	
   private:
 

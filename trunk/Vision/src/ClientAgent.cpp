@@ -807,12 +807,12 @@ ClientAgent::ActionMessage (
   AddSend (&actionSend, id);
   AddSend (&actionSend, " :\1ACTION ");
   AddSend (&actionSend, msgz);
-  AddSend (&actionSend, '\1');
+  AddSend (&actionSend, "\1");
   AddSend (&actionSend, endl);
 
   BString theAction ("\1ACTION ");
   theAction += msgz;
-  theAction += '\1';
+  theAction += "\1";
 
   ChannelMessage (theAction.String(), nick);
 }
