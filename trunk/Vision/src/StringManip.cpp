@@ -23,6 +23,10 @@
  
 #include <stdio.h>
 
+#include <Roster.h>
+#include <Entry.h>
+#include <Path.h>
+
 #include "Vision.h"
 
 BString
@@ -230,4 +234,22 @@ DurationString (int64 value)
 	duration += message;
 
 	return duration;
+}
+
+
+const char *
+RelativePath (const char *append_)
+{
+  app_info ai;
+  be_app->GetAppInfo (&ai);
+		
+  BEntry entry (&ai.ref);
+  BPath path;
+  entry.GetPath (&path);
+  path.GetParent (&path);
+  path.Append (append_);
+  
+  printf (":: %s\n", path.Path());
+  
+  return path.Path();  
 }

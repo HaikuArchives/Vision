@@ -1,6 +1,7 @@
 
 #include "LuaScript.h"
 #include "TestScript.h"
+#include "StringManip.h"
 
 TestScript::TestScript (void)
 {
