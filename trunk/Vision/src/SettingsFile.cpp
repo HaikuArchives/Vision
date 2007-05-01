@@ -261,7 +261,7 @@ status_t SettingsFile::Save() const {
 	status_t ret;
 	BFile file(path.Path(),B_READ_WRITE|B_CREATE_FILE|B_ERASE_FILE);
 	ret=file.InitCheck();
-	if (ret==B_BAD_VALUE) { // try to create the parent directory if creating the file fails the first time
+	if (ret != B_OK) { // try to create the parent directory if creating the file fails the first time
 		BPath parent;
 		ret=path.GetParent(&parent);
 		if (ret!=B_OK) {
