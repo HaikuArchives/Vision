@@ -1,7 +1,8 @@
 Vision
 http://vision.sourceforge.net
 
-[0.9.7-SF-010705]
+[0.9.7-SF-01052007]
+	* Fixed settings file not being created correctly on Haiku.
         * added InfoPopper support
         * fixed duplicate notify bug
 	 * added JIS encoding support
