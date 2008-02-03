@@ -50,7 +50,7 @@
 #endif
 
 #ifdef USE_INFOPOPPER
-#include <libim/InfoPopper.h>
+#include "libim/InfoPopper.h"
 #endif
 
 MessageAgent::MessageAgent (
@@ -244,7 +244,7 @@ MessageAgent::DCCIn (void *arg)
   struct sockaddr_in remoteAddy;
   int theLen (sizeof (struct sockaddr_in));
 
-  dccAcceptSocket = accept(dccSocket, (struct sockaddr*)&remoteAddy, &theLen);
+  dccAcceptSocket = accept(dccSocket, (struct sockaddr*)&remoteAddy, (socklen_t *)&theLen);
   
   vision_app->ReleaseDCCLock();
   
@@ -581,7 +581,7 @@ MessageAgent::MessageReceived (BMessage *msg)
                 content << nick << " said: " << tempString.String();
                 infoMsg.AddString("content", content);
                 
-                BMessenger(InfoPopperAppSig).SendMessage(infoMsg);
+                BMessenger(InfoPopperAppSig).SendMessage(&infoMsg);
               };
 #endif
         }

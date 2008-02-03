@@ -41,6 +41,7 @@
 #ifdef BONE_BUILD
 #  include <arpa/inet.h>
 #  include <sys/socket.h>
+#  include <sys/select.h>
 #  include <netdb.h>
 #endif
 
@@ -488,7 +489,7 @@ ServerAgent::Establish (void *arg)
 
       // store local ip address for future use (dcc, etc)
       int addrlength (sizeof (struct sockaddr_in));
-      if (getsockname (serverSock,(struct sockaddr *)&sockin,&addrlength)) {
+      if (getsockname (serverSock,(struct sockaddr *)&sockin,(socklen_t *)&addrlength)) {
         ClientAgent::PackDisplay (&statMsg, S_SERVER_LOCALIP_ERROR "\n", C_ERROR);
         sMsgrE->SendMessage (&statMsg);
         BMessage setIP (M_SET_IP);

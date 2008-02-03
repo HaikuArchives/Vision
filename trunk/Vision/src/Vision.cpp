@@ -53,6 +53,7 @@ class VisionApp * vision_app;
 #ifdef BONE_BUILD
 #  include <arpa/inet.h>
 #  include <sys/socket.h>
+#  include <sys/select.h>
 #endif
 
 #include "AboutWindow.h"
@@ -67,9 +68,6 @@ class VisionApp * vision_app;
 #include "Theme.h"
 #include "Utilities.h"
 #include "WindowList.h"
-#ifdef __INTEL__
-#include "TestScript.h"
-#endif
 // sound event name definitions
 const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
 
@@ -346,8 +344,11 @@ VisionApp::InitDefaults (void)
   fCommands[CMD_UNIGNORE]    = "*** $N is no longer ignored.";
   fCommands[CMD_AWAY]        = "is idle: $R";
   fCommands[CMD_BACK]        = "has returned";
+#ifdef __HAIKU__
+  fCommands[CMD_UPTIME]      = "OS Uptime [Haiku]: $U";
+#else
   fCommands[CMD_UPTIME]      = "OS Uptime [BeOS]: $U";
-  
+#endif
   uint32 i = 0;
   
   for( const char* eventName = kSoundEventNames[i]; eventName != NULL; i++,
@@ -724,7 +725,7 @@ VisionApp::ArgvReceived (int32 ac, char **av)
       
     else if (strcmp (av[i], "-T") == 0)
     {
-#ifdef __INTEL__
+#if 0
       TestScript *tscript = new TestScript();
       delete tscript;
 #endif
@@ -1675,7 +1676,7 @@ VisionApp::Identity (void *)
          break;
       else if (FD_ISSET (identSock, &rset))
       {
-        accepted = accept (identSock, (struct sockaddr *)&remoteSock, &size);
+        accepted = accept (identSock, (struct sockaddr *)&remoteSock, (socklen_t *)&size);
         if (accepted >= 0)
         {
           FD_ZERO (&rset);

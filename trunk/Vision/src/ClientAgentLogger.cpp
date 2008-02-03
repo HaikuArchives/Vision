@@ -27,6 +27,7 @@
 #include <Directory.h>
 #include <Application.h>
 #include <Roster.h>
+#include <Mime.h>
 
 #include "ClientAgentLogger.h"
 #include "Utilities.h"

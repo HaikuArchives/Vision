@@ -45,7 +45,7 @@
 #include "ResizeView.h"
 
 #ifdef USE_INFOPOPPER
-#include <libim/InfoPopper.h>
+#include "libim/InfoPopper.h"
 #endif
 
 ChannelAgent::ChannelAgent (
@@ -913,7 +913,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
               content << fId << " - " << theNick << " said: " << tempString;
               infoMsg.AddString("content", content);
           
-              BMessenger(InfoPopperAppSig).SendMessage(infoMsg);
+              BMessenger(InfoPopperAppSig).SendMessage(&infoMsg);
             };
           }
 #endif

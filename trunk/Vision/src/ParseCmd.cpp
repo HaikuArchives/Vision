@@ -24,6 +24,7 @@
  *                 Alan Ellis <alan@cgsoftware.org>
  */
 
+#include <File.h>
 #include <FilePanel.h>
 #include <Path.h>
 #include <Roster.h>

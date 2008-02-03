@@ -33,7 +33,7 @@
 
 #include <map>
 
-typedef map<BString, BFile> filemap;
+typedef std::map<BString, BFile> filemap;
 
 class ClientAgentLogger
 {

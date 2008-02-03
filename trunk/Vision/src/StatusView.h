@@ -74,7 +74,7 @@ class StatusItem
     BRect                 frame;
     int32                 alignment;
 
-    friend                StatusView;
+    friend class               StatusView;
 };
 
 #endif

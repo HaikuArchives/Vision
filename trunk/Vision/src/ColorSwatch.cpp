@@ -36,7 +36,7 @@ struct general_ui_info
 	rgb_color			window_frame_color;
 };
 
-extern _IMPORT general_ui_info general_info;
+extern general_ui_info general_info;
 
 ColorSwatch::ColorSwatch (
 

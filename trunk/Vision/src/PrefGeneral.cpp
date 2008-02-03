@@ -49,8 +49,8 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   fPrefsBox->AddChild(fPrefsItems[piColor]);
   fPrefsList = new BListView (BRect (0.0, 0.0, fPrefsItems[piWindow]->Bounds().right / 2, fPrefsItems[piWindow]->Bounds().bottom), "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
   fPrefsList->MoveTo(5, 5);
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_APP_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_ALIAS_ITEM));
+  fPrefsList->AddItem (new BStringItem (S_PREFGEN_APP_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_COLOR_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_FONT_ITEM));
   fPrefsList->AddItem (new BStringItem (S_PREFGEN_COMMAND_ITEM));

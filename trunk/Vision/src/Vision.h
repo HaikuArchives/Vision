@@ -48,6 +48,8 @@ class BNetEndpoint;
 
 extern class VisionApp * vision_app;
 
+using std::map;
+
 class VisionApp : public BApplication
 {
   public:
