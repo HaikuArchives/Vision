@@ -38,8 +38,8 @@
 // I N C L U D E S
 //------------------------------------------------------------------------------
 
-#include <be/interface/MenuItem.h>
-#include <be/interface/Rect.h>
+#include <interface/MenuItem.h>
+#include <interface/Rect.h>
 
 //------------------------------------------------------------------------------
 // D E C L A R A T I O N S

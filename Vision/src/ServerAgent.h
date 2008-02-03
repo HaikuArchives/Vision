@@ -186,7 +186,7 @@ class ServerAgent : public ClientAgent
     
     sem_id                      fSendSyncSem; // synchronization semaphore for data sends
     ServerData                  fCurrentServer;
-    map<BString, BString>		fRemoteAwayMessages;
+    std::map<BString, BString>		fRemoteAwayMessages;
 };
 
 #endif

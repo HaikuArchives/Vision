@@ -34,10 +34,10 @@
 //------------------------------------------------------------------------------
 // I N C L U D E S
 //------------------------------------------------------------------------------
-#include <be/storage/AppFileInfo.h>
-#include <be/interface/Bitmap.h>
-#include <be/app/Application.h>
-#include <be/app/Roster.h>
+#include <storage/AppFileInfo.h>
+#include <interface/Bitmap.h>
+#include <app/Application.h>
+#include <app/Roster.h>
 
 
 

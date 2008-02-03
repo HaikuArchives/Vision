@@ -24,7 +24,7 @@
  */
 
 #include <AppFileInfo.h>
-
+#include <sys/utsname.h>
 #include <stdlib.h>
 
 #include "Vision.h"
@@ -55,6 +55,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     BString sysInfoString;
     if (!vision_app->GetBool ("versionParanoid"))
     {
+#if 0
       BString librootversion;
       BFile *libroot (new BFile ("/boot/beos/system/lib/libroot.so", B_READ_ONLY));
       BAppFileInfo info (libroot);
@@ -64,13 +65,21 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       librootversion.RemoveFirst ("R");
 			
       delete libroot;			
-			
+#endif			
       system_info myInfo;
       get_system_info (&myInfo);
-			
-      sysInfoString = " : BeOS/";
-      sysInfoString += librootversion;
-			
+
+      utsname sysname;
+      uname(&sysname);
+      
+      BString revInfo = sysname.version;
+      revInfo.Remove(revInfo.FindFirst(' '), revInfo.Length());
+	
+      sysInfoString = " : ";
+      sysInfoString += sysname.sysname;
+      sysInfoString += "/";
+      sysInfoString += revInfo;
+#if 0			
       if ((librootversion.FindFirst("5.0") == 0) || (librootversion == "5"))
       {
         // this is the way the BeOS 5.0.1 update checks for R5 Pro...
@@ -95,7 +104,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
           sysInfoString += " Personal Ed.";
 
       }
-			
+#endif			
       sysInfoString += " (";
 	  sysInfoString << myInfo.cpu_count;
       sysInfoString += "x";

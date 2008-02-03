@@ -11,10 +11,10 @@
 // Used with permission for the Vision project. (http://vision.sourceforge.net/)
 //-------------------------------------------------------------------------------
 
-#include <be/interface/Window.h>
-#include <be/interface/Bitmap.h>
-#include <be/interface/Rect.h>
-#include <be/app/Looper.h>
+#include <interface/Window.h>
+#include <interface/Bitmap.h>
+#include <interface/Rect.h>
+#include <app/Looper.h>
 
 #include "SpeedButton.h"
 

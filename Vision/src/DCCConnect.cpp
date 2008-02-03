@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/time.h>
 
 #include "Vision.h"
 #include "ServerAgent.h"
@@ -595,7 +596,7 @@ DCCSend::Transfer (void *arg)
 
     if (FD_ISSET (sd, &rset))
     {
-      dccSock = accept (sd, (sockaddr *)&address, &sin_size);
+      dccSock = accept (sd, (sockaddr *)&address, (socklen_t *)&sin_size);
       UpdateStatus (msgr, S_DCC_ESTABLISH_SUCCEEDED);
       break;
     }

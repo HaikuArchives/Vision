@@ -54,4 +54,5 @@ class ResizeView : public BView
     BCursor cursor;
 };
 
-#endif _RESIZEVIEW_H
+#endif // _RESIZEVIEW_H
+

@@ -88,7 +88,7 @@ class DCCConnect : public BView
 
 class DCCReceive : public DCCConnect
 {
-  friend DCCConnect;
+  friend class DCCConnect;
   public:
                           DCCReceive (
                             const char *,
@@ -109,7 +109,7 @@ class DCCReceive : public DCCConnect
 
 class DCCSend : public DCCConnect
 {
-  friend DCCConnect;
+  friend class DCCConnect;
   public:
                           DCCSend (
                             const char *,

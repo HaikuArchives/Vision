@@ -451,4 +451,5 @@
 
 #define S_INFOPOPPER_TITLE			"Vision"
 
-#endif _VISIONSTRINGS_H_
+#endif // _VISIONSTRINGS_H_
+

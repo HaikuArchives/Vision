@@ -50,7 +50,7 @@
 #endif
 
 #ifdef USE_INFOPOPPER
-#include <libim/InfoPopper.h>
+#include "libim/InfoPopper.h"
 #endif
 
 bool
@@ -474,7 +474,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
                 content << item->Text() << " is online";
                 infoMsg.AddString("content", content);
                 
-                BMessenger(InfoPopperAppSig).SendMessage(infoMsg);
+                BMessenger(InfoPopperAppSig).SendMessage(&infoMsg);
               };
 #endif
 
@@ -501,7 +501,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
                 content << item->Text() << " is offline";
                 infoMsg.AddString("content", content);
                 
-                BMessenger(InfoPopperAppSig).SendMessage(infoMsg);
+                BMessenger(InfoPopperAppSig).SendMessage(&infoMsg);
               };
 #endif
 

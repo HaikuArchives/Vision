@@ -18,8 +18,8 @@
 class BLooper;
 class BBitmap;
 
-#include <be/interface/Control.h>
-#include <be/interface/Rect.h>
+#include <interface/Control.h>
+#include <interface/Rect.h>
 
 // How many pixels around the edge we need for comfort.
 #define EDGE_SPACE 0

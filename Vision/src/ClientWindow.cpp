@@ -60,6 +60,12 @@
   <Brazilian> I have a monkey who draws on my wall really fast
 */
 
+#ifdef __HAIKU__
+static const char *skTermSig = "application/x-vnd.Haiku-Terminal";
+#else
+static const char *skTermSig = "application/x-vnd.Be-SHEL";
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 /// Begin BWindow functions
 //////////////////////////////////////////////////////////////////////////////
@@ -396,7 +402,7 @@ ClientWindow::MessageReceived (BMessage *msg)
     
     case M_OPEN_TERM:
     {
-      status_t result = be_roster->Launch ("application/x-vnd.Be-SHEL", 0, NULL);
+      status_t result = be_roster->Launch (skTermSig, 0, NULL);
       if (result != B_OK)
       {
         BMessage errMsg (M_DISPLAY);
