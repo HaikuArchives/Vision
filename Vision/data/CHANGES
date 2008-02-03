@@ -1,6 +1,12 @@
 Vision
 http://vision.sourceforge.net
 
+[0.9.7-SF-03022008]
+	* Incorporate various fixes to allow building via gcc4.
+	* Pull version information dynamically via utsname so as to yield a correct response on both BeOS and Haiku.
+	* Fix alias and app pref views being reversed.
+	* Use correct terminal signature when building for Haiku.
+
 [0.9.7-SF-01052007]
 	* Fixed settings file not being created correctly on Haiku.
         * added InfoPopper support
