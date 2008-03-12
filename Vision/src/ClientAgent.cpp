@@ -193,7 +193,7 @@ ClientAgent::Init (void)
   fInput->ResizeToPreferred();
   fInput->MoveTo (
            0,
-           fFrame.bottom - fInput->Frame().Height() + 1);
+           fFrame.bottom - fInput->Frame().Height());
   AddChild (fInput);
   fInput->TextView()->AddFilter (new ClientAgentInputFilter (this));
   fInput->Invalidate();
