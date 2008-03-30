@@ -726,15 +726,22 @@ ServerAgent::AsyncSendData (const char *cData)
   memset(fSend_buffer, 0, sizeof(fSend_buffer));
   
   int32 dest_length (sizeof(fSend_buffer)), state (0);
-  
-  convert_from_utf8 (
-    vision_app->GetInt32("encoding"),
-    data.String(), 
-    &length,
-    fSend_buffer,
-    &dest_length,
-    &state);
-
+  int32 encoding = vision_app->GetInt32("encoding");
+  if (encoding != B_UNICODE_CONVERSION)
+  {  
+    convert_from_utf8 (
+      encoding,
+      data.String(), 
+      &length,
+      fSend_buffer,
+      &dest_length,
+      &state);
+  }
+  else
+  {
+    strlcpy(fSend_buffer, data.String(), dest_length);
+    dest_length = strlen(fSend_buffer);
+  }
   if (fServerSocket <= 0)
   {
       // doh, we aren't even connected.
@@ -800,14 +807,22 @@ ServerAgent::ParseLine (const char *cData)
         state (0);
   
   memset (fParse_buffer, 0, sizeof (fParse_buffer));
-  
-  convert_to_utf8 (
-    vision_app->GetInt32("encoding"),
-    data.String(), 
-    &length,
-    fParse_buffer,
-    &destLength,
-    &state);
+  int32 encoding = vision_app->GetInt32("encoding");
+  if (encoding != B_UNICODE_CONVERSION)
+  {
+    convert_to_utf8 (
+      encoding,
+      data.String(), 
+      &length,
+      fParse_buffer,
+      &destLength,
+      &state);
+  }
+  else
+  {
+    strlcpy(fParse_buffer, data.String(), destLength);
+    destLength = strlen(fParse_buffer);
+  }
   if (vision_app->fNumBench)
   {
     vision_app->fBench1 = system_time();

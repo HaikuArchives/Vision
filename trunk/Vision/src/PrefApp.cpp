@@ -194,7 +194,7 @@ AppWindowPrefsView::CreateEncodingMenu(void)
   msg.ReplaceInt32("encoding", B_EUC_KR_CONVERSION);
   encMenu->AddItem (new BMenuItem("Korean (EUC)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_UNICODE_CONVERSION);
-  encMenu->AddItem (new BMenuItem("Unicode", new BMessage(msg)));
+  encMenu->AddItem (new BMenuItem("Unicode (UTF-8)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_MAC_ROMAN_CONVERSION);
   encMenu->AddItem (new BMenuItem("Western (Mac Roman)", new BMessage(msg)));
   msg.ReplaceInt32("encoding", B_MS_WINDOWS_CONVERSION);
