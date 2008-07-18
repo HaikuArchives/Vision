@@ -73,9 +73,7 @@ ResizeView::MouseMoved (BPoint, uint32, const BMessage *)
     BPoint windowCoord;
     windowmsg->FindPoint ("where", &windowCoord);
     BMessage msg (M_RESIZE_VIEW);
-    ConvertToScreen(&windowCoord);
-    BPoint comparePoint = window->ConvertFromScreen(windowCoord);
-    if (comparePoint.x <= 0.0 || comparePoint.x >= window->Bounds().right)
+    if (windowCoord.x <= 0.0 || windowCoord.x >= window->Bounds().right)
       return;
     msg.AddPoint ("loc", windowCoord);
     msg.AddPointer ("view", attachedView);
