@@ -21,6 +21,7 @@
  */
  
 #include <ctype.h>
+#include <stdio.h>
 
 #include "URLCrunch.h"
 
@@ -56,44 +57,37 @@ URLCrunch::Crunch (BString *url)
 	int32 marker (buffer.Length());
 	int32 pos (current_pos);
 	int32 url_length (0);
-	int32 markers[tagNum];
+	int32 marker_pos (B_ERROR);
 	int32 i(0);
 
 	for (i = 0; i < tagNum; ++i)
-		markers[i] = buffer.IFindFirst (tags[i], pos);
-
-	for (i = 0; i < tagNum; ++i)
-	
-		if (markers[i] != B_ERROR
-		&&  markers[i] < marker)
+	{
+		marker_pos = buffer.IFindFirst (tags[i], pos);
+		if (marker_pos != B_ERROR)
 		{
-			url_length = markers[i] + strlen(tags[i]);
+			url_length = marker_pos + strlen(tags[i]);
 			
 			url_length += strcspn (buffer.String() + url_length, " \t\n|\\<>\")(][}{;'*^");
-
-
 			int len (strlen (tags[i]));
 
-			if (url_length - markers[i] > len
-			&& (isdigit (buffer[markers[i] + len])
-			||  isalpha (buffer[markers[i] + len])))
+			if (url_length - marker_pos > len
+			&& (isdigit (buffer[marker_pos + len])
+			||  isalpha (buffer[marker_pos + len])))
 			{
-				marker = markers[i];
+				marker = marker_pos;
 				pos = url_length + 1;
 				url_length -= marker;
+				url->Truncate(0, false);
+				buffer.CopyInto(*url, marker, url_length);
 			}
 			else
-				pos = markers[i] + 1;
-		}
-		
-		if (marker < buffer.Length())
-		{
-			*url = "";
+				pos = marker_pos + 1;
 
-			url->Append (buffer.String() + marker, url_length);
+			current_pos = pos;
+			if (current_pos > (marker_pos + 1))
+				break;
 		}
-
-		current_pos = pos;
+	}
 
 	return marker < buffer.Length() ? marker : B_ERROR;
 }
