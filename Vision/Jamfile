@@ -3,7 +3,7 @@ SubDir HAIKU_TOP 3rdparty anevilyak Vision ;
 SetSubDirSupportedPlatformsBeOSCompatible ;
 UsePrivateHeaders interface ;
 #SubDirC++Flags -DSINGLE_BINARY -DDEBUG=1 ;
-SubDirC++Flags -DBONE_BUILD=1 -DVERSION_STRING=\\\"0.9.7-H-17072008\\\" -DBUILD_DATE=\\\"May_07_2008\\\" ;
+SubDirC++Flags -DBONE_BUILD=1 -DVERSION_STRING=\\\"0.9.7-H-18072008\\\" -DBUILD_DATE=\\\"July_18_2008\\\" ;
 
 SEARCH_SOURCE += [ FDirName $(HAIKU_TOP) 3rdparty anevilyak Vision src ] ;
 
