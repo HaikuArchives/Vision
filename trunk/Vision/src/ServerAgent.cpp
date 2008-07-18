@@ -637,9 +637,9 @@ ServerAgent::Establish (void *arg)
             for (int32 i = 0; i < temp.Length(); ++i)
             {
               if (isprint (temp[i]))
-                printf ("%c", temp[i]);
+                printf ("%c", temp.String()[i]);
               else
-                printf ("[0x%02x]", temp[i]);
+                printf ("[0x%02x]", temp.String()[i]);
             }
             printf ("\"\n");
           }

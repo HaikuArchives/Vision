@@ -545,7 +545,6 @@ ClientAgent::ParsemIRCColors (
         
   while (buffer && *buffer)
   {
-   
     start = buffer;
     while (*buffer)
     {
@@ -593,7 +592,7 @@ ClientAgent::ParsemIRCColors (
       // set start to text portion (we have recorded the mirc stuff)
       start = buffer;
     }
-    if (buffer - start > 0)
+    if (buffer > start)
       fText->Append (start, buffer - start, mircFore, mircBack, mircFont);
   }
 }
