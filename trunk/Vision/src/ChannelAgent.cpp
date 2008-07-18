@@ -720,7 +720,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
       {
           BPoint point;
           msg->FindPoint ("loc", &point);
-          ConvertFromScreen(&point);
+          point.x -= Frame().left;
           float offset ((int32)(point.x - (fNamesScroll->Frame().left)));
           fResize->MoveBy (offset, 0.0);
           fTextScroll->ResizeBy (offset, 0.0);

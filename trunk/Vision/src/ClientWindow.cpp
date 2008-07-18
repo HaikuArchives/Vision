@@ -386,7 +386,6 @@ ClientWindow::MessageReceived (BMessage *msg)
         {
           BPoint point;
           msg->FindPoint ("loc", &point);
-          ConvertFromScreen(&point);
 	  fResize->MoveTo (point.x, fResize->Frame().top);
           fCwDock->ResizeTo (point.x - 1, fCwDock->Frame().Height());
           BRect *agRect (AgentRect());
