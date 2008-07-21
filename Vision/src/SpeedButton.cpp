@@ -200,10 +200,10 @@ void TSpeedButton::AttachedToWindow()
     
     if( (NULL == fDisabledBitmap) && (NULL != fEnabledBitmap))
     {
-		if ( fEnabledBitmap && (B_RGB32 != fEnabledBitmap->ColorSpace() ))
+		if ( fEnabledBitmap && (B_RGBA32 != fEnabledBitmap->ColorSpace() ))
 		{
 			// translate to 32 bit image ...
-			BBitmap* temp = new BBitmap(fEnabledBitmap->Bounds(), B_RGB32, true);
+			BBitmap* temp = new BBitmap(fEnabledBitmap->Bounds(), B_RGBA32, true);
 			BView aView(fEnabledBitmap->Bounds(), "", 0, B_WILL_DRAW);
 			temp->AddChild(&aView);
 			aView.Window()->Lock();
