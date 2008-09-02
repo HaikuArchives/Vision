@@ -43,11 +43,8 @@
 #include <math.h>
 
 #include <netdb.h>
-
-#ifdef BONE_BUILD
-#  include <sys/socket.h>
-#  include <arpa/inet.h>
-#endif
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 #ifdef USE_INFOPOPPER
 #include "libim/InfoPopper.h"

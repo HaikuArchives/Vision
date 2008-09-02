@@ -40,12 +40,10 @@ class BMenu;
 class VTextControl : public BTextControl
 {
   public:
-                           VTextControl (BRect,
-                                         const char *,
+                           VTextControl (const char *,
                                          const char *,
                                          const char *,
                                          BMessage *,
-                                         uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP,
                                          uint32 = B_WILL_DRAW | B_NAVIGABLE,
                                          bool = false);
                            VTextControl (BMessage *, bool = false);

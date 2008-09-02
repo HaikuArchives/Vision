@@ -76,16 +76,10 @@ PromptWindow::PromptWindow (
 	AddChild (bgView);
 
 	field = new VTextControl (
-		BRect (
-			10,
-			10,
-			(width = be_plain_font->StringWidth (label ? label : "")) + 135,
-			25),
 		"field",
 		label ? label : "",
 		text ? text : "",
-		0,
-		B_FOLLOW_LEFT | B_FOLLOW_TOP);
+		0);
 
 	field->SetDivider (width + 5);
 	bgView->AddChild (field);

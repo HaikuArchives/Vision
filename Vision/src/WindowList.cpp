@@ -25,7 +25,7 @@
  *                 Alan Ellis <alan@cgsoftware.org>
  */
  
-
+#include <CardLayout.h>
 #include <PopUpMenu.h>
 #include <MenuItem.h>
 #include <List.h>
@@ -650,7 +650,7 @@ WindowList::AddAgent (BView *agent, const char *name, int32 winType, bool activa
 
   vision_app->pClientWin()->DisableUpdates();
   agent->Hide(); // get it out of the way
-  vision_app->pClientWin()->bgView->AddChild (agent);
+  vision_app->pClientWin()->pCardLayout()->AddView (agent);
   agent->Sync(); // clear artifacts
   vision_app->pClientWin()->EnableUpdates();
 

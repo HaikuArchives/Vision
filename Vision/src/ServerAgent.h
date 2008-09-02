@@ -62,8 +62,7 @@ class ServerAgent : public ClientAgent
 
                                 ServerAgent (
                                   const char *,  // id_
-                                  BMessage &,
-                                  BRect);        // frame
+                                  BMessage &);
     virtual                     ~ServerAgent (void);
 
 

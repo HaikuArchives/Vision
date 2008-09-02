@@ -33,16 +33,14 @@
 
 #include "VTextControl.h"
 
-VTextControl::VTextControl (BRect frame, const char *name, const char *label,
+VTextControl::VTextControl (const char *name, const char *label,
                             const char *text, BMessage *vtcmessage,
-                            uint32 resizingMode, uint32 flags, bool nomenu_)
+                            uint32 flags, bool nomenu_)
   : BTextControl(
-    frame,
     name,
     label,
     text,
     vtcmessage,
-    resizingMode,
     flags),
   nomenu (nomenu_)
 {

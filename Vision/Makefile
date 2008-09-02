@@ -16,12 +16,12 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.7-SF-21072008
+VERSION := 0.9.8-01092008
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
 # system libs
-REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker
+REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -lnetwork
 
 # net_server libs
 NET_LIBS := -lnet 
@@ -50,11 +50,6 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 CC := gcc -c -pipe
 
 CFLAGS := -D_ZETA_TS_FIND_DIR_ -DVERSION_STRING=\"$(VERSION)\" -D_ZETA_USING_DEPRECATED_API_
-ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
-CFLAGS += -DNETSERVER_BUILD
-else
-CFLAGS += -DBONE_BUILD
-endif
 
 # These can be set from the shell to change the build type
 ifeq ($(CHECK_MEM),true)
@@ -94,11 +89,7 @@ CFLAGS += $(VISION_ADDL_BUILD_FLAGS)
 
 LD := gcc
 
-ifeq ($(wildcard /boot/develop/headers/be/bone/arpa/inet.h),)
-LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(NET_LIBS)
-else
-LDFLAGS := $(REG_LIBS) $(LUA_LIBS) $(BONE_LIBS) -nodefaultlibs
-endif
+LDFLAGS := $(REG_LIBS) $(LUA_LIBS) -nodefaultlibs
 
 ifeq ($(wildcard /boot/home/config/include/libim/InfoPopper.h), )
 else

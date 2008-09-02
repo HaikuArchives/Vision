@@ -21,14 +21,14 @@
  *                 Todd Lair
  */
 
+#include "ColumnListView.h"
+#include "ColumnTypes.h"
 #include <MenuBar.h>
 #include <MenuItem.h>
 #include <ScrollView.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ColumnTypes.h"
-#include "ColumnListView.h"
 #include "Prompt.h"
 #include "StatusView.h"
 #include "Vision.h"
@@ -59,13 +59,10 @@
 const int32 LIST_BATCH_SIZE = 75;
 
 ListAgent::ListAgent (
-  BRect frame,
   const char *title,
   BMessenger *sMsgr_)
   : BView (
-      frame,
       title,
-      B_FOLLOW_ALL_SIDES,
       B_WILL_DRAW | B_FRAME_EVENTS),
    activeTheme (vision_app->ActiveTheme()),
    fSMsgr (sMsgr_),
@@ -74,8 +71,6 @@ ListAgent::ListAgent (
   find (""),
   processing (false)
 {
-  frame = Bounds();
-  
   listMenu = new BMenu (S_LIST_MENU);
 
   listMenu->AddItem (mFind = new BMenuItem (
@@ -93,34 +88,23 @@ ListAgent::ListAgent (
   mFilter->SetEnabled (false);
   
 
-  BView *bgView (new BView (
-    frame,
-    "background",
-    B_FOLLOW_ALL_SIDES,
-    B_WILL_DRAW));
-
-  bgView->SetViewColor (activeTheme->ForegroundAt (C_BACKGROUND));
-  AddChild (bgView);
-
-  frame = bgView->Bounds().InsetByCopy (1, 1);
-  
   listView = new BColumnListView (
-    frame,
+    Bounds(),
     "list",
     B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW | B_NAVIGABLE | B_FULL_UPDATE_ON_RESIZE);
 
   listView->SetInvocationMessage (new BMessage (M_LIST_INVOKE));
-  bgView->AddChild (listView);
+  AddChild (listView);
   listView->MakeFocus (true);
   listView->SetTarget(this);
   channelColumn = new BStringColumn (S_LIST_COLUMN_CHAN, be_plain_font->StringWidth (S_LIST_COLUMN_CHAN) * 2,
-    0, frame.Width(), 0);
+    0, Bounds().Width(), 0);
   listView->AddColumn (channelColumn, 0);
-  usersColumn = new BIntegerColumn (S_LIST_COLUMN_USER, be_plain_font->StringWidth (S_LIST_COLUMN_USER) * 2, 0, frame.Width(), B_ALIGN_CENTER);
+  usersColumn = new BIntegerColumn (S_LIST_COLUMN_USER, be_plain_font->StringWidth (S_LIST_COLUMN_USER) * 2, 0, Bounds().Width(), B_ALIGN_CENTER);
   listView->AddColumn (usersColumn, 1);
-  topicColumn = new BStringColumn (S_LIST_COLUMN_TOPIC, frame.Width() / 2,
-    0, frame.Width(), 0);
+  topicColumn = new BStringColumn (S_LIST_COLUMN_TOPIC, Bounds().Width() / 2,
+    0, Bounds().Width(), 0);
   listView->AddColumn (topicColumn, 2);
   listView->SetSelectionMode (B_SINGLE_SELECTION_LIST);
   activeTheme->ReadLock();
@@ -177,13 +161,6 @@ ListAgent::Show (void)
   vision_app->pClientWin()->AddMenu (listMenu);
   listMenu->SetTargetForItems (this);
 #endif
-  const BRect *agentRect (dynamic_cast<ClientWindow *>(Window())->AgentRect());
-  
-  if (*agentRect != Frame())
-  {
-    ResizeTo (agentRect->Width(), agentRect->Height());
-    MoveTo (agentRect->left, agentRect->top);
-  }
 
   BView::Show();
 }

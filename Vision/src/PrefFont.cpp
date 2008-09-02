@@ -193,9 +193,9 @@ FontPrefsView::FontPrefsView (BRect frame)
     fElementMenu);
   AddChild (fFontElementField);
   FontMenu *menu (new FontMenu ("fonts"));
-  fFontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", S_PREFFONT_FONTLABEL, menu);
+  fFontMenuField = new BMenuField (BRect(), "fonts", S_PREFFONT_FONTLABEL, menu);
   AddChild (fFontMenuField);
-  fTextControl = new VTextControl (BRect (60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
+  fTextControl = new VTextControl ("", S_PREFFONT_SIZELABEL, "",
   	new BMessage (M_FONT_SIZE_CHANGE));
   fTextControl->TextView()->AddFilter (new NumericFilter());
   AddChild (fTextControl);
