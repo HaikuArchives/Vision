@@ -35,7 +35,6 @@ class ChannelOptions;
 class BScrollView;
 class ServerWindow;
 class NamesView;
-class ResizeView;
 
 const int32 MAX_RECENT_NICKS = 5;
 
@@ -48,8 +47,7 @@ class ChannelAgent : public ClientAgent
                               const char *,       // serverName
                               int,                // ircdtype
                               const char *,       // nick
-                              BMessenger &, // sMsgr (ServerAgent pointer)
-                              BRect &);             // frame
+                              BMessenger &); // sMsgr (ServerAgent pointer)
     virtual                 ~ChannelAgent (void);
 
     virtual void            AttachedToWindow (void);
@@ -99,8 +97,6 @@ class ChannelAgent : public ClientAgent
     NamesView               *fNamesList;
     BScrollView             *fNamesScroll;
     ChannelOptions          *fChanOpt;
-    ResizeView              *fResize;
-
 };
 
 

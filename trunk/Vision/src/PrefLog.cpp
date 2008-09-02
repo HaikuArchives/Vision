@@ -42,7 +42,7 @@ LogPrefsView::LogPrefsView (BRect frame)
   float maxWidth (0),
     maxHeight (0);
 
-  fLogBaseDir = new VTextControl (BRect (0,0,0,0), NULL, S_PREFLOG_LOGPATH, vision_app->GetString("logBaseDir"), new BMessage (M_PREFLOG_LOGPATH_CHANGED));  fLogBaseDir->ResizeToPreferred();
+  fLogBaseDir = new VTextControl (NULL, S_PREFLOG_LOGPATH, vision_app->GetString("logBaseDir"), new BMessage (M_PREFLOG_LOGPATH_CHANGED));  fLogBaseDir->ResizeToPreferred();
   fLogBaseDir->ResizeToPreferred();
   fLogBaseDir->SetDivider (fLogBaseDir->StringWidth (S_PREFLOG_LOGPATH) + 5);
   fLogBaseDir->ResizeTo (Bounds().Width() - 15, fLogBaseDir->Bounds().Height());
@@ -50,7 +50,7 @@ LogPrefsView::LogPrefsView (BRect frame)
   AddChild (fLogBaseDir);
   checkboxRect = fLogBaseDir->Bounds();
   
-  fLogStampFormat = new VTextControl (BRect (0,0,0,0), NULL, S_PREFLOG_TS_FORMAT, vision_app->GetString("timestamp_format"), new BMessage (M_PREFLOG_TS_FORMAT_CHANGED));
+  fLogStampFormat = new VTextControl (NULL, S_PREFLOG_TS_FORMAT, vision_app->GetString("timestamp_format"), new BMessage (M_PREFLOG_TS_FORMAT_CHANGED));
   fLogBaseDir->ResizeToPreferred();
   fLogStampFormat->SetDivider (fLogBaseDir->StringWidth (S_PREFLOG_TS_FORMAT) + 5); 
   fLogStampFormat->MoveTo (be_plain_font->StringWidth("S"), fLogBaseDir->Frame().bottom + be_plain_font->Size());

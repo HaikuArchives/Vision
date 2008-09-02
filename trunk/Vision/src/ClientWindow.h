@@ -43,10 +43,10 @@ class BMenuItem;
 class BScrollView;
 class BView;
 class BMessageRunner;
+class BCardLayout;
 class ClientWindowDock;
 class NotifyList;
 class NotifyListItem;
-class ResizeView;
 class ServerAgent;
 class StatusView;
 class TIconMenu;
@@ -83,9 +83,8 @@ class ClientWindow : public BWindow
     
     void                  SetEditStates(bool);
 
-    BView                 *bgView;
+	BCardLayout *          pCardLayout(void);
       
-    BRect                 *AgentRect (void) const;
     WindowList            *pWindowList (void) const;
     NotifyList            *pNotifyList (void) const;
     ClientWindowDock      *pCwDock (void) const;
@@ -103,13 +102,11 @@ class ClientWindow : public BWindow
     
     BMessageRunner        *fAltwRunner;
     
-    BRect                 *fAgentrect;
-    
     StatusView            *fStatus;
     
     ClientWindowDock      *fCwDock;
     
-    ResizeView            *fResize;
+    BCardLayout           *fCardLayout;
     
 };
 

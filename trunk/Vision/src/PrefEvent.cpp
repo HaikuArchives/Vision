@@ -65,8 +65,6 @@ EventPrefsView::EventPrefsView (BRect frame)
   for (i = 0; i < MAX_EVENTS; ++i)
   {
     fEvents[i] = new VTextControl (
-      BRect (5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()), 5 + bounds.right - be_plain_font->StringWidth("gP"),
-      be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
       "commands",
       EventControlLabels[i],
       vision_app->GetEvent (i).String(),

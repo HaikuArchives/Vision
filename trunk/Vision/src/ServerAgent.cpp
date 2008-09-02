@@ -34,16 +34,10 @@
 #include <Path.h>
 #include <String.h>
 
-#ifdef NETSERVER_BUILD 
-#  include <netdb.h>
-#endif
-
-#ifdef BONE_BUILD
-#  include <arpa/inet.h>
-#  include <sys/socket.h>
-#  include <sys/select.h>
-#  include <netdb.h>
-#endif
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <netdb.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -69,14 +63,11 @@ int32 ServerAgent::fServerSeed = 0;
 
 ServerAgent::ServerAgent (
   const char *id_,
-  BMessage &net,
-  BRect frame_)
-
+  BMessage &net)
   : ClientAgent (
     id_,
     id_,
-    net.FindString ("nick"),
-    frame_),
+    net.FindString ("nick")),
     fLocalip (""),
     fMyNick (net.FindString ("nick")),
     fMyLag ((net.FindBool ("lagCheck")) ? "0.000" : S_SERVER_LAG_DISABLED),
@@ -118,11 +109,6 @@ ServerAgent::~ServerAgent (void)
   if (fLagRunner)
     delete fLagRunner;
   
-#ifdef NETSERVER_BUILD
-  if (!fEstablishHasLock && fEndPointLock)
-    delete fEndPointLock;
-#endif
-
   while (fStartupChannels.CountItems() != 0)
     delete fStartupChannels.RemoveItemAt (0L);
 
@@ -132,11 +118,7 @@ ServerAgent::~ServerAgent (void)
   
   if (fSocket >= 0)
   {
-#ifdef BONE_BUILD
     close (fSocket);
-#elif NETSERVER_BUILD
-    closesocket (fSocket);
-#endif
   }
 //  wait_for_thread (fLoginThread, &result);
   
@@ -193,9 +175,6 @@ ServerAgent::AddMenuItems(BPopUpMenu *)
 void
 ServerAgent::Init (void)
 {
-#ifdef NETSERVER_BUILD
-  fEndPointLock = new BLocker();
-#endif
   BString revString;
   Display ("Vision ");
   vision_app->VisionVersion (VERSION_VERSION, revString);
@@ -357,10 +336,6 @@ ServerAgent::Establish (void *arg)
   BMessenger *sMsgrE (reinterpret_cast<BMessenger *>(arg));
   AutoDestructor<BMessenger> msgrKiller(sMsgrE);
   BMessage getMsg;
-#ifdef NETSERVER_BUILD
-  BLocker *endpointLock (NULL);
-  AutoDestructor<BLocker> lockKiller (NULL);
-#endif
   BString remoteIP;
   int32 serverSid;
   int32 serverSock (-1);
@@ -393,10 +368,6 @@ ServerAgent::Establish (void *arg)
     getMsg.FindString ("ident", &ident);
     getMsg.FindString ("name", &name);
     getMsg.FindString ("nick", &connectNick);
-#ifdef NETSERVER_BUILD
-    getMsg.FindPointer ("lock", reinterpret_cast<void **>(&endpointLock));
-    lockKiller.SetTo(endpointLock);
-#endif
     serverSid = getMsg.FindInt32 ("sid");
     
     if (sMsgrE->SendMessage (M_GET_RECONNECT_STATUS, &reply) == B_OK)
@@ -443,11 +414,7 @@ ServerAgent::Establish (void *arg)
 
     struct sockaddr_in remoteAddr;
     remoteAddr.sin_family = AF_INET;
-#ifdef BONE_BUILD
     if (inet_aton (connectId.String(), &remoteAddr.sin_addr) == 0)
-#elif NETSERVER_BUILD
-    if ((int)(remoteAddr.sin_addr.s_addr = inet_addr (connectId.String())) <= 0)
-#endif
     {
        struct hostent *remoteInet (gethostbyname (connectId.String()));
        if (remoteInet)
@@ -610,14 +577,8 @@ ServerAgent::Establish (void *arg)
     if ((selResult = select (serverSock + 1, &rset, 0, &eset, &tv)) > 0
     &&  FD_ISSET (serverSock, &rset) && !FD_ISSET (serverSock, &eset))
     {
-#ifdef NETSERVER_BUILD
-      endpointLock->Lock();
-#endif
       if ((length = recv (serverSock, indata, 1023, 0)) > 0)
       {
-#ifdef NETSERVER_BUILD
-        endpointLock->Unlock();
-#endif
         BString temp;
         int32 index;
 
@@ -654,9 +615,6 @@ ServerAgent::Establish (void *arg)
           sMsgrE->SendMessage (&msg);
         }
       }
-#ifdef NETSERVER_BUILD
-      else endpointLock->Unlock();
-#endif
       if (FD_ISSET (serverSock, &eset)
       || (FD_ISSET (serverSock, &rset) && length == 0)
       || !FD_ISSET (serverSock, &wset)
@@ -748,10 +706,6 @@ ServerAgent::AsyncSendData (const char *cData)
       return;
   }
     
-#ifdef NETSERVER_BUILD
-  fEndPointLock->Lock();
-#endif
-
   struct fd_set eset, wset;
   FD_ZERO (&wset);
   FD_ZERO (&eset);
@@ -775,9 +729,6 @@ ServerAgent::AsyncSendData (const char *cData)
     }
   }
 
-#ifdef NETSERVER_BUILD
-  fEndPointLock->Unlock();
-#endif
   if (vision_app->fDebugSend)
   {
     data.RemoveAll ("\n");
@@ -977,9 +928,6 @@ ServerAgent::HandleReconnect (void)
     fIsConnecting = true;
     fNickAttempt = 0;
     fEstablishHasLock = false;
-#ifdef NETSERVER_BUILD
-    fEndPointLock = new BLocker();
-#endif
     CreateEstablishThread();
   }
   else
@@ -1226,10 +1174,6 @@ ServerAgent::MessageReceived (BMessage *msg)
         reply.AddString  ("ident", fLident.String());
         reply.AddString  ("name", fLname.String());
         reply.AddString  ("nick", fMyNick.String());
-#ifdef NETSERVER_BUILD
-        reply.AddPointer ("lock", fEndPointLock);
-        // fEndPointLock = NULL;
-#endif
         msg->SendReply (&reply); 
         fEstablishHasLock = true;
 
@@ -1427,7 +1371,6 @@ ServerAgent::MessageReceived (BMessage *msg)
         
         theNick.Append (" [DCC]");
         MessageAgent *newAgent (new MessageAgent (
-            *vision_app->pClientWin()->AgentRect(),
             theNick.String(),
             fId.String(),
             fSMsgr,
@@ -1460,7 +1403,6 @@ ServerAgent::MessageReceived (BMessage *msg)
        if ((client = Client (theId.String())) == 0)
        {
           MessageAgent *newAgent (new MessageAgent (
-              *vision_app->pClientWin()->AgentRect(),
               theId.String(),
               fId.String(),
               fSMsgr,
@@ -1487,11 +1429,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_SERVER_DISCONNECT:
       {
-#ifdef BONE_BUILD
           close (fSocket);
-#elif NETSERVER_BUILD
-          closesocket (fSocket);
-#endif
 		fSocket = -1;
         if (fIsQuitting)
           break;
@@ -1541,6 +1479,7 @@ ServerAgent::MessageReceived (BMessage *msg)
             "",
             STATUS_ALIGN_LEFT),
           true);
+
 
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
             0,
@@ -1644,7 +1583,6 @@ ServerAgent::MessageReceived (BMessage *msg)
         if (!(client = Client (theNick)))
         {
           MessageAgent *newAgent (new MessageAgent (
-              *vision_app->pClientWin()->AgentRect(),
               theNick,
               fId.String(),
               fSMsgr,
@@ -1745,7 +1683,6 @@ ServerAgent::MessageReceived (BMessage *msg)
           break;
         vision_app->pClientWin()->pWindowList()->AddAgent (
           (fListAgent = new ListAgent (
-            *vision_app->pClientWin()->AgentRect(),
             fServerHostName.String(), new BMessenger(this))),
           "Channels",
           WIN_LIST_TYPE,

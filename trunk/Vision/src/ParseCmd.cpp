@@ -36,12 +36,8 @@
 #include <ctype.h>
 
 #include <netdb.h>
-
-#ifdef BONE_BUILD
-#  include <sys/socket.h>
-#  include <arpa/inet.h>
-#endif
-
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 #include "Vision.h"
 #include "VisionBase.h"

@@ -64,15 +64,13 @@ ServerEntryView::ServerEntryView (BRect bounds, BHandler *handler, BMessage *inv
   if (size != 0)
     memcpy(&currentServer, data, size);
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  serverName = new VTextControl (BRect (0,0,0,0), "serverName", S_SERVERWIN_SERVER,
-    (data) ? data->serverName : "", new BMessage (M_SERVER_NAME_CHANGED),
-    B_FOLLOW_LEFT | B_FOLLOW_TOP);
+  serverName = new VTextControl ("serverName", S_SERVERWIN_SERVER,
+    (data) ? data->serverName : "", new BMessage (M_SERVER_NAME_CHANGED));
   BString strPort ("");
   if (data) strPort << data->port;
   else strPort << 6667;
-  port = new VTextControl (BRect (0,0,0,0), "portVal", S_SERVERWIN_PORT,
-    strPort.String(), new BMessage (M_SERVER_PORT_CHANGED),
-    B_FOLLOW_LEFT | B_FOLLOW_TOP);
+  port = new VTextControl ("portVal", S_SERVERWIN_PORT,
+    strPort.String(), new BMessage (M_SERVER_PORT_CHANGED));
   port->SetDivider (be_plain_font->StringWidth ("Port: ") + 5);
 
   BMenu *stateMenu = new BMenu (S_SERVERWIN_MENU1);
@@ -92,14 +90,11 @@ ServerEntryView::ServerEntryView (BRect bounds, BHandler *handler, BMessage *inv
   if (strlen(currentServer.password) > 0)
     password = currentServer.password;
 
-
-/* XXX TODO: add password checkbox/field */
-
   usePassword = new BCheckBox (BRect (0,0,0,0), "usePass", S_SERVERWIN_PASS_CHECK,
     new BMessage (M_SERVER_USEPASS), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
   
-  passwordField = new VTextControl (BRect (0,0,0,0), "password", NULL,
-    password.String(), NULL, B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
+  passwordField = new VTextControl ("password", NULL,
+    password.String(), NULL, B_WILL_DRAW | B_NAVIGABLE);
       
 
   AddChild (statusField);

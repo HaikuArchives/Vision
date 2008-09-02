@@ -26,10 +26,12 @@
 #include <Beep.h>
 #include <Clipboard.h>
 #include <File.h>
+#include <GroupLayout.h>
 #include <MenuItem.h>
 #include <Path.h>
 #include <PopUpMenu.h>
 #include <ScrollView.h>
+#include <SplitView.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -40,7 +42,6 @@
 #include "ClientAgentInputFilter.h"
 #include "ClientAgentLogger.h"
 #include "HistoryList.h"
-#include "ResizeView.h"
 #include "RunView.h"
 #include "StatusView.h"
 #include "Utilities.h"
@@ -54,13 +55,10 @@ const char *ClientAgent::endl               ("\1\1\1\1\1");
 ClientAgent::ClientAgent (
   const char *id_,
   const char *serverName_,
-  const char *myNick_,
-  BRect frame_)
+  const char *myNick_)
 
   : BView (
-    frame_,
     id_,
-    B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW | B_FRAME_EVENTS),
   fCancelMLPaste(false),
   fActiveTheme (vision_app->ActiveTheme()),
@@ -68,8 +66,7 @@ ClientAgent::ClientAgent (
   fServerName (serverName_),
   fMyNick (myNick_),
   fTimeStampState (vision_app->GetBool ("timestamp")),
-  fIsLogging (vision_app->GetBool ("log_enabled")),
-  fFrame (frame_)
+  fIsLogging (vision_app->GetBool ("log_enabled"))
 {
   Init();
   SetViewColor (B_TRANSPARENT_COLOR);
@@ -79,13 +76,9 @@ ClientAgent::ClientAgent (
   const char *id_,
   const char *serverName_,
   const char *myNick_,
-  const BMessenger &sMsgr_,
-  BRect frame_)
-
+  const BMessenger &sMsgr_)
   : BView (
-    frame_,
     id_,
-    B_FOLLOW_ALL_SIDES,
     B_WILL_DRAW),
   fSMsgr (sMsgr_),
   fActiveTheme (vision_app->ActiveTheme()),
@@ -93,8 +86,7 @@ ClientAgent::ClientAgent (
   fServerName (serverName_),
   fMyNick (myNick_),
   fTimeStampState (vision_app->GetBool ("timestamp")),
-  fIsLogging (vision_app->GetBool ("log_enabled")),
-  fFrame (frame_)
+  fIsLogging (vision_app->GetBool ("log_enabled"))
 {
   fMyLag = "0.000";
   Init();
@@ -162,14 +154,6 @@ ClientAgent::Show (void)
   statusMsg.AddBool ("hidden", false);
   Window()->PostMessage (&statusMsg);
   
-  const BRect *agentRect (dynamic_cast<ClientWindow *>(Window())->AgentRect());
-  
-  if (*agentRect != Frame())
-  {
-    ResizeTo (agentRect->Width(), agentRect->Height());
-    MoveTo (agentRect->left, agentRect->top);
-  }
-
   // make RunView recalculate itself
   fText->Show();
   BView::Show();
@@ -180,32 +164,18 @@ void
 ClientAgent::Init (void)
 {
   fInput = new VTextControl (
-                BRect (
-                  0,
-                  fFrame.top, // tmp. will be moved
-                  fFrame.right - fFrame.left,
-                  fFrame.bottom),
                 "Input", 0, 0,
-                0,
-                B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
+                0);
   
   fInput->SetDivider (0);
-  fInput->ResizeToPreferred();
-  fInput->MoveTo (
-           0,
-           fFrame.bottom - fInput->Frame().Height());
-  AddChild (fInput);
   fInput->TextView()->AddFilter (new ClientAgentInputFilter (this));
-  fInput->Invalidate();
-  
+
+  BGroupLayout *layout = new BGroupLayout(B_VERTICAL);  
+ 
   fHistory = new HistoryList ();
   
-  BRect textrect (
-    1,
-    fFrame.top - 2,
-    fFrame.right - fFrame.left - 1 - B_V_SCROLL_BAR_WIDTH,
-    fFrame.bottom - fInput->Frame().Height() - 1);
-  
+  BRect textrect;
+
   fText = new RunView (
     textrect,
     fId.String(),
@@ -225,8 +195,12 @@ ClientAgent::Init (void)
     false,
     true,
     B_PLAIN_BORDER);
-  
-  AddChild (fTextScroll);
+
+    fSplitView = new BSplitView();
+    fSplitView->AddChild(fTextScroll, 0.8);
+    layout->AddView(fSplitView);
+    layout->AddView(fTextScroll);
+    AddChild(layout->View());
 }
 
 void
@@ -1062,6 +1036,11 @@ ClientAgent::MessageReceived (BMessage *msg)
   }
 }
 
+BSplitView *
+ClientAgent::SplitView (void)
+{
+  return fSplitView;
+}
 
 const BString &
 ClientAgent::Id (void) const
