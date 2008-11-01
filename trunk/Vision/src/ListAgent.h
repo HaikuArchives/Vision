@@ -49,7 +49,7 @@ class ListAgent : public BView
 {
   public:
 
-                            ListAgent (const char *, BMessenger *);
+                            ListAgent (BRect, const char *, BMessenger *);
     virtual                 ~ListAgent (void);
     virtual void            MessageReceived (BMessage *);
     virtual void            AttachedToWindow (void);

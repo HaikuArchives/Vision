@@ -21,7 +21,6 @@
 
 #include "ColumnTypes.h"
 #include "ColumnListView.h"
-
 #include "PrefAliases.h"
 #include "Vision.h"
 #include "VisionStrings.h"

@@ -36,10 +36,12 @@
 #include "Names.h"
 #include "Theme.h"
 
-NamesView::NamesView(void)
+NamesView::NamesView(BRect frame)
   : BListView(
+    frame,
     "namesList",
-    B_MULTIPLE_SELECTION_LIST),
+    B_MULTIPLE_SELECTION_LIST,
+    B_FOLLOW_ALL),
       fActiveTheme (vision_app->ActiveTheme())
 {
   fActiveTheme->ReadLock();

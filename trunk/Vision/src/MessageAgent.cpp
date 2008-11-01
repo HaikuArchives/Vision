@@ -40,15 +40,21 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#ifdef BONE_BUILD
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <arpa/inet.h>
+#elif NETSERVER_BUILD
+#include <socket.h>
+#include <netdb.h>
+#endif
 
 #ifdef USE_INFOPOPPER
-#include "libim/InfoPopper.h"
+#include <libinfopopper/InfoPopper.h>
 #endif
 
 MessageAgent::MessageAgent (
+  BRect &frame_,
   const char *id_,
   const char *fServerName_,
   const BMessenger &fSMsgr_,
@@ -63,7 +69,8 @@ MessageAgent::MessageAgent (
     id_,
     fServerName_,
     nick,
-    fSMsgr_),
+    fSMsgr_,
+    frame_),
 
   fChatAddy (addyString ? addyString : ""),
   fChatee (id_),
@@ -73,9 +80,18 @@ MessageAgent::MessageAgent (
   fDInitiate (initiate),
   fDConnected (false),
   fMySocket (0),
+#ifdef NETSERVER_BUILD
+  fAcceptSocket (0),
+  fLocker (NULL)
+#elif BONE_BUILD
   fAcceptSocket(0)
+#endif
 {
   Init();
+#ifdef NETSERVER_BUILD
+  if (fDChat)
+    fLocker = new BLocker();
+#endif
 }
 
 MessageAgent::~MessageAgent (void)
@@ -84,9 +100,17 @@ MessageAgent::~MessageAgent (void)
   if (fDChat)
   {
     if (fMySocket)
+#ifdef BONE_BUILD
       close (fMySocket);
+#elif NETSERVER_BUILD
+      closesocket (fMySocket);
+#endif
     if (fAcceptSocket)
+#ifdef BONE_BUILD 
       close (fAcceptSocket);
+#elif NETSERVER_BUILD
+      closesocket (fAcceptSocket);
+#endif
   }
 }
 
@@ -209,6 +233,9 @@ MessageAgent::DCCIn (void *arg)
   MessageAgent *agent ((MessageAgent *)arg);
   BMessenger fSMsgrE (agent->fSMsgr);
   BMessenger mMsgr (agent);
+#ifdef NETSERVER_BUILD
+  BLocker *myLocker (agent->fLocker);
+#endif  
   agent->DCCServerSetup();
     
   int dccSocket (agent->fMySocket);
@@ -237,6 +264,9 @@ MessageAgent::DCCIn (void *arg)
   int32 recvReturn (0);
   
   struct fd_set rset, eset;
+#ifdef NETSERVER_BUILD
+  struct timeval tv = { 0, 0 };
+#endif
   FD_ZERO (&rset);
   FD_ZERO (&eset);
   FD_SET (dccAcceptSocket, &rset);
@@ -244,8 +274,15 @@ MessageAgent::DCCIn (void *arg)
   
   while (mMsgr.IsValid() && agent->fDConnected)
   {
+#ifdef NETSERVER_BUILD
+    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) > 0)
+#elif BONE_BUILD
     if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) > 0)
+#endif
     {
+#ifdef NETSERVER_BUILD
+      myLocker->Lock();
+#endif
       if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
       {
         BMessage termMsg (M_DISPLAY);
@@ -255,6 +292,9 @@ MessageAgent::DCCIn (void *arg)
         mMsgr.SendMessage (&termMsg);
         break;
       }
+#ifdef NETSERVER_BUILD
+      myLocker->Unlock();
+#endif
       if (recvReturn > 0)
       {
         if (tempBuffer[0] == '\n')
@@ -294,10 +334,18 @@ MessageAgent::DCCIn (void *arg)
       mMsgr.SendMessage (&termMsg);
       break;
     }
+#ifdef NETSERVER_BUILD
+    else
+      snooze (20000);
+#endif
     FD_SET (dccAcceptSocket, &rset);
     FD_SET (dccAcceptSocket, &eset);
   }
 	
+#ifdef NETSERVER_BUILD
+  myLocker->Unlock();
+  delete myLocker;
+#endif  
   return 0;
 }
 
@@ -307,6 +355,9 @@ MessageAgent::DCCOut (void *arg)
   MessageAgent *agent ((MessageAgent *)arg);
   
   BMessenger mMsgr (agent);
+#ifdef NETSERVER_BUILD
+  BLocker *myLocker (agent->fLocker);
+#endif
   struct sockaddr_in sa;
   int status;
   int dccAcceptSocket (0);
@@ -352,7 +403,11 @@ MessageAgent::DCCOut (void *arg)
 
     ClientAgent::PackDisplay (&msg, S_DCC_CONN_ERROR);
     mMsgr.SendMessage (&msg);
+#ifdef BONE_BUILD
     close (agent->fMySocket);
+#elif NETSERVER_BUILD
+    closesocket (agent->fMySocket);
+#endif
     return false;
   }
 
@@ -378,6 +433,9 @@ MessageAgent::DCCOut (void *arg)
   {
     if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) > 0)
     {
+#ifdef NETSERVER_BUILD
+      myLocker->Lock();
+#endif
       if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
       {
         BMessage termMsg (M_DISPLAY);
@@ -387,6 +445,9 @@ MessageAgent::DCCOut (void *arg)
         mMsgr.SendMessage (&termMsg);
         break;
       }
+#ifdef NETSERVER_BUILD
+      myLocker->Unlock();
+#endif
       if (recvReturn > 0)
       {
         if (tempBuffer[0] == '\n')
@@ -430,6 +491,10 @@ MessageAgent::DCCOut (void *arg)
     FD_SET (dccAcceptSocket, &eset);
   }
 	
+#ifdef NETSERVER_BUILD
+  myLocker->Unlock();
+  delete myLocker;
+#endif  
   return 0;
 }
 
@@ -645,12 +710,21 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
       &state);
 
 
+#ifdef NETSERVER_BUILD
+    fLocker->Lock();
+#endif
     if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
     {
       fDConnected = false;
       Display (S_DCC_CHAT_TERM);
+#ifdef NETSERVER_BUILD
+      fLocker->Unlock();
+#endif
       return;
     }
+#ifdef NETSERVER_BUILD
+    fLocker->Unlock();
+#endif
     outTemp.RemoveLast ("\n");
     ChannelMessage (outTemp.String(), nick);
   }
@@ -690,13 +764,22 @@ MessageAgent::Parser (const char *buffer)
       &destLength,
       &state);
     
+    
+#ifdef NETSERVER_BUILD
+    fLocker->Lock();
+#endif
     if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
     {
       fDConnected = false;
       Display (S_DCC_CHAT_TERM);
+#ifdef NETSERVER_BUILD
+      fLocker->Unlock();
+#endif
       return;
     }
-
+#ifdef NETSERVER_BUILD
+    fLocker->Unlock();
+#endif
   }
   else
     return;

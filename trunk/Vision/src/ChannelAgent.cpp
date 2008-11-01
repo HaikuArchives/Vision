@@ -30,7 +30,6 @@
 #include <PopUpMenu.h>
 #include <Roster.h>
 #include <ScrollView.h>
-#include <SplitView.h>
 
 #include <stdio.h>
 
@@ -43,9 +42,10 @@
 #include "Utilities.h"
 #include "VTextControl.h"
 #include "ChannelOptions.h"
+#include "ResizeView.h"
 
 #ifdef USE_INFOPOPPER
-#include "libim/InfoPopper.h"
+#include <libinfopopper/InfoPopper.h>
 #endif
 
 ChannelAgent::ChannelAgent (
@@ -53,12 +53,16 @@ ChannelAgent::ChannelAgent (
   const char *serverName_,
   int ircdtype_,
   const char *nick,
-  BMessenger &sMsgr_)
+  BMessenger &sMsgr_,
+  BRect &frame_)
+
   : ClientAgent (
     id_,
     serverName_,
     nick,
-    sMsgr_),
+    sMsgr_,
+    frame_),
+
   fChanMode (""),
   fChanLimit (""),
   fChanLimitOld (""),
@@ -110,7 +114,19 @@ ChannelAgent::Init (void)
   /*
    * Function purpose: Setup everything
    */
-  fNamesList = new NamesView ();
+   
+  const BRect namesRect (vision_app->GetRect ("nameListRect"));
+
+  fTextScroll->ResizeTo (
+    Frame().Width() - ((namesRect.Width() == 0.0) ? 100 : namesRect.Width()),
+    fTextScroll->Frame().Height());
+  
+  fFrame = Bounds();
+  fFrame.left   = fTextScroll->Frame().right + 4;
+  fFrame.right -= B_V_SCROLL_BAR_WIDTH + 1;
+  fFrame.bottom = fTextScroll->Frame().bottom - 1;
+  
+  fNamesList = new NamesView (fFrame);
   
   fNamesScroll = new BScrollView(
     "scroll_names",
@@ -121,7 +137,12 @@ ChannelAgent::Init (void)
     true,
     B_PLAIN_BORDER);
 
-  SplitView()->AddChild(fNamesScroll);
+  fResize = new ResizeView (fNamesList, BRect (fTextScroll->Frame().right + 1,
+    Bounds().top + 1, fTextScroll->Frame().right + 3, fTextScroll->Frame().Height()), "resize", B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM);
+
+  AddChild (fNamesScroll);
+
+  AddChild (fResize);
 
   Display (S_CHANNEL_INIT, C_JOIN);
   Display (fId.String(), C_JOIN);
@@ -131,7 +152,17 @@ ChannelAgent::Init (void)
 void
 ChannelAgent::Show (void)
 {
-  // TODO: handle keeping splitviews in sync  
+  const BRect namesListRect (vision_app->GetRect ("namesListRect"));
+  int32 difference ((int32)(fNamesList->Bounds().Width() - namesListRect.Width()));
+  if (difference != 0)
+  {
+    fResize->MoveBy (difference, 0.0);
+    fTextScroll->ResizeBy (difference, 0.0);
+    fNamesScroll->ResizeBy (-difference, 0.0);
+    fNamesScroll->MoveBy (difference, 0.0);
+    Sync();
+  }
+  
   ClientAgent::Show();
 }
 
@@ -685,6 +716,21 @@ ChannelAgent::MessageReceived (BMessage *msg)
       }
       break;
     
+    case M_RESIZE_VIEW:
+      {
+          BPoint point;
+          msg->FindPoint ("loc", &point);
+          point.x -= Frame().left;
+          float offset ((int32)(point.x - (fNamesScroll->Frame().left)));
+          fResize->MoveBy (offset, 0.0);
+          fTextScroll->ResizeBy (offset, 0.0);
+          fNamesScroll->ResizeBy (-offset, 0.0);
+          fNamesScroll->MoveBy (offset, 0.0);
+          BRect namesRect (0, 0, fNamesScroll->Bounds().Width(), 0);
+          vision_app->SetRect ("namesListRect", namesRect);
+      }
+      break;
+
     case M_SERVER_DISCONNECT:
       {
         // clear names list on disconnect

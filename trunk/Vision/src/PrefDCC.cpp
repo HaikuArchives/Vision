@@ -49,7 +49,7 @@ DCCPrefsView::DCCPrefsView (BRect frame)
     new BMessage (M_AUTO_ACCEPT_CHANGED));
   fPrivateCheck = new BCheckBox (BRect (0,0,0,0), NULL, S_PREFDCC_PRIVATE,
     new BMessage (M_DCC_PRIVATE_CHANGED));
-  fDefDir = new VTextControl (NULL, S_PREFDCC_DEFPATH, "", new BMessage (M_DEFAULT_PATH_CHANGED));
+  fDefDir = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_DEFPATH, "", new BMessage (M_DEFAULT_PATH_CHANGED));
   fDefDir->SetDivider (fDefDir->StringWidth (S_PREFDCC_DEFPATH + 5));
   fBox = new BBox (BRect (0,0,0,0), NULL);
   fBox->SetLabel (S_PREFDCC_PORTRANGE);
@@ -58,12 +58,12 @@ DCCPrefsView::DCCPrefsView (BRect frame)
   AddChild (fAutoAccept);
   AddChild (fBlockSize);
   AddChild (fBox);
-  fDccPortMin = new VTextControl (NULL, S_PREFDCC_PORTMIN, "",
+  fDccPortMin = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_PORTMIN, "",
     new BMessage (M_DCC_MIN_PORT_CHANGED));
   fDccPortMin->TextView()->AddFilter (new NumericFilter());
   fDccPortMin->SetDivider (fDccPortMin->StringWidth (S_PREFDCC_PORTMIN) + 5);
   fBox->AddChild (fDccPortMin);
-  fDccPortMax = new VTextControl (NULL, S_PREFDCC_PORTMAX, "",
+  fDccPortMax = new VTextControl (BRect (0,0,0,0), NULL, S_PREFDCC_PORTMAX, "",
     new BMessage (M_DCC_MAX_PORT_CHANGED));
   fDccPortMax->SetDivider (fDccPortMax->StringWidth (S_PREFDCC_PORTMAX) + 5);
   fDccPortMax->TextView()->AddFilter (new NumericFilter());

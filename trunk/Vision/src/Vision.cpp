@@ -23,7 +23,8 @@
  *                 Ted Stodgell <kart@hal-pc.org>
  */
 
-class VisionApp *vision_app;
+class VisionApp * vision_app;
+
 
 /*
   -- #beos was here --
@@ -44,9 +45,16 @@ class VisionApp *vision_app;
 #include <stdio.h>
 #include <ctype.h>
 
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/select.h>
+#ifdef NETSERVER_BUILD
+#  include <netdb.h>
+#  include <socket.h>
+#endif
+
+#ifdef BONE_BUILD
+#  include <arpa/inet.h>
+#  include <sys/socket.h>
+#  include <sys/select.h>
+#endif
 
 #include "AboutWindow.h"
 #include "Vision.h"
@@ -633,7 +641,11 @@ VisionApp::QuitRequested (void)
   fShuttingDown = true;
 
   if (fIdentSocket >= 0)
+#ifdef BONE_BUILD
     close (fIdentSocket);
+#elif NETSERVER_BUILD
+    closesocket (fIdentSocket);
+#endif
   
   BMessenger msgr(fClientWin);
   if (msgr.IsValid())
@@ -1643,8 +1655,10 @@ VisionApp::Identity (void *)
   {
       vision_app->fIdentSocket = identSock;
 
+#ifdef BONE_BUILD
     struct linger lng = { 0, 0 }; 
     setsockopt (identSock, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
+#endif
     listen (identSock, 1);
 
     while (!vision_app->fShuttingDown) 
@@ -1703,13 +1717,21 @@ VisionApp::Identity (void *)
             BString string ("0 , 0 : UNKNOWN : UNKNOWN-ERROR");
             send (accepted, string.String(), string.Length(), 0);
           } 
+#ifdef NETSERVER_BUILD
+          closesocket (accepted);
+#elif BONE_BUILD
           close (accepted);
+#endif              
         }
       }
     }
   }
 
+#ifdef BONE_BUILD
   close (identSock);
+#elif NETSERVER_BUILD
+  closesocket (identSock);
+#endif
   return 0; 
 } 
  

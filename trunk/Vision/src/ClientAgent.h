@@ -34,7 +34,6 @@ class VTextControl;
 
 class BMenu;
 class BPopUpMenu;
-class BSplitView;
 class ClientAgentInputFilter;
 class RunView;
 class Theme;
@@ -49,13 +48,15 @@ class ClientAgent : public BView
                                 ClientAgent (
                                   const char *,         // id_  (window name)
                                   const char *,         // serverName_
-                                  const char *);         // myNick_
+                                  const char *,         // myNick_
+                                  BRect);                // frame
                                 ClientAgent (
                                   const char *,         // id_  (window name)
                                   const char *,         // serverName_
                                   const char *,         // myNick_
-                                  const BMessenger &);   // sMsgr pointer
-
+                                  const BMessenger &,   // sMsgr pointer
+                                  BRect);                // frame
+                                  
     virtual                     ~ClientAgent (void);
 
     virtual void                MessageReceived (BMessage *);
@@ -80,8 +81,6 @@ class ClientAgent : public BView
     virtual void                DroppedFile (BMessage *);
     
     const BString               &Id (void) const;
-
-    BSplitView *		SplitView(void);
     
     BMessenger                  fMsgr,
                                 fSMsgr;
@@ -113,14 +112,14 @@ class ClientAgent : public BView
     void                        Init (void);
 
     bool						fCancelMLPaste;
-    BSplitView                  *fSplitView;                           
+                            
   protected:
     HistoryList                 *fHistory;
     RunView                     *fText;
     BScrollView                 *fTextScroll;
     VTextControl                *fInput;
     Theme                       *fActiveTheme;
- 
+
     static const char               *endl;
 
 
@@ -173,6 +172,7 @@ class ClientAgent : public BView
                                        fScrolling,
                                        fIsLogging;
                                        
+    BRect                            fFrame;
     friend class                     WindowList;
 
 };

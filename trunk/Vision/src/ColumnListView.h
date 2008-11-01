@@ -183,6 +183,7 @@ public:
 	virtual	void		MouseUp(BColumnListView *parent, BRow *row, BField *field);
 		
 	virtual void		GetColumnName(BString* into) const;
+	virtual float		GetPreferredWidth(BField *field, BView *parent) const;
 	
 			bool		IsVisible() const;
 			void		SetVisible(bool);
@@ -306,7 +307,7 @@ public:
 			
 	// Does not delete row or children at this time.
 	// todo: Make delete row and children
-			void			RemoveRow(BRow*);	
+			void			RemoveRow(BRow*);
 			
 			void			UpdateRow(BRow*);
 			void			Clear();
