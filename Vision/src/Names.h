@@ -62,7 +62,7 @@ class NamesView : public BListView
 {
   public:
 
-                                    NamesView (void);
+                                    NamesView (BRect);
     virtual                         ~NamesView (void);
     virtual void                    AttachedToWindow (void);
     virtual void                    DetachedFromWindow (void);

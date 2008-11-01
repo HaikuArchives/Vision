@@ -193,9 +193,9 @@ FontPrefsView::FontPrefsView (BRect frame)
     fElementMenu);
   AddChild (fFontElementField);
   FontMenu *menu (new FontMenu ("fonts"));
-  fFontMenuField = new BMenuField (BRect(), "fonts", S_PREFFONT_FONTLABEL, menu);
+  fFontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", S_PREFFONT_FONTLABEL, menu);
   AddChild (fFontMenuField);
-  fTextControl = new VTextControl ("", S_PREFFONT_SIZELABEL, "",
+  fTextControl = new VTextControl (BRect (60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
   	new BMessage (M_FONT_SIZE_CHANGE));
   fTextControl->TextView()->AddFilter (new NumericFilter());
   AddChild (fTextControl);
@@ -215,10 +215,11 @@ void
 FontPrefsView::AllAttached (void)
 {
   BView::AllAttached ();
-  fFontElementField->ResizeToPreferred();
   fFontElementField->SetDivider (fFontElementField->StringWidth(
     fFontElementField->Label()) + 5);
+  fFontElementField->ResizeToPreferred();
   fFontMenuField->SetDivider (fFontMenuField->StringWidth (fFontMenuField->Label()) + 5);
+  fFontMenuField->ResizeToPreferred();
   fTextControl->SetDivider (fTextControl->StringWidth (fTextControl->Label()) + 5);
   BMenu *menu (fFontElementField->Menu());
   fTextControl->SetTarget (this);
@@ -231,7 +232,7 @@ FontPrefsView::AllAttached (void)
   	dynamic_cast<BInvoker *>(it)->Invoke();
 
   BRect frame (fFontElementField->Frame());
-  fFontMenuField->MoveTo (frame.left + 20, frame.bottom + 20);
+  fFontMenuField->MoveTo (frame.left, frame.bottom + 20);
   menu = fFontMenuField->Menu();
   menu->SetTargetForItems (this);
   menu->SetLabelFromMarked (true);
@@ -239,7 +240,7 @@ FontPrefsView::AllAttached (void)
   float height;
   fFontMenuField->GetPreferredSize(&width, &height);
   fTextControl->ResizeToPreferred();
-  fTextControl->MoveTo (fFontMenuField->Frame().left + width + 5,
+  fTextControl->MoveTo (fFontMenuField->Frame().right + width + 5,
     fFontMenuField->Frame().top);
 
   for (int32 i = 0; i < menu->CountItems(); i++)

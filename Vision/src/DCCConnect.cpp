@@ -335,7 +335,11 @@ DCCReceive::Transfer (void *arg)
   if (connect (dccSock, (sockaddr *)&address, sizeof (address)) < 0)
   {
     UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
+#ifdef BONE_BUILD
     close (dccSock);
+#elif NETSERVER_BUILD
+    closesocket (dccSock);
+#endif
     return B_ERROR;
   }
 
@@ -424,7 +428,11 @@ DCCReceive::Transfer (void *arg)
 
   if (dccSock > 0)
   {
+#ifdef BONE_BUILD
     close (dccSock);
+#elif NETSERVER_BUILD
+    closesocket (dccSock);
+#endif
   }
 
   if (file.InitCheck() == B_OK)
@@ -516,7 +524,11 @@ DCCSend::Transfer (void *arg)
     UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
     vision_app->ReleaseDCCLock();
 
+#ifdef BONE_BUILD
     close (sd);
+#elif NETSERVER_BUILD
+    closesocket (sd);
+#endif
     return 0;
   }
   
@@ -548,7 +560,11 @@ DCCSend::Transfer (void *arg)
     {
       UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
       vision_app->ReleaseDCCLock();
+#ifdef BONE_BUILD
       close (sd);
+#elif NETSERVER_BUILD
+      closesocket (sd);
+#endif
       return 0;
     }
   }
@@ -570,7 +586,11 @@ DCCSend::Transfer (void *arg)
     {
       UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
       vision_app->ReleaseDCCLock();
+#ifdef BONE_BUILD
       close (sd);
+#elif NETSERVER_BUILD
+      closesocket (sd);
+#endif
       return 0;
     }
 
@@ -591,7 +611,11 @@ DCCSend::Transfer (void *arg)
 
   char set[4];
   memset(set, 1, sizeof(set));
+#ifdef BONE_BUILD
   close (sd);
+#elif NETSERVER_BUILD
+  closesocket (sd);
+#endif
   BFile file;
 
   file.SetTo(reply.FindString ("name"), B_READ_ONLY);
@@ -691,7 +715,11 @@ DCCSend::Transfer (void *arg)
 
   if (dccSock > 0)
   {
+#ifdef BONE_BUILD
     close (dccSock);
+#elif NETSERVER_BUILD
+    closesocket (dccSock);
+#endif
   }
 
   if (file.InitCheck() == B_OK)

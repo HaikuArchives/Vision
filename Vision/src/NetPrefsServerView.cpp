@@ -1,8 +1,6 @@
 #include <Autolock.h>
 #include <Box.h>
 #include <Button.h>
-#include "ColumnListView.h"
-#include "ColumnTypes.h"
 #include <MenuField.h>
 #include <Menu.h>
 #include <MenuItem.h>
@@ -14,6 +12,8 @@
 #include "NetPrefsServerView.h"
 #include "NetworkWindow.h"
 #include "ServerEntryWindow.h"
+#include "ColumnListView.h"
+#include "ColumnTypes.h"
 #include "Vision.h"
 
 const rgb_color serverItemNormalColor = {0, 0, 0, 255};

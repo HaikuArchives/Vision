@@ -31,11 +31,16 @@
 
 #include "ClientAgent.h"
 
+#ifdef NETSERVER_BUILD
+class BLocker;
+#endif
+
 class MessageAgent : public ClientAgent
 {
   public:
   
-                         MessageAgent (const char *,
+                         MessageAgent (BRect &,
+                                       const char *,
                                        const char *,
                                        const BMessenger &,
                                        const char *,

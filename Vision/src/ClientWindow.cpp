@@ -23,16 +23,14 @@
  *                 Jamie Wilkinson
  */
 
-#include <CardLayout.h>
-#include <GroupLayout.h>
+#include <ScrollView.h>
 #include <Menu.h>
 #include <MenuItem.h>
 #include <MenuBar.h>
-#include <MessageRunner.h>
 #include <Rect.h>
+#include <MessageRunner.h>
 #include <Roster.h>
-#include <ScrollView.h>
-#include <SplitView.h>
+
 #include <stdio.h>
 
 #include "ChannelAgent.h"
@@ -44,6 +42,7 @@
 #include "Names.h"
 #include "NetworkMenu.h"
 #include "NotifyList.h"
+#include "ResizeView.h"
 #include "ServerAgent.h"
 #include "SettingsFile.h"
 #include "StatusView.h"
@@ -114,13 +113,14 @@ ClientWindow::ClientWindow (BRect frame)
       frame,
       "Vision",
       B_DOCUMENT_WINDOW,
-      B_ASYNCHRONOUS_CONTROLS | B_AUTO_UPDATE_SIZE_LIMITS)
+      B_ASYNCHRONOUS_CONTROLS)
 {
   Init();
 }
 
 ClientWindow::~ClientWindow (void)
 {
+  delete fAgentrect;
 }
 
 bool
@@ -207,7 +207,6 @@ ClientWindow::MessageReceived (BMessage *msg)
     case M_DOWN_CLIENT:
       {
         pWindowList()->Select (pWindowList()->CurrentSelection() + 1);
-        
         pWindowList()->ScrollToSelection();
       }
       break;
@@ -369,10 +368,35 @@ ClientWindow::MessageReceived (BMessage *msg)
         BString netName (network.FindString ("name"));
         pWindowList()->AddAgent (
           new ServerAgent (netName.String(),
-            network),
+            network,
+            *AgentRect()),
           netName.String(),
           WIN_SERVER_TYPE,
           pWindowList()->CountItems() > 0 ? false : true); // grab focus if none present
+      }
+      break;
+    
+    case M_RESIZE_VIEW:
+      {
+        BView *view (NULL);
+        msg->FindPointer ("view", reinterpret_cast<void **>(&view));
+        WindowListItem *item (dynamic_cast<WindowListItem *>(pWindowList()->ItemAt (pWindowList()->CurrentSelection())));
+        BView *agent (item->pAgent());
+        if (dynamic_cast<ClientWindowDock *>(view))
+        {
+          BPoint point;
+          msg->FindPoint ("loc", &point);
+	  fResize->MoveTo (point.x, fResize->Frame().top);
+          fCwDock->ResizeTo (point.x - 1, fCwDock->Frame().Height());
+          BRect *agRect (AgentRect());
+          if (agent)
+          {
+            agent->ResizeTo (agRect->Width(), agRect->Height());
+            agent->MoveTo (agRect->left, agRect->top);
+          }
+        }
+        else
+            DispatchMessage (msg, agent);
       }
       break;
     
@@ -470,16 +494,21 @@ ClientWindow::SetEditStates (bool retargetonly)
   }
 }
 
+BRect *
+ClientWindow::AgentRect (void) const
+{
+  fAgentrect->left = fResize->Frame().right - fCwDock->Frame().left + 1;
+  fAgentrect->top = Bounds().top + 1;
+  fAgentrect->right = Bounds().Width() - 1;
+  fAgentrect->bottom = fCwDock->Frame().Height();
+  return fAgentrect;
+}
+
+
 WindowList *
 ClientWindow::pWindowList (void) const
 {
   return fCwDock->pWindowList();
-}
-
-BCardLayout *
-ClientWindow::pCardLayout (void)
-{
-	return fCardLayout;
 }
 
 NotifyList *
@@ -629,26 +658,43 @@ ClientWindow::Init (void)
   item->SetTarget (this);
   fMenuBar->AddItem (fWindow);  
   
-  BGroupLayout *group = new BGroupLayout(B_VERTICAL);
-  group->AddView(fMenuBar);
+  AddChild (fMenuBar);
   
   // add objects
-  frame = group->View()->Bounds();
+  frame.top = fMenuBar->Frame().bottom + 1;
+  bgView = new BView (frame,
+                      "Background",
+                      B_FOLLOW_ALL_SIDES,
+                      0);
 
-  BRect cwDockRect (vision_app->GetRect ("windowDockRect"));
-  fCwDock = new ClientWindowDock (BRect (0, frame.top, (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(), fStatus->Frame().top - 1));
+  bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+  AddChild (bgView);
+   
 
-  BSplitView *view = new BSplitView();
-  view->AddChild(fCwDock, 0.2);
-  fCardLayout = new BCardLayout();
-  view->AddChild(fCardLayout->View(), 0.8);
-  group->AddView (view);
-  
+  frame = bgView->Bounds();
+
   fStatus = new StatusView (frame);
-  group->AddView (fStatus);
+  bgView->AddChild (fStatus);
+  
   fStatus->AddItem (new StatusItem (
     "irc.elric.net", 0),
     true);
+  
+  BRect cwDockRect (vision_app->GetRect ("windowDockRect"));
+  fCwDock = new ClientWindowDock (BRect (0, frame.top, (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(), fStatus->Frame().top - 1));
+  
+  bgView->AddChild (fCwDock);
+  
+  fResize = new ResizeView (fCwDock, BRect (fCwDock->Frame().right + 1,
+    Bounds().top + 1, fCwDock->Frame().right + 3, fStatus->Frame().top - 1));
+  
+  bgView->AddChild (fResize);
+
+  fAgentrect = new BRect (
+    (fResize->Frame().right - fCwDock->Frame().left) + 1,
+    Bounds().top + 1,
+    Bounds().Width() - 1,
+    fCwDock->Frame().Height());
 }
 
 //////////////////////////////////////////////////////////////////////////////

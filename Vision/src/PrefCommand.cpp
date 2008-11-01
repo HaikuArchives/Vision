@@ -62,6 +62,8 @@ CommandPrefsView::CommandPrefsView (BRect frame)
   for (i = 0; i < MAX_COMMANDS; ++i)
   {
     fCommands[i] = new VTextControl (
+      BRect (5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()), 5 + bounds.right - be_plain_font->StringWidth("gP"),
+      be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
       "commands",
       CommandControlLabels[i],
       vision_app->GetCommand (i).String(),

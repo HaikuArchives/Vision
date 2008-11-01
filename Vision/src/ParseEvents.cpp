@@ -90,6 +90,7 @@ ServerAgent::ParseEvents (const char *data)
               msgaddress (GetAddress (data));
       
       client = new MessageAgent (
+        *vision_app->pClientWin()->AgentRect(),
         theNick.String(),
         fId.String(),
         fSMsgr,
@@ -210,7 +211,8 @@ ServerAgent::ParseEvents (const char *data)
             fId.String(),
             fIrcdtype,
             fMyNick.String(),
-            fSMsgr));
+            fSMsgr,
+            *vision_app->pClientWin()->AgentRect()));
             
         vision_app->pClientWin()->pWindowList()->AddAgent (newAgent,
           channel.String(),
