@@ -836,14 +836,14 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
       if ((fTracking == 1) && (fSp_start != fSp_end))
       {
         BMessage msg (B_MIME_DATA);
-        BString fText;
+        BString text;
 
-        GetSelectionText (fText);
+        GetSelectionText (text);
         msg.AddData (
           "text/plain",
           B_MIME_TYPE,
-          fText.String(),
-          fText.Length() + 1);
+          text.String(),
+          text.Length());
 
         BString clip_name (" Clipping");
 
