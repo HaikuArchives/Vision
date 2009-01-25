@@ -728,7 +728,6 @@ WindowList::RemoveAgent (BView *agent, WindowListItem *agentitem)
   agent->Sync();
   agent->RemoveSelf();
   RemoveItem (agentitem);
-  FullListSortItems (SortListItems);
   // not quite sure why this would happen but better safe than sorry
   if (fLastSelected == agentitem)
     fLastSelected = NULL;
