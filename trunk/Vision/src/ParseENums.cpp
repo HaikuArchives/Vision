@@ -37,17 +37,14 @@
 #include "Vision.h"
 #include "WindowList.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <arpa/inet.h>
 #include <ctype.h>
 #include <math.h>
-
 #include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
 
-#ifdef BONE_BUILD
-#  include <sys/socket.h>
-#  include <arpa/inet.h>
-#endif
 
 #ifdef USE_INFOPOPPER
 #include <libinfopopper/InfoPopper.h>

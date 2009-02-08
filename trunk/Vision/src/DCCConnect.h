@@ -28,13 +28,8 @@
 #include <String.h>
 #include <View.h>
 
-#ifdef BONE_BUILD
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#elif NETSERVER_BUILD
-#include <socket.h>
-#include <netdb.h>
-#endif
 
 class BMessenger;
 class BStatusBar;

@@ -16,18 +16,12 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.8-01092008
+VERSION := 0.9.7-H-08022009
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
 # system libs
-REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -lnetwork
-
-# net_server libs
-NET_LIBS := -lnet 
-
-# bone libs
-BONE_LIBS := -lroot -lsocket -lbind
+REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -lnetwork -lroot
 
 # lua
 LUA_LIBS := -L./src/lua/lib -llua -llualib
@@ -81,7 +75,7 @@ CFLAGS += -march=pentium -mcpu=pentium
 CFLAGS += -Wall -W -Wno-multichar -Wpointer-arith
 CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith
-CFLAGS += -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
+CFLAGS += -Wmissing-declarations
 CFLAGS += -Wcast-qual -Wshadow
 
 # be able to add flags from the env at will without chaging the makefile
