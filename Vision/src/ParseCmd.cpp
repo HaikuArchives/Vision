@@ -30,18 +30,14 @@
 #include <Roster.h>
 #include <FindDirectory.h>
 
+#include <arpa/inet.h>
+#include <ctype.h>
+#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <map.h>
-#include <ctype.h>
+#include <sys/socket.h>
 
-#include <netdb.h>
-
-#ifdef BONE_BUILD
-#  include <sys/socket.h>
-#  include <arpa/inet.h>
-#endif
-
+#include <map>
 
 #include "Vision.h"
 #include "VisionBase.h"

@@ -31,10 +31,6 @@
 
 #include "ClientAgent.h"
 
-#ifdef NETSERVER_BUILD
-class BLocker;
-#endif
-
 class MessageAgent : public ClientAgent
 {
   public:
@@ -87,8 +83,5 @@ class MessageAgent : public ClientAgent
                                 fAcceptSocket;
 
     thread_id                   fDataThread;
-#ifdef NETSERVER_BUILD
-    BLocker                     *fLocker;
-#endif
 };
 #endif
