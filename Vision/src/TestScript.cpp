@@ -1,4 +1,4 @@
-
+#if 0
 
 #include "LuaScript.h"
 #include "TestScript.h"
@@ -158,3 +158,4 @@ TestScript::RunTestScripts (void)
 	DoScriptArrayTest();
 }
 
+#endif
