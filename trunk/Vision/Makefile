@@ -83,7 +83,7 @@ CFLAGS += $(VISION_ADDL_BUILD_FLAGS)
 
 LD := gcc
 
-LDFLAGS := $(REG_LIBS) $(LUA_LIBS) -nodefaultlibs
+LDFLAGS := $(REG_LIBS) -nodefaultlibs
 
 ifeq ($(wildcard /boot/home/config/include/libim/InfoPopper.h), )
 else
@@ -144,11 +144,6 @@ cvsup:
 	@cvs up -d
 
 $(BINARY) : $(OBJDIR) $(OBJECTS)
-ifeq ($(wildcard ./src/lua/lib/liblua.a),)
-	@echo Lua lib not found
-	@echo Building...
-	@cd $(SRCDIR)/lua && make >/dev/null && cd $(SRCDIR)/..
-endif
 	@rm -f $(TEMPDEPFILE)
 	@echo linking $@
 	@$(LD) -o $@ $(OBJECTS) $(LDFLAGS)

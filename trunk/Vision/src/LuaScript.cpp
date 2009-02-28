@@ -1,3 +1,4 @@
+#if 0
 /* 
  * The contents of this file are subject to the Mozilla Public 
  * License Version 1.1 (the "License"); you may not use this file 
@@ -435,3 +436,4 @@ void Script::SaveText(const char* filename)
 	// Close the text file.
 	fclose(file);
 }
+#endif
