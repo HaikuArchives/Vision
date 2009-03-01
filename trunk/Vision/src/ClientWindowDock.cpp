@@ -33,6 +33,12 @@
 
 #include <stdio.h>
 
+static float
+label_height()
+{
+  return 8 + ceilf(be_plain_font->Size());
+}
+
 //////////////////////////////////////////////////////////////////////////////
 /// Begin AgentDock functions
 //////////////////////////////////////////////////////////////////////////////
@@ -46,9 +52,9 @@ ClientWindowDock::ClientWindowDock (BRect frame)
     fNotifyExpanded (false)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  
+
   fWorkingFrame = Bounds();
-  
+
   // add collapsed agent first
   AddNotifyList();
   
@@ -72,8 +78,8 @@ void
 ClientWindowDock::AddNotifyList (void)
 {
   BRect notifyFrame (fWorkingFrame);
-  notifyFrame.top = fWorkingFrame.bottom - 15;
-  
+  notifyFrame.top = fWorkingFrame.bottom - label_height();
+
   fWorkingFrame.bottom = fWorkingFrame.bottom - (notifyFrame.Height() + 1);
   
   fNotifyAgent = new AgentDockNotifyList (notifyFrame);
@@ -111,8 +117,8 @@ ClientWindowDock::MessageReceived (BMessage *msg)
     {
       if (fNotifyExpanded)
       {
-        fNotifyAgent->ResizeTo (fNotifyAgent->Bounds().Width(), 15.0);
-        fNotifyAgent->MoveTo (0.0, Bounds().bottom - 15.0);
+        fNotifyAgent->ResizeTo (fNotifyAgent->Bounds().Width(), label_height() - 2);
+        fNotifyAgent->MoveTo (0.0, Bounds().bottom - label_height() + 2);
         fWinListAgent->ResizeBy (0.0, (fNotifyAgent->Frame().top - fWinListAgent->Frame().bottom - 1.0));
         fNotifyExpanded = false;
       }
@@ -120,7 +126,7 @@ ClientWindowDock::MessageReceived (BMessage *msg)
       {
         fWinListAgent->ResizeBy (0.0, -1.0 * (fWinListAgent->Bounds().Height() / 3.0));
         fNotifyAgent->MoveTo (0.0, fWinListAgent->Frame().bottom + 1.0);
-        fNotifyAgent->ResizeBy (0.0, Frame().bottom - fNotifyAgent->Frame().bottom - 1.0);
+        fNotifyAgent->ResizeBy (0.0, Bounds().bottom - fNotifyAgent->Frame().bottom);
         fNotifyExpanded = true;
       }
       vision_app->SetBool ("notifyExpanded", fNotifyExpanded);
@@ -152,15 +158,13 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   BRect frame (frame_);
   
   BRect headerFrame (frame);
-  headerFrame.top = 1;
-  headerFrame.bottom = 14;
-  headerFrame.right = headerFrame.right;
+  headerFrame.bottom = label_height() - 1;
   fAHeader = new AgentDockHeader (headerFrame, S_CWD_WINLIST_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
   AddChild (fAHeader);
    
-  frame.top = frame.top + headerFrame.Height() + 4;  // make room for header
-  frame.right = frame.right - B_V_SCROLL_BAR_WIDTH; // scrollbar
-  frame.bottom = frame.bottom - 2; // room for "fancy" border
+  frame.top = headerFrame.bottom + 1;
+  frame.right = frame.right - B_V_SCROLL_BAR_WIDTH - 1; // scrollbar
+  frame.bottom = frame.bottom - 1; // room for "plain" border
 
   fWinList = new WindowList (frame);
 
@@ -173,8 +177,6 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
     true,
     B_PLAIN_BORDER);
   AddChild (fWinListScroll);
-  
-  
 }
 
 AgentDockWinList::~AgentDockWinList (void)
@@ -208,15 +210,17 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   BRect frame (frame_);
   
   BRect headerFrame (frame);
-  headerFrame.top = 1;
-  headerFrame.bottom = 14;
-  headerFrame.right = headerFrame.right;
-  fAHeader = new AgentDockHeader (headerFrame, S_CWD_NOTIFY_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
-  headerFrame.top = headerFrame.top + headerFrame.Height() + 4;
-  // BScrollView in R5 has an odd bug where if you initialize it too small, it never draws its scrollbar arrows correctly
-  headerFrame.bottom = headerFrame.top + 30.0;
-  headerFrame.right -= B_V_SCROLL_BAR_WIDTH;
-  fNotifyList = new NotifyList (headerFrame);
+  headerFrame.top = 0;
+  headerFrame.bottom = label_height() - 1;
+  fAHeader = new AgentDockHeader (headerFrame, S_CWD_NOTIFY_HEADER,
+    B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+  headerFrame.top = headerFrame.bottom + 1;
+  // BScrollView in R5 has an odd bug where if you initialize it too small,
+  // it never draws its scrollbar arrows correctly
+  frame.top = headerFrame.bottom + 1;
+  frame.right -= B_V_SCROLL_BAR_WIDTH + 1;
+  frame.bottom = frame.bottom - 1; // room for "plain" border
+  fNotifyList = new NotifyList (frame);
   fNotifyScroll = new BScrollView ("fNotifyListScroll",
                                    fNotifyList,
                                    B_FOLLOW_ALL,
@@ -243,7 +247,8 @@ void
 AgentDockNotifyList::AllAttached (void)
 {
   // hack to deal with some R5 scrollbar drawing bugs
-  fNotifyScroll->ResizeBy (0.0, Bounds().Height() - fNotifyScroll->Bounds().Height() - 15.0);
+  fNotifyScroll->ResizeBy (0.0, Bounds().Height() - fNotifyScroll->Bounds().Height()
+    - label_height() + 2);
   BView::AllAttached ();
 }
 

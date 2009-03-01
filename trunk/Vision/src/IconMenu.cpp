@@ -47,6 +47,12 @@
 // I M P L E M E N T A T I O N
 //------------------------------------------------------------------------------
 
+#ifdef __HAIKU__
+const color_space kIconColorSpace = B_RGBA32;
+#else
+const color_space kIconColorSpace = B_CMAP8;
+#endif
+
 TIconMenu::TIconMenu(BBitmap* icon, BMenu* menu) :
         BMenuItem(menu),
         bounds(),
@@ -54,8 +60,8 @@ TIconMenu::TIconMenu(BBitmap* icon, BMenu* menu) :
 {
     if (icon) {
         bounds = icon->Bounds();
-        iconLabel = new BBitmap(bounds, B_COLOR_8_BIT);
-        iconLabel->SetBits(icon->Bits(), icon->BitsLength(), 0, B_COLOR_8_BIT);
+        iconLabel = new BBitmap(bounds, kIconColorSpace);
+        iconLabel->SetBits(icon->Bits(), icon->BitsLength(), 0, kIconColorSpace);
     }
 }
 
@@ -69,7 +75,7 @@ TIconMenu::TIconMenu(BMenu* menu) :
         BFile appFile(&(info.ref), O_RDONLY);
         BAppFileInfo appFileInfo(&appFile);
 
-        iconLabel = new BBitmap(bounds, B_COLOR_8_BIT);
+        iconLabel = new BBitmap(bounds, kIconColorSpace);
 
         if (appFileInfo.GetIcon(iconLabel, B_MINI_ICON) != B_NO_ERROR) {
             delete iconLabel;

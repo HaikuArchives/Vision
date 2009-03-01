@@ -23,8 +23,11 @@
  *                 Jamie Wilkinson
  */
 
-#include <interface/MenuItem.h>
-#include <interface/PopUpMenu.h>
+#ifdef __HAIKU__
+# include <ControlLook.h>
+#endif
+#include <MenuItem.h>
+#include <PopUpMenu.h>
 
 #include "StatusView.h"
 #include "URLCrunch.h"
@@ -52,9 +55,12 @@ StatusView::StatusView (BRect frame)
 
   SetFont (&font);
 
-  SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  SetLowColor (216, 216, 216, 255);
-  SetHighColor (0, 0, 0, 255);
+  SetLowColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+#ifdef __HAIKU__
+  SetViewColor (B_TRANSPARENT_COLOR);
+#else
+  SetViewColor (LowColor());
+#endif
 }
 
 StatusView::~StatusView (void)
@@ -162,12 +168,18 @@ void
 StatusView::Draw (BRect update)
 {
   SetDrawingMode (B_OP_COPY);
-  SetHighColor (131, 131, 131, 255);
+  SetHighColor (tint_color(LowColor(), B_DARKEN_2_TINT));
   StrokeLine (BPoint (update.left, Bounds().top),
               BPoint (update.right, Bounds().top));
+#ifdef __HAIKU__
+  BRect rect(Bounds());
+  rect.top++;
+  be_control_look->DrawMenuBarBackground(this, rect, update, LowColor());
+#else
   SetHighColor (255, 255, 255, 255);
   StrokeLine (BPoint (update.left, Bounds().top + 1),
               BPoint (update.right, Bounds().top + 1));
+#endif
 
   float width (5.0);
   font_height fh;
@@ -175,7 +187,7 @@ StatusView::Draw (BRect update)
   GetFontHeight (&fh);
 
   SetDrawingMode (B_OP_OVER);
-  SetHighColor (0, 0, 0, 255);
+  SetHighColor (tint_color(LowColor(), 1.7));
 
   for (int32 i = 0; i < items.CountItems(); ++i)
   {
@@ -212,6 +224,16 @@ StatusView::DrawSplit (float x)
 
   PushState();
 
+#ifdef __HAIKU__
+  SetDrawingMode (B_OP_ALPHA);
+  SetHighColor (0, 0, 0, 40);
+  StrokeLine (BPoint (x, bounds.top + 3.0),
+              BPoint (x, bounds.bottom - 2.0));
+
+  SetHighColor (255, 255, 255, 80);
+  StrokeLine (BPoint (x + 1, bounds.top + 3.0),
+              BPoint (x + 1, bounds.bottom - 2.0));
+#else
   SetDrawingMode (B_OP_COPY);
   SetHighColor (131, 131, 131, 255);
   StrokeLine (BPoint (x, bounds.top + 2.0),
@@ -220,6 +242,7 @@ StatusView::DrawSplit (float x)
   SetHighColor (255, 255, 255, 255);
   StrokeLine (BPoint (x + 1, bounds.top + 2.0),
               BPoint (x + 1, bounds.bottom));
+#endif
 
   PopState();
 }

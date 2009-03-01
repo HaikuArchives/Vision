@@ -386,7 +386,7 @@ ClientWindow::MessageReceived (BMessage *msg)
         {
           BPoint point;
           msg->FindPoint ("loc", &point);
-	  fResize->MoveTo (point.x, fResize->Frame().top);
+          fResize->MoveTo (point.x, fResize->Frame().top);
           fCwDock->ResizeTo (point.x - 1, fCwDock->Frame().Height());
           BRect *agRect (AgentRect());
           if (agent)
@@ -498,8 +498,8 @@ BRect *
 ClientWindow::AgentRect (void) const
 {
   fAgentrect->left = fResize->Frame().right - fCwDock->Frame().left + 1;
-  fAgentrect->top = Bounds().top + 1;
-  fAgentrect->right = Bounds().Width() - 1;
+  fAgentrect->top = Bounds().top;
+  fAgentrect->right = Bounds().Width() + 1;
   fAgentrect->bottom = fCwDock->Frame().Height();
   return fAgentrect;
 }
@@ -681,12 +681,14 @@ ClientWindow::Init (void)
     true);
   
   BRect cwDockRect (vision_app->GetRect ("windowDockRect"));
-  fCwDock = new ClientWindowDock (BRect (0, frame.top, (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(), fStatus->Frame().top - 1));
+  fCwDock = new ClientWindowDock (BRect (0, frame.top,
+    (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(),
+    fStatus->Frame().top - 1));
   
   bgView->AddChild (fCwDock);
   
   fResize = new ResizeView (fCwDock, BRect (fCwDock->Frame().right + 1,
-    Bounds().top + 1, fCwDock->Frame().right + 3, fStatus->Frame().top - 1));
+    Bounds().top, fCwDock->Frame().right + 3, fStatus->Frame().top - 1));
   
   bgView->AddChild (fResize);
 
