@@ -93,8 +93,6 @@ ServerEntryView::ServerEntryView (BRect bounds, BHandler *handler, BMessage *inv
     password = currentServer.password;
 
 
-/* XXX TODO: add password checkbox/field */
-
   usePassword = new BCheckBox (BRect (0,0,0,0), "usePass", S_SERVERWIN_PASS_CHECK,
     new BMessage (M_SERVER_USEPASS), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
   
@@ -148,6 +146,7 @@ ServerEntryView::AttachedToWindow (void)
   passwordField->ResizeToPreferred();
   passwordField->ResizeTo(port->Frame().right - usePassword->Frame().right - 5, passwordField->Bounds().Height());
   passwordField->MoveTo (usePassword->Frame().right + 5, usePassword->Frame().top);
+  passwordField->TextView()->HideTyping(true);
 #if B_BEOS_VERSION_DANO
   statusField->MoveTo ((Bounds().Width() - statusField->Bounds().Width()) / 2.0,
 #else
