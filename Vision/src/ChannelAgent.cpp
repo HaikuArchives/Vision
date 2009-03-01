@@ -122,7 +122,7 @@ ChannelAgent::Init (void)
     fTextScroll->Frame().Height());
   
   fFrame = Bounds();
-  fFrame.left   = fTextScroll->Frame().right + 4;
+  fFrame.left   = fTextScroll->Frame().right + 6;
   fFrame.right -= B_V_SCROLL_BAR_WIDTH + 1;
   fFrame.bottom = fTextScroll->Frame().bottom - 1;
   
@@ -138,7 +138,9 @@ ChannelAgent::Init (void)
     B_PLAIN_BORDER);
 
   fResize = new ResizeView (fNamesList, BRect (fTextScroll->Frame().right + 1,
-    Bounds().top + 1, fTextScroll->Frame().right + 3, fTextScroll->Frame().Height()), "resize", B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM);
+    Bounds().top + 1, fTextScroll->Frame().right + 5,
+    fTextScroll->Frame().Height()), "resize",
+    B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM);
 
   AddChild (fNamesScroll);
 

@@ -72,7 +72,6 @@ ClientAgent::ClientAgent (
   fFrame (frame_)
 {
   Init();
-  SetViewColor (B_TRANSPARENT_COLOR);
 }
 
 ClientAgent::ClientAgent (
@@ -179,11 +178,13 @@ ClientAgent::Show (void)
 void
 ClientAgent::Init (void)
 {
+  SetViewColor (ui_color(B_PANEL_BACKGROUND_COLOR));
+
   fInput = new VTextControl (
                 BRect (
                   0,
                   fFrame.top, // tmp. will be moved
-                  fFrame.right - fFrame.left,
+                  fFrame.right - fFrame.left - 4,
                   fFrame.bottom),
                 "Input", 0, 0,
                 0,
@@ -193,7 +194,7 @@ ClientAgent::Init (void)
   fInput->ResizeToPreferred();
   fInput->MoveTo (
            0,
-           fFrame.bottom - fInput->Frame().Height());
+           fFrame.bottom - fInput->Frame().Height() - 3);
   AddChild (fInput);
   fInput->TextView()->AddFilter (new ClientAgentInputFilter (this));
   fInput->Invalidate();
@@ -201,10 +202,10 @@ ClientAgent::Init (void)
   fHistory = new HistoryList ();
   
   BRect textrect (
-    1,
-    fFrame.top - 2,
+    2,
+    fFrame.top,
     fFrame.right - fFrame.left - 1 - B_V_SCROLL_BAR_WIDTH,
-    fFrame.bottom - fInput->Frame().Height() - 1);
+    fFrame.bottom - fInput->Frame().Height() - 8);
   
   fText = new RunView (
     textrect,
