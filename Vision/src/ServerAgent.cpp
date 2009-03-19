@@ -23,6 +23,7 @@
  *                 Jamie Wilkinson
  *                 John Robinson
  *                 Alan Ellis <alan@cgsoftware.org>
+ *                 Francois Revol
  */
 
 #include <UTF8.h>
@@ -773,8 +774,21 @@ ServerAgent::ParseLine (const char *cData)
   }
   else
   {
-    strlcpy(fParse_buffer, data.String(), destLength);
-    destLength = strlen(fParse_buffer);
+    if (IsValidUTF8(data.String(), destLength))
+    {
+      strlcpy(fParse_buffer, data.String(), destLength);
+      destLength = strlen(fParse_buffer);
+    }
+    else
+    {
+      convert_to_utf8 (
+        B_ISO1_CONVERSION,
+        data.String(), 
+        &length,
+        fParse_buffer,
+        &destLength,
+        &state);
+    }
   }
   if (vision_app->fNumBench)
   {

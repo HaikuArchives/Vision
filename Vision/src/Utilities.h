@@ -65,6 +65,6 @@ const char   *RelToAbsPath (const char *);
 BString      GetWordColon (const char *, int32);
 int32        Get440Len (const char *);
 uint16       CheckClickCount(BPoint, BPoint &, bigtime_t, bigtime_t &, int16 &);
-
+bool         IsValidUTF8(const char *string, int32 length);
 
 #endif
