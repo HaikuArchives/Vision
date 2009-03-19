@@ -375,3 +375,46 @@ CheckClickCount(BPoint point, BPoint &lastClick, bigtime_t sysTime, bigtime_t &l
   return clickCount;
 }
 
+bool
+IsValidUTF8(const char *string, int32 length)
+{
+	int sequence = 0;
+	int i;
+
+	/*
+	 * see http://en.wikipedia.org/wiki/UTF-8#Description
+	 * c & 0x80 == 0 : single byte
+	 * c & 0xc0 == 0x80 : continuated multibyte
+	 * else the number of 1s in the MSB before the first 0 indicates
+	 * the number of bytes in the multibyte char.
+	 */
+
+	for (i = 0; i < length && string[i]; i++) {
+		int seq = 0;
+		char c = string[i];
+		while (c & 0x80) {
+			c <<= 1;
+			seq++;
+		}
+		switch (seq) {
+		case 0:
+			// single byte char, should be ok unless we expect a multibyte continuation
+			if (sequence)
+				return false;
+			break;
+		case 1:
+			// if we aren't inside a multibyte char then something is wrong!
+			if (sequence == 0)
+				return false;
+			// one less continuation byte
+			sequence--;
+			break;
+		default:
+			// start of a multibyte sequence of seq bytes (including this one)
+			// there are seq - 1 left to go.
+			sequence = seq - 1;
+			break;
+		}
+	}
+	return true;
+}

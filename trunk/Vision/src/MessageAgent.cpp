@@ -34,6 +34,7 @@
 #include "WindowList.h"
 #include "ClientWindow.h"
 #include "StatusView.h"
+#include "Utilities.h"
 #include "Vision.h"
 #include "VTextControl.h"
 
@@ -270,14 +271,36 @@ MessageAgent::DCCIn (void *arg)
           int32 length (inputBuffer.Length()),
                 destLength (sizeof(convBuffer)),
                 state (0);
+          int32 encoding = vision_app->GetInt32("encoding");
+          if (encoding != B_UNICODE_CONVERSION) 
+          {
+            convert_to_utf8 (
+              encoding,
+	          inputBuffer.String(), 
+              &length,
+              convBuffer,
+              &destLength,
+              &state);
+          } 
+          else 
+          {
+            if (IsValidUTF8(inputBuffer.String(), length))
+            {
+              strlcpy(convBuffer, inputBuffer.String(), length);
+              destLength = strlen(convBuffer);
+            }
+            else
+            {
+              convert_to_utf8 (
+                B_ISO1_CONVERSION,
+                inputBuffer.String(), 
+                &length,
+                convBuffer,
+                &destLength,
+                &state);
+            }
+          }
 
-          convert_to_utf8 (
-            vision_app->GetInt32("encoding"),
-	    inputBuffer.String(), 
-            &length,
-            convBuffer,
-            &destLength,
-            &state);
 
           BMessage dispMsg (M_CHANNEL_MSG);
           dispMsg.AddString ("msgz", convBuffer);
