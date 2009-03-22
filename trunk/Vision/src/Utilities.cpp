@@ -416,5 +416,8 @@ IsValidUTF8(const char *string, int32 length)
 			break;
 		}
 	}
+	// end of string in middle of multibyte sequence
+	if (sequence != 0)
+		return false;
 	return true;
 }
