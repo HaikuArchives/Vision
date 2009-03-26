@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.7-H-090319
+VERSION := 0.9.7-H-090326
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
@@ -71,7 +71,7 @@ CFLAGS += -DBEOS_BUILD
 CFLAGS += -DBUILD_DATE=\"$(BUILDDATE)\"
 CFLAGS += -fno-pic
 CFLAGS += -ffast-math
-CFLAGS += -march=pentium -mcpu=pentium
+CFLAGS += -march=pentium -mcpu=pentiumpro
 CFLAGS += -Wall -W -Wno-multichar -Wpointer-arith
 CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith
@@ -85,7 +85,7 @@ LD := gcc
 
 LDFLAGS := $(REG_LIBS) -nodefaultlibs
 
-ifeq ($(wildcard /boot/home/config/include/libim/InfoPopper.h), )
+ifeq ($(wildcard /boot/develop/headers/libinfopopper/InfoPopper.h), )
 else
   CFLAGS += -DUSE_INFOPOPPER=1
 endif
