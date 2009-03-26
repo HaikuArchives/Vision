@@ -78,7 +78,7 @@ void
 ClientWindowDock::AddNotifyList (void)
 {
   BRect notifyFrame (fWorkingFrame);
-  notifyFrame.top = fWorkingFrame.bottom - label_height();
+  notifyFrame.top = fWorkingFrame.bottom - label_height() + 2;
 
   fWorkingFrame.bottom = fWorkingFrame.bottom - (notifyFrame.Height() + 1);
   
