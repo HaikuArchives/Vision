@@ -85,7 +85,7 @@ LD := gcc
 
 LDFLAGS := $(REG_LIBS) -nodefaultlibs
 
-ifeq ($(wildcard /boot/develop/headers/libinfopopper/InfoPopper.h), )
+ifeq ($(wildcard /boot/common/include/infopopper/InfoPopper.h), )
 else
   CFLAGS += -DUSE_INFOPOPPER=1
 endif
