@@ -34,6 +34,7 @@ class VisionApp * vision_app;
 
 #include <Alert.h>
 #include <Resources.h>
+#include <FindDirectory.h>
 #include <Font.h>
 #include <MenuItem.h>
 #include <Autolock.h>
@@ -63,7 +64,7 @@ class VisionApp * vision_app;
 // sound event name definitions
 const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
 
-const char *kAliasPathName = "/boot/home/config/settings/Vision/Aliases";
+const char *kAliasPathName = "Vision/Aliases";
 
 // And so it begins....
 int
@@ -1946,7 +1947,13 @@ VisionApp::RemoveAlias(const BString &cmd)
 void
 VisionApp::LoadAliases(void)
 {
-  BFile file (kAliasPathName, B_READ_ONLY);
+  BPath settingsPath;
+  if (find_directory(B_USER_SETTINGS_DIRECTORY, &settingsPath) < B_OK)
+    return;
+  settingsPath.Append(kAliasPathName);
+  if (settingsPath.InitCheck() < B_OK)
+    return;
+  BFile file (settingsPath.Path(), B_READ_ONLY);
   if (file.InitCheck() == B_OK)
   {
     BString data;
@@ -1989,7 +1996,13 @@ VisionApp::LoadAliases(void)
 void
 VisionApp::SaveAliases(void)
 {
-  BFile file (kAliasPathName, B_READ_WRITE | B_CREATE_FILE | B_ERASE_FILE);
+  BPath settingsPath;
+  if (find_directory(B_USER_SETTINGS_DIRECTORY, &settingsPath) < B_OK)
+    return;
+  settingsPath.Append(kAliasPathName);
+  if (settingsPath.InitCheck() < B_OK)
+    return;
+  BFile file (settingsPath.Path(), B_READ_WRITE | B_CREATE_FILE | B_ERASE_FILE);
   if (file.InitCheck() == B_OK)
   {
     for (map<BString, BString>::iterator it = fAliases.begin(); it != fAliases.end(); ++it)
