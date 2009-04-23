@@ -20,10 +20,18 @@
  *                 Todd Lair
  */
  
+#include <Autolock.h>
+#include <Mime.h>
+
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "URLCrunch.h"
+
+BLocker URLCrunch::fLocker("URLCrunch taglist");
+const char **URLCrunch::fTags = NULL;
 
 URLCrunch::URLCrunch (const char *data, int32 len)
 	: buffer (""),
@@ -42,25 +50,18 @@ URLCrunch::Crunch (BString *url)
 	if (current_pos >= buffer.Length())
 		return B_ERROR;
 
-	const int32 tagNum = 7;
-	const char *tags[tagNum] =
-	{
-		"http://",
-		"https://",
-		"www.",
-		"ftp://",
-		"ftp.",
-		"file:/",
-		"mailto:"
-	};
-
 	int32 marker (buffer.Length());
 	int32 pos (current_pos);
 	int32 url_length (0);
 	int32 marker_pos (B_ERROR);
 	int32 i(0);
 
-	for (i = 0; i < tagNum; ++i)
+	BAutolock _(fLocker);
+	const char **tags = fTags;
+	if (!tags)
+		return B_ERROR;
+
+	for (i = 0; tags[i]; ++i)
 	{
 		marker_pos = buffer.IFindFirst (tags[i], pos);
 		if (marker_pos != B_ERROR)
@@ -72,12 +73,13 @@ URLCrunch::Crunch (BString *url)
 
 			if (url_length - marker_pos > len
 			&& (isdigit (buffer[marker_pos + len])
-			||  isalpha (buffer[marker_pos + len])))
+			||  isalpha (buffer[marker_pos + len])
+			||  buffer[marker_pos + len] == '/'))
 			{
 				marker = marker_pos;
 				pos = url_length + 1;
 				url_length -= marker;
-				url->Truncate(0, false);
+				url->Truncate(0);
 				buffer.CopyInto(*url, marker, url_length);
 			}
 			else
@@ -90,4 +92,58 @@ URLCrunch::Crunch (BString *url)
 	}
 
 	return marker < buffer.Length() ? marker : B_ERROR;
+}
+
+status_t
+URLCrunch::UpdateTagList (void)
+{
+	int i;
+	
+	// known hostnames
+	const char *builtins[] = {
+		"www.",
+		"ftp.",
+		NULL
+	};
+
+	BAutolock _(fLocker);
+
+	// empty old list
+	for (i = 0; fTags && fTags[i]; i++) {
+		free(const_cast<char *>(fTags[i]));
+	}
+	delete [] fTags;
+	fTags = NULL;
+
+	// build the list
+	BList tags;
+	BMessage types;
+	BMimeType::GetInstalledTypes("application", &types);
+	BString type;
+
+	for (i = 0; types.FindString("types", i, &type) >= B_OK; i++) {
+		if (type.FindFirst(B_URL_MIME_PREFIX) != 0)
+			continue;
+		type.RemoveFirst(B_URL_MIME_PREFIX);
+		type << ":";
+		// require slash-slash for those to limit wrong matches
+		if (type == "http:" || type == "ftp:")
+			type << "//";
+		if (type == "file:")
+			type << "/";
+		tags.AddItem(strdup(type.String()));
+	}
+
+	// add builtins at end (so http://www.foobar isn't picked up as www.foobar)
+	for (i = 0; builtins[i]; i++)
+		tags.AddItem(strdup(builtins[i]));
+
+	// allocate new list
+	fTags = new const char *[tags.CountItems()];
+	for (i = 0; i < tags.CountItems(); i++) {
+		fTags[i] = (const char *)tags.ItemAt(i);
+		//printf("tag:'%s'\n", fTags[i]);
+	}
+
+	return B_OK;
 }
