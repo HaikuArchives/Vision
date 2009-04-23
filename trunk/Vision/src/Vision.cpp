@@ -59,6 +59,7 @@ class VisionApp * vision_app;
 #include "SetupWindow.h"
 #include "PrefsWindow.h"
 #include "Theme.h"
+#include "URLCrunch.h"
 #include "Utilities.h"
 #include "WindowList.h"
 // sound event name definitions
@@ -114,6 +115,7 @@ VisionApp::VisionApp (void)
   app_info info;
   if (GetAppInfo(&info) == B_OK) fAppRef = info.ref; 
 
+  URLCrunch::UpdateTagList();
 }
 
 VisionApp::~VisionApp (void)

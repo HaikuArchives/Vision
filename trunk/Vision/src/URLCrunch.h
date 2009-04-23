@@ -23,7 +23,14 @@
 #ifndef URLCRUNCH_H_
 #define URLCRUNCH_H_
 
+#include <Locker.h>
 #include <String.h>
+#include <TypeConstants.h>
+
+#ifndef B_URL_MIME_PREFIX
+#define B_URL_MIME_PREFIX	"application/x-vnd.Be.URL."
+#endif
+
 
 class URLCrunch
 {
@@ -35,6 +42,12 @@ class URLCrunch
 						URLCrunch (const char *, int32);
 						~URLCrunch (void);
 	int32				Crunch (BString *);
+
+	static status_t		UpdateTagList(void);
+
+private:
+	static BLocker		fLocker; // protects members below
+	static const char	**fTags;
 };
 
 #endif
