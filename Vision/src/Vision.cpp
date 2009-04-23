@@ -66,6 +66,7 @@ class VisionApp * vision_app;
 const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
 
 const char *kAliasPathName = "Vision/Aliases";
+const char *kTrackerSig = "application/x-vnd.Be-TRAK";
 
 // And so it begins....
 int
@@ -830,12 +831,9 @@ VisionApp::LoadURL (const char *url)
     // The URL is guaranteed to be at least "file:/"
     BString file(argument.String() + 5);
 
-    // todo: Should probably see if the file exists before going through
-    //       all this, but, oh well... ;)
-	file.Prepend("/boot/beos/system/Tracker ");
-	file += " &";									// just in case
-
-    system(file.String());
+    args[0] = file.String();
+    //printf("file: '%s'\n", file.String());
+  	be_roster->Launch (kTrackerSig, 1, const_cast<char **>(args));
   }
   else if (argument.IFindFirst ("mailto:") == 0)
   {
@@ -843,7 +841,12 @@ VisionApp::LoadURL (const char *url)
   }
   else
   {
-  	be_roster->Launch ("text/html", 1, const_cast<char **>(args));
+    BString mimeType = B_URL_MIME_PREFIX;
+    mimeType.Append(argument, argument.FindFirst(':'));
+    //printf("mime:'%s'\n", mimeType.String());
+    if (!BMimeType::IsValid(mimeType.String()))
+      return;
+  	be_roster->Launch (mimeType.String(), 1, const_cast<char **>(args));
   }
 }
 
