@@ -47,7 +47,7 @@
 
 
 #ifdef USE_INFOPOPPER
-#include <libinfopopper/InfoPopper.h>
+#include <infopopper/InfoPopper.h>
 #endif
 
 bool
