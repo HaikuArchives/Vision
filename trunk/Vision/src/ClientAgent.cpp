@@ -323,7 +323,7 @@ ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
 BString
 ClientAgent::FilterCrap (const char *data, bool force)
 {
-  BString outData ("");
+  BString outData ("", 440);
   int32 theChars (strlen (data));
   bool ViewCodes (false);
   int32 i (0), j(0);
