@@ -139,11 +139,11 @@ URLCrunch::UpdateTagList (void)
 		tags.AddItem(strdup(builtins[i]));
 
 	// allocate new list
-	fTags = new const char *[tags.CountItems()];
+	fTags = new const char *[tags.CountItems() + 1];
 	for (i = 0; i < tags.CountItems(); i++) {
 		fTags[i] = (const char *)tags.ItemAt(i);
-		//printf("tag:'%s'\n", fTags[i]);
 	}
+	fTags[tags.CountItems()] = NULL;
 
 	return B_OK;
 }
