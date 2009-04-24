@@ -45,7 +45,7 @@
 #include "ResizeView.h"
 
 #ifdef USE_INFOPOPPER
-#include <libinfopopper/InfoPopper.h>
+#include <infopopper/InfoPopper.h>
 #endif
 
 ChannelAgent::ChannelAgent (

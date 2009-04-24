@@ -37,6 +37,7 @@ class VisionApp * vision_app;
 #include <FindDirectory.h>
 #include <Font.h>
 #include <MenuItem.h>
+#include <MimeType.h>
 #include <Autolock.h>
 #include <Roster.h>
 #include <Beep.h>
