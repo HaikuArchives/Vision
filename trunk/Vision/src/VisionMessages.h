@@ -87,6 +87,7 @@ const uint32 M_CHANGE_NICK							= 0x1314;
 const uint32 M_CHANNEL_MODES						= 0x1315;
 const uint32 M_LAG_CHANGED							= 0x1316;
 const uint32 M_CLIENT_QUIT							= 0x1317;
+const uint32 M_JOIN_CHANNEL							= 0x1318;
 
 const uint32 M_MSG_WHOIS                            = 0x1400;
 
@@ -161,6 +162,7 @@ const uint32 M_OPEN_TERM                            = 0x2005;
 const uint32 M_MAKE_NEW_NETWORK                     = 0x2006;
 const uint32 M_STATUS_CLEAR                         = 0x2007;
 const uint32 M_STATUS_ADDITEMS                      = 0x2008;
+
 // names view
 
 const uint32 M_NAMES_POPUP_MODE                     = 0x2100;
@@ -209,6 +211,7 @@ const uint32 M_PREFS_CLOSE                          = 0x2232;
 const uint32 M_CONNECT_NETWORK                      = 0x2233;
 const uint32 M_SERVER_USEPASS                       = 0x2234;
 const uint32 M_NETPREFS_TEXT_INVOKE                 = 0x2235;
+
 // general prefs
 
 const uint32 M_APPWINDOWPREFS_SETTING_CHANGED       = 0x2300;
@@ -236,5 +239,5 @@ const uint32 M_PROMPT_DONE                          = 0x2400;
 const uint32 M_PROMPT_CANCEL                        = 0x2401;
 const uint32 M_OFFVIEW_SELECTION                    = 0x2405;
 const uint32 M_LOAD_URL                             = 0x2406;
-#endif // _VISIONMESSAGES_H_
 
+#endif // _VISIONMESSAGES_H_
