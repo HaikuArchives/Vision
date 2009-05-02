@@ -37,7 +37,7 @@ class VisionApp * vision_app;
 #include <FindDirectory.h>
 #include <Font.h>
 #include <MenuItem.h>
-#include <MimeType.h>
+#include <Mime.h>
 #include <Autolock.h>
 #include <Roster.h>
 #include <Beep.h>
@@ -815,6 +815,15 @@ void
 VisionApp::LoadURL (const char *url)
 {
   BString argument (url);
+
+  if (argument[0] == '#')
+  {
+    BMessage msg(M_JOIN_CHANNEL);
+    msg.AddString("channel", url);
+    be_app_messenger.SendMessage(&msg);
+    return;
+  }
+
   if (argument.FindFirst ("://") == B_ERROR)
   {
 
@@ -954,6 +963,15 @@ VisionApp::MessageReceived (BMessage *msg)
         BMessage connMsg (M_MAKE_NEW_NETWORK);
         connMsg.AddMessage ("network", &netData);
         fClientWin->PostMessage (&connMsg);
+      }
+      break;
+
+    case M_JOIN_CHANNEL:
+      {
+        if (fClientWin == NULL)
+          break;
+      	
+        fClientWin->PostMessage (msg);
       }
       break;
 

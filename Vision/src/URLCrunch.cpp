@@ -103,6 +103,7 @@ URLCrunch::UpdateTagList (void)
 	const char *builtins[] = {
 		"www.",
 		"ftp.",
+		"#",	// MUST stay last
 		NULL
 	};
 

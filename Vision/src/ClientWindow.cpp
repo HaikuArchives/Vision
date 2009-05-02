@@ -431,6 +431,23 @@ ClientWindow::MessageReceived (BMessage *msg)
     }
     break;
 
+    case M_JOIN_CHANNEL:
+    {
+      WindowListItem *item ((WindowListItem *)pWindowList()->ItemAt (pWindowList()->CurrentSelection()));
+      BView *view (NULL);
+      if (item)
+        view = item->pAgent();
+      if ((view == NULL) || (dynamic_cast<ListAgent *>(view) != NULL))
+        break;
+      BString cmd;
+      if (msg->FindString ("channel", &cmd) < B_OK)
+      	break;
+      cmd.Prepend("/JOIN ");
+      dynamic_cast<ClientAgent *>(view)->ParseCmd (cmd.String());
+      // XXX: should select the channel if already joined.
+    }
+    break;
+
     case M_NOTIFYLIST_UPDATE:
     {
       BObjectList<NotifyListItem> *nickList (NULL);
