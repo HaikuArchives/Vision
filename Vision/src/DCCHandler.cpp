@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -26,6 +26,7 @@
 #include <AppFileInfo.h>
 #include <Alert.h>
 #include <Button.h>
+#include <Catalog.h>
 #include <Directory.h>
 #include <FilePanel.h>
 #include <Invoker.h>
@@ -38,6 +39,9 @@
 #include "Utilities.h"
 #include "Vision.h"
 #include "VTextControl.h"
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "DCCMessages"
 
 class DCCFileFilter : public BMessageFilter
 {
@@ -57,8 +61,8 @@ class DCCFileFilter : public BMessageFilter
 void
 ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
 {
-  BString theText(theNick);
-  theText << S_SERVER_DCC_CHAT_PROMPT;
+  BString theText = B_TRANSLATE("%1 wants to begin a DCC chat with you.");
+  theText.ReplaceFirst("%1", theNick.String());
   BAlert *myAlert = new BAlert("DCC Request", theText.String(), "Accept",
     "Refuse");
   myAlert->SetFeel (B_FLOATING_APP_WINDOW_FEEL);

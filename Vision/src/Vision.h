@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -28,6 +28,7 @@
 #include <map>
 
 #include <Application.h>
+#include <Catalog.h>
 #include <Entry.h>
 #include <String.h>
 #include <Locker.h>
@@ -37,6 +38,7 @@
 class BFont;
 class Theme;
 class AboutWindow;
+class NetworkManager;
 class SetupWindow;
 class PrefsWindow;
 class ClientWindow;
@@ -47,6 +49,7 @@ class BLocker;
 class BNetEndpoint;
 
 extern class VisionApp * vision_app;
+extern class NetworkManager * network_manager;
 
 using std::map;
 
@@ -187,6 +190,7 @@ class VisionApp : public BApplication
 	Theme                   *fActiveTheme;
 	bigtime_t               fStartupTime;
 	entry_ref				fAppRef;
+	BCatalog				fCatalog;
 };
 
 const uint32 VIS_NETWORK_DATA        = 'vndc';

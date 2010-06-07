@@ -13,7 +13,7 @@
  *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  *
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -24,6 +24,7 @@
  */
 
 #include <Beep.h>
+#include <Catalog.h>
 #include <Clipboard.h>
 #include <File.h>
 #include <MenuItem.h>
@@ -256,6 +257,9 @@ ClientAgent::SetServerName (const char *name)
   fServerName = name;
 }
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "EditMenu"
+
 void
 ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
 {
@@ -267,7 +271,7 @@ ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
       return;
     }
 
-    BMenuItem *menuItem (menu->FindItem(S_CW_EDIT_CUT));
+    BMenuItem *menuItem (menu->FindItem(B_TRANSLATE("Cut")));
     int32 start (0), finish (0);
     fInput->TextView()->GetSelection(&start, &finish);
     if (start == finish)
@@ -279,7 +283,7 @@ ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
       menuItem->SetEnabled (true);
       menuItem->SetTarget (fInput->TextView());
     }
-    menuItem = menu->FindItem(S_CW_EDIT_COPY);
+    menuItem = menu->FindItem(B_TRANSLATE("Copy"));
     if (start == finish)
     {
       BString string;
@@ -300,25 +304,30 @@ ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
       menuItem->SetTarget (fInput->TextView());
       menuItem->SetEnabled (true);
     }
-    menuItem = menu->FindItem(S_CW_EDIT_PASTE);
+    menuItem = menu->FindItem(B_TRANSLATE("Paste"));
     menuItem->SetTarget (fInput->TextView());
     BClipboard clipboard("system");
     BMessage *clip ((BMessage *)NULL);
     if (clipboard.Lock()) {
-      if ((clip = clipboard.Data()))
-      if (clip->HasData ("text/plain", B_MIME_TYPE))
-        menuItem->SetEnabled(true);
-      else
-        menuItem->SetEnabled(false);
+      if ((clip = clipboard.Data())) 
+      {
+        if (clip->HasData ("text/plain", B_MIME_TYPE))
+          menuItem->SetEnabled(true);
+        else
+          menuItem->SetEnabled(false);
+      }
       clipboard.Unlock();
     }
-    menuItem = menu->FindItem(S_CW_EDIT_SELECT_ALL);
+    menuItem = menu->FindItem(B_TRANSLATE("Select All"));
     if (fInput->TextView()->TextLength() == 0)
       menuItem->SetTarget (fText);
     else
       menuItem->SetTarget (fInput->TextView());
   }
 }
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ClientWindow"
 
 BString
 ClientAgent::FilterCrap (const char *data, bool force)
@@ -483,17 +492,17 @@ void
 ClientAgent::PackDisplay (
   BMessage *msg,
   const char *buffer,
-  uint32 fore,
-  uint32 back,
-  uint32 font)
+  int16 fore,
+  int16 back,
+  int16 font)
 {
   BMessage packed;
   
   packed.AddString ("msgz", buffer);
 
-  packed.AddInt32 ("fore", fore);
-  packed.AddInt32 ("back", back);
-  packed.AddInt32 ("font", font);
+  packed.AddInt16 ("fore", fore);
+  packed.AddInt16 ("back", back);
+  packed.AddInt16 ("font", font);
   
   if (msg->HasMessage ("packed"))
     msg->ReplaceMessage ("packed", &packed);
@@ -505,9 +514,9 @@ ClientAgent::PackDisplay (
 void
 ClientAgent::Display (
   const char *buffer,
-  uint32 fore,
-  uint32 back,
-  uint32 font)
+  int16 fore,
+  int16 back,
+  int16 font)
 {
   // displays normal text if no color codes are present
   // (i.e. if the text has already been filtered by ServerAgent::FilterCrap
@@ -534,11 +543,11 @@ ClientAgent::Display (
 void
 ClientAgent::ParsemIRCColors (
   const char *buffer,
-  uint32 fore,
-  uint32 back,
-  uint32 font)
+  int16 fore,
+  int16 back,
+  int16 font)
 {
-  int mircFore (fore),
+  int16 mircFore (fore),
         mircBack (back),
         mircFont (font),
         i (0);
@@ -573,7 +582,8 @@ ClientAgent::ParsemIRCColors (
         {
           if (!isdigit (*buffer))
             break;
-          mircFore = mircFore * 10 + *buffer++ - '0';
+          mircFore *= 10;
+          mircFore += (*buffer++ - '0');
         }
         mircFore = (mircFore % 16) + C_MIRC_WHITE;
         
@@ -585,9 +595,9 @@ ClientAgent::ParsemIRCColors (
           {
             if (!isdigit (*buffer))
               break;
-            mircBack = mircBack * 10 + *buffer++ - '0';
+            mircBack = mircBack * (int16)10 + *buffer++ - '0';
           }
-          mircBack = (mircFore % 16) + C_MIRC_WHITE;
+          mircBack = (mircFore % (int16)16) + C_MIRC_WHITE;
         }
       }
       // set start to text portion (we have recorded the mirc stuff)
@@ -895,7 +905,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
           msg->FindMessage ("packed", i, &packed);
           packed.FindString ("msgz", &buffer);
-          Display (buffer, packed.FindInt32 ("fore"), packed.FindInt32 ("back"), packed.FindInt32 ("font"));
+          Display (buffer, packed.FindInt16 ("fore"), packed.FindInt16 ("back"), packed.FindInt16 ("font"));
         }
       }
       break;
@@ -1009,6 +1019,9 @@ ClientAgent::MessageReceived (BMessage *msg)
 	  	fCancelMLPaste = true;
 		break;
 	
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "DCCStatus"
+
 	case M_DCC_COMPLETE:
 	  {
           /// set up ///
@@ -1018,8 +1031,8 @@ ClientAgent::MessageReceived (BMessage *msg)
           type,
           completionMsg ("[@] "),
           fAck;
-        int32 rate,
-          xfersize;
+        float rate;
+        int32 xfersize;
         bool completed (true);
 
         msg->FindString ("nick", &nick);
@@ -1027,7 +1040,7 @@ ClientAgent::MessageReceived (BMessage *msg)
         msg->FindString ("size", &size);
         msg->FindString ("type", &type);
         msg->FindInt32 ("transferred", &xfersize);
-        msg->FindInt32 ("transferRate", &rate);
+        msg->FindFloat ("transferRate", &rate);
 				
         BPath pFile (file.String());
 
@@ -1038,21 +1051,44 @@ ClientAgent::MessageReceived (BMessage *msg)
 
 
           /// send mesage ///				
-        if (completed)
-          completionMsg << S_CLIENT_DCC_SUCCESS;
-        else completionMsg << S_CLIENT_DCC_FAILED;
-				
         if (type == "SEND")
-          completionMsg << S_CLIENT_DCC_SENDTYPE << pFile.Leaf() << S_CLIENT_DCC_TO;
-        else completionMsg << S_CLIENT_DCC_RECVTYPE << pFile.Leaf() << S_CLIENT_DCC_FROM;
-				
-        completionMsg << nick << " (";
-
-        if (!completed)
-          completionMsg << fAck << "/";
-				
-        completionMsg << size << S_CLIENT_DCC_SIZE_UNITS "), ";
-        completionMsg	<< rate << S_CLIENT_DCC_SPEED_UNITS "\n";
+        {
+	      if (completed)
+	        completionMsg += B_TRANSLATE("Completed send of %1 to %2 (%3), %4 KB/sec");
+	      else
+	        completionMsg += B_TRANSLATE("Terminated send of %1 to %2 (%3/%4), %5 KB/sec");
+        }
+        else
+        {
+          if (completed)
+            completionMsg += B_TRANSLATE("Completed receive of %1 from %2 (%3), %4 KB/sec");
+          else
+            completionMsg += B_TRANSLATE("Failed receive of %1 from %2 (%3/%4), %5 KB/sec");
+        	  
+        }
+        completionMsg.ReplaceFirst("%1", pFile.Leaf());
+        completionMsg.ReplaceFirst("%2", nick);
+        BString temp;
+        if (completed)
+        {
+          temp << size;
+          completionMsg.ReplaceFirst("%3", temp.String());
+          temp.SetTo("");
+          temp << rate;
+          completionMsg.ReplaceFirst("%4", temp.String());
+        }
+        else
+        {
+          temp << fAck;
+          completionMsg.ReplaceFirst("%3", temp.String());
+          temp.SetTo("");
+          temp << size;
+          completionMsg.ReplaceFirst("%4", temp.String());
+          temp.SetTo("");
+          temp << rate;
+          completionMsg.ReplaceFirst("%5", temp.String());
+        }
+        completionMsg += "\n";
 					
         Display (completionMsg.String(), C_CTCP_RPY);
 	  }

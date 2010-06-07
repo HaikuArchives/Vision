@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -26,10 +26,14 @@
 #include "VisionStrings.h"
 
 #include <Button.h>
+#include <Catalog.h>
 
 const uint32 M_ALIAS_SELECTION_CHANGED = 'mASC';
 const uint32 M_ALIAS_ADD = 'mADD';
 const uint32 M_ALIAS_REMOVE = 'MARE';
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "AliasPrefs"
  
 AliasesPrefsView::AliasesPrefsView (BRect frame)
  : BView(frame, "Alias Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW),
@@ -95,15 +99,18 @@ AliasesPrefsView::AttachedToWindow (void)
   fAliasView = new BColumnListView(bounds, "clv", B_FOLLOW_ALL_SIDES, B_WILL_DRAW, B_FANCY_BORDER);
   AddChild(fAliasView);
   fAliasView->SetSelectionMessage(new BMessage(M_ALIAS_SELECTION_CHANGED));
-  fAliasView->AddColumn(new BStringColumn(S_PREFALIAS_COLUMN_NAME, StringWidth(S_PREFALIAS_COLUMN_NAME) * 2.0,
+  BString itemText = B_TRANSLATE("Name");
+  fAliasView->AddColumn(new BStringColumn(itemText.String(), StringWidth(itemText.String()) * 2.0,
     0, bounds.Width(), 0), 0);
-  fAliasView->AddColumn(new BStringColumn(S_PREFALIAS_COLUMN_ALIAS, StringWidth(S_PREFALIAS_COLUMN_ALIAS) * 6.0,
+  itemText = B_TRANSLATE("Alias");
+  fAliasView->AddColumn(new BStringColumn(itemText.String(), StringWidth(itemText.String()) * 6.0,
     0, bounds.Width(), 0), 1);
-  
-  fAddButton = new BButton(BRect(0,0,0,0), "alAdd", S_PREFALIAS_ADD, new BMessage(M_ALIAS_ADD), B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
+  itemText = B_TRANSLATE("Add");
+  itemText += B_UTF8_ELLIPSIS;  
+  fAddButton = new BButton(BRect(0,0,0,0), "alAdd", itemText.String(), new BMessage(M_ALIAS_ADD), B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
   AddChild(fAddButton);
   fAddButton->ResizeToPreferred();
-  fRemoveButton = new BButton(BRect(0,0,0,0), "alRemove", S_PREFALIAS_REMOVE, new BMessage(M_ALIAS_REMOVE), B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
+  fRemoveButton = new BButton(BRect(0,0,0,0), "alRemove", B_TRANSLATE("Remove"), new BMessage(M_ALIAS_REMOVE), B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
   AddChild(fRemoveButton);
   fRemoveButton->ResizeToPreferred();
   fRemoveButton->MoveTo(fAliasView->Frame().right - fRemoveButton->Bounds().Width(),

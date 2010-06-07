@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -23,6 +23,7 @@
 
 #include <Button.h>
 #include <Bitmap.h>
+#include <Catalog.h>
 #include <View.h>
 #include <MenuField.h>
 #include <MenuItem.h>
@@ -36,10 +37,13 @@
 
 #include <stdio.h>
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "SetupWindow"
+
 SetupWindow::SetupWindow (void)
   : BWindow (
       BRect (108.0, 88.0, 455.0, 290.0),
-      S_SETUP_TITLE,
+      B_TRANSLATE("Setup Window"),
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
@@ -68,14 +72,18 @@ SetupWindow::SetupWindow (void)
     delete bmp;
   }
   
-  connectButton = new BButton (BRect (0,0,0,0), "connect", S_SETUP_CONNECT_BUTTON,
+  connectButton = new BButton (BRect (0,0,0,0), "connect", B_TRANSLATE("Connect"),
     new BMessage (M_CONNECT_NETWORK));
   connectButton->ResizeToPreferred();
-  netPrefsButton = new BButton (BRect (0,0,0,0), "netprefs", S_SETUP_NETPREFS B_UTF8_ELLIPSIS,
+  BString itemString = B_TRANSLATE("Network Setup");
+  itemString += B_UTF8_ELLIPSIS;
+  netPrefsButton = new BButton (BRect (0,0,0,0), "netprefs", itemString.String(),
     new BMessage (M_NETWORK_SHOW));
   netPrefsButton->ResizeToPreferred();
   netPrefsButton->SetTarget (vision_app);
-  prefsButton = new BButton (BRect (0,0,0,0), "prefs", S_SETUP_GENPREFS B_UTF8_ELLIPSIS,
+  itemString = B_TRANSLATE("Preferences");
+  itemString += B_UTF8_ELLIPSIS;
+  prefsButton = new BButton (BRect (0,0,0,0), "prefs", itemString.String(),
     new BMessage (M_PREFS_SHOW));
   prefsButton->ResizeToPreferred();
   prefsButton->SetTarget (vision_app);
@@ -108,11 +116,13 @@ SetupWindow::QuitRequested (void)
 void
 SetupWindow::BuildNetworkMenu (void)
 {
-  BMenu *netMenu (new NetworkMenu (S_SETUP_CHOOSENET, M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
+  BMenu *netMenu (new NetworkMenu (B_TRANSLATE("Choose Network"), M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
   netMenu->SetLabelFromMarked (true);
-  netList = new BMenuField (BRect (0,0,0,0), "Network List", S_SETUP_CHOOSELABEL, netMenu);
+  BString itemString = B_TRANSLATE("Network");
+  itemString += ": ";
+  netList = new BMenuField (BRect (0,0,0,0), "Network List", itemString.String(), netMenu);
   netList->ResizeToPreferred();
-  netList->SetDivider (be_plain_font->StringWidth (S_SETUP_CHOOSELABEL) + 5);
+  netList->SetDivider (be_plain_font->StringWidth (itemString) + 5);
   bgView->AddChild (netList);
   netList->MoveTo (10, connectButton->Frame().top - (netList->Bounds().Height() + 20));
 }

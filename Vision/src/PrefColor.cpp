@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -28,6 +28,7 @@
 #include "Vision.h"
 #include <Box.h>
 #include <Button.h>
+#include <Catalog.h>
 #include <MenuField.h>
 #include <StringView.h>
 #include <Menu.h>
@@ -36,6 +37,8 @@
 
 #include <stdio.h>
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ColorPrefs"
 
 // data structures for font prefs
 
@@ -48,61 +51,61 @@ struct FontStat
 
 static const char *ColorLabels[] =
 {
-	S_PREFCOLOR_TEXT,
-	S_PREFCOLOR_BACKGROUND,
-	S_PREFCOLOR_URL,
-	S_PREFCOLOR_SERVERTEXT,
-	S_PREFCOLOR_NOTICE,
-	S_PREFCOLOR_ACTION,
-	S_PREFCOLOR_QUIT,
-	S_PREFCOLOR_ERROR,
-	S_PREFCOLOR_NICK_EDGES,
-	S_PREFCOLOR_UNICK_EDGES,
-	S_PREFCOLOR_NICK_TEXT,
-	S_PREFCOLOR_JOIN,
-	S_PREFCOLOR_KICK,
-	S_PREFCOLOR_WHOIS,
-	S_PREFCOLOR_NAMES_NORM,
-	S_PREFCOLOR_NAMES_OP,
-	S_PREFCOLOR_NAMES_HELP,
-	S_PREFCOLOR_NAMES_VOICE,
-	S_PREFCOLOR_NAMES_SEL,
-	S_PREFCOLOR_NAMES_BG,
-	S_PREFCOLOR_CTCP_REQ,
-	S_PREFCOLOR_CTCP_RPY,
-	S_PREFCOLOR_IGNORE,
-	S_PREFCOLOR_INPUT_TXT,
-	S_PREFCOLOR_INPUT_BG,
-	S_PREFCOLOR_WLIST_NORM,
-	S_PREFCOLOR_WLIST_TXT,
-	S_PREFCOLOR_WLIST_NICK,
-	S_PREFCOLOR_WLIST_SEL,
-	S_PREFCOLOR_WLIST_EVT,
-	S_PREFCOLOR_WLIST_BG,
-	S_PREFCOLOR_WALLOPS,
-	S_PREFCOLOR_TIMESTAMP,
-	S_PREFCOLOR_TIMESTAMP_BG,
-	S_PREFCOLOR_SELECTION,
-	S_PREFCOLOR_MIRCWHITE,
-	S_PREFCOLOR_MIRCBLACK,
-	S_PREFCOLOR_MIRCDBLUE,
-	S_PREFCOLOR_MIRCGREEN,
-	S_PREFCOLOR_MIRCRED,
-	S_PREFCOLOR_MIRCBROWN,
-	S_PREFCOLOR_MIRCPURPLE,
-	S_PREFCOLOR_MIRCORANGE,
-	S_PREFCOLOR_MIRCYELLOW,
-	S_PREFCOLOR_MIRCLIME,
-	S_PREFCOLOR_MIRCTEAL,
-	S_PREFCOLOR_MIRCAQUA,
-	S_PREFCOLOR_MIRCLBLUE,
-	S_PREFCOLOR_MIRCPINK,
-	S_PREFCOLOR_MIRCGREY,
-	S_PREFCOLOR_MIRCSILVER,
-	S_PREFCOLOR_NOTIFY_ON,
-	S_PREFCOLOR_NOTIFY_OFF,
-	S_PREFCOLOR_NOTIFY_BG,
-	S_PREFCOLOR_NOTIFY_SEL
+	B_TRANSLATE_MARK("Text"),
+	B_TRANSLATE_MARK("Background"),
+	B_TRANSLATE_MARK("URL"),
+	B_TRANSLATE_MARK("Server Text"),
+	B_TRANSLATE_MARK("Notice"),
+	B_TRANSLATE_MARK("Action"),
+	B_TRANSLATE_MARK("Quit"),
+	B_TRANSLATE_MARK("Error"),
+	B_TRANSLATE_MARK("Nickname edges (other users)"),
+	B_TRANSLATE_MARK("Nickname edges (self)"),
+	B_TRANSLATE_MARK("Nickname text"),
+	B_TRANSLATE_MARK("Join"),
+	B_TRANSLATE_MARK("Kick"),
+	B_TRANSLATE_MARK("Whois"),
+	B_TRANSLATE_MARK("Names (Normal)"),
+	B_TRANSLATE_MARK("Names (Op)"),
+	B_TRANSLATE_MARK("Names (Helper)"),
+	B_TRANSLATE_MARK("Names (Voice)"),
+	B_TRANSLATE_MARK("Names selected item"),
+	B_TRANSLATE_MARK("Names background"),
+	B_TRANSLATE_MARK("CTCP Request"),
+	B_TRANSLATE_MARK("CTCP Reply"),
+	B_TRANSLATE_MARK("Ignore"),
+	B_TRANSLATE_MARK("Input Text"),
+	B_TRANSLATE_MARK("Input Background"),
+	B_TRANSLATE_MARK("Winlist normal status"),
+	B_TRANSLATE_MARK("Winlist text status"),
+	B_TRANSLATE_MARK("Winlist nick alert status"),
+	B_TRANSLATE_MARK("Winlist selected item"),
+	B_TRANSLATE_MARK("Winlist event status"),
+	B_TRANSLATE_MARK("Winlist background"),
+	B_TRANSLATE_MARK("Wwallops"),
+	B_TRANSLATE_MARK("Timestamp"),
+	B_TRANSLATE_MARK("Timestamp background"),
+	B_TRANSLATE_MARK("Text selection"),
+	B_TRANSLATE_MARK("mIRC White"),
+	B_TRANSLATE_MARK("mIRC Black"),
+	B_TRANSLATE_MARK("mIRC Dark Blue"),
+	B_TRANSLATE_MARK("mIRC Green"),
+	B_TRANSLATE_MARK("mIRC Red"),
+	B_TRANSLATE_MARK("mIRC Brown"),
+	B_TRANSLATE_MARK("mIRC Purple"),
+	B_TRANSLATE_MARK("mIRC Orange"),
+	B_TRANSLATE_MARK("mIRC Yellow"),
+	B_TRANSLATE_MARK("mIRC Lime"),
+	B_TRANSLATE_MARK("mIRC Teal"),
+	B_TRANSLATE_MARK("mIRC Aqua"),
+	B_TRANSLATE_MARK("mIRC Light Blue"),
+	B_TRANSLATE_MARK("mIRC Pink"),
+	B_TRANSLATE_MARK("mIRC Grey"),
+	B_TRANSLATE_MARK("mIRC Silver"),
+	B_TRANSLATE_MARK("Notify Online"),
+	B_TRANSLATE_MARK("Notify Offline"),
+	B_TRANSLATE_MARK("Notify List background"),
+	B_TRANSLATE_MARK("Notify List selected item")
 };
 
 ColorPrefsView::ColorPrefsView (BRect frame)
@@ -118,13 +121,13 @@ ColorPrefsView::ColorPrefsView (BRect frame)
   for (i = 0 ; i < MAX_COLORS; i++)
   {
   	mycolors.AddData ("color", B_RGB_COLOR_TYPE, &fColors[i], sizeof(rgb_color));
-  	labels.AddString ("color", ColorLabels[i]);
+  	labels.AddString ("color", B_TRANSLATE(ColorLabels[i]));
   }
 
   fSelector = new ColorSelector (frame, "fSelector", NULL, mycolors, labels, new BMessage ('vtst'));
   fSelector->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
   fSelector->ResizeToPreferred();
-  fRevert = new BButton (BRect (0,0,0,0), "fRevert", S_PREFCOLOR_REVERT, new BMessage (M_REVERT_COLOR_SELECTIONS));
+  fRevert = new BButton (BRect (0,0,0,0), "fRevert", B_TRANSLATE("Revert"), new BMessage (M_REVERT_COLOR_SELECTIONS));
   fRevert->ResizeToPreferred();
   ResizeTo (fSelector->Bounds().Width() + 30, fSelector->Bounds().Height() + 30 + fRevert->Bounds().Height());
   AddChild (fSelector);

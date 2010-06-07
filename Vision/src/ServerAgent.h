@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -83,7 +83,6 @@ class ServerAgent : public ClientAgent
     void                        DCCChatDialog (BString, BString, BString);
     void                        DCCGetDialog (BString, BString, BString, BString, BString);
     void                        SendData (const char *);
-    void                        AsyncSendData (const char *);
     void                        ParseLine (const char *);
     bool                        ParseEvents (const char *);
     bool                        ParseENums (const char *, const char *);
@@ -106,11 +105,6 @@ class ServerAgent : public ClientAgent
     
     void                        RemoveAutoexecChan (const BString &);
     void                        ParseAutoexecChans (const BString &);
-    void                        CreateSenderThread (void);
-    void                        CreateEstablishThread (void);
-
-    BLocker                     *fEndPointLock,
-                                 *fSendLock;
 
     static int32                fServerSeed;
 
@@ -141,22 +135,13 @@ class ServerAgent : public ClientAgent
                                   fHasWarned,			// warn about quitting
                                   fIsQuitting,			// look out, going down
                                   fCheckingLag,		// waiting for a lag_check reply
-                                  fReacquiredNick,     // disconnected nick has been reacquired
-                                  fEstablishHasLock;  // establish has taken ownership of
-									                   // the endPointLock pointer
+                                  fReacquiredNick;     // disconnected nick has been reacquired
 									                   
     int32                       fRetry,				// what retry # we're on
                                 fRetryLimit,			// connect retry limit	
                                 fLagCheck,			// system_time()
                                 fLagCount,			// passes made waiting
-                                fNickAttempt,
-                                fServerSocket;
-    char                        fSend_buffer[2048];		// buffer for sending
-
-    char                        fParse_buffer[2048];	// buffer for parsing
-
-    volatile thread_id          fLoginThread,
-                                  fSenderThread;		// thread that receives
+                                fNickAttempt;
 
     BObjectList<ClientAgent>    fClients;			// agents this server "owns"
     
@@ -166,15 +151,13 @@ class ServerAgent : public ClientAgent
     bool                        fInitialMotd,
                                   fIdentd;
     BString                     fCmds;
-    int32                       fSocket;  // socket
+    int32                       fConnectionID;
 	
     BObjectList<BString>        fStartupChannels,
                                 *fPendingSends;
     BObjectList<NotifyListItem> fNotifyNicks;
 //                                fIgnoreNicks;
     
-    static int32                Establish (void *);
-    static int32                Sender (void *);
     static int32                Timer (void *);
     
     ListAgent                   *fListAgent;
@@ -184,7 +167,6 @@ class ServerAgent : public ClientAgent
                                   fNickIndex;
     ClientAgentLogger           *fLogger;
     
-    sem_id                      fSendSyncSem; // synchronization semaphore for data sends
     ServerData                  fCurrentServer;
     std::map<BString, BString>		fRemoteAwayMessages;
 };

@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -36,6 +36,7 @@ class VisionApp * vision_app;
 #include <Resources.h>
 #include <FindDirectory.h>
 #include <Font.h>
+#include <Locale.h>
 #include <MenuItem.h>
 #include <Mime.h>
 #include <Autolock.h>
@@ -55,6 +56,7 @@ class VisionApp * vision_app;
 #include "ClientWindow.h"
 #include "DCCConnect.h"
 #include "DCCFileWindow.h"
+#include "NetworkManager.h"
 #include "NetworkWindow.h"
 #include "SettingsFile.h"
 #include "SetupWindow.h"
@@ -68,6 +70,8 @@ const char *kSoundEventNames[] = { "Vision Nick Notification", 0 };
 
 const char *kAliasPathName = "Vision/Aliases";
 const char *kTrackerSig = "application/x-vnd.Be-TRAK";
+
+NetworkManager *network_manager = NULL;
 
 // And so it begins....
 int
@@ -118,6 +122,7 @@ VisionApp::VisionApp (void)
   if (GetAppInfo(&info) == B_OK) fAppRef = info.ref; 
 
   URLCrunch::UpdateTagList();
+  be_locale->GetAppCatalog(&fCatalog);
 }
 
 VisionApp::~VisionApp (void)
@@ -125,7 +130,7 @@ VisionApp::~VisionApp (void)
   int32 i (0);
   for (; i < MAX_FONTS; i++)
     delete fClientFont[i];
-
+    
   delete fActiveTheme;
 }
 
@@ -496,7 +501,7 @@ VisionApp::LoadDefaults (int32 section)
           fVisionSettings->AddString("logBaseDir", "logs");
         
         if (!fVisionSettings->HasInt32 ("encoding"))
-          fVisionSettings->AddInt32("encoding", B_ISO1_CONVERSION);
+          fVisionSettings->AddInt32("encoding", B_UNICODE_CONVERSION);
       }
       break;
     
@@ -639,6 +644,8 @@ VisionApp::QuitRequested (void)
 
   if (fIdentSocket >= 0)
     close (fIdentSocket);
+    
+  BMessenger(network_manager).SendMessage(B_QUIT_REQUESTED);
   
   BMessenger msgr(fClientWin);
   if (msgr.IsValid())
@@ -809,6 +816,8 @@ VisionApp::ReadyToRun (void)
     fSetupWin = new SetupWindow ();
     fSetupWin->Show();
   }
+  
+  network_manager = new NetworkManager();
 }
 
 void
@@ -1079,11 +1088,15 @@ VisionApp::GetString (const char *stringName) const
       printf (":SETTINGS: looking up String \"%s\"... ", stringName);
     
     if ((fVisionSettings->FindString (stringName, &value)) == B_OK)
+    {
       if (fDebugSettings) 
         printf ("found; returning %s\n", value);
+    }
     else
+    {
       if (fDebugSettings)
         printf (" not found; returning NULL\n");
+    }
   }      
   return value;
 }
@@ -1365,11 +1378,15 @@ VisionApp::GetBool (const char *settingName)
   bool value (false);
   
   if (fVisionSettings->FindBool (settingName, &value) == B_OK)
+  {
     if (fDebugSettings)
       printf ("found; returning %s\n", (value)? "true" : "false");
+  }
   else
+  {
     if (fDebugSettings)
       printf (" not found; returning false\n");
+  }
       
   return value;
 }
@@ -2069,7 +2086,7 @@ VisionApp::GetNextAlias(void **cookie, BString &name, BString &value)
   }
   else
   {
-    delete *cookie;
+    delete it;
     return false;
   }
 }

@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -33,9 +33,12 @@
 #include <stdio.h>
 
 #include <Box.h>
+#include <Catalog.h>
 #include <ListView.h>
 #include <ScrollView.h>
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "GeneralPrefs"
 
 GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redraw, uint32 flags)
   : BView (frame, title, redraw, flags),
@@ -49,14 +52,14 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
   fPrefsBox->AddChild(fPrefsItems[piColor]);
   fPrefsList = new BListView (BRect (0.0, 0.0, fPrefsItems[piWindow]->Bounds().right / 2, fPrefsItems[piWindow]->Bounds().bottom), "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
   fPrefsList->MoveTo(5, 5);
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_ALIAS_ITEM));
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_APP_ITEM));
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_COLOR_ITEM));
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_FONT_ITEM));
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_COMMAND_ITEM));
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_EVENT_ITEM));
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_DCC_ITEM));
-  fPrefsList->AddItem (new BStringItem (S_PREFGEN_LOG_ITEM));
+  fPrefsList->AddItem (new BStringItem (B_TRANSLATE("Aliases")));
+  fPrefsList->AddItem (new BStringItem (B_TRANSLATE("Application")));
+  fPrefsList->AddItem (new BStringItem (B_TRANSLATE("Colors")));
+  fPrefsList->AddItem (new BStringItem (B_TRANSLATE("Fonts")));
+  fPrefsList->AddItem (new BStringItem (B_TRANSLATE("Commands")));
+  fPrefsList->AddItem (new BStringItem (B_TRANSLATE("Events")));
+  fPrefsList->AddItem (new BStringItem (B_TRANSLATE("DCC")));
+  fPrefsList->AddItem (new BStringItem (B_TRANSLATE("Logging")));
   fPrefsList->SetSelectionMessage (new BMessage (M_GENERALPREFS_SELECTION_CHANGED));
   BScrollView *scroller (new BScrollView("list scroller", fPrefsList, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, 0, false, true));
   AddChild(scroller);

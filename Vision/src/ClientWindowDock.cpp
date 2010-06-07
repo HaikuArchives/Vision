@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Rene Gollent
  */
  
-
+#include <Catalog.h>
 #include <ScrollView.h>
 #include <StringView.h>
 
@@ -38,6 +38,9 @@ label_height()
 {
   return 8 + ceilf(be_plain_font->Size());
 }
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "Window List"
 
 //////////////////////////////////////////////////////////////////////////////
 /// Begin AgentDock functions
@@ -159,7 +162,7 @@ AgentDockWinList::AgentDockWinList (BRect frame_)
   
   BRect headerFrame (frame);
   headerFrame.bottom = label_height() - 1;
-  fAHeader = new AgentDockHeader (headerFrame, S_CWD_WINLIST_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+  fAHeader = new AgentDockHeader (headerFrame, B_TRANSLATE("Window List"), B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
   AddChild (fAHeader);
    
   frame.top = headerFrame.bottom + 1;
@@ -212,7 +215,7 @@ AgentDockNotifyList::AgentDockNotifyList (BRect frame_)
   BRect headerFrame (frame);
   headerFrame.top = 0;
   headerFrame.bottom = label_height() - 1;
-  fAHeader = new AgentDockHeader (headerFrame, S_CWD_NOTIFY_HEADER,
+  fAHeader = new AgentDockHeader (headerFrame, B_TRANSLATE("Notify List"),
     B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
   headerFrame.top = headerFrame.bottom + 1;
   // BScrollView in R5 has an odd bug where if you initialize it too small,

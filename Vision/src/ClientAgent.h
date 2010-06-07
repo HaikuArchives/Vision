@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -93,9 +93,9 @@ class ClientAgent : public BView
 
     static void                 PackDisplay (BMessage *,
                                   const char *,
-                                  const uint32 = 0,
-                                  const uint32 = 0,
-                                  const uint32 = 0);
+                                  const int16 = 0,
+                                  const int16 = 0,
+                                  const int16 = 0);
 
     
     virtual void                ActionMessage (
@@ -106,6 +106,12 @@ class ClientAgent : public BView
 	bool						CancelMultilineTextPaste() const {  return fCancelMLPaste; }
 
     WindowListItem                 *fAgentWinItem;
+
+    virtual void                    Display (
+                                      const char *,
+                                      int16 = 0,
+                                      int16 = 0,
+                                      int16 = 0);
     
     
   private:
@@ -126,19 +132,14 @@ class ClientAgent : public BView
     friend class                    ClientAgentInputFilter;
     friend class                    ServerAgent;
  
-    virtual void                    Display (
-                                      const char *,
-                                      uint32 = 0,
-                                      uint32 = 0,
-                                      uint32 = 0);
                                       
     void                            UpdateStatus (int32);
 
     void                            ParsemIRCColors (
                                       const char *,
-                                      uint32 = 0,
-                                      uint32 = 0,
-                                      uint32 = 0);
+                                      int16 = 0,
+                                      int16 = 0,
+                                      int16 = 0);
 
    	static BString                  FilterCrap (const char *, bool = false);
 

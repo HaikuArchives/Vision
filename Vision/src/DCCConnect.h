@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -54,7 +54,7 @@ class DCCConnect : public BView
     virtual void          DetachedFromWindow (void);
     virtual void          Draw (BRect);
     virtual void          MessageReceived (BMessage *);
-    static void           UpdateBar (const BMessenger &, int, int, uint32, bool);
+    static void           UpdateBar (const BMessenger &, int, float, uint32, bool);
     static void           UpdateStatus (const BMessenger &, const char *);
 
   protected:
@@ -75,7 +75,7 @@ class DCCConnect : public BView
     BStringView           *fLabel;
 
     int32                 fTotalTransferred;
-    int32                 fFinalRateAverage;
+    float                 fFinalRateAverage;
     
     thread_id             fTid;
     bool                  fIsStopped;

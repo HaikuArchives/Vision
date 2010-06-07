@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -26,7 +26,6 @@
 #define _VISIONBASE_H_
 
 #include "VisionMessages.h"
-#include "VisionStrings.h"
 
 /// base includes and defines ///
 #include <GraphicsDefs.h>

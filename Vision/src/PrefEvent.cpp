@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -23,21 +23,24 @@
 #include "PrefEvent.h"
 #include "Vision.h"
 
+#include <Catalog.h>
 #include <ScrollView.h>
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "EventPrefs"
 
 static const char *EventControlLabels[] =
 {
-	S_PREFEVENT_JOIN,
-	S_PREFEVENT_PART,
-	S_PREFEVENT_NICK,
-	S_PREFEVENT_QUIT,
-	S_PREFEVENT_KICK,
-	S_PREFEVENT_TOPIC,
-	S_PREFEVENT_SNOTICE,
-	S_PREFEVENT_UNOTICE,
-	S_PREFEVENT_NOTIFYON,
-	S_PREFEVENT_NOTIFYOFF,
+	B_TRANSLATE_MARK("Join"),
+	B_TRANSLATE_MARK("Part"),
+	B_TRANSLATE_MARK("Nick"),
+	B_TRANSLATE_MARK("Quit"),
+	B_TRANSLATE_MARK("Kick"),
+	B_TRANSLATE_MARK("Topic"),
+	B_TRANSLATE_MARK("Server Notice"),
+	B_TRANSLATE_MARK("User Notice"),
+	B_TRANSLATE_MARK("Notify On"),
+	B_TRANSLATE_MARK("Notify Off"),
 	0
 };
 
@@ -53,10 +56,15 @@ EventPrefsView::EventPrefsView (BRect frame)
   int32 i (0);
 
   float label_width (0.0);
-
+  
+  BString tempString;
   for (i = 0; EventControlLabels[i]; ++i)
-    if (StringWidth (EventControlLabels[i]) > label_width)
-      label_width = StringWidth (EventControlLabels[i]);
+  {
+  	tempString = B_TRANSLATE(EventControlLabels[i]);
+  	tempString += ": ";
+    if (StringWidth (tempString) > label_width)
+      label_width = StringWidth (tempString);
+  }
   
   BView *bgView (new BView (bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
   bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
@@ -64,11 +72,13 @@ EventPrefsView::EventPrefsView (BRect frame)
 
   for (i = 0; i < MAX_EVENTS; ++i)
   {
+  	tempString = B_TRANSLATE(EventControlLabels[i]);
+  	tempString += ": ";
     fEvents[i] = new VTextControl (
       BRect (5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()), 5 + bounds.right - be_plain_font->StringWidth("gP"),
       be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
       "commands",
-      EventControlLabels[i],
+      tempString,
       vision_app->GetEvent (i).String(),
       NULL,
       B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);

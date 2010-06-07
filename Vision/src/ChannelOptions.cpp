@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -24,9 +24,13 @@
 #include "ChannelOptions.h"
 #include "VisionBase.h"
 
+#include <Catalog.h>
 #include <StringView.h>
 
 #include <stdio.h>
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ChannelOptions"
 
 ChannelOptions::ChannelOptions (const char *chan_name_, ChannelAgent *parent_)
   : BWindow (
@@ -56,8 +60,8 @@ ChannelOptions::QuitRequested (void)
 void
 ChannelOptions::Init (void)
 {
-  BString temp (S_CHANOPTS_TITLE);
-  temp.Prepend (chan_name);
+  BString temp = B_TRANSLATE("%1 options");
+  temp.ReplaceFirst("%1", chan_name);
   SetTitle (temp.String());
   
   bgView = new BView (Bounds(),
@@ -91,8 +95,9 @@ ChannelOptions::Init (void)
 
   
   BString privString;  // this will become dynamic based on the current mode
-  privString += S_CHANOPTS_OPID1;
-  privString += S_CHANOPTS_OPID2;
+  privString += B_TRANSLATE("You are currently a channel operator.");
+  privString += " ";
+  privString += B_TRANSLATE("You may change any of these options.");
   
   BStringView *privMsgView = new BStringView (BRect (privilegesView->Bounds().left,
                                                      privilegesView->Bounds().top,

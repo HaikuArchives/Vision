@@ -13,14 +13,15 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
  */
 
-#include <View.h>
+#include <Catalog.h>
 #include <Messenger.h>
+#include <View.h>
 
 #include "ClientWindow.h"
 #include "NetworkPrefsView.h"
@@ -30,10 +31,13 @@
 
 #include <stdio.h>
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "NetworkSetupWindow"
+
 NetworkWindow::NetworkWindow (void)
   : BWindow (
       BRect (50, 50, 500, 350),
-      S_NETWORK_WINDOW_TITLE,
+      B_TRANSLATE("Network Setup"),
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
@@ -61,7 +65,7 @@ NetworkWindow::QuitRequested (void)
 NetPrefServerWindow::NetPrefServerWindow (BHandler *target)
   : BWindow (
       BRect (50, 50, 350, 250),
-      S_SERVERPREFS_TITLE,
+      B_TRANSLATE("Servers"),
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {

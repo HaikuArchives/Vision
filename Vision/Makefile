@@ -16,12 +16,12 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.7-H-090423
+VERSION := 0.9.8-20100606
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
 # system libs
-REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -lnetwork -lroot
+REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -lnetwork -lroot -lstdc++ -lsupc++ -llocale
 
 # lua
 LUA_LIBS := -L./src/lua/lib -llua -llualib
@@ -43,7 +43,7 @@ LIBLUA_PATH := ./src/lua/lib/liblua.a
 
 CC := gcc -c -pipe
 
-CFLAGS := -D_ZETA_TS_FIND_DIR_ -DVERSION_STRING=\"$(VERSION)\" -D_ZETA_USING_DEPRECATED_API_
+CFLAGS := -DVERSION_STRING=\"$(VERSION)\"
 
 # These can be set from the shell to change the build type
 ifeq ($(CHECK_MEM),true)
@@ -53,11 +53,6 @@ endif
 
 ifeq ($(BUILD_DEBUG),true)
 	CFLAGS += -g -O0
-	
-	ifeq ($(shell uname -r), 5.1)
-		CFLAGS += -fno-debug-opt
-	endif
-
 	BUILD_TYPE = Debug
 else
 	CFLAGS += -O1
@@ -71,12 +66,12 @@ CFLAGS += -DBEOS_BUILD
 CFLAGS += -DBUILD_DATE=\"$(BUILDDATE)\"
 CFLAGS += -fno-pic
 CFLAGS += -ffast-math
-CFLAGS += -march=pentium -mcpu=pentiumpro
+CFLAGS += -march=pentium -mtune=pentium3
 CFLAGS += -Wall -W -Wno-multichar -Wpointer-arith
 CFLAGS += -Wwrite-strings -Woverloaded-virtual
-CFLAGS += -Wconversion -Wpointer-arith
+CFLAGS += -Wpointer-arith
 CFLAGS += -Wmissing-declarations
-CFLAGS += -Wcast-qual -Wshadow
+CFLAGS += -Wcast-qual -Wshadow -Werror
 
 # be able to add flags from the env at will without chaging the makefile
 CFLAGS += $(VISION_ADDL_BUILD_FLAGS)

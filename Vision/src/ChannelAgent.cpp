@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -26,6 +26,7 @@
 
 #include <Beep.h>
 #include <FilePanel.h>
+#include <Catalog.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
 #include <Roster.h>
@@ -47,6 +48,9 @@
 #ifdef USE_INFOPOPPER
 #include <infopopper/InfoPopper.h>
 #endif
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ChannelWindow"
 
 ChannelAgent::ChannelAgent (
   const char *id_,
@@ -145,18 +149,20 @@ ChannelAgent::Init (void)
   AddChild (fNamesScroll);
 
   AddChild (fResize);
+  
+  BString joinString = B_TRANSLATE("Now talking in %1");
+  joinString.ReplaceFirst("%1", fId.String());
+  joinString += "\n";
 
-  Display (S_CHANNEL_INIT, C_JOIN);
-  Display (fId.String(), C_JOIN);
-  Display ("\n", C_JOIN);
+  Display (joinString.String(), C_JOIN);
 }
 
 void
 ChannelAgent::Show (void)
 {
   const BRect namesListRect (vision_app->GetRect ("namesListRect"));
-  int32 difference ((int32)(fNamesList->Bounds().Width() - namesListRect.Width()));
-  if (difference != 0)
+  float difference (fNamesList->Bounds().Width() - namesListRect.Width());
+  if (difference != 0.0)
   {
     fResize->MoveBy (difference, 0.0);
     fTextScroll->ResizeBy (difference, 0.0);
@@ -396,8 +402,8 @@ ChannelAgent::SortNames(const void *name1, const void *name2)
 
   BString first, second;
 
-  first += (((firstPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (firstPtr)->Status());
-  second += (((secondPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (secondPtr)->Status());
+  first << (((firstPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (firstPtr)->Status());
+  second << (((secondPtr)->Status() & STATUS_OP_BIT) ? STATUS_OP_BIT : (secondPtr)->Status());
   first.Prepend ('0', 10 - first.Length());
   second.Prepend ('0', 10 - second.Length());
   first  += (firstPtr)->Name();
@@ -723,7 +729,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
           BPoint point;
           msg->FindPoint ("loc", &point);
           point.x -= Frame().left;
-          float offset ((int32)(point.x - (fNamesScroll->Frame().left)));
+          float offset (point.x - fNamesScroll->Frame().left);
           fResize->MoveBy (offset, 0.0);
           fTextScroll->ResizeBy (offset, 0.0);
           fNamesScroll->ResizeBy (-offset, 0.0);
@@ -763,8 +769,12 @@ ChannelAgent::MessageReceived (BMessage *msg)
         
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String());
+        
+        BString rejoinString = "[@] ";
+        rejoinString += B_TRANSLATE("Attempting to rejoin ");
+        rejoinString += B_UTF8_ELLIPSIS "\n";
 			                    
-        Display (S_CHANNEL_RECON_REJOIN B_UTF8_ELLIPSIS "\n", C_ERROR, C_BACKGROUND, F_SERVER);
+        Display (rejoinString.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 
         // send join cmd		
         BMessage send (M_SERVER_SEND);	
@@ -836,14 +846,13 @@ ChannelAgent::MessageReceived (BMessage *msg)
           }    
 
         BMessage wegotkicked (M_DISPLAY); // "you were kicked"
-        BString buffer;
-        buffer += S_CHANNEL_GOT_KICKED;
-        buffer += theChannel;
-        buffer += " " S_CHANNEL_GOT_KICKED2 " ";
-        buffer += kicker;
-        buffer += " (";
-        buffer += rest;
-        buffer += ")\n";
+        BString buffer = "*** ";
+        buffer += B_TRANSLATE("You have been kicked from %1 by %2 (%3)");
+        buffer.ReplaceFirst("%1", theChannel);
+        buffer.ReplaceFirst("%2", kicker);
+        buffer.ReplaceFirst("%3", rest);
+        buffer += "\n";
+        
         PackDisplay (&wegotkicked, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
 
         // clean up
@@ -854,8 +863,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
         fMsgr.SendMessage (&wegotkicked);
 
         BMessage attemptrejoin (M_DISPLAY); // "you were kicked"
-        buffer = S_CHANNEL_REJOIN;
-        buffer += theChannel;
+        buffer = "*** ";
+        buffer += B_TRANSLATE("Attempting to rejoin %1");
+        buffer.ReplaceFirst("%1", theChannel);
         buffer += B_UTF8_ELLIPSIS "\n";
         PackDisplay (&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
         fMsgr.SendMessage (&attemptrejoin);
@@ -1197,25 +1207,37 @@ ChannelAgent::MessageReceived (BMessage *msg)
        }
        break;
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "StatusBar"
+
      case M_STATUS_ADDITEMS:
        {
+       	BString statusString;
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
            0, ""), true);
-       
+    
+         statusString = B_TRANSLATE("Lag");
+         statusString += ": ";
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-           S_STATUS_LAG, "", STATUS_ALIGN_LEFT), true);
+           statusString.String(), "", STATUS_ALIGN_LEFT), true);
 
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
            0, "", STATUS_ALIGN_LEFT), true);
 
+         statusString = B_TRANSLATE("Users");
+         statusString += ": ";
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-           S_STATUS_USERS, ""), true);
+           statusString.String(), ""), true);
 
+         statusString = B_TRANSLATE("Ops");
+         statusString += ": ";
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-           S_STATUS_OPS, ""), true);
+           statusString.String(), ""), true);
 
+         statusString = B_TRANSLATE("Modes");
+         statusString += ": ";
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-           S_STATUS_MODES, ""), true);
+           statusString.String(), ""), true);
 
          vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
            "", "", STATUS_ALIGN_LEFT), true);
@@ -1410,17 +1432,18 @@ ChannelAgent::ModeEvent (BMessage *msg)
   BString buffer,
           targetS (target);
 
-  buffer += "*** ";
-  buffer += theNick;
-  buffer += S_CHANNEL_SET_MODE;
-  buffer += mode;
-
+  buffer = "*** ";
   if (targetS != "-9z99")
   {
-    buffer += " ";
-    buffer += targetS;
+    buffer += B_TRANSLATE("%1 set mode %2 %3");
   }
-
+  else
+  {
+    buffer += B_TRANSLATE("%1 set mode %2");	
+  }
+  buffer.ReplaceFirst("%1", theNick);
+  buffer.ReplaceFirst("%2", mode);
+  buffer.ReplaceFirst("%3", targetS);
   buffer += "\n";
 
   BMessenger display (this);

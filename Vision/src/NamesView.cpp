@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -427,12 +427,12 @@ NamesView::MessageReceived (BMessage *msg)
         if (idx >= 0)
         {
           NameItem *item (dynamic_cast<NameItem *>(ItemAt(idx)));
-          BMessage msg (M_CHOSE_FILE);
-          msg.AddString ("nick", item->Name());
-          msg.AddRef ("refs", &ref);
+          BMessage message (M_CHOSE_FILE);
+          message.AddString ("nick", item->Name());
+          message.AddRef ("refs", &ref);
           ClientAgent *myParent (dynamic_cast<ClientAgent *>(Parent()->Parent()));
           if (myParent)
-            myParent->fSMsgr.SendMessage (&msg);
+            myParent->fSMsgr.SendMessage (&message);
         }
       }
     }

@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -23,14 +23,17 @@
 #include "PrefGeneral.h"
 #include "Vision.h"
 
-#include <View.h>
-#include <OutlineListView.h>
 #include <Box.h>
+#include <Catalog.h>
 #include <ScrollView.h>
+#include <View.h>
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "PrefWindow"
 
 PrefsWindow::PrefsWindow(void)
   : BWindow (BRect (88.0, 108.0, 0.0, 0.0),
-      S_PREFSWIN_TITLE,
+      B_TRANSLATE("Preferences"),
       B_TITLED_WINDOW,
       B_ASYNCHRONOUS_CONTROLS)
 {

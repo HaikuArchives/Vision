@@ -13,7 +13,7 @@
  *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  *
  * Contributor(s): Rene Gollent
@@ -835,11 +835,11 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 
       if ((fTracking == 1) && (fSp_start != fSp_end))
       {
-        BMessage msg (B_MIME_DATA);
+        BMessage message (B_MIME_DATA);
         BString text;
 
         GetSelectionText (text);
-        msg.AddData (
+        message.AddData (
           "text/plain",
           B_MIME_TYPE,
           text.String(),
@@ -852,8 +852,8 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
         else
           clip_name.Prepend ("RunView");
 
-        msg.AddString ("be:clip_name", clip_name.String());
-        msg.AddInt32 ("be:actions", B_COPY_TARGET);
+        message.AddString ("be:clip_name", clip_name.String());
+        message.AddInt32 ("be:actions", B_COPY_TARGET);
 
         BRect frame (
           fLines[fSp_start.fLine]->fEdges[fSp_start.fOffset],
@@ -935,7 +935,7 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
         if (frame.Height() > Bounds().Height())
           frame = Bounds();
 
-        DragMessage (&msg, frame);
+        DragMessage (&message, frame);
 
         fTracking = 3;
       }
@@ -1130,8 +1130,8 @@ RunView::MessageReceived (BMessage *msg)
 
         be_clipboard->Clear();
 
-        BMessage *msg (be_clipboard->Data());
-        msg->AddData ("text/plain", B_MIME_TYPE, fText.String(), fText.Length());
+        BMessage *message (be_clipboard->Data());
+        message->AddData ("text/plain", B_MIME_TYPE, fText.String(), fText.Length());
 
         be_clipboard->Commit();
         be_clipboard->Unlock();
@@ -2106,11 +2106,7 @@ Line::FigureEdges (
 
     const BFont &f (theme->FontAt (fFcs[cur_font].fIndex));
 
-#ifdef __INTEL__
     float eshift[ccount];
-#else
-    float *eshift = new float[ccount];
-#endif
     f.GetEscapements (
       fText + fFcs[cur_fFcs].fOffset,
       ccount,
@@ -2136,7 +2132,7 @@ Line::FigureEdges (
       if ((fEdge_count + i > 0) && fEdges[fEdge_count + i - 1] == 0)
       {
          int32 temp = fEdge_count + i - 1;
-         while (fEdges[--temp] == 0);
+         while (fEdges[--temp] == 0) ;
          fEdges[fEdge_count + i] += fEdges[temp];
       }
     }

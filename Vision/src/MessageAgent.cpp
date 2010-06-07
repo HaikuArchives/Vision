@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -24,6 +24,7 @@
  */
 
 #include <Beep.h>
+#include <Catalog.h>
 #include <Entry.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
@@ -48,6 +49,9 @@
 #ifdef USE_INFOPOPPER
 #include <infopopper/InfoPopper.h>
 #endif
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "DCCMessages"
 
 MessageAgent::MessageAgent (
   BRect &frame_,
@@ -161,9 +165,12 @@ MessageAgent::DCCServerSetup(void)
   
   BMessage statMsg (M_DISPLAY);
 
+  BString temp;
   if (fMySocket < 0)
   {
-    ClientAgent::PackDisplay (&statMsg, S_DCC_SOCKET_ERROR, C_ERROR);
+  	temp = B_TRANSLATE("Error creating socket.");
+  	temp += "\n";
+    ClientAgent::PackDisplay (&statMsg, temp.String(), C_ERROR);
     fMsgr.SendMessage (&statMsg);
     return;
   }
@@ -176,7 +183,9 @@ MessageAgent::DCCServerSetup(void)
   
   if (bind (fMySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
   {
-    ClientAgent::PackDisplay (&statMsg, S_DCC_BIND_ERROR, C_ERROR);
+  	temp = B_TRANSLATE("Error binding socket.");
+  	temp += "\n";
+    ClientAgent::PackDisplay (&statMsg, temp.String(), C_ERROR);
     fMsgr.SendMessage (&statMsg);
     return;
   }
@@ -199,8 +208,12 @@ MessageAgent::DCCServerSetup(void)
   struct in_addr addr;
 		
   addr.s_addr = inet_addr (address.String());
-  dataBuffer << S_DCC_CHAT_LISTEN 
-    << address.String() << S_DCC_CHAT_PORT << myPort << "\n";
+  dataBuffer = B_TRANSLATE("Accepting connection on address %1, port %2.");
+  dataBuffer.ReplaceFirst("%1", address.String());
+  temp = "";
+  temp << myPort;
+  dataBuffer.ReplaceFirst("%2", temp.String());
+  dataBuffer += "\n";
   ClientAgent::PackDisplay (&statMsg, dataBuffer.String(), C_TEXT);
   fMsgr.SendMessage (&statMsg);
   return;
@@ -231,8 +244,11 @@ MessageAgent::DCCIn (void *arg)
   agent->fDConnected = true;
   
   BMessage msg (M_DISPLAY);
+  
+  BString temp = B_TRANSLATE("Connected!");
+  temp += "\n";
 
-  ClientAgent::PackDisplay (&msg, S_DCC_CHAT_CONNECTED);
+  ClientAgent::PackDisplay (&msg, temp.String());
   mMsgr.SendMessage (&msg);
 
   char tempBuffer[2];
@@ -254,7 +270,9 @@ MessageAgent::DCCIn (void *arg)
         BMessage termMsg (M_DISPLAY);
 
         agent->fDConnected = false;
-        ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
+        temp = B_TRANSLATE("DCC Chat Terminated.");
+        temp += "\n";
+        ClientAgent::PackDisplay (&termMsg, temp.String());
         mMsgr.SendMessage (&termMsg);
         break;
       }
@@ -315,7 +333,9 @@ MessageAgent::DCCIn (void *arg)
     {
       BMessage termMsg (M_DISPLAY);
       agent->fDConnected = false;
-      ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
+      temp = B_TRANSLATE("DCC Chat Terminated.");
+      temp += "\n";
+      ClientAgent::PackDisplay (&termMsg, temp.String());
       mMsgr.SendMessage (&termMsg);
       break;
     }
@@ -338,12 +358,15 @@ MessageAgent::DCCOut (void *arg)
   char *endpoint;
   
   uint32 realIP = strtoul (agent->fDIP.String(), &endpoint, 10);
+  
+  BString temp;
 
   if ((dccAcceptSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
   {
     BMessage msg (M_DISPLAY);
-
-    ClientAgent::PackDisplay (&msg, S_DCC_SOCKET_ERROR);
+    temp = B_TRANSLATE("Error creating socket.");
+    temp += "\n";
+    ClientAgent::PackDisplay (&msg, temp.String());
     mMsgr.SendMessage (&msg);
     return false;
   }
@@ -362,10 +385,12 @@ MessageAgent::DCCOut (void *arg)
 
     addr.s_addr = ntohl (realIP);
 
-    buffer << S_DCC_CHAT_TRY
-      << inet_ntoa (addr)
-      << S_DCC_CHAT_PORT << agent->fDPort << "\n";
-    
+    buffer  = B_TRANSLATE("Trying to connect to address %1 on port %2.");
+    buffer.ReplaceFirst("%1", inet_ntoa(addr));
+    temp = "";
+    temp << agent->fDPort;
+    buffer.ReplaceFirst("%2", temp.String());
+    buffer += "\n";
     ClientAgent::PackDisplay (&msg, buffer.String());
     mMsgr.SendMessage (&msg);
   }
@@ -374,8 +399,9 @@ MessageAgent::DCCOut (void *arg)
   if (status < 0)
   {
     BMessage msg (M_DISPLAY);
-
-    ClientAgent::PackDisplay (&msg, S_DCC_CONN_ERROR);
+    temp = B_TRANSLATE("Error connecting socket.");
+    temp += "\n";
+    ClientAgent::PackDisplay (&msg, temp.String());
     mMsgr.SendMessage (&msg);
     close (agent->fMySocket);
     return false;
@@ -384,7 +410,9 @@ MessageAgent::DCCOut (void *arg)
   agent->fDConnected = true;
 
   BMessage msg (M_DISPLAY);
-  ClientAgent::PackDisplay (&msg, S_DCC_CHAT_CONNECTED);
+  temp = B_TRANSLATE("Connected!");
+  temp += "\n";
+  ClientAgent::PackDisplay (&msg, temp.String());
   mMsgr.SendMessage (&msg);
 
   char tempBuffer[2];
@@ -408,7 +436,9 @@ MessageAgent::DCCOut (void *arg)
         BMessage termMsg (M_DISPLAY);
 
         agent->fDConnected = false;
-        ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
+        temp = B_TRANSLATE("DCC Chat Terminated.");
+        temp += "\n";
+        ClientAgent::PackDisplay (&termMsg, temp.String());
         mMsgr.SendMessage (&termMsg);
         break;
       }
@@ -445,7 +475,9 @@ MessageAgent::DCCOut (void *arg)
     {
       BMessage termMsg (M_DISPLAY);
       agent->fDConnected = false;
-      ClientAgent::PackDisplay (&termMsg, S_DCC_CHAT_TERM);
+      temp = B_TRANSLATE("DCC Chat Terminated.");
+      temp += "\n";
+      ClientAgent::PackDisplay (&termMsg, temp.String());
       mMsgr.SendMessage (&termMsg);
       break;
     }
@@ -673,7 +705,9 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
     if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
     {
       fDConnected = false;
-      Display (S_DCC_CHAT_TERM);
+      BString temp = B_TRANSLATE("DCC Chat Terminated");
+      temp += "\n";
+      Display (temp.String());
       return;
     }
     outTemp.RemoveLast ("\n");
@@ -719,7 +753,9 @@ MessageAgent::Parser (const char *buffer)
     if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
     {
       fDConnected = false;
-      Display (S_DCC_CHAT_TERM);
+      BString temp = B_TRANSLATE("DCC Chat Terminated");
+      temp += "\n";
+      Display (temp.String());
       return;
     }
   }
