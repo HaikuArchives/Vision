@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -239,5 +239,13 @@ const uint32 M_PROMPT_DONE                          = 0x2400;
 const uint32 M_PROMPT_CANCEL                        = 0x2401;
 const uint32 M_OFFVIEW_SELECTION                    = 0x2405;
 const uint32 M_LOAD_URL                             = 0x2406;
+
+// network manager
+const uint32 M_CREATE_CONNECTION                    = 0x2500;
+const uint32 M_DESTROY_CONNECTION                   = 0x2501;
+const uint32 M_SEND_CONNECTION_DATA                 = 0x2502;
+const uint32 M_CONNECTION_DATA_RECEIVED             = 0x2503;
+const uint32 M_CONNECTION_DISCONNECT                = 0x2504;
+const uint32 M_CONNECTION_CREATED					= 0x2505;
 
 #endif // _VISIONMESSAGES_H_

@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -21,18 +21,22 @@
  */
 
 #include "PrefFont.h"
+#include "NumericFilter.h"
 #include "Vision.h"
+#include "VTextControl.h"
 
 #include <ctype.h>
 #include <stdlib.h>
 
-#include <ScrollView.h>
+#include <Catalog.h>
 #include <Menu.h>
 #include <MenuBar.h>
 #include <MenuField.h>
 #include <MenuItem.h>
-#include "NumericFilter.h"
-#include "VTextControl.h"
+#include <ScrollView.h>
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "FontPrefs"
 
 struct FontStat
 {
@@ -163,14 +167,14 @@ FontMenu::AttachedToWindow (void)
 
 static const char *FontControlLabels[] =
 {
-  S_PREFFONT_TEXT,
-  S_PREFFONT_SMESSAGES,
-  S_PREFFONT_URLS,
-  S_PREFFONT_NAMESLIST,
-  S_PREFFONT_INPUT_TEXT,
-  S_PREFFONT_WINLIST,
-  S_PREFFONT_CHANLIST,
-  S_PREFFONT_TSTAMP,
+  B_TRANSLATE_MARK("Text"),
+  B_TRANSLATE_MARK("Server Messages"),
+  B_TRANSLATE_MARK("URLs"),
+  B_TRANSLATE_MARK("Names List"),
+  B_TRANSLATE_MARK("Input Text"),
+  B_TRANSLATE_MARK("Window List"),
+  B_TRANSLATE_MARK("Channel List"),
+  B_TRANSLATE_MARK("Timestamp"),
 	0
 };
 
@@ -187,15 +191,19 @@ FontPrefsView::FontPrefsView (BRect frame)
   {
   	BMessage *msg (new BMessage (M_FONT_ELEMENT_CHANGE));
   	msg->AddInt32 ("index", i);
-    fElementMenu->AddItem (new BMenuItem (FontControlLabels[i], msg));
+    fElementMenu->AddItem (new BMenuItem (B_TRANSLATE(FontControlLabels[i]), msg));
   }
   fFontElementField = new BMenuField (BRect (10, 10, 200, 50), "elements", "Element: ",
     fElementMenu);
   AddChild (fFontElementField);
   FontMenu *menu (new FontMenu ("fonts"));
-  fFontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", S_PREFFONT_FONTLABEL, menu);
+  BString itemText = B_TRANSLATE("Font");
+  itemText += ": ";
+  fFontMenuField = new BMenuField (BRect (10, 10, 200, 50), "fonts", itemText.String(), menu);
   AddChild (fFontMenuField);
-  fTextControl = new VTextControl (BRect (60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
+  itemText = B_TRANSLATE("Size");
+  itemText += ": ";
+  fTextControl = new VTextControl (BRect (60, 60, 200, 90), "", itemText.String(), "",
   	new BMessage (M_FONT_SIZE_CHANGE));
   fTextControl->TextView()->AddFilter (new NumericFilter());
   AddChild (fTextControl);

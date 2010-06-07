@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -24,6 +24,8 @@
  *                 Bjorn Oksholen
  *                 Alan Ellis <alan@cgsoftware.org>
  */
+ 
+#include <Catalog.h>
  
 #include "Vision.h"
 #include "Utilities.h"
@@ -43,6 +45,9 @@
 <slaad> ?
 <kurros> yeah
 */
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ServerMessages"
 
 bool
 ServerAgent::ParseEvents (const char *data)
@@ -528,12 +533,12 @@ ServerAgent::ParseEvents (const char *data)
     else
     {
       BMessage msg (M_DISPLAY);
-      BString buffer;
+      BString buffer = "*** ";
 
       theMode.RemoveFirst(":");
 
-      buffer += S_PEVENTS_UMODE_CHANGE;
-      buffer += theMode;
+      buffer += B_TRANSLATE("User mode changed: %1");
+      buffer.ReplaceFirst("%1", theMode);
       buffer += "\n";
       
       PackDisplay (&msg, buffer.String());
@@ -583,16 +588,15 @@ ServerAgent::ParseEvents (const char *data)
 
   if (secondWord == "INVITE")
   {
-    BString tempString,
+    BString tempString("*** "),
             theChannel (GetWord(data, 4));
 
     theChannel.RemoveFirst(":");
 
-    tempString += S_PEVENTS_INVITE1;
-    tempString += theChannel;
-    tempString += S_PEVENTS_INVITE2;
-    tempString += GetNick(data);
-    tempString += ".\n";
+    tempString = B_TRANSLATE("You have been invited to %1 by %2.");
+    tempString.ReplaceFirst("%1", theChannel);
+    tempString.ReplaceFirst("%2", GetNick(data));
+    tempString += "\n";
 
     BMessage msg (M_DISPLAY);
 
@@ -604,20 +608,20 @@ ServerAgent::ParseEvents (const char *data)
 
   if (secondWord == "SILENCE")
   {
-    BString tempString,
+    BString tempString ("*** "),
             theHostmask (GetWord(data, 3));  // Could be a hostmask, a nick, whatever
 		const char *hostmask = theHostmask.String();
 		
 		if (hostmask[0] == '+') {
-	    tempString += S_PEVENTS_SILENCE_ADDED;
-      theHostmask.RemoveFirst("+");
+	      tempString += B_TRANSLATE("Hostmask added to SILENCE list: %1.");
+	      theHostmask.RemoveFirst("+");
 		} else {
-	    tempString += S_PEVENTS_SILENCE_REMOVED;
-      theHostmask.RemoveFirst("-");
+	      tempString += B_TRANSLATE("Hostmask removed from SILENCE list: %1.");
+          theHostmask.RemoveFirst("-");
 		}
 
-    tempString += theHostmask;
-    tempString += ".\n";
+    tempString.ReplaceFirst("%1", theHostmask);
+    tempString += "\n";
 
     BMessage msg (M_DISPLAY);
 

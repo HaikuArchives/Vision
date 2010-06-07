@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -26,12 +26,16 @@
 #include "VTextControl.h"
 
 #include <Alert.h>
+#include <Catalog.h>
 #include <CheckBox.h>
 #include <Path.h>
 
 #include <ctype.h>
 #include <stdlib.h>
- 
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "LogPrefs"
+
 LogPrefsView::LogPrefsView (BRect frame)
   : BView (frame, "DCC prefs", B_FOLLOW_NONE, B_WILL_DRAW | B_FRAME_EVENTS)
 {
@@ -42,17 +46,20 @@ LogPrefsView::LogPrefsView (BRect frame)
   float maxWidth (0),
     maxHeight (0);
 
-  fLogBaseDir = new VTextControl (BRect (0,0,0,0), NULL, S_PREFLOG_LOGPATH, vision_app->GetString("logBaseDir"), new BMessage (M_PREFLOG_LOGPATH_CHANGED));  fLogBaseDir->ResizeToPreferred();
+  BString itemText = B_TRANSLATE("Log folder");
+  itemText += ": ";
+  fLogBaseDir = new VTextControl (BRect (0,0,0,0), NULL, itemText.String(), vision_app->GetString("logBaseDir"), new BMessage (M_PREFLOG_LOGPATH_CHANGED));  fLogBaseDir->ResizeToPreferred();
   fLogBaseDir->ResizeToPreferred();
-  fLogBaseDir->SetDivider (fLogBaseDir->StringWidth (S_PREFLOG_LOGPATH) + 5);
   fLogBaseDir->ResizeTo (Bounds().Width() - 15, fLogBaseDir->Bounds().Height());
   fLogBaseDir->MoveTo (be_plain_font->StringWidth("S"), be_plain_font->Size());
   AddChild (fLogBaseDir);
   checkboxRect = fLogBaseDir->Bounds();
   
-  fLogStampFormat = new VTextControl (BRect (0,0,0,0), NULL, S_PREFLOG_TS_FORMAT, vision_app->GetString("timestamp_format"), new BMessage (M_PREFLOG_TS_FORMAT_CHANGED));
+  itemText = B_TRANSLATE("Timestamp format");
+  itemText += ": ";
+  fLogStampFormat = new VTextControl (BRect (0,0,0,0), NULL, itemText.String(), vision_app->GetString("timestamp_format"), new BMessage (M_PREFLOG_TS_FORMAT_CHANGED));
   fLogBaseDir->ResizeToPreferred();
-  fLogStampFormat->SetDivider (fLogBaseDir->StringWidth (S_PREFLOG_TS_FORMAT) + 5); 
+  fLogStampFormat->SetDivider (fLogBaseDir->StringWidth (itemText) + 5); 
   fLogStampFormat->MoveTo (be_plain_font->StringWidth("S"), fLogBaseDir->Frame().bottom + be_plain_font->Size());
   AddChild (fLogStampFormat);
   checkboxRect.top += fLogStampFormat->Bounds().Height() * 1.2;  
@@ -62,7 +69,7 @@ LogPrefsView::LogPrefsView (BRect frame)
   checkboxRect.bottom = checkboxRect.top;
   msg.AddString ("setting", "timestamp");
   fTimeStamp = new BCheckBox (checkboxRect, "timestamp",
-    S_PREFLOG_SHOW_TIMESTAMP,
+    B_TRANSLATE("Show timestamps in IRC window"),
     new BMessage (msg));
   fTimeStamp->SetValue ((vision_app->GetBool ("timestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fTimeStamp->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -75,7 +82,7 @@ LogPrefsView::LogPrefsView (BRect frame)
   checkboxRect.top += fTimeStamp->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "log_enabled");
   fLogEnabled = new BCheckBox (checkboxRect, "fLogEnabled",
-    S_PREFLOG_USE_LOGGING,
+    B_TRANSLATE("Enable logging"),
     new BMessage (msg));
   fLogEnabled->SetValue ((vision_app->GetBool ("log_enabled")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fLogEnabled->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -88,7 +95,7 @@ LogPrefsView::LogPrefsView (BRect frame)
   checkboxRect.top += fLogEnabled->Bounds().Height() * 1.2;
   msg.ReplaceString ("setting", "log_filetimestamp");
   fLogFileTimestamp = new BCheckBox (checkboxRect, "fLogFileTimestamp",
-    S_PREFLOG_LOG_TIMESTAMP,
+    B_TRANSLATE("Append timestamp to log filenames"),
     new BMessage (msg));
   fLogFileTimestamp->SetValue (vision_app->GetBool (("log_filetimestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fLogFileTimestamp->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -108,6 +115,7 @@ void
 LogPrefsView::AttachedToWindow (void)
 {
   fLogBaseDir->SetTarget (this);
+  fLogBaseDir->SetDivider (fLogBaseDir->StringWidth (fLogBaseDir->Label()) + 5.0);
   fLogBaseDir->ResizeTo (Bounds().Width() - 15, fLogBaseDir->Bounds().Height());
   fLogStampFormat->SetTarget (this);
   fLogStampFormat->ResizeTo (Bounds().Width() / 2.0, fLogStampFormat->Bounds().Height());
@@ -150,7 +158,7 @@ LogPrefsView::MessageReceived (BMessage *msg)
          BString tempPath (fLogBaseDir->Text());
         if (tempPath.Length() == 0)
         {
-          BAlert *emptyPathAlert (new BAlert (S_PREFLOG_ALERT_TITLE, S_PREFLOG_ALERT_TEXT, S_PREFLOG_ALERT_BUTTON));
+          BAlert *emptyPathAlert (new BAlert (B_TRANSLATE("Error"), B_TRANSLATE("The log path you have entered is invalid"), B_TRANSLATE("Close")));
           emptyPathAlert->Go();
           break; 
         }
@@ -163,7 +171,7 @@ LogPrefsView::MessageReceived (BMessage *msg)
           BPath path (tempPath.String());
           if (path.InitCheck() != B_OK)
           {
-            BAlert *badPathAlert (new BAlert (S_PREFLOG_ALERT_TITLE, S_PREFLOG_ALERT_TEXT, S_PREFLOG_ALERT_BUTTON));
+            BAlert *badPathAlert (new BAlert (B_TRANSLATE("Error"), B_TRANSLATE("The log path you have entered is invalid"), B_TRANSLATE("Close")));
             badPathAlert->Go();
             break; 
           }

@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -24,11 +24,15 @@
 
 #include <stdio.h>
 
+#include <Catalog.h>
 #include <CheckBox.h>
 #include <Menu.h>
 #include <MenuField.h>
 #include <MenuItem.h>
 #include <UTF8.h>
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "AppPrefs"
 
 AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   : BView (frame, "App/Window Prefs", B_FOLLOW_NONE, B_WILL_DRAW)
@@ -42,7 +46,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.bottom = checkboxRect.top;
   msg.AddString ("setting", "versionParanoid");
   fVersionParanoid = new BCheckBox (checkboxRect, "version Paranoid",
-    S_PREFAPP_VERSION_PARANOID,
+    B_TRANSLATE("Show OS information in version reply"),
     new BMessage (msg));
   fVersionParanoid->SetValue ((!vision_app->GetBool ("versionParanoid")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fVersionParanoid->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -55,7 +59,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.OffsetBy(0.0, fVersionParanoid->Bounds().Height() * 1.2);
   msg.ReplaceString ("setting", "catchAltW");
   fCatchAltW = new BCheckBox (checkboxRect, "catch AltW",
-    S_PREFAPP_CMDW,
+    B_TRANSLATE("Require double Cmd+Q/W to close"),
     new BMessage (msg));
   fCatchAltW->SetValue ((vision_app->GetBool ("catchAltW")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fCatchAltW->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -68,7 +72,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.OffsetBy(0.0, fCatchAltW->Bounds().Height() * 1.2);
   msg.ReplaceString ("setting", "stripcolors");
   fStripColors = new BCheckBox (checkboxRect, "stripcolors",
-    S_PREFAPP_STRIP_MIRC,
+    B_TRANSLATE("Strip mIRC Colors"),
     new BMessage (msg));
   fStripColors->SetValue ((vision_app->GetBool ("stripcolors")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fStripColors->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -81,7 +85,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.OffsetBy(0.0, fStripColors->Bounds().Height() * 1.2);
   msg.ReplaceString ("setting", "Newbie Spam Mode");
   fSpamMode = new BCheckBox (checkboxRect, "newbiespammode",
-    S_PREFAPP_WARN_MULTILINE,
+    B_TRANSLATE("Warn when multiline pasting"),
     new BMessage (msg));
   fSpamMode->SetValue ((vision_app->GetBool ("Newbie Spam Mode")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fSpamMode->MoveBy(be_plain_font->StringWidth("S"), 0);
@@ -94,7 +98,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   checkboxRect.OffsetBy(0.0, fSpamMode->Bounds().Height() * 1.2);
   msg.ReplaceString ("setting", "queryOnMsg");
   fQueryMsg = new BCheckBox (checkboxRect, "queryOnMsg",
-    S_PREFAPP_QUERY_MSG,
+    B_TRANSLATE("Open new query window on message"),
     new BMessage (msg));
   fQueryMsg->SetValue ((vision_app->GetBool ("queryOnMsg")) ? B_CONTROL_ON : B_CONTROL_OFF);
   fQueryMsg->MoveBy(be_plain_font->StringWidth("S"), 0);

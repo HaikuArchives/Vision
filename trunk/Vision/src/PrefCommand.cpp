@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -24,17 +24,21 @@
 #include "Vision.h"
 #include "VTextControl.h"
 
+#include <Catalog.h>
 #include <ScrollView.h>
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "CommandPrefs"
 
 static const char *CommandControlLabels[] =
 {
-	S_PREFCOMMAND_QUIT,
-	S_PREFCOMMAND_KICK,
-	S_PREFCOMMAND_IGNORE,
-	S_PREFCOMMAND_UNIGNORE,
-	S_PREFCOMMAND_AWAY,
-	S_PREFCOMMAND_BACK,
-	S_PREFCOMMAND_UPTIME,
+	B_TRANSLATE_MARK("Quit"),
+	B_TRANSLATE_MARK("Kick"),
+	B_TRANSLATE_MARK("Ignore"),
+	B_TRANSLATE_MARK("Unignore"),
+	B_TRANSLATE_MARK("Away"),
+	B_TRANSLATE_MARK("Back"),
+	B_TRANSLATE_MARK("Uptime"),
 	0
 };
 
@@ -51,9 +55,14 @@ CommandPrefsView::CommandPrefsView (BRect frame)
   bounds.bottom -= 5;
   float label_width (0.0);
 
+  BString tempString;
   for (i = 0; CommandControlLabels[i]; ++i)
-    if (StringWidth (CommandControlLabels[i]) > label_width)
-      label_width = StringWidth (CommandControlLabels[i]);
+  {
+  	tempString = B_TRANSLATE(CommandControlLabels[i]);
+  	tempString += ": ";
+    if (StringWidth (tempString) > label_width)
+      label_width = StringWidth (tempString);
+  }
   
   BView *bgView (new BView (bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
   bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
@@ -61,11 +70,13 @@ CommandPrefsView::CommandPrefsView (BRect frame)
 
   for (i = 0; i < MAX_COMMANDS; ++i)
   {
+  	tempString = B_TRANSLATE(CommandControlLabels[i]);
+  	tempString += ": ";
     fCommands[i] = new VTextControl (
       BRect (5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()), 5 + bounds.right - be_plain_font->StringWidth("gP"),
       be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
       "commands",
-      CommandControlLabels[i],
+      tempString,
       vision_app->GetCommand (i).String(),
       NULL,
       B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);

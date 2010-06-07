@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -21,10 +21,11 @@
  *                 Todd Lair
  */
 
+#include <Catalog.h>
+#include <Mime.h>
+#include <Path.h>
 #include <StatusBar.h>
 #include <StringView.h>
-#include <Path.h>
-#include <Mime.h>
 #include <Window.h>
 
 #include <arpa/inet.h>
@@ -38,6 +39,9 @@
 #include "ServerAgent.h"
 #include "DCCConnect.h"
 #include "PlayButton.h"
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "DCCMessages"
 
 DCCConnect::DCCConnect (
   const char *n,
@@ -58,7 +62,7 @@ DCCConnect::DCCConnect (
         fIp (i),
         fPort (p),
         fTotalTransferred (0),
-        fFinalRateAverage (0),
+        fFinalRateAverage (0.0),
         fTid (-1),
         fIsStopped (false)
 {
@@ -67,10 +71,13 @@ DCCConnect::DCCConnect (
   char trail[128];
   sprintf (trail, " / %.1fk", atol (fSize.String()) / 1024.0);
 
+  BString statusBarString = B_TRANSLATE("KB/sec");
+  statusBarString += ": ";
+
   fBar = new BStatusBar (
     BRect (10, 10, Bounds().right - 30, Bounds().bottom - 10),
     "progress",
-    S_DCC_SPEED,
+    statusBarString.String(),
     trail);
   fBar->SetMaxValue (atol (fSize.String()));
   fBar->SetBarHeight (8.0);
@@ -194,7 +201,7 @@ DCCConnect::MessageReceived (BMessage *msg)
 
     case M_DCC_UPDATE_AVERAGE:
       {
-        fFinalRateAverage = msg->FindInt32 ("average");
+        fFinalRateAverage = msg->FindFloat ("average");
       }
       break;
 
@@ -245,7 +252,7 @@ DCCConnect::Unlock (void)
 }
 
 void
-DCCConnect::UpdateBar (const BMessenger &msgr, int readSize, int cps, uint32 size, bool update)
+DCCConnect::UpdateBar (const BMessenger &msgr, int readSize, float kbps, uint32 size, bool update)
 {
   BMessage msg (B_UPDATE_STATUS_BAR);
 
@@ -256,7 +263,7 @@ DCCConnect::UpdateBar (const BMessenger &msgr, int readSize, int cps, uint32 siz
     sprintf (text, "%.1f", size / 1024.0);
     msg.AddString ("trailing_text", text);
 
-    sprintf (text, "%d", cps);
+    sprintf (text, "%.2f", kbps);
     msg.AddString ("text", text);
   }
 
@@ -317,7 +324,7 @@ DCCReceive::Transfer (void *arg)
 
   if ((dccSock = socket (AF_INET, SOCK_STREAM, 0)) < 0)
   {
-    UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
+    UpdateStatus (msgr, B_TRANSLATE("Unable to establish connection."));
     return B_ERROR;
   }
 
@@ -331,23 +338,19 @@ DCCReceive::Transfer (void *arg)
   address.sin_port   = htons (atoi (reply.FindString ("port")));
   address.sin_addr.s_addr = htonl(strtoul (reply.FindString("ip"), 0, 10));
 
-  UpdateStatus (msgr, S_DCC_CONNECT_TO_SENDER);
+  UpdateStatus (msgr, B_TRANSLATE("Connecting to sender."));
   if (connect (dccSock, (sockaddr *)&address, sizeof (address)) < 0)
   {
-    UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
+    UpdateStatus (msgr, B_TRANSLATE("Unable to establish connection."));
     close (dccSock);
     return B_ERROR;
   }
 
   BPath path (reply.FindString("name"));
-  BString buffer;
+  BString buffer = B_TRANSLATE("Receiving %1 from %2.");
+  buffer.ReplaceFirst("%1", path.Leaf());
+  buffer.ReplaceFirst("%2", reply.FindString("nick"));
   off_t file_size (0);
-
-  buffer << S_DCC_RECV1
-    << path.Leaf()
-    << S_DCC_RECV2
-    << reply.FindString ("nick")
-    << ".";
 
   UpdateStatus (msgr, buffer.String());
 
@@ -376,7 +379,7 @@ DCCReceive::Transfer (void *arg)
 	
   uint32 bytes_received (file_size);
   uint32 size (atol (reply.FindString("size")));
-  uint32 cps (0);
+  float kbps (0);
 
   if (file.InitCheck() == B_NO_ERROR)
   {
@@ -404,15 +407,15 @@ DCCReceive::Transfer (void *arg)
 
       if (now - last > 500000)
       {
-        cps = (int)ceil ((bytes_received - file_size) / ((now - start) / 1000000.0));
+        kbps = ((bytes_received - file_size) / ((now - start) / 1000000.0)) / 1024.0;
         BMessage updmsg (M_DCC_UPDATE_AVERAGE);
-        updmsg.AddInt32 ("average", cps);
+        updmsg.AddFloat ("average", kbps);
         msgr.SendMessage (&updmsg);
         last = now;
         hit = true;
       }
       
-      DCCConnect::UpdateBar (msgr, readSize, cps, bytes_received, hit);
+      DCCConnect::UpdateBar (msgr, readSize, kbps, bytes_received, hit);
     }
   }
 
@@ -495,7 +498,7 @@ DCCSend::Transfer (void *arg)
 
   if ((sd = socket (AF_INET, SOCK_STREAM, 0)) < 0)
   {
-    UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
+    UpdateStatus (msgr, B_TRANSLATE("Unable to establish connection."));
     return 0;
   }
 
@@ -507,20 +510,24 @@ DCCSend::Transfer (void *arg)
   int sin_size;
   sin_size = (sizeof (struct sockaddr_in));
 
-  UpdateStatus (msgr, S_DCC_LOCK_ACQUIRE B_UTF8_ELLIPSIS);
+  BString updateString = B_TRANSLATE("Acquiring DCC lock");
+  updateString += B_UTF8_ELLIPSIS;
+  UpdateStatus (msgr, updateString.String());
 
   vision_app->AcquireDCCLock();
 
   if (!msgr.IsValid() || bind (sd, (sockaddr *)&address, sin_size) < 0)
   {
-    UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
+    UpdateStatus (msgr, B_TRANSLATE("Unable to establish connection."));
     vision_app->ReleaseDCCLock();
 
     close (sd);
     return 0;
   }
   
-  UpdateStatus (msgr, S_DCC_ACK_WAIT);
+  updateString = B_TRANSLATE("Waiting for acceptance");
+  updateString += B_UTF8_ELLIPSIS;
+  UpdateStatus (msgr, updateString.String());
 
   sendaddr.s_addr = inet_addr (ipdata.FindString ("ip"));
 
@@ -543,10 +550,10 @@ DCCSend::Transfer (void *arg)
     if (callmsgr.IsValid())
       callmsgr.SendMessage (&msg);
       
-    UpdateStatus (msgr, S_DCC_LISTEN_CALL);
+    UpdateStatus (msgr, B_TRANSLATE("Attempting to listen for connection."));
     if (listen (sd, 1) < 0)
     {
-      UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
+      UpdateStatus (msgr, B_TRANSLATE("Unable to establish connection."));
       vision_app->ReleaseDCCLock();
       close (sd);
       return 0;
@@ -568,7 +575,7 @@ DCCSend::Transfer (void *arg)
 
     if (select (sd + 1, &rset, 0, 0, &t) < 0)
     {
-      UpdateStatus (msgr, S_DCC_ESTABLISH_ERROR);
+      UpdateStatus (msgr, B_TRANSLATE("Unable to establish connection."));
       vision_app->ReleaseDCCLock();
       close (sd);
       return 0;
@@ -577,13 +584,13 @@ DCCSend::Transfer (void *arg)
     if (FD_ISSET (sd, &rset))
     {
       dccSock = accept (sd, (sockaddr *)&address, (socklen_t *)&sin_size);
-      UpdateStatus (msgr, S_DCC_ESTABLISH_SUCCEEDED);
+      UpdateStatus (msgr, B_TRANSLATE("Established connection."));
       break;
     }
       
     ++try_count;
-    status = S_DCC_WAIT_FOR_CONNECTION;
-    status << try_count << ".";
+    status = B_TRANSLATE("Waiting for connection");
+    status << " " << try_count << ".";
     UpdateStatus (msgr, status.String());
   }
   
@@ -609,24 +616,18 @@ DCCSend::Transfer (void *arg)
     bytes_sent = seekpos;
   }
 
-  status = S_DCC_SEND1;
-  status << path.Leaf()
-    << S_DCC_SEND2
-    << reply.FindString ("nick")
-    << ".";
+  status = B_TRANSLATE("Sending %1 to %2.");
+  status.ReplaceFirst("%1", path.Leaf());
+  status.ReplaceFirst("%2", reply.FindString("nick"));
   UpdateStatus (msgr, status.String());
 
-  int cps (0);
+  float kbps (0);
 
   if (file.InitCheck() == B_NO_ERROR)
   {
     bigtime_t last (system_time()), now;
     const uint32 DCC_BLOCK_SIZE (atoi(vision_app->GetString ("dccBlockSize")));
-#ifdef __INTEL__
     char buffer[DCC_BLOCK_SIZE];
-#else
-	char *buffer = new char[DCC_BLOCK_SIZE];
-#endif
     int period (0);
     ssize_t count (0);
     bigtime_t start = system_time();
@@ -638,7 +639,7 @@ DCCSend::Transfer (void *arg)
           
       if ((sent = send (dccSock, buffer, count, 0)) < count)
       {
-        UpdateStatus (msgr, S_DCC_WRITE_ERROR);
+        UpdateStatus (msgr, B_TRANSLATE("Error writing data."));
         break;
       }
       
@@ -669,19 +670,16 @@ DCCSend::Transfer (void *arg)
           
       if (now - last > 500000)
       {
-        cps = (int) ceil ((bytes_sent - seekpos) / ((now - start) / 1000000.0));
+        kbps = ((bytes_sent - seekpos) / ((now - start) / 1000000.0)) / 1024.0;
         BMessage updmsg (M_DCC_UPDATE_AVERAGE);
-        updmsg.AddInt32 ("average", cps);
+        updmsg.AddInt32 ("average", kbps);
         msgr.SendMessage (&updmsg);
         last = now;
         period = 0;
         hit = true;
       }
-      UpdateBar (msgr, sent, cps, bytes_sent, hit);
+      UpdateBar (msgr, sent, kbps, bytes_sent, hit);
     }
-#ifndef __INTEL__
-    delete [] buffer;
-#endif
   }
   if (msgr.IsValid())
   {

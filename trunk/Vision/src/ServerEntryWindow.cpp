@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -21,6 +21,7 @@
 
 #include <Box.h>
 #include <Button.h>
+#include <Catalog.h>
 #include <CheckBox.h>
 #include <MenuField.h>
 #include <Menu.h>
@@ -35,11 +36,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "AddServerWindow"
 
 ServerEntryWindow::ServerEntryWindow (BHandler *handler, BMessage *invoked, const ServerData *data, int32 size)
   : BWindow (
         BRect (50, 50, 350, 250), 
-        S_SERVERWIN_TITLE, 
+        B_TRANSLATE("Add Server"), 
         B_TITLED_WINDOW,
 		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS)
 {
@@ -64,28 +67,34 @@ ServerEntryView::ServerEntryView (BRect bounds, BHandler *handler, BMessage *inv
   if (size != 0)
     memcpy(&currentServer, data, size);
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  serverName = new VTextControl (BRect (0,0,0,0), "serverName", S_SERVERWIN_SERVER,
+  BString itemText = B_TRANSLATE("Server");
+  itemText += ": ";
+  serverName = new VTextControl (BRect (0,0,0,0), "serverName", itemText.String(),
     (data) ? data->serverName : "", new BMessage (M_SERVER_NAME_CHANGED),
     B_FOLLOW_LEFT | B_FOLLOW_TOP);
   BString strPort ("");
   if (data) strPort << data->port;
   else strPort << 6667;
-  port = new VTextControl (BRect (0,0,0,0), "portVal", S_SERVERWIN_PORT,
+  itemText = B_TRANSLATE("Port");
+  itemText += ": ";
+  port = new VTextControl (BRect (0,0,0,0), "portVal", itemText.String(),
     strPort.String(), new BMessage (M_SERVER_PORT_CHANGED),
     B_FOLLOW_LEFT | B_FOLLOW_TOP);
-  port->SetDivider (be_plain_font->StringWidth ("Port: ") + 5);
+  port->SetDivider (be_plain_font->StringWidth (itemText) + 5);
 
-  BMenu *stateMenu = new BMenu (S_SERVERWIN_MENU1);
-  stateMenu->AddItem (new BMenuItem (S_SERVERWIN_MENU_PRI, new BMessage (M_SERVER_STATE)));
-  stateMenu->AddItem (new BMenuItem (S_SERVERWIN_MENU_SEC, new BMessage (M_SERVER_STATE)));
-  stateMenu->AddItem (new BMenuItem (S_SERVERWIN_MENU_DIS , new BMessage (M_SERVER_STATE)));
-  statusField = new BMenuField (BRect (0,0,0,0), "states", S_SERVERWIN_STATE, stateMenu,
+  BMenu *stateMenu = new BMenu (B_TRANSLATE("Choose status"));
+  stateMenu->AddItem (new BMenuItem (B_TRANSLATE("Primary"), new BMessage (M_SERVER_STATE)));
+  stateMenu->AddItem (new BMenuItem (B_TRANSLATE("Secondary"), new BMessage (M_SERVER_STATE)));
+  stateMenu->AddItem (new BMenuItem (B_TRANSLATE("Disabled") , new BMessage (M_SERVER_STATE)));
+  itemText = B_TRANSLATE("State");
+  itemText += ": ";
+  statusField = new BMenuField (BRect (0,0,0,0), "states", itemText.String(), stateMenu,
     B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
 
-  okButton = new BButton (BRect (0,0,0,0), "serverOk", S_SERVERWIN_DONE_BUTTON,
+  okButton = new BButton (BRect (0,0,0,0), "serverOk", B_TRANSLATE("Done"),
     new BMessage (M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
     
-  cancelButton = new BButton (BRect (0,0,0,0), "serverCancel", S_SERVERWIN_CANCEL_BUTTON,
+  cancelButton = new BButton (BRect (0,0,0,0), "serverCancel", B_TRANSLATE("Cancel"),
     new BMessage (M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
 
   BString password ("");
@@ -93,7 +102,9 @@ ServerEntryView::ServerEntryView (BRect bounds, BHandler *handler, BMessage *inv
     password = currentServer.password;
 
 
-  usePassword = new BCheckBox (BRect (0,0,0,0), "usePass", S_SERVERWIN_PASS_CHECK,
+  itemText = B_TRANSLATE("Use Password");
+  itemText += ": ";
+  usePassword = new BCheckBox (BRect (0,0,0,0), "usePass", itemText.String(),
     new BMessage (M_SERVER_USEPASS), B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
   
   passwordField = new VTextControl (BRect (0,0,0,0), "password", NULL,
@@ -120,7 +131,7 @@ ServerEntryView::AttachedToWindow (void)
 {
   BView::AttachedToWindow();
 
-  serverName->SetDivider (be_plain_font->StringWidth (S_SERVERWIN_SERVER) + 5);
+  serverName->SetDivider (be_plain_font->StringWidth (serverName->Label()) + 5);
   serverName->ResizeToPreferred();
   serverName->ResizeTo (Bounds().Width() / 2, serverName->Bounds().Height());
   serverName->MoveTo (10,10);
@@ -230,9 +241,9 @@ ServerEntryView::MessageReceived (BMessage *msg)
 				if (usePassword->Value() == B_CONTROL_ON)
 				  strcpy(data.password, passwordField->TextView()->Text());
 				BMessenger msgr (target);
-				BMessage msg (*invocation);
-				msg.AddData ("server", B_RAW_TYPE, &data, sizeof(data));
-				msgr.SendMessage (&msg);
+				BMessage message (*invocation);
+				message.AddData ("server", B_RAW_TYPE, &data, sizeof(data));
+				msgr.SendMessage (&message);
 			}
 		
 		case M_SERVER_CANCEL:

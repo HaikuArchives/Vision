@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -204,16 +204,12 @@ RegExValidate::RegExValidate (const char *title_)
 	: compiled (false),
 	  title (title_)
 {
-#ifdef __INTEL__
-	memset (&re, 0, sizeof (re));
-#endif
+  memset (&re, 0, sizeof (re));
 }
 
 RegExValidate::~RegExValidate (void)
 {
-#ifdef __INTEL__
-	if (compiled) regfree (&re);
-#endif
+  if (compiled) regfree (&re);
 }
 
 bool

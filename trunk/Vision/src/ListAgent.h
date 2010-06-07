@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -30,9 +30,7 @@
 #include <String.h>
 #include <Messenger.h>
 #include <MessageRunner.h>
-#ifdef __INTEL__
 #include <regex.h>
-#endif
 #include "ObjectList.h"
 
 class BColumnListView;
@@ -75,10 +73,8 @@ class ListAgent : public BView
     BString                 filter,
                               find,
                               statusStr;
-#ifdef __INTEL__
     regex_t                 re,
                               fre;
-#endif
                               
     bool                    processing;
     

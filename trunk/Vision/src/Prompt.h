@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -28,9 +28,8 @@
 #include <MessageFilter.h>
 #include <String.h>
 
-#ifdef __INTEL__
 #include <regex.h>
-#endif
+
 class VTextControl;
 class BButton;
 
@@ -45,9 +44,7 @@ class PromptValidate
 
 class RegExValidate : public PromptValidate
 {
-#ifdef __INTEL__
 	regex_t				re;
-#endif
 	bool					compiled;
 	BString				title;
 

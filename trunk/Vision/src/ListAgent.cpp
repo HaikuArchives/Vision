@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -21,6 +21,7 @@
  *                 Todd Lair
  */
 
+#include <Catalog.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
 #include <ScrollView.h>
@@ -56,6 +57,7 @@
   <regurg> But your .
 */
 
+
 const int32 LIST_BATCH_SIZE = 75;
 
 ListAgent::ListAgent (
@@ -75,23 +77,32 @@ ListAgent::ListAgent (
   processing (false)
 {
   frame = Bounds();
-  
-  listMenu = new BMenu (S_LIST_MENU);
 
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ChannelListMenu"
+  
+  listMenu = new BMenu (B_TRANSLATE("Channels"));
+
+  BString itemText = B_TRANSLATE("Find");
+  itemText += B_UTF8_ELLIPSIS;
   listMenu->AddItem (mFind = new BMenuItem (
-    S_LIST_MENU_FIND B_UTF8_ELLIPSIS, 
+    itemText.String(), 
     new BMessage (M_LIST_FIND)));
   listMenu->AddItem (mFindAgain = new BMenuItem (
-    S_LIST_MENU_FINDNEXT, 
+    B_TRANSLATE("Find Next"), 
     new BMessage (M_LIST_FAGAIN)));
+  itemText = B_TRANSLATE("Filter");
+  itemText += B_UTF8_ELLIPSIS;
   listMenu->AddItem (mFilter = new BMenuItem (
-    S_LIST_MENU_FILTER B_UTF8_ELLIPSIS,
+    itemText.String(),
     new BMessage (M_LIST_FILTER)));
   
   mFind->SetEnabled (false);
   mFindAgain->SetEnabled (false);
   mFilter->SetEnabled (false);
-  
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ChannelListWindow"  
 
   BView *bgView (new BView (
     frame,
@@ -114,12 +125,15 @@ ListAgent::ListAgent (
   bgView->AddChild (listView);
   listView->MakeFocus (true);
   listView->SetTarget(this);
-  channelColumn = new BStringColumn (S_LIST_COLUMN_CHAN, be_plain_font->StringWidth (S_LIST_COLUMN_CHAN) * 2,
+  BString columnLabel = B_TRANSLATE("Channel");
+  channelColumn = new BStringColumn (columnLabel.String(), be_plain_font->StringWidth (columnLabel.String()) * 2,
     0, frame.Width(), 0);
   listView->AddColumn (channelColumn, 0);
-  usersColumn = new BIntegerColumn (S_LIST_COLUMN_USER, be_plain_font->StringWidth (S_LIST_COLUMN_USER) * 2, 0, frame.Width(), B_ALIGN_CENTER);
+  columnLabel = B_TRANSLATE("Users");
+  usersColumn = new BIntegerColumn (columnLabel.String(), be_plain_font->StringWidth (columnLabel.String()) * 2, 0, frame.Width(), B_ALIGN_CENTER);
   listView->AddColumn (usersColumn, 1);
-  topicColumn = new BStringColumn (S_LIST_COLUMN_TOPIC, frame.Width() / 2,
+  columnLabel = B_TRANSLATE("Topic");
+  topicColumn = new BStringColumn (columnLabel.String(), frame.Width() / 2,
     0, frame.Width(), 0);
   listView->AddColumn (topicColumn, 2);
   listView->SetSelectionMode (B_SINGLE_SELECTION_LIST);
@@ -129,10 +143,8 @@ ListAgent::ListAgent (
   listView->SetColor (B_COLOR_SELECTION, activeTheme->ForegroundAt (C_SELECTION));
   listView->SetFont (B_FONT_ROW, &activeTheme->FontAt (F_LISTAGENT));
   activeTheme->ReadUnlock();
-#ifdef __INTEL__
   memset (&re, 0, sizeof (re));
   memset (&fre, 0, sizeof (fre));
-#endif
 }
 
 ListAgent::~ListAgent (void)
@@ -154,10 +166,8 @@ ListAgent::~ListAgent (void)
   delete fSMsgr;
   delete fAgentWinItem;
 
-#ifdef __INTEL__
   regfree (&re);
   regfree (&fre);
-#endif
 }
 
 void
@@ -173,10 +183,8 @@ ListAgent::Show (void)
 {
   Window()->PostMessage (M_STATUS_CLEAR);
   this->fMsgr.SendMessage (M_STATUS_ADDITEMS);
-#ifdef __INTEL__  
   vision_app->pClientWin()->AddMenu (listMenu);
   listMenu->SetTargetForItems (this);
-#endif
   const BRect *agentRect (dynamic_cast<ClientWindow *>(Window())->AgentRect());
   
   if (*agentRect != Frame())
@@ -266,9 +274,17 @@ ListAgent::MessageReceived (BMessage *msg)
       
     case M_STATUS_ADDITEMS:
       {
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTCOUNT, ""), true);
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTSTAT, ""), true);
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTFILTER, "", STATUS_ALIGN_LEFT), true);
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ChannelListStatusBarItems"        
+        BString statusLabel = B_TRANSLATE("Count");
+        statusLabel += ": ";
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (statusLabel.String(), ""), true);
+        statusLabel = B_TRANSLATE("Status");
+        statusLabel += ": ";        
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (statusLabel.String(), ""), true);
+        statusLabel = B_TRANSLATE("Filter");
+        statusLabel += ": ";        
+        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (statusLabel.String(), "", STATUS_ALIGN_LEFT), true);
  
         BString cString;
         cString << listView->CountRows();
@@ -306,9 +322,9 @@ ListAgent::MessageReceived (BMessage *msg)
 
     case M_LIST_BEGIN:
       {
-        BMessage msg (M_LIST_UPDATE);
-        listUpdateTrigger = new BMessageRunner (BMessenger(this), &msg, 3000000); 
-        statusStr = S_LIST_STATUS_LOADING;
+        BMessage message (M_LIST_UPDATE);
+        listUpdateTrigger = new BMessageRunner (BMessenger(this), &message, 3000000); 
+        statusStr = B_TRANSLATE("Loading");
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
       }
@@ -321,7 +337,7 @@ ListAgent::MessageReceived (BMessage *msg)
           delete listUpdateTrigger;
           listUpdateTrigger = 0;
         }
-        statusStr = S_LIST_STATUS_DONE;
+        statusStr = B_TRANSLATE("Done");
 
         listView->SetSortingEnabled (true);
         listView->SetSortColumn (channelColumn, true, true);
@@ -371,192 +387,190 @@ ListAgent::MessageReceived (BMessage *msg)
       }
       break;
 
-#ifdef __INTEL__
 
-		case M_LIST_FILTER:
-			if (msg->HasString ("text"))
-			{
-				const char *buffer;
+    case M_LIST_FILTER:
+      if (msg->HasString ("text"))
+      {
+        const char *buffer;
 
-				msg->FindString ("text", &buffer);
-				if (filter != buffer)
-				{
-					filter = buffer;
+        msg->FindString ("text", &buffer);
+        if (filter != buffer)
+        {
+          filter = buffer;
 
-					if (!IsHidden())
-					  vision_app->pClientWin()->pStatusView()->SetItemValue (2, filter.String(), true);
+          if (!IsHidden())
+            vision_app->pClientWin()->pStatusView()->SetItemValue (2, filter.String(), true);
 
-					regfree (&re);
-					memset (&re, 0, sizeof (re));
-					regcomp (
-						&re,
-						filter.String(),
-						REG_EXTENDED | REG_ICASE | REG_NOSUB);
-					
-					BRow *currentRow;	
-					BStringField *channel,
-					             *topic;
+          regfree (&re);
+          memset (&re, 0, sizeof (re));
+          regcomp (
+            &re,
+            filter.String(),
+            REG_EXTENDED | REG_ICASE | REG_NOSUB);
+          
+          BRow *currentRow;  
+          BStringField *channel, *topic;
 
-					while (hiddenItems.CountItems() != 0)
-					{
-					  currentRow = hiddenItems.RemoveItemAt (0L);
-					  listView->AddRow (currentRow);
-					}
+          while (hiddenItems.CountItems() != 0)
+          {
+            currentRow = hiddenItems.RemoveItemAt (0L);
+            listView->AddRow (currentRow);
+          }
 
-					if (filter != NULL)
-					{
-  					  int32 k (0);
-  					    					  					
-					  while (k < listView->CountRows())
-					  {
-					     currentRow = listView->RowAt (k);
-					     channel = (BStringField *)currentRow->GetField (0);
-					     topic = (BStringField *)currentRow->GetField (2);
-       				  	 if ((regexec (&re, channel->String(), 0, 0, 0) != REG_NOMATCH)
-       				  	    || (regexec (&re, topic->String(), 0, 0, 0) != REG_NOMATCH))
-       				  	  {
-       				  	    k++;
-       					    continue;
-       					  }
-       					 else
-       					 {
-       					   listView->RemoveRow (currentRow);
-       					   hiddenItems.AddItem (currentRow);
-       					 }
-					  }
-					}
-					fMsgr.SendMessage (M_LIST_DONE);
-					processing = true;
-				}
-			}
-			else
-			{
-				PromptWindow *prompt (new PromptWindow (
-					BPoint ((Window()->Frame().right/2) - 100, (Window()->Frame().bottom/2) - 50),
-					"  Filter:",
-					"List Filter",
-					filter.String(),
-					this,
-					new BMessage (M_LIST_FILTER),
-					new RegExValidate ("Filter"),
-					true));
-				prompt->Show();
-			}
+          if (filter != NULL)
+          {
+            int32 k (0);
+                                      
+            while (k < listView->CountRows())
+            {
+              currentRow = listView->RowAt (k);
+              channel = (BStringField *)currentRow->GetField (0);
+              topic = (BStringField *)currentRow->GetField (2);
+              if ((regexec (&re, channel->String(), 0, 0, 0) != REG_NOMATCH)
+                || (regexec (&re, topic->String(), 0, 0, 0) != REG_NOMATCH))
+              {
+                k++;
+                continue;
+              }
+              else
+              {
+                listView->RemoveRow (currentRow);
+                hiddenItems.AddItem (currentRow);
+              }
+            }
+          }
+          fMsgr.SendMessage (M_LIST_DONE);
+          processing = true;
+        }
+      }
+      else
+      {
+        PromptWindow *prompt (new PromptWindow (
+          BPoint ((Window()->Frame().right/2) - 100, (Window()->Frame().bottom/2) - 50),
+          "  Filter:",
+          "List Filter",
+          filter.String(),
+          this,
+          new BMessage (M_LIST_FILTER),
+          new RegExValidate ("Filter"),
+          true));
+        prompt->Show();
+      }
+      break;
 
-			break;
+    case M_LIST_FIND:
+      if (msg->HasString ("text"))
+      {
+        int32 selection (listView->IndexOf(listView->CurrentSelection()));
+        const char *buffer;
 
-		case M_LIST_FIND:
-			if (msg->HasString ("text"))
-			{
-				int32 selection (listView->IndexOf(listView->CurrentSelection()));
-				const char *buffer;
+        msg->FindString ("text", &buffer);
 
-				msg->FindString ("text", &buffer);
+        if (strlen (buffer) == 0)
+        {
+          find = buffer;
+          break;
+        }
 
-				if (strlen (buffer) == 0)
-				{
-					find = buffer;
-					break;
-				}
+        if (selection < 0)
+        {
+          selection = 0;
+        }
+        else
+        {
+          ++selection;
+        }
 
-				if (selection < 0)
-				{
-					selection = 0;
-				}
-				else
-				{
-					++selection;
-				}
+        if (find != buffer)
+        {
+          regfree (&fre);
+          memset (&fre, 0, sizeof (fre));
+          regcomp (
+            &fre,
+            buffer,
+            REG_EXTENDED | REG_ICASE | REG_NOSUB);
+          find = buffer;
+        }
 
-				if (find != buffer)
-				{
-					regfree (&fre);
-					memset (&fre, 0, sizeof (fre));
-					regcomp (
-						&fre,
-						buffer,
-						REG_EXTENDED | REG_ICASE | REG_NOSUB);
-					find = buffer;
-				}
+        BStringField *field;
+        int32 i;
+        for (i = selection; i < listView->CountRows(); ++i)
+        {
+          field = (BStringField *)listView->RowAt (i)->GetField (0);
 
-				BStringField *field;
-				int32 i;
-				for (i = selection; i < listView->CountRows(); ++i)
-				{
-					field = (BStringField *)listView->RowAt (i)->GetField (0);
+          if (regexec (&fre, field->String(), 0, 0, 0) != REG_NOMATCH)
+            break;
+        }
 
-					if (regexec (&fre, field->String(), 0, 0, 0) != REG_NOMATCH)
-						break;
-				}
+        if (i < listView->CountRows())
+        {
+          BRow* row = listView->RowAt (i);
+          listView->DeselectAll();
+          listView->AddToSelection (row);
+          listView->ScrollTo(row);
+          listView->Refresh();
+        }
+        else
+        {
+          listView->DeselectAll();
+        }
+      }
+      else
+      {
+        BString label = B_TRANSLATE("Find");
+        label += ":";
+        PromptWindow *prompt (new PromptWindow (
+          BPoint ((Window()->Frame().right / 2) - 100, (Window()->Frame().bottom/2) - 50),
+          label.String(),
+          B_TRANSLATE("Find"),
+          find.String(),
+          this,
+          new BMessage (M_LIST_FIND),
+          new RegExValidate ("Find:"),
+          true));
+        prompt->Show();
+      } 
+      break;
 
-				if (i < listView->CountRows())
-				{
-					BRow* row = listView->RowAt (i);
-					listView->DeselectAll();
-					listView->AddToSelection (row);
-					listView->ScrollTo(row);
-					listView->Refresh();
-				}
-				else
-				{
-					listView->DeselectAll();
-				}
-			}
-			else
-			{
-				PromptWindow *prompt (new PromptWindow (
-					BPoint ((Window()->Frame().right / 2) - 100, (Window()->Frame().bottom/2) - 50),
-					S_LIST_PROMPT_LABEL,
-					S_LIST_PROMPT_TITLE,
-					find.String(),
-					this,
-					new BMessage (M_LIST_FIND),
-					new RegExValidate ("Find:"),
-					true));
-				prompt->Show();
-			} 
-			break;
+    case M_LIST_FAGAIN:
+      if (find.Length())
+      {
+        msg->AddString ("text", find.String());
+        msg->what = M_LIST_FIND;
+        fMsgr.SendMessage (msg);
+      }
+      break;
 
-		case M_LIST_FAGAIN:
-			if (find.Length())
-			{
-				msg->AddString ("text", find.String());
-				msg->what = M_LIST_FIND;
-				fMsgr.SendMessage (msg);
-			}
-			break;
-#endif
-
-		case M_LIST_INVOKE:
-		{
-			BMessage msg (M_SUBMIT);
-			BString buffer;
-				
-			BRow *row (listView->CurrentSelection());
-				
-			if (row)
-			{
+    case M_LIST_INVOKE:
+    {
+      BMessage message (M_SUBMIT);
+      BString buffer;
+        
+      BRow *row (listView->CurrentSelection());
+        
+      if (row)
+      {
                  buffer = "/JOIN ";
                  buffer += ((BStringField *)row->GetField(0))->String();
-                 msg.AddBool ("history", false);
-                 msg.AddBool ("clear", false);
-                 msg.AddString ("input", buffer.String());
-                 fSMsgr->SendMessage (&msg);
+                 message.AddBool ("history", false);
+                 message.AddBool ("clear", false);
+                 message.AddString ("input", buffer.String());
+                 fSMsgr->SendMessage (&message);
             }
-		}
-		break;
-		
-		case M_CLIENT_QUIT:
-		{
-		  fSMsgr->SendMessage(M_LIST_SHUTDOWN);
-		  BMessage deathchant (M_OBITUARY);
+    }
+    break;
+    
+    case M_CLIENT_QUIT:
+    {
+      fSMsgr->SendMessage(M_LIST_SHUTDOWN);
+      BMessage deathchant (M_OBITUARY);
           deathchant.AddPointer ("agent", this);
           deathchant.AddPointer ("item", fAgentWinItem);
           vision_app->pClientWin()->PostMessage (&deathchant);
-		}
-		break;
-		
-		default:
-			BView::MessageReceived (msg);
-	}
+    }
+    break;
+    
+    default:
+      BView::MessageReceived (msg);
+  }
 }

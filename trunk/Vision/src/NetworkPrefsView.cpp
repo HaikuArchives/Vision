@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -23,6 +23,7 @@
 #include <Bitmap.h>
 #include <Box.h>
 #include <Button.h>
+#include <Catalog.h>
 #include <CheckBox.h>
 #include <ListItem.h>
 #include <ListView.h>
@@ -43,6 +44,9 @@
 #include "Prompt.h"
 #include "SpeedButton.h"
 #include "Vision.h"
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "NetworkPrefView"
 
 
 class InvokingTextView : public BTextView, public BInvoker
@@ -85,12 +89,16 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
           fServerPrefs (NULL)
 {
   SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  BMenu *menu (new BMenu (S_NETPREFS_NETMENU));
-  menu->AddItem (new BMenuItem (S_NETPREFS_DEFAULTS_ITEM, new BMessage (M_NETWORK_DEFAULTS)));
+  BMenu *menu (new BMenu (B_TRANSLATE("Network")));
+  menu->AddItem (new BMenuItem (B_TRANSLATE("Defaults"), new BMessage (M_NETWORK_DEFAULTS)));
   menu->AddSeparatorItem ();
-  menu->AddItem (new BMenuItem (S_NETPREFS_ADD_NEW B_UTF8_ELLIPSIS, new BMessage (M_ADD_NEW_NETWORK)));
-  menu->AddItem (fRemoveItem = new BMenuItem (S_NETPREFS_REMOVE, new BMessage (M_REMOVE_CURRENT_NETWORK)));
-  menu->AddItem (fDupeItem = new BMenuItem (S_NETPREFS_DUPE B_UTF8_ELLIPSIS, new BMessage (M_DUPE_CURRENT_NETWORK)));
+  BString itemText = B_TRANSLATE("Add network");
+  itemText += B_UTF8_ELLIPSIS;
+  menu->AddItem (new BMenuItem (itemText.String(), new BMessage (M_ADD_NEW_NETWORK)));
+  menu->AddItem (fRemoveItem = new BMenuItem (B_TRANSLATE("Remove current network"), new BMessage (M_REMOVE_CURRENT_NETWORK)));
+  itemText = B_TRANSLATE("Duplicate current network");
+  itemText += B_UTF8_ELLIPSIS;
+  menu->AddItem (fDupeItem = new BMenuItem (itemText.String(), new BMessage (M_DUPE_CURRENT_NETWORK)));
   fNetworkMenu = new BMenuField (BRect (0, 0, 100, 30), "NetList", NULL, menu);
   fMainNetBox = new BBox (Bounds ().InsetByCopy (5, 5));
   fMainNetBox->SetLabel (fNetworkMenu);
@@ -101,40 +109,29 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
   boundsRect.top += 15;
   boundsRect.bottom -= 30;
   fNetDetailsBox = new BBox (boundsRect);
-  fNetDetailsBox->SetLabel (S_NETPREFS_NET_BOX);
+  fNetDetailsBox->SetLabel (B_TRANSLATE("Network Details"));
   fMainNetBox->AddChild (fNetDetailsBox);
   fPersonalBox = new BBox (boundsRect);
-  fPersonalBox->SetLabel (S_NETPREFS_PERSONAL_BOX);
+  fPersonalBox->SetLabel (B_TRANSLATE("Personal Details"));
   fMainNetBox->AddChild (fPersonalBox);
   fPersonalBox->MoveBy (boundsRect.Width () + 16, 0);
   boundsRect.left += 10;
   boundsRect.right = boundsRect.left + 10;
   boundsRect.top = 10;
   boundsRect.bottom += 20;
-  BStringView *stringView1 (new BStringView (boundsRect, NULL,
-					     S_NETPREFS_CONN1));
-  stringView1->ResizeToPreferred ();
-  stringView1->MoveTo (fNetDetailsBox->Frame ().left, fNetDetailsBox->Frame ().top);
-  fNetDetailsBox->AddChild (stringView1);
-  fConnectServer = new BStringView (boundsRect, NULL,
-				   "irc.sorcery.net,");
-  fConnectServer->ResizeToPreferred ();
-  fConnectServer->MoveTo (stringView1->Frame ().left, stringView1->Frame ().bottom);
-  fAlternates = new BStringView (boundsRect, NULL,
-				S_NETPREFS_CONN2);
-  fAlternates->ResizeToPreferred ();
-  fAlternates->MoveTo (fConnectServer->Frame ().left, fConnectServer->Frame ().bottom);
-  fNetDetailsBox->AddChild (fConnectServer);
-  fNetDetailsBox->AddChild (fAlternates);
-  fServerButton = new BButton (boundsRect, NULL, S_NETPREFS_CHANGE_SERVER B_UTF8_ELLIPSIS,
+  itemText = B_TRANSLATE("Edit servers");
+  itemText += B_UTF8_ELLIPSIS;
+  fServerButton = new BButton (boundsRect, NULL, itemText.String(),
 			      new BMessage (M_SERVER_DIALOG));
   fServerButton->ResizeToPreferred ();
   fServerButton->MoveTo (fNetDetailsBox->Frame().right - (fServerButton->Frame().Width() + 20),
-			fAlternates->Frame ().bottom + 10);
+			10.0);
   fNetDetailsBox->AddChild (fServerButton);
-  BStringView *stringView4 (new BStringView (boundsRect, NULL, S_NETPREFS_AUTOEXEC));
+  itemText = B_TRANSLATE("Autoexec");
+  itemText += ":";
+  BStringView *stringView4 (new BStringView (boundsRect, NULL, itemText.String()));
   stringView4->ResizeToPreferred ();
-  stringView4->MoveTo (fAlternates->Frame ().left, fServerButton->Frame ().bottom);
+  stringView4->MoveTo (fNetDetailsBox->Frame().left, fServerButton->Frame ().bottom);
   fNetDetailsBox->AddChild (stringView4);
   boundsRect = fNetDetailsBox->Frame ();
   boundsRect.right -= (20 + B_V_SCROLL_BAR_WIDTH);;
@@ -146,25 +143,27 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
   fTextView->MakeEditable (true);
   fTextView->SetStylable (false);
   fNetDetailsBox->AddChild (scrollView);
-  fLagCheckBox = new BCheckBox (boundsRect, NULL, S_NETPREFS_LAG_CHECK,
+  fLagCheckBox = new BCheckBox (boundsRect, NULL, B_TRANSLATE("Enable lag checking"),
                   new BMessage (M_NET_CHECK_LAG));
   fLagCheckBox->ResizeToPreferred ();
   fLagCheckBox->MoveTo (scrollView->Frame().left,
     scrollView->Frame ().bottom + 5);
   fNetDetailsBox->AddChild (fLagCheckBox);
-  fStartupBox = new BCheckBox (boundsRect, NULL, S_NETPREFS_STARTUP_CONN,
+  fStartupBox = new BCheckBox (boundsRect, NULL, B_TRANSLATE("Connect to this network when Vision starts up"),
 			      new BMessage (M_CONNECT_ON_STARTUP));
   fStartupBox->ResizeToPreferred ();
   fStartupBox->MoveTo (fNetDetailsBox->Frame ().left, fMainNetBox->Frame ().bottom - (fStartupBox->Bounds ().Height () + 12));
   fMainNetBox->AddChild (fStartupBox);
-  fNickDefaultsBox = new BCheckBox (boundsRect, NULL, S_NETPREFS_USE_DEFAULTS,
+  fNickDefaultsBox = new BCheckBox (boundsRect, NULL, B_TRANSLATE("Use Defaults"),
 				   new BMessage (M_USE_NICK_DEFAULTS));
   fNickDefaultsBox->ResizeToPreferred ();
   fNickDefaultsBox->MoveTo (fNetDetailsBox->Frame ().left, fNetDetailsBox->Frame ().top);
   fPersonalBox->AddChild (fNickDefaultsBox);
-  BStringView *stringView5 (new BStringView (boundsRect, NULL, S_NETPREFS_PREFNICK));
+  itemText = B_TRANSLATE("Preferred Nicknames:");
+  itemText += ":";
+  BStringView *stringView5 (new BStringView (boundsRect, NULL, itemText.String()));
   stringView5->ResizeToPreferred ();
-  stringView5->MoveTo (fAlternates->Frame ().left, fAlternates->Frame ().top);
+  stringView5->MoveTo (fNetDetailsBox->Frame ().left, fNetDetailsBox->Frame ().top);
   fPersonalBox->AddChild (stringView5);
   fListView = new BListView (scrollView->Frame (), NULL);
   fListView->SetSelectionMessage (new BMessage (M_NICK_SELECTED));
@@ -173,9 +172,11 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
   BScrollView *listScroll (new BScrollView (NULL, fListView, B_FOLLOW_LEFT | B_FOLLOW_TOP,
 					    0, false, true));
   fPersonalBox->AddChild (listScroll);
-  fNickAddButton = new BButton (boundsRect, NULL, S_NETPREFS_ADD_BUTTON B_UTF8_ELLIPSIS, new BMessage (M_ADD_NICK));
+  itemText = B_TRANSLATE("Add");
+  itemText += B_UTF8_ELLIPSIS;
+  fNickAddButton = new BButton (boundsRect, NULL, itemText.String(), new BMessage (M_ADD_NICK));
   fNickAddButton->ResizeToPreferred ();
-  fNickRemoveButton = new BButton (boundsRect, NULL, S_NETPREFS_REMOVE_BUTTON, new BMessage (M_REMOVE_NICK));
+  fNickRemoveButton = new BButton (boundsRect, NULL, B_TRANSLATE("Remove"), new BMessage (M_REMOVE_NICK));
   fNickRemoveButton->ResizeToPreferred ();
   fNickRemoveButton->MoveTo (listScroll->Frame ().right - fNickRemoveButton->Frame ().Width (),
 			    listScroll->Frame ().bottom + 5);
@@ -201,8 +202,12 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
     fPersonalBox->AddChild (fNickDnButton);
     delete bmp;
   }
-  fIdent = new BTextControl (listScroll->Frame (), NULL, S_NETPREFS_IDENT, NULL, NULL);
-  fRealName = new BTextControl (listScroll->Frame (), NULL, S_NETPREFS_REALNAME, NULL, NULL);
+  itemText = B_TRANSLATE("Ident");
+  itemText += ": ";
+  fIdent = new BTextControl (listScroll->Frame (), NULL, itemText.String(), NULL, NULL);
+  itemText = B_TRANSLATE("Real name");
+  itemText += ": ";
+  fRealName = new BTextControl (listScroll->Frame (), NULL, itemText.String(), NULL, NULL);
   fRealName->ResizeTo (listScroll->Frame ().Width (), fRealName->Frame ().Height ());
   fRealName->MoveTo (listScroll->Frame ().left, fNickAddButton->Frame ().bottom + 5);
   fRealName->SetDivider (fRealName->StringWidth (fRealName->Label ()) + 5);
@@ -279,30 +284,6 @@ NetworkPrefsView::BuildNetworkList (void)
 }
 
 void
-NetworkPrefsView::SetConnectServer (const char *serverName)
-{
-  fConnectServer->SetText (serverName);
-  fConnectServer->ResizeToPreferred ();
-}
-
-void
-NetworkPrefsView::SetAlternateCount (uint32 altCount)
-{
-  if (altCount > 0)
-  {
-    BString text (S_NETPREFS_FALLBACK1);
-    text << altCount;
-    text += S_NETPREFS_FALLBACK2;
-    text += (altCount > 1) ? S_NETPREFS_FALLBACK2_PLURAL : "";
-    text += ".";
-    fAlternates->SetText (text.String ());
-    fAlternates->ResizeToPreferred ();
-  }
-  else
-    fAlternates->SetText ("");
-}
-
-void
 NetworkPrefsView::UpdateNetworkData (BMessage & msg)
 {
   // enable network controls
@@ -310,8 +291,6 @@ NetworkPrefsView::UpdateNetworkData (BMessage & msg)
   fServerButton->SetEnabled (true);
   fTextView->MakeEditable (true);
   fLagCheckBox->SetEnabled (true);
-  SetConnectServer ("<N/A>");
-  SetAlternateCount (0);
 
   bool startup (false),
        lagcheck (true);
@@ -329,18 +308,6 @@ NetworkPrefsView::UpdateNetworkData (BMessage & msg)
     fTextView->SetText (autoexec);
   else
     fTextView->SetText ("");
-  uint32 altCount (0);
-  int32 size;
-  const ServerData *data (NULL);
-  for (int32 i = 0; msg.FindData ("server", B_ANY_TYPE, i,
-    reinterpret_cast < const void **>(&data), &size) == B_OK; i++)
-  {
-    if (data->state == 0)
-      SetConnectServer (data->serverName);
-    else if (data->state == 1)
-      ++altCount;
-  }
-  SetAlternateCount (altCount);
 }
 
 void
@@ -402,8 +369,6 @@ NetworkPrefsView::SetupDefaults (BMessage & msg)
   fTextView->MakeEditable (false);
   fTextView->SetText ("");
   fServerButton->SetEnabled (false);
-  SetConnectServer ("<N/A>");
-  SetAlternateCount (0);
   fNickDefaultsBox->SetEnabled (false);
   fStartupBox->SetEnabled (false);
   fLagCheckBox->SetEnabled (false);
@@ -513,8 +478,10 @@ NetworkPrefsView::MessageReceived (BMessage * msg)
 	    }
         else
         {
+          BString promptText = B_TRANSLATE("Network Name");
+          promptText += ": ";
           fNetPrompt = new PromptWindow (BPoint (Window ()->Frame ().left + Window ()->Frame ().Width () / 2, Window ()->Frame ().top + Window ()->Frame ().Height () / 2),
-            S_NETPREFS_NET_PROMPT, S_NETPREFS_ADDNET_TITLE, NULL, this, new BMessage (M_ADD_NEW_NETWORK), NULL, false);
+            promptText.String(), B_TRANSLATE("Add Network"), NULL, this, new BMessage (M_ADD_NEW_NETWORK), NULL, false);
           fNetPrompt->Show ();
         }
       }
@@ -566,8 +533,10 @@ NetworkPrefsView::MessageReceived (BMessage * msg)
         }
         else
         {
+          BString promptText = B_TRANSLATE("Network Name");
+          promptText += ": ";
           fDupePrompt = new PromptWindow (BPoint (Window ()->Frame ().left + Window ()->Frame ().Width () / 2, Window ()->Frame ().top + Window ()->Frame ().Height () / 2),
-            S_NETPREFS_NET_PROMPT, S_NETPREFS_DUPENET_TITLE, NULL, this, new BMessage (M_DUPE_CURRENT_NETWORK), NULL, false);
+            promptText.String(), B_TRANSLATE("Duplicate Current Network"), NULL, this, new BMessage (M_DUPE_CURRENT_NETWORK), NULL, false);
           fDupePrompt->Show ();
         }
       }
@@ -650,8 +619,10 @@ NetworkPrefsView::MessageReceived (BMessage * msg)
       }
       else
       {
+      	BString promptString = B_TRANSLATE("Nickname");
+      	promptString += ": ";
         fNickPrompt = new PromptWindow (BPoint (Window ()->Frame ().left + Window ()->Frame ().Width () / 2, Window ()->Frame ().top + Window ()->Frame ().Height () / 2),
-          S_NETPREFS_ADDNICK_PROMPT, S_NETPREFS_ADDNICK_TITLE, NULL, this, new BMessage (M_ADD_NICK), NULL, false);
+          promptString.String(), B_TRANSLATE("Add Nickname"), NULL, this, new BMessage (M_ADD_NICK), NULL, false);
         fNickPrompt->Show ();
       }
       break;

@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -238,9 +238,9 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			// treat keypress like we would a normal B_RETURN
 			if (fWindow->fInput->TextView()->TextLength())
 			{
-				BMessage msg (M_SUBMIT);
-				msg.AddString ("input", fWindow->fInput->TextView()->Text());
-				msgr.SendMessage (&msg);
+				BMessage message (M_SUBMIT);
+				message.AddString ("input", fWindow->fInput->TextView()->Text());
+				msgr.SendMessage (&message);
 			}
 			result = B_SKIP_MESSAGE;
 		}

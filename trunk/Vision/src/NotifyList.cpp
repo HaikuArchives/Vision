@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  *
  * Contributor(s): Rene Gollent
@@ -21,6 +21,7 @@
  *
  */
 
+#include <Catalog.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
 
@@ -31,6 +32,9 @@
 #include "Utilities.h"
 #include "Vision.h"
 #include "WindowList.h"
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "NotifyList"
 
 NotifyList::NotifyList (BRect _frame)
   : BListView (_frame,
@@ -180,20 +184,20 @@ NotifyList::BuildPopUp(void)
     msg.AddString("input", data.String());
     msg.AddBool ("history", false);
     msg.AddBool ("clear", false);
-    fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_QUERY_ITEM, new BMessage (msg)));
+    fMyPopUp->AddItem (new BMenuItem (B_TRANSLATE("Query"), new BMessage (msg)));
     data = "/WHOIS ";
     data.Append(name);
     msg.ReplaceString("input", data.String());
-    fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_WHOIS_ITEM, new BMessage (msg)));
+    fMyPopUp->AddItem (new BMenuItem (B_TRANSLATE("Whois"), new BMessage (msg)));
     data = "/DCC CHAT ";
     data.Append(name);
     msg.ReplaceString("input", data.String());
-    fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_DCC_ITEM, new BMessage (msg)));
+    fMyPopUp->AddItem (new BMenuItem (B_TRANSLATE("DCC Chat"), new BMessage (msg)));
     fMyPopUp->AddSeparatorItem();
     data = "/UNNOTIFY ";
     data.Append(name);
     msg.ReplaceString("input", data.String());
-    fMyPopUp->AddItem (new BMenuItem (S_NOTIFYLIST_REMOVE_ITEM, new BMessage (msg)));
+    fMyPopUp->AddItem (new BMenuItem (B_TRANSLATE("Remove"), new BMessage (msg)));
 
     WindowListItem *winItem (dynamic_cast<WindowListItem *>(
       vision_app->pClientWin()->pWindowList()->ItemAt(

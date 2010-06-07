@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -24,12 +24,16 @@
  */
 
 #include <AppFileInfo.h>
+#include <Catalog.h>
 #include <sys/utsname.h>
 #include <stdlib.h>
 
 #include "Vision.h"
 #include "Utilities.h"
 #include "ServerAgent.h"
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "ServerMessages"
 
 void
 ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
@@ -221,7 +225,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
 
         if (data->nick == theNick
         &&  data->pos  == pos
-        &&  data->port == port);
+        &&  data->port == port)
         {
           fResumes.RemoveItem (i);
 
@@ -361,14 +365,21 @@ ServerAgent::ParseCTCPResponse (BString theNick, BString theMsg)
 		}
 		tempString += "[";
 		tempString += theNick;
-		tempString += " PING" S_PCTCP_RESPONSE "]: ";
+		tempString += " PING ";
+		tempString += B_TRANSLATE("reponse");
+		tempString += "]: ";
 		if (theSeconds != 1)
 		{
-			tempString << theSeconds;
-			tempString += " " S_PCTCP_SECOND_PLURAL "\n";
+		  tempString << theSeconds << " ";
+		  tempString += B_TRANSLATE("seconds");
+		  tempString += "\n";
 		}
 		else
-			tempString += "1 " S_PCTCP_SECOND "\n";
+		{
+		  tempString += "1 ";
+		  tempString += B_TRANSLATE("second");
+		  tempString += "\n";
+		}
 	}
 	else
 	{
@@ -377,7 +388,9 @@ ServerAgent::ParseCTCPResponse (BString theNick, BString theMsg)
 		tempString += theNick;
 		tempString += " ";
 		tempString += firstWord;
-		tempString += S_PCTCP_RESPONSE "]: ";
+		tempString += " ";
+		tempString += B_TRANSLATE("response");
+		tempString += "]: ";
 		tempString += theReply;
 		tempString += '\n';
 	}

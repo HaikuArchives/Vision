@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.  All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -25,10 +25,10 @@
  *                 Alan Ellis <alan@cgsoftware.org>
  */
  
-
-#include <PopUpMenu.h>
-#include <MenuItem.h>
+#include <Catalog.h>
 #include <List.h>
+#include <MenuItem.h>
+#include <PopUpMenu.h>
 
 #include "Theme.h"
 #include "Vision.h"
@@ -39,6 +39,9 @@
 #include "ListAgent.h"
 #include "Utilities.h"
 #include <stdio.h>
+
+#undef B_TRANSLATE_CONTEXT
+#define B_TRANSLATE_CONTEXT "WindowList"
 
 //////////////////////////////////////////////////////////////////////////////
 /// Begin WindowList functions
@@ -783,7 +786,7 @@ WindowList::BuildPopUp (void)
       activeagent->AddMenuItems (fMyPopUp);
   }
   
-  item = new BMenuItem(S_WINLIST_CLOSE_ITEM, new BMessage (M_MENU_NUKE));
+  item = new BMenuItem(B_TRANSLATE("Close"), new BMessage (M_MENU_NUKE));
   item->SetTarget (this);
   fMyPopUp->AddItem (item);
   
@@ -920,7 +923,7 @@ WindowListItem::DrawItem (BView *father, BRect frame, bool complete)
 
   if (fSubStatus > WIN_NORMAL_BIT)
   {
-    rgb_color color;
+    rgb_color color = rgb_color();
     if ((fSubStatus & WIN_NEWS_BIT) != 0)
       color = fActiveTheme->ForegroundAt (C_WINLIST_NEWS);
     else if ((fSubStatus & WIN_PAGESIX_BIT) != 0)

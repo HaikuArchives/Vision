@@ -619,7 +619,7 @@ void BColumn::GetColumnName(BString* into) const
 	*into = "(Unnamed)";
 }
 
-float BColumn::GetPreferredWidth(BField *field, BView *parent) const
+float BColumn::GetPreferredWidth(BField * /*field */, BView * /*parent */) const
 {
 	return fWidth;
 }

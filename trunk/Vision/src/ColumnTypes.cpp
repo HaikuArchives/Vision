@@ -104,7 +104,7 @@ BTitledColumn::FontHeight() const
 
 
 float
-BTitledColumn::GetPreferredWidth(BField *_field, BView* parent) const
+BTitledColumn::GetPreferredWidth(BField * /*_field*/, BView* parent) const
 {
 	BFont font;
 	parent->GetFont(&font);
