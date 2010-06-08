@@ -125,11 +125,12 @@ class ServerAgent : public ClientAgent
     int                         fIrcdtype;
 	
 	BList                       fResumes;
-
+	
+	int32                       fConnectionID;
+	
     bool                        fLocalip_private,    // if localip is private
 	                                                // (set by PrivateIPCheck)
                                   fGetLocalIP,
-                                  fIsConnected,		// were done connecting
                                   fIsConnecting,		// in process
                                   fReconnecting,		// we're reconnecting
                                   fHasWarned,			// warn about quitting
@@ -151,7 +152,6 @@ class ServerAgent : public ClientAgent
     bool                        fInitialMotd,
                                   fIdentd;
     BString                     fCmds;
-    int32                       fConnectionID;
 	
     BObjectList<BString>        fStartupChannels,
                                 *fPendingSends;
@@ -169,6 +169,7 @@ class ServerAgent : public ClientAgent
     
     ServerData                  fCurrentServer;
     std::map<BString, BString>		fRemoteAwayMessages;
+    BString                     fPartialBuffer;
 };
 
 #endif

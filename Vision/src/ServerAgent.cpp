@@ -79,9 +79,9 @@ ServerAgent::ServerAgent (
     fMyLag ((net.FindBool ("lagCheck")) ? "0.000" : B_TRANSLATE("Disabled")),
     fLname (net.FindString ("realname")),
     fLident (net.FindString ("ident")),
+    fConnectionID (-1),
     fLocalip_private (false),
     fGetLocalIP (false),
-    fIsConnected (false),
     fIsConnecting (true),
     fReconnecting (false),
     fIsQuitting (false),
@@ -188,6 +188,16 @@ ServerAgent::Init (void)
     new BMessage (M_LAG_CHECK),
     10000000,   // 10 seconds
     -1);        // forever
+    
+  BMessage msg (M_CREATE_CONNECTION);
+  msg.AddMessenger("target", BMessenger(this));
+  
+  BString port;
+  const ServerData *data = GetNextServer();
+  port << data->port;
+  msg.AddString("hostname", data->serverName);
+  msg.AddString("port", port);
+  BMessenger(network_manager).SendMessage(&msg);
 }
 
 
@@ -574,9 +584,23 @@ void
 ServerAgent::SendData (const char *cData)
 {
   BMessage dataSend(M_SEND_CONNECTION_DATA);
+  BString data = cData;
+  data.Append("\r\n");
+  
+  int32 encoding = vision_app->GetInt32("encoding");
+  if (encoding != B_UNICODE_CONVERSION)
+  {
+  	char sendBuffer[2048];
+  	int32 state = 0;
+  	int32 length = data.Length();
+  	int32 destLength = length;
+  	convert_from_utf8(encoding, data.String(), &length, sendBuffer, &destLength, &state);
+  	data.SetTo(sendBuffer, destLength);
+  	  	
+  }
   dataSend.AddInt32("connection", fConnectionID);
-  dataSend.AddData("buffer", B_RAW_TYPE, cData, strlen(cData));
-  network_manager->PostMessage(&dataSend);
+  dataSend.AddData("data", B_RAW_TYPE, data.String(), data.Length() + 1);
+  BMessenger(network_manager).SendMessage(&dataSend);
 }
 
 void
@@ -753,13 +777,6 @@ ServerAgent::HandleReconnect (void)
    * to the server 
    */
    
-  if (fIsConnected)
-  {
-    // what's going on here?!
-    printf (":ERROR: HandleReconnect() called when we're already connected! Whats up with that?!");
-    return;
-  }
-
   if (fRetry < fRetryLimit)
   {
     // we are go for main engine start
@@ -1004,28 +1021,92 @@ ServerAgent::MessageReceived (BMessage *msg)
         DisplayAll (data.String(), msg->FindInt32 ("fore"), msg->FindInt32 ("back"), msg->FindInt32 ("font"));
       }
       break;
-      
-    case M_GET_ESTABLISH_DATA:
+    
+    case M_CONNECTION_CREATED:
       {
-        BMessage reply (B_REPLY);
-        reply.AddData ("server", B_RAW_TYPE, GetNextServer(), sizeof (ServerData));
-        reply.AddString  ("ident", fLident.String());
-        reply.AddString  ("name", fLname.String());
-        reply.AddString  ("nick", fMyNick.String());
-        msg->SendReply (&reply); 
+      	int32 result = msg->FindInt32("status");
+      	if (result != B_OK)
+      	{
+          fIsConnecting = false;
+          fReconnecting = false;
+          fConnectionID = -1;
+          // TODO: post reconnect
+      	}
+      	else
+      	{
+          fIsConnecting = true;
+      	}
       }
       break;
-    
-    case M_NOT_CONNECTING:
-      fIsConnecting = false;
-      fReconnecting = false;
+      
+    case M_CONNECTION_DATA_RECEIVED:
+      {
+      	bool sendHandshake = false;
+        const char *buffer (NULL);
+        ssize_t numBytes = 0;
+        if (msg->FindData("data", B_RAW_TYPE, reinterpret_cast<const void **>(&buffer), &numBytes) == B_OK)
+        {
+          if (fIsConnecting && fConnectionID < 0)
+          {
+            fConnectionID = msg->FindInt32("connection");
+            sendHandshake = true;
+          }
+          BString tempBuffer(buffer, numBytes);
+          int32 pos = -1;
+          while ((pos = tempBuffer.FindFirst('\n')) >= 0)
+          {
+            fPartialBuffer.Append(tempBuffer, pos + 1);
+            tempBuffer.Remove(0, pos + 1);
+            fPartialBuffer.RemoveLast("\r");
+            if (vision_app->fDebugRecv)
+            {
+              printf ("RECEIVED: (%ld:%03ld) \"", fConnectionID, fPartialBuffer.Length());
+              for (int32 i = 0; i < fPartialBuffer.Length(); ++i)
+              {
+                if (isprint (fPartialBuffer.String()[i]))
+                  printf ("%c", fPartialBuffer.String()[i]);
+                else
+                  printf ("[0x%02x]", fPartialBuffer.String()[i]);
+              }
+              printf ("\"\n");
+            }
+            ParseLine(fPartialBuffer.String());
+            fPartialBuffer.SetTo("");
+          }
+          if (tempBuffer.Length() > 0)
+          {
+            fPartialBuffer = tempBuffer;
+          }
+        }
+        
+        if (sendHandshake)
+        {
+          BString data;
+
+          if (strlen(fCurrentServer.password) > 0)
+          {
+//            ClientAgent::PackDisplay (&statMsg, "Sending password\n", C_ERROR);
+//            sMsgrE.SendMessage(&statMsg);
+            data = "PASS ";
+            data += fCurrentServer.password;
+            SendData(data.String());
+          }
+
+          data = "NICK ";
+          data.Append (fMyNick.String());
+          SendData(data.String());
+        
+          data = "USER ";
+          data.Append (fLident);
+          data.Append (" localhost ");
+          data.Append (fCurrentServer.serverName);
+          data.Append (" :");
+          data.Append (fLname);
+          SendData(data.String());
+        }
+      }
       break;
-     
-    case M_CONNECTED:
-      fIsConnected = true;
-      fIsConnecting = false;
-      break;
-    
+      
     case M_INC_RECONNECT:
       ++fRetry;
       break;
@@ -1247,7 +1328,7 @@ ServerAgent::MessageReceived (BMessage *msg)
      break;
 
     case M_SLASH_RECONNECT:
-      if (!fIsConnected && !fIsConnecting)
+      if (fConnectionID < 0 && !fIsConnecting)
         fMsgr.SendMessage (M_SERVER_DISCONNECT);
       break;
 
@@ -1263,9 +1344,9 @@ ServerAgent::MessageReceived (BMessage *msg)
           fReconNick = fMyNick;
         }
         // let the user know
-        if (fIsConnected)
+        if (fConnectionID >= 0)
         {
-          fIsConnected = false;
+          fConnectionID = -1;
           BString sAnnounce;
           sAnnounce += "[@] ";
           sAnnounce += B_TRANSLATE("Disconnected from %1");
@@ -1318,7 +1399,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 
     case M_LAG_CHECK:
       {
-        if (fIsConnected)
+        if (fConnectionID >= 0)
         {
           if (fNetworkData.FindBool ("lagCheck"))
           {
@@ -1447,7 +1528,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           fQuitMsg = quitstr;
         }
 
-        if (!fIsQuitting && fIsConnected) 
+        if (!fIsQuitting && fConnectionID >= 0) 
         {
           if (fQuitMsg.Length() == 0)
           {

@@ -23,7 +23,6 @@
 #include "ColumnListView.h"
 #include "PrefAliases.h"
 #include "Vision.h"
-#include "VisionStrings.h"
 
 #include <Button.h>
 #include <Catalog.h>
