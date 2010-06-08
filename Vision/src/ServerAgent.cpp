@@ -584,7 +584,7 @@ void
 ServerAgent::SendData (const char *cData)
 {
   BMessage dataSend(M_SEND_CONNECTION_DATA);
-  BString data = cData;
+  BString data(cData);
   data.Append("\r\n");
   
   int32 encoding = vision_app->GetInt32("encoding");
@@ -599,8 +599,16 @@ ServerAgent::SendData (const char *cData)
   	  	
   }
   dataSend.AddInt32("connection", fConnectionID);
-  dataSend.AddData("data", B_RAW_TYPE, data.String(), data.Length() + 1);
+  dataSend.AddData("data", B_RAW_TYPE, data.String(), data.Length());
   BMessenger(network_manager).SendMessage(&dataSend);
+
+  if (vision_app->fDebugSend)
+  {
+  	data.RemoveAll("\n");
+  	data.RemoveAll("\r");
+  	printf("   SENT: (%03ld) \"%s\"\n", data.Length(), data.String());
+  }
+
 }
 
 void
@@ -1035,22 +1043,40 @@ ServerAgent::MessageReceived (BMessage *msg)
       	else
       	{
           fIsConnecting = true;
+          fConnectionID = msg->FindInt32("connection");
+          BString data;
+          
+          if (strlen(fCurrentServer.password) > 0)
+          {
+//            ClientAgent::PackDisplay (&statMsg, "Sending password\n", C_ERROR);
+//            sMsgrE.SendMessage(&statMsg);
+            data = "PASS ";
+            data += fCurrentServer.password;
+            SendData(data.String());
+          }
+
+          data = "USER ";
+          data.Append (fLident);
+          data.Append (" localhost ");
+          data.Append (fCurrentServer.serverName);
+          data.Append (" :");
+          data.Append (fLname);
+          SendData(data.String());
+
+          data = "NICK ";
+          data += fMyNick;
+          SendData(data.String());
+        
       	}
       }
       break;
       
     case M_CONNECTION_DATA_RECEIVED:
       {
-      	bool sendHandshake = false;
         const char *buffer (NULL);
         ssize_t numBytes = 0;
         if (msg->FindData("data", B_RAW_TYPE, reinterpret_cast<const void **>(&buffer), &numBytes) == B_OK)
         {
-          if (fIsConnecting && fConnectionID < 0)
-          {
-            fConnectionID = msg->FindInt32("connection");
-            sendHandshake = true;
-          }
           BString tempBuffer(buffer, numBytes);
           int32 pos = -1;
           while ((pos = tempBuffer.FindFirst('\n')) >= 0)
@@ -1077,33 +1103,7 @@ ServerAgent::MessageReceived (BMessage *msg)
           {
             fPartialBuffer = tempBuffer;
           }
-        }
-        
-        if (sendHandshake)
-        {
-          BString data;
-
-          if (strlen(fCurrentServer.password) > 0)
-          {
-//            ClientAgent::PackDisplay (&statMsg, "Sending password\n", C_ERROR);
-//            sMsgrE.SendMessage(&statMsg);
-            data = "PASS ";
-            data += fCurrentServer.password;
-            SendData(data.String());
-          }
-
-          data = "NICK ";
-          data.Append (fMyNick.String());
-          SendData(data.String());
-        
-          data = "USER ";
-          data.Append (fLident);
-          data.Append (" localhost ");
-          data.Append (fCurrentServer.serverName);
-          data.Append (" :");
-          data.Append (fLname);
-          SendData(data.String());
-        }
+        }        
       }
       break;
       

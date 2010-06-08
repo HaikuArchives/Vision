@@ -102,6 +102,7 @@ NetworkManager::Overlord(void *data)
   {
     int result = 0;
     manager->_SocketLock();
+
     result = poll(manager->fPollFDs, manager->fSockets.size(), 1000);
     if (result <= 0)
     {
@@ -136,7 +137,7 @@ NetworkManager::_HandleSend(const BMessage *data)
   if (data->FindInt32("connection", &sock) == B_OK 
     && data->FindData("data", B_RAW_TYPE, &sendBuffer, &size) == B_OK)
   {
-    int result = send(sock, data, size, 0);
+    int result = send(sock, sendBuffer, size, 0);
     if (result < 0)
     {
       _HandleDisconnect(sock, _IndexForSocket(sock));
@@ -187,7 +188,7 @@ NetworkManager::_HandleConnect(const BMessage *message)
     struct addrinfo *info;
     struct addrinfo hints;
     memset(&hints, 0, sizeof(addrinfo));
-    hints.ai_family = PF_UNSPEC;
+    hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
     int result = getaddrinfo(hostname.String(), port.String(), &hints, &info);
