@@ -63,6 +63,7 @@ class NetworkManager : public BLooper
     bool                            fShuttingDown;
     BLocker                         fSocketLock;
     struct pollfd                   fPollFDs[256];
+    thread_id                       fPollThread;
 };
 
 #endif // _NETWORK_MANAGER_H_

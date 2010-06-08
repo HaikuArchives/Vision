@@ -818,6 +818,7 @@ VisionApp::ReadyToRun (void)
   }
   
   network_manager = new NetworkManager();
+  network_manager->Run();
 }
 
 void

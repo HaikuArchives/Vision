@@ -33,11 +33,22 @@
 #include <string.h>
 
 NetworkManager::NetworkManager(void)
-  : BLooper("Big Brother")
+  : BLooper("Big Brother"),
+    fShuttingDown(false)
 {
   for (uint32 i = 0; i < sizeof(fPollFDs) / sizeof(pollfd); i++)
   {
     fPollFDs[i].fd = -1;
+  }
+  
+  fPollThread = spawn_thread(Overlord, "Overlord", B_LOW_PRIORITY, this);
+  if (fPollThread >= B_OK)
+  {
+  	resume_thread(fPollThread);
+  }
+  else
+  {
+  	printf("Thread error: %ld\n", fPollThread);
   }
 }
 
@@ -94,10 +105,11 @@ NetworkManager::Overlord(void *data)
     result = poll(manager->fPollFDs, manager->fSockets.size(), 1000);
     if (result <= 0)
     {
+    	manager->_SocketUnlock();
       continue;
     }
     for (uint32 i = 0; i < manager->fSockets.size(); i++)
-    {          
+    {
       if (manager->fPollFDs[i].revents & (POLLIN | POLLPRI))
       {
         manager->_HandleReceive(manager->fPollFDs[i].fd, i);
@@ -122,7 +134,7 @@ NetworkManager::_HandleSend(const BMessage *data)
   const void *sendBuffer = NULL;
   int32 size = -1;
   if (data->FindInt32("connection", &sock) == B_OK 
-    && data->FindData("buffer", B_RAW_TYPE, &sendBuffer, &size) == B_OK)
+    && data->FindData("data", B_RAW_TYPE, &sendBuffer, &size) == B_OK)
   {
     int result = send(sock, data, size, 0);
     if (result < 0)
@@ -154,6 +166,7 @@ NetworkManager::_HandleReceive(int sock, uint32 index)
   BMessage msg(M_CONNECTION_DATA_RECEIVED);
   msg.AddInt32("connection", sock);
   msg.AddData("data", B_RAW_TYPE, recvbuffer, result);
+  
   it->second.SendMessage(&msg);
 }
 
