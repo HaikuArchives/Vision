@@ -591,6 +591,13 @@ RunView::BuildPopUp (void)
   BMenuItem *item;
 
   BMessage *lookup;
+  lookup = new BMessage (M_LOOKUP_BROWSER);
+  lookup->AddString ("string", querystring);
+  item = new BMenuItem("Open in browser", lookup);
+  item->SetEnabled (enablelookup);
+  item->SetTarget (Parent());
+  fMyPopUp->AddItem (item);
+
   lookup = new BMessage (M_LOOKUP_WEBSTER);
   lookup->AddString ("string", querystring);
   item = new BMenuItem("Lookup (Dictionary)", lookup);

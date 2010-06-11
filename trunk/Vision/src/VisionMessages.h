@@ -101,8 +101,10 @@ const uint32 M_CHANNEL_GOT_KICKED					= 0x1606;
 const uint32 M_LOOKUP_WEBSTER                       = 0x1607;
 const uint32 M_LOOKUP_GOOGLE                        = 0x1608;
 const uint32 M_LOOKUP_ACRONYM                       = 0x1609;
-const uint32 M_CHANNEL_OPTIONS_SHOW                 = 0x1610;
-const uint32 M_CHANNEL_OPTIONS_CLOSE                = 0x1611;
+const uint32 M_LOOKUP_BROWSER						= 0x1610;
+const uint32 M_CHANNEL_OPTIONS_SHOW                 = 0x1611;
+const uint32 M_CHANNEL_OPTIONS_CLOSE                = 0x1612;
+
 
 const uint32 M_SERVER_SEND							= 0x1701;
 const uint32 M_SERVER_SHUTDOWN						= 0x1702;

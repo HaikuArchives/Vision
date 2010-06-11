@@ -984,6 +984,18 @@ ClientAgent::MessageReceived (BMessage *msg)
       }
       break;
 
+    case M_LOOKUP_BROWSER:
+      {
+        BString lookup;
+        msg->FindString ("string", &lookup);
+        if (lookup.FindFirst("://") == B_ERROR)
+        {
+        	lookup.Prepend("http://");
+        }
+        vision_app->LoadURL (lookup.String());
+      }
+      break;
+
     case M_LOOKUP_WEBSTER:
       {
         BString lookup;
