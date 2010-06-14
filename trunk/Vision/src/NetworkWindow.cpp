@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -35,39 +35,39 @@
 #define B_TRANSLATE_CONTEXT "NetworkSetupWindow"
 
 NetworkWindow::NetworkWindow (void)
-  : BWindow (
-      BRect (50, 50, 500, 350),
-      B_TRANSLATE("Network Setup"),
-      B_TITLED_WINDOW,
-      B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
+	: BWindow (
+			BRect (50, 50, 500, 350),
+			B_TRANSLATE("Network Setup"),
+			B_TITLED_WINDOW,
+			B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
-  AddChild (new NetworkPrefsView (Bounds(), "network"));
-  BRect netFrame (0,0,0,0);
-  netFrame = vision_app->GetRect ("NetPrefWinRect");
-  if (netFrame.Width() != 0.0)
-    MoveTo(netFrame.left, netFrame.top);
+	AddChild (new NetworkPrefsView (Bounds(), "network"));
+	BRect netFrame (0,0,0,0);
+	netFrame = vision_app->GetRect ("NetPrefWinRect");
+	if (netFrame.Width() != 0.0)
+		MoveTo(netFrame.left, netFrame.top);
 }
 
 
 NetworkWindow::~NetworkWindow (void)
 {
-  //
+	//
 }
 
 bool
 NetworkWindow::QuitRequested (void)
 {
-  vision_app->SetRect ("NetPrefWinRect", Frame());
-  be_app_messenger.SendMessage (M_NETWORK_CLOSE);
-  return true;  
+	vision_app->SetRect ("NetPrefWinRect", Frame());
+	be_app_messenger.SendMessage (M_NETWORK_CLOSE);
+	return true;	
 }
 
 NetPrefServerWindow::NetPrefServerWindow (BHandler *target)
-  : BWindow (
-      BRect (50, 50, 350, 250),
-      B_TRANSLATE("Servers"),
-      B_TITLED_WINDOW,
-      B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
+	: BWindow (
+			BRect (50, 50, 350, 250),
+			B_TRANSLATE("Servers"),
+			B_TITLED_WINDOW,
+			B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
 	AddChild ((serverView = new NetPrefsServerView (Bounds(), "server settings", BMessenger(target))));
 }
@@ -75,17 +75,17 @@ NetPrefServerWindow::NetPrefServerWindow (BHandler *target)
 
 NetPrefServerWindow::~NetPrefServerWindow (void)
 {
-  //
+	//
 }
 
 bool
 NetPrefServerWindow::QuitRequested (void)
 {
-  return true;
+	return true;
 }
 
 void
 NetPrefServerWindow::SetNetworkData (BMessage *msg)
 {
-  serverView->SetNetworkData (msg);
+	serverView->SetNetworkData (msg);
 }

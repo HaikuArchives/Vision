@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #ifndef _LISTAGENT_H_
@@ -45,46 +45,46 @@ class WindowList;
 
 class ListAgent : public BView
 {
-  public:
+	public:
 
-                            ListAgent (BRect, const char *, BMessenger *);
-    virtual                 ~ListAgent (void);
-    virtual void            MessageReceived (BMessage *);
-    virtual void            AttachedToWindow (void);
-    virtual void			Show (void);
-    virtual void            Hide (void);
+														ListAgent (BRect, const char *, BMessenger *);
+		virtual								 ~ListAgent (void);
+		virtual void						MessageReceived (BMessage *);
+		virtual void						AttachedToWindow (void);
+		virtual void			Show (void);
+		virtual void						Hide (void);
 
-    WindowListItem          *fAgentWinItem;
-    BMessenger              fMsgr;
-    
-  private:
-    void                    AddBatch (void);
-    Theme                   *activeTheme;
-    BMessenger              *fSMsgr;
-    BMessageRunner          *listUpdateTrigger;
-    BMenu                   *listMenu;
-    BColumnListView         *listView;
-    BColumn                 *channelColumn,
-                            *usersColumn,
-                            *topicColumn;
-                            
-    StatusView              *status;
+		WindowListItem					*fAgentWinItem;
+		BMessenger							fMsgr;
+		
+	private:
+		void										AddBatch (void);
+		Theme									 *activeTheme;
+		BMessenger							*fSMsgr;
+		BMessageRunner					*listUpdateTrigger;
+		BMenu									 *listMenu;
+		BColumnListView				 *listView;
+		BColumn								 *channelColumn,
+														*usersColumn,
+														*topicColumn;
+														
+		StatusView							*status;
 
-    BString                 filter,
-                              find,
-                              statusStr;
-    regex_t                 re,
-                              fre;
-                              
-    bool                    processing;
-    
-    BObjectList<BRow>       hiddenItems,
-                              fBuildList;
+		BString								 filter,
+															find,
+															statusStr;
+		regex_t								 re,
+															fre;
+															
+		bool										processing;
+		
+		BObjectList<BRow>			 hiddenItems,
+															fBuildList;
 
-    BMenuItem               *mFilter,
-                              *mFind,
-                              *mFindAgain;
-    friend class            WindowList;
+		BMenuItem							 *mFilter,
+															*mFind,
+															*mFindAgain;
+		friend class						WindowList;
 };
 
 #endif

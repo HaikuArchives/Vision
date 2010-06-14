@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
@@ -31,41 +31,41 @@
 #ifndef _VTEXTCONTROL_H_
 #define _VTEXTCONTROL_H_
 
-#  include <TextControl.h>
-#  include <MessageFilter.h>
+#	include <TextControl.h>
+#	include <MessageFilter.h>
 
 class BPopUpMenu;
 class BMenu;
 
 class VTextControl : public BTextControl
 {
-  public:
-                           VTextControl (BRect,
-                                         const char *,
-                                         const char *,
-                                         const char *,
-                                         BMessage *,
-                                         uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP,
-                                         uint32 = B_WILL_DRAW | B_NAVIGABLE,
-                                         bool = false);
-                           VTextControl (BMessage *, bool = false);
-    virtual void           AllAttached (void);
-    void                   BuildPopUp (void);
+	public:
+													 VTextControl (BRect,
+																				 const char *,
+																				 const char *,
+																				 const char *,
+																				 BMessage *,
+																				 uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP,
+																				 uint32 = B_WILL_DRAW | B_NAVIGABLE,
+																				 bool = false);
+													 VTextControl (BMessage *, bool = false);
+		virtual void					 AllAttached (void);
+		void									 BuildPopUp (void);
 
-    BPopUpMenu             *myPopUp;
-    
-    bool                   nomenu;
+		BPopUpMenu						 *myPopUp;
+		
+		bool									 nomenu;
 };
 
 class VTextControlFilter : public BMessageFilter
 {
 
-  public:
-                                    VTextControlFilter (VTextControl *);
-    virtual filter_result           Filter (BMessage *, BHandler **);
+	public:
+																		VTextControlFilter (VTextControl *);
+		virtual filter_result					 Filter (BMessage *, BHandler **);
 
-  private:
-    VTextControl                    *parent;
+	private:
+		VTextControl										*parent;
 
 };
 

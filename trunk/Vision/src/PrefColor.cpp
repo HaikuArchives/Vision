@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Todd Lair
+ *								 Todd Lair
  */
 
 // TODO: Color Schemes/Themes
@@ -109,29 +109,29 @@ static const char *ColorLabels[] =
 };
 
 ColorPrefsView::ColorPrefsView (BRect frame)
-  : BView (frame, "Color Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW)
+	: BView (frame, "Color Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW)
 {
-  int32 i (0);
-  SetViewColor (ui_color(B_PANEL_BACKGROUND_COLOR));
-  for (i = 0 ; i < MAX_COLORS ; i++)
-    fColors[i] = vision_app->GetColor (i);
-  
-  BMessage mycolors, labels;
+	int32 i (0);
+	SetViewColor (ui_color(B_PANEL_BACKGROUND_COLOR));
+	for (i = 0 ; i < MAX_COLORS ; i++)
+		fColors[i] = vision_app->GetColor (i);
+	
+	BMessage mycolors, labels;
 
-  for (i = 0 ; i < MAX_COLORS; i++)
-  {
-  	mycolors.AddData ("color", B_RGB_COLOR_TYPE, &fColors[i], sizeof(rgb_color));
-  	labels.AddString ("color", B_TRANSLATE(ColorLabels[i]));
-  }
+	for (i = 0 ; i < MAX_COLORS; i++)
+	{
+		mycolors.AddData ("color", B_RGB_COLOR_TYPE, &fColors[i], sizeof(rgb_color));
+		labels.AddString ("color", B_TRANSLATE(ColorLabels[i]));
+	}
 
-  fSelector = new ColorSelector (frame, "fSelector", NULL, mycolors, labels, new BMessage ('vtst'));
-  fSelector->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  fSelector->ResizeToPreferred();
-  fRevert = new BButton (BRect (0,0,0,0), "fRevert", B_TRANSLATE("Revert"), new BMessage (M_REVERT_COLOR_SELECTIONS));
-  fRevert->ResizeToPreferred();
-  ResizeTo (fSelector->Bounds().Width() + 30, fSelector->Bounds().Height() + 30 + fRevert->Bounds().Height());
-  AddChild (fSelector);
-  AddChild (fRevert);
+	fSelector = new ColorSelector (frame, "fSelector", NULL, mycolors, labels, new BMessage ('vtst'));
+	fSelector->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+	fSelector->ResizeToPreferred();
+	fRevert = new BButton (BRect (0,0,0,0), "fRevert", B_TRANSLATE("Revert"), new BMessage (M_REVERT_COLOR_SELECTIONS));
+	fRevert->ResizeToPreferred();
+	ResizeTo (fSelector->Bounds().Width() + 30, fSelector->Bounds().Height() + 30 + fRevert->Bounds().Height());
+	AddChild (fSelector);
+	AddChild (fRevert);
 }
 
 ColorPrefsView::~ColorPrefsView (void)
@@ -141,29 +141,29 @@ ColorPrefsView::~ColorPrefsView (void)
 void
 ColorPrefsView::AttachedToWindow (void)
 {
-  BView::AttachedToWindow();
+	BView::AttachedToWindow();
 }
 
 void
 ColorPrefsView::AllAttached (void)
 {
-  BView::AllAttached();
-  fSelector->ResizeToPreferred();
-  fSelector->MoveTo ((Bounds().Width() - fSelector->Bounds().Width()) / 2 ,
-    5);
-  fRevert->MoveTo (fSelector->Frame().left, fSelector->Frame().bottom + 10);
-  fRevert->SetTarget (this);
+	BView::AllAttached();
+	fSelector->ResizeToPreferred();
+	fSelector->MoveTo ((Bounds().Width() - fSelector->Bounds().Width()) / 2 ,
+		5);
+	fRevert->MoveTo (fSelector->Frame().left, fSelector->Frame().bottom + 10);
+	fRevert->SetTarget (this);
 }
 
 void
 ColorPrefsView::MessageReceived (BMessage *msg)
 {
-  switch (msg->what)
-  {
-    case M_REVERT_COLOR_SELECTIONS:
-      fSelector->Revert();
-      break;
-  }
-  BView::MessageReceived(msg);
+	switch (msg->what)
+	{
+		case M_REVERT_COLOR_SELECTIONS:
+			fSelector->Revert();
+			break;
+	}
+	BView::MessageReceived(msg);
 }
 

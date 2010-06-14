@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Ted Stodgell <kart@hal-pc.org>
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Ted Stodgell <kart@hal-pc.org>
  */
 
 #include <Window.h>
@@ -30,17 +30,17 @@
 #include "ResizeView.h"
 #include "VisionBase.h"
 #include "Vision.h"
-  
+	
 ResizeView::ResizeView (BView *child, BRect frame, const char *title,
-  uint32 resizeMode, uint32 flags) :
-    BView (frame, title, resizeMode, flags),
-    mousePressed (false),
-    attachedView (child),
-    cursor (kHorizontalResizeCursor)
+	uint32 resizeMode, uint32 flags) :
+		BView (frame, title, resizeMode, flags),
+		mousePressed (false),
+		attachedView (child),
+		cursor (kHorizontalResizeCursor)
 {
-  assert (attachedView != NULL);
+	assert (attachedView != NULL);
 
-  SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
 }
  
 ResizeView::~ResizeView()
@@ -50,33 +50,33 @@ ResizeView::~ResizeView()
 void
 ResizeView::MouseDown (BPoint)
 {
-  SetMouseEventMask (B_POINTER_EVENTS, B_LOCK_WINDOW_FOCUS|B_SUSPEND_VIEW_FOCUS|B_NO_POINTER_HISTORY);
-  mousePressed = true;
-  vision_app->SetCursor (&cursor);
+	SetMouseEventMask (B_POINTER_EVENTS, B_LOCK_WINDOW_FOCUS|B_SUSPEND_VIEW_FOCUS|B_NO_POINTER_HISTORY);
+	mousePressed = true;
+	vision_app->SetCursor (&cursor);
 }
  
 void
 ResizeView::MouseUp (BPoint)
 {
-  mousePressed = false;
-  vision_app->SetCursor (B_HAND_CURSOR);
+	mousePressed = false;
+	vision_app->SetCursor (B_HAND_CURSOR);
 }
  
 void
 ResizeView::MouseMoved (BPoint, uint32, const BMessage *)
 {
-  SetViewCursor (&cursor);
-  if (mousePressed)
-  {
-    BWindow *window (Window ());
-    BMessage *windowmsg (window->CurrentMessage());
-    BPoint windowCoord;
-    windowmsg->FindPoint ("where", &windowCoord);
-    BMessage msg (M_RESIZE_VIEW);
-    if (windowCoord.x <= 0.0 || windowCoord.x >= window->Bounds().right)
-      return;
-    msg.AddPoint ("loc", windowCoord);
-    msg.AddPointer ("view", attachedView);
-    window->PostMessage (&msg);
-  }
+	SetViewCursor (&cursor);
+	if (mousePressed)
+	{
+		BWindow *window (Window ());
+		BMessage *windowmsg (window->CurrentMessage());
+		BPoint windowCoord;
+		windowmsg->FindPoint ("where", &windowCoord);
+		BMessage msg (M_RESIZE_VIEW);
+		if (windowCoord.x <= 0.0 || windowCoord.x >= window->Bounds().right)
+			return;
+		msg.AddPoint ("loc", windowCoord);
+		msg.AddPointer ("view", attachedView);
+		window->PostMessage (&msg);
+	}
 }

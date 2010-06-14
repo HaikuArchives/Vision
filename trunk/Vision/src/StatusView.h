@@ -13,23 +13,23 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #ifndef _STATUSVIEW_H_
 #define _STATUSVIEW_H_
 
-#define STATUS_ALIGN_RIGHT          0
-#define STATUS_ALIGN_LEFT           1
+#define STATUS_ALIGN_RIGHT					0
+#define STATUS_ALIGN_LEFT					 1
 
-#define STATUS_HEIGHT               13
+#define STATUS_HEIGHT							 13
 
 #include <View.h>
 #include <List.h>
@@ -39,42 +39,42 @@ class StatusItem;
 
 class StatusView : public BView
 {
-  BList                 items;
+	BList								 items;
 
-  public:
-                        StatusView (BRect);
-    virtual             ~StatusView (void);
+	public:
+												StatusView (BRect);
+		virtual						 ~StatusView (void);
 
-    void                AddItem (StatusItem *, bool);
-    StatusItem          *ItemAt (int32) const;
+		void								AddItem (StatusItem *, bool);
+		StatusItem					*ItemAt (int32) const;
 
-    void                SetItemValue (int32, const char *, bool = true);
-    virtual void        Draw (BRect);
-    virtual void		MouseDown (BPoint);
-    void                Clear (void);
+		void								SetItemValue (int32, const char *, bool = true);
+		virtual void				Draw (BRect);
+		virtual void		MouseDown (BPoint);
+		void								Clear (void);
 
-  protected:
-    void                DrawSplit (float);
+	protected:
+		void								DrawSplit (float);
 };
 
 class StatusItem
 {
-  public:
-                        StatusItem (const char *,
-                                    const char *,
-								    int32 = STATUS_ALIGN_RIGHT);
+	public:
+												StatusItem (const char *,
+																		const char *,
+										int32 = STATUS_ALIGN_RIGHT);
 
-    virtual               ~StatusItem (void);
-    
-    void                GeneratePopUp(BPoint, BRect);
-  
-  private:
-    BString               label,
-                        value;
-    BRect                 frame;
-    int32                 alignment;
+		virtual							 ~StatusItem (void);
+		
+		void								GeneratePopUp(BPoint, BRect);
+	
+	private:
+		BString							 label,
+												value;
+		BRect								 frame;
+		int32								 alignment;
 
-    friend class               StatusView;
+		friend class							 StatusView;
 };
 
 #endif

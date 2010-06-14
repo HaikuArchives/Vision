@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Alan Ellis <alan@cgsoftware.org>
+ *								 Alan Ellis <alan@cgsoftware.org>
  */
  
 //------------------------------------------------------------------------------
@@ -54,69 +54,69 @@ const color_space kIconColorSpace = B_CMAP8;
 #endif
 
 TIconMenu::TIconMenu(BBitmap* icon, BMenu* menu) :
-        BMenuItem(menu),
-        bounds(),
-        iconLabel(NULL)
+				BMenuItem(menu),
+				bounds(),
+				iconLabel(NULL)
 {
-    if (icon) {
-        bounds = icon->Bounds();
-        iconLabel = new BBitmap(bounds, kIconColorSpace);
-        iconLabel->SetBits(icon->Bits(), icon->BitsLength(), 0, kIconColorSpace);
-    }
+		if (icon) {
+				bounds = icon->Bounds();
+				iconLabel = new BBitmap(bounds, kIconColorSpace);
+				iconLabel->SetBits(icon->Bits(), icon->BitsLength(), 0, kIconColorSpace);
+		}
 }
 
 TIconMenu::TIconMenu(BMenu* menu) :
-        BMenuItem(menu),
-        bounds(0.0, 0.0, 15.0, 15.0),
-        iconLabel(NULL)
+				BMenuItem(menu),
+				bounds(0.0, 0.0, 15.0, 15.0),
+				iconLabel(NULL)
 {
-    app_info info;
-    if (be_app->GetAppInfo(&info) == B_NO_ERROR) {
-        BFile appFile(&(info.ref), O_RDONLY);
-        BAppFileInfo appFileInfo(&appFile);
+		app_info info;
+		if (be_app->GetAppInfo(&info) == B_NO_ERROR) {
+				BFile appFile(&(info.ref), O_RDONLY);
+				BAppFileInfo appFileInfo(&appFile);
 
-        iconLabel = new BBitmap(bounds, kIconColorSpace);
+				iconLabel = new BBitmap(bounds, kIconColorSpace);
 
-        if (appFileInfo.GetIcon(iconLabel, B_MINI_ICON) != B_NO_ERROR) {
-            delete iconLabel;
-            iconLabel = NULL;
-        }
-    }
+				if (appFileInfo.GetIcon(iconLabel, B_MINI_ICON) != B_NO_ERROR) {
+						delete iconLabel;
+						iconLabel = NULL;
+				}
+		}
 }
 
 TIconMenu::~TIconMenu()
 {
-    delete iconLabel;
-    iconLabel = NULL;
+		delete iconLabel;
+		iconLabel = NULL;
 }
 
 void TIconMenu::GetContentSize(float* width, float* height)
 {
-    if (iconLabel) {
-        *width = bounds.Width();
-        *height = bounds.Height();
-    }
-    else
-        BMenuItem::GetContentSize(width, height);
+		if (iconLabel) {
+				*width = bounds.Width();
+				*height = bounds.Height();
+		}
+		else
+				BMenuItem::GetContentSize(width, height);
 }
 
 void TIconMenu::DrawContent()
 {
-    if (iconLabel) {
-        Menu()->SetDrawingMode(B_OP_OVER);
+		if (iconLabel) {
+				Menu()->SetDrawingMode(B_OP_OVER);
 
-        float width, height;
+				float width, height;
 
-        Menu()->GetPreferredSize(&width, &height);
+				Menu()->GetPreferredSize(&width, &height);
 
-        BRect destBounds = bounds;
-        destBounds.OffsetBy(8.0, ((height - bounds.Height()) * 0.5) - 1);
+				BRect destBounds = bounds;
+				destBounds.OffsetBy(8.0, ((height - bounds.Height()) * 0.5) - 1);
 
-        // Scaling the icon is left as an exercise for the reader :)
-        Menu()->DrawBitmap(iconLabel, bounds, destBounds);
-    }
-    else
-        BMenuItem::DrawContent();
+				// Scaling the icon is left as an exercise for the reader :)
+				Menu()->DrawBitmap(iconLabel, bounds, destBounds);
+		}
+		else
+				BMenuItem::DrawContent();
 }
 
 //-------------------------------------------------------------- IconMenu.cpp --

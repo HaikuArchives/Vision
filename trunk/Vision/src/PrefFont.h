@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Todd Lair
+ *								 Todd Lair
  */
 
 #ifndef _PREFFONT_H
@@ -32,18 +32,18 @@ class BTextControl;
 
 class FontPrefsView : public BView
 {
-  public:
-    FontPrefsView (BRect);
-    virtual ~FontPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-    virtual void FrameResized (float, float);
-  private:
-  	BMenuField *fFontMenuField;
-  	BMenuField *fFontElementField;
-  	VTextControl *fTextControl;
-  	int32 fActiveFont;
+	public:
+		FontPrefsView (BRect);
+		virtual ~FontPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+		virtual void FrameResized (float, float);
+	private:
+		BMenuField *fFontMenuField;
+		BMenuField *fFontElementField;
+		VTextControl *fTextControl;
+		int32 fActiveFont;
 };
 
 #endif // _PREFFONT_H

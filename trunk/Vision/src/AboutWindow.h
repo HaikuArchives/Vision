@@ -13,13 +13,13 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Brian Luft
- *                 Todd Lair
- *                 Rene Gollent
+ *								 Brian Luft
+ *								 Todd Lair
+ *								 Rene Gollent
  */ 
 
 #ifndef _ABOUTWINDOW_H_
@@ -34,22 +34,22 @@ class BMessageRunner;
 class AboutWindow : public BWindow
 {
 
-  public:
-                          AboutWindow (void);
-    virtual               ~AboutWindow (void);
-    virtual void          MessageReceived (BMessage *);
-    virtual bool          QuitRequested (void);
+	public:
+													AboutWindow (void);
+		virtual							 ~AboutWindow (void);
+		virtual void					MessageReceived (BMessage *);
+		virtual bool					QuitRequested (void);
 
-  private:
-    BTextView             *fCredits; 
-    BView                 *fBackground,
-                            *fLogo;
-    bool                  fEasterEggOn;
-    const char            *fCreditsText;
-    text_run_array        fTextRun;
-    BMessageRunner        *fScrollRunner;
-    
-    void                  AboutImage (const char *, bool);
+	private:
+		BTextView						 *fCredits; 
+		BView								 *fBackground,
+														*fLogo;
+		bool									fEasterEggOn;
+		const char						*fCreditsText;
+		text_run_array				fTextRun;
+		BMessageRunner				*fScrollRunner;
+		
+		void									AboutImage (const char *, bool);
 };
 
 #endif

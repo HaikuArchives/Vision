@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -26,9 +26,9 @@
 
 class PrefsWindow : public BWindow
 {
-  public:
-    PrefsWindow(void);
-    virtual ~PrefsWindow(void);
-    virtual bool QuitRequested(void);
+	public:
+		PrefsWindow(void);
+		virtual ~PrefsWindow(void);
+		virtual bool QuitRequested(void);
 };
 #endif // _PREFS_WINDOW_H

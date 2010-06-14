@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -31,24 +31,24 @@ class BMenuItem;
 
 class AppWindowPrefsView : public BView
 {
-  public:
-    AppWindowPrefsView (BRect);
-    virtual ~AppWindowPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-  private:
-    BMenu *CreateEncodingMenu(void);
-    void SetEncodingItem(int32);
-    BMenuField *fEncodings;
-    BCheckBox *fVersionParanoid,
-              *fCatchAltW,
-              *fTimeStamp,
-              *fLogEnabled,
-              *fLogFileTimestamp,
-              *fStripColors,
-              *fSpamMode,
-              *fQueryMsg;
+	public:
+		AppWindowPrefsView (BRect);
+		virtual ~AppWindowPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+	private:
+		BMenu *CreateEncodingMenu(void);
+		void SetEncodingItem(int32);
+		BMenuField *fEncodings;
+		BCheckBox *fVersionParanoid,
+							*fCatchAltW,
+							*fTimeStamp,
+							*fLogEnabled,
+							*fLogFileTimestamp,
+							*fStripColors,
+							*fSpamMode,
+							*fQueryMsg;
 };
 
 #endif // _PREFAPP_H

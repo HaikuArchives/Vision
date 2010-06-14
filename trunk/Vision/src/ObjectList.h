@@ -34,22 +34,22 @@ All rights reserved.
 
 /****************************************************************************
 ** WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING **
-**                                                                         **
-**                          DANGER, WILL ROBINSON!                         **
-**                                                                         **
-** The interfaces contained here are part of BeOS's                        **
-**                                                                         **
-**                     >> PRIVATE NOT FOR PUBLIC USE <<                    **
-**                                                                         **
-**                                                       implementation.   **
-**                                                                         **
-** These interfaces              WILL CHANGE        in future releases.    **
-** If you use them, your app     WILL BREAK         at some future time.   **
-**                                                                         **
-** (And yes, this does mean that binaries built from OpenTracker will not  **
-** be compatible with some future releases of the OS.  When that happens,  **
+**																																				 **
+**													DANGER, WILL ROBINSON!												 **
+**																																				 **
+** The interfaces contained here are part of BeOS's												**
+**																																				 **
+**										 >> PRIVATE NOT FOR PUBLIC USE <<										**
+**																																				 **
+**																											 implementation.	 **
+**																																				 **
+** These interfaces							WILL CHANGE				in future releases.		**
+** If you use them, your app		 WILL BREAK				 at some future time.	 **
+**																																				 **
+** (And yes, this does mean that binaries built from OpenTracker will not	**
+** be compatible with some future releases of the OS.	When that happens,	**
 ** we will provide an updated version of this file to keep compatibility.) **
-**                                                                         **
+**																																				 **
 ** WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING **
 ****************************************************************************/
 

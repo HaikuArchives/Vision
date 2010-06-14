@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -31,16 +31,16 @@ class BButton;
 
 class ColorPrefsView : public BView
 {
-  public:
-    ColorPrefsView (BRect);
-    virtual ~ColorPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-  private:
-    rgb_color fColors [MAX_COLORS];
-    ColorSelector *fSelector;
-    BButton *fRevert;
+	public:
+		ColorPrefsView (BRect);
+		virtual ~ColorPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+	private:
+		rgb_color fColors [MAX_COLORS];
+		ColorSelector *fSelector;
+		BButton *fRevert;
 };
 
 #endif // _PREFCOLOR_H

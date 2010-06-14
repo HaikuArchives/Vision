@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #include <String.h>
@@ -30,88 +30,88 @@
 #include "HistoryList.h"
 
 HistoryList::HistoryList () : 
-  bufferFree (0),
-  bufferPos (0)
+	bufferFree (0),
+	bufferPos (0)
 {
 }
 
 void
 HistoryList::PreviousBuffer (VTextControl *input)
 {
-  if (bufferPos)
-  {
-    if (input->TextView()->TextLength() > 0  && 
-    bufferFree < BACK_BUFFER_SIZE &&
-    bufferPos == bufferFree)
-      backBuffer[bufferFree++] = input->Text();
+	if (bufferPos)
+	{
+		if (input->TextView()->TextLength() > 0	&& 
+		bufferFree < BACK_BUFFER_SIZE &&
+		bufferPos == bufferFree)
+			backBuffer[bufferFree++] = input->Text();
 
-    --bufferPos;
+		--bufferPos;
 
-    input->SetText (backBuffer[bufferPos].String());
-    input->TextView()->Select (
-      input->TextView()->TextLength(),
-      input->TextView()->TextLength());
-  }
+		input->SetText (backBuffer[bufferPos].String());
+		input->TextView()->Select (
+			input->TextView()->TextLength(),
+			input->TextView()->TextLength());
+	}
 }
 
 void
 HistoryList::NextBuffer (VTextControl *input)
 {
-  BString buffer;
+	BString buffer;
 
-  if (bufferPos + 1 < bufferFree)
-  {
-    ++bufferPos;
-    buffer = backBuffer[bufferPos].String();
-  }
-  else if (bufferFree > 0)
-  {
-    if (backBuffer[bufferFree-1] == input->Text())
-    {
-      buffer = "";
-      ++bufferPos;
-    }
-    else
-      buffer = input->Text();
-  }  
-  input->SetText (buffer.String());
-  input->TextView()->Select (
-  input->TextView()->TextLength(),
-  input->TextView()->TextLength());
+	if (bufferPos + 1 < bufferFree)
+	{
+		++bufferPos;
+		buffer = backBuffer[bufferPos].String();
+	}
+	else if (bufferFree > 0)
+	{
+		if (backBuffer[bufferFree-1] == input->Text())
+		{
+			buffer = "";
+			++bufferPos;
+		}
+		else
+			buffer = input->Text();
+	}	
+	input->SetText (buffer.String());
+	input->TextView()->Select (
+	input->TextView()->TextLength(),
+	input->TextView()->TextLength());
 }
 
 BString
 HistoryList::Submit (const char *buffer)
 {
-  int32 i(0);
-  // All filled up
-  if (bufferFree == BACK_BUFFER_SIZE)
-  {
-    for (i = 0; i < BACK_BUFFER_SIZE - 1; ++i)
-      backBuffer[i] = backBuffer[i + 1];
-   
-    bufferFree = BACK_BUFFER_SIZE - 1;
-  }
+	int32 i(0);
+	// All filled up
+	if (bufferFree == BACK_BUFFER_SIZE)
+	{
+		for (i = 0; i < BACK_BUFFER_SIZE - 1; ++i)
+			backBuffer[i] = backBuffer[i + 1];
+	 
+		bufferFree = BACK_BUFFER_SIZE - 1;
+	}
 	
-  backBuffer[bufferFree] = buffer;
+	backBuffer[bufferFree] = buffer;
 
-  BString cmd;
+	BString cmd;
 	
-  for (i = 0; i < backBuffer[bufferFree].Length(); ++i)
-  {
-    if (backBuffer[bufferFree][i] == '\n')
-      cmd += " ";
-    else if (backBuffer[bufferFree][i] != '\r')
-      cmd += backBuffer[bufferFree][i];
-  }
-  
-  bufferPos = ++bufferFree;
+	for (i = 0; i < backBuffer[bufferFree].Length(); ++i)
+	{
+		if (backBuffer[bufferFree][i] == '\n')
+			cmd += " ";
+		else if (backBuffer[bufferFree][i] != '\r')
+			cmd += backBuffer[bufferFree][i];
+	}
+	
+	bufferPos = ++bufferFree;
 
-  return cmd;
+	return cmd;
 }
 
 bool
 HistoryList::HasHistory (void) const
 {
-  return bufferFree != 0;
+	return bufferFree != 0;
 }

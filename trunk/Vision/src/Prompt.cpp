@@ -13,12 +13,12 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Wade Majors
- *                 Todd Lair
+ *								 Wade Majors
+ *								 Todd Lair
  */
 #include <Alert.h>
 #include <Application.h>
@@ -146,7 +146,7 @@ PromptWindow::MessageReceived (BMessage *msg)
 			if (field->TextView()->TextLength() || blanks)
 			{
 				if (!validate
-				||   validate->Validate (field->TextView()->Text()))
+				||	 validate->Validate (field->TextView()->Text()))
 				{
 					BMessenger msgr (handler);
 
@@ -170,7 +170,7 @@ PromptWindow::MessageReceived (BMessage *msg)
 
 EscapeFilter::EscapeFilter (BWindow *window_)
 	: BMessageFilter (B_PROGRAMMED_DELIVERY, B_LOCAL_SOURCE, B_KEY_DOWN),
-	  window (window_)
+		window (window_)
 {
 }
 
@@ -188,9 +188,9 @@ EscapeFilter::Filter (BMessage *msg, BHandler **)
 	msg->FindInt32 ("modifiers", (int32 *)&keyModifiers);
 
 	if (bytes[0] == B_ESCAPE
-	&& (keyModifiers & B_SHIFT_KEY)   == 0
+	&& (keyModifiers & B_SHIFT_KEY)	 == 0
 	&& (keyModifiers & B_CONTROL_KEY) == 0
-	&& (keyModifiers & B_OPTION_KEY)  == 0
+	&& (keyModifiers & B_OPTION_KEY)	== 0
 	&& (keyModifiers & B_COMMAND_KEY) == 0)
 	{
 		window->PostMessage (B_QUIT_REQUESTED);
@@ -202,14 +202,14 @@ EscapeFilter::Filter (BMessage *msg, BHandler **)
 
 RegExValidate::RegExValidate (const char *title_)
 	: compiled (false),
-	  title (title_)
+		title (title_)
 {
-  memset (&re, 0, sizeof (re));
+	memset (&re, 0, sizeof (re));
 }
 
 RegExValidate::~RegExValidate (void)
 {
-  if (compiled) regfree (&re);
+	if (compiled) regfree (&re);
 }
 
 bool

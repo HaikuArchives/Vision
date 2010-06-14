@@ -148,7 +148,7 @@ public:
 	virtual	void GetContentSize(float *w, float *h)
 	{
 		BMenuItem::GetContentSize(w, h);
-		*w += Menu()->StringWidth("(W) WA  ")+4 + 2;
+		*w += Menu()->StringWidth("(W) WA	")+4 + 2;
 	}
 	
 private:
@@ -236,17 +236,17 @@ ColorSelector::ColorSelector(	BRect frame, const char* name,
 	fColorField->SetFont(be_bold_font);
 	
 	fColorPalette = new BColorControl(dummyRect.LeftTop(), B_CELLS_32x8, 8,
-									  "Palette", new BMessage(CMD_SET_UI_COLOR),
-									  true);
+										"Palette", new BMessage(CMD_SET_UI_COLOR),
+										true);
 #if B_BEOS_VERSION_DANO
 	fColorPalette->SetModeFlags(B_CC_32BIT_MODE | B_CC_SHOW_SWATCH);
 	fColorPalette->SetDoubleBuffering (B_UPDATE_INVALIDATED | B_UPDATE_RESIZED | B_UPDATE_EXPOSED);
 #else
-    rgb_color *color (NULL);
-    int32 size (0);
-    fColors.FindData ("color", B_RGB_COLOR_TYPE, 0, (const void **)(&color), &size);
-    swatch = new ColorSwatch (dummyRect, "swatch", *color);
-    AddChild (swatch);
+		rgb_color *color (NULL);
+		int32 size (0);
+		fColors.FindData ("color", B_RGB_COLOR_TYPE, 0, (const void **)(&color), &size);
+		swatch = new ColorSwatch (dummyRect, "swatch", *color);
+		AddChild (swatch);
 #endif
 	AddChild(fColorPalette);
 }
@@ -425,7 +425,7 @@ bool ColorSelector::IsDirty() const
 		ssize_t size2;
 		if (fInitColors.FindData("color", B_RGB_COLOR_TYPE, i, &data1, &size1) == B_OK &&
 				( fColors.FindData("color", B_RGB_COLOR_TYPE, i, &data2, &size2) != B_OK ||
-				  size1 != size2 || memcmp(data1, data2, size1) != 0)) {
+					size1 != size2 || memcmp(data1, data2, size1) != 0)) {
 				dirty = true;
 				break;
 		}

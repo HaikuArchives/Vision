@@ -30,17 +30,17 @@ class NetPrefsServerView : public BView
 
 	void			AddServer (const ServerData *);
 	void			RemoveServer (void);
-	void            UpdateNetworkData (const ServerData *);
-	BStringView     *fSelectTitleString,
-	                *fLegend4;
+	void						UpdateNetworkData (const ServerData *);
+	BStringView		 *fSelectTitleString,
+									*fLegend4;
 	BColumnListView *fServerList;
-	BButton         *fAddButton,
-	                *fEditButton,
-	                *fRemoveButton,
-	                *fOkButton;
-	BWindow         *fEntryWin;
-	BMessage        *fActiveNetwork;
-	BMessenger      fNetWin;
+	BButton				 *fAddButton,
+									*fEditButton,
+									*fRemoveButton,
+									*fOkButton;
+	BWindow				 *fEntryWin;
+	BMessage				*fActiveNetwork;
+	BMessenger			fNetWin;
 };
 
 #endif

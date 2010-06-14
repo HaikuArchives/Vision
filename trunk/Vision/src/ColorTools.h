@@ -36,7 +36,7 @@ All rights reserved.
 /
 /	File:			ColorTools.h
 /
-/   Description:    Additional experimental color manipulation functions.
+/	 Description:		Additional experimental color manipulation functions.
 /
 /	Copyright 2000, Be Incorporated, All Rights Reserved
 /
@@ -80,14 +80,14 @@ inline rgb_color make_color(uint8 red, uint8 green, uint8 blue, uint8 alpha=255)
 
 // Mix two colors together, ignoring their relative alpha channels.
 // If amount is 0, the result is color1; if 255, the result is color2;
-// if another value, it is somewhere in-between.  The resulting alpha
+// if another value, it is somewhere in-between.	The resulting alpha
 // channel is mixed exactly like the other color channels.
 rgb_color mix_color(rgb_color color1, rgb_color color2, uint8 amount);
 
 // Blend two colors together, weighting by their relative alpha channels.
 // The resulting color is the same as mix_color(), except that the amount
 // used from color1 and color2's color channels is dependent on that color's
-// alpha channel.  For example, if color1.alpha is 0 and color2.alpha is
+// alpha channel.	For example, if color1.alpha is 0 and color2.alpha is
 // 255, the resulting red, green, and blue values will be the same as those
 // in color2, regardless of 'amount'.
 rgb_color blend_color(rgb_color color1, rgb_color color2, uint8 amount);

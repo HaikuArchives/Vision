@@ -14,13 +14,13 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Joshua Jensen
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Joshua Jensen
  */
 
 #include <stdio.h>
@@ -36,19 +36,19 @@ extern "C"
 static int
 Script_LOG(lua_State* state)
 {
-  Script script(state);
-  Script::Object obj = script.GetObject(script.GetTop());
+	Script script(state);
+	Script::Object obj = script.GetObject(script.GetTop());
 
-  printf("%s\n", obj.GetString());
+	printf("%s\n", obj.GetString());
 
-  return 0;
+	return 0;
 }
 
 /* TODO: get this working
 static void
 FatalError()
 {
-  throw -1;
+	throw -1;
 }
 */
 
@@ -70,7 +70,7 @@ LuaScript_CopyTable =
 /**
 **/
 Script::Script (bool initStandardLibrary) :
-  m_ownState(false)
+	m_ownState(false)
 {
 	m_state = lua_open(0);
 	m_ownState = true;
@@ -86,7 +86,7 @@ Script::Script (bool initStandardLibrary) :
 
 
 /**
-	@return Retrieves the value at [section].[entry].  If either
+	@return Retrieves the value at [section].[entry].	If either
 		[section] or [entry] doesn't exist, [defaultValue] is returned.
 **/
 int Script::ConfigGetInteger(const char* section, const char* entry,
@@ -97,7 +97,7 @@ int Script::ConfigGetInteger(const char* section, const char* entry,
 
 
 /**
-	@return Retrieves the value at [section].[entry].  If either
+	@return Retrieves the value at [section].[entry].	If either
 		[section] or [entry] doesn't exist, [defaultValue] is returned.
 **/
 float Script::ConfigGetReal(const char* section, const char* entry,
@@ -116,7 +116,7 @@ float Script::ConfigGetReal(const char* section, const char* entry,
 
 
 /**
-	@return Retrieves the value at [section].[entry].  If either
+	@return Retrieves the value at [section].[entry].	If either
 		[section] or [entry] doesn't exist, [defaultValue] is returned.
 **/
 const char* Script::ConfigGetString(const char* section, const char* entry,
@@ -142,7 +142,7 @@ void Script::ConfigSetInteger(const char* section, const char* entry, int value)
 	AutoBlock block(*this);
 
 	// section.entry = value
-	// Difficult in code.  Do it this way.
+	// Difficult in code.	Do it this way.
 	Object sectionTable = GetGlobal(section);
 
 	// If the global table isn't there, then create it.
@@ -163,7 +163,7 @@ void Script::ConfigSetReal(const char* section, const char* entry, double value)
 	AutoBlock block(*this);
 
 	// section.entry = value
-	// Difficult in code.  Do it this way.
+	// Difficult in code.	Do it this way.
 	Object sectionTable = GetGlobal(section);
 
 	// If the global table isn't there, then create it.
@@ -184,7 +184,7 @@ void Script::ConfigSetString(const char* section, const char* entry, const char*
 	AutoBlock block(*this);
 
 	// section.entry = value
-	// Difficult in code.  Do it this way.
+	// Difficult in code.	Do it this way.
 	Object sectionTable = GetGlobal(section);
 
 	// If the global table isn't there, then create it.
@@ -223,7 +223,7 @@ WriteObject(Script& script, FILE* file, const char* name,
 		return;
 
 	// If the variable is user data or a function, then don't write it.
-	if (value.IsUserData()  ||  value.IsFunction())
+	if (value.IsUserData()	||	value.IsFunction())
 	{
 		return;
 	}
@@ -272,7 +272,7 @@ WriteObject(Script& script, FILE* file, const char* name,
 			Script::Object value2 = table.GetByIndex(2);
 
 			// If they both exist, then there is a sequential list.
-			if (!value1.IsNil()  &&  !value2.IsNil())
+			if (!value1.IsNil()	&&	!value2.IsNil())
 			{
 				// Cycle through the list.
 				bool firstSequential = true;
@@ -329,8 +329,8 @@ WriteObject(Script& script, FILE* file, const char* name,
 					int intNum = (int)realNum;
 					if (realNum == (float)intNum)
 					{
-						// Yes.  Is it between 1 and upperIndex?
-						if (intNum >= 1  &&  intNum < upperIndex)
+						// Yes.	Is it between 1 and upperIndex?
+						if (intNum >= 1	&&	intNum < upperIndex)
 						{
 							// We already wrote it as part of the sequential
 							// list.
@@ -352,7 +352,7 @@ WriteObject(Script& script, FILE* file, const char* name,
 			// If we wrote a sequential list, the value we're about to write
 			// is not nil, and we haven't written the semicolon to separate
 			// the sequential table entries from the keyed table entries...
-			if (hasSequential  &&  !value.IsNil()  &&  !wroteSemi)
+			if (hasSequential	&&	!value.IsNil()	&&	!wroteSemi)
 			{
 				// Then add a comma (for good measure) and the semicolon.
 				fputs(", ;\n", file);
@@ -370,8 +370,8 @@ WriteObject(Script& script, FILE* file, const char* name,
 		}
 
 		// If we wrote a sequential list and haven't written a semicolon, then
-		// there were no keyed table entries.  Just write the final comma.
-		if (hasSequential  &&  !wroteSemi)
+		// there were no keyed table entries.	Just write the final comma.
+		if (hasSequential	&&	!wroteSemi)
 		{
 			fputs(",\n", file);
 		}
@@ -387,7 +387,7 @@ WriteObject(Script& script, FILE* file, const char* name,
 		}
 		else
 		{
-			// Close the table.  The comma is written when WriteObject()
+			// Close the table.	The comma is written when WriteObject()
 			// returns from the recursive call.
 			fputs("}", file);
 		}

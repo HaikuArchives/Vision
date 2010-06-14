@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -31,22 +31,22 @@ class BBox;
 
 class DCCPrefsView : public BView
 {
-  public:
-    DCCPrefsView (BRect);
-    virtual ~DCCPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-    virtual void FrameResized (float, float);
-  
-  private:
-    BMenuField *fBlockSize;
-    VTextControl *fDefDir,
-                 *fDccPortMin,
-                 *fDccPortMax;
-    BCheckBox *fAutoAccept,
-              *fPrivateCheck;
-    BBox *fBox;
+	public:
+		DCCPrefsView (BRect);
+		virtual ~DCCPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+		virtual void FrameResized (float, float);
+	
+	private:
+		BMenuField *fBlockSize;
+		VTextControl *fDefDir,
+								 *fDccPortMin,
+								 *fDccPortMax;
+		BCheckBox *fAutoAccept,
+							*fPrivateCheck;
+		BBox *fBox;
 };
 
 #endif // _PREFDCC_H

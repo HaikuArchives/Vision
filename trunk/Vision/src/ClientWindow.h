@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #ifndef _CLIENTWINDOW_H_
@@ -29,13 +29,13 @@
 #include <Window.h>
 #include <String.h>
 
-#define STATUS_SERVER               0
-#define STATUS_LAG                    1
-#define STATUS_NICK                 2
-#define STATUS_USERS                  3
-#define STATUS_OPS                  4
-#define STATUS_MODES                  5
-#define STATUS_META                 6
+#define STATUS_SERVER							 0
+#define STATUS_LAG										1
+#define STATUS_NICK								 2
+#define STATUS_USERS									3
+#define STATUS_OPS									4
+#define STATUS_MODES									5
+#define STATUS_META								 6
 
 class BMenu;
 class BMenuBar;
@@ -56,61 +56,61 @@ class WindowListItem;
 class ClientWindow : public BWindow
 {
 
-  protected:
-    BMenuBar              *fMenuBar;
-    BMenu                 *fServer,
-                          *fEdit,
-                          *fWindow;
-    TIconMenu             *fApp;
+	protected:
+		BMenuBar							*fMenuBar;
+		BMenu								 *fServer,
+													*fEdit,
+													*fWindow;
+		TIconMenu						 *fApp;
 
-  public:
-                          ClientWindow (BRect);
-    virtual               ~ClientWindow (void);
-    virtual void          FrameMoved (BPoint);
-    virtual void          FrameResized (float width, float height);
-    virtual void          MessageReceived (BMessage *);
-    virtual bool          QuitRequested (void);
-    virtual void          ScreenChanged (BRect, color_space);
-    virtual void          Show (void);
-    
-    // accessors that add/remove menus to the main Vision menu bar
-    void                  AddMenu (BMenu *);
-    void                  RemoveMenu (BMenu *);
-    
-    ServerAgent           *GetTopServer (WindowListItem *) const;
-    
-    bool                  ServerBroadcast (BMessage *) const;
-    
-    void                  SetEditStates(bool);
+	public:
+													ClientWindow (BRect);
+		virtual							 ~ClientWindow (void);
+		virtual void					FrameMoved (BPoint);
+		virtual void					FrameResized (float width, float height);
+		virtual void					MessageReceived (BMessage *);
+		virtual bool					QuitRequested (void);
+		virtual void					ScreenChanged (BRect, color_space);
+		virtual void					Show (void);
+		
+		// accessors that add/remove menus to the main Vision menu bar
+		void									AddMenu (BMenu *);
+		void									RemoveMenu (BMenu *);
+		
+		ServerAgent					 *GetTopServer (WindowListItem *) const;
+		
+		bool									ServerBroadcast (BMessage *) const;
+		
+		void									SetEditStates(bool);
 
-    BView                 *bgView;
-      
-    BRect                 *AgentRect (void) const;
-    WindowList            *pWindowList (void) const;
-    NotifyList            *pNotifyList (void) const;
-    ClientWindowDock      *pCwDock (void) const;
-    StatusView            *pStatusView (void) const;
-    BString               joinStrings;  // used to keep track of channel
-                                        // keys on u2 ircds
+		BView								 *bgView;
+			
+		BRect								 *AgentRect (void) const;
+		WindowList						*pWindowList (void) const;
+		NotifyList						*pNotifyList (void) const;
+		ClientWindowDock			*pCwDock (void) const;
+		StatusView						*pStatusView (void) const;
+		BString							 joinStrings;	// used to keep track of channel
+																				// keys on u2 ircds
 
-  private:
-    void                  Init (void);
-    
-    bool                  fShutdown_in_progress;
-    bool                  fWait_for_quits;
-    
-    bool                  fAltw_catch;    
-    
-    BMessageRunner        *fAltwRunner;
-    
-    BRect                 *fAgentrect;
-    
-    StatusView            *fStatus;
-    
-    ClientWindowDock      *fCwDock;
-    
-    ResizeView            *fResize;
-    
+	private:
+		void									Init (void);
+		
+		bool									fShutdown_in_progress;
+		bool									fWait_for_quits;
+		
+		bool									fAltw_catch;		
+		
+		BMessageRunner				*fAltwRunner;
+		
+		BRect								 *fAgentrect;
+		
+		StatusView						*fStatus;
+		
+		ClientWindowDock			*fCwDock;
+		
+		ResizeView						*fResize;
+		
 };
 
 #endif

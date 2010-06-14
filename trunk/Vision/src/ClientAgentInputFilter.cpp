@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #include <Alert.h>
@@ -96,11 +96,11 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 				ssize_t size;
 
 				msg->FindData (
-				    "text/plain",
-				    B_MIME_TYPE,
-				    0,
-				    reinterpret_cast<const void **>(&buffer),
-				    &size);
+						"text/plain",
+						B_MIME_TYPE,
+						0,
+						reinterpret_cast<const void **>(&buffer),
+						&size);
 
 				// We copy it, because B_MIME_TYPE
 				// might not be \0 terminated
@@ -131,11 +131,11 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 					BNodeInfo info (&file);
 					off_t size;
 
-					if (file.InitCheck()               == B_NO_ERROR
-					        &&  file.GetSize (&size)           == B_NO_ERROR
-					        &&  info.InitCheck()               == B_NO_ERROR
-					        &&  info.GetType (mime)            == B_NO_ERROR
-					        &&  strncasecmp (mime, "text/", 5) == 0)
+					if (file.InitCheck()							 == B_NO_ERROR
+									&&	file.GetSize (&size)					 == B_NO_ERROR
+									&&	info.InitCheck()							 == B_NO_ERROR
+									&&	info.GetType (mime)						== B_NO_ERROR
+									&&	strncasecmp (mime, "text/", 5) == 0)
 					{
 						char *buffer (new char [size + 1]);
 
@@ -153,7 +153,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 				}
 
 				// Give the fWindow a chance to handle non
-				// text files.  If it's a message window, it'll
+				// text files.	If it's a message window, it'll
 				// kick off a dcc send
 				fWindow->DroppedFile (msg);
 			}
@@ -172,7 +172,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 			{
 				if ((clip = clipboard.Data()))
 					if (clip->FindData ("text/plain", B_MIME_TYPE,
-					        (const void **)&fText, &textLen) != B_OK)
+									(const void **)&fText, &textLen) != B_OK)
 					{
 						clipboard.Unlock();
 						break;
@@ -216,7 +216,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 	
 	BMessenger msgr (fWindow);
 
-    WindowList *winList (vision_app->pClientWin()->pWindowList());
+		WindowList *winList (vision_app->pClientWin()->pWindowList());
 
 	msg->FindString ("bytes", &keyStroke);
 	msg->FindInt32 ("modifiers", &keymodifiers);
@@ -248,17 +248,17 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 
 	case B_TAB: // tab key
 		{
-            if ((keymodifiers & B_OPTION_KEY)  == 0
-	        &&  (keymodifiers & B_COMMAND_KEY) == 0
-	        &&  (keymodifiers & B_CONTROL_KEY) == 0
-	        &&  (keymodifiers & B_SHIFT_KEY) == 0)
-	        {
-  				// used for tabcompletion for nickname/channelname/etc
+						if ((keymodifiers & B_OPTION_KEY)	== 0
+					&&	(keymodifiers & B_COMMAND_KEY) == 0
+					&&	(keymodifiers & B_CONTROL_KEY) == 0
+					&&	(keymodifiers & B_SHIFT_KEY) == 0)
+					{
+					// used for tabcompletion for nickname/channelname/etc
 				fWindow->TabExpansion();
-			    BMessage logMessage (M_CLIENT_LOG);
+					BMessage logMessage (M_CLIENT_LOG);
 				logMessage.AddString ("name", fWindow->fId.String());
-			    logMessage.AddString ("data", "DEBUG: Tab completion used\n");
-			    fWindow->fSMsgr.SendMessage (&logMessage);
+					logMessage.AddString ("data", "DEBUG: Tab completion used\n");
+					fWindow->fSMsgr.SendMessage (&logMessage);
 			}
 			if ((keymodifiers & B_SHIFT_KEY) || !(keymodifiers & B_CONTROL_KEY))
 				result = B_SKIP_MESSAGE;
@@ -266,105 +266,105 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		break;
 	}
 
-	if ((keymodifiers & B_OPTION_KEY)  == 0
-	        &&  (keymodifiers & B_COMMAND_KEY) != 0
-	        &&  (keymodifiers & B_CONTROL_KEY) == 0
-	        &&  (keymodifiers & B_SHIFT_KEY) != 0)
+	if ((keymodifiers & B_OPTION_KEY)	== 0
+					&&	(keymodifiers & B_COMMAND_KEY) != 0
+					&&	(keymodifiers & B_CONTROL_KEY) == 0
+					&&	(keymodifiers & B_SHIFT_KEY) != 0)
 	{
-	  switch (keyStroke[0])
-      {
-        case '0':
-        case B_INSERT:
-          // switch to last active agent
-          winList->SelectLast();
-		  result = B_SKIP_MESSAGE;
-          break;
-      
-        case B_UP_ARROW:
-        case B_LEFT_ARROW: // baxter muscle memory
-        case ',': // bowser muscle memory
-          winList->ContextSelectUp();
-		  result = B_SKIP_MESSAGE;
-          break;
-      
-        case B_DOWN_ARROW: //
-        case B_RIGHT_ARROW: // baxter muscle memory
-        case '.': // bowser muscle memory
-          winList->ContextSelectDown();
-		  result = B_SKIP_MESSAGE;
-          break;
-      
-        case 'U':
-          winList->MoveCurrentUp();
-		  result = B_SKIP_MESSAGE;
-          break;
-        
-        case 'D':
-          winList->MoveCurrentDown();
-		  result = B_SKIP_MESSAGE;
-          break;
-      }
-    }
+		switch (keyStroke[0])
+			{
+				case '0':
+				case B_INSERT:
+					// switch to last active agent
+					winList->SelectLast();
+			result = B_SKIP_MESSAGE;
+					break;
+			
+				case B_UP_ARROW:
+				case B_LEFT_ARROW: // baxter muscle memory
+				case ',': // bowser muscle memory
+					winList->ContextSelectUp();
+			result = B_SKIP_MESSAGE;
+					break;
+			
+				case B_DOWN_ARROW: //
+				case B_RIGHT_ARROW: // baxter muscle memory
+				case '.': // bowser muscle memory
+					winList->ContextSelectDown();
+			result = B_SKIP_MESSAGE;
+					break;
+			
+				case 'U':
+					winList->MoveCurrentUp();
+			result = B_SKIP_MESSAGE;
+					break;
+				
+				case 'D':
+					winList->MoveCurrentDown();
+			result = B_SKIP_MESSAGE;
+					break;
+			}
+		}
 
-  else if ((keymodifiers & B_OPTION_KEY)  == 0
-       &&  (keymodifiers & B_COMMAND_KEY) != 0
-       &&  (keymodifiers & B_CONTROL_KEY) == 0
-       &&  (keymodifiers & B_SHIFT_KEY) == 0)
-  {
-    ///////////////
-    /// Command ///
-    ///////////////
-    switch (keyStroke[0])
-    {
-      case B_UP_ARROW:
-      case ',': // bowser muscle memory
-        {
-        // move up one agent
-        winList->Select (winList->CurrentSelection() - 1);
-        winList->ScrollToSelection();
-	    result = B_SKIP_MESSAGE;
-	    }
-        break;
+	else if ((keymodifiers & B_OPTION_KEY)	== 0
+			 &&	(keymodifiers & B_COMMAND_KEY) != 0
+			 &&	(keymodifiers & B_CONTROL_KEY) == 0
+			 &&	(keymodifiers & B_SHIFT_KEY) == 0)
+	{
+		///////////////
+		/// Command ///
+		///////////////
+		switch (keyStroke[0])
+		{
+			case B_UP_ARROW:
+			case ',': // bowser muscle memory
+				{
+				// move up one agent
+				winList->Select (winList->CurrentSelection() - 1);
+				winList->ScrollToSelection();
+			result = B_SKIP_MESSAGE;
+			}
+				break;
 
-      case B_DOWN_ARROW:
-      case '.': // bowser muscle memory
-        {
-        // move down one agent
-        winList->Select (winList->CurrentSelection() + 1);
-        winList->ScrollToSelection();
-	    result = B_SKIP_MESSAGE;
-	    }
-        break;
-        
-      case B_LEFT_ARROW: // collapse current server (if expanded)
-        {
-        winList->CollapseCurrentServer();
-	    result = B_SKIP_MESSAGE;
-	    }
-        break;
+			case B_DOWN_ARROW:
+			case '.': // bowser muscle memory
+				{
+				// move down one agent
+				winList->Select (winList->CurrentSelection() + 1);
+				winList->ScrollToSelection();
+			result = B_SKIP_MESSAGE;
+			}
+				break;
+				
+			case B_LEFT_ARROW: // collapse current server (if expanded)
+				{
+				winList->CollapseCurrentServer();
+			result = B_SKIP_MESSAGE;
+			}
+				break;
 
-      case B_RIGHT_ARROW: // expand current server (if collapsed)
-        {
-        winList->ExpandCurrentServer();
-	    result = B_SKIP_MESSAGE;
-	    }
-        break;
-      
-      case '/': // bowser muscle memory
-        // move to the agents parent ServerAgent
-        // XXX move to WindowList ?
-        {
-        winList->SelectServer();
-	    result = B_SKIP_MESSAGE;
-	    }
-        break;
-    }
-  }
+			case B_RIGHT_ARROW: // expand current server (if collapsed)
+				{
+				winList->ExpandCurrentServer();
+			result = B_SKIP_MESSAGE;
+			}
+				break;
+			
+			case '/': // bowser muscle memory
+				// move to the agents parent ServerAgent
+				// XXX move to WindowList ?
+				{
+				winList->SelectServer();
+			result = B_SKIP_MESSAGE;
+			}
+				break;
+		}
+	}
 
-	if ((keymodifiers & B_OPTION_KEY)  == 0
-	        &&  (keymodifiers & B_COMMAND_KEY) == 0
-	        &&  (keymodifiers & B_CONTROL_KEY) == 0
-	        &&  (keymodifiers & B_SHIFT_KEY) == 0)
+	if ((keymodifiers & B_OPTION_KEY)	== 0
+					&&	(keymodifiers & B_COMMAND_KEY) == 0
+					&&	(keymodifiers & B_CONTROL_KEY) == 0
+					&&	(keymodifiers & B_SHIFT_KEY) == 0)
 	{
 		////////////////////
 		/// no modifiers ///
@@ -417,7 +417,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			break;
 
 		case B_ESCAPE:
-		    {
+				{
 			fWindow->fCancelMLPaste = true;
 			result = B_SKIP_MESSAGE;
 			}
@@ -425,10 +425,10 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 		}
 	}
 
-	else if ((keymodifiers & B_OPTION_KEY)  == 0
-	        &&  (keymodifiers & B_COMMAND_KEY) == 0
-	        &&  (keymodifiers & B_CONTROL_KEY) != 0
-	        &&  (keymodifiers & B_SHIFT_KEY) == 0)
+	else if ((keymodifiers & B_OPTION_KEY)	== 0
+					&&	(keymodifiers & B_COMMAND_KEY) == 0
+					&&	(keymodifiers & B_CONTROL_KEY) != 0
+					&&	(keymodifiers & B_SHIFT_KEY) == 0)
 	{
 		////////////
 		/// Ctrl ///
@@ -511,7 +511,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 					int32 selstart, selfinish;
 					fWindow->fInput->TextView()->GetSelection (&selstart, &selfinish);
 					fWindow->fInput->TextView()->Delete (0,
-					        selfinish);
+									selfinish);
 				}
 				result = B_SKIP_MESSAGE;
 			}
@@ -562,18 +562,18 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 			str += "are about to add ";
 			str << lines;
 			str += " more lines of spam to ";
-			str += "the internet.  How ";
+			str += "the internet.	How ";
 			str += "would you like to go about this?";
 
 			BAlert *alert (new BAlert (
-			            "Spam",
-			            str.String(),
-			            "Cancel",
-			            "Spam!",
-			            "Single Line",
-			            B_WIDTH_FROM_WIDEST,
-			            B_OFFSET_SPACING,
-			            B_WARNING_ALERT));
+									"Spam",
+									str.String(),
+									"Cancel",
+									"Spam!",
+									"Single Line",
+									B_WIDTH_FROM_WIDEST,
+									B_OFFSET_SPACING,
+									B_WARNING_ALERT));
 
 			BMessage *invokeMsg (new BMessage (msg));
 			BInvoker *invoker (new BInvoker (invokeMsg, msgr));

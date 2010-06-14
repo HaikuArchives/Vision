@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -32,30 +32,30 @@
 #define B_TRANSLATE_CONTEXT "PrefWindow"
 
 PrefsWindow::PrefsWindow(void)
-  : BWindow (BRect (88.0, 108.0, 0.0, 0.0),
-      B_TRANSLATE("Preferences"),
-      B_TITLED_WINDOW,
-      B_ASYNCHRONOUS_CONTROLS)
+	: BWindow (BRect (88.0, 108.0, 0.0, 0.0),
+			B_TRANSLATE("Preferences"),
+			B_TITLED_WINDOW,
+			B_ASYNCHRONOUS_CONTROLS)
 {
-  GeneralPrefsView *generalView = new GeneralPrefsView(BRect(0.0, 0.0, 0.0, 0.0),
-     "view", B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
+	GeneralPrefsView *generalView = new GeneralPrefsView(BRect(0.0, 0.0, 0.0, 0.0),
+		 "view", B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
 
-  ResizeTo(generalView->Bounds().Width(), generalView->Bounds().Height());
+	ResizeTo(generalView->Bounds().Width(), generalView->Bounds().Height());
 
-  BBox *box = new BBox (Bounds().InsetByCopy(-1,-1), "box", B_FOLLOW_ALL_SIDES);
-  
-  AddChild(box);
+	BBox *box = new BBox (Bounds().InsetByCopy(-1,-1), "box", B_FOLLOW_ALL_SIDES);
+	
+	AddChild(box);
 
-  box->AddChild(generalView);
-  generalView->MoveTo ((box->Bounds().Width() - generalView->Bounds().Width()) / 2,
-    (box->Bounds().Height() - generalView->Bounds().Height()) / 2);
+	box->AddChild(generalView);
+	generalView->MoveTo ((box->Bounds().Width() - generalView->Bounds().Width()) / 2,
+		(box->Bounds().Height() - generalView->Bounds().Height()) / 2);
 
-  BRect prefsRect (vision_app->GetRect ("GenPrefWinRect"));
-  if (prefsRect.Width() != 0.0 && prefsRect.Height() != 0.0)
-  {
-    ResizeTo (prefsRect.Width(), prefsRect.Height());
-    MoveTo (prefsRect.left, prefsRect.top);
-  }
+	BRect prefsRect (vision_app->GetRect ("GenPrefWinRect"));
+	if (prefsRect.Width() != 0.0 && prefsRect.Height() != 0.0)
+	{
+		ResizeTo (prefsRect.Width(), prefsRect.Height());
+		MoveTo (prefsRect.left, prefsRect.top);
+	}
 }
 
 PrefsWindow::~PrefsWindow(void)
@@ -65,7 +65,7 @@ PrefsWindow::~PrefsWindow(void)
 bool
 PrefsWindow::QuitRequested(void)
 {
-  vision_app->SetRect ("GenPrefWinRect", Frame());
-  be_app_messenger.SendMessage (M_PREFS_CLOSE);
-  return true;  
+	vision_app->SetRect ("GenPrefWinRect", Frame());
+	be_app_messenger.SendMessage (M_PREFS_CLOSE);
+	return true;	
 }

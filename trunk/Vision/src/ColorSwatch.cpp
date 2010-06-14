@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
+ *								 Rene Gollent
  */
 
 #define SHIFT_COMPONENT(x,y)		(y >= 1 ? \
@@ -47,7 +47,7 @@ ColorSwatch::ColorSwatch (
 	uint32 flags)
 
 	: BView (frame, name, resize, flags),
-	  fColor (color_)
+		fColor (color_)
 {
 }
 
@@ -67,7 +67,7 @@ ColorSwatch::AttachedToWindow (void)
 		rgb_color c (view->ViewColor());
 
 		SetViewColor (c);
-		SetLowColor  (c);
+		SetLowColor	(c);
 	}
 }
 
@@ -85,7 +85,7 @@ ColorSwatch::Draw (BRect)
 	FillRect (colorPad);
 
 	rgb_color light (ShiftColor (ValueAsColor(), 0.4));
-	rgb_color dark  (ShiftColor (ValueAsColor(), 1.2));
+	rgb_color dark	(ShiftColor (ValueAsColor(), 1.2));
 
 	BeginLineArray (10);
 	AddLine (
@@ -109,7 +109,7 @@ ColorSwatch::Draw (BRect)
 		dark);
 
 	light = ShiftColor (ViewColor(), 0.1);
-	dark  = ShiftColor (ViewColor(), 1.4);
+	dark	= ShiftColor (ViewColor(), 1.4);
 	colorPad.InsetBy (-1, -1);
 
 	BPoint hless (-1, 0);
@@ -120,7 +120,7 @@ ColorSwatch::Draw (BRect)
 	if (IsFocus() && Window()->IsActive())
 	{
 		light = general_info.mark_color;
-		dark  = general_info.mark_color;
+		dark	= general_info.mark_color;
 		hless = hmore = vless = vmore = BPoint (0, 0);
 	}
 	else
@@ -169,10 +169,10 @@ ColorSwatch::ValueAsColor (void) const
 void
 ColorSwatch::SetColor (rgb_color c)
 {
-	if (fColor.red   == c.red
-	&&  fColor.green == c.green
-	&&  fColor.blue  == c.blue
-	&&  fColor.alpha == c.alpha)
+	if (fColor.red	 == c.red
+	&&	fColor.green == c.green
+	&&	fColor.blue	== c.blue
+	&&	fColor.alpha == c.alpha)
 		return;
 
 	fColor = c;
@@ -184,10 +184,10 @@ ColorSwatch::ShiftColor (rgb_color c, float percent) const
 {
 	rgb_color result =
 	{
-		SHIFT_COMPONENT(c.red,   percent),
+		SHIFT_COMPONENT(c.red,	 percent),
 		SHIFT_COMPONENT(c.green, percent),
-		SHIFT_COMPONENT(c.blue,  percent),
-		SHIFT_COMPONENT(c.alpha,  255)
+		SHIFT_COMPONENT(c.blue,	percent),
+		SHIFT_COMPONENT(c.alpha,	255)
 	};
 
 	return result;
@@ -198,9 +198,9 @@ ColorSwatch::Inverted (void) const
 {
 	rgb_color baseColor, value = ValueAsColor();
 
-	baseColor.red   = 255 - value.red;
+	baseColor.red	 = 255 - value.red;
 	baseColor.green = 255 - value.green;
-	baseColor.blue  = 255 - value.blue;
+	baseColor.blue	= 255 - value.blue;
 	baseColor.alpha = value.alpha;
 
 	return fColor;

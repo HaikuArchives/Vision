@@ -13,36 +13,36 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
  
 #ifndef _HISTORYLIST_H_
 #define _HISTORYLIST_H_
 
-#define BACK_BUFFER_SIZE                20
+#define BACK_BUFFER_SIZE								20
 
 class VTextControl;
 class BString;
 
 class HistoryList
 {
-  BString                 backBuffer[BACK_BUFFER_SIZE];
-  int32                   bufferFree,
-                          bufferPos;
+	BString								 backBuffer[BACK_BUFFER_SIZE];
+	int32									 bufferFree,
+													bufferPos;
 
-  public:
-                          HistoryList (void);
-  void                    PreviousBuffer (VTextControl *);
-  void                    NextBuffer (VTextControl *);
-  BString                 Submit (const char *);
-  bool                    HasHistory (void) const;
+	public:
+													HistoryList (void);
+	void										PreviousBuffer (VTextControl *);
+	void										NextBuffer (VTextControl *);
+	BString								 Submit (const char *);
+	bool										HasHistory (void) const;
 };
 
 #endif

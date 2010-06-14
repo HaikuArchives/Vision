@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -31,21 +31,21 @@ class BBox;
 
 class LogPrefsView : public BView
 {
-  public:
-    LogPrefsView (BRect);
-    virtual ~LogPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-    virtual void FrameResized (float, float);
-  
-  private:
-    VTextControl *fLogBaseDir,
-                 *fLogStampFormat;
-                 
-    BCheckBox *fLogEnabled,
-              *fLogFileTimestamp,
-              *fTimeStamp;
+	public:
+		LogPrefsView (BRect);
+		virtual ~LogPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+		virtual void FrameResized (float, float);
+	
+	private:
+		VTextControl *fLogBaseDir,
+								 *fLogStampFormat;
+								 
+		BCheckBox *fLogEnabled,
+							*fLogFileTimestamp,
+							*fTimeStamp;
 };
 
 #endif // _PREFLOG_H

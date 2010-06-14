@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Todd Lair
+ *								 Todd Lair
  */
  
 #ifndef RUNVIEW_H_
@@ -70,10 +70,10 @@ class SelectPos
 								return ((fLine == rhs.fLine) && (fOffset == rhs.fOffset));
 							}
 	
-	inline int          operator != (const SelectPos &rhs) const
-	                        {
-	                            return (!(*this == rhs));
-	                        }
+	inline int					operator != (const SelectPos &rhs) const
+													{
+															return (!(*this == rhs));
+													}
 	
 
 };
@@ -87,7 +87,7 @@ class RunView : public BView
 	Line					*fWorking;
 	Line					*fLines[LINE_COUNT];
 	int16					fLine_count,
-	                        fClickCount;
+													fClickCount;
 
 	char					*fStamp_format;
 	char					*fClipping_name;
@@ -162,9 +162,9 @@ class RunView : public BView
 	void					Select (const SelectPos &, const SelectPos &);
 	void					SelectAll (void);
 	void					SetClippingName (const char *);
-        void                                    ScrollToSelection(void);
-        void                                    ScrollToBottom(void);
-        bool                                    FindText(const char *);
+				void																		ScrollToSelection(void);
+				void																		ScrollToBottom(void);
+				bool																		FindText(const char *);
 };
 
 #endif
