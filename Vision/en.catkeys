@@ -1,5 +1,6 @@
-1	english	application/x-vnd.Ink-Vision	1537299747
+1	english	application/x-vnd.Ink-Vision	844576859
 Use Password	AddServerWindow		Use Password
+Handshaking	ServerMessages		Handshaking
 mIRC Purple	ColorPrefs		mIRC Purple
 Join	EventPrefs		Join
 (you're banned)	ServerMessages		(you're banned)
@@ -13,6 +14,7 @@ Close	WindowList		Close
 Retry limit reached; giving up. Type /reconnect to try connecting again.	ServerMessages		Retry limit reached; giving up. Type /reconnect to try connecting again.
 Close Subwindow	WindowMenu		Close Subwindow
 You may change any of these options.	ChannelOptions		You may change any of these options.
+Attempting a connection to %1:%2	ServerMessages		Attempting a connection to %1:%2
 DCC Chat Terminated.	DCCMessages		DCC Chat Terminated.
 Paste	EditMenu		Paste
 Preferred Nicknames:	NetworkPrefView		Preferred Nicknames:
@@ -43,10 +45,10 @@ Setup Window	SetupWindow		Setup Window
 Network Window	WindowMenu		Network Window
 Uptime	CommandPrefs		Uptime
 mIRC White	ColorPrefs		mIRC White
+Attempting to reconnect (attempt %1 of %2), waiting %3 second(s)	ServerMessages		Attempting to reconnect (attempt %1 of %2), waiting %3 second(s)
 Names (Op)	ColorPrefs		Names (Op)
 Terminated send of %1 to %2 (%3/%4), %5 KB/sec	DCCStatus		Terminated send of %1 to %2 (%3/%4), %5 KB/sec
 %1 options	ChannelOptions		%1 options
-Disconnected	ServerMessages		Disconnected
 You are currently a channel operator.	ChannelOptions		You are currently a channel operator.
 response	ServerMessages		response
 Nickname/Channel \"%1\" is already in use or unavailable.	ServerMessages		Nickname/Channel \"%1\" is already in use or unavailable.
@@ -118,6 +120,7 @@ You have been invited to %1 by %2.	ServerMessages		You have been invited to %1 b
 Server Notice	EventPrefs		Server Notice
 Open new query window on message	AppPrefs		Open new query window on message
 reponse	ServerMessages		reponse
+Established	ServerMessages		Established
 Nickname \"%1\" in use or unavailable, trying \"%2\"	ServerMessages		Nickname \"%1\" in use or unavailable, trying \"%2\"
 Hostmask removed from SILENCE list: %1.	ServerMessages		Hostmask removed from SILENCE list: %1.
 Close	ServerListView		Close
@@ -192,6 +195,7 @@ Add	AliasPrefs		Add
 Window	WindowMenu		Window
 Wwallops	ColorPrefs		Wwallops
 %1 was (%2)	ServerMessages		%1 was (%2)
+Attempting to connect (attempt %1 of %2)	ServerMessages		Attempting to connect (attempt %1 of %2)
 Connect to	ClientWindow		Connect to
 %1 set mode %2	StatusBar		%1 set mode %2
 Server	ClientWindow		Server
@@ -248,6 +252,7 @@ All your pre-selected nicknames are in use.	ServerMessages		All your pre-selecte
 Ident	NetworkPrefView		Ident
 Text	ColorPrefs		Text
 Log folder	LogPrefs		Log folder
+Could not create connection to address and port. Make sure your Internet connection is operational.	ServerMessages		Could not create connection to address and port. Make sure your Internet connection is operational.
 Disabled	ServerMessages		Disabled
 Status	ServerListView		Status
 Server	AddServerWindow		Server
@@ -255,6 +260,7 @@ Alias	AliasPrefs		Alias
 Server Messages	FontPrefs		Server Messages
 Ignore	ColorPrefs		Ignore
 List Channels	ClientWindow		List Channels
+Sending password.	ServerMessages		Sending password.
 mIRC Black	ColorPrefs		mIRC Black
 Edit servers	NetworkPrefView		Edit servers
 Warn when multiline pasting	AppPrefs		Warn when multiline pasting
