@@ -102,9 +102,17 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 		case RPL_CREATED:					// 003
 		case RPL_MYINFO:					 // 004
 			{
+				fConnected = true;
 				fIsConnecting = false;
 				fInitialMotd = true;
 				fRetry = 0;
+				
+				if (num == RPL_WELCOME)
+				{
+					BString message = B_TRANSLATE("Established");
+					message.Prepend("[@] ").Append("\n");
+					Display(message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
+				}
 				
 				if (fNetworkData.FindBool ("lagCheck"))
 				{

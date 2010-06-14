@@ -135,6 +135,7 @@ class ServerAgent : public ClientAgent
 																	fGetLocalIP,
 																	fIsConnecting,		// in process
 																	fReconnecting,		// we're reconnecting
+																	fConnected,
 																	fHasWarned,			// warn about quitting
 																	fIsQuitting,			// look out, going down
 																	fCheckingLag,		// waiting for a lag_check reply

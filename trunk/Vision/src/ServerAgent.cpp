@@ -84,6 +84,7 @@ ServerAgent::ServerAgent (
 		fGetLocalIP (false),
 		fIsConnecting (true),
 		fReconnecting (false),
+		fConnected (false),
 		fIsQuitting (false),
 		fCheckingLag (false),
 		fReacquiredNick (true),
@@ -779,28 +780,35 @@ ServerAgent::HandleReconnect (void)
 	 
 	if (fRetry < fRetryLimit)
 	{
-		BString data;
+		BString message;
+		if (fRetry > 1)
+		{
+			message = B_TRANSLATE("Attempting to reconnect (attempt %1 of %2), waiting %3 second(s)");
+			message.Append(B_UTF8_ELLIPSIS);
+		}
+		else
+		{
+			message = B_TRANSLATE("Attempting to connect (attempt %1 of %2)");
+		}
+		message.Prepend("[@] ").Append("\n");
+		BString temp;
+		temp << fRetry;
+		message.ReplaceFirst("%1", temp);
+		temp = "";
+		temp << fRetryLimit;
+		message.ReplaceFirst("%2", temp);
 		// we are go for main engine start
 		fReconnecting = true;
 		fIsConnecting = true;
 		fNickAttempt = 0;
 		int seconds = fRetry * fRetry;
-		if (seconds == 1)
-		{
-			data = B_TRANSLATE("Waiting 1 second before next attempt");
-		}
-		else
-		{
-			data = B_TRANSLATE("Waiting %1 seconds before next attempt");
-			BString timestr;
-			timestr << seconds;
-			data.ReplaceFirst("%1", timestr);
-		}
-		data.Prepend("[@] ").Append(B_UTF8_ELLIPSIS).Append("\n");
-		Display(data.String(), C_ERROR, C_BACKGROUND, F_SERVER);
+		temp = "";
+		temp << seconds;
+		message.ReplaceFirst("%3", temp);
+		Display(message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 		ClientAgent *agent (ActiveClient());
 		if (agent && (agent != this))
-			agent->Display (data.String(), C_ERROR, C_BACKGROUND, F_SERVER);		
+			agent->Display (message.String(), C_ERROR, C_BACKGROUND, F_SERVER);		
 		SendConnectionCreate(seconds * 1000000);
 		++fRetry;
 	}
@@ -1005,8 +1013,14 @@ ServerAgent::SendConnectionCreate(bigtime_t timeout)
 	msg.AddString("port", port);
 	if (timeout > 0)
 	{
-		msg.AddInt64("delay", timeout);
+		msg.AddInt64("timeout", timeout);
 	}
+	BString message;
+	message = B_TRANSLATE("Attempting a connection to %1:%2");
+	message.Prepend("[@] ").Append(B_UTF8_ELLIPSIS "\n");
+	message.ReplaceFirst("%1", data->serverName);
+	message.ReplaceFirst("%2", port);
+	Display(message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 	BMessenger(network_manager).SendMessage(&msg);
 }
 
@@ -1068,18 +1082,26 @@ ServerAgent::MessageReceived (BMessage *msg)
 					fIsConnecting = false;
 					fReconnecting = false;
 					fConnectionID = -1;
-					// TODO: post reconnect
+					BString data = B_TRANSLATE("Could not create connection to address and port. Make sure your Internet connection is operational.");
+					data.Prepend("[@] ").Append("\n");
+					Display(data.String(), C_ERROR, C_BACKGROUND, F_SERVER);
+					HandleReconnect();
 				}
 				else
 				{
+					BString message;
+					message = B_TRANSLATE("Handshaking");
+					message.Prepend("[@] ").Append("\n");
+					Display(message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 					fIsConnecting = true;
 					fConnectionID = msg->FindInt32("connection");
 					BString data;
 					
 					if (strlen(fCurrentServer.password) > 0)
 					{
-//						ClientAgent::PackDisplay (&statMsg, "Sending password\n", C_ERROR);
-//						sMsgrE.SendMessage(&statMsg);
+						message = B_TRANSLATE("Sending password.");
+						message.Prepend("[@] ").Append("\n");
+						Display(message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 						data = "PASS ";
 						data += fCurrentServer.password;
 						SendData(data.String());
@@ -1406,7 +1428,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 
 		case M_LAG_CHECK:
 			{
-				if (fConnectionID >= 0)
+				if (fConnectionID >= 0 && fConnected)
 				{
 					if (fNetworkData.FindBool ("lagCheck"))
 					{
