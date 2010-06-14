@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Ted Stodgell <kart@hal-pc.org>
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Ted Stodgell <kart@hal-pc.org>
  */
  
 #ifndef _RESIZEVIEW_H
@@ -41,17 +41,17 @@ const unsigned char kHorizontalResizeCursor[] = {
 
 class ResizeView : public BView
 {
-  public:
-    ResizeView (BView *, BRect, const char * = "resizeView", uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, uint32 = 0);
-    virtual ~ResizeView (void);
-    virtual void MouseDown(BPoint);
-    virtual void MouseMoved (BPoint, uint32, const BMessage *);
-    virtual void MouseUp (BPoint);
-  
-  private:
-    bool mousePressed;
-    BView *attachedView;
-    BCursor cursor;
+	public:
+		ResizeView (BView *, BRect, const char * = "resizeView", uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, uint32 = 0);
+		virtual ~ResizeView (void);
+		virtual void MouseDown(BPoint);
+		virtual void MouseMoved (BPoint, uint32, const BMessage *);
+		virtual void MouseUp (BPoint);
+	
+	private:
+		bool mousePressed;
+		BView *attachedView;
+		BCursor cursor;
 };
 
 #endif // _RESIZEVIEW_H

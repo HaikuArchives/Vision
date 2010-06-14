@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #ifndef _CLIENTAGENT_H_
@@ -43,147 +43,147 @@ class WindowListItem;
 
 class ClientAgent : public BView
 {
-  public:
-                                // used by ServerAgent
-                                ClientAgent (
-                                  const char *,         // id_  (window name)
-                                  const char *,         // serverName_
-                                  const char *,         // myNick_
-                                  BRect);                // frame
-                                ClientAgent (
-                                  const char *,         // id_  (window name)
-                                  const char *,         // serverName_
-                                  const char *,         // myNick_
-                                  const BMessenger &,   // sMsgr pointer
-                                  BRect);                // frame
-                                  
-    virtual                     ~ClientAgent (void);
+	public:
+																// used by ServerAgent
+																ClientAgent (
+																	const char *,				 // id_	(window name)
+																	const char *,				 // serverName_
+																	const char *,				 // myNick_
+																	BRect);								// frame
+																ClientAgent (
+																	const char *,				 // id_	(window name)
+																	const char *,				 // serverName_
+																	const char *,				 // myNick_
+																	const BMessenger &,	 // sMsgr pointer
+																	BRect);								// frame
+																	
+		virtual										 ~ClientAgent (void);
 
-    virtual void                MessageReceived (BMessage *);
-    virtual void                AttachedToWindow (void);
-    virtual void                AllAttached (void);
-    virtual void                DetachedFromWindow (void);
-    virtual void                Show (void);
+		virtual void								MessageReceived (BMessage *);
+		virtual void								AttachedToWindow (void);
+		virtual void								AllAttached (void);
+		virtual void								DetachedFromWindow (void);
+		virtual void								Show (void);
 
-    virtual void                AddMenuItems (BPopUpMenu *) = 0;
+		virtual void								AddMenuItems (BPopUpMenu *) = 0;
 
-    float                       ScrollPos(void) const;
-    void                        SetScrollPos(float);
-    void                        ScrollRange(float *, float *) const;
-    void                        SetServerName(const char *);
-    void                        SetEditStates(BMenu *, bool);
-    
-    bool                        ParseCmd (const char *);
-    virtual void                TabExpansion (void);
-    static int32                DNSLookup (void *);
-    static int32                ExecPipe (void *);
+		float											 ScrollPos(void) const;
+		void												SetScrollPos(float);
+		void												ScrollRange(float *, float *) const;
+		void												SetServerName(const char *);
+		void												SetEditStates(BMenu *, bool);
+		
+		bool												ParseCmd (const char *);
+		virtual void								TabExpansion (void);
+		static int32								DNSLookup (void *);
+		static int32								ExecPipe (void *);
 
-    virtual void                DroppedFile (BMessage *);
-    
-    const BString               &Id (void) const;
-    
-    BMessenger                  fMsgr,
-                                fSMsgr;
-    
-    virtual void                ChannelMessage (
-                                  const char *,
-                                  const char * = 0,
-                                  const char * = 0,
-                                  const char * = 0);
+		virtual void								DroppedFile (BMessage *);
+		
+		const BString							 &Id (void) const;
+		
+		BMessenger									fMsgr,
+																fSMsgr;
+		
+		virtual void								ChannelMessage (
+																	const char *,
+																	const char * = 0,
+																	const char * = 0,
+																	const char * = 0);
 
-    static void                 PackDisplay (BMessage *,
-                                  const char *,
-                                  const int16 = 0,
-                                  const int16 = 0,
-                                  const int16 = 0);
+		static void								 PackDisplay (BMessage *,
+																	const char *,
+																	const int16 = 0,
+																	const int16 = 0,
+																	const int16 = 0);
 
-    
-    virtual void                ActionMessage (
-                                  const char *,
-                                  const char *);
+		
+		virtual void								ActionMessage (
+																	const char *,
+																	const char *);
 
-    void                        CTCPAction (BString theTarget, BString theMsg);
-	bool						CancelMultilineTextPaste() const {  return fCancelMLPaste; }
+		void												CTCPAction (BString theTarget, BString theMsg);
+	bool						CancelMultilineTextPaste() const {	return fCancelMLPaste; }
 
-    WindowListItem                 *fAgentWinItem;
+		WindowListItem								 *fAgentWinItem;
 
-    virtual void                    Display (
-                                      const char *,
-                                      int16 = 0,
-                                      int16 = 0,
-                                      int16 = 0);
-    
-    
-  private:
-    void                        Init (void);
+		virtual void										Display (
+																			const char *,
+																			int16 = 0,
+																			int16 = 0,
+																			int16 = 0);
+		
+		
+	private:
+		void												Init (void);
 
-    bool						fCancelMLPaste;
-                            
-  protected:
-    HistoryList                 *fHistory;
-    RunView                     *fText;
-    BScrollView                 *fTextScroll;
-    VTextControl                *fInput;
-    Theme                       *fActiveTheme;
+		bool						fCancelMLPaste;
+														
+	protected:
+		HistoryList								 *fHistory;
+		RunView										 *fText;
+		BScrollView								 *fTextScroll;
+		VTextControl								*fInput;
+		Theme											 *fActiveTheme;
 
-    static const char               *endl;
+		static const char							 *endl;
 
 
-    friend class                    ClientAgentInputFilter;
-    friend class                    ServerAgent;
+		friend class										ClientAgentInputFilter;
+		friend class										ServerAgent;
  
-                                      
-    void                            UpdateStatus (int32);
+																			
+		void														UpdateStatus (int32);
 
-    void                            ParsemIRCColors (
-                                      const char *,
-                                      int16 = 0,
-                                      int16 = 0,
-                                      int16 = 0);
+		void														ParsemIRCColors (
+																			const char *,
+																			int16 = 0,
+																			int16 = 0,
+																			int16 = 0);
 
-   	static BString                  FilterCrap (const char *, bool = false);
+	 	static BString									FilterCrap (const char *, bool = false);
 
-                                      
-    virtual void                    Submit (const char *, bool = true, bool = true);
+																			
+		virtual void										Submit (const char *, bool = true, bool = true);
 
-    static int32                    TimedSubmit (void *);
+		static int32										TimedSubmit (void *);
 
-    int32                           FirstKnownAs (
-                                      const BString &,
-                                      BString &,
-                                      bool *) const;
-    int32                           FirstSingleKnownAs (
-                                      const BString &,
-                                      const BString &) const;
+		int32													 FirstKnownAs (
+																			const BString &,
+																			BString &,
+																			bool *) const;
+		int32													 FirstSingleKnownAs (
+																			const BString &,
+																			const BString &) const;
 
-    virtual void                    Parser (const char *);
-    virtual bool                    SlashParser (const char *);
-    
-    void                            AddSend (BMessage *, const char *) const;
-    void                            AddSend (BMessage *, const BString &) const;
-    void                            AddSend (BMessage *, int32) const;
+		virtual void										Parser (const char *);
+		virtual bool										SlashParser (const char *);
+		
+		void														AddSend (BMessage *, const char *) const;
+		void														AddSend (BMessage *, const BString &) const;
+		void														AddSend (BMessage *, int32) const;
 
-    BString                         fId;
-    BString                         fServerName;
-    BString                         fMyNick,
-                                      fMyLag;
+		BString												 fId;
+		BString												 fServerName;
+		BString												 fMyNick,
+																			fMyLag;
 
-    bool                             fTimeStampState,
-                                       fCanNotify,
-                                       fScrolling,
-                                       fIsLogging;
-                                       
-    BRect                            fFrame;
-    friend class                     WindowList;
+		bool														 fTimeStampState,
+																			 fCanNotify,
+																			 fScrolling,
+																			 fIsLogging;
+																			 
+		BRect														fFrame;
+		friend class										 WindowList;
 
 };
 
 // constants for multiline paste handler
 enum {
-  PASTE_CANCEL = 0,
-  PASTE_MULTI = 1,
-  PASTE_SINGLE = 2,
-  PASTE_MULTI_NODELAY = 3
+	PASTE_CANCEL = 0,
+	PASTE_MULTI = 1,
+	PASTE_SINGLE = 2,
+	PASTE_MULTI_NODELAY = 3
 };
 
 #endif

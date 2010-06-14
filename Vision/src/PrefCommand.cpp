@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Todd Lair
+ *								 Todd Lair
  */
 
 #include "PrefCommand.h"
@@ -44,122 +44,122 @@ static const char *CommandControlLabels[] =
 
 
 CommandPrefsView::CommandPrefsView (BRect frame)
-  : BView (frame, "Command prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
+	: BView (frame, "Command prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
 {
-  SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  BRect bounds (Bounds());
-  int32 i (0);
-  bounds.left += 3;
-  bounds.right -= B_V_SCROLL_BAR_WIDTH + 3;
-  bounds.top += 3;
-  bounds.bottom -= 5;
-  float label_width (0.0);
+	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+	BRect bounds (Bounds());
+	int32 i (0);
+	bounds.left += 3;
+	bounds.right -= B_V_SCROLL_BAR_WIDTH + 3;
+	bounds.top += 3;
+	bounds.bottom -= 5;
+	float label_width (0.0);
 
-  BString tempString;
-  for (i = 0; CommandControlLabels[i]; ++i)
-  {
-  	tempString = B_TRANSLATE(CommandControlLabels[i]);
-  	tempString += ": ";
-    if (StringWidth (tempString) > label_width)
-      label_width = StringWidth (tempString);
-  }
-  
-  BView *bgView (new BView (bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
-  bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
-  fCommands = new VTextControl * [MAX_COMMANDS];
+	BString tempString;
+	for (i = 0; CommandControlLabels[i]; ++i)
+	{
+		tempString = B_TRANSLATE(CommandControlLabels[i]);
+		tempString += ": ";
+		if (StringWidth (tempString) > label_width)
+			label_width = StringWidth (tempString);
+	}
+	
+	BView *bgView (new BView (bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
+	bgView->SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
+	fCommands = new VTextControl * [MAX_COMMANDS];
 
-  for (i = 0; i < MAX_COMMANDS; ++i)
-  {
-  	tempString = B_TRANSLATE(CommandControlLabels[i]);
-  	tempString += ": ";
-    fCommands[i] = new VTextControl (
-      BRect (5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()), 5 + bounds.right - be_plain_font->StringWidth("gP"),
-      be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
-      "commands",
-      tempString,
-      vision_app->GetCommand (i).String(),
-      NULL,
-      B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+	for (i = 0; i < MAX_COMMANDS; ++i)
+	{
+		tempString = B_TRANSLATE(CommandControlLabels[i]);
+		tempString += ": ";
+		fCommands[i] = new VTextControl (
+			BRect (5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()), 5 + bounds.right - be_plain_font->StringWidth("gP"),
+			be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
+			"commands",
+			tempString,
+			vision_app->GetCommand (i).String(),
+			NULL,
+			B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
 
-    fCommands[i]->SetDivider (label_width + 5);
+		fCommands[i]->SetDivider (label_width + 5);
 
-    BMessage *msg (new BMessage (M_COMMAND_MODIFIED));
+		BMessage *msg (new BMessage (M_COMMAND_MODIFIED));
 
-    msg->AddInt32 ("which", i);
-    fCommands[i]->SetModificationMessage (msg);
-    bgView->AddChild (fCommands[i]);
-  }
-  fScroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES,
-    0, false, true);
-  BScrollBar *bar (fScroller->ScrollBar(B_VERTICAL));
+		msg->AddInt32 ("which", i);
+		fCommands[i]->SetModificationMessage (msg);
+		bgView->AddChild (fCommands[i]);
+	}
+	fScroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES,
+		0, false, true);
+	BScrollBar *bar (fScroller->ScrollBar(B_VERTICAL));
  
-  fMaxheight = bgView->Bounds().Height();
-  fProportionheight = fCommands[MAX_COMMANDS-1]->Frame().bottom + 10.0;
-  bar->SetRange (0.0, (fProportionheight - fScroller->Bounds().Height()));
-  bar->SetProportion (fScroller->Bounds().Height() / fProportionheight);
+	fMaxheight = bgView->Bounds().Height();
+	fProportionheight = fCommands[MAX_COMMANDS-1]->Frame().bottom + 10.0;
+	bar->SetRange (0.0, (fProportionheight - fScroller->Bounds().Height()));
+	bar->SetProportion (fScroller->Bounds().Height() / fProportionheight);
 
-  AddChild (fScroller);
+	AddChild (fScroller);
 }
 
 CommandPrefsView::~CommandPrefsView (void)
 {
-  delete [] fCommands;
+	delete [] fCommands;
 }
 
 void
 CommandPrefsView::AttachedToWindow (void)
 {
-  BView::AttachedToWindow ();
-  for (int32 i = 0; i < MAX_COMMANDS; i++)
-    fCommands[i]->SetTarget (this);
+	BView::AttachedToWindow ();
+	for (int32 i = 0; i < MAX_COMMANDS; i++)
+		fCommands[i]->SetTarget (this);
 }
 
 void
 CommandPrefsView::AllAttached (void)
 {
-  BView::AllAttached ();
+	BView::AllAttached ();
 }
 
 void
 CommandPrefsView::FrameResized (float width, float height)
 {
-  BView::FrameResized (width, height);
-  BScrollBar *bar(fScroller->ScrollBar(B_VERTICAL));
-  if (!bar)
-    return;
-  float min, max, scrollheight (fScroller->Bounds().Height());
-  
-  bar->GetRange (&min, &max);
-  if (scrollheight < fProportionheight)
-  {
-    if (max != fMaxheight)
-      bar->SetRange (0.0, fProportionheight - scrollheight);
-    bar->SetProportion (scrollheight / fProportionheight);
-  }
-  else
-  {
-    bar->SetProportion (1.0);
-    bar->SetRange (0.0, 0.0);
-  }
+	BView::FrameResized (width, height);
+	BScrollBar *bar(fScroller->ScrollBar(B_VERTICAL));
+	if (!bar)
+		return;
+	float min, max, scrollheight (fScroller->Bounds().Height());
+	
+	bar->GetRange (&min, &max);
+	if (scrollheight < fProportionheight)
+	{
+		if (max != fMaxheight)
+			bar->SetRange (0.0, fProportionheight - scrollheight);
+		bar->SetProportion (scrollheight / fProportionheight);
+	}
+	else
+	{
+		bar->SetProportion (1.0);
+		bar->SetRange (0.0, 0.0);
+	}
 }
 
 void
 CommandPrefsView::MessageReceived (BMessage *msg)
 {
-  switch (msg->what)
-  {
-    case M_COMMAND_MODIFIED:
-    {
-      int32 which;
+	switch (msg->what)
+	{
+		case M_COMMAND_MODIFIED:
+		{
+			int32 which;
 
-      msg->FindInt32 ("which", &which);
-      vision_app->SetCommand (
-        which,
-        fCommands[which]->TextView()->Text());
-    }
-    break;
+			msg->FindInt32 ("which", &which);
+			vision_app->SetCommand (
+				which,
+				fCommands[which]->TextView()->Text());
+		}
+		break;
 
-    default:
-      BView::MessageReceived (msg);
-  }
+		default:
+			BView::MessageReceived (msg);
+	}
 }

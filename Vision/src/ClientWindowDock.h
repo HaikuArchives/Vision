@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
+ *								 Rene Gollent
  */
 
 #ifndef _CLIENTWINDOWDOCK_H_
@@ -32,82 +32,82 @@ class BScrollView;
 
 class AgentDockHeaderString : public BStringView
 {
-  public:
-                           AgentDockHeaderString (BRect, const char *);
-    virtual                ~AgentDockHeaderString (void);
-    
-    virtual void           MouseMoved (BPoint, uint32, const BMessage *);
-    virtual void           MouseDown (BPoint);
-    virtual void           MouseUp (BPoint);
+	public:
+													 AgentDockHeaderString (BRect, const char *);
+		virtual								~AgentDockHeaderString (void);
+		
+		virtual void					 MouseMoved (BPoint, uint32, const BMessage *);
+		virtual void					 MouseDown (BPoint);
+		virtual void					 MouseUp (BPoint);
 };
 
 class AgentDockHeader : public BView
 {
-  public:
-                           AgentDockHeader (BRect, const char *, uint32);
-    virtual                ~AgentDockHeader (void);
+	public:
+													 AgentDockHeader (BRect, const char *, uint32);
+		virtual								~AgentDockHeader (void);
 
-  private:
-    
-    AgentDockHeaderString  *fHeaderView;
+	private:
+		
+		AgentDockHeaderString	*fHeaderView;
 
 };
 
 class AgentDockWinList : public BView
 {
-  public:
-                          AgentDockWinList (BRect);
-    virtual               ~AgentDockWinList (void);
-    
-    WindowList            *pWindowList (void) const;
+	public:
+													AgentDockWinList (BRect);
+		virtual							 ~AgentDockWinList (void);
+		
+		WindowList						*pWindowList (void) const;
 
-  private:
-    WindowList            *fWinList;
-    BScrollView           *fWinListScroll;
-    
-    AgentDockHeader       *fAHeader;
+	private:
+		WindowList						*fWinList;
+		BScrollView					 *fWinListScroll;
+		
+		AgentDockHeader			 *fAHeader;
 
 };
 
 class AgentDockNotifyList : public BView
 {
-  public:
-                          AgentDockNotifyList (BRect);
-    virtual               ~AgentDockNotifyList (void);
-    
-    NotifyList            *pNotifyList (void) const; 
-    
-    virtual void          AllAttached(void);
+	public:
+													AgentDockNotifyList (BRect);
+		virtual							 ~AgentDockNotifyList (void);
+		
+		NotifyList						*pNotifyList (void) const; 
+		
+		virtual void					AllAttached(void);
 
-  private:
-    
-    AgentDockHeader       *fAHeader;
-    NotifyList            *fNotifyList;
-    BScrollView           *fNotifyScroll;
+	private:
+		
+		AgentDockHeader			 *fAHeader;
+		NotifyList						*fNotifyList;
+		BScrollView					 *fNotifyScroll;
 
 };
 
 class ClientWindowDock : public BView
 {
-  public:
-                            ClientWindowDock (BRect);
-    virtual                 ~ClientWindowDock (void);
-    
-    void                    AddWinList (void);
-    void                    AddNotifyList (void);
-    WindowList              *pWindowList (void) const;
-    NotifyList              *pNotifyList (void) const;
-    
-    virtual void            AllAttached (void);
-    virtual void            MessageReceived (BMessage *);
-    	
-  private:
-    
-    BRect                   fWorkingFrame;
-    
-    AgentDockWinList        *fWinListAgent;
-    AgentDockNotifyList     *fNotifyAgent;
-    bool                    fNotifyExpanded;
+	public:
+														ClientWindowDock (BRect);
+		virtual								 ~ClientWindowDock (void);
+		
+		void										AddWinList (void);
+		void										AddNotifyList (void);
+		WindowList							*pWindowList (void) const;
+		NotifyList							*pNotifyList (void) const;
+		
+		virtual void						AllAttached (void);
+		virtual void						MessageReceived (BMessage *);
+			
+	private:
+		
+		BRect									 fWorkingFrame;
+		
+		AgentDockWinList				*fWinListAgent;
+		AgentDockNotifyList		 *fNotifyAgent;
+		bool										fNotifyExpanded;
 };
 
 

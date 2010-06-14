@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Todd Lair
+ *								 Todd Lair
  */
 
 #ifndef _PREFEVENT_H
@@ -31,17 +31,17 @@ class BScrollView;
 
 class EventPrefsView : public BView
 {
-  public:
-    EventPrefsView (BRect);
-    virtual ~EventPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-    virtual void FrameResized (float, float);
-  private:
-    VTextControl **fEvents;
-    BScrollView *fScroller;
-    float fMaxheight, fProportionheight;
+	public:
+		EventPrefsView (BRect);
+		virtual ~EventPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+		virtual void FrameResized (float, float);
+	private:
+		VTextControl **fEvents;
+		BScrollView *fScroller;
+		float fMaxheight, fProportionheight;
 };
 
 #endif // _PREFEVENT_H

@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #ifndef _SERVERAGENT_H_
@@ -58,118 +58,120 @@ struct ResumeData
 
 class ServerAgent : public ClientAgent
 {
-  public:
+	public:
 
-                                ServerAgent (
-                                  const char *,  // id_
-                                  BMessage &,
-                                  BRect);        // frame
-    virtual                     ~ServerAgent (void);
+																ServerAgent (
+																	const char *,	// id_
+																	BMessage &,
+																	BRect);				// frame
+		virtual										 ~ServerAgent (void);
 
 
-    virtual void                MessageReceived (BMessage *);
-    virtual void                AttachedToWindow (void);
-    virtual void                AllAttached (void);
-    virtual void                AddMenuItems (BPopUpMenu *);
-    void                        PostActive (BMessage *);
-    void                        Broadcast (BMessage *, bool = false);
-    void                        RepliedBroadcast (BMessage *);
-    status_t                    NewTimer (const char *, int32, int32);
+		virtual void								MessageReceived (BMessage *);
+		virtual void								AttachedToWindow (void);
+		virtual void								AllAttached (void);
+		virtual void								AddMenuItems (BPopUpMenu *);
+		void												PostActive (BMessage *);
+		void												Broadcast (BMessage *, bool = false);
+		void												RepliedBroadcast (BMessage *);
+		status_t										NewTimer (const char *, int32, int32);
 	
-    int                         IRCDType (void);
+		int												 IRCDType (void);
 	
-  private:
-    virtual void                Init (void);
-    void                        DCCChatDialog (BString, BString, BString);
-    void                        DCCGetDialog (BString, BString, BString, BString, BString);
-    void                        SendData (const char *);
-    void                        ParseLine (const char *);
-    bool                        ParseEvents (const char *);
-    bool                        ParseENums (const char *, const char *);
-    void                        ParseCTCP (BString, BString, BString);
-    void                        ParseCTCPResponse (BString, BString);
+	private:
+		virtual void								Init (void);
+		void												DCCChatDialog (BString, BString, BString);
+		void												DCCGetDialog (BString, BString, BString, BString, BString);
+		void												SendData (const char *);
+		void												ParseLine (const char *);
+		bool												ParseEvents (const char *);
+		bool												ParseENums (const char *, const char *);
+		void												ParseCTCP (BString, BString, BString);
+		void												ParseCTCPResponse (BString, BString);
 
-    static int                  SortNotifyItems (const NotifyListItem *, const NotifyListItem *);
+		static int									SortNotifyItems (const NotifyListItem *, const NotifyListItem *);
 
-    void                        HandleReconnect (void);
-    static bool                 PrivateIPCheck (const char *);
-    const char                  *GetNextNick (void);
-    const ServerData            *GetNextServer (void);
+		void												HandleReconnect (void);
+		static bool								 PrivateIPCheck (const char *);
+		const char									*GetNextNick (void);
+		const ServerData						*GetNextServer (void);
 	
-    ClientAgent                 *Client (const char *);
-    ClientAgent                 *ActiveClient (void);
+		ClientAgent								 *Client (const char *);
+		ClientAgent								 *ActiveClient (void);
 
-    void                        DisplayAll (const char *, const uint32 = 0, const uint32 = 0, const uint32 = 0);
+		void												DisplayAll (const char *, const uint32 = 0, const uint32 = 0, const uint32 = 0);
 	
-    void                        AddResumeData (BMessage *);
-    
-    void                        RemoveAutoexecChan (const BString &);
-    void                        ParseAutoexecChans (const BString &);
+		void												AddResumeData (BMessage *);
+		
+		void												RemoveAutoexecChan (const BString &);
+		void												ParseAutoexecChans (const BString &);
+		
+		void												SendConnectionCreate(bigtime_t timeout = 0LL);
 
-    static int32                fServerSeed;
+		static int32								fServerSeed;
 
-    BMessageRunner              *fLagRunner;
+		BMessageRunner							*fLagRunner;
 	
-	BString                     fLocalip,           // our local ip
-	                              fMyNick,
-	                              fReconNick, // used when reconnecting
-	                              fQuitMsg,
-	                              fMyLag;
+	BString										 fLocalip,					 // our local ip
+																fMyNick,
+																fReconNick, // used when reconnecting
+																fQuitMsg,
+																fMyLag;
 	
 	
-    const BString               fLname,
-	                             fLident;
+		const BString							 fLname,
+															 fLident;
 
 	// these are used to make Vision more dynamic to various
 	// ircd and server configurations	
-    int                         fIrcdtype;
+		int												 fIrcdtype;
 	
-	BList                       fResumes;
+	BList											 fResumes;
 	
-	int32                       fConnectionID;
+	int32											 fConnectionID;
 	
-    bool                        fLocalip_private,    // if localip is private
-	                                                // (set by PrivateIPCheck)
-                                  fGetLocalIP,
-                                  fIsConnecting,		// in process
-                                  fReconnecting,		// we're reconnecting
-                                  fHasWarned,			// warn about quitting
-                                  fIsQuitting,			// look out, going down
-                                  fCheckingLag,		// waiting for a lag_check reply
-                                  fReacquiredNick;     // disconnected nick has been reacquired
-									                   
-    int32                       fRetry,				// what retry # we're on
-                                fRetryLimit,			// connect retry limit	
-                                fLagCheck,			// system_time()
-                                fLagCount,			// passes made waiting
-                                fNickAttempt;
+		bool												fLocalip_private,		// if localip is private
+																									// (set by PrivateIPCheck)
+																	fGetLocalIP,
+																	fIsConnecting,		// in process
+																	fReconnecting,		// we're reconnecting
+																	fHasWarned,			// warn about quitting
+																	fIsQuitting,			// look out, going down
+																	fCheckingLag,		// waiting for a lag_check reply
+																	fReacquiredNick;		 // disconnected nick has been reacquired
+																		 
+		int32											 fRetry,				// what retry # we're on
+																fRetryLimit,			// connect retry limit	
+																fLagCheck,			// system_time()
+																fLagCount,			// passes made waiting
+																fNickAttempt;
 
-    BObjectList<ClientAgent>    fClients;			// agents this server "owns"
-    
-    BString                     *fEvents;
-    BString                     fServerHostName;
+		BObjectList<ClientAgent>		fClients;			// agents this server "owns"
+		
+		BString										 *fEvents;
+		BString										 fServerHostName;
 
-    bool                        fInitialMotd,
-                                  fIdentd;
-    BString                     fCmds;
+		bool												fInitialMotd,
+																	fIdentd;
+		BString										 fCmds;
 	
-    BObjectList<BString>        fStartupChannels,
-                                *fPendingSends;
-    BObjectList<NotifyListItem> fNotifyNicks;
-//                                fIgnoreNicks;
-    
-    static int32                Timer (void *);
-    
-    ListAgent                   *fListAgent;
-    
-    BMessage                    fNetworkData;
-    int32                       fServerIndex,
-                                  fNickIndex;
-    ClientAgentLogger           *fLogger;
-    
-    ServerData                  fCurrentServer;
-    std::map<BString, BString>		fRemoteAwayMessages;
-    BString                     fPartialBuffer;
+		BObjectList<BString>				fStartupChannels,
+																*fPendingSends;
+		BObjectList<NotifyListItem> fNotifyNicks;
+//																fIgnoreNicks;
+		
+		static int32								Timer (void *);
+		
+		ListAgent									 *fListAgent;
+		
+		BMessage										fNetworkData;
+		int32											 fServerIndex,
+																	fNickIndex;
+		ClientAgentLogger					 *fLogger;
+		
+		ServerData									fCurrentServer;
+		std::map<BString, BString>		fRemoteAwayMessages;
+		BString										 fPartialBuffer;
 };
 
 #endif

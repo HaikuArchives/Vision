@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #include <Beep.h>
@@ -54,84 +54,84 @@
 #define B_TRANSLATE_CONTEXT "DCCMessages"
 
 MessageAgent::MessageAgent (
-  BRect &frame_,
-  const char *id_,
-  const char *fServerName_,
-  const BMessenger &fSMsgr_,
-  const char *nick,
-  const char *addyString,
-  bool chat,
-  bool initiate,
-  const char *IP,
-  const char *port)
+	BRect &frame_,
+	const char *id_,
+	const char *fServerName_,
+	const BMessenger &fSMsgr_,
+	const char *nick,
+	const char *addyString,
+	bool chat,
+	bool initiate,
+	const char *IP,
+	const char *port)
 
-  : ClientAgent (
-    id_,
-    fServerName_,
-    nick,
-    fSMsgr_,
-    frame_),
+	: ClientAgent (
+		id_,
+		fServerName_,
+		nick,
+		fSMsgr_,
+		frame_),
 
-  fChatAddy (addyString ? addyString : ""),
-  fChatee (id_),
-  fDIP (IP),
-  fDPort (port),
-  fDChat (chat),
-  fDInitiate (initiate),
-  fDConnected (false),
-  fMySocket (0),
-  fAcceptSocket(0)
+	fChatAddy (addyString ? addyString : ""),
+	fChatee (id_),
+	fDIP (IP),
+	fDPort (port),
+	fDChat (chat),
+	fDInitiate (initiate),
+	fDConnected (false),
+	fMySocket (0),
+	fAcceptSocket(0)
 {
-  Init();
+	Init();
 }
 
 MessageAgent::~MessageAgent (void)
 {
-  fDConnected = false;
-  if (fDChat)
-  {
-    if (fMySocket)
-      close (fMySocket);
-    if (fAcceptSocket)
-      close (fAcceptSocket);
-  }
+	fDConnected = false;
+	if (fDChat)
+	{
+		if (fMySocket)
+			close (fMySocket);
+		if (fAcceptSocket)
+			close (fAcceptSocket);
+	}
 }
 
 void
 MessageAgent::AllAttached (void)
 {
-  // initialize threads here since messenger will otherwise not be valid
-  if (fDChat)
-  {
-    if (fDInitiate)
-      fDataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY, this);
-    else
-      fDataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY, this);
-    
-    resume_thread (fDataThread);
-  }
-  ClientAgent::AllAttached();
+	// initialize threads here since messenger will otherwise not be valid
+	if (fDChat)
+	{
+		if (fDInitiate)
+			fDataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY, this);
+		else
+			fDataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY, this);
+		
+		resume_thread (fDataThread);
+	}
+	ClientAgent::AllAttached();
 }
 
 void
 MessageAgent::AddMenuItems (BPopUpMenu *pMenu)
 {
-  BMenuItem *item (NULL);
-  item = new BMenuItem("Whois", new BMessage (M_MSG_WHOIS));
-  item->SetTarget (this);
-  if (Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
-      item->SetEnabled (false);
-  pMenu->AddItem (item);
-  BMessage *msg (new BMessage (M_SUBMIT));
-  BString command ("/dcc send ");
-  command += fId;
-  msg->AddString ("input", command.String());
-  item = new BMenuItem("DCC Send", msg);
-  item->SetTarget (this);
-  if (Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
-      item->SetEnabled (false);
-  pMenu->AddItem (item);
-  pMenu->AddSeparatorItem();
+	BMenuItem *item (NULL);
+	item = new BMenuItem("Whois", new BMessage (M_MSG_WHOIS));
+	item->SetTarget (this);
+	if (Id().FindFirst (" [DCC]") >= 0)	// dont enable for dcc sessions
+			item->SetEnabled (false);
+	pMenu->AddItem (item);
+	BMessage *msg (new BMessage (M_SUBMIT));
+	BString command ("/dcc send ");
+	command += fId;
+	msg->AddString ("input", command.String());
+	item = new BMenuItem("DCC Send", msg);
+	item->SetTarget (this);
+	if (Id().FindFirst (" [DCC]") >= 0)	// dont enable for dcc sessions
+			item->SetEnabled (false);
+	pMenu->AddItem (item);
+	pMenu->AddSeparatorItem();
 }
 
 void
@@ -143,687 +143,687 @@ MessageAgent::Init (void)
 void
 MessageAgent::DCCServerSetup(void)
 {
-  int32 myPort (atoi(vision_app->GetString ("dccMinPort")));
-  int32 diff (atoi(vision_app->GetString ("dccMaxPort")) - myPort);
-  if (diff > 0)
-    myPort += rand() % diff;
-    
-  BString outNick (fChatee);
-  outNick.RemoveFirst (" [DCC]");
-  struct sockaddr_in sa;
-  
-  BMessage reply;
-  fSMsgr.SendMessage (M_GET_IP, &reply);
-  
-  BString address;
-  reply.FindString ("ip", &address);
-    
-  if (fDPort != "")
-    myPort = atoi (fDPort.String());
-
-  fMySocket = socket (AF_INET, SOCK_STREAM, 0);
-  
-  BMessage statMsg (M_DISPLAY);
-
-  BString temp;
-  if (fMySocket < 0)
-  {
-  	temp = B_TRANSLATE("Error creating socket.");
-  	temp += "\n";
-    ClientAgent::PackDisplay (&statMsg, temp.String(), C_ERROR);
-    fMsgr.SendMessage (&statMsg);
-    return;
-  }
-
-  sa.sin_family = AF_INET;
-
-  sa.sin_addr.s_addr = INADDR_ANY;
-  
-  sa.sin_port = htons(myPort);
-  
-  if (bind (fMySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
-  {
-  	temp = B_TRANSLATE("Error binding socket.");
-  	temp += "\n";
-    ClientAgent::PackDisplay (&statMsg, temp.String(), C_ERROR);
-    fMsgr.SendMessage (&statMsg);
-    return;
-  }
-  
-  BMessage sendMsg (M_SERVER_SEND);
-  BString buffer;
-  
-  sa.sin_addr.s_addr = inet_addr (address.String());
-  
-  buffer << "PRIVMSG " << outNick << " :\1DCC CHAT chat ";
-  buffer << htonl(sa.sin_addr.s_addr) << " ";
-  buffer << myPort << "\1";
-  sendMsg.AddString ("data", buffer.String());
-  fSMsgr.SendMessage (&sendMsg);
-  
-  vision_app->AcquireDCCLock();	
-  listen (fMySocket, 1);
-
-  BString dataBuffer;
-  struct in_addr addr;
+	int32 myPort (atoi(vision_app->GetString ("dccMinPort")));
+	int32 diff (atoi(vision_app->GetString ("dccMaxPort")) - myPort);
+	if (diff > 0)
+		myPort += rand() % diff;
 		
-  addr.s_addr = inet_addr (address.String());
-  dataBuffer = B_TRANSLATE("Accepting connection on address %1, port %2.");
-  dataBuffer.ReplaceFirst("%1", address.String());
-  temp = "";
-  temp << myPort;
-  dataBuffer.ReplaceFirst("%2", temp.String());
-  dataBuffer += "\n";
-  ClientAgent::PackDisplay (&statMsg, dataBuffer.String(), C_TEXT);
-  fMsgr.SendMessage (&statMsg);
-  return;
+	BString outNick (fChatee);
+	outNick.RemoveFirst (" [DCC]");
+	struct sockaddr_in sa;
+	
+	BMessage reply;
+	fSMsgr.SendMessage (M_GET_IP, &reply);
+	
+	BString address;
+	reply.FindString ("ip", &address);
+		
+	if (fDPort != "")
+		myPort = atoi (fDPort.String());
+
+	fMySocket = socket (AF_INET, SOCK_STREAM, 0);
+	
+	BMessage statMsg (M_DISPLAY);
+
+	BString temp;
+	if (fMySocket < 0)
+	{
+		temp = B_TRANSLATE("Error creating socket.");
+		temp += "\n";
+		ClientAgent::PackDisplay (&statMsg, temp.String(), C_ERROR);
+		fMsgr.SendMessage (&statMsg);
+		return;
+	}
+
+	sa.sin_family = AF_INET;
+
+	sa.sin_addr.s_addr = INADDR_ANY;
+	
+	sa.sin_port = htons(myPort);
+	
+	if (bind (fMySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
+	{
+		temp = B_TRANSLATE("Error binding socket.");
+		temp += "\n";
+		ClientAgent::PackDisplay (&statMsg, temp.String(), C_ERROR);
+		fMsgr.SendMessage (&statMsg);
+		return;
+	}
+	
+	BMessage sendMsg (M_SERVER_SEND);
+	BString buffer;
+	
+	sa.sin_addr.s_addr = inet_addr (address.String());
+	
+	buffer << "PRIVMSG " << outNick << " :\1DCC CHAT chat ";
+	buffer << htonl(sa.sin_addr.s_addr) << " ";
+	buffer << myPort << "\1";
+	sendMsg.AddString ("data", buffer.String());
+	fSMsgr.SendMessage (&sendMsg);
+	
+	vision_app->AcquireDCCLock();	
+	listen (fMySocket, 1);
+
+	BString dataBuffer;
+	struct in_addr addr;
+		
+	addr.s_addr = inet_addr (address.String());
+	dataBuffer = B_TRANSLATE("Accepting connection on address %1, port %2.");
+	dataBuffer.ReplaceFirst("%1", address.String());
+	temp = "";
+	temp << myPort;
+	dataBuffer.ReplaceFirst("%2", temp.String());
+	dataBuffer += "\n";
+	ClientAgent::PackDisplay (&statMsg, dataBuffer.String(), C_TEXT);
+	fMsgr.SendMessage (&statMsg);
+	return;
 }
 
 status_t
 MessageAgent::DCCIn (void *arg)
 {
-  MessageAgent *agent ((MessageAgent *)arg);
-  BMessenger fSMsgrE (agent->fSMsgr);
-  BMessenger mMsgr (agent);
-  agent->DCCServerSetup();
-    
-  int dccSocket (agent->fMySocket);
-  int dccAcceptSocket (0);
-  
-  struct sockaddr_in remoteAddy;
-  int theLen (sizeof (struct sockaddr_in));
-
-  dccAcceptSocket = accept(dccSocket, (struct sockaddr*)&remoteAddy, (socklen_t *)&theLen);
-  
-  vision_app->ReleaseDCCLock();
-  
-  if (dccAcceptSocket < 0)
-    return B_ERROR;
-    
-  agent->fAcceptSocket = dccAcceptSocket;
-  agent->fDConnected = true;
-  
-  BMessage msg (M_DISPLAY);
-  
-  BString temp = B_TRANSLATE("Connected!");
-  temp += "\n";
-
-  ClientAgent::PackDisplay (&msg, temp.String());
-  mMsgr.SendMessage (&msg);
-
-  char tempBuffer[2];
-  BString inputBuffer;
-  int32 recvReturn (0);
-  
-  struct fd_set rset, eset;
-  FD_ZERO (&rset);
-  FD_ZERO (&eset);
-  FD_SET (dccAcceptSocket, &rset);
-  FD_SET (dccAcceptSocket, &eset);
-  
-  while (mMsgr.IsValid() && agent->fDConnected)
-  {
-    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) > 0)
-    {
-      if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
-      {
-        BMessage termMsg (M_DISPLAY);
-
-        agent->fDConnected = false;
-        temp = B_TRANSLATE("DCC Chat Terminated.");
-        temp += "\n";
-        ClientAgent::PackDisplay (&termMsg, temp.String());
-        mMsgr.SendMessage (&termMsg);
-        break;
-      }
-      if (recvReturn > 0)
-      {
-        if (tempBuffer[0] == '\n')
-        {
-          inputBuffer.RemoveLast ("\r");
-          inputBuffer = FilterCrap (inputBuffer.String(), false);
-
-          char convBuffer[2048];
-          memset (convBuffer, 0, sizeof(convBuffer));
-
-          int32 length (inputBuffer.Length()),
-                destLength (sizeof(convBuffer)),
-                state (0);
-          int32 encoding = vision_app->GetInt32("encoding");
-          if (encoding != B_UNICODE_CONVERSION) 
-          {
-            convert_to_utf8 (
-              encoding,
-	          inputBuffer.String(), 
-              &length,
-              convBuffer,
-              &destLength,
-              &state);
-          } 
-          else 
-          {
-            if (IsValidUTF8(inputBuffer.String(), length))
-            {
-              strlcpy(convBuffer, inputBuffer.String(), length);
-              destLength = strlen(convBuffer);
-            }
-            else
-            {
-              convert_to_utf8 (
-                B_ISO1_CONVERSION,
-                inputBuffer.String(), 
-                &length,
-                convBuffer,
-                &destLength,
-                &state);
-            }
-          }
-
-
-          BMessage dispMsg (M_CHANNEL_MSG);
-          dispMsg.AddString ("msgz", convBuffer);
-          mMsgr.SendMessage (&dispMsg);
-          inputBuffer = "";
-        }
-        else
-          inputBuffer.Append(tempBuffer[0],1);
-      }
-    }
-    else if (FD_ISSET (dccAcceptSocket, &eset))
-    {
-      BMessage termMsg (M_DISPLAY);
-      agent->fDConnected = false;
-      temp = B_TRANSLATE("DCC Chat Terminated.");
-      temp += "\n";
-      ClientAgent::PackDisplay (&termMsg, temp.String());
-      mMsgr.SendMessage (&termMsg);
-      break;
-    }
-    FD_SET (dccAcceptSocket, &rset);
-    FD_SET (dccAcceptSocket, &eset);
-  }
+	MessageAgent *agent ((MessageAgent *)arg);
+	BMessenger fSMsgrE (agent->fSMsgr);
+	BMessenger mMsgr (agent);
+	agent->DCCServerSetup();
+		
+	int dccSocket (agent->fMySocket);
+	int dccAcceptSocket (0);
 	
-  return 0;
+	struct sockaddr_in remoteAddy;
+	int theLen (sizeof (struct sockaddr_in));
+
+	dccAcceptSocket = accept(dccSocket, (struct sockaddr*)&remoteAddy, (socklen_t *)&theLen);
+	
+	vision_app->ReleaseDCCLock();
+	
+	if (dccAcceptSocket < 0)
+		return B_ERROR;
+		
+	agent->fAcceptSocket = dccAcceptSocket;
+	agent->fDConnected = true;
+	
+	BMessage msg (M_DISPLAY);
+	
+	BString temp = B_TRANSLATE("Connected!");
+	temp += "\n";
+
+	ClientAgent::PackDisplay (&msg, temp.String());
+	mMsgr.SendMessage (&msg);
+
+	char tempBuffer[2];
+	BString inputBuffer;
+	int32 recvReturn (0);
+	
+	struct fd_set rset, eset;
+	FD_ZERO (&rset);
+	FD_ZERO (&eset);
+	FD_SET (dccAcceptSocket, &rset);
+	FD_SET (dccAcceptSocket, &eset);
+	
+	while (mMsgr.IsValid() && agent->fDConnected)
+	{
+		if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) > 0)
+		{
+			if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
+			{
+				BMessage termMsg (M_DISPLAY);
+
+				agent->fDConnected = false;
+				temp = B_TRANSLATE("DCC Chat Terminated.");
+				temp += "\n";
+				ClientAgent::PackDisplay (&termMsg, temp.String());
+				mMsgr.SendMessage (&termMsg);
+				break;
+			}
+			if (recvReturn > 0)
+			{
+				if (tempBuffer[0] == '\n')
+				{
+					inputBuffer.RemoveLast ("\r");
+					inputBuffer = FilterCrap (inputBuffer.String(), false);
+
+					char convBuffer[2048];
+					memset (convBuffer, 0, sizeof(convBuffer));
+
+					int32 length (inputBuffer.Length()),
+								destLength (sizeof(convBuffer)),
+								state (0);
+					int32 encoding = vision_app->GetInt32("encoding");
+					if (encoding != B_UNICODE_CONVERSION) 
+					{
+						convert_to_utf8 (
+							encoding,
+						inputBuffer.String(), 
+							&length,
+							convBuffer,
+							&destLength,
+							&state);
+					} 
+					else 
+					{
+						if (IsValidUTF8(inputBuffer.String(), length))
+						{
+							strlcpy(convBuffer, inputBuffer.String(), length);
+							destLength = strlen(convBuffer);
+						}
+						else
+						{
+							convert_to_utf8 (
+								B_ISO1_CONVERSION,
+								inputBuffer.String(), 
+								&length,
+								convBuffer,
+								&destLength,
+								&state);
+						}
+					}
+
+
+					BMessage dispMsg (M_CHANNEL_MSG);
+					dispMsg.AddString ("msgz", convBuffer);
+					mMsgr.SendMessage (&dispMsg);
+					inputBuffer = "";
+				}
+				else
+					inputBuffer.Append(tempBuffer[0],1);
+			}
+		}
+		else if (FD_ISSET (dccAcceptSocket, &eset))
+		{
+			BMessage termMsg (M_DISPLAY);
+			agent->fDConnected = false;
+			temp = B_TRANSLATE("DCC Chat Terminated.");
+			temp += "\n";
+			ClientAgent::PackDisplay (&termMsg, temp.String());
+			mMsgr.SendMessage (&termMsg);
+			break;
+		}
+		FD_SET (dccAcceptSocket, &rset);
+		FD_SET (dccAcceptSocket, &eset);
+	}
+	
+	return 0;
 }
 
 status_t
 MessageAgent::DCCOut (void *arg)
 {
-  MessageAgent *agent ((MessageAgent *)arg);
-  
-  BMessenger mMsgr (agent);
-  struct sockaddr_in sa;
-  int status;
-  int dccAcceptSocket (0);
-  char *endpoint;
-  
-  uint32 realIP = strtoul (agent->fDIP.String(), &endpoint, 10);
-  
-  BString temp;
-
-  if ((dccAcceptSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-  {
-    BMessage msg (M_DISPLAY);
-    temp = B_TRANSLATE("Error creating socket.");
-    temp += "\n";
-    ClientAgent::PackDisplay (&msg, temp.String());
-    mMsgr.SendMessage (&msg);
-    return false;
-  }
-  
-  agent->fAcceptSocket = dccAcceptSocket;
+	MessageAgent *agent ((MessageAgent *)arg);
 	
-  sa.sin_family = AF_INET;
-  sa.sin_port = htons (atoi (agent->fDPort.String()));
-  sa.sin_addr.s_addr = ntohl (realIP);
-  memset (sa.sin_zero, 0, sizeof(sa.sin_zero));
-
-  {
-    BMessage msg (M_DISPLAY);
-    BString buffer;
-    struct in_addr addr;
-
-    addr.s_addr = ntohl (realIP);
-
-    buffer  = B_TRANSLATE("Trying to connect to address %1 on port %2.");
-    buffer.ReplaceFirst("%1", inet_ntoa(addr));
-    temp = "";
-    temp << agent->fDPort;
-    buffer.ReplaceFirst("%2", temp.String());
-    buffer += "\n";
-    ClientAgent::PackDisplay (&msg, buffer.String());
-    mMsgr.SendMessage (&msg);
-  }
-
-  status = connect (dccAcceptSocket, (struct sockaddr *)&sa, sizeof(sa));
-  if (status < 0)
-  {
-    BMessage msg (M_DISPLAY);
-    temp = B_TRANSLATE("Error connecting socket.");
-    temp += "\n";
-    ClientAgent::PackDisplay (&msg, temp.String());
-    mMsgr.SendMessage (&msg);
-    close (agent->fMySocket);
-    return false;
-  }
-
-  agent->fDConnected = true;
-
-  BMessage msg (M_DISPLAY);
-  temp = B_TRANSLATE("Connected!");
-  temp += "\n";
-  ClientAgent::PackDisplay (&msg, temp.String());
-  mMsgr.SendMessage (&msg);
-
-  char tempBuffer[2];
-  BString inputBuffer;
-  int32 recvReturn (0);
-
-  struct fd_set rset, eset;
-  struct timeval tv = { 0, 0 };
-
-  FD_ZERO (&rset);
-  FD_ZERO (&eset);
-  FD_SET (dccAcceptSocket, &rset);
-  FD_SET (dccAcceptSocket, &eset);
-  
-  while (mMsgr.IsValid() && agent->fDConnected)
-  {
-    if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) > 0)
-    {
-      if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
-      {
-        BMessage termMsg (M_DISPLAY);
-
-        agent->fDConnected = false;
-        temp = B_TRANSLATE("DCC Chat Terminated.");
-        temp += "\n";
-        ClientAgent::PackDisplay (&termMsg, temp.String());
-        mMsgr.SendMessage (&termMsg);
-        break;
-      }
-      if (recvReturn > 0)
-      {
-        if (tempBuffer[0] == '\n')
-        {
-          inputBuffer.RemoveLast ("\r");
-          inputBuffer = FilterCrap (inputBuffer.String(), false);
-
-	  char convBuffer[2048];
-	  memset (convBuffer, 0, sizeof(convBuffer));
-          int32 length (inputBuffer.Length()),
-            destLength (sizeof(convBuffer)),
-	    state (0);
-	    
-	    convert_to_utf8 (
-              vision_app->GetInt32("encoding"),					              inputBuffer.String(), 
-              &length,
-              convBuffer,
-	      &destLength,
-	      &state);
-	  
-          BMessage dispMsg (M_CHANNEL_MSG);
-          dispMsg.AddString ("msgz", inputBuffer.String());
-          mMsgr.SendMessage (&dispMsg);
-          inputBuffer = "";
-        }
-        else
-          inputBuffer.Append(tempBuffer[0],1);
-      }
-    }
-    else if (FD_ISSET (dccAcceptSocket, &eset))
-    {
-      BMessage termMsg (M_DISPLAY);
-      agent->fDConnected = false;
-      temp = B_TRANSLATE("DCC Chat Terminated.");
-      temp += "\n";
-      ClientAgent::PackDisplay (&termMsg, temp.String());
-      mMsgr.SendMessage (&termMsg);
-      break;
-    }
-    else
-      snooze (20000);
-    FD_SET (dccAcceptSocket, &rset);
-    FD_SET (dccAcceptSocket, &eset);
-  }
+	BMessenger mMsgr (agent);
+	struct sockaddr_in sa;
+	int status;
+	int dccAcceptSocket (0);
+	char *endpoint;
 	
-  return 0;
+	uint32 realIP = strtoul (agent->fDIP.String(), &endpoint, 10);
+	
+	BString temp;
+
+	if ((dccAcceptSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	{
+		BMessage msg (M_DISPLAY);
+		temp = B_TRANSLATE("Error creating socket.");
+		temp += "\n";
+		ClientAgent::PackDisplay (&msg, temp.String());
+		mMsgr.SendMessage (&msg);
+		return false;
+	}
+	
+	agent->fAcceptSocket = dccAcceptSocket;
+	
+	sa.sin_family = AF_INET;
+	sa.sin_port = htons (atoi (agent->fDPort.String()));
+	sa.sin_addr.s_addr = ntohl (realIP);
+	memset (sa.sin_zero, 0, sizeof(sa.sin_zero));
+
+	{
+		BMessage msg (M_DISPLAY);
+		BString buffer;
+		struct in_addr addr;
+
+		addr.s_addr = ntohl (realIP);
+
+		buffer	= B_TRANSLATE("Trying to connect to address %1 on port %2.");
+		buffer.ReplaceFirst("%1", inet_ntoa(addr));
+		temp = "";
+		temp << agent->fDPort;
+		buffer.ReplaceFirst("%2", temp.String());
+		buffer += "\n";
+		ClientAgent::PackDisplay (&msg, buffer.String());
+		mMsgr.SendMessage (&msg);
+	}
+
+	status = connect (dccAcceptSocket, (struct sockaddr *)&sa, sizeof(sa));
+	if (status < 0)
+	{
+		BMessage msg (M_DISPLAY);
+		temp = B_TRANSLATE("Error connecting socket.");
+		temp += "\n";
+		ClientAgent::PackDisplay (&msg, temp.String());
+		mMsgr.SendMessage (&msg);
+		close (agent->fMySocket);
+		return false;
+	}
+
+	agent->fDConnected = true;
+
+	BMessage msg (M_DISPLAY);
+	temp = B_TRANSLATE("Connected!");
+	temp += "\n";
+	ClientAgent::PackDisplay (&msg, temp.String());
+	mMsgr.SendMessage (&msg);
+
+	char tempBuffer[2];
+	BString inputBuffer;
+	int32 recvReturn (0);
+
+	struct fd_set rset, eset;
+	struct timeval tv = { 0, 0 };
+
+	FD_ZERO (&rset);
+	FD_ZERO (&eset);
+	FD_SET (dccAcceptSocket, &rset);
+	FD_SET (dccAcceptSocket, &eset);
+	
+	while (mMsgr.IsValid() && agent->fDConnected)
+	{
+		if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) > 0)
+		{
+			if ((recvReturn = recv (dccAcceptSocket, tempBuffer, 1, 0)) == 0)
+			{
+				BMessage termMsg (M_DISPLAY);
+
+				agent->fDConnected = false;
+				temp = B_TRANSLATE("DCC Chat Terminated.");
+				temp += "\n";
+				ClientAgent::PackDisplay (&termMsg, temp.String());
+				mMsgr.SendMessage (&termMsg);
+				break;
+			}
+			if (recvReturn > 0)
+			{
+				if (tempBuffer[0] == '\n')
+				{
+					inputBuffer.RemoveLast ("\r");
+					inputBuffer = FilterCrap (inputBuffer.String(), false);
+
+		char convBuffer[2048];
+		memset (convBuffer, 0, sizeof(convBuffer));
+					int32 length (inputBuffer.Length()),
+						destLength (sizeof(convBuffer)),
+			state (0);
+			
+			convert_to_utf8 (
+							vision_app->GetInt32("encoding"),												inputBuffer.String(), 
+							&length,
+							convBuffer,
+				&destLength,
+				&state);
+		
+					BMessage dispMsg (M_CHANNEL_MSG);
+					dispMsg.AddString ("msgz", inputBuffer.String());
+					mMsgr.SendMessage (&dispMsg);
+					inputBuffer = "";
+				}
+				else
+					inputBuffer.Append(tempBuffer[0],1);
+			}
+		}
+		else if (FD_ISSET (dccAcceptSocket, &eset))
+		{
+			BMessage termMsg (M_DISPLAY);
+			agent->fDConnected = false;
+			temp = B_TRANSLATE("DCC Chat Terminated.");
+			temp += "\n";
+			ClientAgent::PackDisplay (&termMsg, temp.String());
+			mMsgr.SendMessage (&termMsg);
+			break;
+		}
+		else
+			snooze (20000);
+		FD_SET (dccAcceptSocket, &rset);
+		FD_SET (dccAcceptSocket, &eset);
+	}
+	
+	return 0;
 }
 
 void
 MessageAgent::ChannelMessage (
-  const char *msgz,
-  const char *nick,
-  const char *ident,
-  const char *address)
+	const char *msgz,
+	const char *nick,
+	const char *ident,
+	const char *address)
 {
-//  fAgentWinItem->SetName (nick);
-  
-  ClientAgent::ChannelMessage (msgz, nick, ident, address);
+//	fAgentWinItem->SetName (nick);
+	
+	ClientAgent::ChannelMessage (msgz, nick, ident, address);
 }
 
 void
 MessageAgent::MessageReceived (BMessage *msg)
 {
-  switch (msg->what)
-  {
-    case B_SIMPLE_DATA:
-      {
-        if (msg->HasRef("refs"))
-        {
-          // TODO: get this to work properly for multiple refs
-          // and update DCC send logic to figure that out too
-          entry_ref ref;
-          msg->FindRef("refs", &ref);
-          
-          BMessage dccmsg(M_CHOSE_FILE);
-          dccmsg.AddString("nick", fChatee.String());
-          dccmsg.AddRef("refs", &ref);
-          fSMsgr.SendMessage(&dccmsg); 
-        }
-      }
-      break;
-      
-    case M_CHANNEL_MSG:
-      {
-        const char *nick (NULL);
+	switch (msg->what)
+	{
+		case B_SIMPLE_DATA:
+			{
+				if (msg->HasRef("refs"))
+				{
+					// TODO: get this to work properly for multiple refs
+					// and update DCC send logic to figure that out too
+					entry_ref ref;
+					msg->FindRef("refs", &ref);
+					
+					BMessage dccmsg(M_CHOSE_FILE);
+					dccmsg.AddString("nick", fChatee.String());
+					dccmsg.AddRef("refs", &ref);
+					fSMsgr.SendMessage(&dccmsg); 
+				}
+			}
+			break;
+			
+		case M_CHANNEL_MSG:
+			{
+				const char *nick (NULL);
  
-        if (msg->HasString ("nick"))
-        {
-          msg->FindString ("nick", &nick);
-          BString outNick (nick);
-          outNick.RemoveFirst (" [DCC]");
-          if (fMyNick.ICompare (outNick) != 0 && !fDChat)
-            fAgentWinItem->SetName (outNick.String());      
-          msg->ReplaceString ("nick", outNick.String());
-        }
-        else
-        {
-          BString outNick (fChatee.String());
-          outNick.RemoveFirst (" [DCC]");
-          msg->AddString ("nick", outNick.String());
-        }
+				if (msg->HasString ("nick"))
+				{
+					msg->FindString ("nick", &nick);
+					BString outNick (nick);
+					outNick.RemoveFirst (" [DCC]");
+					if (fMyNick.ICompare (outNick) != 0 && !fDChat)
+						fAgentWinItem->SetName (outNick.String());			
+					msg->ReplaceString ("nick", outNick.String());
+				}
+				else
+				{
+					BString outNick (fChatee.String());
+					outNick.RemoveFirst (" [DCC]");
+					msg->AddString ("nick", outNick.String());
+				}
 
-        BWindow *window (Window());
+				BWindow *window (Window());
 
-        if (IsHidden())
-          UpdateStatus (WIN_NICK_BIT);
-        
-        if (IsHidden() || (window && !window->IsActive()))
-        {
+				if (IsHidden())
+					UpdateStatus (WIN_NICK_BIT);
+				
+				if (IsHidden() || (window && !window->IsActive()))
+				{
 #ifdef USE_INFOPOPPER
-              if (be_roster->IsRunning(InfoPopperAppSig) == true) {
+							if (be_roster->IsRunning(InfoPopperAppSig) == true) {
 				entry_ref ref = vision_app->AppRef();
-                BMessage infoMsg(InfoPopper::AddMessage);
-                infoMsg.AddString("appTitle", S_INFOPOPPER_TITLE);
-                infoMsg.AddString("title", fServerName.String());
-                infoMsg.AddInt8("type", (int8)InfoPopper::Important);
-                
-                infoMsg.AddInt32("iconType", InfoPopper::Attribute);
-                infoMsg.AddRef("iconRef", &ref);              
+								BMessage infoMsg(InfoPopper::AddMessage);
+								infoMsg.AddString("appTitle", S_INFOPOPPER_TITLE);
+								infoMsg.AddString("title", fServerName.String());
+								infoMsg.AddInt8("type", (int8)InfoPopper::Important);
+								
+								infoMsg.AddInt32("iconType", InfoPopper::Attribute);
+								infoMsg.AddRef("iconRef", &ref);							
 
 				BString tempString(msg->FindString("msgz"));
-                if (tempString[0] == '\1')
-                {
-                  tempString.RemoveFirst("\1ACTION ");
-                  tempString.RemoveLast ("\1");
-                }
-                
-                BString content;
-                content << nick << " said: " << tempString.String();
-                infoMsg.AddString("content", content);
-                
-                BMessenger(InfoPopperAppSig).SendMessage(&infoMsg);
-              };
+								if (tempString[0] == '\1')
+								{
+									tempString.RemoveFirst("\1ACTION ");
+									tempString.RemoveLast ("\1");
+								}
+								
+								BString content;
+								content << nick << " said: " << tempString.String();
+								infoMsg.AddString("content", content);
+								
+								BMessenger(InfoPopperAppSig).SendMessage(&infoMsg);
+							};
 #endif
-        }
+				}
 
-        if (window != NULL && !window->IsActive())
-          system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+				if (window != NULL && !window->IsActive())
+					system_beep(kSoundEventNames[(uint32)seNickMentioned]);
 
-        // Send the rest of processing up the chain
-        ClientAgent::MessageReceived (msg);
-      }
-      break;
-      
-    case M_MSG_WHOIS:
-      {
-        BMessage dataSend (M_SERVER_SEND);
+				// Send the rest of processing up the chain
+				ClientAgent::MessageReceived (msg);
+			}
+			break;
+			
+		case M_MSG_WHOIS:
+			{
+				BMessage dataSend (M_SERVER_SEND);
 
-        AddSend (&dataSend, "WHOIS ");
-        AddSend (&dataSend, fChatee.String());
-        AddSend (&dataSend, " ");
-        AddSend (&dataSend, fChatee.String());
-        AddSend (&dataSend, endl);      
-      }
+				AddSend (&dataSend, "WHOIS ");
+				AddSend (&dataSend, fChatee.String());
+				AddSend (&dataSend, " ");
+				AddSend (&dataSend, fChatee.String());
+				AddSend (&dataSend, endl);			
+			}
 
-    case M_CHANGE_NICK:
-      {
-        const char *oldNick, *newNick;
+		case M_CHANGE_NICK:
+			{
+				const char *oldNick, *newNick;
 
-        msg->FindString ("oldnick", &oldNick);
-        msg->FindString ("newnick", &newNick);
+				msg->FindString ("oldnick", &oldNick);
+				msg->FindString ("newnick", &newNick);
 
-        if (fChatee.ICompare (oldNick) == 0)
-        {
-          const char *address;
-          const char *ident;
+				if (fChatee.ICompare (oldNick) == 0)
+				{
+					const char *address;
+					const char *ident;
 
-          msg->FindString ("address", &address);
-          msg->FindString ("ident", &ident);
+					msg->FindString ("address", &address);
+					msg->FindString ("ident", &ident);
 
-          BString oldId (fId);
-          fChatee = fId = newNick;
+					BString oldId (fId);
+					fChatee = fId = newNick;
 
-          if (fDChat)
-            fId.Append(" [DCC]");
-          
-          // set up new logging file for new nick
-          BMessage logMsg (M_UNREGISTER_LOGGER);
-          logMsg.AddString("name", oldId.String());
-          fSMsgr.SendMessage(&logMsg);
-          logMsg.MakeEmpty();
-          logMsg.what = M_REGISTER_LOGGER;
-          logMsg.AddString("name", fId.String());
-          fSMsgr.SendMessage(&logMsg);
-          
-          fAgentWinItem->SetName (fId.String());
+					if (fDChat)
+						fId.Append(" [DCC]");
+					
+					// set up new logging file for new nick
+					BMessage logMsg (M_UNREGISTER_LOGGER);
+					logMsg.AddString("name", oldId.String());
+					fSMsgr.SendMessage(&logMsg);
+					logMsg.MakeEmpty();
+					logMsg.what = M_REGISTER_LOGGER;
+					logMsg.AddString("name", fId.String());
+					fSMsgr.SendMessage(&logMsg);
+					
+					fAgentWinItem->SetName (fId.String());
 
-                 
-          ClientAgent::MessageReceived (msg);
-        }
-      
-        else if (fMyNick.ICompare (oldNick) == 0)
-        {
-          if (!IsHidden())
-            vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
-          ClientAgent::MessageReceived (msg);
-        }
-      }
-      break;
+								 
+					ClientAgent::MessageReceived (msg);
+				}
+			
+				else if (fMyNick.ICompare (oldNick) == 0)
+				{
+					if (!IsHidden())
+						vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, newNick);
+					ClientAgent::MessageReceived (msg);
+				}
+			}
+			break;
 
-    case M_STATUS_ADDITEMS:
-      {
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-            0, ""),
-          true);
-      
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-            "Lag: ",
-            "",
-            STATUS_ALIGN_LEFT),
-          true);
-      
-        vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
-            0,
-            "",
-            STATUS_ALIGN_LEFT),
-          true);
+		case M_STATUS_ADDITEMS:
+			{
+				vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+						0, ""),
+					true);
+			
+				vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+						"Lag: ",
+						"",
+						STATUS_ALIGN_LEFT),
+					true);
+			
+				vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
+						0,
+						"",
+						STATUS_ALIGN_LEFT),
+					true);
 
-        // The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
-        // We send true on the last SetItemValue().
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, fServerName.String(), false);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String(), false);
-        vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String(), true);
-      }        
-      break;
-    
-    default:
-      ClientAgent::MessageReceived (msg);
-  }
+				// The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
+				// We send true on the last SetItemValue().
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, fServerName.String(), false);
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String(), false);
+				vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String(), true);
+			}				
+			break;
+		
+		default:
+			ClientAgent::MessageReceived (msg);
+	}
 }
 
 void
 MessageAgent::ActionMessage (const char *msg, const char *nick)
 {
-  if (!fDChat)
-    ClientAgent::ActionMessage (msg, nick);
-  else if (fDConnected)
-  {
-    BString outTemp;
-    outTemp = "\1ACTION ";
-    outTemp += msg;
-    outTemp += "\1";
-    outTemp += "\n";
+	if (!fDChat)
+		ClientAgent::ActionMessage (msg, nick);
+	else if (fDConnected)
+	{
+		BString outTemp;
+		outTemp = "\1ACTION ";
+		outTemp += msg;
+		outTemp += "\1";
+		outTemp += "\n";
 
-    char convBuffer[2048];
-    memset (convBuffer, 0, sizeof(convBuffer));
+		char convBuffer[2048];
+		memset (convBuffer, 0, sizeof(convBuffer));
 
-    int32 length (outTemp.Length()),
-          destLength (sizeof(convBuffer)),
-          state (0);
+		int32 length (outTemp.Length()),
+					destLength (sizeof(convBuffer)),
+					state (0);
 
-    convert_from_utf8 (
-      vision_app->GetInt32("encoding"),
-      outTemp.String(), 
-      &length,
-      convBuffer,
-      &destLength,
-      &state);
+		convert_from_utf8 (
+			vision_app->GetInt32("encoding"),
+			outTemp.String(), 
+			&length,
+			convBuffer,
+			&destLength,
+			&state);
 
 
-    if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
-    {
-      fDConnected = false;
-      BString temp = B_TRANSLATE("DCC Chat Terminated");
-      temp += "\n";
-      Display (temp.String());
-      return;
-    }
-    outTemp.RemoveLast ("\n");
-    ChannelMessage (outTemp.String(), nick);
-  }
-  
+		if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
+		{
+			fDConnected = false;
+			BString temp = B_TRANSLATE("DCC Chat Terminated");
+			temp += "\n";
+			Display (temp.String());
+			return;
+		}
+		outTemp.RemoveLast ("\n");
+		ChannelMessage (outTemp.String(), nick);
+	}
+	
 }
 void
 MessageAgent::Parser (const char *buffer)
 {
-  if (!fDChat)
-  {
-    BMessage dataSend (M_SERVER_SEND);
+	if (!fDChat)
+	{
+		BMessage dataSend (M_SERVER_SEND);
 
-    AddSend (&dataSend, "PRIVMSG ");
-    AddSend (&dataSend, fChatee);
-    AddSend (&dataSend, " :");
-    AddSend (&dataSend, buffer);
-    AddSend (&dataSend, endl);
-  }
-  else if (fDConnected)
-  {
-    BString outTemp (buffer);
+		AddSend (&dataSend, "PRIVMSG ");
+		AddSend (&dataSend, fChatee);
+		AddSend (&dataSend, " :");
+		AddSend (&dataSend, buffer);
+		AddSend (&dataSend, endl);
+	}
+	else if (fDConnected)
+	{
+		BString outTemp (buffer);
 
-    outTemp << "\n";
+		outTemp << "\n";
 
-    char convBuffer[2048];
-    memset (convBuffer, 0, sizeof(convBuffer));
+		char convBuffer[2048];
+		memset (convBuffer, 0, sizeof(convBuffer));
 
-    int32 length (outTemp.Length()),
-          destLength (sizeof(convBuffer)),
-          state (0);
+		int32 length (outTemp.Length()),
+					destLength (sizeof(convBuffer)),
+					state (0);
 
-    convert_from_utf8 (
-      vision_app->GetInt32("encoding"),
-      outTemp.String(), 
-      &length,
-      convBuffer,
-      &destLength,
-      &state);
-    
-    
-    if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
-    {
-      fDConnected = false;
-      BString temp = B_TRANSLATE("DCC Chat Terminated");
-      temp += "\n";
-      Display (temp.String());
-      return;
-    }
-  }
-  else
-    return;
+		convert_from_utf8 (
+			vision_app->GetInt32("encoding"),
+			outTemp.String(), 
+			&length,
+			convBuffer,
+			&destLength,
+			&state);
+		
+		
+		if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
+		{
+			fDConnected = false;
+			BString temp = B_TRANSLATE("DCC Chat Terminated");
+			temp += "\n";
+			Display (temp.String());
+			return;
+		}
+	}
+	else
+		return;
 
-  Display ("<", C_MYNICK);
-  Display (fMyNick.String(), C_NICKDISPLAY);
-  Display ("> ", C_MYNICK);
+	Display ("<", C_MYNICK);
+	Display (fMyNick.String(), C_NICKDISPLAY);
+	Display ("> ", C_MYNICK);
 
-  BString sBuffer (buffer);
-  Display (sBuffer.String());
-  
+	BString sBuffer (buffer);
+	Display (sBuffer.String());
+	
 
-  Display ("\n");
+	Display ("\n");
 }
 
 void
 MessageAgent::DroppedFile (BMessage *)
 {
-  // TODO: implement this when DCC's ready
+	// TODO: implement this when DCC's ready
 }
 
 void
 MessageAgent::TabExpansion (void)
 {
-  int32 start,
-        finish;
+	int32 start,
+				finish;
 
-  fInput->TextView()->GetSelection (&start, &finish);
+	fInput->TextView()->GetSelection (&start, &finish);
 
-  if (fInput->TextView()->TextLength()
-  &&  start == finish
-  &&  start == fInput->TextView()->TextLength())
-  {
-    const char *fInputText (
-                  fInput->TextView()->Text()
-                  + fInput->TextView()->TextLength());
-    const char *place (fInputText);
+	if (fInput->TextView()->TextLength()
+	&&	start == finish
+	&&	start == fInput->TextView()->TextLength())
+	{
+		const char *fInputText (
+									fInput->TextView()->Text()
+									+ fInput->TextView()->TextLength());
+		const char *place (fInputText);
 
 
-    while (place > fInput->TextView()->Text())
-    {
-      if (*(place - 1) == '\x20')
-        break;
-      --place;
-    }
+		while (place > fInput->TextView()->Text())
+		{
+			if (*(place - 1) == '\x20')
+				break;
+			--place;
+		}
 
-    BString insertion;
+		BString insertion;
 
-    if (!fId.ICompare (place, strlen (place)))
-    {
-      insertion = fId;
-      insertion.RemoveLast(" [DCC]");
-    }
-    else if (!fMyNick.ICompare (place, strlen (place)))
-      insertion = fMyNick;
+		if (!fId.ICompare (place, strlen (place)))
+		{
+			insertion = fId;
+			insertion.RemoveLast(" [DCC]");
+		}
+		else if (!fMyNick.ICompare (place, strlen (place)))
+			insertion = fMyNick;
 
-    if (insertion.Length())
-    {
-      fInput->TextView()->Delete (
-        place - fInput->TextView()->Text(),
-        fInput->TextView()->TextLength());
+		if (insertion.Length())
+		{
+			fInput->TextView()->Delete (
+				place - fInput->TextView()->Text(),
+				fInput->TextView()->TextLength());
 
-      fInput->TextView()->Insert (insertion.String());
-      fInput->TextView()->Select (
-        fInput->TextView()->TextLength(),
-        fInput->TextView()->TextLength());
-    }
-  }
+			fInput->TextView()->Insert (insertion.String());
+			fInput->TextView()->Select (
+				fInput->TextView()->TextLength(),
+				fInput->TextView()->TextLength());
+		}
+	}
 }

@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -36,33 +36,33 @@ class BCheckBox;
 
 class ServerEntryWindow : public BWindow
 {
-  public:
-    ServerEntryWindow (BHandler *, BMessage *, const ServerData*, int32);
-    virtual ~ServerEntryWindow (void);
+	public:
+		ServerEntryWindow (BHandler *, BMessage *, const ServerData*, int32);
+		virtual ~ServerEntryWindow (void);
 };
 
 class ServerEntryView : public BView
 {
-  public:
-                              ServerEntryView (BRect, BHandler *, BMessage *, const ServerData *, int32);
-    virtual                   ~ServerEntryView (void);
-    virtual void              AttachedToWindow (void);
-    virtual void              AllAttached (void);
-    virtual void              MessageReceived (BMessage *);
-  
-  private:
-    void                      CheckDoneState (void);
-    
-    BMessage                  *invocation;
-    BHandler                  *target;
-    VTextControl              *serverName,
-                              *port,
-                              *passwordField;
-    BMenuField                *statusField;
-    BButton                   *okButton,
-                              *cancelButton;
-    BCheckBox                 *usePassword;
-    ServerData                currentServer;
+	public:
+															ServerEntryView (BRect, BHandler *, BMessage *, const ServerData *, int32);
+		virtual									 ~ServerEntryView (void);
+		virtual void							AttachedToWindow (void);
+		virtual void							AllAttached (void);
+		virtual void							MessageReceived (BMessage *);
+	
+	private:
+		void											CheckDoneState (void);
+		
+		BMessage									*invocation;
+		BHandler									*target;
+		VTextControl							*serverName,
+															*port,
+															*passwordField;
+		BMenuField								*statusField;
+		BButton									 *okButton,
+															*cancelButton;
+		BCheckBox								 *usePassword;
+		ServerData								currentServer;
 };
 
 

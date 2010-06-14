@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -26,9 +26,9 @@
 #include "Vision.h"
 
 NetworkMenu::NetworkMenu (const char *title, uint32 what, BMessenger msgTarget)
-  : BMenu (title),
-    fMsgConst (what),
-    fTarget (msgTarget)
+	: BMenu (title),
+		fMsgConst (what),
+		fTarget (msgTarget)
 {
 }
 
@@ -39,26 +39,26 @@ NetworkMenu::~NetworkMenu (void)
 void
 NetworkMenu::AttachedToWindow (void)
 {
-  if (CountItems())
-  {
-    BMenuItem *item (NULL);
-    while ((item = RemoveItem(0L)) != NULL)
-      delete item;
-  }
+	if (CountItems())
+	{
+		BMenuItem *item (NULL);
+		while ((item = RemoveItem(0L)) != NULL)
+			delete item;
+	}
 
-  BMessage msg;
-  BMessage *invoke (NULL);
-  for (int32 i = 0; (msg = vision_app->GetNetwork (i)), !msg.HasBool ("error"); i++)
-  {
-    const char *name = msg.FindString ("name");
-    invoke = new BMessage (fMsgConst);
-    invoke->AddString ("network", name);
-    BMenuItem *item (new BMenuItem(name, invoke));
-    AddItem (item);
-    if (!vision_app->CheckNetworkValid (name))
-      item->SetEnabled (false);
-  }
-  SetTargetForItems (fTarget.Target(NULL));
-  BMenu::AttachedToWindow();
+	BMessage msg;
+	BMessage *invoke (NULL);
+	for (int32 i = 0; (msg = vision_app->GetNetwork (i)), !msg.HasBool ("error"); i++)
+	{
+		const char *name = msg.FindString ("name");
+		invoke = new BMessage (fMsgConst);
+		invoke->AddString ("network", name);
+		BMenuItem *item (new BMenuItem(name, invoke));
+		AddItem (item);
+		if (!vision_app->CheckNetworkValid (name))
+			item->SetEnabled (false);
+	}
+	SetTargetForItems (fTarget.Target(NULL));
+	BMenu::AttachedToWindow();
 }
 

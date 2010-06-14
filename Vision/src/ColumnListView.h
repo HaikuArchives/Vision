@@ -36,7 +36,7 @@ All rights reserved.
 /
 /	File:			ColumnListView.h
 /
-/   Description:    Experimental multi-column list view.
+/	 Description:		Experimental multi-column list view.
 /
 /	Copyright 2000+, Be Incorporated, All Rights Reserved
 /
@@ -84,16 +84,16 @@ typedef enum {
 } column_flags;
 
 enum ColumnListViewColor {
-	B_COLOR_BACKGROUND			=  0,
-	B_COLOR_TEXT				=  1,
-	B_COLOR_ROW_DIVIDER			=  2,
-	B_COLOR_SELECTION			=  3,
-	B_COLOR_SELECTION_TEXT		=  4,
-	B_COLOR_NON_FOCUS_SELECTION	=  5,
-	B_COLOR_EDIT_BACKGROUND		=  6,
-	B_COLOR_EDIT_TEXT			=  7,
-	B_COLOR_HEADER_BACKGROUND	=  8,
-	B_COLOR_HEADER_TEXT			=  9,
+	B_COLOR_BACKGROUND			=	0,
+	B_COLOR_TEXT				=	1,
+	B_COLOR_ROW_DIVIDER			=	2,
+	B_COLOR_SELECTION			=	3,
+	B_COLOR_SELECTION_TEXT		=	4,
+	B_COLOR_NON_FOCUS_SELECTION	=	5,
+	B_COLOR_EDIT_BACKGROUND		=	6,
+	B_COLOR_EDIT_TEXT			=	7,
+	B_COLOR_HEADER_BACKGROUND	=	8,
+	B_COLOR_HEADER_TEXT			=	9,
 	B_COLOR_SEPARATOR_LINE		= 10,
 	B_COLOR_SEPARATOR_BORDER	= 11,
 	
@@ -101,10 +101,10 @@ enum ColumnListViewColor {
 };
 
 enum ColumnListViewFont {
-	B_FONT_ROW					=  0,
-	B_FONT_HEADER				=  1,
+	B_FONT_ROW					=	0,
+	B_FONT_HEADER				=	1,
 	
-	B_FONT_TOTAL				=  2
+	B_FONT_TOTAL				=	2
 };
 
 
@@ -115,9 +115,9 @@ public:
 	virtual				~BField();
 };
 
-// A single line in the list.  Each line contains a BField object
+// A single line in the list.	Each line contains a BField object
 // for each column in the list, associated by their "logical field"
-// index.  Hierarchies are formed by adding other BRow objects as
+// index.	Hierarchies are formed by adding other BRow objects as
 // a parent of a row, using the AddRow() function in BColumnListView().
 class BRow {
 public:
@@ -154,17 +154,17 @@ private:
 	friend class BPrivate::OutlineView;
 };
 
-// Information about a single column in the list.  A column knows
+// Information about a single column in the list.	A column knows
 // how to display the BField objects that occur at its location in
-// each of the list's rows.  See ColumnTypes.h for particular
+// each of the list's rows.	See ColumnTypes.h for particular
 // subclasses of BField and BColumn that handle common data types.
 class BColumn
 {
 public:
 						BColumn(float width,
-						        float minWidth,
-						        float maxWidth,
-						        alignment align = B_ALIGN_LEFT);
+										float minWidth,
+										float maxWidth,
+										alignment align = B_ALIGN_LEFT);
 	virtual 			~BColumn();
 	
 			float		Width() const;
@@ -177,9 +177,9 @@ public:
 	virtual int			CompareFields(BField *field1, BField *field2);
 	
 	virtual void		MouseMoved(BColumnListView *parent, BRow *row, BField *field,
-					               BRect field_rect, BPoint point, uint32 buttons, int32 code);
+												 BRect field_rect, BPoint point, uint32 buttons, int32 code);
 	virtual void		MouseDown(BColumnListView *parent, BRow *row, BField *field,
-					              BRect field_rect, BPoint point, uint32 buttons);
+												BRect field_rect, BPoint point, uint32 buttons);
 	virtual	void		MouseUp(BColumnListView *parent, BRow *row, BField *field);
 		
 	virtual void		GetColumnName(BString* into) const;
@@ -209,10 +209,10 @@ public:
 			determine if it is of a kind that your BColumn know how ot handle. return false if it is not.
 			
 			\note The debugger will be called if you return false from here with information about
-			      what type of BField and BColumn and the logical field index where it occured.
-			      
+						what type of BField and BColumn and the logical field index where it occured.
+						
 			\note Do not call the inherited version of this, it just returns true; 
-	  */
+		*/
 	virtual	bool		AcceptsField(const BField* field) const;
 		
 private:
@@ -237,8 +237,8 @@ class BColumnListView : public BView, public BInvoker
 {
 public:
 							BColumnListView(BRect rect,
-						                const char *name,
-						                uint32 resizingMode,
+														const char *name,
+														uint32 resizingMode,
 										uint32 drawFlags,
 										border_style = B_NO_BORDER,
 										bool showHorizontalScrollbar = true);
@@ -268,7 +268,7 @@ public:
 	virtual void			SetSelectionMessage(BMessage *);
 			BMessage*		SelectionMessage();
 			uint32			SelectionCommand() const;
-			void			SetSelectionMode(list_view_type);  // list_view_type is defined in ListView.h.
+			void			SetSelectionMode(list_view_type);	// list_view_type is defined in ListView.h.
 
 	// Sorting
 			void			SetSortingEnabled(bool);

@@ -13,12 +13,12 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Wade Majors
- *                 Todd Lair
+ *								 Wade Majors
+ *								 Todd Lair
  */
  
 #ifndef NUMERICFILTER_H
@@ -28,10 +28,10 @@
 
 class NumericFilter : public BMessageFilter
 {
-  public:
-    NumericFilter (void);
-    virtual ~NumericFilter (void);
-    virtual filter_result Filter (BMessage *, BHandler **);
+	public:
+		NumericFilter (void);
+		virtual ~NumericFilter (void);
+		virtual filter_result Filter (BMessage *, BHandler **);
 };
 
 #endif

@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
+ *								 Rene Gollent
  */
  
 #include "SettingsFile.h"
@@ -99,7 +99,7 @@ status_t SettingsFile::Load() {
 	}
 	
 	if (vision_app->fDebugSettings)
-	  PrintToStream();
+		PrintToStream();
 /*	
 	ret=file.RewindAttrs();
 	if (ret!=B_OK) {
@@ -282,7 +282,7 @@ status_t SettingsFile::Save() const {
 	}
 
 	if (vision_app->fDebugSettings)
-	  PrintToStream();
+		PrintToStream();
 
 	ret=Flatten(&file);
 	if (ret!=B_OK) {
@@ -302,7 +302,7 @@ status_t SettingsFile::Save() const {
 
 status_t SettingsFile::_StoreAttributes(BMessage const*m,BFile*f,const char*basename) {
 #if B_BEOS_VERSION_DANO
-    const char *namefound;
+		const char *namefound;
 #else
 	char* namefound;
 #endif

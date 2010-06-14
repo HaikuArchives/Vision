@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
  
 #ifndef _NAMES_H_
@@ -36,54 +36,54 @@ class Theme;
 
 class NameItem : public BListItem
 {
-  public:
+	public:
 
-                                    NameItem (
-                                      const char *,
-                                      int32);
-    BString                         Name (void) const;
-    BString                         Address (void) const;
-    int32                           Status (void) const;
+																		NameItem (
+																			const char *,
+																			int32);
+		BString												 Name (void) const;
+		BString												 Address (void) const;
+		int32													 Status (void) const;
 
-    void                            SetName (const char *);
-    void                            SetAddress (const char *);
-    void                            SetStatus (int32);
+		void														SetName (const char *);
+		void														SetAddress (const char *);
+		void														SetStatus (int32);
 
-    virtual void                    DrawItem (BView *, BRect , bool = false);
+		virtual void										DrawItem (BView *, BRect , bool = false);
 
-  private:
+	private:
 
-    BString                         myName,
-                                      myAddress;
-    int32                           myStatus;
+		BString												 myName,
+																			myAddress;
+		int32													 myStatus;
 };
 
 class NamesView : public BListView
 {
-  public:
+	public:
 
-                                    NamesView (BRect);
-    virtual                         ~NamesView (void);
-    virtual void                    AttachedToWindow (void);
-    virtual void                    DetachedFromWindow (void);
-    virtual void                    MouseDown (BPoint);
-    virtual void                    MouseMoved (BPoint, uint32, const BMessage *);
-    virtual void                    MouseUp (BPoint);
-    virtual void                    KeyDown (const char *, int32);
-    virtual void                    MessageReceived (BMessage *);
+																		NamesView (BRect);
+		virtual												 ~NamesView (void);
+		virtual void										AttachedToWindow (void);
+		virtual void										DetachedFromWindow (void);
+		virtual void										MouseDown (BPoint);
+		virtual void										MouseMoved (BPoint, uint32, const BMessage *);
+		virtual void										MouseUp (BPoint);
+		virtual void										KeyDown (const char *, int32);
+		virtual void										MessageReceived (BMessage *);
 
-    void                            ClearList (void);
+		void														ClearList (void);
 
-  private:
+	private:
 
-    bool                            fTracking;
+		bool														fTracking;
 
-    BPopUpMenu                      *fMyPopUp;
-    BMenu                           *fCTCPPopUp;
-    int32                           fLastSelected,
-                                      fLastButton,
-                                      fCurrentindex;
-    Theme                           *fActiveTheme;
+		BPopUpMenu											*fMyPopUp;
+		BMenu													 *fCTCPPopUp;
+		int32													 fLastSelected,
+																			fLastButton,
+																			fCurrentindex;
+		Theme													 *fActiveTheme;
 };
 
 #endif

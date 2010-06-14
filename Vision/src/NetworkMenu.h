@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -28,14 +28,14 @@ class BMessenger;
 
 class NetworkMenu : public BMenu
 {
-  public:
-    NetworkMenu (const char *, uint32, BMessenger);
-    virtual ~NetworkMenu (void);
-    virtual void AttachedToWindow (void);
-  
-  private:
-    uint32 fMsgConst;
-    BMessenger fTarget;
+	public:
+		NetworkMenu (const char *, uint32, BMessenger);
+		virtual ~NetworkMenu (void);
+		virtual void AttachedToWindow (void);
+	
+	private:
+		uint32 fMsgConst;
+		BMessenger fTarget;
 };
 
 #endif // _NETWORK_MENU_H

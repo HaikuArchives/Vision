@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Alan Ellis
+ *								 Alan Ellis
  */
 
 #ifndef _NETWORKPREFSVIEW_H
@@ -46,50 +46,50 @@ class NetworkPrefsView : public BView
 {
 	public:
 
-					    NetworkPrefsView (BRect, const char *);
-	virtual			    ~NetworkPrefsView (void);
-	virtual void	    MessageReceived (BMessage *);
-	virtual void	    AttachedToWindow (void);
-	virtual void        DetachedFromWindow (void);
+							NetworkPrefsView (BRect, const char *);
+	virtual					~NetworkPrefsView (void);
+	virtual void			MessageReceived (BMessage *);
+	virtual void			AttachedToWindow (void);
+	virtual void				DetachedFromWindow (void);
 
 	private:
 	
-	void			    UpdateNetworkData (BMessage &);
-	void			    UpdatePersonalData (BMessage &);
-	void			    SetupDefaults (BMessage &);
-	void                BuildNetworkList (void);
-	void                SaveCurrentNetwork();
-	BMenuField          *fNetworkMenu;
-	BScrollView         *fExecScroller,
-				        *fNickScroller;
+	void					UpdateNetworkData (BMessage &);
+	void					UpdatePersonalData (BMessage &);
+	void					SetupDefaults (BMessage &);
+	void								BuildNetworkList (void);
+	void								SaveCurrentNetwork();
+	BMenuField					*fNetworkMenu;
+	BScrollView				 *fExecScroller,
+								*fNickScroller;
 	
-	BBox                *fMainNetBox,
-		                *fNetDetailsBox,
-		                *fPersonalBox;
+	BBox								*fMainNetBox,
+										*fNetDetailsBox,
+										*fPersonalBox;
 	
-	BButton             *fServerButton,
-			            *fNickAddButton,
-			            *fNickRemoveButton;
+	BButton						 *fServerButton,
+									*fNickAddButton,
+									*fNickRemoveButton;
 	
-	TSpeedButton        *fNickUpButton,
-	                    *fNickDnButton;
+	TSpeedButton				*fNickUpButton,
+											*fNickDnButton;
 	
-	BCheckBox           *fNickDefaultsBox,
-	                    *fLagCheckBox,
-			            *fStartupBox;
-			  
-	BTextView           *fTextView;
-	BListView           *fListView;
+	BCheckBox					 *fNickDefaultsBox,
+											*fLagCheckBox,
+									*fStartupBox;
+				
+	BTextView					 *fTextView;
+	BListView					 *fListView;
 	
-	BTextControl        *fIdent,
-				        *fRealName;
+	BTextControl				*fIdent,
+								*fRealName;
 	
-	BMessage	        fActiveNetwork;
-	PromptWindow        *fNickPrompt;
-	PromptWindow        *fNetPrompt;
-	PromptWindow        *fDupePrompt;
-	BMenuItem           *fRemoveItem;
-	BMenuItem           *fDupeItem;
+	BMessage					fActiveNetwork;
+	PromptWindow				*fNickPrompt;
+	PromptWindow				*fNetPrompt;
+	PromptWindow				*fDupePrompt;
+	BMenuItem					 *fRemoveItem;
+	BMenuItem					 *fDupeItem;
 	NetPrefServerWindow *fServerPrefs;
 };
 

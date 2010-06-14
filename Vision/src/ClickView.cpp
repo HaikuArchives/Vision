@@ -13,12 +13,12 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
+ *								 Rene Gollent
+ *								 Todd Lair
  */ 
 
 #include "Vision.h"
@@ -27,6 +27,6 @@
 void
 ClickView::MouseDown (BPoint)
 {
-  vision_app->LoadURL (fLaunchUrl.String());
+	vision_app->LoadURL (fLaunchUrl.String());
 }
 

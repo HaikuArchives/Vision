@@ -36,7 +36,7 @@ All rights reserved.
 /
 /	File:			ColumnListView.cpp
 /
-/   Description:    Experimental multi-column list view.
+/	 Description:		Experimental multi-column list view.
 /
 /	Copyright 2000+, Be Incorporated, All Rights Reserved
 /					 By Jeff Bush
@@ -180,18 +180,18 @@ static const float kLatchWidth = 15.0;
 
 static const rgb_color kColor[B_COLOR_TOTAL] =
 {
-    {236, 236, 236, 255},           // B_COLOR_BACKGROUND
-    {  0,   0,   0, 255},           // B_COLOR_TEXT
-    {148, 148, 148, 255},           // B_COLOR_ROW_DIVIDER
-    {190, 190, 190, 255},           // B_COLOR_SELECTION
-    {  0,   0,   0, 255},           // B_COLOR_SELECTION_TEXT
-    {200, 200, 200, 255},           // B_COLOR_NON_FOCUS_SELECTION
-    {180, 180, 180, 180},           // B_COLOR_EDIT_BACKGROUND
-    {  0,   0,   0, 255},           // B_COLOR_EDIT_TEXT
-    {215, 215, 215, 255},           // B_COLOR_HEADER_BACKGROUND
-    {  0,   0,   0, 255},           // B_COLOR_HEADER_TEXT
-    {  0,   0,   0, 255},           // B_COLOR_SEPARATOR_LINE
-    {  0,   0,   0, 255},           // B_COLOR_SEPARATOR_BORDER
+		{236, 236, 236, 255},					 // B_COLOR_BACKGROUND
+		{	0,	 0,	 0, 255},					 // B_COLOR_TEXT
+		{148, 148, 148, 255},					 // B_COLOR_ROW_DIVIDER
+		{190, 190, 190, 255},					 // B_COLOR_SELECTION
+		{	0,	 0,	 0, 255},					 // B_COLOR_SELECTION_TEXT
+		{200, 200, 200, 255},					 // B_COLOR_NON_FOCUS_SELECTION
+		{180, 180, 180, 180},					 // B_COLOR_EDIT_BACKGROUND
+		{	0,	 0,	 0, 255},					 // B_COLOR_EDIT_TEXT
+		{215, 215, 215, 255},					 // B_COLOR_HEADER_BACKGROUND
+		{	0,	 0,	 0, 255},					 // B_COLOR_HEADER_TEXT
+		{	0,	 0,	 0, 255},					 // B_COLOR_SEPARATOR_LINE
+		{	0,	 0,	 0, 255},					 // B_COLOR_SEPARATOR_BORDER
 };
 
 static const int32 kMaxDepth = 1024;
@@ -546,7 +546,7 @@ BRow::ValidateField(const BField *field, int32 logicalFieldIndex) const
 	if( NULL == col )
 	{
 		BString dbmessage("\n\n\tThe parent BColumnListView does not have "
-		                  "\n\ta BColumn at the logical field index ");
+											"\n\ta BColumn at the logical field index ");
 		dbmessage << logicalFieldIndex << ".\n\n";
 		printf(dbmessage.String());
 	}
@@ -556,8 +556,8 @@ BRow::ValidateField(const BField *field, int32 logicalFieldIndex) const
 		{
 			BString dbmessage("\n\n\tThe BColumn of type ");
 			dbmessage << typeid(*col).name() << "\n\tat logical field index "
-			          << logicalFieldIndex << "\n\tdoes not support the field type "
-			          << typeid(*field).name() << ".\n\n";
+								<< logicalFieldIndex << "\n\tdoes not support the field type "
+								<< typeid(*field).name() << ".\n\n";
 			debugger(dbmessage.String());
 		}
 	}
@@ -694,7 +694,7 @@ BColumnListView::BColumnListView(BRect rect, const char *name, uint32 resizingMo
 	bounds.OffsetTo(0, 0);
 	
 	for (int i = 0; i < (int)B_COLOR_TOTAL; i++)
-	  fColorList[i] = kColor[i];
+		fColorList[i] = kColor[i];
 	
 	BRect titleRect(bounds);
 	titleRect.bottom = titleRect.top + kTitleHeight;
@@ -990,7 +990,7 @@ void BColumnListView::AddColumn(BColumn *column, int32 logicalFieldIndex)
 	column->fList = this;
 	column->fFieldID = logicalFieldIndex;
 
-	// sanity check.  If there is already a field with this ID, remove it.
+	// sanity check.	If there is already a field with this ID, remove it.
 	for (int32 index = 0; index < fColumns.CountItems(); index++) {
 		BColumn *existingColumn = (BColumn*) fColumns.ItemAt(index);
 		if (existingColumn && existingColumn->fFieldID == logicalFieldIndex) {
@@ -1166,7 +1166,7 @@ void BColumnListView::SetFont(ColumnListViewFont font_num, const BFont* font, ui
 		case B_FONT_ROW:
 			fOutlineView->SetFont(font, mask);
 			break;
-		  
+			
 		case B_FONT_HEADER:
 			fTitleView->SetFont(font, mask);
 			break;
@@ -1183,7 +1183,7 @@ void BColumnListView::GetFont(ColumnListViewFont font_num, BFont* font) const
 		case B_FONT_ROW:
 			fOutlineView->GetFont(font);
 			break;
-		  
+			
 		case B_FONT_HEADER:
 			fTitleView->GetFont(font);
 			break;
@@ -1207,7 +1207,7 @@ void BColumnListView::SetColor(ColumnListViewColor color_num, const rgb_color co
 		ASSERT(false);
 		color_num = (ColumnListViewColor) (B_COLOR_TOTAL - 1);
 	}
-  
+	
 	fColorList[color_num] = color;
 }
 
@@ -1224,7 +1224,7 @@ rgb_color BColumnListView::Color(ColumnListViewColor color_num) const
 		ASSERT(false);
 		color_num = (ColumnListViewColor) (B_COLOR_TOTAL - 1);
 	}
-  
+	
 	return fColorList[color_num];
 }
 
@@ -1321,12 +1321,12 @@ void BColumnListView::DrawLatch(BView *view, BRect rect, LatchType position, BRo
 	}
 	
 	// Make Center
-	int32 halfWidth  = rect.IntegerWidth() / 2;
+	int32 halfWidth	= rect.IntegerWidth() / 2;
 	int32 halfHeight = rect.IntegerHeight() / 2;
-	int32 halfSide   = sideLen / 2;
+	int32 halfSide	 = sideLen / 2;
 	
-	float left = rect.left + halfWidth  - halfSide;
-	float top  = rect.top  + halfHeight - halfSide;
+	float left = rect.left + halfWidth	- halfSide;
+	float top	= rect.top	+ halfHeight - halfSide;
 	
 	BRect itemRect(left, top, left + sideLen, top + sideLen);
 	
@@ -1338,7 +1338,7 @@ void BColumnListView::DrawLatch(BView *view, BRect rect, LatchType position, BRo
 	// Make it an odd number of pixels wide, the latch looks better this way
 	if (1 == (itemRect.IntegerWidth() % 2))
 	{
-		itemRect.right  += 1;
+		itemRect.right	+= 1;
 		itemRect.bottom += 1;
 	}
 		
@@ -1353,7 +1353,7 @@ void BColumnListView::DrawLatch(BView *view, BRect rect, LatchType position, BRo
 			view->StrokeRect(itemRect);
 			view->StrokeLine(BPoint(itemRect.left + 2, (itemRect.top + itemRect.bottom) / 2),
 				BPoint(itemRect.right - 2, (itemRect.top + itemRect.bottom) / 2));
-			view->StrokeLine(BPoint((itemRect.left + itemRect.right) / 2, itemRect.top +  2),
+			view->StrokeLine(BPoint((itemRect.left + itemRect.right) / 2, itemRect.top +	2),
 				BPoint((itemRect.left + itemRect.right) / 2, itemRect.bottom - 2));
 			view->InvertRect(itemRect);
 			break;
@@ -1362,7 +1362,7 @@ void BColumnListView::DrawLatch(BView *view, BRect rect, LatchType position, BRo
 			view->StrokeRect(itemRect);
 			view->StrokeLine(BPoint(itemRect.left + 2, (itemRect.top + itemRect.bottom) / 2),
 				BPoint(itemRect.right - 2, (itemRect.top + itemRect.bottom) / 2));
-			view->StrokeLine(BPoint((itemRect.left + itemRect.right) / 2, itemRect.top +  2),
+			view->StrokeLine(BPoint((itemRect.left + itemRect.right) / 2, itemRect.top +	2),
 				BPoint((itemRect.left + itemRect.right) / 2, itemRect.bottom - 2));
 			break;
 	
@@ -1381,7 +1381,7 @@ void BColumnListView::MakeFocus(bool isFocus)
 void BColumnListView::MessageReceived(BMessage *message)
 {
 	// Propagate mouse wheel messages down to child, so that it can
-	// scroll.  Note we have done so, so we don't go into infinite
+	// scroll.	Note we have done so, so we don't go into infinite
 	// recursion if this comes back up here.
 	if (message->what == B_MOUSE_WHEEL_CHANGED) {
 		bool handled;
@@ -1400,7 +1400,7 @@ void BColumnListView::KeyDown(const char *bytes, int32 numBytes)
 	switch (c) {
 		case B_RIGHT_ARROW: 
 		case B_LEFT_ARROW: {
-			float  minVal, maxVal;
+			float	minVal, maxVal;
 			fHorizontalScrollBar->GetRange(&minVal, &maxVal);
 			float smallStep, largeStep;
 			fHorizontalScrollBar->GetSteps(&smallStep, &largeStep);
@@ -1676,7 +1676,7 @@ void TitleView::SetColumnVisible(BColumn *column, bool visible)
 		return;
 
 	// If setting it visible, do this first so we can find its position
-	// to invalidate.  If hiding it, do it last.
+	// to invalidate.	If hiding it, do it last.
 	if (visible)
 		column->fVisible = visible;
 		
@@ -1952,7 +1952,7 @@ void TitleView::DrawTitle(BView *view, BRect rect, BColumn *column, bool depress
 	
 	float baseline = floor(drawRect.top + fh.ascent
 							+ (drawRect.Height()+1-(fh.ascent+fh.descent))/2);
-				   
+					 
 	view->SetHighColor(backgroundColor);
 	view->SetLowColor(backgroundColor);
 
@@ -2229,11 +2229,11 @@ void TitleView::MouseMoved(BPoint position, uint32 transit, const BMessage *)
 						BRect dragRect(fSelectedColumnRect);
 		
 						// There is a race condition where the mouse may have moved by the
-						// time we get to handle this message.  If the user drags a column very
+						// time we get to handle this message.	If the user drags a column very
 						// quickly, this results in the annoying bug where the cursor is outside
 						// of the rectangle that is being dragged around.
 						// Call GetMouse with the checkQueue flag set to false so we
-						// can get the most recent position of the mouse.  This minimizes
+						// can get the most recent position of the mouse.	This minimizes
 						// this problem (although it is currently not possible to completely
 						// eliminate it).
 						uint32 buttons;
@@ -2426,7 +2426,7 @@ OutlineView::OutlineView(BRect rect, BList *visibleColumns, BList *sortColumns,
 	SetViewColor(B_TRANSPARENT_32_BIT);
 
 #if DOUBLE_BUFFERED_COLUMN_RESIZE
-	// xxx this needs to be smart about the size of the buffer.  Also, the buffer can
+	// xxx this needs to be smart about the size of the buffer.	Also, the buffer can
 	// be shared with the title's buffer.
 	BRect doubleBufferRect(0, 0, 600, 35);
 	fDrawBuffer = new BBitmap(doubleBufferRect, B_RGB32, true);
@@ -2606,7 +2606,7 @@ void OutlineView::RedrawColumn(BColumn *column, float leftEdge, bool isFirstColu
 				fDrawBufferView->ConstrainClippingRegion(&clipRegion);
 				fDrawBufferView->PushState();
 	#endif
-				fDrawBufferView->SetHighColor(fMasterView->Color(row->fNextSelected ?  B_COLOR_SELECTION_TEXT : B_COLOR_TEXT));
+				fDrawBufferView->SetHighColor(fMasterView->Color(row->fNextSelected ?	B_COLOR_SELECTION_TEXT : B_COLOR_TEXT));
 				float baseline = floor(fieldRect.top + fh.ascent
 										+ (fieldRect.Height()+1-(fh.ascent+fh.descent))/2);
 				fDrawBufferView->MovePenTo(fieldRect.left + 8, baseline);
@@ -2642,7 +2642,7 @@ void OutlineView::RedrawColumn(BColumn *column, float leftEdge, bool isFirstColu
 				ConstrainClippingRegion(&clipRegion);
 				PushState();
 	#endif
-				SetHighColor(fColorList[row->fNextSelected ?  B_COLOR_SELECTION_TEXT : B_COLOR_TEXT]);
+				SetHighColor(fColorList[row->fNextSelected ?	B_COLOR_SELECTION_TEXT : B_COLOR_TEXT]);
 				float baseline = floor(destRect.top + fh.ascent
 										+ (destRect.Height()+1-(fh.ascent+fh.descent))/2);
 				MovePenTo(destRect.left + 8, baseline);
@@ -2785,7 +2785,7 @@ void OutlineView::Draw(BRect invalidBounds)
 							ConstrainClippingRegion(&clipRegion);
 							PushState();
 #endif
-							SetHighColor(fMasterView->Color(row->fNextSelected ?  B_COLOR_SELECTION_TEXT : B_COLOR_TEXT));
+							SetHighColor(fMasterView->Color(row->fNextSelected ?	B_COLOR_SELECTION_TEXT : B_COLOR_TEXT));
 							float baseline = floor(destRect.top + fh.ascent
 													+ (destRect.Height()+1-(fh.ascent+fh.descent))/2);
 							MovePenTo(destRect.left + 8, baseline);
@@ -2865,9 +2865,9 @@ void OutlineView::SetMouseTrackingEnabled(bool enabled)
 
 
 //
-// Note that this interaction is not totally safe.  If items are added to
+// Note that this interaction is not totally safe.	If items are added to
 // the list in the background, the widget rect will be incorrect, possibly
-// resulting in drawing glitches.  The code that adds items needs to be a little smarter
+// resulting in drawing glitches.	The code that adds items needs to be a little smarter
 // about invalidating state.
 // 
 void OutlineView::MouseDown(BPoint position)
@@ -3385,17 +3385,17 @@ void OutlineView::ExpandOrCollapse(BRow* ParentRow, bool Expand)
 			float subTreeHeight = 0.0;
 			if (ParentRow->fIsExpanded)
 				for (RecursiveOutlineIterator iterator(ParentRow->fChildList);
-				     iterator.CurrentRow();
-				     iterator.GoToNext()
-				    )
+						 iterator.CurrentRow();
+						 iterator.GoToNext()
+						)
 				{
 					subTreeHeight += iterator.CurrentRow()->Height()+1;
 				}
 			else
 				for (RecursiveOutlineIterator iterator(ParentRow->fChildList);
-				     iterator.CurrentRow();
-				     iterator.GoToNext()
-				    )
+						 iterator.CurrentRow();
+						 iterator.GoToNext()
+						)
 				{
 					subTreeHeight -= iterator.CurrentRow()->Height()+1;
 				}
@@ -3578,7 +3578,7 @@ void OutlineView::AddRow(BRow* Row, int32 Index, BRow* ParentRow)
 					Invalidate(BRect(fVisibleRect.left, fVisibleRect.top, fVisibleRect.right,
 						fVisibleRect.top + newRowRect.Height()));
 				} else if (newRowRect.top < fVisibleRect.bottom) {
-					// New item is somewhere in the current region.  Scroll everything
+					// New item is somewhere in the current region.	Scroll everything
 					// beneath it down and invalidate just the new row rect.
 					BRect source(fVisibleRect.left, newRowRect.top, fVisibleRect.right,
 						fVisibleRect.bottom - newRowRect.Height());
@@ -3589,8 +3589,8 @@ void OutlineView::AddRow(BRow* Row, int32 Index, BRow* ParentRow)
 				} // otherwise, this is below the currently visible region
 			} else {
 				// Adding the item may have caused the item that the user is currently
-				// selected to move.  This would cause annoying drawing and interaction
-				// bugs, as the position of that item is cached.  If this happens, resize
+				// selected to move.	This would cause annoying drawing and interaction
+				// bugs, as the position of that item is cached.	If this happens, resize
 				// the scroll bar, then scroll back so the selected item is in view.
 				BRect targetRect;
 				if (FindRect(fTargetRow, &targetRect)) {
@@ -3603,7 +3603,7 @@ void OutlineView::AddRow(BRow* Row, int32 Index, BRow* ParentRow)
 						// copy occurs.
 						//
 						//	xxx this currently doesn't work if the scroll bars aren't enabled.
-						//  everything will still move anyway.  A minor annoyance.
+						//	everything will still move anyway.	A minor annoyance.
 						BRegion emptyRegion;
 						ConstrainClippingRegion(&emptyRegion);
 						PushState();
@@ -3637,7 +3637,7 @@ void OutlineView::FixScrollBar(bool scrollToFit)
 			vScrollBar->SetProportion(fVisibleRect.Height() / fItemsHeight);
 
 			// If the user is scrolled down too far when makes the range smaller, the list
-			// will jump suddenly, which is undesirable.  In this case, don't fix the scroll
+			// will jump suddenly, which is undesirable.	In this case, don't fix the scroll
 			// bar here. In ScrollTo, it checks to see if this has occured, and will
 			// fix the scroll bars sneakily if the user has scrolled up far enough.
 			if (scrollToFit || vScrollBar->Value() <= maxScrollBarValue) {
@@ -3713,7 +3713,7 @@ void OutlineView::ScrollTo(BPoint position)
 	fVisibleRect.OffsetTo(position.x, position.y);
 
 	// In FixScrollBar, we might not have been able to change the size of
-	// the scroll bar because the user was scrolled down too far.  Take
+	// the scroll bar because the user was scrolled down too far.	Take
 	// this opportunity to sneak it in if we can.
 	BScrollBar *vScrollBar = ScrollBar(B_VERTICAL);
 	float maxScrollBarValue = fItemsHeight - fVisibleRect.Height();
@@ -4017,7 +4017,7 @@ void OutlineView::SelectRange(BRow *start, BRow *end)
 		iterator.GoToNext();
 	}
 
-	Invalidate();  // xxx make invalidation smaller
+	Invalidate();	// xxx make invalidation smaller
 }
 
 bool OutlineView::FindParent(BRow *row, BRow **outParent, bool *out_parentIsVisible)

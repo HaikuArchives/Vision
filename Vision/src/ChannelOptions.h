@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
+ *								 Rene Gollent
  */
 
 #ifndef _CHANNELOPTIONS_H_
@@ -31,20 +31,20 @@ class BView;
 
 class ChannelOptions : public BWindow
 {
-  public:
-                              ChannelOptions (const char *, ChannelAgent *);
-    virtual                   ~ChannelOptions (void);
-    virtual bool              QuitRequested (void);
-      
-  private:  
-    void                      Init (void);
-    ChannelAgent              *parent;
-    const char                *chan_name;
-    
-    BView                     *bgView;
-    BView                     *privilegesView;
-    
-    
+	public:
+															ChannelOptions (const char *, ChannelAgent *);
+		virtual									 ~ChannelOptions (void);
+		virtual bool							QuitRequested (void);
+			
+	private:	
+		void											Init (void);
+		ChannelAgent							*parent;
+		const char								*chan_name;
+		
+		BView										 *bgView;
+		BView										 *privilegesView;
+		
+		
 };
 
 

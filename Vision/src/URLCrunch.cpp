@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Todd Lair
+ *								 Todd Lair
  */
  
 #include <Autolock.h>
@@ -35,7 +35,7 @@ const char **URLCrunch::fTags = NULL;
 
 URLCrunch::URLCrunch (const char *data, int32 len)
 	: buffer (""),
-	  current_pos (0)
+		current_pos (0)
 {
 	buffer.Append (data, len);
 }
@@ -73,8 +73,8 @@ URLCrunch::Crunch (BString *url)
 
 			if (url_length - marker_pos > len
 			&& (isdigit (buffer[marker_pos + len])
-			||  isalpha (buffer[marker_pos + len])
-			||  buffer[marker_pos + len] == '/'))
+			||	isalpha (buffer[marker_pos + len])
+			||	buffer[marker_pos + len] == '/'))
 			{
 				marker = marker_pos;
 				pos = url_length + 1;

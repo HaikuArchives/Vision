@@ -2,7 +2,7 @@
 /
 /	File:			ColumnTypes.h
 /
-/   Description:    Experimental classes that implement particular column/field
+/	 Description:		Experimental classes that implement particular column/field
 /					data types for use in BColumnListView.
 /
 /	Copyright 2000+, Be Incorporated, All Rights Reserved
@@ -88,7 +88,7 @@ class BStringColumn : public BTitledColumn
 		virtual int			CompareFields		(BField* field1,
 												 BField* field2);
 		virtual float		GetPreferredWidth(BField* field, BView* parent) const;
-		virtual	bool		AcceptsField        (const BField* field) const;
+		virtual	bool		AcceptsField				(const BField* field) const;
 
 	private:
 		uint32				fTruncate;
@@ -233,7 +233,7 @@ class BBitmapColumn : public BTitledColumn
 												 BRect rect,
 												 BView* parent);
 		virtual int			CompareFields		(BField* field1, BField* field2);
-		virtual	bool		AcceptsField        (const BField* field) const;
+		virtual	bool		AcceptsField				(const BField* field) const;
 };
 	
 

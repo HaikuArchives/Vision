@@ -2,7 +2,7 @@
 /
 /	File:			ColumnTypes.h
 /
-/   Description:    Experimental classes that implement particular column/field
+/	 Description:		Experimental classes that implement particular column/field
 /					data types for use in BColumnListView.
 /
 /	Copyright 2000+, Be Incorporated, All Rights Reserved

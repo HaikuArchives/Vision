@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
  
 #ifndef _MESSAGEWINDOW_H_
@@ -33,55 +33,55 @@
 
 class MessageAgent : public ClientAgent
 {
-  public:
-  
-                         MessageAgent (BRect &,
-                                       const char *,
-                                       const char *,
-                                       const BMessenger &,
-                                       const char *,
-                                       const char *,
-                                       bool = false,
-                                       bool = false,
-                                       const char * = "",
-                                       const char * = "");
-                         
-    virtual              ~MessageAgent (void);
-    virtual void         AllAttached (void);
-    virtual void         AddMenuItems (BPopUpMenu *);
-    
-    virtual void         MessageReceived (BMessage *);
-    virtual void         Parser (const char *);
-    virtual void         DroppedFile (BMessage *);
-    virtual void         TabExpansion (void);
-    virtual void         ActionMessage (const char *, const char *);
-    
-    virtual void         ChannelMessage (const char *,
-                                         const char * = 0,
-                                         const char * = 0,
-                                         const char * = 0);
+	public:
+	
+												 MessageAgent (BRect &,
+																			 const char *,
+																			 const char *,
+																			 const BMessenger &,
+																			 const char *,
+																			 const char *,
+																			 bool = false,
+																			 bool = false,
+																			 const char * = "",
+																			 const char * = "");
+												 
+		virtual							~MessageAgent (void);
+		virtual void				 AllAttached (void);
+		virtual void				 AddMenuItems (BPopUpMenu *);
+		
+		virtual void				 MessageReceived (BMessage *);
+		virtual void				 Parser (const char *);
+		virtual void				 DroppedFile (BMessage *);
+		virtual void				 TabExpansion (void);
+		virtual void				 ActionMessage (const char *, const char *);
+		
+		virtual void				 ChannelMessage (const char *,
+																				 const char * = 0,
+																				 const char * = 0,
+																				 const char * = 0);
 
 
-  private:
-   
-    void                 Init (void);
-    void                 DCCServerSetup (void);
-    static status_t      DCCIn (void *);
-    static status_t      DCCOut (void *);
-    
-    
-    BString                     fChatAddy,
-                                fChatee,
-                                fDIP,
-                                fDPort;
+	private:
+	 
+		void								 Init (void);
+		void								 DCCServerSetup (void);
+		static status_t			DCCIn (void *);
+		static status_t			DCCOut (void *);
+		
+		
+		BString										 fChatAddy,
+																fChatee,
+																fDIP,
+																fDPort;
 
-    bool                        fDChat,
-                                fDInitiate,
-                                fDConnected;
+		bool												fDChat,
+																fDInitiate,
+																fDConnected;
 
-    int                         fMySocket,
-                                fAcceptSocket;
+		int												 fMySocket,
+																fAcceptSocket;
 
-    thread_id                   fDataThread;
+		thread_id									 fDataThread;
 };
 #endif

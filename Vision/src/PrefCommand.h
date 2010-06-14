@@ -13,11 +13,11 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Todd Lair
+ *								 Todd Lair
  */
 
 #ifndef _PREFCOMMAND_H
@@ -25,25 +25,25 @@
 
 #include <View.h>
 
-#define MAX_COMMANDS                                     7
+#define MAX_COMMANDS																		 7
 
 class VTextControl;
 class BScrollView;
 
 class CommandPrefsView : public BView
 {
-  public:
-    CommandPrefsView (BRect);
-    virtual ~CommandPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-    virtual void FrameResized (float, float);
-  private:
-    VTextControl **fCommands;
-    BScrollView *fScroller;
-    float fMaxheight;
-    float fProportionheight;
+	public:
+		CommandPrefsView (BRect);
+		virtual ~CommandPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+		virtual void FrameResized (float, float);
+	private:
+		VTextControl **fCommands;
+		BScrollView *fScroller;
+		float fMaxheight;
+		float fProportionheight;
 };
 
 #endif // _PREFCOMMAND_H

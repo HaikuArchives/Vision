@@ -13,12 +13,12 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Todd Lair
- *                 Andrew Bazan
+ *								 Todd Lair
+ *								 Andrew Bazan
  */
  
 #ifndef _UTILITIES_H
@@ -27,44 +27,44 @@
 #include <String.h>
 
 template<class T> class AutoDestructor {
-  public:
-    AutoDestructor(T *t)
-    {
-      fObject = t;
-    }
-    
-    virtual ~AutoDestructor(void)
-    {
-      delete fObject;
-    }
-    
-    void SetTo(T *t)
-    {
-      delete fObject;
-      fObject = t;
-    }
-    
-  private:
-    T *fObject;  
+	public:
+		AutoDestructor(T *t)
+		{
+			fObject = t;
+		}
+		
+		virtual ~AutoDestructor(void)
+		{
+			delete fObject;
+		}
+		
+		void SetTo(T *t)
+		{
+			delete fObject;
+			fObject = t;
+		}
+		
+	private:
+		T *fObject;	
 };
 
 
 class BMessage;
 class BPoint;
 
-BString      GetWord (const char *, int32);
-BString      RestOfString (const char *, int32);
-BString      GetNick (const char *);
-BString      GetIdent (const char *);
-BString      GetAddress (const char *);
-BString      TimeStamp (void);
-BString      ExpandKeyed (const char *, const char *, const char **);
-BString      DurationString (int64);
-BString      StringToURI (const char *);
-const char   *RelToAbsPath (const char *);
-BString      GetWordColon (const char *, int32);
-int32        Get440Len (const char *);
-uint16       CheckClickCount(BPoint, BPoint &, bigtime_t, bigtime_t &, int16 &);
-bool         IsValidUTF8(const char *string, int32 length);
+BString			GetWord (const char *, int32);
+BString			RestOfString (const char *, int32);
+BString			GetNick (const char *);
+BString			GetIdent (const char *);
+BString			GetAddress (const char *);
+BString			TimeStamp (void);
+BString			ExpandKeyed (const char *, const char *, const char **);
+BString			DurationString (int64);
+BString			StringToURI (const char *);
+const char	 *RelToAbsPath (const char *);
+BString			GetWordColon (const char *, int32);
+int32				Get440Len (const char *);
+uint16			 CheckClickCount(BPoint, BPoint &, bigtime_t, bigtime_t &, int16 &);
+bool				 IsValidUTF8(const char *string, int32 length);
 
 #endif

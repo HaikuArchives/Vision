@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -29,19 +29,19 @@ class BColumnListView;
 
 class AliasesPrefsView : public BView
 {
-  public:
-    AliasesPrefsView (BRect);
-    virtual ~AliasesPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-    
-  private:
-    void BuildAliasList(void);
-    
-    BColumnListView *fAliasView;
-    BButton *fAddButton;
-    BButton *fRemoveButton;
+	public:
+		AliasesPrefsView (BRect);
+		virtual ~AliasesPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+		
+	private:
+		void BuildAliasList(void);
+		
+		BColumnListView *fAliasView;
+		BButton *fAddButton;
+		BButton *fRemoveButton;
 };
 
 #endif // _PREFALIASES_H

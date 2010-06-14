@@ -36,7 +36,7 @@ All rights reserved.
 /
 /	File:			ColorTools.cpp
 /
-/   Description:    Additional experimental color manipulation functions.
+/	 Description:		Additional experimental color manipulation functions.
 /
 /	Copyright 2000, Be Incorporated, All Rights Reserved
 /

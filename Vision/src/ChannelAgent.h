@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
  
 #ifndef _CHANNELAGENT_H_
@@ -41,65 +41,65 @@ const int32 MAX_RECENT_NICKS = 5;
 
 class ChannelAgent : public ClientAgent
 {
-  public:
+	public:
 
-                            ChannelAgent (
-                              const char *,       // id 
-                              const char *,       // serverName
-                              int,                // ircdtype
-                              const char *,       // nick
-                              BMessenger &, // sMsgr (ServerAgent pointer)
-                              BRect &);             // frame
-    virtual                 ~ChannelAgent (void);
+														ChannelAgent (
+															const char *,			 // id 
+															const char *,			 // serverName
+															int,								// ircdtype
+															const char *,			 // nick
+															BMessenger &, // sMsgr (ServerAgent pointer)
+															BRect &);						 // frame
+		virtual								 ~ChannelAgent (void);
 
-    virtual void            AttachedToWindow (void);
-    virtual void            MessageReceived (BMessage *);
-    virtual void            Parser (const char *);
-    virtual void            TabExpansion (void);
-    virtual void            ChannelMessage (
-                                  const char *,
-                                  const char * = 0,
-                                  const char * = 0,
-                                  const char * = 0);
-    virtual void            AddMenuItems (BPopUpMenu *);
-    virtual void            Show (void);
-    
-    void                    AddUser (const char *, const int32);
-    bool                    RemoveUser (const char *);
-    int                     FindPosition (const char *) const;
-    void                    UpdateMode (char, char);
-    void                    ModeEvent (BMessage *);
-    
-    static int              AlphaSortNames (const BString *, const BString *);
-    static int              SortNames (const void *, const void *);
-    
-    const NamesView         *pNamesList() const;
+		virtual void						AttachedToWindow (void);
+		virtual void						MessageReceived (BMessage *);
+		virtual void						Parser (const char *);
+		virtual void						TabExpansion (void);
+		virtual void						ChannelMessage (
+																	const char *,
+																	const char * = 0,
+																	const char * = 0,
+																	const char * = 0);
+		virtual void						AddMenuItems (BPopUpMenu *);
+		virtual void						Show (void);
+		
+		void										AddUser (const char *, const int32);
+		bool										RemoveUser (const char *);
+		int										 FindPosition (const char *) const;
+		void										UpdateMode (char, char);
+		void										ModeEvent (BMessage *);
+		
+		static int							AlphaSortNames (const BString *, const BString *);
+		static int							SortNames (const void *, const void *);
+		
+		const NamesView				 *pNamesList() const;
 
-    
-  private:
-    void                    Init();
-    void                    RemoveNickFromList (BObjectList<BString> &, const char *);
-    
-    BString                 fChanMode,
-                              fChanLimit,
-                              fChanLimitOld,
-                              fChanKey,
-                              fChanKeyOld,
-                              fLastExpansion,
-                              fTopic;
-    
-    BObjectList<BString>    fRecentNicks,
-                              fCompletionNicks;
+		
+	private:
+		void										Init();
+		void										RemoveNickFromList (BObjectList<BString> &, const char *);
+		
+		BString								 fChanMode,
+															fChanLimit,
+															fChanLimitOld,
+															fChanKey,
+															fChanKeyOld,
+															fLastExpansion,
+															fTopic;
+		
+		BObjectList<BString>		fRecentNicks,
+															fCompletionNicks;
 
-    int32                   fUserCount,
-                            fOpsCount;
-                            
-    int                     fIrcdtype;
+		int32									 fUserCount,
+														fOpsCount;
+														
+		int										 fIrcdtype;
 
-    NamesView               *fNamesList;
-    BScrollView             *fNamesScroll;
-    ChannelOptions          *fChanOpt;
-    ResizeView              *fResize;
+		NamesView							 *fNamesList;
+		BScrollView						 *fNamesScroll;
+		ChannelOptions					*fChanOpt;
+		ResizeView							*fResize;
 
 };
 

@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #ifndef _CLIENTAGENTINPUTFILTER_H_
@@ -33,15 +33,15 @@ class ClientWindow;
 
 class ClientAgentInputFilter : public BMessageFilter
 {
-    ClientAgent                     *fWindow;
-    bool                            fHandledDrop;
+		ClientAgent										 *fWindow;
+		bool														fHandledDrop;
 
-  public:
-                                    ClientAgentInputFilter (ClientAgent *);
-    virtual filter_result           Filter (BMessage *, BHandler **);
+	public:
+																		ClientAgentInputFilter (ClientAgent *);
+		virtual filter_result					 Filter (BMessage *, BHandler **);
 
-    filter_result                   HandleKeys (BMessage *);
-    void                            HandleDrop (const char *);
+		filter_result									 HandleKeys (BMessage *);
+		void														HandleDrop (const char *);
 };
 
 #endif

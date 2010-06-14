@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -30,32 +30,32 @@ class BBox;
 
 class GeneralPrefsView : public BView
 {
-  enum PrefsItems
-  {
-    piAlias = 0,
-    piWindow,
-    piColor,
-    piFonts,
-    piCommands,
-    piEvents,
-    piDCC,
-    piLog,
-    piEND
-  };
+	enum PrefsItems
+	{
+		piAlias = 0,
+		piWindow,
+		piColor,
+		piFonts,
+		piCommands,
+		piEvents,
+		piDCC,
+		piLog,
+		piEND
+	};
 
-  public:
-    GeneralPrefsView (BRect, const char *, uint32, uint32);
-    virtual ~GeneralPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-    virtual void Show (void);
-  
-  private:
-    BListView *fPrefsList;
-    BBox *fPrefsBox;
-    BView *fPrefsItems[piEND];
-    int32 fLastindex;
+	public:
+		GeneralPrefsView (BRect, const char *, uint32, uint32);
+		virtual ~GeneralPrefsView (void);
+		virtual void MessageReceived (BMessage *);
+		virtual void AttachedToWindow (void);
+		virtual void AllAttached (void);
+		virtual void Show (void);
+	
+	private:
+		BListView *fPrefsList;
+		BBox *fPrefsBox;
+		BView *fPrefsItems[piEND];
+		int32 fLastindex;
 };
 
 #endif // _PREFGENERAL_H

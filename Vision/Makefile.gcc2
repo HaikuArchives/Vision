@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.8-20100606
+VERSION := 0.9.8-20100613
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
@@ -157,15 +157,15 @@ $(DEPDIR)/%.d : $(SRCDIR)/%.cpp
 
 $(FULLNAME).zip : $(BINARY) $(DATA) $(EXTRADATA) $(MAKEFILE)
 	@rm -rf $@~
-	@mkdir -p $@~/$(FULLNAME)/
-	@copyattr -d -r $(BINARY) $(DATADIR)/* $@~/$(FULLNAME)/
+	@mkdir -p $@~/$(BINARY)/
+	@copyattr -d -r $(BINARY) $(DATADIR)/* $@~/$(BINARY)/
 ifneq "$(EXTRADATA)" ""
-	@unzip $(EXTRADATA) -d $@~/$(FULLNAME)/
+	@unzip $(EXTRADATA) -d $@~/$(BINARY)/
 endif
 	@find $@~ -type f | xargs mimeset
-	@rm -rf $@~/$(FULLNAME)/CVS $@~/$(FULLNAME)/protocol/CVS $@~/$(FULLNAME)/help/CVS $@~/$(FULLNAME)/scripts/CVS
-	@rm -rf $@~/$(FULLNAME)/CVS $@~/$(FULLNAME)/help/content/CVS $@~/$(FULLNAME)/help/images/CVS
-	@cd $@~ && $(ZIP) $@ $(FULLNAME)
+	@rm -rf $@~/$(BINARY)/.svn $@~/$(BINARY)/protocol/.svn $@~/$(BINARY)/help/.svn $@~/$(BINARY)/scripts/.svn
+	@rm -rf $@~/$(BINARY)/.svn $@~/$(BINARY)/help/content/.svn $@~/$(BINARY)/help/images/.svn
+	@cd $@~ && $(ZIP) $@ $(BINARY)/*
 	@mv -f $@~/$@ .
 	@rm -rf $@~
 
@@ -177,9 +177,9 @@ ifneq "$(EXTRADATA)" ""
 	@copyattr -d -r $(EXTRADATA) $@~/$(FULLNAME)-src/
 endif
 	@find $@~ -type f | xargs mimeset
-	@rm -rf $@~/$(FULLNAME)-src/src/CVS $@~/$(FULLNAME)-src/data/CVS
-	@rm -rf $@~/$(FULLNAME)-src/CVS $@~/$(FULLNAME)-src/data/protocol/CVS $@~/$(FULLNAME)-src/data/help/CVS $@~/$(FULLNAME)-src/data/scripts/CVS
-	@rm -rf $@~/$(FULLNAME)-src/CVS $@~/$(FULLNAME)-src/data/help/content/CVS $@~/$(FULLNAME)-src/data/help/images/CVS
+	@rm -rf $@~/$(FULLNAME)-src/src/.svn $@~/$(FULLNAME)-src/data/.svn
+	@rm -rf $@~/$(FULLNAME)-src/.svn $@~/$(FULLNAME)-src/data/protocol/.svn $@~/$(FULLNAME)-src/data/help/.svn $@~/$(FULLNAME)-src/data/scripts/.svn
+	@rm -rf $@~/$(FULLNAME)-src/.svn $@~/$(FULLNAME)-src/data/help/content/.svn $@~/$(FULLNAME)-src/data/help/images/.svn
 	@cd $@~ && $(ZIP) $@ $(FULLNAME)-src
 	@mv -f $@~/$@ .
 	@rm -rf $@~

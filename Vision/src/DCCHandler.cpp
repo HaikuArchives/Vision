@@ -13,14 +13,14 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
- *                 Andrew Bazan
- *                 Jamie Wilkinson
+ *								 Rene Gollent
+ *								 Todd Lair
+ *								 Andrew Bazan
+ *								 Jamie Wilkinson
  */
 
 #include <AppFileInfo.h>
@@ -61,17 +61,17 @@ class DCCFileFilter : public BMessageFilter
 void
 ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
 {
-  BString theText = B_TRANSLATE("%1 wants to begin a DCC chat with you.");
-  theText.ReplaceFirst("%1", theNick.String());
-  BAlert *myAlert = new BAlert("DCC Request", theText.String(), "Accept",
-    "Refuse");
-  myAlert->SetFeel (B_FLOATING_APP_WINDOW_FEEL);
-  BMessage *myMessage = new BMessage(M_CHAT_ACCEPT);
-  myMessage->AddString("nick", theNick.String());
-  myMessage->AddString("ip", theIP.String());
-  myMessage->AddString("port", thePort.String());
-  BInvoker *myInvoker = new BInvoker(myMessage, this);
-  myAlert->Go(myInvoker);
+	BString theText = B_TRANSLATE("%1 wants to begin a DCC chat with you.");
+	theText.ReplaceFirst("%1", theNick.String());
+	BAlert *myAlert = new BAlert("DCC Request", theText.String(), "Accept",
+		"Refuse");
+	myAlert->SetFeel (B_FLOATING_APP_WINDOW_FEEL);
+	BMessage *myMessage = new BMessage(M_CHAT_ACCEPT);
+	myMessage->AddString("nick", theNick.String());
+	myMessage->AddString("ip", theIP.String());
+	myMessage->AddString("port", thePort.String());
+	BInvoker *myInvoker = new BInvoker(myMessage, this);
+	myAlert->Go(myInvoker);
 }
 
 const uint32 M_FILE_PANEL_BUTTON				= 'Tact';
@@ -93,61 +93,61 @@ ServerAgent::DCCGetDialog (
 	msg.AddString ("vision:ip", ip.String());
 	msg.AddString ("vision:port", port.String());
 
-      BFilePanel *panel;
-	  BString text;
+			BFilePanel *panel;
+		BString text;
 
-	  text << nick
-        << ": "
-        << file
-        << " ("
-        << size
-        << " bytes)";
+		text << nick
+				<< ": "
+				<< file
+				<< " ("
+				<< size
+				<< " bytes)";
 
-	  panel = new BFilePanel (
-        B_SAVE_PANEL,
-        &fSMsgr,
-        0,
-        0,
-        false,
-        &msg);
-      panel->SetButtonLabel (B_DEFAULT_BUTTON, "Accept");
-      panel->SetButtonLabel (B_CANCEL_BUTTON, "Refuse");
-      panel->SetSaveText (file.String());
-      
-      BWindow *panelWindow (panel->Window());
+		panel = new BFilePanel (
+				B_SAVE_PANEL,
+				&fSMsgr,
+				0,
+				0,
+				false,
+				&msg);
+			panel->SetButtonLabel (B_DEFAULT_BUTTON, "Accept");
+			panel->SetButtonLabel (B_CANCEL_BUTTON, "Refuse");
+			panel->SetSaveText (file.String());
+			
+			BWindow *panelWindow (panel->Window());
 
-      if (panelWindow->Lock())
-      {
-        panelWindow->SetTitle (text.String());
-        panelWindow->SetFlags (panelWindow->Flags() | B_AVOID_FOCUS); 
-        panelWindow->AddFilter (new DCCFileFilter (panel, msg));
-        if (vision_app->GetBool ("dccAutoAccept"))
-        {
-          BDirectory path (vision_app->GetString ("dccDefPath"));
-          if (path.InitCheck() == B_OK)
-            panel->SetPanelDirectory(&path);
-        }
-        if (vision_app->GetBool ("dccAutoAccept"))
-        {
-          panelWindow->Hide();
-          BButton *button (dynamic_cast<BButton *>(panel->Window()->FindView ("default button")));
-          if (button)
-            button->Invoke();
-        }
-        panelWindow->Unlock();
-        panel->Show();
-        // hack trick to ensure that the file panel doesn't take over the keyboard focus
-        // when it pops up
-        panelWindow->Lock();
-        panelWindow->SetFlags (panelWindow->Flags() & ~B_AVOID_FOCUS);
-        panelWindow->Unlock();
-      }
+			if (panelWindow->Lock())
+			{
+				panelWindow->SetTitle (text.String());
+				panelWindow->SetFlags (panelWindow->Flags() | B_AVOID_FOCUS); 
+				panelWindow->AddFilter (new DCCFileFilter (panel, msg));
+				if (vision_app->GetBool ("dccAutoAccept"))
+				{
+					BDirectory path (vision_app->GetString ("dccDefPath"));
+					if (path.InitCheck() == B_OK)
+						panel->SetPanelDirectory(&path);
+				}
+				if (vision_app->GetBool ("dccAutoAccept"))
+				{
+					panelWindow->Hide();
+					BButton *button (dynamic_cast<BButton *>(panel->Window()->FindView ("default button")));
+					if (button)
+						button->Invoke();
+				}
+				panelWindow->Unlock();
+				panel->Show();
+				// hack trick to ensure that the file panel doesn't take over the keyboard focus
+				// when it pops up
+				panelWindow->Lock();
+				panelWindow->SetFlags (panelWindow->Flags() & ~B_AVOID_FOCUS);
+				panelWindow->Unlock();
+			}
 }
 
 DCCFileFilter::DCCFileFilter (BFilePanel *p, const BMessage &msg)
 	: BMessageFilter (B_ANY_DELIVERY, B_ANY_SOURCE),
-	  panel (p),
-	  send_msg (msg)
+		panel (p),
+		send_msg (msg)
 {
 }
 
@@ -190,7 +190,7 @@ DCCFileFilter::HandleButton (BMessage *)
 	filter_result result (B_DISPATCH_MESSAGE);
 	BTextControl *paneltext (dynamic_cast<BTextControl *>(
 		panel->Window()->FindView ("text view")));
-    
+		
 	if (paneltext)
 	{
 		BDirectory dir;
@@ -203,24 +203,24 @@ DCCFileFilter::HandleButton (BMessage *)
 		dir.SetTo (&ref);
 		
 		if (entry.SetTo (&dir, paneltext->Text()) == B_NO_ERROR
-		&&  entry.GetStat (&s)               == B_NO_ERROR
-		&&  S_ISREG (s.st_mode))
+		&&	entry.GetStat (&s)							 == B_NO_ERROR
+		&&	S_ISREG (s.st_mode))
 		{
-          if (vision_app->GetBool ("dccAutoAccept"))
-          {
-            BMessage msg (M_FILE_PANEL_ALERT);
-            msg.AddInt32 ("which", 2);
-            panel->Window()->PostMessage (&msg);
-            result = B_SKIP_MESSAGE; 
-          }
-          else
-          {
+					if (vision_app->GetBool ("dccAutoAccept"))
+					{
+						BMessage msg (M_FILE_PANEL_ALERT);
+						msg.AddInt32 ("which", 2);
+						panel->Window()->PostMessage (&msg);
+						result = B_SKIP_MESSAGE; 
+					}
+					else
+					{
 			BString buffer;
 			BAlert *alert;
 
 			buffer << "The file \""
 				<< paneltext->Text()
-				<< "\" already exists in the specified folder.  "
+				<< "\" already exists in the specified folder.	"
 					"Do you want to continue the transfer?";
 
 			alert = new BAlert (
@@ -238,7 +238,7 @@ DCCFileFilter::HandleButton (BMessage *)
 				panel->Window()));
 
 			result = B_SKIP_MESSAGE;
-	      }
+				}
 		}
 	}
 	return result;
@@ -272,7 +272,7 @@ DCCFileFilter::HandleAlert (BMessage *msg)
 		file.GetSize (&position);
 		entry.GetPath (&path);
 		send_msg.AddString ("path", path.Path());
-		send_msg.AddInt64  ("pos", position);
+		send_msg.AddInt64	("pos", position);
 
 		send_msg.what = M_ADD_RESUME_DATA;
 	}

@@ -13,12 +13,12 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Todd Lair
- *                 Rene Gollent
+ *								 Todd Lair
+ *								 Rene Gollent
  */
 
 #ifndef _SETUPWINDOW_H_
@@ -34,21 +34,21 @@ class BMessage;
 
 class SetupWindow : public BWindow
 {
-  public:
-                              SetupWindow (void);
-    virtual                   ~SetupWindow (void);
-    virtual bool              QuitRequested (void);
-    virtual void              MessageReceived (BMessage *);
-    
-  private:
-    void                      InitServerStartup (void);
-    void                      BuildNetworkMenu (void);
-    BView                     *bgView;
-    BButton                   *connectButton,
-                              *netPrefsButton,
-                              *prefsButton;
-    BMenuField                *netList;
-    
+	public:
+															SetupWindow (void);
+		virtual									 ~SetupWindow (void);
+		virtual bool							QuitRequested (void);
+		virtual void							MessageReceived (BMessage *);
+		
+	private:
+		void											InitServerStartup (void);
+		void											BuildNetworkMenu (void);
+		BView										 *bgView;
+		BButton									 *connectButton,
+															*netPrefsButton,
+															*prefsButton;
+		BMenuField								*netList;
+		
 };
 
 

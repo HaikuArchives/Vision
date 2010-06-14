@@ -6,13 +6,13 @@
 
 TestScript::TestScript (void)
 {
-  RunTestScripts();
+	RunTestScripts();
 }
 
 
 /**
 	Because callbacks are handled in Lua, they still have to look like a Lua
-	callback.  The Script wrapper class can't "rename" them.
+	callback.	The Script wrapper class can't "rename" them.
 **/
 int
 TestScript::Script_PrintNumber (lua_State* state)
@@ -34,7 +34,7 @@ TestScript::Script_PrintNumber (lua_State* state)
 
 /**
 	Because callbacks are handled in Lua, they still have to look like a Lua
-	callback.  The Script wrapper class can't "rename" them.
+	callback.	The Script wrapper class can't "rename" them.
 **/
 int
 TestScript::Script_Add(lua_State* state)
@@ -47,7 +47,7 @@ TestScript::Script_Add(lua_State* state)
 	Script::Object number2Obj = script.GetObject(2);
 
 	// Verify it is a number and print it.
-	if (number1Obj.IsNumber()  &&  number2Obj.IsNumber())
+	if (number1Obj.IsNumber()	&&	number2Obj.IsNumber())
 	{
 		script.PushNumber(number1Obj.GetNumber() + number2Obj.GetNumber());
 	}

@@ -13,12 +13,12 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
- *                 Wade Majors
- *                 Todd Lair
+ *								 Wade Majors
+ *								 Todd Lair
  */
  
 #ifndef PROMPTWINDOW_H_

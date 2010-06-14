@@ -13,12 +13,12 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Wade Majors <wade@ezri.org>
- *                 Rene Gollent
- *                 Todd Lair
+ *								 Rene Gollent
+ *								 Todd Lair
  */
 
 #ifndef _CLICKVIEW_H
@@ -29,21 +29,21 @@
 
 class ClickView : public BView
 {
-  public:
-    BString fLaunchUrl;
+	public:
+		BString fLaunchUrl;
 
-    ClickView (BRect frame,
-               const char *name,
-               uint32 resizeMask,
-               uint32 flags,
-               const char *url) 
-      : BView (frame, name, resizeMask, flags)
-        {
-          fLaunchUrl = url;
-        };
+		ClickView (BRect frame,
+							 const char *name,
+							 uint32 resizeMask,
+							 uint32 flags,
+							 const char *url) 
+			: BView (frame, name, resizeMask, flags)
+				{
+					fLaunchUrl = url;
+				};
 
 
-    virtual void MouseDown (BPoint);
+		virtual void MouseDown (BPoint);
 };
 
 #endif

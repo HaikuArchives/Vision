@@ -13,7 +13,7 @@
  * 
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
- * Copyright (C) 1999-2010 The Vision Team.  All Rights
+ * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
  * 
  * Contributor(s): Rene Gollent
@@ -30,23 +30,23 @@ class BHandler;
 
 class NetworkWindow : public BWindow
 {
-  public:
-                              NetworkWindow ();
-    virtual                   ~NetworkWindow (void);
-    virtual bool              QuitRequested (void);
+	public:
+															NetworkWindow ();
+		virtual									 ~NetworkWindow (void);
+		virtual bool							QuitRequested (void);
 };
 
 class NetPrefServerWindow : public BWindow
 {
-  public:
-                              NetPrefServerWindow (BHandler *);
-    virtual                   ~NetPrefServerWindow (void);
-    void                      SetNetworkData (BMessage *);                
-    virtual bool              QuitRequested (void);
-   
-  private:
-  
-  	NetPrefsServerView        *serverView;
+	public:
+															NetPrefServerWindow (BHandler *);
+		virtual									 ~NetPrefServerWindow (void);
+		void											SetNetworkData (BMessage *);								
+		virtual bool							QuitRequested (void);
+	 
+	private:
+	
+		NetPrefsServerView				*serverView;
 };
 
 #endif
