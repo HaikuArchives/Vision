@@ -25,13 +25,14 @@
 #ifndef _NETWORK_MANAGER_H_
 #define _NETWORK_MANAGER_H_
 
-#include <Looper.h>
 #include <Locker.h>
+#include <Looper.h>
 #include <Messenger.h>
 
 #include <poll.h>
 
 #include <map>
+#include <set>
 #include <vector>
 
 
@@ -44,6 +45,7 @@ class NetworkManager : public BLooper
 		virtual							~NetworkManager(void);
 		
 		virtual void					MessageReceived(BMessage *);
+		virtual bool					QuitRequested(void);
 		
 	private:
 		// thread functions
@@ -53,6 +55,8 @@ class NetworkManager : public BLooper
 		void							_SocketLock(void);
 		void							_SocketUnlock(void);
 		
+		void							_HandleBind(const BMessage *data);
+		void							_HandleAccept(int sock, uint32 index);
 		void							_HandleConnect(const BMessage *data);
 		void							_HandleSend(const BMessage *data);
 		void							_HandleReceive(int sock, uint32 index);
@@ -65,6 +69,8 @@ class NetworkManager : public BLooper
 		BLocker							fSocketLock;
 		struct pollfd					fPollFDs[256];
 		thread_id						fPollThread;
+		std::set<int>					fListeners;
+		
 };
 
 #endif // _NETWORK_MANAGER_H_

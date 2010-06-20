@@ -102,7 +102,6 @@ VisionApp::VisionApp (void)
 			fNetWin (NULL),
 			fDccFileWin (NULL),
 			fVisionSettings (NULL),
-			fIdentThread (-1),
 			fWinThread (-1),
 			fIdentSocket (-1),
 			fActiveTheme (new Theme ("active theme", MAX_COLORS + 1, MAX_COLORS + 1, MAX_FONTS + 1))
@@ -219,7 +218,7 @@ VisionApp::ThreadStates (void)
 #endif
 	}
 
-	return t_count;		
+	return t_count;
 }
 
 void
@@ -670,7 +669,6 @@ VisionApp::QuitRequested (void)
 		delete fVisionSettings;
 	}
 
-
 	return true;
 }
 
@@ -806,11 +804,7 @@ void
 VisionApp::ReadyToRun (void)
 {
 	InitSettings();
-
-	fIdentThread = spawn_thread (Identity, "the_spirits_within", B_LOW_PRIORITY, NULL);
-	if (fIdentThread >= B_OK)
-		resume_thread (fIdentThread);
-
+	
 	if (!CheckStartupNetworks())
 	{	
 		fSetupWin = new SetupWindow ();
@@ -819,6 +813,12 @@ VisionApp::ReadyToRun (void)
 	
 	network_manager = new NetworkManager();
 	network_manager->Run();
+	
+	BMessenger msgr(network_manager);
+	BMessage identMsg(M_CREATE_LISTENER);
+	identMsg.AddString("port", "113");
+	identMsg.AddMessenger("target", BMessenger(this));
+	msgr.SendMessage(&identMsg);
 }
 
 void
@@ -1030,6 +1030,73 @@ VisionApp::MessageReceived (BMessage *msg)
 			if (url.Length() > 0)
 			{
 				LoadURL(url.String());
+			}
+		}
+		break;
+		
+		case M_LISTENER_CREATED:
+		{
+			int32 status = -1;
+			if (msg->FindInt32("status", &status) == B_OK && status == B_OK)
+			{
+				msg->FindInt32("connection", &fIdentSocket);
+			}
+		}
+		break;
+		
+		case M_CONNECTION_ACCEPTED:
+		{
+			int32 socket = -1;
+			BString address;
+			BString name;
+			if (msg->FindInt32("client", &socket) == B_OK)
+			{
+				msg->FindString("address", &address);
+				msg->FindString("name", &name);
+				fIdentAddresses[socket] = name.Length() > 0 ? name : address;
+			}
+		}
+		break;
+		
+		case M_CONNECTION_DATA_RECEIVED:
+		{
+			int32 socket = -1;
+			if (msg->FindInt32("connection", &socket) == B_OK)
+			{
+				BString remoteIP = fIdentAddresses[socket];
+				BString ident = GetIdent (fIdentAddresses[socket]);
+				BString data;
+				
+				if (ident.Length() > 0) 
+				{
+					const char *buffer = NULL;
+					int32 size = -1;
+					msg->FindData("data", B_RAW_TYPE, reinterpret_cast<const void **>(&buffer), &size);
+					data.SetTo(buffer, size);
+					int32 spaceidx = data.Length() - 1;
+					while (spaceidx > 0 && isspace(data[spaceidx]))
+					{
+						--spaceidx;
+					}
+					data.Truncate(spaceidx + 1);
+				
+
+					data.Append (" : USERID : Haiku : "); 
+					data.Append (ident); 
+					data.Append ("\r\n"); 
+				} 
+				else 
+				{ 
+					data.SetTo("0 , 0 : UNKNOWN : UNKNOWN-ERROR");
+				}
+				BMessage reply(M_SEND_CONNECTION_DATA);
+				reply.AddInt32("connection", socket);
+				reply.AddData("data", B_RAW_TYPE, data.String(), data.Length());
+				BMessenger msgr(network_manager);
+				msgr.SendMessage(&reply);
+				
+				reply.what = M_DESTROY_CONNECTION;
+				msgr.SendMessage(&reply);
 			}
 		}
 		break;
@@ -1669,117 +1736,24 @@ VisionApp::Broadcast (BMessage *, const char *, bool)
 //	Unlock();
 }
 
-int32 
-VisionApp::Identity (void *) 
-{
-	int32 identSock (0), accepted (0);
-	BString ident; 
-	char received[64];
- 
-	struct sockaddr_in localAddr;
-	localAddr.sin_family = AF_INET;
-	localAddr.sin_port = htons (113);
-	localAddr.sin_addr.s_addr = INADDR_ANY;
-			
-	if ((identSock = socket (AF_INET, SOCK_STREAM, 0)) >= 0 
-	&&	bind (identSock, (struct sockaddr *)&localAddr, sizeof (localAddr)) == 0) 
-	{
-			vision_app->fIdentSocket = identSock;
-
-		struct linger lng = { 0, 0 }; 
-		setsockopt (identSock, SOL_SOCKET, SO_LINGER, &lng, sizeof (linger));
-		listen (identSock, 1);
-
-		while (!vision_app->fShuttingDown) 
-		{
-			struct fd_set rset, eset;
-			struct sockaddr_in remoteSock;
-			int size (sizeof (sockaddr_in));
-			struct timeval tv = { 10, 0};
-			FD_ZERO (&rset);
-			FD_ZERO (&eset);
-			FD_SET (identSock, &rset);
-			FD_SET (identSock, &eset);
-
-			if (select (identSock + 1, &rset, 0, &eset, NULL) < 0 || FD_ISSET (identSock, &eset))
-				 break;
-			else if (FD_ISSET (identSock, &rset))
-			{
-				accepted = accept (identSock, (struct sockaddr *)&remoteSock, (socklen_t *)&size);
-				if (accepted >= 0)
-				{
-					FD_ZERO (&rset);
-					FD_ZERO (&eset);
-				
-					BString remoteIP (inet_ntoa (remoteSock.sin_addr));
-					ident = vision_app->GetIdent (remoteIP.String());
-
-					if (ident.Length() > 0) 
-					{
-						memset (received, 0, 64);
-						FD_SET (accepted, &rset);
-						FD_SET (accepted, &eset);
-						if (select (accepted + 1, &rset, 0, &eset, &tv) > 0
-							&& FD_ISSET (accepted, &rset) && !FD_ISSET (accepted, &eset))
-						{
-						
-							recv (accepted, received, 64, 0);
-							int32 len (0); 
-		 
-							received[63] = 0; 
-							while ((len = strlen (received)) 
-							&&		 isspace (received[len - 1])) 
-								received[len - 1] = 0;
-							
-							BString string; 
-							
-							string.Append (received); 
-							string.Append (" : USERID : BeOS : "); 
-							string.Append (ident); 
-							string.Append ("\r\n"); 
-								
-							send (accepted, string.String(), string.Length(), 0); 
-						}
-					} 
-					else 
-					{ 
-						BString string ("0 , 0 : UNKNOWN : UNKNOWN-ERROR");
-						send (accepted, string.String(), string.Length(), 0);
-					} 
-					close (accepted);
-				}
-			}
-		}
-	}
-
-	close (identSock);
-	return 0; 
-} 
- 
 void 
 VisionApp::AddIdent (const char *server, const char *serverIdent) 
-{ 
-	fIdentLock.Lock(); 
+{
 	fIdents.AddString (server, serverIdent); 
-	fIdentLock.Unlock();
 } 
  
 void 
 VisionApp::RemoveIdent (const char *server) 
 { 
-	fIdentLock.Lock(); 
 	fIdents.RemoveName (server); 
-	fIdentLock.Unlock(); 
 } 
  
 BString 
 VisionApp::GetIdent (const char *server)
 {
 	BString ident;
-	fIdentLock.Lock(); 
 	if (fIdents.HasString (server)) 
 		ident = fIdents.FindString (server); 
-	fIdentLock.Unlock();
 	
 	return ident; 
 }
