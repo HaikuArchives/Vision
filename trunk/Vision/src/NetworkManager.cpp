@@ -276,7 +276,7 @@ NetworkManager::_HandleReceive(int sock, uint32 index)
 {
 	char recvbuffer[16384];
 	int result = recv(sock, recvbuffer, sizeof(recvbuffer), 0);
-	if (result < 0)
+	if (result <= 0)
 	{
 		// handle as a disconnect
 		_HandleDisconnect(sock, index);
@@ -471,7 +471,7 @@ NetworkManager::_CleanupSocket(int sock, uint32 index)
 	{
 		fListeners.erase(sit);
 	}
-	if (index < ((sizeof(fPollFDs) / sizeof(pollfd)) - 1))
+	if (index < fSockets.size() - 1)
 	{
 		memmove(&fPollFDs[index], &fPollFDs[index + 1], 
 			sizeof(pollfd) * (fSockets.size() - index));
