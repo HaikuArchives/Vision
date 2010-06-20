@@ -1009,6 +1009,7 @@ ServerAgent::SendConnectionCreate(bigtime_t timeout)
 	BString port;
 	const ServerData *data = GetNextServer();
 	port << data->port;
+	vision_app->AddIdent(data->serverName, fLident);
 	msg.AddString("hostname", data->serverName);
 	msg.AddString("port", port);
 	if (timeout > 0)

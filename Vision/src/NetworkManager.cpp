@@ -29,6 +29,7 @@
 
 #include <String.h>
 
+#include <errno.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <string.h>
@@ -58,6 +59,21 @@ NetworkManager::~NetworkManager(void)
 	// TODO: shut down all threads / sockets
 }
 
+bool
+NetworkManager::QuitRequested(void)
+{
+	_SocketLock();
+	int32 index = -1;
+	while (!fSockets.empty())
+	{
+		index = _IndexForSocket(fSockets.begin()->first);
+		_HandleDisconnect(fSockets.begin()->first, index);
+	}
+	_SocketUnlock();
+	
+	return true;
+}
+
 void
 NetworkManager::MessageReceived(BMessage *message)
 {
@@ -66,6 +82,12 @@ NetworkManager::MessageReceived(BMessage *message)
 		case M_CREATE_CONNECTION:
 		{
 			_HandleConnect(message);
+		}
+		break;
+		
+		case M_CREATE_LISTENER:
+		{
+			_HandleBind(message);
 		}
 		break;
 		
@@ -82,6 +104,7 @@ NetworkManager::MessageReceived(BMessage *message)
 			}
 		}
 		break;
+		
 		
 		case M_SEND_CONNECTION_DATA:
 		{
@@ -114,7 +137,14 @@ NetworkManager::Overlord(void *data)
 		{
 			if (manager->fPollFDs[i].revents & (POLLIN | POLLPRI))
 			{
-				manager->_HandleReceive(manager->fPollFDs[i].fd, i);
+				if (manager->fListeners.find(manager->fPollFDs[i].fd) != manager->fListeners.end())
+				{
+					manager->_HandleAccept(manager->fPollFDs[i].fd, i);
+				}
+				else
+				{
+					manager->_HandleReceive(manager->fPollFDs[i].fd, i);
+				}
 			}
 			
 			if (manager->fPollFDs[i].revents & 
@@ -268,6 +298,124 @@ NetworkManager::_HandleReceive(int sock, uint32 index)
 }
 
 void
+NetworkManager::_HandleAccept(int sock, uint32 /* index */)
+{
+	struct sockaddr_storage data;
+	socklen_t datasize = sizeof(data);
+	int client = accept(sock, (sockaddr *)&data, &datasize);
+	if (client >= 0)
+	{
+		std::map<int, BMessenger>::iterator it = fSockets.find(sock);
+		if (it == fSockets.end())
+		{
+			close(client);
+			// TODO: log error, this should never happen
+			return;
+		}
+		char namebuf[200];
+		char ipbuf[100];
+		memset(namebuf, 0, sizeof(namebuf));
+		memset(ipbuf, 0, sizeof(ipbuf));
+		getnameinfo((sockaddr *)&data, datasize, namebuf, sizeof(namebuf), 
+			NULL, 0, 0);
+		getnameinfo((sockaddr *)&data, datasize, ipbuf, sizeof(ipbuf), 
+			NULL, 0, NI_NUMERICHOST);		
+		_SocketLock();
+		int32 index = fSockets.size();
+		fSockets[client] = it->second;
+		fPollFDs[index].fd = client;
+		fPollFDs[index].events = POLLIN | POLLERR;
+		_SocketUnlock();
+		BMessage msg(M_CONNECTION_ACCEPTED);
+		msg.AddInt32("connection", sock);
+		msg.AddInt32("client", client);
+		msg.AddString("address", ipbuf);
+		if (strlen(namebuf) > 0)
+		{
+			msg.AddString("name", namebuf);
+		}
+		it->second.SendMessage(&msg);		
+	}
+}
+
+void
+NetworkManager::_HandleBind(const BMessage *message)
+{
+	BMessenger target;
+	
+	if (message->FindMessenger("target", &target) != B_OK)
+	{
+		return;
+	}
+	
+	BMessage reply(M_LISTENER_CREATED);
+	BString interface, port;
+	if (message->FindString("port", &port) != B_OK)
+	{
+		reply.AddInt32("status", B_BAD_DATA);
+		target.SendMessage(&reply);
+		return;
+	}
+
+	struct addrinfo *info = NULL;
+	struct addrinfo hints;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_socktype = SOCK_STREAM;
+	
+	int32 sock = -1;
+	
+	int result = getaddrinfo(NULL, port.String(), &hints, &info);
+	if (result == 0)
+	{
+		for (struct addrinfo *current = info; current != NULL; current = current->ai_next)
+		{
+			sock = socket(current->ai_family, current->ai_socktype, current->ai_protocol);
+			if (sock < 0)
+			{
+				result = sock;
+				continue;
+			}
+			int opt = 1;
+			setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+			
+			result = bind(sock, current->ai_addr, current->ai_addrlen);
+			if (result < 0)
+			{
+				close(sock);
+				sock = -1;
+				continue;
+			}
+
+			result = listen(sock, SOMAXCONN);
+			if (result < 0)
+			{
+				close(sock);
+				sock = -1;
+				continue;
+			}
+			break;
+		}
+		
+	}
+
+	reply.AddInt32("status", result);
+	if (result == 0)
+	{
+		_SocketLock();
+		int32 index = network_manager->fSockets.size();
+		fSockets[sock] = target;
+		fPollFDs[index].fd = sock;
+		fPollFDs[index].events = POLLIN | POLLERR;
+		fListeners.insert(sock);
+		_SocketUnlock();
+		reply.AddInt32("connection", sock);		
+	}
+	
+	target.SendMessage(&reply);
+}
+
+void
 NetworkManager::_HandleConnect(const BMessage *message)
 {
 	BMessenger target;
@@ -279,7 +427,6 @@ NetworkManager::_HandleConnect(const BMessage *message)
 	
 	BString threadName;
 	vision_app->GetThreadName(THREAD_S, threadName);
-	printf("Creating thread %s\n", threadName.String());
 	thread_id connector = spawn_thread(ConnectionHandler, threadName.String(), 
 		B_LOW_PRIORITY, new BMessage(*message));
 	
@@ -304,7 +451,9 @@ NetworkManager::_HandleDisconnect(int sock, uint32 index)
 		// TODO: log error, this should never happen
 		return;
 	}
-	it->second.SendMessage(M_CONNECTION_DISCONNECT);
+	BMessage msg(M_CONNECTION_DISCONNECT);
+	msg.AddInt32("connection", sock);
+	it->second.SendMessage(&msg);
 	_CleanupSocket(sock, index);
 }
 
@@ -317,11 +466,17 @@ NetworkManager::_CleanupSocket(int sock, uint32 index)
 		// TODO: log error, this should never happen
 		return;
 	}
+	std::set<int>::iterator sit = fListeners.find(sock);
+	if (sit != fListeners.end())
+	{
+		fListeners.erase(sit);
+	}
 	if (index < ((sizeof(fPollFDs) / sizeof(pollfd)) - 1))
 	{
 		memmove(&fPollFDs[index], &fPollFDs[index + 1], 
 			sizeof(pollfd) * (fSockets.size() - index));
 	}
+	close(sock);
 	fSockets.erase(it);
 }
 
