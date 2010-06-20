@@ -220,6 +220,7 @@ NetworkManager::ConnectionHandler(void *data)
 				}
 				break;
 			}
+			freeaddrinfo(info);
 		}
 		
 		reply.AddInt32("status", result);
@@ -396,7 +397,7 @@ NetworkManager::_HandleBind(const BMessage *message)
 			}
 			break;
 		}
-		
+		freeaddrinfo(info);
 	}
 
 	reply.AddInt32("status", result);
