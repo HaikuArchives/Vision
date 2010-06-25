@@ -80,15 +80,14 @@ ServerAgent::ServerAgent (
 		fLname (net.FindString ("realname")),
 		fLident (net.FindString ("ident")),
 		fConnectionID (-1),
-		fLocalip_private (false),
-		fGetLocalIP (false),
+		fGetLocalIP (true),
 		fIsConnecting (true),
 		fReconnecting (false),
 		fConnected (false),
 		fIsQuitting (false),
 		fCheckingLag (false),
 		fReacquiredNick (true),
-		fRetry (0),
+		fRetry (1),
 		fRetryLimit (47),
 		fLagCheck (0),
 		fLagCount (0),
@@ -230,332 +229,6 @@ ServerAgent::Timer (void *arg)
 	return B_OK;
 	
 }
-
-#if 0
-int32
-ServerAgent::Establish (void *arg)
-{
-	BMessenger *sMsgrE (reinterpret_cast<BMessenger *>(arg));
-	AutoDestructor<BMessenger> msgrKiller(sMsgrE);
-	BMessage getMsg;
-	BString remoteIP;
-	int32 serverSid;
-	int32 serverSock (-1);
-	if (!(sMsgrE->IsValid() && (sMsgrE->SendMessage (M_GET_ESTABLISH_DATA, &getMsg) == B_OK)))
-	{
-		printf (":ERROR: sMsgr not valid in Establish() -- bailing\n");
-		return B_ERROR;
-	}
-
-	BMessage statMsg (M_DISPLAY);
-	BString statString;
-	
-	try {
-		BMessage reply;
-		BString connectId,
-						connectPort,
-						ident,
-						name,
-						connectNick;
-		const ServerData *serverData (NULL);
-		int32 size;
-		
-		getMsg.FindData ("server", B_ANY_TYPE, reinterpret_cast<const void **>(&serverData), &size);
-		// better safe than sorry, seems under certain circumstances the SendMessage can fail
-		// "silently"
-		if (serverData == NULL)
-			throw failToLock();
-		connectId = serverData->serverName;
-		connectPort << serverData->port;
-		getMsg.FindString ("ident", &ident);
-		getMsg.FindString ("name", &name);
-		getMsg.FindString ("nick", &connectNick);
-		serverSid = getMsg.FindInt32 ("sid");
-		
-		if (sMsgrE->SendMessage (M_GET_RECONNECT_STATUS, &reply) == B_OK)
-		{
-			int retrycount (reply.FindInt32 ("retries"));
-			
-			if (retrycount)
-			{
-				statString = S_SERVER_WAITING_RETRY;
-				statString << (retrycount * retrycount);
-				statString += S_SERVER_WAITING_SECONDS;
-				if (retrycount > 1)
-					statString += S_SERVER_WAITING_PLURAL;
-				statString += S_SERVER_WAITING_ENDING B_UTF8_ELLIPSIS "\n";
-				ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
-				sMsgrE->SendMessage(&statMsg);
-				snooze (1000000 * retrycount * retrycount); // wait 1, 4, 9, 16 ... seconds
-			}
-			
-		
-			if (sMsgrE->SendMessage (M_INC_RECONNECT) != B_OK)
-				throw failToLock();
-			statString = S_SERVER_ATTEMPT1;
-			if (retrycount != 0)
-				statString += S_SERVER_ATTEMPT2;
-			statString += S_SERVER_ATTEMPT3;
-			statString << retrycount + 1;
-			statString += S_SERVER_ATTEMPT4;
-			statString << reply.FindInt32 ("max_retries");
-			statString += ")\n";
-			ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
-			sMsgrE->SendMessage (&statMsg);
-		}
-		else
-			throw failToLock();
- 
-		statString = S_SERVER_ATTEMPT5;
-		statString << connectId;
-		statString += ":";
-		statString << connectPort;
-		statString += B_UTF8_ELLIPSIS "\n";
-		ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
-		sMsgrE->SendMessage (&statMsg);
-
-		struct sockaddr_in remoteAddr;
-		remoteAddr.sin_family = AF_INET;
-		if (inet_aton (connectId.String(), &remoteAddr.sin_addr) == 0)
-		{
-			 struct hostent *remoteInet (gethostbyname (connectId.String()));
-			 if (remoteInet)
-				 remoteAddr.sin_addr = *((in_addr *)remoteInet->h_addr_list[0]);
-			 else 
-			 {
-				 ClientAgent::PackDisplay (&statMsg, S_SERVER_CONN_ERROR1 "\n", C_ERROR);
-				 sMsgrE->SendMessage (&statMsg);
-				 sMsgrE->SendMessage (M_NOT_CONNECTING);
-				 sMsgrE->SendMessage (M_SERVER_DISCONNECT);
-				 throw failToLock();
-			 }
-		}
-
-		remoteAddr.sin_port = htons(atoi (connectPort.String()));
-		remoteIP = inet_ntoa (remoteAddr.sin_addr);
-
-		vision_app->AddIdent (remoteIP.String(), ident.String());			
-
-		if ((serverSock = socket (AF_INET, SOCK_STREAM, 0)) < 0)
-		{
-				 ClientAgent::PackDisplay (&statMsg, S_SERVER_CONN_ERROR1 "\n", C_ERROR);
-				 sMsgrE->SendMessage (&statMsg);
-				 sMsgrE->SendMessage (M_NOT_CONNECTING);
-				 sMsgrE->SendMessage (M_SERVER_DISCONNECT);
-				 throw failToLock();
-		}
-		
-		// just see if he's still hanging around before
-		// we got blocked for a minute
-		ClientAgent::PackDisplay (&statMsg, S_SERVER_CONN_OPEN "\n", C_ERROR);
-		sMsgrE->SendMessage (&statMsg);
-		sMsgrE->SendMessage (M_LAG_CHANGED);
-
-		if (connect (serverSock, (struct sockaddr *)&remoteAddr, sizeof(remoteAddr)) >= 0)
-		{
-			BString ip ("");	
-			struct sockaddr_in sockin;
-
-			// store local ip address for future use (dcc, etc)
-			int addrlength (sizeof (struct sockaddr_in));
-			if (getsockname (serverSock,(struct sockaddr *)&sockin,(socklen_t *)&addrlength)) {
-				ClientAgent::PackDisplay (&statMsg, S_SERVER_LOCALIP_ERROR "\n", C_ERROR);
-				sMsgrE->SendMessage (&statMsg);
-				BMessage setIP (M_SET_IP);
-				setIP.AddString("ip", "127.0.0.1");
-				setIP.AddBool("private", PrivateIPCheck("127.0.0.1"));
-				sMsgrE->SendMessage(&setIP);
-			}
-			else
-			{
-				BMessage setIP (M_SET_IP);
-				ip = inet_ntoa (sockin.sin_addr);
-				if (vision_app->GetBool ("dccPrivateCheck"))
-				{
-					setIP.AddBool("private", PrivateIPCheck (ip.String()));
-				}
-				else
-				{
-					setIP.AddBool("private", false);
-				}
-				setIP.AddString("ip", ip.String());
-				sMsgrE->SendMessage(&setIP);
-				statString = S_SERVER_LOCALIP;
-				statString += ip.String();
-				statString += "\n";
-				ClientAgent::PackDisplay (&statMsg, statString.String(), C_ERROR);
-				sMsgrE->SendMessage (&statMsg);
-			}
-
-			if (vision_app->GetBool("dccPrivateCheck") && PrivateIPCheck (ip.String()))
-			{
-				ClientAgent::PackDisplay (&statMsg, S_SERVER_PROXY_MSG "\n", C_ERROR);
-				sMsgrE->SendMessage (&statMsg);	
-			}
-			
-			ClientAgent::PackDisplay (&statMsg, S_SERVER_HANDSHAKE "\n", C_ERROR);
-			sMsgrE->SendMessage (&statMsg);
-
-			BString string;
-			BMessage dataSend (M_SERVER_SEND);
-			dataSend.AddString ("data", "blah");
-
-			BMessage endpointMsg (M_SET_ENDPOINT);
-			endpointMsg.AddInt32 ("socket", serverSock);
-			if (sMsgrE->SendMessage (&endpointMsg, &reply) != B_OK)
-				throw failToLock();
-			 
-			if (strlen(serverData->password) > 0)
-			{
-				ClientAgent::PackDisplay (&statMsg, S_SERVER_PASS_MSG "\n", C_ERROR);
-				sMsgrE->SendMessage (&statMsg);	
-				string = "PASS ";
-				string += serverData->password;
-				dataSend.ReplaceString ("data", string.String());
-				sMsgrE->SendMessage (&dataSend);
-			}
-
-			string = "NICK ";
-			string.Append (connectNick);
-				
-			dataSend.ReplaceString ("data", string.String());
-			if (sMsgrE->SendMessage (&dataSend) != B_OK)
-				throw failToLock();
-
-			string = "USER ";
-			string.Append (ident);
-			string.Append (" localhost ");
-			string.Append (connectId);
-			string.Append (" :");
-			string.Append (name);
-
-			dataSend.ReplaceString ("data", string.String());
-			if (sMsgrE->SendMessage (&dataSend) != B_OK)
-				throw failToLock();
-
-		
-			// resume normal business matters.
-			
-			ClientAgent::PackDisplay (&statMsg, S_SERVER_ESTABLISH "\n", C_ERROR);
-			sMsgrE->SendMessage (&statMsg);
-		}
-		else // No endpoint->connect
-		{
-			ClientAgent::PackDisplay (&statMsg, S_SERVER_CONN_ERROR2 "\n", C_ERROR);
-			sMsgrE->SendMessage (&statMsg);
-			sMsgrE->SendMessage (M_NOT_CONNECTING);
-			sMsgrE->SendMessage (M_SERVER_DISCONNECT);
-			throw failToLock();
-		}
-	} catch (failToLock)
-	{
-		vision_app->RemoveIdent (remoteIP.String());
-		return B_ERROR;
-	}
-	
-	struct fd_set eset, rset, wset;
-	int selResult (0);
-	
-	FD_ZERO (&eset);
-	FD_ZERO (&rset);
-	FD_ZERO (&wset);
-
-	BString buffer;
-	
-	FD_SET (serverSock, &eset);
-	FD_SET (serverSock, &rset);
-	FD_SET (serverSock, &wset);
-	
-	while (sMsgrE->IsValid())
-	{
-		char indata[1024];
-		int32 length (0);
-		
-		FD_SET (serverSock, &eset);
-		FD_SET (serverSock, &rset);
-		FD_SET (serverSock, &wset);
-		memset (indata, 0, 1024);
-		struct timeval tv = { 0, 0 };
-		if ((selResult = select (serverSock + 1, &rset, 0, &eset, &tv)) > 0
-		&&	FD_ISSET (serverSock, &rset) && !FD_ISSET (serverSock, &eset))
-		{
-			if ((length = recv (serverSock, indata, 1023, 0)) > 0)
-			{
-				BString temp;
-				int32 index;
-
-				temp.SetTo (indata, strlen(indata));
-				buffer += temp;
-
-				while ((index = buffer.FindFirst ('\n')) != B_ERROR)
-				{
-					temp.SetTo (buffer, index);
-					buffer.Remove (0, index + 1);
-		
-					temp.RemoveLast ("\r");
-
-					if (vision_app->fDebugRecv)
-					{
-						printf ("RECEIVED: (%ld:%03ld) \"", serverSid, temp.Length());
-						for (int32 i = 0; i < temp.Length(); ++i)
-						{
-							if (isprint (temp[i]))
-								printf ("%c", temp.String()[i]);
-							else
-								printf ("[0x%02x]", temp.String()[i]);
-						}
-						printf ("\"\n");
-					}
-
-
-					// We ship it off this way because
-					// we want this thread to loop relatively
-					// quickly.	Let ServerWindow's main thread
-					// handle the processing of incoming data!
-					BMessage msg (M_PARSE_LINE);
-					msg.AddString ("line", temp.String());
-					sMsgrE->SendMessage (&msg);
-				}
-			}
-			if (FD_ISSET (serverSock, &eset)
-			|| (FD_ISSET (serverSock, &rset) && length == 0)
-			|| !FD_ISSET (serverSock, &wset)
-			|| length < 0)
-			{
-				// we got disconnected :(
-				
-				if (vision_app->fDebugRecv)
-				{
-					// print interesting info					
-					printf ("Negative from endpoint receive! (%ld)\n", length);
-					printf ("eset : %s\nrset: %s\nwset: %s\n",
-						FD_ISSET (serverSock, &eset) ? "true" : "false",
-						FD_ISSET (serverSock, &rset) ? "true" : "false",
-						FD_ISSET (serverSock, &wset) ? "true" : "false");
-		}
-				// tell the user all about it
-				sMsgrE->SendMessage (M_NOT_CONNECTING);
-				sMsgrE->SendMessage (M_SERVER_DISCONNECT);
-				break;
-			}
-		}
-		
-		// select error, treat this as a disconnect as well
-		if (selResult < 0)
-		{
-				sMsgrE->SendMessage (M_NOT_CONNECTING);
-				sMsgrE->SendMessage (M_SERVER_DISCONNECT);
-				break;
-		}		
-	// take a nap, so the ServerAgent can do things
-		 snooze(20000);
-	}
-	vision_app->RemoveIdent (remoteIP.String());
-
-	return B_OK;
-}
-
-#endif
 
 int
 ServerAgent::SortNotifyItems (const NotifyListItem *item1, const NotifyListItem *item2)
@@ -783,8 +456,7 @@ ServerAgent::HandleReconnect (void)
 		BString message;
 		if (fRetry > 1)
 		{
-			message = B_TRANSLATE("Attempting to reconnect (attempt %1 of %2), waiting %3 second(s)");
-			message.Append(B_UTF8_ELLIPSIS);
+			message = B_TRANSLATE("Attempting to reconnect (attempt %1 of %2), waiting %3 second(s)" B_UTF8_ELLIPSIS);
 		}
 		else
 		{
@@ -1017,8 +689,8 @@ ServerAgent::SendConnectionCreate(bigtime_t timeout)
 		msg.AddInt64("timeout", timeout);
 	}
 	BString message;
-	message = B_TRANSLATE("Attempting a connection to %1:%2");
-	message.Prepend("[@] ").Append(B_UTF8_ELLIPSIS "\n");
+	message = B_TRANSLATE("Attempting a connection to %1:%2" B_UTF8_ELLIPSIS);
+	message.Prepend("[@] ").Append("\n");
 	message.ReplaceFirst("%1", data->serverName);
 	message.ReplaceFirst("%2", port);
 	Display(message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
@@ -1183,8 +855,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				static BString ip;
 				msg->FindString("ip", &ip);
 				fLocalip = ip.String();
-				fLocalip_private = msg->FindBool("private");
-				fGetLocalIP = fLocalip_private;
+				fGetLocalIP = false;
 			}
 			break;
 		

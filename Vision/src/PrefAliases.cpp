@@ -104,8 +104,7 @@ AliasesPrefsView::AttachedToWindow (void)
 	itemText = B_TRANSLATE("Alias");
 	fAliasView->AddColumn(new BStringColumn(itemText.String(), StringWidth(itemText.String()) * 6.0,
 		0, bounds.Width(), 0), 1);
-	itemText = B_TRANSLATE("Add");
-	itemText += B_UTF8_ELLIPSIS;	
+	itemText = B_TRANSLATE("Add" B_UTF8_ELLIPSIS);
 	fAddButton = new BButton(BRect(0,0,0,0), "alAdd", itemText.String(), new BMessage(M_ALIAS_ADD), B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
 	AddChild(fAddButton);
 	fAddButton->ResizeToPreferred();

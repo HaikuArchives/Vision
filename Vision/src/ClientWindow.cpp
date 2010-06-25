@@ -613,13 +613,11 @@ ClientWindow::Init (void)
 	
 	menu = new BMenu("App");
 
-	BString itemText = B_TRANSLATE("About");
-	itemText += B_UTF8_ELLIPSIS;
+	BString itemText = B_TRANSLATE("About" B_UTF8_ELLIPSIS);
 	menu->AddItem (item = new BMenuItem (itemText.String(),
 										new BMessage (B_ABOUT_REQUESTED)));
 	item->SetTarget (vision_app);
-	itemText = B_TRANSLATE("Preferences");
-	itemText += B_UTF8_ELLIPSIS;
+	itemText = B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS);
 	menu->AddItem (item = new BMenuItem (itemText.String(), new BMessage (M_PREFS_SHOW)));
 	item->SetTarget (vision_app);
 
@@ -635,12 +633,10 @@ ClientWindow::Init (void)
 	fMenuBar->AddItem (fApp);
 	
 	fServer = new BMenu (B_TRANSLATE("Server"));
-	itemText = B_TRANSLATE("Connect to");
-	itemText += B_UTF8_ELLIPSIS;
+	itemText = B_TRANSLATE("Connect to" B_UTF8_ELLIPSIS);
 	fServer->AddItem (menu = new NetworkMenu (itemText.String(), M_CONNECT_NETWORK, BMessenger (vision_app)));
 	
-	itemText = B_TRANSLATE("Setup");
-	itemText += B_UTF8_ELLIPSIS;
+	itemText = B_TRANSLATE("Setup" B_UTF8_ELLIPSIS);
 	fServer->AddItem (item = new BMenuItem (itemText.String(),
 										new BMessage (M_SETUP_SHOW), '/', B_SHIFT_KEY));
 	item->SetTarget (vision_app);

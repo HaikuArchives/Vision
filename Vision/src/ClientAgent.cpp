@@ -472,7 +472,6 @@ ClientAgent::TimedSubmit (void *arg)
 			submitMsg.AddString ("input", data);
 		else
 			submitMsg.ReplaceString ("input", data);
-		// :TODO: wade 020101 move locks to ParseCmd?
 		if (agentMsgr.IsValid())
 		{
 			agentMsgr.SendMessage (&submitMsg);

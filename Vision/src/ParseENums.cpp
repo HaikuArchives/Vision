@@ -390,55 +390,25 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 				tempString.Append ("\n");
 				Display (tempString.String());
 		
-		if (fGetLocalIP && (tempString.IFindFirst (fMyNick.String()) == 0))
-		{
-			fGetLocalIP = false;
-					hostent *hp = gethostbyname (theHostname.String());
-			if (hp != NULL)
-			{
-				char addr_buf[16];
-						in_addr *addr = (in_addr *)hp->h_addr_list[0];
-						strcpy(addr_buf, inet_ntoa(*addr));
-						fLocalip = addr_buf;
-#if 0
-						printf("hostname found: %s\n", fLocalip.String());
-#endif
-						return true;
-			}
-			else if (isdigit(theHostname[0]))
-			{
-							fLocalip = theHostname;
-#if 0
-							printf("hostname found: %s\n", fLocalip.String());
-#endif
-							return true;
-					}
-#if 0
-					else
-					{
-							printf("lookup failed, unable to resolve host\n");
-					}
-#endif
-		}
-						
-				if (theHost != "-9z99" && theHost != "")
+				if (fGetLocalIP && (tempString.IFindFirst (fMyNick.String()) == 0))
 				{
-					BMessage *dnsmsg (new BMessage);
-					dnsmsg->AddString ("lookup", theHostname.String());
-					ClientAgent *client (ActiveClient());
-				
-					if (client)
-						dnsmsg->AddPointer("agent", client);
-					else
-						dnsmsg->AddPointer("agent", this);
-		 
-					thread_id lookupThread = spawn_thread (
-						DNSLookup,
-						"dns_lookup",
-						B_LOW_PRIORITY,
-						dnsmsg);
-
-					resume_thread (lookupThread);
+					fGetLocalIP = false;
+					struct addrinfo *info;
+					struct addrinfo hints;
+					memset(&hints, 0, sizeof(addrinfo));
+					hints.ai_family = AF_UNSPEC;
+					hints.ai_socktype = SOCK_STREAM;
+					hints.ai_protocol = IPPROTO_TCP;
+					int result = getaddrinfo(theHostname.String(), NULL, &hints, &info);
+					if (result == 0)
+					{
+						char addr_buf[INET6_ADDRSTRLEN];
+						inet_ntop(info->ai_family, info->ai_addr, addr_buf, INET6_ADDRSTRLEN);
+						fLocalip = addr_buf;
+						printf("Got address: %s\n", fLocalip.String());
+						freeaddrinfo(info);
+						return true;
+					}
 				}
 			}		
 			return true;
@@ -469,7 +439,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 							hasChanged = 1;
 #ifdef USE_INFOPOPPER
 							if (be_roster->IsRunning(InfoPopperAppSig) == true) {
-				entry_ref ref = vision_app->AppRef();
+								entry_ref ref = vision_app->AppRef();
 								BMessage infoMsg(InfoPopper::AddMessage);
 								infoMsg.AddString("appTitle", S_INFOPOPPER_TITLE);
 								infoMsg.AddString("title", fId.String());
@@ -1058,12 +1028,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 					fMsgr.SendMessage (&msg);
 				}
 				
-				if (fLocalip_private)
-				{
-					BString IPCommand ("/userhost ");
-					IPCommand += fMyNick;
-					ParseCmd (IPCommand.String());
-				}
+				BString IPCommand ("/userhost ");
+				IPCommand += fMyNick;
+				ParseCmd (IPCommand.String());
 
 				if (fReconnecting)
 				{

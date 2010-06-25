@@ -50,47 +50,52 @@ class NetworkPrefsView : public BView
 	virtual					~NetworkPrefsView (void);
 	virtual void			MessageReceived (BMessage *);
 	virtual void			AttachedToWindow (void);
-	virtual void				DetachedFromWindow (void);
+	virtual void			DetachedFromWindow (void);
 
 	private:
 	
 	void					UpdateNetworkData (BMessage &);
 	void					UpdatePersonalData (BMessage &);
 	void					SetupDefaults (BMessage &);
-	void								BuildNetworkList (void);
-	void								SaveCurrentNetwork();
-	BMenuField					*fNetworkMenu;
-	BScrollView				 *fExecScroller,
-								*fNickScroller;
+	void					BuildNetworkList (void);
+	void					SaveCurrentNetwork();
+	void					SetPrimaryServer(const char *serverName);
+	void					SetAlternateCount(uint32 altCount);
 	
-	BBox								*fMainNetBox,
-										*fNetDetailsBox,
-										*fPersonalBox;
+	BMenuField				*fNetworkMenu;
+	BScrollView				*fExecScroller,
+							*fNickScroller;
 	
-	BButton						 *fServerButton,
-									*fNickAddButton,
-									*fNickRemoveButton;
+	BBox					*fMainNetBox,
+							*fNetDetailsBox,
+							*fPersonalBox;
 	
-	TSpeedButton				*fNickUpButton,
-											*fNickDnButton;
+	BButton					*fServerButton,
+							*fNickAddButton,
+							*fNickRemoveButton;
 	
-	BCheckBox					 *fNickDefaultsBox,
-											*fLagCheckBox,
-									*fStartupBox;
+	TSpeedButton			*fNickUpButton,
+							*fNickDnButton;
+	
+	BCheckBox				*fNickDefaultsBox,
+							*fLagCheckBox,
+							*fStartupBox;
 				
-	BTextView					 *fTextView;
-	BListView					 *fListView;
+	BTextView				*fTextView;
+	BListView				*fListView;
 	
-	BTextControl				*fIdent,
-								*fRealName;
+	BTextControl			*fIdent,
+							*fRealName;
 	
-	BMessage					fActiveNetwork;
-	PromptWindow				*fNickPrompt;
-	PromptWindow				*fNetPrompt;
-	PromptWindow				*fDupePrompt;
-	BMenuItem					 *fRemoveItem;
-	BMenuItem					 *fDupeItem;
-	NetPrefServerWindow *fServerPrefs;
+	BMessage				fActiveNetwork;
+	PromptWindow			*fNickPrompt;
+	PromptWindow			*fNetPrompt;
+	PromptWindow			*fDupePrompt;
+	BMenuItem				*fRemoveItem;
+	BMenuItem				*fDupeItem;
+	NetPrefServerWindow 	*fServerPrefs;
+	BStringView				*fConnectServer,
+							*fAlternates;
 };
 
 #endif

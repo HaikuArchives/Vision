@@ -1,6 +1,10 @@
 Vision
 http://vision.sourceforge.net
 
+[0.9.8-20100624]
+	* Rewrote network subsystem for Haiku so it no longer uses various bad hacks/workarounds for R5/BONE bugs. Also has the side effect of making it IPv6 ready once Haiku is.
+	* Reworked localization to use Haiku's Locale kit.
+
 [0.9.7-SF-03022008]
 	* Incorporate various fixes to allow building via gcc4.
 	* Pull version information dynamically via utsname so as to yield a correct response on both BeOS and Haiku.

@@ -28,9 +28,6 @@
 #include <String.h>
 #include <View.h>
 
-#include <sys/socket.h>
-#include <arpa/inet.h>
-
 class BMessenger;
 class BStatusBar;
 class BStringView;
@@ -40,86 +37,85 @@ class PauseButton;
 class DCCConnect : public BView
 {
 	public:
-													DCCConnect (
-														const char *,
-														const char *,
-														const char *,
-														const char *,
-														const char *,
-														const BMessenger &);
-		virtual							 ~DCCConnect (void);
+									DCCConnect (
+										const char *,
+										const char *,
+										const char *,
+										const char *,
+										const char *,
+										const BMessenger &);
+		virtual						 ~DCCConnect (void);
 
-		virtual void					AttachedToWindow (void);
-		virtual void					AllAttached (void);
-		virtual void					DetachedFromWindow (void);
-		virtual void					Draw (BRect);
-		virtual void					MessageReceived (BMessage *);
-		static void					 UpdateBar (const BMessenger &, int, float, uint32, bool);
-		static void					 UpdateStatus (const BMessenger &, const char *);
+		virtual void				AttachedToWindow (void);
+		virtual void				AllAttached (void);
+		virtual void				DetachedFromWindow (void);
+		virtual void				Draw (BRect);
+		virtual void				MessageReceived (BMessage *);
+		static void					UpdateBar (const BMessenger &, int, float, uint32, bool);
+		static void					UpdateStatus (const BMessenger &, const char *);
 
 	protected:
-		virtual void					Stopped (void);
-		virtual void					Lock (void);
-		virtual void					Unlock (void);
+		virtual void				Stopped (void);
+		virtual void				Lock (void);
+		virtual void				Unlock (void);
 
-		StopButton						*fStop;
-		BMessenger						fCaller;
+		StopButton					*fStop;
+		BMessenger					fCaller;
 
-		BString							 fNick,
-													 fFileName,
-													 fSize,
-													 fIp,
-													 fPort;
+		BString						fNick,
+									fFileName,
+									fSize,
+									fIp,
+									fPort;
 
-		BStatusBar						*fBar;
-		BStringView					 *fLabel;
+		BStatusBar					*fBar;
+		BStringView					*fLabel;
 
-		int32								 fTotalTransferred;
-		float								 fFinalRateAverage;
+		int32						fTotalTransferred;
+		float						fFinalRateAverage;
 		
-		thread_id						 fTid;
-		bool									fIsStopped;
+		bool						fIsStopped;
 };
 
 class DCCReceive : public DCCConnect
 {
 	friend class DCCConnect;
 	public:
-													DCCReceive (
-														const char *,
-														const char *,
-														const char *,
-														const char *,
-														const char *,
-														const BMessenger &,
-														bool);
+									DCCReceive (
+										const char *,
+										const char *,
+										const char *,
+										const char *,
+										const char *,
+										const BMessenger &,
+										bool);
 														
-		virtual							 ~DCCReceive (void);
-		virtual void					AttachedToWindow (void);
-		static int32					Transfer (void *);
+		virtual						~DCCReceive (void);
+		virtual void				AttachedToWindow (void);
+		virtual void				MessageReceived(BMessage *msg);
 
 	protected:
-		bool									fResume;
+		bool						fResume;
 };
 
 class DCCSend : public DCCConnect
 {
 	friend class DCCConnect;
 	public:
-													DCCSend (
-														const char *,
-														const char *,
-														const char *,
-														const BMessenger &);
+									DCCSend (
+										const char *,
+										const char *,
+										const char *,
+										const BMessenger &);
 														
-		virtual							 ~DCCSend (void);
-		virtual void					AttachedToWindow (void);
-		static int32					Transfer (void *);
-		bool									IsMatch (const char *, const char *) const;
-		void									SetResume (off_t);
+		virtual						~DCCSend (void);
+		virtual void				AttachedToWindow (void);
+		virtual void				MessageReceived(BMessage *msg);
+		bool						IsMatch (const char *, const char *) const;
+		void						SetResume (off_t);
 
 	protected:
-		int64								 fPos;
+		int64						fPos;
 };
 
 #endif
