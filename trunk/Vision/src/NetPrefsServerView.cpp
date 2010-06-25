@@ -158,14 +158,12 @@ NetPrefsServerView::NetPrefsServerView (BRect bounds, const char *name, BMesseng
 	BStringColumn *port (new BStringColumn (itemText.String(), be_plain_font->StringWidth (itemText.String()) * 2,
 		0, bounds.Width (), 0));
 	fServerList->AddColumn (port, 2);
-	itemText = B_TRANSLATE("Add");
-	itemText += B_UTF8_ELLIPSIS;
+	itemText = B_TRANSLATE("Add" B_UTF8_ELLIPSIS);
 	fAddButton = new BButton (BRect (0, 0, 0, 0), NULL, itemText.String(),
 		new BMessage (M_SERVER_ADD_ITEM));
 	fRemoveButton = new BButton (BRect (0, 0, 0, 0), NULL, B_TRANSLATE("Remove"),
 		new BMessage (M_SERVER_REMOVE_ITEM));
-	itemText = B_TRANSLATE("Edit");
-	itemText += B_UTF8_ELLIPSIS;
+	itemText = B_TRANSLATE("Edit" B_UTF8_ELLIPSIS);
 	fEditButton = new BButton (BRect (0, 0, 0, 0), NULL, itemText.String(),
 		new BMessage (M_SERVER_EDIT_ITEM));
 	fAddButton->ResizeToPreferred ();

@@ -771,8 +771,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
 					vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String());
 				
 				BString rejoinString = "[@] ";
-				rejoinString += B_TRANSLATE("Attempting to rejoin ");
-				rejoinString += B_UTF8_ELLIPSIS "\n";
+				rejoinString += B_TRANSLATE("Attempting to rejoin " B_UTF8_ELLIPSIS);
+				rejoinString += "\n";
 													
 				Display (rejoinString.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 
@@ -864,9 +864,9 @@ ChannelAgent::MessageReceived (BMessage *msg)
 
 				BMessage attemptrejoin (M_DISPLAY); // "you were kicked"
 				buffer = "*** ";
-				buffer += B_TRANSLATE("Attempting to rejoin %1");
+				buffer += B_TRANSLATE("Attempting to rejoin %1" B_UTF8_ELLIPSIS);
 				buffer.ReplaceFirst("%1", theChannel);
-				buffer += B_UTF8_ELLIPSIS "\n";
+				buffer += "\n";
 				PackDisplay (&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
 				fMsgr.SendMessage (&attemptrejoin);
 

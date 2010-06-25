@@ -92,12 +92,10 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	BMenu *menu (new BMenu (B_TRANSLATE("Network")));
 	menu->AddItem (new BMenuItem (B_TRANSLATE("Defaults"), new BMessage (M_NETWORK_DEFAULTS)));
 	menu->AddSeparatorItem ();
-	BString itemText = B_TRANSLATE("Add network");
-	itemText += B_UTF8_ELLIPSIS;
+	BString itemText = B_TRANSLATE("Add network" B_UTF8_ELLIPSIS);
 	menu->AddItem (new BMenuItem (itemText.String(), new BMessage (M_ADD_NEW_NETWORK)));
 	menu->AddItem (fRemoveItem = new BMenuItem (B_TRANSLATE("Remove current network"), new BMessage (M_REMOVE_CURRENT_NETWORK)));
-	itemText = B_TRANSLATE("Duplicate current network");
-	itemText += B_UTF8_ELLIPSIS;
+	itemText = B_TRANSLATE("Duplicate current network" B_UTF8_ELLIPSIS);
 	menu->AddItem (fDupeItem = new BMenuItem (itemText.String(), new BMessage (M_DUPE_CURRENT_NETWORK)));
 	fNetworkMenu = new BMenuField (BRect (0, 0, 100, 30), "NetList", NULL, menu);
 	fMainNetBox = new BBox (Bounds ().InsetByCopy (5, 5));
@@ -119,13 +117,25 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	boundsRect.right = boundsRect.left + 10;
 	boundsRect.top = 10;
 	boundsRect.bottom += 20;
-	itemText = B_TRANSLATE("Edit servers");
-	itemText += B_UTF8_ELLIPSIS;
+	BStringView *stringView1 (new BStringView(boundsRect, NULL,
+		B_TRANSLATE("Primary server: ")));
+	stringView1->ResizeToPreferred();
+	fNetDetailsBox->AddChild(stringView1);
+	stringView1->MoveTo(fNetDetailsBox->Frame().left, fNetDetailsBox->Frame().top);
+	fConnectServer = new BStringView(boundsRect, NULL, "irc.freenode.net");
+	fConnectServer->ResizeToPreferred();
+	fNetDetailsBox->AddChild(fConnectServer);
+	fConnectServer->MoveTo(stringView1->Frame().left, stringView1->Frame().bottom);
+	fAlternates = new BStringView(boundsRect, NULL, B_TRANSLATE("Fallbacks: %1"));
+	fAlternates->ResizeToPreferred();
+	fNetDetailsBox->AddChild(fAlternates);
+	fAlternates->MoveTo(fConnectServer->Frame().left, fConnectServer->Frame().bottom);
+	itemText = B_TRANSLATE("Edit servers" B_UTF8_ELLIPSIS);
 	fServerButton = new BButton (boundsRect, NULL, itemText.String(),
 						new BMessage (M_SERVER_DIALOG));
 	fServerButton->ResizeToPreferred ();
 	fServerButton->MoveTo (fNetDetailsBox->Frame().right - (fServerButton->Frame().Width() + 20),
-			10.0);
+			fAlternates->Frame().bottom + 10.0);
 	fNetDetailsBox->AddChild (fServerButton);
 	itemText = B_TRANSLATE("Autoexec");
 	itemText += ":";
@@ -160,10 +170,9 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	fNickDefaultsBox->MoveTo (fNetDetailsBox->Frame ().left, fNetDetailsBox->Frame ().top);
 	fPersonalBox->AddChild (fNickDefaultsBox);
 	itemText = B_TRANSLATE("Preferred Nicknames:");
-	itemText += ":";
-	BStringView *stringView5 (new BStringView (boundsRect, NULL, itemText.String()));
+	BStringView *stringView5 (new BStringView (boundsRect, NULL, B_TRANSLATE("Preferred Nicknames:")));
 	stringView5->ResizeToPreferred ();
-	stringView5->MoveTo (fNetDetailsBox->Frame ().left, fNetDetailsBox->Frame ().top);
+	stringView5->MoveTo (fNetDetailsBox->Frame ().left, fNickDefaultsBox->Frame ().bottom + 5);
 	fPersonalBox->AddChild (stringView5);
 	fListView = new BListView (scrollView->Frame (), NULL);
 	fListView->SetSelectionMessage (new BMessage (M_NICK_SELECTED));
@@ -172,8 +181,7 @@ NetworkPrefsView::NetworkPrefsView (BRect bounds, const char *name)
 	BScrollView *listScroll (new BScrollView (NULL, fListView, B_FOLLOW_LEFT | B_FOLLOW_TOP,
 							0, false, true));
 	fPersonalBox->AddChild (listScroll);
-	itemText = B_TRANSLATE("Add");
-	itemText += B_UTF8_ELLIPSIS;
+	itemText = B_TRANSLATE("Add" B_UTF8_ELLIPSIS);
 	fNickAddButton = new BButton (boundsRect, NULL, itemText.String(), new BMessage (M_ADD_NICK));
 	fNickAddButton->ResizeToPreferred ();
 	fNickRemoveButton = new BButton (boundsRect, NULL, B_TRANSLATE("Remove"), new BMessage (M_REMOVE_NICK));
@@ -291,6 +299,8 @@ NetworkPrefsView::UpdateNetworkData (BMessage & msg)
 	fServerButton->SetEnabled (true);
 	fTextView->MakeEditable (true);
 	fLagCheckBox->SetEnabled (true);
+	SetPrimaryServer("<N/A>");
+	SetAlternateCount(0);
 
 	bool startup (false),
 			 lagcheck (true);
@@ -308,6 +318,19 @@ NetworkPrefsView::UpdateNetworkData (BMessage & msg)
 		fTextView->SetText (autoexec);
 	else
 		fTextView->SetText ("");
+		
+	uint32 altCount(0);
+	int32 size;
+	const ServerData *data (NULL);
+	for (int32 i = 0; msg.FindData("server", B_ANY_TYPE, i, 
+		reinterpret_cast<const void **>(&data), &size) == B_OK; i++)
+	{
+		if (data->state == 0)
+			SetPrimaryServer(data->serverName);
+		else if(data->state == 1)
+			++altCount;
+	}
+	SetAlternateCount(altCount);
 }
 
 void
@@ -369,6 +392,8 @@ NetworkPrefsView::SetupDefaults (BMessage & msg)
 	fTextView->MakeEditable (false);
 	fTextView->SetText ("");
 	fServerButton->SetEnabled (false);
+	SetPrimaryServer("<N/A>");
+	SetAlternateCount(0);
 	fNickDefaultsBox->SetEnabled (false);
 	fStartupBox->SetEnabled (false);
 	fLagCheckBox->SetEnabled (false);
@@ -418,6 +443,24 @@ NetworkPrefsView::SaveCurrentNetwork (void)
 	}
 
 	vision_app->SetNetwork (name, &fActiveNetwork);
+}
+
+void
+NetworkPrefsView::SetPrimaryServer(const char *serverName)
+{
+	fConnectServer->SetText(serverName);
+	fConnectServer->ResizeToPreferred();
+}
+
+void
+NetworkPrefsView::SetAlternateCount(uint32 altCount)
+{
+	BString text = B_TRANSLATE("Fallbacks: %1");
+	BString value;
+	value << altCount;
+	text.ReplaceFirst("%1", value);
+	fAlternates->SetText(text.String());
+	fAlternates->ResizeToPreferred();
 }
 
 void

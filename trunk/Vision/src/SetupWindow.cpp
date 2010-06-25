@@ -75,14 +75,12 @@ SetupWindow::SetupWindow (void)
 	connectButton = new BButton (BRect (0,0,0,0), "connect", B_TRANSLATE("Connect"),
 		new BMessage (M_CONNECT_NETWORK));
 	connectButton->ResizeToPreferred();
-	BString itemString = B_TRANSLATE("Network Setup");
-	itemString += B_UTF8_ELLIPSIS;
+	BString itemString = B_TRANSLATE("Network Setup" B_UTF8_ELLIPSIS);
 	netPrefsButton = new BButton (BRect (0,0,0,0), "netprefs", itemString.String(),
 		new BMessage (M_NETWORK_SHOW));
 	netPrefsButton->ResizeToPreferred();
 	netPrefsButton->SetTarget (vision_app);
-	itemString = B_TRANSLATE("Preferences");
-	itemString += B_UTF8_ELLIPSIS;
+	itemString = B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS);
 	prefsButton = new BButton (BRect (0,0,0,0), "prefs", itemString.String(),
 		new BMessage (M_PREFS_SHOW));
 	prefsButton->ResizeToPreferred();

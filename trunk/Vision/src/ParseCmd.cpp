@@ -33,6 +33,7 @@
 
 #include <arpa/inet.h>
 #include <ctype.h>
+#include <errno.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1335,46 +1336,45 @@ ClientAgent::DNSLookup (void *arg)
 
 	BString resolve (lookup),
 					output ("[x] ");
+					
+	
+	struct addrinfo *info;
+	struct addrinfo hints;
+	memset(&hints, 0, sizeof(addrinfo));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = IPPROTO_TCP;
+	bool reverse = false;
 
-	if (isalpha (resolve[0]))
+	struct in_addr addr;
+	if (resolve.FindFirst(":") != B_ERROR || inet_aton(resolve.String(), &addr) == 1)
 	{
-		hostent *hp = gethostbyname (resolve.String());
+		reverse = true;
+	}
+	
+	int result = getaddrinfo(resolve.String(), NULL, &hints, &info);
+	char addr_buf[1024];
+	memset(addr_buf, 0, sizeof(addr_buf));
 
-		if (hp)
-		{
-			// ip address is in hp->h_addr_list[0];
-			char addr_buf[16];
-
-			in_addr *addr = (in_addr *)hp->h_addr_list[0];
-			strcpy(addr_buf, inet_ntoa(*addr));
-			output += B_TRANSLATE("Resolved %1 to %2");
-			output.ReplaceFirst("%1", resolve.String());
-			output.ReplaceFirst("%2", addr_buf);
-		}
-		else
-		{
-			output += B_TRANSLATE("Unable to resolve %1");
-			output.ReplaceFirst("%1", resolve.String());
-		}
+	if (result == 0)
+	{
+		result = getnameinfo(info->ai_addr, info->ai_addrlen, addr_buf,
+				sizeof(addr_buf), NULL, NULL, reverse ? NI_NAMEREQD : NI_NUMERICHOST);
+		freeaddrinfo(info);
+	}
+	
+	if (result == 0)
+	{
+		output += B_TRANSLATE("Resolved %1 to %2");
+		output.ReplaceFirst("%1", resolve.String());
+		output.ReplaceFirst("%2", addr_buf);
 	}
 	else
 	{
-		ulong addr = inet_addr (resolve.String());
-		hostent *hp = gethostbyaddr ((const char *)&addr, 4, AF_INET);
-		
-		if (hp)
-		{
-			output += B_TRANSLATE("Resolved %1 to %2");
-			output.ReplaceFirst("%1", resolve.String());
-			output.ReplaceFirst("%2", hp->h_name);
-		}
-		else
-		{
-			output += B_TRANSLATE("Unable to resolve %1");
-			output.ReplaceFirst("%1", resolve.String());
-		}
+		output += B_TRANSLATE("Unable to resolve %1 (%2)");
+		output.ReplaceFirst("%1", resolve.String());
+		output.ReplaceFirst("%2", gai_strerror(result));
 	}
-
 	output += "\n";
 
 	delete msg;

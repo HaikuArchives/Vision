@@ -83,16 +83,14 @@ ListAgent::ListAgent (
 	
 	listMenu = new BMenu (B_TRANSLATE("Channels"));
 
-	BString itemText = B_TRANSLATE("Find");
-	itemText += B_UTF8_ELLIPSIS;
+	BString itemText = B_TRANSLATE("Find" B_UTF8_ELLIPSIS);
 	listMenu->AddItem (mFind = new BMenuItem (
 		itemText.String(), 
 		new BMessage (M_LIST_FIND)));
 	listMenu->AddItem (mFindAgain = new BMenuItem (
 		B_TRANSLATE("Find Next"), 
 		new BMessage (M_LIST_FAGAIN)));
-	itemText = B_TRANSLATE("Filter");
-	itemText += B_UTF8_ELLIPSIS;
+	itemText = B_TRANSLATE("Filter" B_UTF8_ELLIPSIS);
 	listMenu->AddItem (mFilter = new BMenuItem (
 		itemText.String(),
 		new BMessage (M_LIST_FILTER)));

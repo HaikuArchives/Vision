@@ -35,10 +35,10 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 
-#include "Vision.h"
-#include "ServerAgent.h"
 #include "DCCConnect.h"
+#include "NetworkManager.h"
 #include "PlayButton.h"
+#include "Vision.h"
 
 #undef B_TRANSLATE_CONTEXT
 #define B_TRANSLATE_CONTEXT "DCCMessages"
@@ -63,7 +63,6 @@ DCCConnect::DCCConnect (
 				fPort (p),
 				fTotalTransferred (0),
 				fFinalRateAverage (0.0),
-				fTid (-1),
 				fIsStopped (false)
 {
 	SetViewColor (ui_color (B_PANEL_BACKGROUND_COLOR));
@@ -305,14 +304,27 @@ DCCReceive::AttachedToWindow (void)
 {
 	DCCConnect::AttachedToWindow();
 
-	fTid = spawn_thread (
-		Transfer,
-		"DCC Receive",
-		B_NORMAL_PRIORITY,
-		this);
-	resume_thread (fTid);
+	BMessage msg(M_CREATE_CONNECTION);
+	msg.AddMessenger("target", BMessenger(this));
+	msg.AddString("port", fPort);
+	msg.AddString("hostname", fIp.String());
+	BMessenger(network_manager).SendMessage(&msg);
 }
 
+void
+DCCReceive::MessageReceived(BMessage *msg)
+{
+	switch (msg->what)
+	{
+		default:
+		{
+			DCCConnect::MessageReceived(msg);
+		}
+		break;
+	}
+}
+
+/*
 int32
 DCCReceive::Transfer (void *arg)
 {
@@ -437,6 +449,7 @@ DCCReceive::Transfer (void *arg)
 	}
 	return 0;
 }
+*/
 
 DCCSend::DCCSend (
 	const char *n,
@@ -463,14 +476,26 @@ DCCSend::AttachedToWindow (void)
 {
 	DCCConnect::AttachedToWindow();
 	
-	fTid = spawn_thread (
-		Transfer,
-		"DCC Send",
-		B_NORMAL_PRIORITY,
-		this);
-	resume_thread (fTid);
+	BMessage msg(M_CREATE_LISTENER);
+	msg.AddMessenger("target", BMessenger(this));
+	msg.AddString("port", fPort);
+	BMessenger(network_manager).SendMessage(&msg);
 }
 
+void
+DCCSend::MessageReceived(BMessage *msg)
+{
+	switch (msg->what)
+	{
+		default:
+		{
+			DCCConnect::MessageReceived(msg);
+		}
+		break;
+	}
+}
+
+/*
 int32
 DCCSend::Transfer (void *arg)
 {
@@ -510,8 +535,7 @@ DCCSend::Transfer (void *arg)
 	int sin_size;
 	sin_size = (sizeof (struct sockaddr_in));
 
-	BString updateString = B_TRANSLATE("Acquiring DCC lock");
-	updateString += B_UTF8_ELLIPSIS;
+	BString updateString = B_TRANSLATE("Acquiring DCC lock" B_UTF8_ELLIPSIS);
 	UpdateStatus (msgr, updateString.String());
 
 	vision_app->AcquireDCCLock();
@@ -525,8 +549,7 @@ DCCSend::Transfer (void *arg)
 		return 0;
 	}
 	
-	updateString = B_TRANSLATE("Waiting for acceptance");
-	updateString += B_UTF8_ELLIPSIS;
+	updateString = B_TRANSLATE("Waiting for acceptance" B_UTF8_ELLIPSIS);
 	UpdateStatus (msgr, updateString.String());
 
 	sendaddr.s_addr = inet_addr (ipdata.FindString ("ip"));
@@ -697,6 +720,7 @@ DCCSend::Transfer (void *arg)
 	
 	return 0;
 }
+*/
 
 bool
 DCCSend::IsMatch (const char *n, const char *p) const
