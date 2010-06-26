@@ -199,6 +199,7 @@ NetworkManager::ConnectionHandler(void *data)
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
+		hints.ai_flags = AI_ADDRCONFIG;
 		int result = getaddrinfo(hostname.String(), port.String(), &hints, &info);
 		int32 sock = -1;
 		if (result == 0)
@@ -361,7 +362,7 @@ NetworkManager::_HandleBind(const BMessage *message)
 	struct addrinfo *info = NULL;
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(hints));
-	hints.ai_flags = AI_PASSIVE;
+	hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;
 	hints.ai_socktype = SOCK_STREAM;
 	
 	int32 sock = -1;
