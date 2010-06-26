@@ -799,6 +799,7 @@ ClientAgent::ParseCmd (const char *data)
 			BString tempString = "*** ";
 			tempString += B_TRANSLATE("Trying new nick %1.");
 			tempString.ReplaceFirst("%1", newNick.String());
+			tempString += "\n";
 			Display (tempString.String());
 
 			AddSend (&sendMsg, "NICK ");
