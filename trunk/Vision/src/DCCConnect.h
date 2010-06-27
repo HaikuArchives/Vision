@@ -51,8 +51,8 @@ class DCCConnect : public BView
 		virtual void				DetachedFromWindow (void);
 		virtual void				Draw (BRect);
 		virtual void				MessageReceived (BMessage *);
-		static void					UpdateBar (const BMessenger &, int, float, uint32, bool);
-		static void					UpdateStatus (const BMessenger &, const char *);
+		void						UpdateBar (int, bool);
+		void						UpdateStatus (const char *);
 
 	protected:
 		virtual void				Stopped (void);
@@ -73,8 +73,10 @@ class DCCConnect : public BView
 
 		int32						fTotalTransferred;
 		float						fFinalRateAverage;
-		
 		bool						fIsStopped;
+		int32						fSocketID;
+		BFile						fFile;
+		bigtime_t					fTransferStartTime;
 };
 
 class DCCReceive : public DCCConnect
@@ -115,6 +117,7 @@ class DCCSend : public DCCConnect
 		void						SetResume (off_t);
 
 	protected:
+		ssize_t						SendNextBlock(void);
 		int64						fPos;
 };
 

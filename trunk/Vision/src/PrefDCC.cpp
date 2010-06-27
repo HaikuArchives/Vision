@@ -58,7 +58,6 @@ DCCPrefsView::DCCPrefsView (BRect frame)
 	itemText = B_TRANSLATE("Default path");
 	itemText += ": ";
 	fDefDir = new VTextControl (BRect (0,0,0,0), NULL, itemText.String(), "", new BMessage (M_DEFAULT_PATH_CHANGED));
-	fDefDir->SetDivider (fDefDir->StringWidth (itemText) + 5);
 	fBox = new BBox (BRect (0,0,0,0), NULL);
 	fBox->SetLabel (B_TRANSLATE("DCC Port Range"));
 	AddChild (fDefDir);
@@ -66,6 +65,7 @@ DCCPrefsView::DCCPrefsView (BRect frame)
 	AddChild (fAutoAccept);
 	AddChild (fBlockSize);
 	AddChild (fBox);
+	fDefDir->SetDivider (fDefDir->StringWidth (itemText.String()) + 5);
 	itemText = B_TRANSLATE("Min");
 	itemText += ": ";
 	fDccPortMin = new VTextControl (BRect (0,0,0,0), NULL, itemText.String(), "",
