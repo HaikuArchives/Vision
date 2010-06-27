@@ -98,6 +98,10 @@ DCCConnect::DCCConnect (
 
 DCCConnect::~DCCConnect (void)
 {
+	if (fFile.InitCheck() == B_OK)
+	{
+		fFile.Unset();
+	}
 }
 
 void
@@ -158,12 +162,6 @@ DCCConnect::MessageReceived (BMessage *msg)
 			}
 			break;
 
-		case M_DCC_UPDATE_STATUS:
-			{
-				fLabel->SetText (msg->FindString ("text"));
-			}
-			break;
-			
 		case M_DCC_GET_CONNECT_DATA:
 			{
 				BMessage reply;
@@ -251,35 +249,25 @@ DCCConnect::Unlock (void)
 }
 
 void
-DCCConnect::UpdateBar (const BMessenger &msgr, int readSize, float kbps, uint32 size, bool update)
+DCCConnect::UpdateBar (int readSize, bool update)
 {
-	BMessage msg (B_UPDATE_STATUS_BAR);
-
+	char text[128];
+	char trailing_text[128];
 	if (update)
 	{
-		char text[128];
-
-		sprintf (text, "%.1f", size / 1024.0);
-		msg.AddString ("trailing_text", text);
-
-		sprintf (text, "%.2f", kbps);
-		msg.AddString ("text", text);
+		sprintf (trailing_text, "%.1f", fTotalTransferred / 1024.0);
+		sprintf (text, "%.2f", (fTotalTransferred / 1024.0) / ((system_time() - fTransferStartTime) / 1000000));
 	}
-
-	msg.AddFloat ("delta", readSize);
-	BLooper *looper (NULL);
-	DCCConnect *transferView ((DCCConnect *)msgr.Target(&looper));
-	if ((looper != NULL) && (transferView != NULL))
-		looper->PostMessage (&msg, transferView->fBar);
+	if (update)
+		fBar->Update(readSize, text ,trailing_text);
+	else
+		fBar->Update(readSize, NULL, NULL);
 }
 
 void
-DCCConnect::UpdateStatus (const BMessenger &msgr, const char *text)
+DCCConnect::UpdateStatus (const char *text)
 {
-	BMessage msg (M_DCC_UPDATE_STATUS);
-
-	msg.AddString ("text", text);
-	msgr.SendMessage (&msg);
+	fLabel->SetText (text);
 }
 
 DCCReceive::DCCReceive (
@@ -293,6 +281,7 @@ DCCReceive::DCCReceive (
 		: DCCConnect (n, fn, sz, i, p, c),
 			fResume (cont)
 {
+	fFile.SetTo(fn, B_READ_WRITE);
 }
 
 DCCReceive::~DCCReceive (void)
@@ -353,7 +342,7 @@ DCCReceive::Transfer (void *arg)
 	UpdateStatus (msgr, B_TRANSLATE("Connecting to sender."));
 	if (connect (dccSock, (sockaddr *)&address, sizeof (address)) < 0)
 	{
-		UpdateStatus (msgr, B_TRANSLATE("Unable to establish connection."));
+		
 		close (dccSock);
 		return B_ERROR;
 	}
@@ -465,6 +454,7 @@ DCCSend::DCCSend (
 		dccPort += rand() % diff;
 			
 	fPort << dccPort;
+	fFile.SetTo(fn, B_READ_ONLY);
 }
 
 DCCSend::~DCCSend (void)
@@ -485,14 +475,123 @@ DCCSend::AttachedToWindow (void)
 void
 DCCSend::MessageReceived(BMessage *msg)
 {
+	BString status;
 	switch (msg->what)
 	{
+		case M_LISTENER_CREATED:
+		{
+			status_t result = B_OK;
+			if (msg->FindInt32("status", &result) == B_OK && result == B_OK)
+			{
+				msg->FindInt32("connection", &fSocketID);
+				BMessage getIpMsg(M_GET_IP), reply;
+				fCaller.SendMessage(&getIpMsg, &reply);
+				BString ipAddr;
+				reply.FindString("ip", &ipAddr);
+				if (ipAddr.FindFirst(":") == B_ERROR)
+				{
+					BString temp;
+					temp << htonl(atoi(ipAddr.String()));
+					ipAddr = temp;
+				}
+				status = "PRIVMSG ";
+				status << fNick 
+					<< " :\1DCC SEND "
+					<< fFileName
+					<< " "
+					<< ipAddr
+					<< " "
+					<< fPort
+					<< " "
+					<< fSize
+					<< "\1";
+		
+				BMessage sendMsg(M_SERVER_SEND);
+				sendMsg.AddString("data", status.String());
+				if (fCaller.IsValid())
+					fCaller.SendMessage (&sendMsg);
+				UpdateStatus(B_TRANSLATE("Waiting for connection" B_UTF8_ELLIPSIS));
+			}
+			else
+			{
+				UpdateStatus(B_TRANSLATE("Unable to set up listener."));
+			}
+		}
+		break;
+		
+		case M_CONNECTION_ACCEPTED:
+		{
+			BMessage destroyMsg(M_DESTROY_CONNECTION);
+			destroyMsg.AddInt32("connection", fSocketID);
+			BMessenger(network_manager).SendMessage(&destroyMsg);
+			msg->FindInt32("client", &fSocketID);
+			status = B_TRANSLATE("Sending %1 to %2.");
+			BPath path(fFileName);
+			status.ReplaceFirst("%1", path.Leaf());
+			status.ReplaceFirst("%2", fNick);
+			UpdateStatus (status.String());
+			fFile.Seek(fPos, SEEK_SET);
+			SendNextBlock();
+		}
+		break;
+		
+		case M_CONNECTION_DISCONNECT:
+		{
+			UpdateStatus (B_TRANSLATE("Error writing data."));
+		}
+		break;
+		
+		case M_CONNECTION_DATA_RECEIVED:
+		{
+			int32 recvsize = -1;
+			ssize_t size = 0;
+			const uint32 *data = NULL;
+			if (msg->FindData("data", B_RAW_TYPE, reinterpret_cast<const void **>(&data), &size) == B_OK)
+			{
+				for (ssize_t i = 0; static_cast<ssize_t>(i * sizeof(uint32)) < size; i++)
+				{
+					recvsize = ntohl(data[i]);
+				}
+			}
+			if (recvsize == fTotalTransferred)
+			{
+				if (SendNextBlock() == 0)
+				{
+					BMessage destroyMsg(M_DESTROY_CONNECTION);
+					destroyMsg.AddInt32("connection", fSocketID);
+					BMessenger(network_manager).SendMessage(&destroyMsg);
+					Stopped();
+				}
+			}
+		}
+		break;
+		
 		default:
 		{
 			DCCConnect::MessageReceived(msg);
 		}
 		break;
 	}
+}
+
+ssize_t
+DCCSend::SendNextBlock(void)
+{
+	const uint32 DCC_BLOCK_SIZE (atoi(vision_app->GetString ("dccBlockSize")));
+	char buffer[DCC_BLOCK_SIZE];
+
+	int32 count = fFile.Read (buffer, DCC_BLOCK_SIZE);
+	if (count > 0)
+	{
+		fTotalTransferred += count;
+		UpdateBar(count, true);
+		BMessage msg(M_SEND_CONNECTION_DATA);
+		msg.AddInt32("connection", fSocketID);
+		msg.AddData("data", B_RAW_TYPE, buffer, count);
+		BMessenger(network_manager).SendMessage(&msg);
+	}
+	
+	return count;
 }
 
 /*
@@ -549,29 +648,13 @@ DCCSend::Transfer (void *arg)
 		return 0;
 	}
 	
-	updateString = B_TRANSLATE("Waiting for acceptance" B_UTF8_ELLIPSIS);
+	updateString = 
 	UpdateStatus (msgr, updateString.String());
 
 	sendaddr.s_addr = inet_addr (ipdata.FindString ("ip"));
 
 	if (msgr.IsValid())
 	{
-		status = "PRIVMSG ";
-		status << reply.FindString ("nick") 
-			<< " :\1DCC SEND "
-			<< fileName
-			<< " "
-			<< htonl (sendaddr.s_addr)
-			<< " "
-			<< reply.FindString ("port")
-			<< " "
-			<< reply.FindString ("size")
-			<< "\1";
-
-		BMessage msg (M_SERVER_SEND);
-		msg.AddString ("data", status.String());
-		if (callmsgr.IsValid())
-			callmsgr.SendMessage (&msg);
 			
 		UpdateStatus (msgr, B_TRANSLATE("Attempting to listen for connection."));
 		if (listen (sd, 1) < 0)
@@ -639,10 +722,6 @@ DCCSend::Transfer (void *arg)
 		bytes_sent = seekpos;
 	}
 
-	status = B_TRANSLATE("Sending %1 to %2.");
-	status.ReplaceFirst("%1", path.Leaf());
-	status.ReplaceFirst("%2", reply.FindString("nick"));
-	UpdateStatus (msgr, status.String());
 
 	float kbps (0);
 
@@ -662,7 +741,6 @@ DCCSend::Transfer (void *arg)
 					
 			if ((sent = send (dccSock, buffer, count, 0)) < count)
 			{
-				UpdateStatus (msgr, B_TRANSLATE("Error writing data."));
 				break;
 			}
 			
