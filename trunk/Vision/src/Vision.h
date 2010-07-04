@@ -187,7 +187,6 @@ class VisionApp : public BApplication
 		Theme							*fActiveTheme;
 		bigtime_t						fStartupTime;
 		entry_ref						fAppRef;
-		BCatalog						fCatalog;
 		map<int32, BString>				fIdentAddresses;
 };
 

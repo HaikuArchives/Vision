@@ -121,7 +121,7 @@ VisionApp::VisionApp (void)
 	if (GetAppInfo(&info) == B_OK) fAppRef = info.ref; 
 
 	URLCrunch::UpdateTagList();
-	be_locale->GetAppCatalog(&fCatalog);
+	
 }
 
 VisionApp::~VisionApp (void)
