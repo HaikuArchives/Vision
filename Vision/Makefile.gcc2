@@ -16,12 +16,12 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.8-20100613
+VERSION := 0.9.8-20100705
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
 # system libs
-REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -lnetwork -lroot -lstdc++.r4 -llocale
+REG_LIBS := -lbe -ltranslation -ltextencoding -ltracker -lnetwork -lroot -lstdc++.r4 -llocale -llocalestub
 
 # lua
 LUA_LIBS := -L./src/lua/lib -llua -llualib
