@@ -80,7 +80,7 @@ ServerAgent::ServerAgent (
 		fLname (net.FindString ("realname")),
 		fLident (net.FindString ("ident")),
 		fConnectionID (-1),
-		fGetLocalIP (true),
+		fGetLocalIP (false),
 		fIsConnecting (true),
 		fReconnecting (false),
 		fConnected (false),
@@ -778,6 +778,18 @@ ServerAgent::MessageReceived (BMessage *msg)
 						data = "PASS ";
 						data += fCurrentServer.password;
 						SendData(data.String());
+					}
+					
+					sockaddr_storage storage;
+					socklen_t slen = sizeof(storage);
+					getsockname(fConnectionID, (struct sockaddr *)&storage, &slen);
+					char buf[128];
+					getnameinfo(reinterpret_cast<sockaddr *>(&storage), slen, buf, sizeof(buf), NULL, NULL, NI_NUMERICHOST);
+					fLocalip = buf;
+					fLocalip_private = PrivateIPCheck(buf);
+					if (fLocalip_private && vision_app->GetBool("dccPrivateCheck"))
+					{
+						fGetLocalIP = true;
 					}
 
 					data = "USER ";

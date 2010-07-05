@@ -119,6 +119,7 @@ class DCCSend : public DCCConnect
 	protected:
 		ssize_t						SendNextBlock(void);
 		int64						fPos;
+		int32						fServerID;
 };
 
 #endif
