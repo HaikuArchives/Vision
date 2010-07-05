@@ -127,7 +127,7 @@ NetworkManager::Overlord(void *data)
 		int result = 0;
 		manager->_SocketLock();
 
-		result = poll(manager->fPollFDs, manager->fSockets.size(), 1000);
+		result = poll(manager->fPollFDs, manager->fSockets.size(), 500);
 		if (result <= 0)
 		{
 			manager->_SocketUnlock();
@@ -146,11 +146,14 @@ NetworkManager::Overlord(void *data)
 					manager->_HandleReceive(manager->fPollFDs[i].fd, i);
 				}
 			}
-			
-			if (manager->fPollFDs[i].revents & 
+			else if (manager->fPollFDs[i].revents & 
 				(POLLERR | POLLHUP | POLLNVAL))
 			{
 				manager->_HandleDisconnect(manager->fPollFDs[i].fd, i);	
+			}
+			else if (manager->fPollFDs[i].revents != 0)
+			{
+				printf("Unexpected poll flags for socket %d: %d\n", manager->fPollFDs[i].fd, manager->fPollFDs[i].revents);
 			}
 		}
 		manager->_SocketUnlock();

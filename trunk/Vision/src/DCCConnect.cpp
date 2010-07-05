@@ -29,6 +29,7 @@
 #include <Window.h>
 
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -42,6 +43,8 @@
 
 #undef B_TRANSLATE_CONTEXT
 #define B_TRANSLATE_CONTEXT "DCCMessages"
+
+static const uint32 M_SEND_NEXT_BLOCK = 'msnb';
 
 DCCConnect::DCCConnect (
 	const char *n,
@@ -162,46 +165,6 @@ DCCConnect::MessageReceived (BMessage *msg)
 			}
 			break;
 
-		case M_DCC_GET_CONNECT_DATA:
-			{
-				BMessage reply;
-				reply.AddString ("port", fPort.String());
-				reply.AddString ("ip", fIp.String());
-				reply.AddString ("name", fFileName.String());
-				reply.AddString ("nick", fNick.String());
-				reply.AddString ("size", fSize.String());
-				DCCReceive *recview (dynamic_cast<DCCReceive *>(this));
-				if (recview != NULL)
-					reply.AddBool ("resume", recview->fResume);
-				DCCSend *sendview (dynamic_cast<DCCSend *>(this));
-				if (sendview != NULL)
-					reply.AddMessenger ("caller", sendview->fCaller);
-				msg->SendReply(&reply);
-			}
-			break;
-		
-		case M_DCC_GET_RESUME_POS:
-			{
-				BMessage reply;
-				DCCSend *sendview (dynamic_cast<DCCSend *>(this));
-				if (sendview != NULL)
-					reply.AddInt32 ("pos", sendview->fPos);
-				msg->SendReply(&reply);
-			}
-			break;
-		
-		case M_DCC_UPDATE_TRANSFERRED:
-			{
-				fTotalTransferred = msg->FindInt32 ("transferred");
-			}
-			break;
-
-		case M_DCC_UPDATE_AVERAGE:
-			{
-				fFinalRateAverage = msg->FindFloat ("average");
-			}
-			break;
-
 		default:
 			BView::MessageReceived (msg);
 	}
@@ -210,6 +173,9 @@ DCCConnect::MessageReceived (BMessage *msg)
 void
 DCCConnect::Stopped (void)
 {
+	BMessage destroyMsg(M_DESTROY_CONNECTION);
+	destroyMsg.AddInt32("connection", fSocketID);
+	BMessenger(network_manager).SendMessage(&destroyMsg);
 	if (fTotalTransferred > 0)
 	{
 		BMessage xfermsg (M_DCC_COMPLETE);
@@ -305,6 +271,71 @@ DCCReceive::MessageReceived(BMessage *msg)
 {
 	switch (msg->what)
 	{
+		case M_CONNECTION_CREATED:
+		{
+			int32 status = msg->FindInt32("status");
+			if (status != B_OK)
+			{
+				UpdateStatus(B_TRANSLATE("Unable to establish connection."));
+			}
+			
+			msg->FindInt32("connection", &fSocketID);
+			if (fResume)
+			{
+				fFile.SetTo(fFileName, B_WRITE_ONLY | B_OPEN_AT_END);
+			}
+			else
+			{
+				fFile.SetTo(fFileName, B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
+			}
+			
+			if (fFile.InitCheck() == B_OK)
+			{
+				off_t fileSize = 0;
+				status = fFile.GetSize(&fileSize);
+				fTotalTransferred = (uint32) fileSize;
+				if (status == B_OK)
+				{
+					UpdateBar(fTotalTransferred, true);
+				}
+			}
+			else
+			{
+				UpdateStatus(B_TRANSLATE("Error creating / opening data file."));
+			}
+		}
+		break;
+		
+		case M_CONNECTION_DATA_RECEIVED:
+		{
+			ssize_t size = 0;
+			const void *data = NULL;
+			if (msg->FindData("data", B_RAW_TYPE, reinterpret_cast<const void **>(&data), &size) == B_OK)
+			{
+				if (fFile.Write(data, size) == B_OK)
+				{
+					fTotalTransferred += size;
+					UpdateBar(fTotalTransferred, true);
+					BMessage message(M_SEND_CONNECTION_DATA);
+					message.AddData("data", B_RAW_TYPE, &fTotalTransferred, sizeof(uint32));
+					message.AddInt32("connection", fSocketID);
+					BMessenger(network_manager).SendMessage(&message);
+					if (fTotalTransferred == atoi(fSize.String()))
+					{
+						Stopped();
+					}
+				}
+				else
+				{
+					UpdateStatus(B_TRANSLATE("Error writing data to disk."));
+					BMessage message(M_DESTROY_CONNECTION);
+					message.AddInt32("connection", fSocketID);
+					BMessenger(network_manager).SendMessage(&message);
+				}
+			}
+		}
+		break;
+		
 		default:
 		{
 			DCCConnect::MessageReceived(msg);
@@ -312,133 +343,6 @@ DCCReceive::MessageReceived(BMessage *msg)
 		break;
 	}
 }
-
-/*
-int32
-DCCReceive::Transfer (void *arg)
-{
-	BMessenger msgr (reinterpret_cast<DCCReceive *>(arg));
-	struct sockaddr_in address;
-	BLooper *looper (NULL);
-	
-	int32 dccSock (-1);
-
-	if ((dccSock = socket (AF_INET, SOCK_STREAM, 0)) < 0)
-	{
-		UpdateStatus (msgr, B_TRANSLATE("Unable to establish connection."));
-		return B_ERROR;
-	}
-
-	BMessage reply;
-
-	if (msgr.SendMessage (M_DCC_GET_CONNECT_DATA, &reply) == B_ERROR)
-		return B_ERROR;
-
-	memset (&address, 0, sizeof(sockaddr_in));
-	address.sin_family = AF_INET;
-	address.sin_port	 = htons (atoi (reply.FindString ("port")));
-	address.sin_addr.s_addr = htonl(strtoul (reply.FindString("ip"), 0, 10));
-
-	UpdateStatus (msgr, B_TRANSLATE("Connecting to sender."));
-	if (connect (dccSock, (sockaddr *)&address, sizeof (address)) < 0)
-	{
-		
-		close (dccSock);
-		return B_ERROR;
-	}
-
-	BPath path (reply.FindString("name"));
-	BString buffer = B_TRANSLATE("Receiving %1 from %2.");
-	buffer.ReplaceFirst("%1", path.Leaf());
-	buffer.ReplaceFirst("%2", reply.FindString("nick"));
-	off_t file_size (0);
-
-	UpdateStatus (msgr, buffer.String());
-
-	BFile file;
-
-	if (msgr.IsValid())
-	{
-		if (reply.FindBool ("resume"))
-		{
-			if (file.SetTo (
-				reply.FindString("name"),
-				B_WRITE_ONLY | B_OPEN_AT_END) == B_NO_ERROR
-				&&	file.GetSize (&file_size) == B_NO_ERROR
-				&&	file_size > 0LL)
-					UpdateBar (msgr, file_size, 0, 0, true);
-			else
-				file_size = 0LL;
-		}
-		else
-		{
-			file.SetTo (
-				reply.FindString("name"),
-				B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
-		}
-	}
-	
-	uint32 bytes_received (file_size);
-	uint32 size (atol (reply.FindString("size")));
-	float kbps (0);
-
-	if (file.InitCheck() == B_NO_ERROR)
-	{
-		bigtime_t last (system_time()), now;
-		char inBuffer[8196];		
-		bigtime_t start = system_time();
-
-		while ((msgr.Target(&looper) != NULL) && bytes_received < size)
-		{
-			int readSize;
-			if ((readSize = recv (dccSock, inBuffer, 8196, 0)) < 0)
-				break;
-
-			file.Write (inBuffer, readSize);
-			bytes_received += readSize;
-			BMessage msg (M_DCC_UPDATE_TRANSFERRED);
-			msg.AddInt32 ("transferred", bytes_received);
-			msgr.SendMessage (&msg);
-
-			uint32 feed_back (htonl (bytes_received));
-			send (dccSock, &feed_back, sizeof (uint32), 0);
-
-			now = system_time();
-			bool hit (false);
-
-			if (now - last > 500000)
-			{
-				kbps = ((bytes_received - file_size) / ((now - start) / 1000000.0)) / 1024.0;
-				BMessage updmsg (M_DCC_UPDATE_AVERAGE);
-				updmsg.AddFloat ("average", kbps);
-				msgr.SendMessage (&updmsg);
-				last = now;
-				hit = true;
-			}
-			
-			DCCConnect::UpdateBar (msgr, readSize, kbps, bytes_received, hit);
-		}
-	}
-
-	if (msgr.IsValid())
-	{
-		BMessage msg (M_DCC_STOP_BUTTON);
-		msgr.SendMessage (&msg);
-	}
-
-	if (dccSock > 0)
-	{
-		close (dccSock);
-	}
-
-	if (file.InitCheck() == B_OK)
-	{
-		file.Unset();
-		update_mime_info (reply.FindString("name"), 0, 0, 1);
-	}
-	return 0;
-}
-*/
 
 DCCSend::DCCSend (
 	const char *n,
@@ -483,16 +387,23 @@ DCCSend::MessageReceived(BMessage *msg)
 			status_t result = B_OK;
 			if (msg->FindInt32("status", &result) == B_OK && result == B_OK)
 			{
-				msg->FindInt32("connection", &fSocketID);
+				msg->FindInt32("connection", &fServerID);
 				BMessage getIpMsg(M_GET_IP), reply;
 				fCaller.SendMessage(&getIpMsg, &reply);
 				BString ipAddr;
 				reply.FindString("ip", &ipAddr);
 				if (ipAddr.FindFirst(":") == B_ERROR)
 				{
-					BString temp;
-					temp << htonl(atoi(ipAddr.String()));
-					ipAddr = temp;
+					addrinfo hints;
+					hints.ai_flags = AI_NUMERICHOST | AI_ADDRCONFIG;
+					addrinfo *res = NULL;
+					memset(&hints, 0, sizeof(hints));
+					if (getaddrinfo(ipAddr.String(), NULL, &hints, &res) == 0)
+					{
+						ipAddr = "";
+						ipAddr << htonl(((sockaddr_in *)(res->ai_addr))->sin_addr.s_addr);
+						freeaddrinfo(res);
+					}
 				}
 				status = "PRIVMSG ";
 				status << fNick 
@@ -505,7 +416,7 @@ DCCSend::MessageReceived(BMessage *msg)
 					<< " "
 					<< fSize
 					<< "\1";
-		
+
 				BMessage sendMsg(M_SERVER_SEND);
 				sendMsg.AddString("data", status.String());
 				if (fCaller.IsValid())
@@ -522,7 +433,7 @@ DCCSend::MessageReceived(BMessage *msg)
 		case M_CONNECTION_ACCEPTED:
 		{
 			BMessage destroyMsg(M_DESTROY_CONNECTION);
-			destroyMsg.AddInt32("connection", fSocketID);
+			destroyMsg.AddInt32("connection", fServerID);
 			BMessenger(network_manager).SendMessage(&destroyMsg);
 			msg->FindInt32("client", &fSocketID);
 			status = B_TRANSLATE("Sending %1 to %2.");
@@ -531,13 +442,23 @@ DCCSend::MessageReceived(BMessage *msg)
 			status.ReplaceFirst("%2", fNick);
 			UpdateStatus (status.String());
 			fFile.Seek(fPos, SEEK_SET);
+			fTotalTransferred = fPos;
 			SendNextBlock();
 		}
 		break;
 		
+		case M_SEND_NEXT_BLOCK:
+		{
+			SendNextBlock();
+		}
+		break;
+
 		case M_CONNECTION_DISCONNECT:
 		{
-			UpdateStatus (B_TRANSLATE("Error writing data."));
+			if (msg->FindInt32("connection") == fSocketID)
+			{
+				UpdateStatus (B_TRANSLATE("Error writing data."));
+			}
 		}
 		break;
 		
@@ -557,9 +478,6 @@ DCCSend::MessageReceived(BMessage *msg)
 			{
 				if (SendNextBlock() == 0)
 				{
-					BMessage destroyMsg(M_DESTROY_CONNECTION);
-					destroyMsg.AddInt32("connection", fSocketID);
-					BMessenger(network_manager).SendMessage(&destroyMsg);
 					Stopped();
 				}
 			}
@@ -577,7 +495,7 @@ DCCSend::MessageReceived(BMessage *msg)
 ssize_t
 DCCSend::SendNextBlock(void)
 {
-	const uint32 DCC_BLOCK_SIZE (atoi(vision_app->GetString ("dccBlockSize")));
+	const int32 DCC_BLOCK_SIZE (atoi(vision_app->GetString ("dccBlockSize")));
 	char buffer[DCC_BLOCK_SIZE];
 
 	int32 count = fFile.Read (buffer, DCC_BLOCK_SIZE);

@@ -389,7 +389,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 				tempString.RemoveFirst (":");
 				tempString.Append ("\n");
 				Display (tempString.String());
-		
+				
 				if (fGetLocalIP && (tempString.IFindFirst (fMyNick.String()) == 0))
 				{
 					fGetLocalIP = false;
@@ -403,7 +403,8 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 					if (result == 0)
 					{
 						char addr_buf[INET6_ADDRSTRLEN];
-						inet_ntop(info->ai_family, info->ai_addr, addr_buf, INET6_ADDRSTRLEN);
+						getnameinfo(info->ai_addr, info->ai_addrlen, addr_buf, sizeof(addr_buf), 
+						NULL, NULL, NI_NUMERICHOST);
 						fLocalip = addr_buf;
 						printf("Got address: %s\n", fLocalip.String());
 						freeaddrinfo(info);
