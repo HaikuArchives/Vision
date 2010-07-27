@@ -62,6 +62,7 @@ NetworkManager::~NetworkManager(void)
 bool
 NetworkManager::QuitRequested(void)
 {
+	fShuttingDown = true;
 	_SocketLock();
 	int32 index = -1;
 	while (!fSockets.empty())
