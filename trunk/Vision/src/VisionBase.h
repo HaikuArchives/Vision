@@ -31,6 +31,7 @@
 #include <GraphicsDefs.h>
 
 #include <Debug.h>
+#include <Locale.h>
 #include <String.h>
 
 // TODO: resort these so they make more sense -- will break settings compat though
