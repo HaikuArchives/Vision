@@ -163,7 +163,7 @@ ifneq "$(EXTRADATA)" ""
 	@unzip $(EXTRADATA) -d $@~/$(BINARY)/
 endif
 	@find $@~ -type f | xargs mimeset
-	@rm -rf $@~/$(BINARY)/.svn $@~/$(BINARY)/protocol/.svn $@~/$(BINARY)/help/.svn $@~/$(BINARY)/scripts/.svn
+	@rm -rf $@~/$(BINARY)/.svn $@~/$(BINARY)/protocol/ $@~/$(BINARY)/help/.svn $@~/$(BINARY)/scripts/.svn
 	@rm -rf $@~/$(BINARY)/.svn $@~/$(BINARY)/help/content/.svn $@~/$(BINARY)/help/images/.svn
 	@cd $@~ && $(ZIP) $@ $(BINARY)/*
 	@mv -f $@~/$@ .
