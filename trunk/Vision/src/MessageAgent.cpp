@@ -27,6 +27,9 @@
 #include <Catalog.h>
 #include <Entry.h>
 #include <MenuItem.h>
+#ifdef __HAIKU__
+#include <Notification.h>
+#endif
 #include <PopUpMenu.h>
 #include <Roster.h>
 #include <UTF8.h>
@@ -338,6 +341,25 @@ MessageAgent::MessageReceived (BMessage *msg)
 
 				if (IsHidden() || (window && !window->IsActive()))
 				{
+#ifdef __HAIKU__
+					BNotification notification(B_INFORMATION_NOTIFICATION);
+					notification.SetApplication(BString("Vision"));
+					entry_ref ref = vision_app->AppRef();
+					notification.SetOnClickFile(&ref);
+					notification.SetTitle(fServerName.String());
+					BString tempString(msg->FindString("msgz"));
+					if (tempString[0] == '\1')
+					{
+						tempString.RemoveFirst("\1ACTION ");
+						tempString.RemoveLast ("\1");
+					}
+
+					BString content;
+					content << nick << " said: " << tempString.String();
+					notification.SetContent(content);
+
+					be_roster->Notify(notification);
+#endif
 #ifdef USE_INFOPOPPER
 							if (be_roster->IsRunning(InfoPopperAppSig) == true) {
 				entry_ref ref = vision_app->AppRef();

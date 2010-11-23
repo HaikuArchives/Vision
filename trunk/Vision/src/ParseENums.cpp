@@ -27,6 +27,9 @@
 #include <Catalog.h>
 #include <Entry.h>
 #include <Menu.h>
+#ifdef __HAIKU__
+#include <Notification.h>
+#endif
 #include <Roster.h>
 
 #include "ClientWindow.h"
@@ -417,6 +420,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 		case RPL_ISON:					 // 303
 			{
 				BString nicks (RestOfString (data, 4));
+				BString onlined, offlined;
 				
 				nicks.RemoveFirst (":");
 				
@@ -438,6 +442,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 						{
 							item->SetState (true);
 							hasChanged = 1;
+
+							if (onlined.Length())
+								onlined << ", ";
+							onlined << item->Text();
 #ifdef USE_INFOPOPPER
 							if (be_roster->IsRunning(InfoPopperAppSig) == true) {
 								entry_ref ref = vision_app->AppRef();
@@ -465,6 +473,10 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 						{
 							item->SetState (false);
 							hasChanged = 2;
+
+							if (offlined.Length())
+								offlined << ", ";
+							offlined << item->Text();
 #ifdef USE_INFOPOPPER
 							if (be_roster->IsRunning(InfoPopperAppSig) == true) {
 				entry_ref ref = vision_app->AppRef();
@@ -486,6 +498,44 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
 						}
 					}
+#ifdef __HAIKU__
+					if (offlined.Length())
+					{
+						BNotification notification(B_INFORMATION_NOTIFICATION);
+						notification.SetApplication(BString("Vision"));
+						entry_ref ref = vision_app->AppRef();
+						notification.SetOnClickFile(&ref);
+						notification.SetTitle(fServerName.String());
+						BString content;
+						content << offlined;
+						if (offlined.FindFirst(' ') > -1)
+							content << " are offline";
+						else
+							content << " is offline";
+
+
+						notification.SetContent(content);
+						be_roster->Notify(notification);
+					}
+					if (onlined.Length())
+					{
+						BNotification notification(B_INFORMATION_NOTIFICATION);
+						notification.SetApplication(BString("Vision"));
+						entry_ref ref = vision_app->AppRef();
+						notification.SetOnClickFile(&ref);
+						notification.SetTitle(fServerName.String());
+						BString content;
+						content << onlined;
+						if (onlined.FindFirst(' ') > -1)
+							content << " are offline";
+						else
+							content << " is offline";
+
+
+						notification.SetContent(content);
+						be_roster->Notify(notification);
+					}
+#endif
 				}
 				fNotifyNicks.SortItems(SortNotifyItems);
 				msg.AddPointer ("list", &fNotifyNicks);

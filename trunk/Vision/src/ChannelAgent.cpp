@@ -28,6 +28,9 @@
 #include <FilePanel.h>
 #include <Catalog.h>
 #include <MenuItem.h>
+#ifdef __HAIKU__
+#include <Notification.h>
+#endif
 #include <PopUpMenu.h>
 #include <Roster.h>
 #include <ScrollView.h>
@@ -902,6 +905,26 @@ ChannelAgent::MessageReceived (BMessage *msg)
 				if (IsHidden())
 				{
 					UpdateStatus((hasNick) ? WIN_NICK_BIT : WIN_NEWS_BIT);
+#ifdef __HAIKU__
+					if (hasNick)
+					{
+						if (tempString[0] == '\1')
+						{
+							tempString.RemoveFirst("\1ACTION ");
+							tempString.RemoveLast ("\1");
+						}
+
+						BNotification notification(B_INFORMATION_NOTIFICATION);
+						notification.SetApplication(BString("Vision"));
+						entry_ref ref = vision_app->AppRef();
+						notification.SetOnClickFile(&ref);
+						notification.SetTitle(fServerName.String());
+						BString content;
+						content << fId << " - " << theNick << " said: " << tempString;
+						notification.SetContent(content);
+						be_roster->Notify(notification);
+					}
+#endif
 #ifdef USE_INFOPOPPER
 					if (hasNick)
 					{
