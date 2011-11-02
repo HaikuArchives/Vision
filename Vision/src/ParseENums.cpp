@@ -527,9 +527,9 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 						BString content;
 						content << onlined;
 						if (onlined.FindFirst(' ') > -1)
-							content << " are offline";
+							content << " are online";
 						else
-							content << " is offline";
+							content << " is online";
 
 
 						notification.SetContent(content);
