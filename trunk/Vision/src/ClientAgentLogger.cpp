@@ -221,7 +221,7 @@ ClientAgentLogger::SetupLogging (void)
 		BString visLogPath (vision_app->GetString ("logBaseDir"));
 		if (visLogPath.Length() == 0)
 			visLogPath = "logs";
-		else if (visLogPath[0] == '/')
+		if (visLogPath[0] == '/')
 			fLogPath.SetTo (visLogPath.String());
 		else
 			fLogPath.Append (visLogPath.String());
