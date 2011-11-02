@@ -39,6 +39,7 @@ class VisionApp * vision_app;
 #include <Locale.h>
 #include <MenuItem.h>
 #include <Mime.h>
+#include <Path.h>
 #include <Autolock.h>
 #include <Roster.h>
 #include <Beep.h>
@@ -496,8 +497,14 @@ VisionApp::LoadDefaults (int32 section)
 				if (!fVisionSettings->HasBool ("notifyExpanded"))
 					fVisionSettings->AddBool("notifyExpanded", true);
 
-				if (!fVisionSettings->HasString ("logBaseDir"))
-					fVisionSettings->AddString("logBaseDir", "logs");
+				if (!fVisionSettings->HasString ("logBaseDir")) {
+					BPath base;
+					if (find_directory(B_USER_DATA_DIRECTORY, &base) == B_OK) {
+						base.Append("logs");
+						base.Append("Vision");
+					}
+					fVisionSettings->AddString("logBaseDir", base.Path());
+				}
 
 				if (!fVisionSettings->HasInt32 ("encoding"))
 					fVisionSettings->AddInt32("encoding", B_UNICODE_CONVERSION);
