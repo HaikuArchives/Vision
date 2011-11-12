@@ -1360,7 +1360,7 @@ ClientAgent::DNSLookup (void *arg)
 	if (result == 0)
 	{
 		result = getnameinfo(info->ai_addr, info->ai_addrlen, addr_buf,
-				sizeof(addr_buf), NULL, NULL, reverse ? NI_NAMEREQD : NI_NUMERICHOST);
+				sizeof(addr_buf), NULL, 0, reverse ? NI_NAMEREQD : NI_NUMERICHOST);
 		freeaddrinfo(info);
 	}
 	

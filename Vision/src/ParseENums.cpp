@@ -407,7 +407,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 					{
 						char addr_buf[INET6_ADDRSTRLEN];
 						getnameinfo(info->ai_addr, info->ai_addrlen, addr_buf, sizeof(addr_buf), 
-						NULL, NULL, NI_NUMERICHOST);
+						NULL, 0, NI_NUMERICHOST);
 						fLocalip = addr_buf;
 						printf("Got address: %s\n", fLocalip.String());
 						freeaddrinfo(info);
@@ -502,7 +502,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 					if (offlined.Length())
 					{
 						BNotification notification(B_INFORMATION_NOTIFICATION);
-						notification.SetApplication(BString("Vision"));
+						notification.SetGroup(BString("Vision"));
 						entry_ref ref = vision_app->AppRef();
 						notification.SetOnClickFile(&ref);
 						notification.SetTitle(fServerName.String());
@@ -515,12 +515,12 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
 
 						notification.SetContent(content);
-						be_roster->Notify(notification);
+						notification.Send();
 					}
 					if (onlined.Length())
 					{
 						BNotification notification(B_INFORMATION_NOTIFICATION);
-						notification.SetApplication(BString("Vision"));
+						notification.SetGroup(BString("Vision"));
 						entry_ref ref = vision_app->AppRef();
 						notification.SetOnClickFile(&ref);
 						notification.SetTitle(fServerName.String());
@@ -533,7 +533,7 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
 
 
 						notification.SetContent(content);
-						be_roster->Notify(notification);
+						notification.Send();
 					}
 #endif
 				}
