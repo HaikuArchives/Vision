@@ -343,7 +343,7 @@ MessageAgent::MessageReceived (BMessage *msg)
 				{
 #ifdef __HAIKU__
 					BNotification notification(B_INFORMATION_NOTIFICATION);
-					notification.SetApplication(BString("Vision"));
+					notification.SetGroup(BString("Vision"));
 					entry_ref ref = vision_app->AppRef();
 					notification.SetOnClickFile(&ref);
 					notification.SetTitle(fServerName.String());
@@ -358,7 +358,7 @@ MessageAgent::MessageReceived (BMessage *msg)
 					content << nick << " said: " << tempString.String();
 					notification.SetContent(content);
 
-					be_roster->Notify(notification);
+					notification.Send();
 #endif
 #ifdef USE_INFOPOPPER
 							if (be_roster->IsRunning(InfoPopperAppSig) == true) {

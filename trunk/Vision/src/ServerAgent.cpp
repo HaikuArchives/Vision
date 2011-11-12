@@ -784,7 +784,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 					socklen_t slen = sizeof(storage);
 					getsockname(fConnectionID, (struct sockaddr *)&storage, &slen);
 					char buf[128];
-					getnameinfo(reinterpret_cast<sockaddr *>(&storage), slen, buf, sizeof(buf), NULL, NULL, NI_NUMERICHOST);
+					getnameinfo(reinterpret_cast<sockaddr *>(&storage), slen, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST);
 					fLocalip = buf;
 					fLocalip_private = PrivateIPCheck(buf);
 					if (fLocalip_private && vision_app->GetBool("dccPrivateCheck"))

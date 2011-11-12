@@ -915,14 +915,14 @@ ChannelAgent::MessageReceived (BMessage *msg)
 						}
 
 						BNotification notification(B_INFORMATION_NOTIFICATION);
-						notification.SetApplication(BString("Vision"));
+						notification.SetGroup(BString("Vision"));
 						entry_ref ref = vision_app->AppRef();
 						notification.SetOnClickFile(&ref);
 						notification.SetTitle(fServerName.String());
 						BString content;
 						content << fId << " - " << theNick << " said: " << tempString;
 						notification.SetContent(content);
-						be_roster->Notify(notification);
+						notification.Send();
 					}
 #endif
 #ifdef USE_INFOPOPPER
