@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *								 Rene Gollent
  *								 Todd Lair
@@ -59,15 +59,15 @@ NamesView::~NamesView (void)
 		delete fMyPopUp;
 }
 
-void 
-NamesView::KeyDown (const char * bytes, int32 numBytes) 
+void
+NamesView::KeyDown (const char * bytes, int32 numBytes)
 {
-	BMessage inputMsg (M_INPUT_FOCUS); 
-	BString buffer; 
+	BMessage inputMsg (M_INPUT_FOCUS);
+	BString buffer;
 
-	buffer.Append (bytes, numBytes); 
-	inputMsg.AddString ("text", buffer.String()); 
-	
+	buffer.Append (bytes, numBytes);
+	inputMsg.AddString ("text", buffer.String());
+
 	reinterpret_cast<ChannelAgent *>(Parent()->Parent())->fMsgr.SendMessage (&inputMsg);
 }
 
@@ -81,7 +81,7 @@ void NamesView::AttachedToWindow (void)
 
 	myMessage = new BMessage (M_OPEN_MSGAGENT);
 	fMyPopUp->AddItem(new BMenuItem("Query", myMessage));
-	
+
 	myMessage = new BMessage (M_NAMES_POPUP_NOTIFY);
 	fMyPopUp->AddItem(new BMenuItem("Add To Notify", myMessage));
 
@@ -150,7 +150,7 @@ void NamesView::AttachedToWindow (void)
 
 	fMyPopUp->SetTargetForItems (this);
 	fCTCPPopUp->SetTargetForItems (this);
-	
+
 	fActiveTheme->WriteLock();
 	fActiveTheme->AddView (this);
 	fActiveTheme->WriteUnlock();
@@ -170,13 +170,13 @@ NamesView::MouseDown (BPoint myPoint)
 {
 	int32 selected (IndexOf (myPoint));
 	bool handled (false);
-	
+
 	if (selected < 0)
 	{
 		DeselectAll();
 		return;
 	}
-	
+
 	BMessage *inputMsg (Window()->CurrentMessage());
 	int32 mousebuttons (0),
 				keymodifiers (0),
@@ -195,7 +195,7 @@ NamesView::MouseDown (BPoint myPoint)
 	&& (keymodifiers & B_CONTROL_KEY) == 0)
 	{
 		// user double clicked
-		
+
 		BListItem *item (ItemAt (IndexOf(myPoint)));
 		if (item && !item->IsSelected())
 		{
@@ -214,10 +214,10 @@ NamesView::MouseDown (BPoint myPoint)
 			msg.AddString ("nick", theNick.String());
 			reinterpret_cast<ChannelAgent *>(Parent()->Parent())->fMsgr.SendMessage (&msg);
 		}
-		
+
 		handled = true;
 	}
-		
+
 	if (mouseclicks == 1
 	&&	CurrentSelection(1) <= 0
 	&&	mousebuttons == B_PRIMARY_MOUSE_BUTTON
@@ -230,12 +230,12 @@ NamesView::MouseDown (BPoint myPoint)
 		BListItem *item (ItemAt (IndexOf(myPoint)));
 		if (item && !item->IsSelected())
 			Select (IndexOf (myPoint), false);
-			
+
 		fTracking = true;
 		fCurrentindex = IndexOf (myPoint);
 		handled = true;
 	}
-		
+
 	if (mouseclicks >= 1
 	&&	CurrentSelection(1) >= 0
 	&&	mousebuttons == B_PRIMARY_MOUSE_BUTTON
@@ -248,7 +248,7 @@ NamesView::MouseDown (BPoint myPoint)
 		BListItem *item (ItemAt (IndexOf(myPoint)));
 		if (item)
 			Select (IndexOf (myPoint), false);
-		
+
 		fTracking = true;
 		fCurrentindex = IndexOf (myPoint);
 		handled = true;
@@ -275,7 +275,7 @@ NamesView::MouseDown (BPoint myPoint)
 	if (mousebuttons == B_TERTIARY_MOUSE_BUTTON)
 		BListView::MouseDown (myPoint);
 
-	fLastSelected = selected; 
+	fLastSelected = selected;
 	if (!handled)
 		BListView::MouseDown (myPoint);
 }
@@ -285,7 +285,7 @@ NamesView::MouseUp (BPoint myPoint)
 {
  if (fTracking)
 	 fTracking = false;
- 
+
  BListView::MouseUp (myPoint);
 }
 
@@ -338,7 +338,7 @@ NamesView::MouseMoved (BPoint myPoint, uint32 transitcode, const BMessage *dragM
 				 }
 				 else if (fCurrentindex > current)
 				 {
-					 // backtrack up 
+					 // backtrack up
 					 DeselectExcept (first, current);
 				 }
 				 else if (fCurrentindex < current)
@@ -359,7 +359,7 @@ void
 NamesView::ClearList (void)
 {
 	while (CountItems() > 0)
-		delete RemoveItem (0L);
+		delete RemoveItem ((int32)0);
 }
 
 void
@@ -379,14 +379,14 @@ NamesView::MessageReceived (BMessage *msg)
 					refresh = true;
 					fActiveTheme->ReadUnlock();
 					break;
-				
+
 				case C_OP:
 				case C_VOICE:
 				case C_HELPER:
 				case C_NAMES_SELECTION:
 					refresh = true;
 					break;
-					
+
 				default:
 					break;
 			}
@@ -394,7 +394,7 @@ NamesView::MessageReceived (BMessage *msg)
 				Invalidate();
 		}
 		break;
-		
+
 		case M_THEME_FONT_CHANGE:
 		{
 			int16 which (msg->FindInt16 ("which"));
@@ -410,7 +410,7 @@ NamesView::MessageReceived (BMessage *msg)
 			}
 		}
 		break;
-		
+
 		case B_SIMPLE_DATA:
 		{
 			if (msg->HasRef("refs"))
@@ -437,7 +437,7 @@ NamesView::MessageReceived (BMessage *msg)
 			}
 		}
 		break;
-		
+
 		default:
 		{
 			BListView::MessageReceived (msg);

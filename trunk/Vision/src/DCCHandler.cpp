@@ -40,8 +40,8 @@
 #include "Vision.h"
 #include "VTextControl.h"
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "DCCMessages"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "DCCMessages"
 
 class DCCFileFilter : public BMessageFilter
 {

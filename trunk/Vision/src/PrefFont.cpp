@@ -35,8 +35,8 @@
 #include <MenuItem.h>
 #include <ScrollView.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "FontPrefs"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "FontPrefs"
 
 struct FontStat
 {

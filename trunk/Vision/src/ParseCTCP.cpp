@@ -32,8 +32,8 @@
 #include "Utilities.h"
 #include "ServerAgent.h"
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ServerMessages"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ServerMessages"
 
 void
 ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
@@ -214,7 +214,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
 							poss (GetWord (theMsg.String(), 5));
 			poss.RemoveLast("\1");
 
-			off_t pos (0LL);
+			off_t pos ((int32)0L);
 			int32 i (0);
 			for (i = 0; i < poss.Length(); ++i)
 				pos = pos * 10 + poss[i] - '0';
@@ -251,7 +251,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
 							port (GetWord (theMsg.String(), 4)),
 							poss (GetWord (theMsg.String(), 5));
 			poss.RemoveLast("\1");
-			off_t pos (0LL);
+			off_t pos ((int32)0L);
 
 			for (int32 i = 0; i < poss.Length(); ++i)
 				pos = pos * 10 + poss[i] - '0';

@@ -1,21 +1,21 @@
 /*
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *								 Rene Gollent
  *								 Todd Lair
@@ -165,8 +165,8 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 			// we have our own pasting code so we can catch multiple lines
 			BClipboard clipboard ("system");
 			const char *fText;
-			int32 textLen;
-			BMessage *clip ((BMessage *)NULL);
+			ssize_t textLen;
+			BMessage *clip (NULL);
 
 			if (clipboard.Lock())
 			{
@@ -213,7 +213,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 	filter_result result (B_DISPATCH_MESSAGE);
 	const char *keyStroke;
 	int32 keymodifiers;
-	
+
 	BMessenger msgr (fWindow);
 
 		WindowList *winList (vision_app->pClientWin()->pWindowList());
@@ -225,7 +225,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 	{
 		return result;
 	}
-	
+
 	switch (keyStroke[0])
 	{
 		/////////////////
@@ -279,26 +279,26 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 					winList->SelectLast();
 			result = B_SKIP_MESSAGE;
 					break;
-			
+
 				case B_UP_ARROW:
 				case B_LEFT_ARROW: // baxter muscle memory
 				case ',': // bowser muscle memory
 					winList->ContextSelectUp();
 			result = B_SKIP_MESSAGE;
 					break;
-			
+
 				case B_DOWN_ARROW: //
 				case B_RIGHT_ARROW: // baxter muscle memory
 				case '.': // bowser muscle memory
 					winList->ContextSelectDown();
 			result = B_SKIP_MESSAGE;
 					break;
-			
+
 				case 'U':
 					winList->MoveCurrentUp();
 			result = B_SKIP_MESSAGE;
 					break;
-				
+
 				case 'D':
 					winList->MoveCurrentDown();
 			result = B_SKIP_MESSAGE;
@@ -335,7 +335,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			result = B_SKIP_MESSAGE;
 			}
 				break;
-				
+
 			case B_LEFT_ARROW: // collapse current server (if expanded)
 				{
 				winList->CollapseCurrentServer();
@@ -349,7 +349,7 @@ ClientAgentInputFilter::HandleKeys (BMessage *msg)
 			result = B_SKIP_MESSAGE;
 			}
 				break;
-			
+
 			case '/': // bowser muscle memory
 				// move to the agents parent ServerAgent
 				// XXX move to WindowList ?

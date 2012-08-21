@@ -1,25 +1,25 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *								 Rene Gollent
  */
- 
+
 #include "SettingsFile.h"
 #include "Vision.h" // for debug output
 
@@ -38,7 +38,7 @@
 SettingsFile::SettingsFile(char const*lname,char const*bname,directory_which d) {
 	check=B_OK;
 	if (d!=(directory_which)-1) { // -1 means "absolute path"
-		if ((check=find_directory(d,&path))!=B_OK) return;		
+		if ((check=find_directory(d,&path))!=B_OK) return;
 	} else {
 		if ((check=path.SetTo("/"))!=B_OK) return;
 	}
@@ -97,10 +97,10 @@ status_t SettingsFile::Load() {
 		MakeEmpty();
 		return ret;
 	}
-	
+
 	if (vision_app->fDebugSettings)
 		PrintToStream();
-/*	
+/*
 	ret=file.RewindAttrs();
 	if (ret!=B_OK) {
 		file.Unlock();
@@ -155,11 +155,11 @@ status_t SettingsFile::Load() {
 				}
 				break;
 			}
-		}		
+		}
 	}
 */
 	file.Unlock();
-	return B_OK; 
+	return B_OK;
 }
 
 status_t SettingsFile::_ExtractAttribute(BMessage*m,BFile*f,const char*full_name,char*partial_name,attr_info*ai) {
@@ -342,7 +342,7 @@ status_t SettingsFile::_StoreAttributes(BMessage const*m,BFile*f,const char*base
 					if (lname==NULL) {
 						return B_NO_MEMORY;
 					}
-					sprintf(lname,"%ld",countfound-1); // find the length of the biggest number for that field
+					sprintf(lname,"%" B_PRId32,countfound-1); // find the length of the biggest number for that field
 					char format[12];
 					sprintf(format,"%%s%%s::%%0%ldld:",strlen(lname)); // create the sprintf format
 					for (int32 j=0;j<countfound;j++) {
@@ -409,7 +409,7 @@ status_t SettingsFile::_StoreAttributes(BMessage const*m,BFile*f,const char*base
 					if (lname==NULL) {
 						return B_NO_MEMORY;
 					}
-					sprintf(lname,"%ld",countfound-1);
+					sprintf(lname,"%" B_PRId32,countfound-1);
 					char format[12];
 					sprintf(format,"%%s%%s::%%0%ldld",strlen(lname));
 					for (int32 j=0;j<countfound;j++) {

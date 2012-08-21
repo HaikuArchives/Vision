@@ -28,8 +28,8 @@
 #include <ScrollView.h>
 #include <View.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "PrefWindow"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "PrefWindow"
 
 PrefsWindow::PrefsWindow(void)
 	: BWindow (BRect (88.0, 108.0, 0.0, 0.0),

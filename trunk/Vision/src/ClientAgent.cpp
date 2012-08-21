@@ -115,7 +115,7 @@ ClientAgent::AttachedToWindow (void)
 	BView::AttachedToWindow();
 	fActiveTheme->WriteLock();
 	fActiveTheme->AddView (this);
-	fActiveTheme->WriteUnlock();	
+	fActiveTheme->WriteUnlock();
 }
 
 void
@@ -124,7 +124,7 @@ ClientAgent::DetachedFromWindow (void)
 	BView::DetachedFromWindow ();
 	fActiveTheme->WriteLock();
 	fActiveTheme->RemoveView (this);
-	fActiveTheme->WriteUnlock();	
+	fActiveTheme->WriteUnlock();
 }
 
 void
@@ -161,9 +161,9 @@ ClientAgent::Show (void)
 	statusMsg.AddInt32 ("status", WIN_NORMAL_BIT);
 	statusMsg.AddBool ("hidden", false);
 	Window()->PostMessage (&statusMsg);
-	
+
 	const BRect *agentRect (dynamic_cast<ClientWindow *>(Window())->AgentRect());
-	
+
 	if (*agentRect != Frame())
 	{
 		ResizeTo (agentRect->Width(), agentRect->Height());
@@ -190,7 +190,7 @@ ClientAgent::Init (void)
 								"Input", 0, 0,
 								0,
 								B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
-	
+
 	fInput->SetDivider (0);
 	fInput->ResizeToPreferred();
 	fInput->MoveTo (
@@ -199,26 +199,26 @@ ClientAgent::Init (void)
 	AddChild (fInput);
 	fInput->TextView()->AddFilter (new ClientAgentInputFilter (this));
 	fInput->Invalidate();
-	
+
 	fHistory = new HistoryList ();
-	
+
 	BRect textrect (
 		2,
 		fFrame.top,
 		fFrame.right - fFrame.left - 1 - B_V_SCROLL_BAR_WIDTH,
 		fFrame.bottom - fInput->Frame().Height() - 8);
-	
+
 	fText = new RunView (
 		textrect,
 		fId.String(),
 		fActiveTheme,
 		B_FOLLOW_ALL);
-	 
+
 	fText->SetClippingName (fId.String());
-	
+
 	if (vision_app->GetBool ("timestamp"))
 		fText->SetTimeStampFormat (vision_app->GetString ("timestamp_format"));
-	
+
 	fTextScroll = new BScrollView (
 		"textscroll",
 		fText,
@@ -227,7 +227,7 @@ ClientAgent::Init (void)
 		false,
 		true,
 		B_PLAIN_BORDER);
-	
+
 	AddChild (fTextScroll);
 }
 
@@ -257,8 +257,8 @@ ClientAgent::SetServerName (const char *name)
 	fServerName = name;
 }
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "EditMenu"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "EditMenu"
 
 void
 ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
@@ -309,7 +309,7 @@ ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
 		BClipboard clipboard("system");
 		BMessage *clip ((BMessage *)NULL);
 		if (clipboard.Lock()) {
-			if ((clip = clipboard.Data())) 
+			if ((clip = clipboard.Data()))
 			{
 				if (clip->HasData ("text/plain", B_MIME_TYPE))
 					menuItem->SetEnabled(true);
@@ -326,8 +326,8 @@ ClientAgent::SetEditStates (BMenu *menu, bool targetonly)
 	}
 }
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ClientWindow"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ClientWindow"
 
 BString
 ClientAgent::FilterCrap (const char *data, bool force)
@@ -349,7 +349,7 @@ ClientAgent::FilterCrap (const char *data, bool force)
 					outData << "[0x03]{";
 
 				++i;
-				
+
 				// filter foreground
 				for (j = 0; j < 2; j++)
 					if (data[i] >= '0' && data[i] <= '9')
@@ -359,7 +359,7 @@ ClientAgent::FilterCrap (const char *data, bool force)
 							++i;
 					}
 					else break;
-					
+
 				if (data[i] == ',')
 				{
 						if (ViewCodes)
@@ -376,7 +376,7 @@ ClientAgent::FilterCrap (const char *data, bool force)
 				}
 
 				--i;
-				
+
 				if (ViewCodes)
 					outData << "}";
 			}
@@ -401,7 +401,7 @@ ClientAgent::Submit (
 	bool fHistoryAdd)
 {
 	BString cmd;
-	
+
 	if (fHistoryAdd)
 		cmd = fHistory->Submit (buffer);
 	else
@@ -456,18 +456,18 @@ ClientAgent::TimedSubmit (void *arg)
 	BMessage submitMsg (M_SUBMIT);
 	submitMsg.AddBool ("history", addtofHistory);
 	submitMsg.AddBool ("clear", false);
-	
+
 	for (i = 0; (msg->HasString ("data", i)) && (agentMsgr.IsValid()) && (false == agent->CancelMultilineTextPaste()); ++i)
 	{
 		BString data;
 
 
 		msg->FindString ("data", i, &data);
-		
+
 		// add a space so /'s don't get triggered as commands
 		if (!autoexec)
 			data.Prepend (" ");
-		
+
 		if (!submitMsg.HasString ("input"))
 			submitMsg.AddString ("input", data);
 		else
@@ -496,13 +496,13 @@ ClientAgent::PackDisplay (
 	int16 font)
 {
 	BMessage packed;
-	
+
 	packed.AddString ("msgz", buffer);
 
 	packed.AddInt16 ("fore", fore);
 	packed.AddInt16 ("back", back);
 	packed.AddInt16 ("font", font);
-	
+
 	if (msg->HasMessage ("packed"))
 		msg->ReplaceMessage ("packed", &packed);
 	else
@@ -551,7 +551,7 @@ ClientAgent::ParsemIRCColors (
 				mircFont (font),
 				i (0);
 	const char *start (NULL);
-				
+
 	while (buffer && *buffer)
 	{
 		start = buffer;
@@ -585,7 +585,7 @@ ClientAgent::ParsemIRCColors (
 					mircFore += (*buffer++ - '0');
 				}
 				mircFore = (mircFore % 16) + C_MIRC_WHITE;
-				
+
 				if (*buffer == ',')
 				{
 					++buffer;
@@ -681,7 +681,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 					logMessage.AddString ("name", fId.String());
 					fSMsgr.SendMessage(&logMessage);
 				}
-				
+
 				BMessage deathchant (M_CLIENT_SHUTDOWN);
 				deathchant.AddPointer("agent", this);
 				fSMsgr.SendMessage (&deathchant);
@@ -704,7 +704,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 				}
 			}
 			break;
-		 
+
 		case M_THEME_FONT_CHANGE:
 			{
 				int16 which (msg->FindInt16 ("which"));
@@ -718,7 +718,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 					Invalidate();
 				}
 			}
-			break; 
+			break;
 
 		case M_STATE_CHANGE:
 			{
@@ -732,9 +732,9 @@ ClientAgent::MessageReceived (BMessage *msg)
 						else
 							fText->SetTimeStampFormat (NULL);
 					}
-					
+
 					bool shouldLog = vision_app->GetBool ("log_enabled");
-					
+
 					if (fIsLogging != shouldLog)
 					{
 						if ((fIsLogging = shouldLog))
@@ -742,7 +742,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 							BMessage logMessage (M_REGISTER_LOGGER);
 							logMessage.AddString ("name", fId.String());
 							fSMsgr.SendMessage (&logMessage);
-						} 
+						}
 						else
 						{
 							BMessage logMessage (M_UNREGISTER_LOGGER);
@@ -759,7 +759,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 				}
 			}
 			break;
-		 
+
 		case M_SUBMIT_INPUT:
 			{
 				fCancelMLPaste = false;
@@ -773,18 +773,18 @@ ClientAgent::MessageReceived (BMessage *msg)
 					msg->FindPointer ("invoker", reinterpret_cast<void **>(&invoker));
 					delete invoker;
 				}
-				
+
 				switch (which)
 				{
 					case PASTE_CANCEL:
 							break;
-						
+
 						case PASTE_MULTI:
 						case PASTE_MULTI_NODELAY:
 						{
 							BMessage *buffer (new BMessage (*msg));
 							thread_id tid;
-							
+
 							// if there is some text in the input control already, submit it before
 							// starting the timed paste
 							if (fInput->TextView()->TextLength() != 0)
@@ -805,7 +805,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 							resume_thread (tid);
 						}
 						break;
-						
+
 						case PASTE_SINGLE:
 						{
 							BString buffer;
@@ -816,9 +816,9 @@ ClientAgent::MessageReceived (BMessage *msg)
 								buffer += (i ? " " : "");
 							 buffer += data;
 							}
-					
+
 							int32 start, finish;
- 
+
 							if (msg->FindInt32 ("selstart", &start) == B_OK)
 							{
 								msg->FindInt32 ("selend", &finish);
@@ -848,7 +848,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 							fInput->TextView()->ScrollToSelection();
 						}
 						break;
-				
+
 					default:
 						break;
 				}
@@ -922,17 +922,17 @@ ClientAgent::MessageReceived (BMessage *msg)
 
 				BString tempString;
 				BString nickString;
-				
+
 				if (theMessage[0] == '\1')
 				{
-					BString aMessage (theMessage);		
+					BString aMessage (theMessage);
 					aMessage.RemoveFirst ("\1ACTION ");
 					aMessage.RemoveLast ("\1");
-					
+
 					tempString = " ";
 					tempString += aMessage;
 					tempString += "\n";
-					
+
 					nickString = "* ";
 					nickString += theNick;
 					isAction = true;
@@ -952,7 +952,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 					FirstKnownAs (tempString, knownAs, &hasNick);
 
 				tempString.Prepend (nickString);
- 
+
 				int32 dispColor = C_TEXT;
 				if (hasNick)
 				{
@@ -960,10 +960,10 @@ ClientAgent::MessageReceived (BMessage *msg)
 					dispColor = C_MYNICK;
 					if ((window = Window()) != NULL && !window->IsActive())
 						system_beep(kSoundEventNames[(uint32)seNickMentioned]);
-				}						
+				}
 				else if (isAction)
 					dispColor = C_ACTION;
-				
+
 				Display (tempString.String(), dispColor);
 			}
 			break;
@@ -976,7 +976,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 
 				if (fMyNick.ICompare (oldNick) == 0)
 					fMyNick = msg->FindString ("newnick");
-				 
+
 				BMessage display;
 				if (msg->FindMessage ("display", &display) == B_NO_ERROR)
 					ClientAgent::MessageReceived (&display);
@@ -1014,7 +1014,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 				vision_app->LoadURL (lookup.String());
 			}
 			break;
-		
+
 		case M_LOOKUP_ACRONYM:
 			{
 				BString lookup;
@@ -1025,13 +1025,13 @@ ClientAgent::MessageReceived (BMessage *msg)
 				vision_app->LoadURL (lookup.String());
 			}
 			break;
-			
+
 	case B_ESCAPE:
 			fCancelMLPaste = true;
 		break;
-	
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "DCCStatus"
+
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "DCCStatus"
 
 	case M_DCC_COMPLETE:
 		{
@@ -1052,16 +1052,16 @@ ClientAgent::MessageReceived (BMessage *msg)
 				msg->FindString ("type", &type);
 				msg->FindInt32 ("transferred", &xfersize);
 				msg->FindFloat ("transferRate", &rate);
-				
+
 				BPath pFile (file.String());
 
 				fAck << xfersize;
-								
+
 				if (size.ICompare (fAck))
 					completed = false;
 
 
-					/// send mesage ///				
+					/// send mesage ///
 				if (type == "SEND")
 				{
 				if (completed)
@@ -1075,7 +1075,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 						completionMsg += B_TRANSLATE("Completed receive of %1 from %2 (%3), %4 KB/sec");
 					else
 						completionMsg += B_TRANSLATE("Failed receive of %1 from %2 (%3/%4), %5 KB/sec");
-						
+
 				}
 				completionMsg.ReplaceFirst("%1", pFile.Leaf());
 				completionMsg.ReplaceFirst("%2", nick);
@@ -1100,7 +1100,7 @@ ClientAgent::MessageReceived (BMessage *msg)
 					completionMsg.ReplaceFirst("%5", temp.String());
 				}
 				completionMsg += "\n";
-					
+
 				Display (completionMsg.String(), C_CTCP_RPY);
 		}
 		break;
@@ -1129,7 +1129,7 @@ ClientAgent::FirstKnownAs (
 				i,
 				place;
 	BString target;
-	
+
 	if ((place = FirstSingleKnownAs (data, fMyNick)) != B_ERROR)
 	{
 		result = fMyNick;

@@ -17,8 +17,8 @@
 #include "ColumnTypes.h"
 #include "Vision.h"
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ServerListView"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ServerListView"
 
 const rgb_color serverItemNormalColor = {0, 0, 0, 255};
 const rgb_color serverItemDefaultColor = {0, 127, 0, 255};
@@ -273,7 +273,8 @@ NetPrefsServerView::RemoveServer ()
 	{
 		BStringField *field ((BStringField *) row->GetField (1));
 
-		int32 count, size;
+		int32 count;
+		ssize_t size;
 		type_code type;
 		fActiveNetwork->GetInfo ("server", &type, &count);
 
@@ -300,7 +301,8 @@ NetPrefsServerView::UpdateNetworkData (const ServerData * newServer)
 	if (newServer == NULL)
 		return;
 	type_code type;
-	int32 count, size;
+	int32 count;
+	ssize_t size;
 	fActiveNetwork->GetInfo ("server", &type, &count);
 	const ServerData *data (NULL);
 	for (int32 i = 0; i < count; i++)
@@ -322,7 +324,7 @@ NetPrefsServerView::SetNetworkData (BMessage * msg)
 	BLooper *looper (Looper());
 	if (looper == NULL)
 		return;
-	
+
 	BAutolock lock (Looper ());
 	if (!lock.IsLocked ())
 		return;
@@ -338,7 +340,8 @@ NetPrefsServerView::SetNetworkData (BMessage * msg)
 	netString.ReplaceFirst("%1", msg->FindString("name"));
 	netString += ":";
 	type_code type;
-	int32 count, size;
+	int32 count;
+	ssize_t size;
 	const ServerData *data;
 	msg->GetInfo ("server", &type, &count);
 	for (int32 i = 0; i < count; i++)
@@ -395,7 +398,8 @@ NetPrefsServerView::MessageReceived (BMessage * msg)
 					BRow *row (fServerList->CurrentSelection ());
 					if (!row)
 						break;
-					int32 count (0), size (0);
+					int32 count (0);
+					ssize_t size (0);
 					type_code type;
 					fActiveNetwork->GetInfo ("server", &type, &count);
 					const ServerData *compData;
@@ -424,7 +428,7 @@ NetPrefsServerView::MessageReceived (BMessage * msg)
 		case M_SERVER_RECV_DATA:
 			{
 				const ServerData *data;
-				int32 size;
+				ssize_t size;
 				Window ()->DisableUpdates ();
 				msg->FindData ("server", B_RAW_TYPE, reinterpret_cast < const void **>(&data), &size);
 				if (msg->HasBool ("edit"))

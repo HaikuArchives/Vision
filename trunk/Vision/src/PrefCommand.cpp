@@ -27,8 +27,8 @@
 #include <Catalog.h>
 #include <ScrollView.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "CommandPrefs"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "CommandPrefs"
 
 static const char *CommandControlLabels[] =
 {

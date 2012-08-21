@@ -52,8 +52,8 @@
 #include <infopopper/InfoPopper.h>
 #endif
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ChannelWindow"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ChannelWindow"
 
 ChannelAgent::ChannelAgent (
 	const char *id_,
@@ -96,11 +96,11 @@ ChannelAgent::~ChannelAgent (void)
 	
 	// empty recent nick list
 	while (fRecentNicks.CountItems() > 0)
-		delete fRecentNicks.RemoveItemAt(0L);
+		delete fRecentNicks.RemoveItemAt((int32)0);
 	
 	// empty nick completion list
 	while (fCompletionNicks.CountItems() > 0)
-		delete fCompletionNicks.RemoveItemAt(0L);
+		delete fCompletionNicks.RemoveItemAt((int32)0);
 }
 
 void
@@ -344,7 +344,7 @@ ChannelAgent::ChannelMessage (
 		 int32 count (fRecentNicks.CountItems());
 		 if (count > MAX_RECENT_NICKS)
 		 {
-			 delete fRecentNicks.RemoveItemAt (0L);
+			 delete fRecentNicks.RemoveItemAt ((int32)0);
 		 }
 		 // scan for presence of nick in list, and remove duplicate if found
 		 RemoveNickFromList (fRecentNicks, nick);
@@ -452,7 +452,7 @@ ChannelAgent::TabExpansion (void)
 			fLastExpansion = place;
 
 			while (!fCompletionNicks.IsEmpty())
-				delete fCompletionNicks.RemoveItemAt(0L);
+				delete fCompletionNicks.RemoveItemAt((int32)0);
 			
 			int32 count (fNamesList->CountItems()),
 						i (0);
@@ -753,7 +753,7 @@ ChannelAgent::MessageReceived (BMessage *msg)
 				// over in it after reconnect -- list will quickly be rebuilt anyhow if there
 				// is any conversation whatsoever going on
 				while (fRecentNicks.CountItems() > 0)
-					delete fRecentNicks.RemoveItemAt(0L);
+					delete fRecentNicks.RemoveItemAt((int32)0);
 				
 			}
 			break;
@@ -1230,8 +1230,8 @@ ChannelAgent::MessageReceived (BMessage *msg)
 			 }
 			 break;
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "StatusBar"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "StatusBar"
 
 		 case M_STATUS_ADDITEMS:
 			 {

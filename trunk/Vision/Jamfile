@@ -1,13 +1,11 @@
-SubDir HAIKU_TOP 3rdparty anevilyak Vision ;
+SubDir HAIKU_TOP src apps vision ;
 
-SetSubDirSupportedPlatformsBeOSCompatible ;
 UsePrivateHeaders interface ;
 #SubDirC++Flags -DSINGLE_BINARY -DDEBUG=1 ;
-SubDirC++Flags -DVERSION_STRING=\\\"0.9.8-01092008\\\" -DBUILD_DATE=\\\"Sep_01_2008\\\" ;
+SubDirC++Flags -DVERSION_STRING=\\\"0.9.8-08192012\\\" -DBUILD_DATE=\\\"Aug_19_2012\\\" ;
+SEARCH_SOURCE += [ FDirName $(SUBDIR) src ] ;
 
-SEARCH_SOURCE += [ FDirName $(HAIKU_TOP) 3rdparty anevilyak Vision src ] ;
-
-Application <3rdparty>Vision :
+Application Vision :
 	AboutWindow.cpp
 	ChannelAgent.cpp
 	ChannelOptions.cpp
@@ -19,7 +17,6 @@ Application <3rdparty>Vision :
 	ClientWindowDock.cpp
 	ColorSelector.cpp
 	ColorSwatch.cpp
-	ColorTools.cpp
 	DCCConnect.cpp
 	DCCFileWindow.cpp
 	DCCHandler.cpp
@@ -30,6 +27,7 @@ Application <3rdparty>Vision :
 	NameItem.cpp
 	NamesView.cpp
 	NetPrefsServerView.cpp
+	NetworkManager.cpp
 	NetworkMenu.cpp
 	NetworkPrefsView.cpp
 	NetworkWindow.cpp
@@ -51,6 +49,7 @@ Application <3rdparty>Vision :
 	PrefLog.cpp
 	PrefsWindow.cpp
 	Prompt.cpp
+	ResizeView.cpp
 	RunView.cpp
 	ServerAgent.cpp
 	ServerEntryWindow.cpp
@@ -64,7 +63,7 @@ Application <3rdparty>Vision :
 	VTextControl.cpp
 	Vision.cpp
 	WindowList.cpp
-	: libcolumnlistview.a be translation textencoding tracker $(TARGET_NETWORK_LIBS) $(TARGET_LIBSTDC++)
+	: be libcolumnlistview.a translation textencoding tracker $(TARGET_NETWORK_LIBS) $(TARGET_LIBSUPC++) $(TARGET_LIBSTDC++) $(HAIKU_LOCALE_LIBS)
 	: Vision.rsrc
 ;
 

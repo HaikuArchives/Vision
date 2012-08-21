@@ -37,8 +37,8 @@
 
 #include <stdio.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ColorPrefs"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ColorPrefs"
 
 // data structures for font prefs
 

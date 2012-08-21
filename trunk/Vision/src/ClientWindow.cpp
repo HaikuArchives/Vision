@@ -62,8 +62,8 @@
 	<Brazilian> I have a monkey who draws on my wall really fast
 */
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ClientWindow"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ClientWindow"
 
 static const char *skTermSig = "application/x-vnd.Haiku-Terminal";
 
@@ -648,16 +648,16 @@ ClientWindow::Init (void)
 	// Edit menu
 	fEdit = new DynamicEditMenu ();
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "EditMenu"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "EditMenu"
 	fEdit->AddItem (item = new BMenuItem (B_TRANSLATE("Cut"), new BMessage (B_CUT), 'X'));
 	fEdit->AddItem (item = new BMenuItem (B_TRANSLATE("Copy"), new BMessage (B_COPY), 'C'));
 	fEdit->AddItem (item = new BMenuItem (B_TRANSLATE("Paste"), new BMessage (B_PASTE), 'V'));
 	fEdit->AddItem (item = new BMenuItem (B_TRANSLATE("Select All"), new BMessage (B_SELECT_ALL), 'A', B_OPTION_KEY));
 	fMenuBar->AddItem (fEdit);
 	
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "WindowMenu"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "WindowMenu"
 	
 	// Window menu
 	fWindow = new BMenu (B_TRANSLATE("Window"));

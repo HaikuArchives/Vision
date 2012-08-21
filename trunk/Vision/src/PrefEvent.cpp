@@ -26,8 +26,8 @@
 #include <Catalog.h>
 #include <ScrollView.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "EventPrefs"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "EventPrefs"
 
 static const char *EventControlLabels[] =
 {

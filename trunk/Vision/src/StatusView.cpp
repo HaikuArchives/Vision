@@ -67,7 +67,7 @@ StatusView::~StatusView (void)
 {
 	while (!items.IsEmpty())
 	{
-		StatusItem *item ((StatusItem *)items.RemoveItem (0L));
+		StatusItem *item ((StatusItem *)items.RemoveItem ((int32)0));
 
 		delete item;
 	}
@@ -123,7 +123,7 @@ StatusView::Clear (void)
 
 	for (i = 0; i <= all; i++)
 	{
-		StatusItem *item ((StatusItem *)items.RemoveItem (0L));
+		StatusItem *item ((StatusItem *)items.RemoveItem ((int32)0));
 		delete item;
 	}
 	

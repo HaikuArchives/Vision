@@ -282,8 +282,8 @@ ClientAgentLogger::AsyncLogger (void *arg)
 		if (!myLogBuffer->IsEmpty())
 		{
 			// grab next string from list and write to file
-			currentLogger = myLogBuffer->RemoveItemAt (0L);
-			currentString = myLogBuffer->RemoveItemAt (0L);
+			currentLogger = myLogBuffer->RemoveItemAt ((int32)0);
+			currentString = myLogBuffer->RemoveItemAt ((int32)0);
 			myLogBufferLock->Unlock();
 			myLogFile = &logger->fLogFiles[*currentLogger];
 			if (myLogFile->InitCheck() != B_NO_INIT)
@@ -297,8 +297,8 @@ ClientAgentLogger::AsyncLogger (void *arg)
 	// on shutdown empty out all remaining data (if any) and write to file
 	while (!myLogBuffer->IsEmpty())
 	{
-		currentLogger = (BString *)(myLogBuffer->RemoveItemAt (0L));
-		currentString = (BString *)(myLogBuffer->RemoveItemAt (0L));
+		currentLogger = (BString *)(myLogBuffer->RemoveItemAt ((int32)0));
+		currentString = (BString *)(myLogBuffer->RemoveItemAt ((int32)0));
 		myLogFile = &logger->fLogFiles[*currentLogger];
 		if (myLogFile->InitCheck() != B_NO_INIT)
 			myLogFile->Write (currentString->String(), currentString->Length());

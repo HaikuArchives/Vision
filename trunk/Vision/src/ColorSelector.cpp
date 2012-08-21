@@ -46,7 +46,7 @@ public:
 		fColor = color;
 		fInitialColor = initial_color;
 	}
-	
+
 	void ResetColors(rgb_color col, rgb_color initial)
 	{
 		if (!CompareColors(fColor, col) || !CompareColors (fInitialColor, initial)) {
@@ -56,7 +56,7 @@ public:
 			if (parent) parent->Invalidate(Frame());
 		}
 	}
-	
+
 	void SetColor(rgb_color col)
 	{
 		if (!CompareColors (fColor, col)) {
@@ -65,23 +65,23 @@ public:
 			if (parent) parent->Invalidate(Frame());
 		}
 	}
-	
+
 	rgb_color Color() const
 	{
 		return fColor;
 	}
-	
+
 	rgb_color InitialColor() const
 	{
 		return fInitialColor;
 	}
-	
+
 	virtual	void DrawContent()
 	{
 		BRect		b = Frame();
 		BMenu		*parent = Menu();
 		BPoint		loc = parent->PenLocation();
-		
+
 		enum {
 			W_CHAR = 0,
 			A_CHAR = 1,
@@ -97,18 +97,18 @@ public:
 		for (int32 i=0; i<NUM_CHARS; i++) {
 			escapements[i] *= font.Size();
 		}
-		
+
 		const float blockWidth = escapements[W_CHAR]+escapements[A_CHAR];
-		
+
 		const rgb_color old_col = parent->HighColor();
 		font_height fh;
-		
+
 		const bool showInitial = !CompareColors(fInitialColor, fColor);
-		
+
 		b.InsetBy(1, 1);
 		b.bottom -= 1;
 		b.left = loc.x;
-		
+
 		if (showInitial) {
 			parent->GetFontHeight(&fh);
 			parent->DrawString("(", BPoint(b.left, loc.y+fh.ascent));
@@ -130,27 +130,27 @@ public:
 			parent->DrawString(")", BPoint(b.right+1, loc.y+fh.ascent));
 		}
 		b.right += escapements[CLOSE_CHAR] + 1;
-		
+
 		b.left = b.right + escapements[SPACE_CHAR];
 		b.right = b.left + blockWidth;
-		
+
 		parent->SetHighColor(fColor);
 		parent->FillRect(b);
 		parent->SetHighColor(old_col);
 		b.InsetBy(-1, -1);
 		parent->StrokeRect(b);
-		
+
 		parent->MovePenTo(b.right + escapements[SPACE_CHAR]*2 + 2, loc.y);
-		
+
 		BMenuItem::DrawContent();
 	}
-	
+
 	virtual	void GetContentSize(float *w, float *h)
 	{
 		BMenuItem::GetContentSize(w, h);
 		*w += Menu()->StringWidth("(W) WA	")+4 + 2;
 	}
-	
+
 private:
 	rgb_color fColor, fInitialColor;
 };
@@ -187,9 +187,9 @@ static void populate_colors(BMenu* dest, const BMessage& src,
 					break;
 				}
 			}
-			
+
 			if (found) continue;
-			
+
 			// This color doesn't currently exist; add it in.
 			BMessage* msg = new BMessage(CMD_CHOOSE_UI_COLOR);
 			msg->AddString("field", name);
@@ -203,7 +203,7 @@ static void populate_colors(BMenu* dest, const BMessage& src,
 					break;
 			}
 			rgb_color *init_col;
-			if (!initial || initial->FindData ("color", B_RGB_COLOR_TYPE, j, 
+			if (!initial || initial->FindData ("color", B_RGB_COLOR_TYPE, j,
 				(const void **)&init_col, &size) != B_OK)
 				*init_col = *col;
 
@@ -226,7 +226,7 @@ ColorSelector::ColorSelector(	BRect frame, const char* name,
 		fNames(names), fInitColors(colors), fColors(colors), fSizeValid(false)
 {
 	const BRect dummyRect(-100, -100, -10, -10);
-	
+
 	fColorMenu = new BPopUpMenu("Colors");
 	populate_colors(fColorMenu, fColors, fNames, &fInitColors);
 	fColorField = new BMenuField(dummyRect, "Color", "Color: ", fColorMenu,
@@ -234,7 +234,7 @@ ColorSelector::ColorSelector(	BRect frame, const char* name,
 								 B_WILL_DRAW|B_FRAME_EVENTS|B_NAVIGABLE);
 	AddChild(fColorField);
 	fColorField->SetFont(be_bold_font);
-	
+
 	fColorPalette = new BColorControl(dummyRect.LeftTop(), B_CELLS_32x8, 8,
 										"Palette", new BMessage(CMD_SET_UI_COLOR),
 										true);
@@ -243,7 +243,7 @@ ColorSelector::ColorSelector(	BRect frame, const char* name,
 	fColorPalette->SetDoubleBuffering (B_UPDATE_INVALIDATED | B_UPDATE_RESIZED | B_UPDATE_EXPOSED);
 #else
 		rgb_color *color (NULL);
-		int32 size (0);
+		ssize_t size (0);
 		fColors.FindData ("color", B_RGB_COLOR_TYPE, 0, (const void **)(&color), &size);
 		swatch = new ColorSwatch (dummyRect, "swatch", *color);
 		AddChild (swatch);
@@ -274,7 +274,7 @@ void ColorSelector::ExtractColors(BMessage* dest, const BMessage& src)
 void ColorSelector::AttachedToWindow()
 {
 	BControl::AttachedToWindow();
-	
+
 	BMessenger me(this);
 	fColorPalette->SetTarget(me);
 	fColorMenu->SetTargetForItems(me);
@@ -301,7 +301,7 @@ void ColorSelector::LayoutViews(bool really)
 	fColorField->SetDivider(fColorField->StringWidth(fColorField->Label()) + 5);
 	fColorField->GetPreferredSize(&mw, &mh);
 	fColorPalette->GetPreferredSize(&cw, &ch);
-	
+
 	if (really) {
 		BRect b(Bounds());
 		if (Window()) Window()->BeginViewTransaction();
@@ -319,7 +319,7 @@ void ColorSelector::LayoutViews(bool really)
 		if (Window()) Window()->EndViewTransaction();
 	}
 
-#if B_BEOS_VERSION_DANO	
+#if B_BEOS_VERSION_DANO
 	fPrefWidth = (mw > cw ? mw : cw);
 #else
 	fPrefWidth = (mw > cw ? mw : cw) + 5 + swatch->Bounds().Width();
@@ -332,7 +332,7 @@ void ColorSelector::MessageReceived(BMessage *msg)
 {
 	if (msg->WasDropped()) {
 		rgb_color *color;
-		int32 size;
+		ssize_t size;
 		if (msg->FindData ("RGBColor", B_RGB_COLOR_TYPE, (const void **)&color,
 			&size) == B_OK) {
 			if (fColorPalette) {
@@ -347,12 +347,12 @@ void ColorSelector::MessageReceived(BMessage *msg)
 		}
 		return;
 	}
-	
+
 	switch (msg->what) {
 		case CMD_CHOOSE_UI_COLOR: {
 			const char* field;
 			int32 index (0);
-			int32 size;
+			ssize_t size;
 			if (msg->FindString("field", &field) == B_OK) {
 				msg->FindInt32 ("index", &index);
 				fCurrentField = field;
@@ -366,7 +366,7 @@ void ColorSelector::MessageReceived(BMessage *msg)
 				}
 			}
 		} break;
-		
+
 		case CMD_SET_UI_COLOR: {
 			if (Message()) {
 				BMessage upd(*Message());
@@ -390,7 +390,7 @@ void ColorSelector::MessageReceived(BMessage *msg)
 				Invoke(&upd);
 			}
 		} break;
-		
+
 		default:
 			BControl::MessageReceived(msg);
 			break;
@@ -439,17 +439,17 @@ void ColorSelector::SetTo(const BMessage& colors)
 	fInitColors.MakeEmpty();
 	ExtractColors(&fInitColors, colors);
 	fColors = fInitColors;
-	
+
 	fColorMenu->RemoveItems(0, fColorMenu->CountItems(), true);
 	populate_colors(fColorMenu, fColors, fNames, &fInitColors);
-	
+
 	if (Window()) ColorSelector::AttachedToWindow();
 }
 
 void ColorSelector::Update(const BMessage& changes)
 {
 	int32 index (0);
-	int32 size (0);
+	ssize_t size (0);
 	rgb_color *color;
 	changes.FindInt32 ("index", &index);
 	changes.FindData ("color", B_RGB_COLOR_TYPE, (const void **)(&color), &size);
@@ -461,7 +461,7 @@ void ColorSelector::Update(const BMessage& changes)
 		BMessage *curMsg (item->Message());
 		curMsg->FindInt32 ("index", &index);
 	}
-			
+
 	if (fColors.FindData ("color", B_RGB_COLOR_TYPE, index,
 		(const void **)(&color), &size) == B_OK) {
 		fColorPalette->SetValue(*color);
@@ -477,7 +477,7 @@ void ColorSelector::Revert()
 	BMessage OriginalColors = fInitColors;
 	SetTo (OriginalColors);
 	rgb_color *color;
-	int32 size (0);
+	ssize_t size (0);
 
 	for (int32 i = 0; i < MAX_COLORS; i++)
 		if (fInitColors.FindData ("color", B_RGB_COLOR_TYPE, i, (const void **)(&color), &size) == B_OK)

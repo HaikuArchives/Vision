@@ -36,8 +36,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "AddServerWindow"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "AddServerWindow"
 
 ServerEntryWindow::ServerEntryWindow (BHandler *handler, BMessage *invoked, const ServerData *data, int32 size)
 	: BWindow (

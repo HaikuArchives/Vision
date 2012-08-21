@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Rene Gollent
 									 Alan Ellis
  */
@@ -37,8 +37,8 @@
 #include <ListView.h>
 #include <ScrollView.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "GeneralPrefs"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "GeneralPrefs"
 
 GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redraw, uint32 flags)
 	: BView (frame, title, redraw, flags),
@@ -74,7 +74,7 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
 
 	fPrefsItems[piAlias] = new AliasesPrefsView (bounds);
 	fPrefsBox->AddChild (fPrefsItems[piAlias]);
-	
+
 	fPrefsItems[piWindow]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
 	fPrefsItems[piWindow]->ResizeBy(be_plain_font->StringWidth("i") * 3, -1.2 * (be_plain_font->Size()));
 	fPrefsItems[piWindow]->Hide();
@@ -91,11 +91,11 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
 	fPrefsItems[piEvents] = new EventPrefsView (bounds);
 	fPrefsBox->AddChild (fPrefsItems[piEvents]);
 	fPrefsItems[piEvents]->Hide();
-	
+
 	fPrefsItems[piDCC] = new DCCPrefsView (bounds);
 	fPrefsBox->AddChild (fPrefsItems[piDCC]);
 	fPrefsItems[piDCC]->Hide();
-	
+
 	fPrefsItems[piLog] = new LogPrefsView (bounds);
 	fPrefsBox->AddChild (fPrefsItems[piLog]);
 	fPrefsItems[piLog]->Hide();
@@ -104,7 +104,7 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
 GeneralPrefsView::~GeneralPrefsView (void)
 {
 	while (fPrefsList->CountItems() != 0)
-		delete fPrefsList->RemoveItem (0L);
+		delete fPrefsList->RemoveItem ((int32)0);
 }
 
 void
@@ -145,7 +145,7 @@ GeneralPrefsView::MessageReceived (BMessage *msg)
 			Invalidate();
 		}
 		break;
-			
+
 		default:
 			BView::MessageReceived(msg);
 	}

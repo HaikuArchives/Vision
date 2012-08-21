@@ -1,27 +1,27 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *								 Rene Gollent
  *								 Todd Lair
  *								 Andrew Bazan
  */
- 
+
 
 #include "NetworkManager.h"
 #include "VisionMessages.h"
@@ -42,7 +42,7 @@ NetworkManager::NetworkManager(void)
 	{
 		fPollFDs[i].fd = -1;
 	}
-	
+
 	fPollThread = spawn_thread(Overlord, "Overlord", B_LOW_PRIORITY, this);
 	if (fPollThread >= B_OK)
 	{
@@ -50,7 +50,7 @@ NetworkManager::NetworkManager(void)
 	}
 	else
 	{
-		printf("Thread error: %ld\n", fPollThread);
+		printf("Thread error: %" B_PRId32 "\n", fPollThread);
 	}
 }
 
@@ -71,7 +71,7 @@ NetworkManager::QuitRequested(void)
 		_HandleDisconnect(fSockets.begin()->first, index);
 	}
 	_SocketUnlock();
-	
+
 	return true;
 }
 
@@ -85,13 +85,13 @@ NetworkManager::MessageReceived(BMessage *message)
 			_HandleConnect(message);
 		}
 		break;
-		
+
 		case M_CREATE_LISTENER:
 		{
 			_HandleBind(message);
 		}
 		break;
-		
+
 		case M_DESTROY_CONNECTION:
 		{
 			int32 sock = -1;
@@ -105,14 +105,14 @@ NetworkManager::MessageReceived(BMessage *message)
 			}
 		}
 		break;
-		
-		
+
+
 		case M_SEND_CONNECTION_DATA:
 		{
 			_HandleSend(message);
 		}
 		break;
-		
+
 		default:
 			BLooper::MessageReceived(message);
 			break;
@@ -121,7 +121,7 @@ NetworkManager::MessageReceived(BMessage *message)
 
 int32
 NetworkManager::Overlord(void *data)
-{ 
+{
 	NetworkManager *manager = reinterpret_cast<NetworkManager *>(data);
 	while (!manager->fShuttingDown)
 	{
@@ -147,10 +147,10 @@ NetworkManager::Overlord(void *data)
 					manager->_HandleReceive(manager->fPollFDs[i].fd, i);
 				}
 			}
-			else if (manager->fPollFDs[i].revents & 
+			else if (manager->fPollFDs[i].revents &
 				(POLLERR | POLLHUP | POLLNVAL))
 			{
-				manager->_HandleDisconnect(manager->fPollFDs[i].fd, i);	
+				manager->_HandleDisconnect(manager->fPollFDs[i].fd, i);
 			}
 			else if (manager->fPollFDs[i].revents != 0)
 			{
@@ -171,9 +171,9 @@ NetworkManager::ConnectionHandler(void *data)
 
 	BMessenger target;
 	message->FindMessenger("target", &target);
-	
+
 	BMessenger msgr(network_manager);
-	
+
 	bigtime_t timeout = 0;
 	if (message->FindInt64("timeout", &timeout) == B_OK && timeout > 0)
 	{
@@ -227,7 +227,7 @@ NetworkManager::ConnectionHandler(void *data)
 			}
 			freeaddrinfo(info);
 		}
-		
+
 		reply.AddInt32("status", result);
 		if (result == 0 && sock >= 0)
 		{
@@ -254,10 +254,10 @@ NetworkManager::ConnectionHandler(void *data)
 		reply.AddInt32("status", B_BAD_DATA);
 	}
 	target.SendMessage(&reply);
-	
+
 	delete message;
-	
-	return B_OK;	
+
+	return B_OK;
 }
 
 void
@@ -265,8 +265,8 @@ NetworkManager::_HandleSend(const BMessage *data)
 {
 	int32 sock = -1;
 	const void *sendBuffer = NULL;
-	int32 size = -1;
-	if (data->FindInt32("connection", &sock) == B_OK 
+	ssize_t size = -1;
+	if (data->FindInt32("connection", &sock) == B_OK
 		&& data->FindData("data", B_RAW_TYPE, &sendBuffer, &size) == B_OK)
 	{
 		int result = send(sock, sendBuffer, size, 0);
@@ -299,7 +299,7 @@ NetworkManager::_HandleReceive(int sock, uint32 index)
 	BMessage msg(M_CONNECTION_DATA_RECEIVED);
 	msg.AddInt32("connection", sock);
 	msg.AddData("data", B_RAW_TYPE, recvbuffer, result);
-	
+
 	it->second.SendMessage(&msg);
 }
 
@@ -322,10 +322,10 @@ NetworkManager::_HandleAccept(int sock, uint32 /* index */)
 		char ipbuf[100];
 		memset(namebuf, 0, sizeof(namebuf));
 		memset(ipbuf, 0, sizeof(ipbuf));
-		getnameinfo((sockaddr *)&data, datasize, namebuf, sizeof(namebuf), 
+		getnameinfo((sockaddr *)&data, datasize, namebuf, sizeof(namebuf),
 			NULL, 0, 0);
-		getnameinfo((sockaddr *)&data, datasize, ipbuf, sizeof(ipbuf), 
-			NULL, 0, NI_NUMERICHOST);		
+		getnameinfo((sockaddr *)&data, datasize, ipbuf, sizeof(ipbuf),
+			NULL, 0, NI_NUMERICHOST);
 		_SocketLock();
 		int32 index = fSockets.size();
 		fSockets[client] = it->second;
@@ -340,7 +340,7 @@ NetworkManager::_HandleAccept(int sock, uint32 /* index */)
 		{
 			msg.AddString("name", namebuf);
 		}
-		it->second.SendMessage(&msg);		
+		it->second.SendMessage(&msg);
 	}
 }
 
@@ -348,12 +348,12 @@ void
 NetworkManager::_HandleBind(const BMessage *message)
 {
 	BMessenger target;
-	
+
 	if (message->FindMessenger("target", &target) != B_OK)
 	{
 		return;
 	}
-	
+
 	BMessage reply(M_LISTENER_CREATED);
 	BString interface, port;
 	if (message->FindString("port", &port) != B_OK)
@@ -368,9 +368,9 @@ NetworkManager::_HandleBind(const BMessage *message)
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;
 	hints.ai_socktype = SOCK_STREAM;
-	
+
 	int32 sock = -1;
-	
+
 	int result = getaddrinfo(NULL, port.String(), &hints, &info);
 	if (result == 0)
 	{
@@ -384,7 +384,7 @@ NetworkManager::_HandleBind(const BMessage *message)
 			}
 			int opt = 1;
 			setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-			
+
 			result = bind(sock, current->ai_addr, current->ai_addrlen);
 			if (result < 0)
 			{
@@ -415,9 +415,9 @@ NetworkManager::_HandleBind(const BMessage *message)
 		fPollFDs[index].events = POLLIN | POLLERR;
 		fListeners.insert(sock);
 		_SocketUnlock();
-		reply.AddInt32("connection", sock);		
+		reply.AddInt32("connection", sock);
 	}
-	
+
 	target.SendMessage(&reply);
 }
 
@@ -425,17 +425,17 @@ void
 NetworkManager::_HandleConnect(const BMessage *message)
 {
 	BMessenger target;
-	
+
 	if (message->FindMessenger("target", &target) != B_OK)
 	{
 		return;
 	}
-	
+
 	BString threadName;
 	vision_app->GetThreadName(THREAD_S, threadName);
-	thread_id connector = spawn_thread(ConnectionHandler, threadName.String(), 
+	thread_id connector = spawn_thread(ConnectionHandler, threadName.String(),
 		B_LOW_PRIORITY, new BMessage(*message));
-	
+
 	if (connector < B_OK)
 	{
 		BMessage reply(M_CONNECTION_CREATED);
@@ -479,7 +479,7 @@ NetworkManager::_CleanupSocket(int sock, uint32 index)
 	}
 	if (index < fSockets.size() - 1)
 	{
-		memmove(&fPollFDs[index], &fPollFDs[index + 1], 
+		memmove(&fPollFDs[index], &fPollFDs[index + 1],
 			sizeof(pollfd) * (fSockets.size() - index));
 	}
 	close(sock);

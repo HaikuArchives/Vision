@@ -31,8 +31,8 @@
 #include <MenuItem.h>
 #include <UTF8.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "AppPrefs"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "AppPrefs"
 
 AppWindowPrefsView::AppWindowPrefsView (BRect frame)
 	: BView (frame, "App/Window Prefs", B_FOLLOW_NONE, B_WILL_DRAW)
