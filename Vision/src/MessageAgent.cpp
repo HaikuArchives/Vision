@@ -52,8 +52,8 @@
 #include <infopopper/InfoPopper.h>
 #endif
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "DCCMessages"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "DCCMessages"
 
 MessageAgent::MessageAgent (
 	BRect &frame_,

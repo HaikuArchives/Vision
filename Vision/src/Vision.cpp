@@ -799,7 +799,7 @@ VisionApp::CheckNetworkValid (const char *name)
 		&& netData.HasString ("name"))
 		{
 			const ServerData *data (NULL);
-			int32 size;
+			ssize_t size;
 			for (int32 i = 0; netData.FindData ("server", B_RAW_TYPE, i,
 				reinterpret_cast<const void **>(&data), &size) == B_OK; i++)
 			{
@@ -1081,7 +1081,7 @@ VisionApp::MessageReceived (BMessage *msg)
 				if (ident.Length() > 0)
 				{
 					const char *buffer = NULL;
-					int32 size = -1;
+					ssize_t size = -1;
 					msg->FindData("data", B_RAW_TYPE, reinterpret_cast<const void **>(&buffer), &size);
 					data.SetTo(buffer, size);
 					int32 spaceidx = data.Length() - 1;
@@ -1713,7 +1713,7 @@ VisionApp::BenchOut (const char *ts)
 	bench0 = fBench2 - fBench1;
 	bench0 = bench0 / 100;
 
-	printf ("%s: 0.%04lds\n", ts, bench0);
+	printf ("%s: 0.%04" B_PRId32 "s\n", ts, bench0);
 }
 
 void
@@ -1909,7 +1909,6 @@ VisionApp::ParseAlias(const char *cmd, const BString &channel)
 	BString newcmd = fAliases[command];
 	const char *parse = newcmd.String();
 
-	int32 replidx (0);
 	int32 varidx (0);
 
 	newcmd.ReplaceAll("$C", channel.String());
@@ -1923,7 +1922,6 @@ VisionApp::ParseAlias(const char *cmd, const BString &channel)
 		}
 		else
 		{
-			replidx = parse - newcmd.String();
 			++parse;
 			if (isdigit(*parse))
 			{

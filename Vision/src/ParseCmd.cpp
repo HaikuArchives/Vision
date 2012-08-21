@@ -53,8 +53,8 @@
 #include "RunView.h"
 #include "WindowList.h"
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "CommandParser"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "CommandParser"
 
 static void
 DisplayCommandError(ClientAgent *agent, const char *commandName)

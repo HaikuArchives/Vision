@@ -29,8 +29,8 @@
 
 #include <stdio.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ChannelOptions"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ChannelOptions"
 
 ChannelOptions::ChannelOptions (const char *chan_name_, ChannelAgent *parent_)
 	: BWindow (

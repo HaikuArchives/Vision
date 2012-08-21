@@ -40,8 +40,8 @@
 #include "Utilities.h"
 #include <stdio.h>
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "WindowList"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "WindowList"
 
 //////////////////////////////////////////////////////////////////////////////
 /// Begin WindowList functions
@@ -344,7 +344,7 @@ WindowList::ClearList (void)
 				all (CountItems());
 
 	for (i = 0; i < all; i++)
-		delete static_cast<WindowListItem *>(RemoveItem (0L));
+		delete static_cast<WindowListItem *>(RemoveItem ((int32)0));
 }
 
 void
@@ -357,7 +357,7 @@ WindowList::SelectLast (void)
 	if (lastInt >= 0)
 		Select (lastInt);
 	else
-		Select (0L);
+		Select ((int32)0);
 	ScrollToSelection();
 }
 

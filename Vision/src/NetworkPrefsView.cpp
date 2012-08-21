@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Rene Gollent
  *								 Alan Ellis
  */
@@ -45,8 +45,8 @@
 #include "SpeedButton.h"
 #include "Vision.h"
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "NetworkPrefView"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "NetworkPrefView"
 
 
 class InvokingTextView : public BTextView, public BInvoker
@@ -318,11 +318,11 @@ NetworkPrefsView::UpdateNetworkData (BMessage & msg)
 		fTextView->SetText (autoexec);
 	else
 		fTextView->SetText ("");
-		
+
 	uint32 altCount(0);
-	int32 size;
+	ssize_t size;
 	const ServerData *data (NULL);
-	for (int32 i = 0; msg.FindData("server", B_ANY_TYPE, i, 
+	for (int32 i = 0; msg.FindData("server", B_ANY_TYPE, i,
 		reinterpret_cast<const void **>(&data), &size) == B_OK; i++)
 	{
 		if (data->state == 0)
@@ -342,7 +342,7 @@ NetworkPrefsView::UpdatePersonalData (BMessage & msg)
 	int32 count (fListView->CountItems ()),
 				i (0);
 	for (i = 0; i < count; i++)
-		delete (fListView->RemoveItem (0L));
+		delete (fListView->RemoveItem ((int32)0));
 
 	if ((msg.HasBool ("useDefaults") && msg.FindBool ("useDefaults")))
 	{
@@ -614,7 +614,7 @@ NetworkPrefsView::MessageReceived (BMessage * msg)
 					fActiveNetwork.AddBool ("lagCheck", value);
 			}
 			break;
-			
+
 		case M_CONNECT_ON_STARTUP:
 			{
 				bool value = msg->FindInt32 ("be:value");

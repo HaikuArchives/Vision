@@ -39,8 +39,8 @@ label_height()
 	return 8 + ceilf(be_plain_font->Size());
 }
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "Window List"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "Window List"
 
 //////////////////////////////////////////////////////////////////////////////
 /// Begin AgentDock functions

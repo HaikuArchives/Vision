@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * rights and limitations under the License.
- * 
- * The Original Code is Vision. 
- * 
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *								 Rene Gollent
  *								 Todd Lair
@@ -59,8 +59,8 @@
 #include "Vision.h"
 #include "WindowList.h"
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ServerMessages"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ServerMessages"
 
 int32 ServerAgent::fServerSeed = 0;
 
@@ -109,20 +109,20 @@ ServerAgent::~ServerAgent (void)
 {
 	if (fLagRunner)
 		delete fLagRunner;
-	
+
 	while (fStartupChannels.CountItems() != 0)
-		delete fStartupChannels.RemoveItemAt (0L);
+		delete fStartupChannels.RemoveItemAt ((int32)0);
 
 	delete fLogger;
 
 //	wait_for_thread (fLoginThread, &result);
-	
+
 /*
 	while (fIgnoreNicks.CountItems() > 0)
-		delete fIgnoreNicks.RemoveItem(0L);
+		delete fIgnoreNicks.RemoveItem((int32)0);
 */
 	while (fNotifyNicks.CountItems() > 0)
-		delete fNotifyNicks.RemoveItemAt(0L);
+		delete fNotifyNicks.RemoveItemAt((int32)0);
 }
 
 void
@@ -142,10 +142,10 @@ ServerAgent::AllAttached (void)
 
 	type_code type;
 	int32 attrCount (0);
-	
+
 	BMessage updatemsg (M_NOTIFYLIST_ADD);
 	BString data;
-	
+
 	fNetworkData.GetInfo ("notify", &type, &attrCount);
 
 	for (int32 i = 0; i < attrCount; i++)
@@ -182,14 +182,14 @@ ServerAgent::Init (void)
 	temp << fId << "\n";
 	Display (temp.String(), C_NICK);
 	Display ("Have fun!\n");
-	
+
 	fLagRunner = new BMessageRunner (
 		this,			 // target ServerAgent
 		new BMessage (M_LAG_CHECK),
 		10000000,	 // 10 seconds
 		-1);				// forever
 
-	SendConnectionCreate();		
+	SendConnectionCreate();
 }
 
 
@@ -220,14 +220,14 @@ ServerAgent::Timer (void *arg)
 	||	(msg->FindInt32	 ("loops", &loops) != B_OK)
 	||	(msg->FindInt32	 ("sleep", &sleeptimer) != B_OK)
 	||	(msg->FindPointer ("agent", reinterpret_cast<void **>(&agent)) != B_OK))
-	{	
+	{
 		printf (":ERROR: couldn't find valid data in BMsg to Timer() -- bailing\n");
 		return B_ERROR;
 	}
-	
-	
+
+
 	return B_OK;
-	
+
 }
 
 int
@@ -235,14 +235,14 @@ ServerAgent::SortNotifyItems (const NotifyListItem *item1, const NotifyListItem 
 {
 	if (!item1 || !item2)
 		return 0;
-	
+
 	if (item1->GetState() && !item2->GetState())
 		return -1;
 	if (!item1->GetState() && item2->GetState())
 		return 1;
-	
+
 	BString name (item1->Text());
-		
+
 	return name.ICompare(item2->Text());
 }
 
@@ -252,7 +252,7 @@ ServerAgent::SendData (const char *cData)
 	BMessage dataSend(M_SEND_CONNECTION_DATA);
 	BString data(cData);
 	data.Append("\r\n");
-	
+
 	int32 encoding = vision_app->GetInt32("encoding");
 	if (encoding != B_UNICODE_CONVERSION)
 	{
@@ -262,7 +262,7 @@ ServerAgent::SendData (const char *cData)
 		int32 destLength = length;
 		convert_from_utf8(encoding, data.String(), &length, sendBuffer, &destLength, &state);
 		data.SetTo(sendBuffer, destLength);
-				
+
 	}
 	dataSend.AddInt32("connection", fConnectionID);
 	dataSend.AddData("data", B_RAW_TYPE, data.String(), data.Length());
@@ -272,7 +272,7 @@ ServerAgent::SendData (const char *cData)
 	{
 		data.RemoveAll("\n");
 		data.RemoveAll("\r");
-		printf("	 SENT: (%03ld) \"%s\"\n", data.Length(), data.String());
+		printf("	 SENT: (%03" B_PRId32 ") \"%s\"\n", data.Length(), data.String());
 	}
 
 }
@@ -285,14 +285,14 @@ ServerAgent::ParseLine (const char *cData)
 	int32 length (data.Length()),
 				destLength (sizeof(parseBuffer)),
 				state (0);
-	
+
 	memset (parseBuffer, 0, sizeof (parseBuffer));
 	int32 encoding = vision_app->GetInt32("encoding");
 	if (encoding != B_UNICODE_CONVERSION)
 	{
 		convert_to_utf8 (
 			encoding,
-			data.String(), 
+			data.String(),
 			&length,
 			parseBuffer,
 			&destLength,
@@ -308,7 +308,7 @@ ServerAgent::ParseLine (const char *cData)
 		{
 			convert_to_utf8 (
 				B_ISO1_CONVERSION,
-				data.String(), 
+				data.String(),
 				&length,
 				parseBuffer,
 				&destLength,
@@ -346,7 +346,7 @@ ServerAgent::Client (const char *cName)
 		ClientAgent *item (fClients.ItemAt (i));
 		if (strcasecmp (cName, item->Id().String()) == 0)
 		{
-			
+
 			client = item;
 			break;
 		}
@@ -448,9 +448,9 @@ ServerAgent::HandleReconnect (void)
 {
 	/*
 	 * Function purpose: Setup the environment and attempt a new connection
-	 * to the server 
+	 * to the server
 	 */
-	 
+
 	if (fRetry < fRetryLimit)
 	{
 		BString message;
@@ -480,7 +480,7 @@ ServerAgent::HandleReconnect (void)
 		Display(message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 		ClientAgent *agent (ActiveClient());
 		if (agent && (agent != this))
-			agent->Display (message.String(), C_ERROR, C_BACKGROUND, F_SERVER);		
+			agent->Display (message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 		SendConnectionCreate(seconds * 1000000);
 		++fRetry;
 	}
@@ -495,7 +495,7 @@ ServerAgent::HandleReconnect (void)
 		Display (message.String(), C_ERROR);
 		ClientAgent *agent (ActiveClient());
 		if (agent && (agent != this))
-			agent->Display (message.String(), C_ERROR, C_BACKGROUND, F_SERVER);		
+			agent->Display (message.String(), C_ERROR, C_BACKGROUND, F_SERVER);
 	}
 }
 
@@ -503,8 +503,8 @@ const ServerData *
 ServerAgent::GetNextServer ()
 {
 	type_code type;
-	int32 count,
-		size;
+	int32 count;
+	ssize_t size;
 	fNetworkData.GetInfo ("server", &type, &count);
 	uint32 state = (fReconnecting) ? SERVER_SECONDARY : SERVER_PRIMARY;
 
@@ -515,9 +515,9 @@ ServerAgent::GetNextServer ()
 			fServerIndex = 0;
 			state = SERVER_PRIMARY;
 		}
-		
+
 		const ServerData *server (NULL);
-		for (; fNetworkData.FindData ("server", B_RAW_TYPE, fServerIndex, 
+		for (; fNetworkData.FindData ("server", B_RAW_TYPE, fServerIndex,
 			reinterpret_cast<const void **>(&server), &size) == B_OK; fServerIndex++)
 				if (server->state == state)
 				{
@@ -563,15 +563,15 @@ ServerAgent::PrivateIPCheck (const char *ip)
 		 printf (":ERROR: PrivateIPCheck() called when there is no valid data to check!\n");
 		 return true;
 	 }
-	 
+
 	 if (strcmp(ip, "127.0.0.1") == 0)
 		 return true;
-	 
+
 	 // catch 10.0.0.0 - 10.255.255.255 and 192.168.0.0 - 192.168.255.255
 	 if (	(strncmp (ip, "10.", 3) == 0)
 			|| (strncmp (ip, "192.168.", 8) == 0))
 		 return true;
-	 
+
 	 // catch 172.16.0.0 - 172.31.255.255
 	 if (strncmp (ip, "172.", 4) == 0)
 	 {
@@ -582,7 +582,7 @@ ServerAgent::PrivateIPCheck (const char *ip)
 			 temp172s[1] = ip[5];
 			 temp172s[2] = '\0';
 			 int temp172n (atoi (temp172s));
-		 
+
 			 if (temp172n >= 16 || temp172n <= 31)
 				 return true;
 		 }
@@ -591,7 +591,7 @@ ServerAgent::PrivateIPCheck (const char *ip)
 
 	// if we got this far, its a public IP address
 	return false;
-	 
+
 }
 
 void
@@ -601,7 +601,7 @@ ServerAgent::AddResumeData (BMessage *msg)
 
 	data = new ResumeData;
 
-	data->expire = system_time() + 50000000LL;
+	data->expire = system_time() + 5000000LL;
 	data->nick	 = msg->FindString ("vision:nick");
 	data->file	 = msg->FindString ("vision:file");
 	data->size	 = msg->FindString ("vision:size");
@@ -609,8 +609,8 @@ ServerAgent::AddResumeData (BMessage *msg)
 	data->port	 = msg->FindString ("vision:port");
 	data->path	 = msg->FindString ("path");
 	data->pos		= msg->FindInt64	("pos");
-	
-	//PRINT(("%s %s %s %s %s", data->nick.String(), data->file.String(), 
+
+	//PRINT(("%s %s %s %s %s", data->nick.String(), data->file.String(),
 	//	data->size.String(), data->ip.String(), data->port.String()));
 	fResumes.AddItem (data);
 
@@ -677,7 +677,7 @@ ServerAgent::SendConnectionCreate(bigtime_t timeout)
 {
 	BMessage msg (M_CREATE_CONNECTION);
 	msg.AddMessenger("target", BMessenger(this));
-	
+
 	BString port;
 	const ServerData *data = GetNextServer();
 	port << data->port;
@@ -722,14 +722,14 @@ ServerAgent::MessageReceived (BMessage *msg)
 					ParseLine (buffer);
 			}
 			break;
-		
+
 		case M_STATE_CHANGE:
 			{
 				Broadcast(msg);
 				ClientAgent::MessageReceived (msg);
 			}
 			break;
-		
+
 		case M_SEND_RAW:
 			{
 				const char *buffer;
@@ -746,7 +746,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				DisplayAll (data.String(), msg->FindInt32 ("fore"), msg->FindInt32 ("back"), msg->FindInt32 ("font"));
 			}
 			break;
-		
+
 		case M_CONNECTION_CREATED:
 			{
 				int32 result = msg->FindInt32("status");
@@ -769,7 +769,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 					fIsConnecting = true;
 					fConnectionID = msg->FindInt32("connection");
 					BString data;
-					
+
 					if (strlen(fCurrentServer.password) > 0)
 					{
 						message = B_TRANSLATE("Sending password.");
@@ -779,7 +779,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 						data += fCurrentServer.password;
 						SendData(data.String());
 					}
-					
+
 					sockaddr_storage storage;
 					socklen_t slen = sizeof(storage);
 					getsockname(fConnectionID, (struct sockaddr *)&storage, &slen);
@@ -803,11 +803,11 @@ ServerAgent::MessageReceived (BMessage *msg)
 					data = "NICK ";
 					data += fMyNick;
 					SendData(data.String());
-				
+
 				}
 			}
 			break;
-			
+
 		case M_CONNECTION_DISCONNECT:
 			{
 				if (fIsQuitting)
@@ -821,7 +821,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				HandleReconnect();
 			}
 			break;
-			
+
 		case M_CONNECTION_DATA_RECEIVED:
 			{
 				const char *buffer (NULL);
@@ -837,7 +837,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 						fPartialBuffer.RemoveLast("\r");
 						if (vision_app->fDebugRecv)
 						{
-							printf ("RECEIVED: (%ld:%03ld) \"", fConnectionID, fPartialBuffer.Length());
+							printf ("RECEIVED: (%" B_PRId32 ":%03" B_PRId32 ") \"", fConnectionID, fPartialBuffer.Length());
 							for (int32 i = 0; i < fPartialBuffer.Length(); ++i)
 							{
 								if (isprint (fPartialBuffer.String()[i]))
@@ -854,14 +854,14 @@ ServerAgent::MessageReceived (BMessage *msg)
 					{
 						fPartialBuffer = tempBuffer;
 					}
-				}				
+				}
 			}
 			break;
-			
+
 		case M_INC_RECONNECT:
 			++fRetry;
 			break;
-		
+
 		case M_SET_IP:
 			{
 				static BString ip;
@@ -870,7 +870,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				fGetLocalIP = false;
 			}
 			break;
-		
+
 		case M_GET_IP:
 			{
 				BMessage reply;
@@ -885,10 +885,10 @@ ServerAgent::MessageReceived (BMessage *msg)
 				BMessage reply (B_REPLY);
 				reply.AddInt32 ("retries", fRetry);
 				reply.AddInt32 ("max_retries", fRetryLimit);
-				msg->SendReply(&reply); 
+				msg->SendReply(&reply);
 			}
 			break;
-			
+
 		case M_SERVER_SEND:
 			{
 				BString buffer;
@@ -916,12 +916,12 @@ ServerAgent::MessageReceived (BMessage *msg)
 						 *ip,
 						 *port;
 				BPath path;
-			
+
 				msg->FindString("vision:nick", &nick);
 				msg->FindString("vision:size", &size);
 				msg->FindString("vision:ip", &ip);
 				msg->FindString("vision:port", &port);
-			
+
 				if (msg->HasString ("path"))
 					path.SetTo (msg->FindString ("path"));
 				else
@@ -931,14 +931,14 @@ ServerAgent::MessageReceived (BMessage *msg)
 
 					msg->FindRef ("directory", &ref);
 					msg->FindString("name", &file);
- 
+
 					BDirectory dir (&ref);
 					path.SetTo (&dir, file);
 				}
 
 				if (msg->HasBool ("continue"))
 					msg->FindBool ("continue", &cont);
-				
+
 				DCCReceive *view;
 				view = new DCCReceive (
 					nick,
@@ -948,13 +948,13 @@ ServerAgent::MessageReceived (BMessage *msg)
 					port,
 					fSMsgr,
 					cont);
-	
+
 					BMessage aMsg (M_DCC_FILE_WIN);
 					aMsg.AddPointer ("view", view);
 					be_app->PostMessage (&aMsg);
 			}
 			break;
-			
+
 		case M_CHOSE_FILE: // DCC send
 			{
 				const char *nick (NULL);
@@ -966,7 +966,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				BEntry entry (&ref);
 
 /* // TODO: resolve if symlink
-			
+
 				if (entry.IsSymLink())
 				{
 					BSymLink link (&entry);
@@ -1009,7 +1009,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 			}
 			break;
 
-		
+
 		case M_CHAT_ACCEPT:
 			{
 				int32 acceptDeny;
@@ -1021,7 +1021,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				msg->FindString("nick", &theNick);
 				msg->FindString("ip", &theIP);
 				msg->FindString("port", &thePort);
-				
+
 				theNick.Append (" [DCC]");
 				MessageAgent *newAgent (new MessageAgent (
 						*vision_app->pClientWin()->AgentRect(),
@@ -1038,10 +1038,10 @@ ServerAgent::MessageReceived (BMessage *msg)
 					theNick.String(),
 					WIN_MESSAGE_TYPE,
 					true);
-					
+
 					fClients.AddItem (newAgent);
 			}
-			break;	
+			break;
 
 		case M_CHAT_ACTION: // dcc chat
 		 {
@@ -1083,7 +1083,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				HandleReconnect();
 			}
 			break;
-			
+
 		case M_STATUS_ADDITEMS:
 			{
 				vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
@@ -1138,7 +1138,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 							{
 								// wait some more
 								char lag[15] = "";
-								sprintf (lag, "%ld0.000+", fLagCount);	// assuming a 10 second runner
+								sprintf (lag, "%" B_PRId32 "0.000+", fLagCount);	// assuming a 10 second runner
 								fMyLag = lag;
 								++fLagCount;
 								fMsgr.SendMessage (M_LAG_CHANGED);
@@ -1157,18 +1157,18 @@ ServerAgent::MessageReceived (BMessage *msg)
 						dataSend.AddString ("data", cmd.String());
 						fSMsgr.SendMessage (&dataSend);
 					}
-				}	
+				}
 			}
 			break;
-			
+
 		case M_LAG_CHANGED:
 			{
 				if (!IsHidden())
 					vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String(), true);
-					
+
 				BMessage newmsg (M_LAG_CHANGED);
 				newmsg.AddString ("lag", fMyLag);
-				Broadcast (&newmsg);				
+				Broadcast (&newmsg);
 			}
 			break;
 
@@ -1177,14 +1177,14 @@ ServerAgent::MessageReceived (BMessage *msg)
 				for (int32 i = 0; i < fClients.CountItems(); ++i)
 				{
 					ClientAgent *client (fClients.ItemAt (i));
-					
+
 					if (dynamic_cast<ChannelAgent *>(client))
 					{
 						BMessage rejoinMsg (M_REJOIN);
 						rejoinMsg.AddString ("nickname", fMyNick.String());
 						client->fMsgr.SendMessage (&rejoinMsg);
-					}				
-				}		
+					}
+				}
 			}
 			break;
 
@@ -1209,14 +1209,14 @@ ServerAgent::MessageReceived (BMessage *msg)
 						theNick,
 						WIN_MESSAGE_TYPE,
 						true);
-						
+
 					client = newAgent;
 
 					fClients.AddItem (newAgent);
 				}
 				else
 					client->fAgentWinItem->ActivateItem();
-				
+
 				if (msg->HasMessage ("msg"))
 				{
 					BMessage buffer;
@@ -1241,7 +1241,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 					fQuitMsg = quitstr;
 				}
 
-				if (!fIsQuitting && fConnectionID >= 0) 
+				if (!fIsQuitting && fConnectionID >= 0)
 				{
 					if (fQuitMsg.Length() == 0)
 					{
@@ -1260,7 +1260,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				{
 					Broadcast(msg);
 					BMessenger listMsgr(fListAgent);
-					listMsgr.SendMessage(M_CLIENT_QUIT); 
+					listMsgr.SendMessage(M_CLIENT_QUIT);
 				}
 				else
 					ClientAgent::MessageReceived(msg);
@@ -1276,7 +1276,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 					printf (":ERROR: error getting valid pointer from M_CLIENT_SHUTDOWN -- bailing\n");
 					break;
 				}
-				
+
 				fClients.RemoveItem (deadagent);
 
 				BMessage deathchant (M_OBITUARY);
@@ -1292,7 +1292,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 
 			}
 			break;
-		
+
 		case M_LIST_COMMAND:
 			{
 				if (fListAgent)
@@ -1310,11 +1310,11 @@ ServerAgent::MessageReceived (BMessage *msg)
 				listMsgr.SendMessage(msg);
 			}
 			break;
-		
+
 		case M_LIST_SHUTDOWN:
 			fListAgent = NULL;
 			break;
-		
+
 		case M_REGISTER_LOGGER:
 			{
 				const char *logName;
@@ -1322,7 +1322,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				fLogger->RegisterLogger (logName);
 			}
 			break;
-		
+
 		case M_UNREGISTER_LOGGER:
 			{
 				const char *logName;
@@ -1330,7 +1330,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				fLogger->UnregisterLogger (logName);
 			}
 			break;
-		
+
 		case M_CLIENT_LOG:
 			{
 				const char *logName;
@@ -1340,7 +1340,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				fLogger->Log (logName, data);
 			}
 			break;
-		
+
 		case M_IGNORE_ADD:
 			{
 				BString cmd (msg->FindString("cmd"));
@@ -1351,7 +1351,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 
 				type_code type;
 				int32 attrCount;
-	
+
 				// make sure this nick hasn't already been added
 				fNetworkData.GetInfo ("ignore", &type, &attrCount);
 
@@ -1387,22 +1387,22 @@ ServerAgent::MessageReceived (BMessage *msg)
 				}
 			}
 			break;
-			
+
 		case M_IGNORE_REMOVE:
 			{
 			}
 			break;
-		
+
 		case M_EXCLUDE_ADD:
 			{
 			}
 			break;
-			
+
 		case M_EXCLUDE_REMOVE:
 			{
 			}
 			break;
-			
+
 		case M_NOTIFYLIST_ADD:
 			{
 				BString cmd (msg->FindString("cmd"));
@@ -1442,7 +1442,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 						fNotifyNicks.AddItem (item);
 					}
 				}
-				
+
 				fNotifyNicks.SortItems(SortNotifyItems);
 				BMessage updMsg (M_NOTIFYLIST_UPDATE);
 				updMsg.AddPointer ("list", &fNotifyNicks);
@@ -1450,7 +1450,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				Window()->PostMessage (&updMsg);
 			}
 			break;
-		
+
 		case M_NOTIFYLIST_REMOVE:
 			{
 				BString cmd (msg->FindString("cmd"));
@@ -1485,10 +1485,10 @@ ServerAgent::MessageReceived (BMessage *msg)
 				updMsg.AddPointer ("list", &fNotifyNicks);
 				updMsg.AddPointer ("source", this);
 				Window()->PostMessage (&updMsg);
-				
+
 			}
 			break;
-		
+
 		case M_NOTIFYLIST_UPDATE:
 			{
 				// force agent to update (used for winlist switches)
@@ -1510,7 +1510,7 @@ ServerAgent::MessageReceived (BMessage *msg)
 				fIgnoreNicks.AddItem (new BString(cmd));
 			}
 			break;
-#endif		
+#endif
 		default:
 			ClientAgent::MessageReceived (msg);
 	}

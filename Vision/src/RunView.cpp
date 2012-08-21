@@ -166,7 +166,7 @@ struct Line
 								Theme * fTheme,
 								float width);
 
-	void					AddSoftBreak (SoftBreakEnd , float &, 
+	void					AddSoftBreak (SoftBreakEnd , float &,
 		uint16 &, int16 &, float &, float &, Theme *);
 
 	int16				 CountChars (int16 pos, int16 len);
@@ -611,7 +611,7 @@ RunView::BuildPopUp (void)
 	item->SetEnabled (enablelookup);
 	item->SetTarget (Parent());
 	fMyPopUp->AddItem (item);
- 
+
 	lookup = new BMessage (M_LOOKUP_ACRONYM);
 	lookup->AddString ("string", querystring);
 	item = new BMenuItem("Lookup (Acronym Finder)", lookup);
@@ -620,7 +620,7 @@ RunView::BuildPopUp (void)
 	fMyPopUp->AddItem (item);
 
 	fMyPopUp->AddSeparatorItem();
-	
+
 	item = new BMenuItem("Copy", new BMessage (B_COPY), 'C');
 	item->SetEnabled (enablecopy);
 	item->SetTarget (this);
@@ -834,7 +834,7 @@ RunView::MouseMoved (BPoint point, uint32 transit, const BMessage *msg)
 				ShiftTrackingSelect (
 					point,
 					false,
-					max_c (0LL, min_c (OFFVIEW_TIMER, OFFVIEW_TIMER - (now - fOff_view_time))));
+					max_c ((int32)0L, min_c (OFFVIEW_TIMER, OFFVIEW_TIMER - (now - fOff_view_time))));
 			}
 			break;
 
@@ -1040,7 +1040,7 @@ RunView::ShiftTrackingSelect (BPoint point, bool move, bigtime_t timer)
 				fOff_view_runner = new BMessageRunner (
 					BMessenger (this),
 					msg,
-					timer == 0LL ? OFFVIEW_TIMER : timer);
+					timer == (int32)0L ? OFFVIEW_TIMER : timer);
 			}
 
 			if (move || timer == 0)
@@ -1080,7 +1080,7 @@ RunView::ShiftTrackingSelect (BPoint point, bool move, bigtime_t timer)
 				fOff_view_runner = new BMessageRunner (
 					BMessenger (this),
 					msg,
-					timer == 0LL ? OFFVIEW_TIMER : timer);
+					timer == (int32)0L ? OFFVIEW_TIMER : timer);
 			}
 
 			if (move || timer == 0)
@@ -1346,7 +1346,7 @@ RunView::Append (
 	assert (back != Theme::SelectionBack);
 
 	fTheme->ReadLock();
-		
+
 
 	while (place < len)
 	{
@@ -1477,12 +1477,12 @@ RunView::Append (
 				fWorking->fBottom -= shift;
 
 				delete first;
-				
+
 				if (fSp_start.fLine > 0)
 					fSp_start.fLine--;
 				else
 					fSp_start.fOffset = 0;
-				
+
 				if (fSp_end.fLine > 0)
 					fSp_end.fLine--;
 				else
@@ -1732,7 +1732,7 @@ RunView::IntersectSelection (const SelectPos &start, const SelectPos &end) const
 		if (start.fLine == fSp_end.fLine && start.fOffset < fSp_end.fOffset)
 			return true;
 		if (end.fLine == fSp_end.fLine && end.fOffset < fSp_end.fOffset)
-			return true; 
+			return true;
 	}
 
 	return false;
@@ -1869,11 +1869,11 @@ Line::~Line (void)
 	delete [] fFcs;
 	delete [] fText;
 	delete [] fSofties;
-	
+
 	if (fUrls)
 	{
 		while (fUrls->CountItems() > 0)
-			delete fUrls->RemoveItemAt(0L);
+			delete fUrls->RemoveItemAt((int32)0);
 		delete fUrls;
 	}
 }
@@ -1911,9 +1911,9 @@ Line::Append (
 		if( '\t' == *pos )
 		{
 			*pos = ' ';
-		} 
+		}
 	}
-	
+
 	fText = new_fText;
 
 	FigureFontColors (save, fore, back, font);
@@ -2123,15 +2123,15 @@ Line::FigureEdges (
 		// but BFont::GetEdges doesn't seem to work as we'd like
 
 		int16 i;
-		
+
 		float incrementor = (fEdge_count > 0) ? fEdges[fEdge_count - 1] : 0;
-		
+
 		for (i = 0; i < ccount; ++i)
 		{
 			incrementor += eshift[i] * f.Size();
 
 			fEdges[fEdge_count+i] = (int16) incrementor;
-			
+
 			// this little backfTracking routine is necessary in the case where an fFcs change
 			// comes immediately after a UTF8-char, since all but the first edge will be 0
 			// and thus the new edge's starting position will be thrown off if we don't
@@ -2165,9 +2165,6 @@ Line::FigureEdges (
 
 		cur_fFcs = next_fFcs;
 		fEdge_count += ccount;
-#ifndef __INTEL__
-	delete [] eshift;
-#endif
 	}
 
 	SoftBreaks (theme, width);
@@ -2286,7 +2283,7 @@ Line::SoftBreaks (Theme *theme, float start_width)
 
 				while (fEdges[i] == 0)
 					--i;
-				
+
 				if (fEdges[i] - start <= width)
 				{
 					AddSoftBreak (SoftBreakEnd(fLength - 1), start, fText_place, font, width, start_width, theme);
@@ -2318,7 +2315,7 @@ Line::SoftBreaks (Theme *theme, float start_width)
 			int16 i (ccount1 - 1);
 			while (fEdges[i] == 0)
 				--i;
-				
+
 			if (fEdges[ccount1 + ccount2] - fEdges[i] < width - margin)
 				{
 					AddSoftBreak (SoftBreakEnd(fSpaces[space_place]), start, fText_place, font, width, start_width, theme);
@@ -2365,7 +2362,7 @@ Line::SetStamp (const char *format, bool was_on)
 {
 	size_t size (0);
 	int32 i (0);
-	
+
 	if (was_on)
 	{
 		int16 offset (fFcs[4].fOffset + 1);

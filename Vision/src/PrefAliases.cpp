@@ -31,8 +31,8 @@ const uint32 M_ALIAS_SELECTION_CHANGED = 'mASC';
 const uint32 M_ALIAS_ADD = 'mADD';
 const uint32 M_ALIAS_REMOVE = 'MARE';
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "AliasPrefs"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "AliasPrefs"
  
 AliasesPrefsView::AliasesPrefsView (BRect frame)
  : BView(frame, "Alias Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW),

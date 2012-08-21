@@ -41,8 +41,8 @@
 #include "PlayButton.h"
 #include "Vision.h"
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "DCCMessages"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "DCCMessages"
 
 static const uint32 M_SEND_NEXT_BLOCK = 'msnb';
 
@@ -350,7 +350,7 @@ DCCSend::DCCSend (
 	const char *sz,
 	const BMessenger &c)
 		: DCCConnect (n, fn, sz, "", "", c),
-			fPos (0LL)
+			fPos ((int32)0L)
 {
 	int32 dccPort (atoi (vision_app->GetString ("dccMinPort")));
 	int32 diff (atoi (vision_app->GetString ("dccMaxPort")) - dccPort);

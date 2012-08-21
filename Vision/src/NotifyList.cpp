@@ -1,16 +1,16 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
@@ -33,8 +33,8 @@
 #include "Vision.h"
 #include "WindowList.h"
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "NotifyList"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "NotifyList"
 
 NotifyList::NotifyList (BRect _frame)
 	: BListView (_frame,
@@ -53,11 +53,11 @@ NotifyList::NotifyList (BRect _frame)
 	SetViewColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_BACKGROUND));
 	fActiveTheme->ReadUnlock();
 }
- 
+
 NotifyList::~NotifyList (void)
 {
 	while (CountItems() > 0)
-		delete RemoveItem (0L);
+		delete RemoveItem((int32)0);
 	delete fMyPopUp;
 }
 
@@ -65,7 +65,7 @@ void
 NotifyList::UpdateList(BObjectList<NotifyListItem> *newList)
 {
 	while (CountItems() > 0)
-		delete RemoveItem (0L);
+		delete RemoveItem ((int32)0);
 	BList updateList;
 	// make private copy of list items otherwise things go bad
 	for (int32 i = 0; i < newList->CountItems(); i++)
@@ -97,18 +97,18 @@ NotifyList::MouseDown (BPoint myPoint)
 		BMessage *inputMsg (Window()->CurrentMessage());
 		int32 mousebuttons (0),
 					keymodifiers (0);
-		
+
 		NotifyListItem *item ((NotifyListItem *)ItemAt(selected));
 		if (!item)
 			return;
-		
+
 		inputMsg->FindInt32 ("buttons", &mousebuttons);
 		inputMsg->FindInt32 ("modifiers", &keymodifiers);
-		
+
 		bigtime_t sysTime;
 		msg->FindInt64 ("when", &sysTime);
 		uint16 clicks = CheckClickCount (myPoint, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
-		
+
 		// slight kludge to make sure the expand/collapse triangles behave how they should
 		// -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
 		if (mousebuttons == B_PRIMARY_MOUSE_BUTTON)
@@ -136,7 +136,7 @@ NotifyList::MouseDown (BPoint myPoint)
 			else
 				Select (selected);
 		}
-		
+
 		if ((keymodifiers & B_SHIFT_KEY)	== 0
 		&& (keymodifiers & B_OPTION_KEY)	== 0
 		&& (keymodifiers & B_COMMAND_KEY) == 0
@@ -173,7 +173,7 @@ NotifyList::BuildPopUp(void)
 	int index (CurrentSelection());
 	if (index < 0)
 		return;
-	
+
 	NotifyListItem *item (dynamic_cast<NotifyListItem *>(ItemAt(index)));
 	if (item)
 	{
@@ -227,7 +227,7 @@ NotifyList::MessageReceived (BMessage *msg)
 				cWin->DispatchMessage (msg, cWin->pCwDock());
 				break;
 			}
-		
+
 		case M_THEME_FOREGROUND_CHANGE:
 			{
 				int16 which (msg->FindInt16 ("which"));
@@ -240,7 +240,7 @@ NotifyList::MessageReceived (BMessage *msg)
 						fActiveTheme->ReadUnlock();
 						refresh = true;
 						break;
-					
+
 					case C_NOTIFY_ON:
 					case C_NOTIFY_OFF:
 					case C_NOTIFYLIST_SELECTION:
@@ -264,7 +264,7 @@ NotifyList::MessageReceived (BMessage *msg)
 				}
 			}
 			break;
-			
+
 		default:
 			BListView::MessageReceived (msg);
 	}
@@ -305,13 +305,13 @@ void
 NotifyListItem::DrawItem (BView *father, BRect frame, bool complete)
 {
 	Theme *fActiveTheme (vision_app->ActiveTheme());
-	
+
 	fActiveTheme->ReadLock();
 
 	if (IsSelected())
 	{
 		father->SetHighColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_SELECTION));
-		father->SetLowColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_BACKGROUND));		
+		father->SetLowColor (fActiveTheme->ForegroundAt (C_NOTIFYLIST_BACKGROUND));
 		father->FillRect (frame);
 	}
 	else if (complete)
@@ -332,7 +332,7 @@ NotifyListItem::DrawItem (BView *father, BRect frame, bool complete)
 	BString drawString (Text());
 
 	fActiveTheme->ReadUnlock();
-	
+
 	father->SetHighColor (color);
 
 	father->SetDrawingMode (B_OP_OVER);

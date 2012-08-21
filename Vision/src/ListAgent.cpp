@@ -78,8 +78,8 @@ ListAgent::ListAgent (
 {
 	frame = Bounds();
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ChannelListMenu"
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ChannelListMenu"
 	
 	listMenu = new BMenu (B_TRANSLATE("Channels"));
 
@@ -99,8 +99,8 @@ ListAgent::ListAgent (
 	mFindAgain->SetEnabled (false);
 	mFilter->SetEnabled (false);
 
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ChannelListWindow"	
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ChannelListWindow"	
 
 	BView *bgView (new BView (
 		frame,
@@ -159,7 +159,7 @@ ListAgent::~ListAgent (void)
 	}
 	
 	while (hiddenItems.CountItems() > 0)
-		delete hiddenItems.RemoveItemAt (0L);
+		delete hiddenItems.RemoveItemAt ((int32)0);
 	
 	delete fSMsgr;
 	delete fAgentWinItem;
@@ -207,7 +207,7 @@ ListAgent::AddBatch (void)
 	// make sure you call this from a locked looper
 	BRow *row (NULL);
 	Window()->DisableUpdates();
-	while ((row = fBuildList.RemoveItemAt (0L)) != NULL)
+	while ((row = fBuildList.RemoveItemAt ((int32)0)) != NULL)
 		listView->AddRow (row);
 	Window()->EnableUpdates();
 				
@@ -272,8 +272,8 @@ ListAgent::MessageReceived (BMessage *msg)
 			
 		case M_STATUS_ADDITEMS:
 			{
-#undef B_TRANSLATE_CONTEXT
-#define B_TRANSLATE_CONTEXT "ChannelListStatusBarItems"				
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ChannelListStatusBarItems"				
 				BString statusLabel = B_TRANSLATE("Count");
 				statusLabel += ": ";
 				vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (statusLabel.String(), ""), true);
@@ -411,7 +411,7 @@ ListAgent::MessageReceived (BMessage *msg)
 
 					while (hiddenItems.CountItems() != 0)
 					{
-						currentRow = hiddenItems.RemoveItemAt (0L);
+						currentRow = hiddenItems.RemoveItemAt ((int32)0);
 						listView->AddRow (currentRow);
 					}
 

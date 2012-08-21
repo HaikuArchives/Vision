@@ -1,26 +1,26 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999-2010 The Vision Team.	All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *								 Todd Lair
  *								 Andrew Bazan
  */
- 
+
 #include <stdio.h>
 #include <time.h>
 
@@ -40,7 +40,7 @@ GetWord (const char *cData, int32 wordNeeded)
 	 * Function purpose: Get word number {wordNeeded} from {cData}
 	 *									 (space delimited)
 	 */
-	 
+
 	BString data (cData);
 	BString buffer ("-9z99");
 	int32 wordAt (1), place (0);
@@ -75,7 +75,7 @@ GetWordColon (const char *cData, int32 wordNeeded)
 	 * Function purpose: Get word number {wordNeeded} from {cData}
 	 *									 (colon delimited)
 	 */
-	 
+
 	BString data (cData);
 	BString buffer ("-9z99");
 	int32 wordAt (1), place (0);
@@ -115,7 +115,7 @@ RestOfString (const char *cData, int32 wordStart)
 	BString data (cData);
 	int32 wordAt (1), place (0);
 	BString buffer ("-9z99");
-	
+
 	while (wordAt != wordStart && place != B_ERROR)
 	{
 		if ((place = data.FindFirst ('\x20', place)) != B_ERROR)
@@ -140,7 +140,7 @@ GetNick (const char *cData)
 	 *
 	 *	Expected format: nickname!user@host.name
 	 */
-	 
+
 	BString data (cData);
 	BString theNick;
 
@@ -158,7 +158,7 @@ GetIdent (const char *cData)
 	 *
 	 *	Expected format: nickname!user@host.name
 	 */
-	 
+
 	BString data (GetWord(cData, 1));
 	BString theIdent;
 	int32 place[2];
@@ -169,7 +169,7 @@ GetIdent (const char *cData)
 		++(place[0]);
 		data.CopyInto (theIdent, place[0], place[1] - place[0]);
 	}
-		
+
 	return theIdent;
 }
 
@@ -207,19 +207,19 @@ TimeStamp()
 	 * Function purpose: Return the timestamp string
 	 *
 	 */
-	 
+
 	if(!vision_app->GetBool ("timestamp"))
 		return "";
-		
+
 	const char *ts_format (vision_app->GetString ("timestamp_format"));
 
 	time_t myTime (time (0));
 	tm curTime;
 	localtime_r (&myTime, &curTime);
-	
+
 	char tempTime[32];
-	tempTime[strftime (tempTime, 31, ts_format, &curTime)] = '\0'; 
-	
+	tempTime[strftime (tempTime, 31, ts_format, &curTime)] = '\0';
+
 	return BString (tempTime).Append('\x20', 1);
 }
 
@@ -270,7 +270,7 @@ StringToURI (const char *string)
 	buffer.ReplaceAll ("\n", "%20");
 	buffer.ReplaceAll (" ",	"%20");
 	buffer.ReplaceAll ("\"", "%22");
-	buffer.ReplaceAll ("#",	"%23");	
+	buffer.ReplaceAll ("#",	"%23");
 	buffer.ReplaceAll ("@",	"%40");
 	buffer.ReplaceAll ("`",	"%60");
 	buffer.ReplaceAll (":",	"%3A");
@@ -283,7 +283,7 @@ StringToURI (const char *string)
 	buffer.ReplaceAll ("{",	"%7B");
 	buffer.ReplaceAll ("|",	"%7C");
 	buffer.ReplaceAll ("}",	"%7D");
-	buffer.ReplaceAll ("~",	"%7E");		
+	buffer.ReplaceAll ("~",	"%7E");
 	return buffer;
 }
 
@@ -294,7 +294,7 @@ DurationString (int64 value)
 	 * Function purpose: Return a duration string based on {value}
 	 *
 	 */
-	 
+
 	BString duration;
 	bigtime_t micro = value;
 	bigtime_t milli = micro/1000;
@@ -305,15 +305,15 @@ DurationString (int64 value)
 
 	char message[512] = "";
 	if (days)
-		sprintf(message, "%Ld day%s ",days,days!=1?"s":"");
-	
-	if (hours%24)
-		sprintf(message, "%s%Ld hr%s ",message, hours%24,(hours%24)!=1?"s":"");
-	
-	if (min%60)
-		sprintf(message, "%s%Ld min%s ",message, min%60, (min%60)!=1?"s":"");
+		sprintf(message, "%" B_PRId64 " day%s ",days,days!=1?"s":"");
 
-	sprintf(message, "%s%Ld.%Ld sec%s",message, sec%60, (milli%1000), (sec%60)!=1?"s":"");
+	if (hours%24)
+		sprintf(message, "%s%" B_PRId64 " hr%s ",message, hours%24,(hours%24)!=1?"s":"");
+
+	if (min%60)
+		sprintf(message, "%s%" B_PRId64 " min%s ",message, min%60, (min%60)!=1?"s":"");
+
+	sprintf(message, "%s%" B_PRId64 ".%" B_PRId64 " sec%s",message, sec%60, (milli%1000), (sec%60)!=1?"s":"");
 
 	duration += message;
 
@@ -326,14 +326,14 @@ RelToAbsPath (const char *append_)
 {
 	app_info ai;
 	be_app->GetAppInfo (&ai);
-		
+
 	BEntry entry (&ai.ref);
 	BPath path;
 	entry.GetPath (&path);
 	path.GetParent (&path);
 	path.Append (append_);
-	
-	return path.Path();	
+
+	return path.Path();
 }
 
 
