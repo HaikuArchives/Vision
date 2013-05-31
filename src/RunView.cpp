@@ -593,7 +593,7 @@ RunView::BuildPopUp (void)
   BMessage *lookup;
   lookup = new BMessage (M_LOOKUP_WEBSTER);
   lookup->AddString ("string", querystring);
-  item = new BMenuItem("Lookup (Dictionary)", lookup);
+  item = new BMenuItem("Lookup (dictionary)", lookup);
   item->SetEnabled (enablelookup);
   item->SetTarget (Parent());
   fMyPopUp->AddItem (item);
@@ -607,7 +607,7 @@ RunView::BuildPopUp (void)
  
   lookup = new BMessage (M_LOOKUP_ACRONYM);
   lookup->AddString ("string", querystring);
-  item = new BMenuItem("Lookup (Acronym Finder)", lookup);
+  item = new BMenuItem("Lookup (acronym finder)", lookup);
   item->SetEnabled (enablelookup);
   item->SetTarget (Parent());
   fMyPopUp->AddItem (item);
@@ -619,7 +619,7 @@ RunView::BuildPopUp (void)
   item->SetTarget (this);
   fMyPopUp->AddItem (item);
 
-  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL), 'A');
+  item = new BMenuItem("Select all", new BMessage (B_SELECT_ALL), 'A');
   item->SetEnabled (enableselectall);
   item->SetTarget (this);
   fMyPopUp->AddItem (item);

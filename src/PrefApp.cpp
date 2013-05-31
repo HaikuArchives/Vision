@@ -79,7 +79,7 @@ AppWindowPrefsView::AppWindowPrefsView (BRect frame)
   AddChild (fStripColors);
 
   checkboxRect.OffsetBy(0.0, fStripColors->Bounds().Height() * 1.2);
-  msg.ReplaceString ("setting", "Newbie Spam Mode");
+  msg.ReplaceString ("setting", "Newbie spam mode");
   fSpamMode = new BCheckBox (checkboxRect, "newbiespammode",
     S_PREFAPP_WARN_MULTILINE,
     new BMessage (msg));

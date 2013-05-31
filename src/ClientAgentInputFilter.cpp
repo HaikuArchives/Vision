@@ -570,7 +570,7 @@ ClientAgentInputFilter::HandleDrop (const char *buffer)
 			            str.String(),
 			            "Cancel",
 			            "Spam!",
-			            "Single Line",
+			            "Single line",
 			            B_WIDTH_FROM_WIDEST,
 			            B_OFFSET_SPACING,
 			            B_WARNING_ALERT));

@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Brian Luft
  *                 Todd Lair
@@ -45,7 +45,7 @@ AboutWindow::AboutWindow (void)
    * Function purpose: Construct
    */
 
-  
+
   BRect bounds (Bounds());
   BBitmap *bmp (NULL);
 
@@ -74,7 +74,7 @@ AboutWindow::AboutWindow (void)
 
     bounds.Set (
       0.0,
-      fLogo->Frame().bottom + 12, 
+      fLogo->Frame().bottom + 12,
       Bounds().right,
       Bounds().bottom);
   }
@@ -84,7 +84,7 @@ AboutWindow::AboutWindow (void)
                   "credits",
                   bounds.OffsetToCopy (B_ORIGIN).InsetByCopy (20, 0),
                   B_FOLLOW_LEFT | B_FOLLOW_TOP,
-                  B_WILL_DRAW); 
+                  B_WILL_DRAW);
 
   fCredits->MakeSelectable (false);
   fCredits->MakeEditable (false);
@@ -110,8 +110,8 @@ AboutWindow::AboutWindow (void)
     "Brian Luft (Electroly)\n"
     "Wade Majors (kurros)\n"
     "Jamie Wilkinson (project)\n\n\n\n"
-  
-    "\n\n\n\nBrought To You In Part By Contributions From\n"
+
+    "\n\n\n\nBrought to you in part by contributions from\n"
     "{A-Z}\n"
     "Seth Flaxman (Flax)\n"
     "Joshua Jensen\n"
@@ -119,6 +119,7 @@ AboutWindow::AboutWindow (void)
     "John Robinson ([geo])\n"
     "Bjorn Oksholen (GuinnessM)\n"
     "Jean-Baptiste M. Quéru (jbq)\n"
+    "Humdinger\n"
     "\n\n\n"
 
     "\n\n\n\nUnit C\n[Support Crew]\n"
@@ -130,7 +131,7 @@ AboutWindow::AboutWindow (void)
     "Counselors: regurg and helix\n\n\n"
     "No animals were injured during the production of this IRC client\n\n\n"
     "Soundtrack available on Catastrophe Records\n\n\n\n"
-    
+
     "\n\n\n\nSpecial Thanks\n\n"
     "Olathe\n"
     "Terminus\n"
@@ -142,7 +143,7 @@ AboutWindow::AboutWindow (void)
     "Kristine Gouveia\n"
     "Be, Inc., Menlo Park, CA\n"
     "Pizza Hut, Winter Haven, FL (now give me that free pizza Mike)\n\n\n"
-    
+
     "send all complaints and nipple pictures to kaye\n\n\n"
 
     "\n\n\n\n\n"
@@ -191,7 +192,7 @@ AboutWindow::QuitRequested (void)
    */
   delete fScrollRunner;
   vision_app->PostMessage (M_ABOUT_CLOSE);
-  
+
   return true;
 }
 
@@ -202,7 +203,7 @@ AboutWindow::AboutImage (const char *, bool)
    * Function purpose: Read image resource bits::{eggName} and display
    */
 
-/* TODO : get this working  
+/* TODO : get this working
   BBitmap *bmp;
 
   if ((bmp = BTranslationUtils::GetBitmap ('bits', eggName)) != 0)
@@ -225,7 +226,7 @@ AboutWindow::MessageReceived (BMessage *msg)
   {
     case M_ABOUT_SCROLL:
     {
-#if B_BEOS_VERSION_DANO 
+#if B_BEOS_VERSION_DANO
       fCredits->SetDoubleBuffering(0xf);
 #endif
 
@@ -236,7 +237,7 @@ AboutWindow::MessageReceived (BMessage *msg)
         fCredits->ScrollTo (0, 0);
     }
     break;
-    
+
     default:
       BWindow::MessageReceived (msg);
       break;

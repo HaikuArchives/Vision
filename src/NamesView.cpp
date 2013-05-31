@@ -83,15 +83,15 @@ void NamesView::AttachedToWindow (void)
   fMyPopUp->AddItem(new BMenuItem("Query", myMessage));
   
   myMessage = new BMessage (M_NAMES_POPUP_NOTIFY);
-  fMyPopUp->AddItem(new BMenuItem("Add To Notify", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("Add to notify", myMessage));
 
   fMyPopUp->AddSeparatorItem();
 
   myMessage = new BMessage(M_NAMES_POPUP_DCCSEND);
-  fMyPopUp->AddItem(new BMenuItem("DCC Send", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("DCC send", myMessage));
 
   myMessage = new BMessage(M_NAMES_POPUP_DCCCHAT);
-  fMyPopUp->AddItem(new BMenuItem("DCC Chat", myMessage));
+  fMyPopUp->AddItem(new BMenuItem("DCC chat", myMessage));
 
   fCTCPPopUp = new BMenu("CTCP");
   fMyPopUp->AddItem( fCTCPPopUp );
