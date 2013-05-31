@@ -1,0 +1,192 @@
+
+Some ircds send numeric 005 as part of the welcome message on connect. It contains
+a list of tags that identify options the server supports, and is intended to help
+scripters and client coders. I've seen more ircds sending this recently, and with
+some client support appearing, I figured it was time to post a list.
+
+This isn't a complete list, and doesn't go into details yet. I'll add more to it
+when I have time. It does contain all tags that I'm presently aware of, except for
+three: NOQUIT (has nothing to do with clients); SAFELIST (doesn't mean much anymore);
+and HCN (no documentation). If you want me to dig up details, feel free to ask, but
+keep in mind I'm not familiar with all of these myself, so I may not know :)
+
+ 
+CHANMODES=a,b,c,d 
+
+    Categorizes channel mode characters: 
+
+        a - modes that take a parameter, and add/remove the parameter 
+            to/from a list (such as 'b') 
+
+        b - modes that take a parameter when set and unset (such as 'k') 
+
+        c - modes that take a parameter only when set (such as 'l') 
+
+        d - modes that do not take parameters (such as 'imnpst') 
+
+    Example: CHANMODES=beI,k,l,cimnpRst 
+
+    [ introduced by mIRC 5.9, not currently supported on any networks ] 
+
+--- 
+CHANTYPES=x 
+
+    Indicates the prefixes of the supported channel types. 
+
+    Prefix  Channel type 
+       #    global, supports modes 
+       +    global, modeless 
+       &    local, supports modes 
+
+    Example:  CHANTYPES=#& 
+
+--- 
+CPRIVMSG 
+
+    Indicates support for the CPRIVMSG command. 
+
+    Example: CPRIVMSG 
+
+--- 
+CNOTICE 
+
+    Indicates support for the CNOTICE command. 
+
+    Example: CNOTICE 
+
+--- 
+IRCX 
+
+    Indicates support for the IRCX extensions. 
+
+    Example: IRCX 
+
+--- 
+KICKLEN=n 
+
+    Indicates the maximum number of characters a KICK reason may use. 
+
+    Example: KICKLEN=160 
+
+--- 
+KNOCK 
+
+    Indicates support for the KNOCK command. 
+
+    Example: KNOCK 
+
+--- 
+MAP 
+
+    Indicates support for the MAP command. 
+
+    Example: MAP 
+
+--- 
+MAXBANS=n 
+
+    Indicates the maximum number of bans that may be active in a channel at 
+    any given time. 
+
+    Example: MAXBANS=60 
+
+--- 
+MAXCHANNELS=n 
+
+    Indicates the maximum number of channels a client may be a member of at 
+    any given time. 
+
+    Example: MAXCHANNELS=10 
+
+--- 
+MAXTARGETS=n 
+
+    Indicates the maximum number of comma-separated targets a single message 
+    may have. 
+
+    Example: MAXTARGETS=4 
+
+--- 
+MODES=n 
+
+    Indicates the maximum number of mode characters that may be specified in 
+    a single command. 
+
+    Example: MODES=6 
+
+--- 
+NICKLEN=n 
+
+    Indicates the maximum number of characters a nickname may use. 
+
+    Example: NICKLEN=30 
+
+--- 
+PREFIX=x 
+PREFIX=(x)x 
+
+    Indicates the available character prefixes for channel modes, and 
+    optionally the mode characters that correspond with them. 
+
+    Prefix  Mode  Description 
+       @      o   channel operator 
+       %      h   channel half-operator 
+       +      v   channel voice 
+
+    Example: PREFIX=@%+ 
+    Example: PREFIX=(ohv)@%+ 
+
+    Suggested assumption: modes are ordered right to left as highest rank to 
+    lowest. 
+
+--- 
+SILENCE=n 
+
+    Indicates the maximum number of masks that may be active in a SILENCE list 
+    at any given time. 
+
+    Example: SILENCE=5 
+
+--- 
+TOPICLEN=n 
+
+    Indicates the maximum number of characters a channel topic may use. 
+
+    Example: TOPICLEN=160 
+
+--- 
+USERIP 
+
+    Indicates support for the USERIP command. 
+
+    Example: USERIP 
+
+--- 
+VCHANS 
+
+    Indicates support for virtual channels. 
+
+    Example: VCHANS 
+
+--- 
+WALLCHOPS 
+
+    Indicates support of the @ target, for sending the message 
+    to all channel operators. 
+
+    Example: WALLCHOPS 
+
+--- 
+WATCH=n 
+
+    Indicates the maximum number of nicknames that may be in a watch list at 
+    any given time. 
+
+    Example: WATCH=128 
+
+--- 
+WHOX 
+
+    Indicates support for WHO filtering extensions. 
+
+    Example: WHOX
