@@ -164,7 +164,7 @@ void
 NotifyList::BuildPopUp(void)
 {
   delete fMyPopUp;
-  fMyPopUp = new BPopUpMenu("Notify Selection", false, false);
+  fMyPopUp = new BPopUpMenu("Notify selection", false, false);
 
   int index (CurrentSelection());
   if (index < 0)

@@ -117,7 +117,7 @@ VTextControl::BuildPopUp (void)
   
   myPopUp->AddSeparatorItem(); 
   
-  item = new BMenuItem("Select All", new BMessage (B_SELECT_ALL), 'A');
+  item = new BMenuItem("Select all", new BMessage (B_SELECT_ALL), 'A');
   item->SetEnabled (enableselectall);
   myPopUp->AddItem (item);  
   

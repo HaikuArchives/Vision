@@ -59,7 +59,7 @@ ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
 {
   BString theText(theNick);
   theText << S_SERVER_DCC_CHAT_PROMPT;
-  BAlert *myAlert = new BAlert("DCC Request", theText.String(), "Accept",
+  BAlert *myAlert = new BAlert("DCC request", theText.String(), "Accept",
     "Refuse");
   myAlert->SetFeel (B_FLOATING_APP_WINDOW_FEEL);
   BMessage *myMessage = new BMessage(M_CHAT_ACCEPT);

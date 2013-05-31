@@ -122,7 +122,7 @@ MessageAgent::AddMenuItems (BPopUpMenu *pMenu)
   BString command ("/dcc send ");
   command += fId;
   msg->AddString ("input", command.String());
-  item = new BMenuItem("DCC Send", msg);
+  item = new BMenuItem("DCC send", msg);
   item->SetTarget (this);
   if (Id().FindFirst (" [DCC]") >= 0)  // dont enable for dcc sessions
       item->SetEnabled (false);
