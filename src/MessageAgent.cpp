@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
  * The Original Code is Vision.
- * 
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Rene Gollent
  *                 Todd Lair
@@ -26,10 +26,11 @@
 #include <Beep.h>
 #include <Entry.h>
 #include <MenuItem.h>
+#include <Notification.h>
 #include <PopUpMenu.h>
 #include <Roster.h>
 #include <UTF8.h>
- 
+
 #include "MessageAgent.h"
 #include "WindowList.h"
 #include "ClientWindow.h"
@@ -44,10 +45,6 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <arpa/inet.h>
-
-#ifdef USE_INFOPOPPER
-#include <infopopper/InfoPopper.h>
-#endif
 
 MessageAgent::MessageAgent (
   BRect &frame_,
@@ -103,7 +100,7 @@ MessageAgent::AllAttached (void)
       fDataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY, this);
     else
       fDataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY, this);
-    
+
     resume_thread (fDataThread);
   }
   ClientAgent::AllAttached();
@@ -143,22 +140,22 @@ MessageAgent::DCCServerSetup(void)
   int32 diff (atoi(vision_app->GetString ("dccMaxPort")) - myPort);
   if (diff > 0)
     myPort += rand() % diff;
-    
+
   BString outNick (fChatee);
   outNick.RemoveFirst (" [DCC]");
   struct sockaddr_in sa;
-  
+
   BMessage reply;
   fSMsgr.SendMessage (M_GET_IP, &reply);
-  
+
   BString address;
   reply.FindString ("ip", &address);
-    
+
   if (fDPort != "")
     myPort = atoi (fDPort.String());
 
   fMySocket = socket (AF_INET, SOCK_STREAM, 0);
-  
+
   BMessage statMsg (M_DISPLAY);
 
   if (fMySocket < 0)
@@ -171,35 +168,35 @@ MessageAgent::DCCServerSetup(void)
   sa.sin_family = AF_INET;
 
   sa.sin_addr.s_addr = INADDR_ANY;
-  
+
   sa.sin_port = htons(myPort);
-  
+
   if (bind (fMySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1)
   {
     ClientAgent::PackDisplay (&statMsg, S_DCC_BIND_ERROR, C_ERROR);
     fMsgr.SendMessage (&statMsg);
     return;
   }
-  
+
   BMessage sendMsg (M_SERVER_SEND);
   BString buffer;
-  
+
   sa.sin_addr.s_addr = inet_addr (address.String());
-  
+
   buffer << "PRIVMSG " << outNick << " :\1DCC CHAT chat ";
   buffer << htonl(sa.sin_addr.s_addr) << " ";
   buffer << myPort << "\1";
   sendMsg.AddString ("data", buffer.String());
   fSMsgr.SendMessage (&sendMsg);
-  
-  vision_app->AcquireDCCLock();	
+
+  vision_app->AcquireDCCLock();
   listen (fMySocket, 1);
 
   BString dataBuffer;
   struct in_addr addr;
-		
+
   addr.s_addr = inet_addr (address.String());
-  dataBuffer << S_DCC_CHAT_LISTEN 
+  dataBuffer << S_DCC_CHAT_LISTEN
     << address.String() << S_DCC_CHAT_PORT << myPort << "\n";
   ClientAgent::PackDisplay (&statMsg, dataBuffer.String(), C_TEXT);
   fMsgr.SendMessage (&statMsg);
@@ -213,23 +210,23 @@ MessageAgent::DCCIn (void *arg)
   BMessenger fSMsgrE (agent->fSMsgr);
   BMessenger mMsgr (agent);
   agent->DCCServerSetup();
-    
+
   int dccSocket (agent->fMySocket);
   int dccAcceptSocket (0);
-  
+
   struct sockaddr_in remoteAddy;
   int theLen (sizeof (struct sockaddr_in));
 
   dccAcceptSocket = accept(dccSocket, (struct sockaddr*)&remoteAddy, (socklen_t *)&theLen);
-  
+
   vision_app->ReleaseDCCLock();
-  
+
   if (dccAcceptSocket < 0)
     return B_ERROR;
-    
+
   agent->fAcceptSocket = dccAcceptSocket;
   agent->fDConnected = true;
-  
+
   BMessage msg (M_DISPLAY);
 
   ClientAgent::PackDisplay (&msg, S_DCC_CHAT_CONNECTED);
@@ -238,13 +235,13 @@ MessageAgent::DCCIn (void *arg)
   char tempBuffer[2];
   BString inputBuffer;
   int32 recvReturn (0);
-  
+
   struct fd_set rset, eset;
   FD_ZERO (&rset);
   FD_ZERO (&eset);
   FD_SET (dccAcceptSocket, &rset);
   FD_SET (dccAcceptSocket, &eset);
-  
+
   while (mMsgr.IsValid() && agent->fDConnected)
   {
     if (select (dccAcceptSocket + 1, &rset, NULL, &eset, NULL) > 0)
@@ -272,17 +269,17 @@ MessageAgent::DCCIn (void *arg)
                 destLength (sizeof(convBuffer)),
                 state (0);
           int32 encoding = vision_app->GetInt32("encoding");
-          if (encoding != B_UNICODE_CONVERSION) 
+          if (encoding != B_UNICODE_CONVERSION)
           {
             convert_to_utf8 (
               encoding,
-	          inputBuffer.String(), 
+	          inputBuffer.String(),
               &length,
               convBuffer,
               &destLength,
               &state);
-          } 
-          else 
+          }
+          else
           {
             if (IsValidUTF8(inputBuffer.String(), length))
             {
@@ -293,7 +290,7 @@ MessageAgent::DCCIn (void *arg)
             {
               convert_to_utf8 (
                 B_ISO1_CONVERSION,
-                inputBuffer.String(), 
+                inputBuffer.String(),
                 &length,
                 convBuffer,
                 &destLength,
@@ -322,7 +319,7 @@ MessageAgent::DCCIn (void *arg)
     FD_SET (dccAcceptSocket, &rset);
     FD_SET (dccAcceptSocket, &eset);
   }
-	
+
   return 0;
 }
 
@@ -330,13 +327,13 @@ status_t
 MessageAgent::DCCOut (void *arg)
 {
   MessageAgent *agent ((MessageAgent *)arg);
-  
+
   BMessenger mMsgr (agent);
   struct sockaddr_in sa;
   int status;
   int dccAcceptSocket (0);
   char *endpoint;
-  
+
   uint32 realIP = strtoul (agent->fDIP.String(), &endpoint, 10);
 
   if ((dccAcceptSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -347,9 +344,9 @@ MessageAgent::DCCOut (void *arg)
     mMsgr.SendMessage (&msg);
     return false;
   }
-  
+
   agent->fAcceptSocket = dccAcceptSocket;
-	
+
   sa.sin_family = AF_INET;
   sa.sin_port = htons (atoi (agent->fDPort.String()));
   sa.sin_addr.s_addr = ntohl (realIP);
@@ -365,7 +362,7 @@ MessageAgent::DCCOut (void *arg)
     buffer << S_DCC_CHAT_TRY
       << inet_ntoa (addr)
       << S_DCC_CHAT_PORT << agent->fDPort << "\n";
-    
+
     ClientAgent::PackDisplay (&msg, buffer.String());
     mMsgr.SendMessage (&msg);
   }
@@ -398,7 +395,7 @@ MessageAgent::DCCOut (void *arg)
   FD_ZERO (&eset);
   FD_SET (dccAcceptSocket, &rset);
   FD_SET (dccAcceptSocket, &eset);
-  
+
   while (mMsgr.IsValid() && agent->fDConnected)
   {
     if (select (dccAcceptSocket + 1, &rset, NULL, &eset, &tv) > 0)
@@ -424,14 +421,14 @@ MessageAgent::DCCOut (void *arg)
           int32 length (inputBuffer.Length()),
             destLength (sizeof(convBuffer)),
 	    state (0);
-	    
+
 	    convert_to_utf8 (
-              vision_app->GetInt32("encoding"),					              inputBuffer.String(), 
+              vision_app->GetInt32("encoding"),					              inputBuffer.String(),
               &length,
               convBuffer,
 	      &destLength,
 	      &state);
-	  
+
           BMessage dispMsg (M_CHANNEL_MSG);
           dispMsg.AddString ("msgz", inputBuffer.String());
           mMsgr.SendMessage (&dispMsg);
@@ -454,7 +451,7 @@ MessageAgent::DCCOut (void *arg)
     FD_SET (dccAcceptSocket, &rset);
     FD_SET (dccAcceptSocket, &eset);
   }
-	
+
   return 0;
 }
 
@@ -466,7 +463,7 @@ MessageAgent::ChannelMessage (
   const char *address)
 {
 //  fAgentWinItem->SetName (nick);
-  
+
   ClientAgent::ChannelMessage (msgz, nick, ident, address);
 }
 
@@ -483,26 +480,26 @@ MessageAgent::MessageReceived (BMessage *msg)
           // and update DCC send logic to figure that out too
           entry_ref ref;
           msg->FindRef("refs", &ref);
-          
+
           BMessage dccmsg(M_CHOSE_FILE);
           dccmsg.AddString("nick", fChatee.String());
           dccmsg.AddRef("refs", &ref);
-          fSMsgr.SendMessage(&dccmsg); 
+          fSMsgr.SendMessage(&dccmsg);
         }
       }
       break;
-      
+
     case M_CHANNEL_MSG:
       {
         const char *nick (NULL);
- 
+
         if (msg->HasString ("nick"))
         {
           msg->FindString ("nick", &nick);
           BString outNick (nick);
           outNick.RemoveFirst (" [DCC]");
           if (fMyNick.ICompare (outNick) != 0 && !fDChat)
-            fAgentWinItem->SetName (outNick.String());      
+            fAgentWinItem->SetName (outNick.String());
           msg->ReplaceString ("nick", outNick.String());
         }
         else
@@ -516,34 +513,25 @@ MessageAgent::MessageReceived (BMessage *msg)
 
         if (IsHidden())
           UpdateStatus (WIN_NICK_BIT);
-        
+
         if (IsHidden() || (window && !window->IsActive()))
         {
-#ifdef USE_INFOPOPPER
-              if (be_roster->IsRunning(InfoPopperAppSig) == true) {
-				entry_ref ref = vision_app->AppRef();
-                BMessage infoMsg(InfoPopper::AddMessage);
-                infoMsg.AddString("appTitle", S_INFOPOPPER_TITLE);
-                infoMsg.AddString("title", fServerName.String());
-                infoMsg.AddInt8("type", (int8)InfoPopper::Important);
-                
-                infoMsg.AddInt32("iconType", InfoPopper::Attribute);
-                infoMsg.AddRef("iconRef", &ref);              
+          BNotification notification(B_INFORMATION_NOTIFICATION);
+          notification.SetGroup(BString("Vision"));
+          entry_ref ref = vision_app->AppRef();
+          notification.SetOnClickFile(&ref);
+          notification.SetTitle(fServerName.String());
+          BString tempString(msg->FindString("msgz"));
+          if (tempString[0] == '\1')
+          {
+            tempString.RemoveFirst("\1ACTION ");
+            tempString.RemoveLast ("\1");
+          }
 
-				BString tempString(msg->FindString("msgz"));
-                if (tempString[0] == '\1')
-                {
-                  tempString.RemoveFirst("\1ACTION ");
-                  tempString.RemoveLast ("\1");
-                }
-                
-                BString content;
-                content << nick << " said: " << tempString.String();
-                infoMsg.AddString("content", content);
-                
-                BMessenger(InfoPopperAppSig).SendMessage(&infoMsg);
-              };
-#endif
+          BString content;
+          content.SetToFormat("%s said: %s", nick, tempString.String());
+          notification.SetContent(content);
+          notification.Send();
         }
 
         if (window != NULL && !window->IsActive())
@@ -553,7 +541,7 @@ MessageAgent::MessageReceived (BMessage *msg)
         ClientAgent::MessageReceived (msg);
       }
       break;
-      
+
     case M_MSG_WHOIS:
       {
         BMessage dataSend (M_SERVER_SEND);
@@ -562,7 +550,7 @@ MessageAgent::MessageReceived (BMessage *msg)
         AddSend (&dataSend, fChatee.String());
         AddSend (&dataSend, " ");
         AddSend (&dataSend, fChatee.String());
-        AddSend (&dataSend, endl);      
+        AddSend (&dataSend, endl);
       }
 
     case M_CHANGE_NICK:
@@ -585,7 +573,7 @@ MessageAgent::MessageReceived (BMessage *msg)
 
           if (fDChat)
             fId.Append(" [DCC]");
-          
+
           // set up new logging file for new nick
           BMessage logMsg (M_UNREGISTER_LOGGER);
           logMsg.AddString("name", oldId.String());
@@ -594,13 +582,13 @@ MessageAgent::MessageReceived (BMessage *msg)
           logMsg.what = M_REGISTER_LOGGER;
           logMsg.AddString("name", fId.String());
           fSMsgr.SendMessage(&logMsg);
-          
+
           fAgentWinItem->SetName (fId.String());
 
-                 
+
           ClientAgent::MessageReceived (msg);
         }
-      
+
         else if (fMyNick.ICompare (oldNick) == 0)
         {
           if (!IsHidden())
@@ -615,13 +603,13 @@ MessageAgent::MessageReceived (BMessage *msg)
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
             0, ""),
           true);
-      
+
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
             "Lag: ",
             "",
             STATUS_ALIGN_LEFT),
           true);
-      
+
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (
             0,
             "",
@@ -633,9 +621,9 @@ MessageAgent::MessageReceived (BMessage *msg)
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_SERVER, fServerName.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_LAG, fMyLag.String(), false);
         vision_app->pClientWin()->pStatusView()->SetItemValue (STATUS_NICK, fMyNick.String(), true);
-      }        
+      }
       break;
-    
+
     default:
       ClientAgent::MessageReceived (msg);
   }
@@ -663,7 +651,7 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
 
     convert_from_utf8 (
       vision_app->GetInt32("encoding"),
-      outTemp.String(), 
+      outTemp.String(),
       &length,
       convBuffer,
       &destLength,
@@ -679,7 +667,7 @@ MessageAgent::ActionMessage (const char *msg, const char *nick)
     outTemp.RemoveLast ("\n");
     ChannelMessage (outTemp.String(), nick);
   }
-  
+
 }
 void
 MessageAgent::Parser (const char *buffer)
@@ -709,13 +697,13 @@ MessageAgent::Parser (const char *buffer)
 
     convert_from_utf8 (
       vision_app->GetInt32("encoding"),
-      outTemp.String(), 
+      outTemp.String(),
       &length,
       convBuffer,
       &destLength,
       &state);
-    
-    
+
+
     if (send(fAcceptSocket, convBuffer, destLength, 0) < 0)
     {
       fDConnected = false;
@@ -732,7 +720,7 @@ MessageAgent::Parser (const char *buffer)
 
   BString sBuffer (buffer);
   Display (sBuffer.String());
-  
+
 
   Display ("\n");
 }
