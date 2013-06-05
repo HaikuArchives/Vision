@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Rene Gollent
  *                 Todd Lair
@@ -61,26 +61,28 @@ class VisionApp : public BApplication
     virtual bool            QuitRequested (void);
     virtual void            ArgvReceived (int32, char **);
     virtual void            ReadyToRun (void);
-    
+
     void                    LoadURL (const char *);
 
     void                    VisionVersion (int, BString &);
-    
+
+    void                    LoadInitialSettings (void);
+
     void                    InitDefaults (void);
-    
+
     void                    LoadDefaults (int32);
 
     void                    ClientFontFamilyAndStyle (int32, const char *,
                               const char *);
     void                    ClientFontSize (int32, float);
     const BFont             *GetClientFont (int32) const;
-    
+
     const BRect             GetRect (const char *);
     void                    SetRect (const char *, BRect);
-    
-    const char              *GetString (const char *) const; 
-    void                    SetString (const char *, int32 index, const char *); 
-    
+
+    const char              *GetString (const char *) const;
+    void                    SetString (const char *, int32 index, const char *);
+
     rgb_color               GetColor (int32) const;
     void                    SetColor (int32, const rgb_color);
 
@@ -92,10 +94,10 @@ class VisionApp : public BApplication
 
     bool                    GetBool (const char *);
     status_t                SetBool (const char *, bool);
-    
+
     int32                   GetInt32 (const char *);
     status_t                SetInt32 (const char *, int32);
-    
+
     BMessage                GetNetwork (const char *);
     BMessage				GetNetwork (int32);
     status_t                SetNetwork (const char *, BMessage *);
@@ -103,41 +105,41 @@ class VisionApp : public BApplication
     bool                    CheckNetworkValid (const char *);
 
     Theme *                 ActiveTheme(void);
-    
+
     void                    GetThreadName (int, BString &);
-    
+
     void                    BenchOut (const char *);
 
     void                    Broadcast (BMessage *);
     void                    Broadcast (BMessage *, const char *, bool = false);
-    
+
     void                    AddIdent (const char *, const char *);
     void                    RemoveIdent (const char *);
     BString                 GetIdent (const char *);
     static int32            Identity (void *);
-    
+
     void                    AddNotifyNick(const char *, const char *);
     void                    RemoveNotifyNick (const char *, const char *);
     void                    AddIgnoreNick(const char *, const char *, bool = false);
     void                    RemoveIgnoreNick (const char *, const char *, bool = false);
-    
+
     void                    AcquireDCCLock (void);
     void                    ReleaseDCCLock (void);
 
 	bool                    SaveSettings (void);
-	
+
 	bigtime_t               VisionUptime (void);
-	
+
 	bool					HasAlias(const BString &) const;
 	BString					ParseAlias(const char *, const BString &);
 	status_t				AddAlias(const BString &, const BString &);
 	void					RemoveAlias(const BString &);
 	void					LoadAliases();
 	void					SaveAliases();
-    
+
     int32                   CountAliases() const;
     bool                    GetNextAlias(void **, BString &, BString &);
-    
+
     BString                 fEvents[MAX_EVENTS];
 
     bool                    fDebugSettings;
@@ -151,7 +153,7 @@ class VisionApp : public BApplication
     // used for benchmarking
     int32                   fBench1;
     int32                   fBench2;
-    
+
     ClientWindow            *pClientWin (void) const;
 
 	entry_ref				AppRef(void) const;
@@ -160,7 +162,7 @@ class VisionApp : public BApplication
 	void					InitSettings (void);
     int32                   ThreadStates (void);
     bool                    CheckStartupNetworks (void);
-    
+
     volatile bool           fShuttingDown;
 
     AboutWindow             *fAboutWin;
@@ -169,9 +171,9 @@ class VisionApp : public BApplication
     PrefsWindow             *fPrefsWin;
     NetworkWindow           *fNetWin;
     DCCFileWindow           *fDccFileWin;
-    
+
     SettingsFile			*fVisionSettings;
-    
+
     rgb_color               fColors[MAX_COLORS];
     BFont                   *fClientFont[MAX_FONTS];
 	BString					fCommands[MAX_COMMANDS];
