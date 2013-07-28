@@ -53,7 +53,7 @@ NotifyList::NotifyList (BRect _frame)
 NotifyList::~NotifyList (void)
 {
   while (CountItems() > 0)
-    delete RemoveItem (0L);
+    delete RemoveItem ((int32)0);
   delete fMyPopUp;
 }
 
@@ -61,7 +61,7 @@ void
 NotifyList::UpdateList(BObjectList<NotifyListItem> *newList)
 {
   while (CountItems() > 0)
-    delete RemoveItem (0L);
+    delete RemoveItem ((int32)0);
   BList updateList;
   // make private copy of list items otherwise things go bad
   for (int32 i = 0; i < newList->CountItems(); i++)

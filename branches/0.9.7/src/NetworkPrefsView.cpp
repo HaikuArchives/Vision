@@ -330,7 +330,7 @@ NetworkPrefsView::UpdateNetworkData (BMessage & msg)
   else
     fTextView->SetText ("");
   uint32 altCount (0);
-  int32 size;
+  ssize_t size;
   const ServerData *data (NULL);
   for (int32 i = 0; msg.FindData ("server", B_ANY_TYPE, i,
     reinterpret_cast < const void **>(&data), &size) == B_OK; i++)
@@ -352,7 +352,7 @@ NetworkPrefsView::UpdatePersonalData (BMessage & msg)
   int32 count (fListView->CountItems ()),
         i (0);
   for (i = 0; i < count; i++)
-    delete (fListView->RemoveItem (0L));
+    delete (fListView->RemoveItem ((int32)0));
 
   if ((msg.HasBool ("useDefaults") && msg.FindBool ("useDefaults")))
   {

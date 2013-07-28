@@ -42,7 +42,7 @@ NetworkMenu::AttachedToWindow (void)
   if (CountItems())
   {
     BMenuItem *item (NULL);
-    while ((item = RemoveItem(0L)) != NULL)
+    while ((item = RemoveItem((int32)0)) != NULL)
       delete item;
   }
 

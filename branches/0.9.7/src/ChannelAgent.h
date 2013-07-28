@@ -29,7 +29,7 @@
 #include <Rect.h>
 #include <String.h>
 #include "ClientAgent.h"
-#include "ObjectList.h"
+#include <ObjectList.h>
 
 class ChannelOptions;
 class BScrollView;
