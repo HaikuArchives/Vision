@@ -817,7 +817,7 @@ VisionApp::CheckNetworkValid (const char *name)
     && netData.HasString ("name"))
     {
       const ServerData *data (NULL);
-      int32 size;
+      ssize_t size;
       for (int32 i = 0; netData.FindData ("server", B_RAW_TYPE, i,
         reinterpret_cast<const void **>(&data), &size) == B_OK; i++)
       {

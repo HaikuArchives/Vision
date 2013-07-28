@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.7-H-130604
+VERSION := 0.9.7-H-280704
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
@@ -69,9 +69,8 @@ endif
 
 CFLAGS += -DBEOS_BUILD
 CFLAGS += -DBUILD_DATE=\"$(BUILDDATE)\"
-CFLAGS += -fno-pic
+CFLAGS += -fPIC
 CFLAGS += -ffast-math
-CFLAGS += -march=pentium -mcpu=pentiumpro
 CFLAGS += -Wall -W -Wno-multichar -Wpointer-arith
 CFLAGS += -Wwrite-strings -Woverloaded-virtual
 CFLAGS += -Wconversion -Wpointer-arith

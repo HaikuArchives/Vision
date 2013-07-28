@@ -165,7 +165,7 @@ ClientAgentInputFilter::Filter (BMessage *msg, BHandler **target)
 			// we have our own pasting code so we can catch multiple lines
 			BClipboard clipboard ("system");
 			const char *fText;
-			int32 textLen;
+			ssize_t textLen;
 			BMessage *clip ((BMessage *)NULL);
 
 			if (clipboard.Lock())

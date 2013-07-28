@@ -359,7 +359,7 @@ ServerAgent::Establish (void *arg)
             name,
             connectNick;
     const ServerData *serverData (NULL);
-    int32 size;
+    ssize_t size;
     
     getMsg.FindData ("server", B_ANY_TYPE, reinterpret_cast<const void **>(&serverData), &size);
     // better safe than sorry, seems under certain circumstances the SendMessage can fail
@@ -597,7 +597,7 @@ ServerAgent::Establish (void *arg)
 
           if (vision_app->fDebugRecv)
           {
-            printf ("RECEIVED: (%ld:%03ld) \"", serverSid, temp.Length());
+            printf ("RECEIVED: (%03" B_PRId32 ":%03" B_PRId32 ") \"", serverSid, temp.Length());
             for (int32 i = 0; i < temp.Length(); ++i)
             {
               if (isprint (temp[i]))
@@ -628,7 +628,7 @@ ServerAgent::Establish (void *arg)
         if (vision_app->fDebugRecv)
         {
           // print interesting info          
-          printf ("Negative from endpoint receive! (%ld)\n", length);
+          printf ("Negative from endpoint receive! (%" B_PRId32 ")\n", length);
           printf ("eset : %s\nrset: %s\nwset: %s\n",
             FD_ISSET (serverSock, &eset) ? "true" : "false",
             FD_ISSET (serverSock, &rset) ? "true" : "false",
@@ -736,7 +736,7 @@ ServerAgent::AsyncSendData (const char *cData)
   {
     data.RemoveAll ("\n");
     data.RemoveAll ("\r");
-    printf("    SENT: (%03ld) \"%s\"\n", length, data.String());
+    printf("    SENT: (%03" B_PRId32 ") \"%s\"\n", length, data.String());
   }
 }
 
@@ -964,8 +964,8 @@ const ServerData *
 ServerAgent::GetNextServer ()
 {
   type_code type;
-  int32 count,
-    size;
+  int32 count;
+  ssize_t size;
   fNetworkData.GetInfo ("server", &type, &count);
   uint32 state = (fReconnecting) ? SERVER_SECONDARY : SERVER_PRIMARY;
 
@@ -1005,7 +1005,7 @@ ServerAgent::GetNextNick ()
 }
 
 bool
-ServerAgent::PrivateIPCheck (const char *ip)
+ServerAgent::PrivateIPCheck (BString ip)
 {
   /*
    * Function purpose: Compare against fLocalip to see if it is a private address
@@ -1349,9 +1349,9 @@ ServerAgent::MessageReceived (BMessage *msg)
                 path.Path(),
                 ssize.String(),
                 fSMsgr);
-            BMessage msg (M_DCC_FILE_WIN);
-            msg.AddPointer ("view", view);
-            vision_app->PostMessage (&msg);
+            BMessage message (M_DCC_FILE_WIN);
+            message.AddPointer ("view", view);
+            vision_app->PostMessage (&message);
 
       }
       break;
@@ -1540,7 +1540,7 @@ ServerAgent::MessageReceived (BMessage *msg)
               {
                 // wait some more
                 char lag[15] = "";
-                sprintf (lag, "%ld0.000+", fLagCount);  // assuming a 10 second runner
+                sprintf (lag, "%" B_PRId32 "0.000+", fLagCount);  // assuming a 10 second runner
                 fMyLag = lag;
                 ++fLagCount;
                 fMsgr.SendMessage (M_LAG_CHANGED);

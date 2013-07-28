@@ -359,7 +359,7 @@ void
 NamesView::ClearList (void)
 {
   while (CountItems() > 0)
-    delete RemoveItem (0L);
+    delete RemoveItem ((int32)0);
 }
 
 void

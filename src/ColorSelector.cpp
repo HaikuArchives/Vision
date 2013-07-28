@@ -243,7 +243,7 @@ ColorSelector::ColorSelector(	BRect frame, const char* name,
 	fColorPalette->SetDoubleBuffering (B_UPDATE_INVALIDATED | B_UPDATE_RESIZED | B_UPDATE_EXPOSED);
 #else
     rgb_color *color (NULL);
-    int32 size (0);
+    ssize_t size (0);
     fColors.FindData ("color", B_RGB_COLOR_TYPE, 0, (const void **)(&color), &size);
     swatch = new ColorSwatch (dummyRect, "swatch", *color);
     AddChild (swatch);
@@ -332,7 +332,7 @@ void ColorSelector::MessageReceived(BMessage *msg)
 {
 	if (msg->WasDropped()) {
 		rgb_color *color;
-		int32 size;
+		ssize_t size;
 		if (msg->FindData ("RGBColor", B_RGB_COLOR_TYPE, (const void **)&color,
 			&size) == B_OK) {
 			if (fColorPalette) {
@@ -352,7 +352,7 @@ void ColorSelector::MessageReceived(BMessage *msg)
 		case CMD_CHOOSE_UI_COLOR: {
 			const char* field;
 			int32 index (0);
-			int32 size;
+			ssize_t size;
 			if (msg->FindString("field", &field) == B_OK) {
 				msg->FindInt32 ("index", &index);
 				fCurrentField = field;
@@ -449,7 +449,7 @@ void ColorSelector::SetTo(const BMessage& colors)
 void ColorSelector::Update(const BMessage& changes)
 {
 	int32 index (0);
-	int32 size (0);
+	ssize_t size (0);
 	rgb_color *color;
 	changes.FindInt32 ("index", &index);
 	changes.FindData ("color", B_RGB_COLOR_TYPE, (const void **)(&color), &size);
@@ -477,7 +477,7 @@ void ColorSelector::Revert()
 	BMessage OriginalColors = fInitColors;
 	SetTo (OriginalColors);
 	rgb_color *color;
-	int32 size (0);
+	ssize_t size (0);
 
 	for (int32 i = 0; i < MAX_COLORS; i++)
 		if (fInitColors.FindData ("color", B_RGB_COLOR_TYPE, i, (const void **)(&color), &size) == B_OK)

@@ -101,7 +101,7 @@ GeneralPrefsView::GeneralPrefsView (BRect frame, const char *title, uint32 redra
 GeneralPrefsView::~GeneralPrefsView (void)
 {
   while (fPrefsList->CountItems() != 0)
-    delete fPrefsList->RemoveItem (0L);
+    delete fPrefsList->RemoveItem ((int32)0);
 }
 
 void

@@ -341,7 +341,7 @@ WindowList::ClearList (void)
         all (CountItems());
 
   for (i = 0; i < all; i++)
-    delete static_cast<WindowListItem *>(RemoveItem (0L));
+    delete static_cast<WindowListItem *>(RemoveItem ((int32)0));
 }
 
 void

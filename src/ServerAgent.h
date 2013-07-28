@@ -93,7 +93,7 @@ class ServerAgent : public ClientAgent
     static int                  SortNotifyItems (const NotifyListItem *, const NotifyListItem *);
 
     void                        HandleReconnect (void);
-    static bool                 PrivateIPCheck (const char *);
+    static bool                 PrivateIPCheck (BString);
     const char                  *GetNextNick (void);
     const ServerData            *GetNextServer (void);
 	
