@@ -526,8 +526,14 @@ VisionApp::LoadDefaults (int32 section)
         if (!fVisionSettings->HasBool ("notifyExpanded"))
           fVisionSettings->AddBool("notifyExpanded", true);
 
-        if (!fVisionSettings->HasString ("logBaseDir"))
-          fVisionSettings->AddString("logBaseDir", "logs");
+		if (!fVisionSettings->HasString ("logBaseDir")) {
+			BPath base;
+			if (find_directory(B_USER_SETTINGS_DIRECTORY, &base) == B_OK) {
+				base.Append("Vision");
+				base.Append("logs");
+			}
+			fVisionSettings->AddString("logBaseDir", base.Path());
+		}
 
         if (!fVisionSettings->HasInt32 ("encoding"))
           fVisionSettings->AddInt32("encoding", B_ISO1_CONVERSION);
