@@ -16,7 +16,7 @@
 
 # the file name, ...
 BINARY := Vision
-VERSION := 0.9.7-H-20131004
+VERSION := 0.9.7-H-20131020
 BUILDDATE := $(shell date +%b_%d_%Y)
 BUILD_TYPE := Release
 
@@ -84,10 +84,7 @@ LD := gcc
 
 LDFLAGS := $(REG_LIBS) -nodefaultlibs
 
-ifeq ($(wildcard /boot/common/include/infopopper/InfoPopper.h), )
-else
-  CFLAGS += -DUSE_INFOPOPPER=1
-endif
+CFLAGS += -DUSE_INFOPOPPER=1
 
 DEP := gcc -MM -DBEOS_BUILD
 
