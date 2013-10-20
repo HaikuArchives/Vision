@@ -471,43 +471,44 @@ ServerAgent::ParseENums (const char *data, const char *sWord)
               offlined << item->Text();
             }
           }
-
-          if (offlined.Length())
-          {
-            BNotification notification(B_INFORMATION_NOTIFICATION);
-            notification.SetGroup(BString("Vision"));
-            entry_ref ref = vision_app->AppRef();
-            notification.SetOnClickFile(&ref);
-            notification.SetTitle(fServerName.String());
-            BString content;
-            content << offlined;
-            if (offlined.FindFirst(' ') > -1)
-	          content << " are offline";
-            else
-	          content << " is offline";
-
-            notification.SetContent(content);
-            notification.Send();
-          }
-          if (onlined.Length())
-          {
-            BNotification notification(B_INFORMATION_NOTIFICATION);
-            notification.SetGroup(BString("Vision"));
-            entry_ref ref = vision_app->AppRef();
-            notification.SetOnClickFile(&ref);
-            notification.SetTitle(fServerName.String());
-            BString content;
-            content << onlined;
-            if (onlined.FindFirst(' ') > -1)
-	          content << " are online";
-            else
-	          content << " is online";
-
-            notification.SetContent(content);
-            notification.Send();
-          }
-
         }
+
+        if (offlined.Length())
+        {
+          BNotification notification(B_INFORMATION_NOTIFICATION);
+          notification.SetGroup(BString("Vision"));
+          entry_ref ref = vision_app->AppRef();
+          notification.SetOnClickFile(&ref);
+          notification.SetTitle(fServerName.String());
+          BString content;
+          content << offlined;
+          if (offlined.FindFirst(' ') > -1)
+	         content << " are offline";
+          else
+	         content << " is offline";
+
+          notification.SetContent(content);
+          notification.Send();
+        }
+
+        if (onlined.Length())
+        {
+           BNotification notification(B_INFORMATION_NOTIFICATION);
+           notification.SetGroup(BString("Vision"));
+           entry_ref ref = vision_app->AppRef();
+           notification.SetOnClickFile(&ref);
+           notification.SetTitle(fServerName.String());
+           BString content;
+           content << onlined;
+           if (onlined.FindFirst(' ') > -1)
+          content << " are online";
+           else
+          content << " is online";
+
+           notification.SetContent(content);
+           notification.Send();
+        }
+
         fNotifyNicks.SortItems(SortNotifyItems);
         msg.AddPointer ("list", &fNotifyNicks);
         msg.AddPointer ("source", this);
