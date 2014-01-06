@@ -26,7 +26,11 @@
 #include "VTextControl.h"
 
 #include <Alert.h>
+#include <Button.h>
 #include <CheckBox.h>
+#include <Directory.h>
+#include <FindDirectory.h>
+#include <Entry.h>
 #include <Path.h>
 
 #include <ctype.h>
@@ -58,6 +62,15 @@ LogPrefsView::LogPrefsView (BRect frame)
   checkboxRect.top += fLogStampFormat->Bounds().Height() * 1.2;  
   BMessage msg (M_PREFLOG_CHECKBOX_CHANGED);
 
+  fClearLogs = new BButton(BRect(0,0,0,0), "Clear Logs", S_PREFLOG_DELETE_LOGS,
+  	new BMessage(M_PREFLOG_DELETE_LOGS));
+  fClearLogs->ResizeToPreferred();
+  fClearLogs->MoveTo(fLogBaseDir->Bounds().Width() + 200,
+  	fLogBaseDir->Frame().bottom + be_plain_font->Size());
+  if (_CheckIfEmpty())
+    fClearLogs->SetEnabled(false);
+  AddChild(fClearLogs);
+  
   checkboxRect.top += be_plain_font->Size();
   checkboxRect.bottom = checkboxRect.top;
   msg.AddString ("setting", "timestamp");
@@ -111,6 +124,7 @@ LogPrefsView::AttachedToWindow (void)
   fLogBaseDir->ResizeTo (Bounds().Width() - 15, fLogBaseDir->Bounds().Height());
   fLogStampFormat->SetTarget (this);
   fLogStampFormat->ResizeTo (Bounds().Width() / 2.0, fLogStampFormat->Bounds().Height());
+  fClearLogs->SetTarget (this);
   fTimeStamp->SetTarget (this);
   fTimeStamp->MoveTo (be_plain_font->StringWidth ("S"), fLogStampFormat->Frame().bottom + fLogStampFormat->Bounds().Height());
   fLogEnabled->SetTarget (this);
@@ -177,9 +191,53 @@ LogPrefsView::MessageReceived (BMessage *msg)
         vision_app->SetString ("timestamp_format", 0, fLogStampFormat->Text());
       }
       break;
-    
+
+	case M_PREFLOG_DELETE_LOGS:
+	  {
+	  	BString path(vision_app->GetString ("logBaseDir"));
+		BEntry entry(path.String());
+		  _DeleteLogs(&entry);
+		fClearLogs->SetEnabled(false);
+	  }
+	  break;
+
     default:
       BView::MessageReceived (msg);
       break;
   }
+}
+
+
+void
+LogPrefsView::_DeleteLogs(BEntry* dir_entry)
+{
+  BEntry entry;
+  BDirectory dir(dir_entry);
+  dir.Rewind();
+  while (dir.GetNextEntry(&entry) == B_OK)
+  {
+    if (entry.IsDirectory())
+	  _DeleteLogs(&entry);
+	else
+	  entry.Remove();
+  }
+}
+
+
+bool
+LogPrefsView::_CheckIfEmpty()
+{
+  BString path(vision_app->GetString ("logBaseDir"));
+  BDirectory dir(path.String());
+  BEntry entry;
+  while (dir.GetNextEntry(&entry) == B_OK)
+  {
+    if (entry.IsDirectory()) {
+	  BDirectory directory(&entry);
+	  if (directory.CountEntries() > 0)
+	    return false;
+    } else
+	  return false;
+  }
+  return true;
 }

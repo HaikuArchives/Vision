@@ -369,6 +369,7 @@
 #define S_PREFLOG_ALERT_TITLE       "Error"
 #define S_PREFLOG_ALERT_TEXT        "The log path you have entered is invalid."
 #define S_PREFLOG_ALERT_BUTTON      "OK"
+#define S_PREFLOG_DELETE_LOGS		"Delete Log Files"
 
 // main prefs view
 

@@ -28,6 +28,8 @@ class VTextControl;
 class BMenuField;
 class BCheckBox;
 class BBox;
+class BButton;
+class BEntry;
 
 class LogPrefsView : public BView
 {
@@ -46,6 +48,10 @@ class LogPrefsView : public BView
     BCheckBox *fLogEnabled,
               *fLogFileTimestamp,
               *fTimeStamp;
+    BButton   *fClearLogs;
+  private:
+  			void _DeleteLogs(BEntry* dir_entry);
+  			bool _CheckIfEmpty();
 };
 
 #endif // _PREFLOG_H
