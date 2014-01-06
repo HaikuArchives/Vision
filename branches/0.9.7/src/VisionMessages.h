@@ -232,6 +232,7 @@ const uint32 M_PREFLOG_CHECKBOX_CHANGED             = 0x2314;
 const uint32 M_PREFLOG_LOGPATH_CHANGED              = 0x2315;
 const uint32 M_PREFLOG_TS_FORMAT_CHANGED            = 0x2316;
 const uint32 M_DCC_PRIVATE_CHANGED                  = 0x2317;
+const uint32 M_PREFLOG_DELETE_LOGS					= 0x2318;
 
 // misc
 
