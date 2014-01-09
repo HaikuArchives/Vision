@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Rene Gollent
  *                 Todd Lair
@@ -38,7 +38,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
           theRest (RestOfString(theMsg.String(), 2));
   theCTCP.RemoveFirst ("\1");
   theCTCP.RemoveLast ("\1");
-  
+
   if (theCTCP == "PING")
   {
     if (theMsg == "-9z99")
@@ -49,76 +49,58 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     tempString += theMsg;
     SendData (tempString.String());
   }
-  
+
   else if ((theCTCP == "VERSION") || (theCTCP == "CLIENTINFO"))
   {
     BString sysInfoString;
     if (!vision_app->GetBool ("versionParanoid"))
     {
-#if 0
-      BString librootversion;
-      BFile *libroot (new BFile ("/boot/beos/system/lib/libroot.so", B_READ_ONLY));
-      BAppFileInfo info (libroot);
-      version_info version;
-      info.GetVersionInfo (&version, B_SYSTEM_VERSION_KIND);
-      librootversion = version.short_info;
-      librootversion.RemoveFirst ("R");
-			
-      delete libroot;			
-#endif			
       system_info myInfo;
       get_system_info (&myInfo);
 
+      cpu_topology_node_info* cpuInfo = NULL;
+      uint32 infoCount = 0;
+      uint64 clockSpeed = 0;
+      get_cpu_topology_info(NULL, &infoCount);
+      if (infoCount != 0) {
+      	cpuInfo = new cpu_topology_node_info[infoCount];
+        get_cpu_topology_info(cpuInfo, &infoCount);
+
+        for (uint32 i = 0; i < infoCount; i++) {
+      	  if (cpuInfo[i].type == B_TOPOLOGY_CORE) {
+            clockSpeed = cpuInfo[i].data.core.default_frequency;
+            break;
+      	  }
+        }
+
+        delete [] cpuInfo;
+      }
+
       utsname sysname;
       uname(&sysname);
-      
+
       BString revInfo = sysname.version;
       revInfo.Remove(revInfo.FindFirst(' '), revInfo.Length());
-	
+
+
       sysInfoString = " : ";
       sysInfoString += sysname.sysname;
       sysInfoString += "/";
       sysInfoString += revInfo;
-#if 0			
-      if ((librootversion.FindFirst("5.0") == 0) || (librootversion == "5"))
-      {
-        // this is the way the BeOS 5.0.1 update checks for R5 Pro...
-        bool BePro;
-        BePro = true; // innocent until proven guilty
-        BFile *indeo5rt (new BFile ("/boot/beos/system/add-ons/media/encoders/indeo5rt.encoder", B_READ_ONLY));
-        BFile *indeo5rtmmx (new BFile ("/boot/beos/system/add-ons/media/encoders/indeo5rtmmx.encoder", B_READ_ONLY));
-        BFile *mp3 (new BFile ("/boot/beos/system/add-ons/media/encoders/mp3.encoder", B_READ_ONLY));
-				
-        if ((indeo5rt->InitCheck() != B_OK)
-        ||  (indeo5rtmmx->InitCheck() != B_OK)
-        ||  (mp3->InitCheck() != B_OK))
-          BePro = false; // *gasp*! leeches!
-
-        delete indeo5rt;
-        delete indeo5rtmmx;
-        delete mp3;
-				
-        if (BePro)
-          sysInfoString += " Pro Edition";
-        else
-          sysInfoString += " Personal Ed.";
-
-      }
-#endif			
       sysInfoString += " (";
 	  sysInfoString << myInfo.cpu_count;
       sysInfoString += "x";
-      sysInfoString << myInfo.cpu_clock_speed / 1000000;
+      sysInfoString << clockSpeed / 1000000;
       sysInfoString += "MHz) : ";
     }
     else
       sysInfoString = " : A bird in the bush usually has a friend in there with him : ";
-		
+
     BString tempString ("NOTICE ");
     BString tempString2;
     vision_app->VisionVersion (VERSION_VERSION, tempString2);
     tempString += theNick;
-    tempString += " :\1VERSION Vision-"; 
+    tempString += " :\1VERSION Vision-";
     tempString += tempString2;
     tempString += sysInfoString;
     tempString += "http://vision.sourceforge.net";
@@ -148,18 +130,18 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     tempString += '\1';
     SendData (tempString.String());
   }
-  
+
   else if ((theCTCP == "TIME") || (theCTCP == "DATE"))
   {
     time_t st (time (0));
     struct tm curTime;
-    localtime_r (&st, &curTime); 
+    localtime_r (&st, &curTime);
     char str[47];
     strftime (str,47,"%A %b %d %Y %I:%M %p %Z",&curTime);
 
     BString tempString ("NOTICE ");
     tempString += theNick;
-    tempString += " :\1TIME "; 
+    tempString += " :\1TIME ";
     tempString += str;
     tempString += '\1';
     SendData (tempString.String());
@@ -235,7 +217,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
           msg.AddBool   ("continue",    true);
 
           fMsgr.SendMessage(&msg);
-					
+
           delete data;
           break;
         }
@@ -251,7 +233,7 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
 
       for (int32 i = 0; i < poss.Length(); ++i)
         pos = pos * 10 + poss[i] - '0';
-        
+
 
       // Have to tell the sender we can resume
       BString tempString("PRIVMSG ");
@@ -264,20 +246,20 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
       tempString += poss;
       tempString += "\1";
       SendData (tempString.String());
-      
+
 
       BMessage bMsg (M_DCC_MESSENGER), bReply;
       be_app_messenger.SendMessage (&bMsg, &bReply);
-      
+
       BMessenger msgr;
       bReply.FindMessenger ("msgr", &msgr);
-      
+
       BMessage msg (M_ADD_RESUME_DATA), reply;
       msg.AddString ("vision:nick", theNick.String());
       msg.AddString ("vision:port", port.String());
       msg.AddString ("vision:file", file.String());
       msg.AddInt64 ("vision:pos", pos);
-      
+
       // do sync.. we do not want to have the transfer
       // start before we tell it okay
       msgr.SendMessage (&msg, &reply);
@@ -319,12 +301,12 @@ ServerAgent::ParseCTCP (BString theNick, BString theTarget, BString theMsg)
     int32 theChars = theRest.Length();
     if (theRest[theChars - 1] == '\1')
       theRest.Truncate (theChars - 1);
-      
+
     buffer += "] ";
     buffer += theRest;
     buffer += '\n';
   }
-		
+
   PackDisplay (&display, buffer.String(), C_CTCP_REQ, C_BACKGROUND, F_SERVER);
   PostActive (&display);
 }
@@ -381,7 +363,7 @@ ServerAgent::ParseCTCPResponse (BString theNick, BString theMsg)
 		tempString += theReply;
 		tempString += '\n';
 	}
-	
+
 	BMessage display (M_DISPLAY);
 	BString buffer;
 
