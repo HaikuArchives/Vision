@@ -1100,7 +1100,7 @@ VisionApp::VisionVersion (int typebit, BString &result)
       break;
 
     case VERSION_DATE:
-      result = BUILD_DATE;
+      result = __DATE__ " " __TIME__;
       result.ReplaceAll ("_", " ");
       break;
   }
