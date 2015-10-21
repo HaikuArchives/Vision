@@ -47,7 +47,6 @@ SRCS = AboutWindow.cpp \
 	HistoryList.cpp \
 	IconMenu.cpp \
 	ListAgent.cpp \
-	LuaScript.cpp \
 	MessageAgent.cpp \
 	NameItem.cpp \
 	NamesView.cpp \
@@ -81,7 +80,6 @@ SRCS = AboutWindow.cpp \
 	SetupWindow.cpp \
 	SpeedButton.cpp \
 	StatusView.cpp \
-	TestScript.cpp \
 	Theme.cpp \
 	URLCrunch.cpp \
 	Utilities.cpp \
