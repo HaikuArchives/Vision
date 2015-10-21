@@ -19,28 +19,23 @@ struct ServerData;
 
 class NetPrefsServerView : public BView
 {
-	public:
-					NetPrefsServerView (BRect, const char *, BMessenger);
-	virtual			~NetPrefsServerView (void);
-	virtual void	MessageReceived (BMessage *);
-	virtual void	AttachedToWindow (void);
-	void			SetNetworkData (BMessage *);
-	
-	private:
+public:
+	NetPrefsServerView(BRect, const char*, BMessenger);
+	virtual ~NetPrefsServerView(void);
+	virtual void MessageReceived(BMessage*);
+	virtual void AttachedToWindow(void);
+	void SetNetworkData(BMessage*);
 
-	void			AddServer (const ServerData *);
-	void			RemoveServer (void);
-	void            UpdateNetworkData (const ServerData *);
-	BStringView     *fSelectTitleString,
-	                *fLegend4;
-	BColumnListView *fServerList;
-	BButton         *fAddButton,
-	                *fEditButton,
-	                *fRemoveButton,
-	                *fOkButton;
-	BWindow         *fEntryWin;
-	BMessage        *fActiveNetwork;
-	BMessenger      fNetWin;
+private:
+	void AddServer(const ServerData*);
+	void RemoveServer(void);
+	void UpdateNetworkData(const ServerData*);
+	BStringView* fSelectTitleString, *fLegend4;
+	BColumnListView* fServerList;
+	BButton* fAddButton, *fEditButton, *fRemoveButton, *fOkButton;
+	BWindow* fEntryWin;
+	BMessage* fActiveNetwork;
+	BMessenger fNetWin;
 };
 
 #endif

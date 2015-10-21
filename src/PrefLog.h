@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Rene Gollent
  */
 
@@ -33,25 +33,23 @@ class BEntry;
 
 class LogPrefsView : public BView
 {
-  public:
-    LogPrefsView (BRect);
-    virtual ~LogPrefsView (void);
-    virtual void MessageReceived (BMessage *);
-    virtual void AttachedToWindow (void);
-    virtual void AllAttached (void);
-    virtual void FrameResized (float, float);
-  
-  private:
-    VTextControl *fLogBaseDir,
-                 *fLogStampFormat;
-                 
-    BCheckBox *fLogEnabled,
-              *fLogFileTimestamp,
-              *fTimeStamp;
-    BButton   *fClearLogs;
-  private:
-  			void _DeleteLogs(BEntry* dir_entry);
-  			bool _CheckIfEmpty();
+public:
+	LogPrefsView(BRect);
+	virtual ~LogPrefsView(void);
+	virtual void MessageReceived(BMessage*);
+	virtual void AttachedToWindow(void);
+	virtual void AllAttached(void);
+	virtual void FrameResized(float, float);
+
+private:
+	VTextControl* fLogBaseDir, *fLogStampFormat;
+
+	BCheckBox* fLogEnabled, *fLogFileTimestamp, *fTimeStamp;
+	BButton* fClearLogs;
+
+private:
+	void _DeleteLogs(BEntry* dir_entry);
+	bool _CheckIfEmpty();
 };
 
 #endif // _PREFLOG_H
