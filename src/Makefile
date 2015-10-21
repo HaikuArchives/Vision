@@ -6,8 +6,8 @@
 
 # The name of the binary.
 NAME = Vision
-VERSION := 0.9.7-H-20140108
-TARGET_DIR = ../data
+VERSION := 0.9.7pre8
+TARGET_DIR = ../dist
 
 # The type of binary, must be one of:
 #	APP:	Application

@@ -1,5 +1,23 @@
 Vision
-http://vision.sourceforge.net
+https://github.com/HaikuArchives/Vision
+
+[0.9.8]
+	* Rewrite build system, remove various deprecated cruft.
+	* Use the system's ColumnListView rather than the built-in one.
+	* Completely reformat all source code.
+
+[0.9.7-20140108]
+	* Rewrite DCC to use the new network backend.
+	* Fix potential crash-on-exit from Net Prefs window.
+	* Don't include protocol docs in release packages.
+	* Change the default logs path to B_USER_DATA_DIRECTORY/logs/Vision/.
+	* Use Haiku's Notifications system for notifications.
+	* Sentence-case the UI.
+	* Settings loading rework.
+	* Fix logging under PM systems.
+	* Fix incorrect handling of nick notifications.
+	* Add a way to delete logs.
+	* Update CPU info retrieval to use newer core topology APIs.
 
 [0.9.7-SF-03022008]
 	* Incorporate various fixes to allow building via gcc4.
@@ -12,22 +30,22 @@ http://vision.sourceforge.net
         * added InfoPopper support
         * fixed duplicate notify bug
 	 * added JIS encoding support
-	 * modified tab completion to append a ":" if the nick is at the beginning of a line 
+	 * modified tab completion to append a ":" if the nick is at the beginning of a line
 	 * refined URL crunching logic (Alan Ellis)
 	 * Fixed /netclear and /aclear not working correctly (thanks to Michael Weirauch for reporting)
-	 * added popup URL menu to status area's topic display 
+	 * added popup URL menu to status area's topic display
          * added parsing for PART reasons ($R in event string to use)
 	 * added ignore/exclude support (not yet finished)
          * fixed bug in DCC chat (encoding was not being used in one case)
          * fixed crash bug in input filter for unmapped keys (thanks to Patrick/cartman for debugging assistance)
          * added /find and /search for finding text in the textview.
          * added ISO-8859-13 encoding support
-         * added repeat away message suppression support 
+         * added repeat away message suppression support
 	 * added simple substitution alias support
 	   -- commands as follows:
 	   1) /addalias /aliasname /whataliasshouldmapto with params
 	   2) /delalias /aliasname
-	   
+
 	   Substitution aliases can take the following forms:
 	     - $C (channel name)
 	     - $x (where x == 1-based index of parameter that should be substituted in)
@@ -38,7 +56,7 @@ http://vision.sourceforge.net
          * fixed crash bug in sender thread
 	 * added /netclear and /aclear to clear all windows in the current network and for all networks, respectively.
          * fixed a bug with part/quit events not being correctly recognized on some servers
-  
+
 [0.9.5-0906]
          * fix stupid crash bug
          * fix crash bug in PPC rev
@@ -46,7 +64,7 @@ http://vision.sourceforge.net
          * fix bug where items would get attached to the wrong server
          * fixed bug where font changes would update the font size but not spacing of list items
          * altered some semantics in how reconnects are handled, should fix some ping timeout issues that would happen now and then on reconnect.
-         * redid menus 
+         * redid menus
            - added IconMenu, thanks to Alan Ellis
            - rearranged locations of some items, renamed others
            - filled in Edit, Window menus
@@ -126,7 +144,7 @@ http://vision.sourceforge.net
          * fixed a crash on shutdown bug
          * fied crash bug and mem leak in window list
          * fixed bug where servers would ignore changes to text input colors
-         * added notify list 
+         * added notify list
              - /notify nick1 nick2 etc. to add nicks to notify list for current network
              - /unnotify nick1 nick2, etc. to remove nicks from notify list for current network
              - context popup item in channel's nick list (add to notify)
@@ -158,7 +176,7 @@ http://vision.sourceforge.net
          * cleaned up some visual artifacts
 
 [0.8.5-0418]
-         * fixed incorrect behavior with spam paste dialog 
+         * fixed incorrect behavior with spam paste dialog
            (cancel was causing the same result as clicking single line)
          * fixed bug where dcc file panel would not take focus
            (and also not grab focus on incoming send)
@@ -199,9 +217,9 @@ http://vision.sourceforge.net
          * fixed crash bug in mirc color parser
          * fixed bug in control code stripper where too many digits would get removed
          * tweaked textview drawing performance
-         * moved program UI strings to a common header file for easier localization 
+         * moved program UI strings to a common header file for easier localization
          * fixed thread-safety issue in thread name generator
-         * rewrote About Window to use a BMessageRunner 
+         * rewrote About Window to use a BMessageRunner
          * rewrote logging system
          * fixed crash bug in DCC Chat
          * fixed double-click bug in window list
@@ -224,7 +242,7 @@ http://vision.sourceforge.net
 
 [0.7.6-1217]
          * fixed bug where colors wouldn't always get stripped
-         
+
 [0.7.5-1208]
          * rewrote channel list
          * rearranged some menu item
@@ -234,7 +252,7 @@ http://vision.sourceforge.net
          * fixed crash bug in DCC Send code
 
 [0.7-1203]
-         * DCC file transfer support 
+         * DCC file transfer support
          * added packet size configuration for DCC
          * added auto-accept options for DCC
          * added configurable DCC port ranges
@@ -273,7 +291,7 @@ http://vision.sourceforge.net
          * fixed some major resize-related bugs...should be much faster at resizing the
            window and names list now
          * added nick reordering buttons (thanks to Alan Ellis for the TSpeedButton
-           class and bitmaps) 
+           class and bitmaps)
 
 [0.5-1103]
          * added option to disable the spam flood dialog (thanks to Alan Ellis)
@@ -317,11 +335,11 @@ http://vision.sourceforge.net
          * collapsed servers show indicator of status of collapsed items
          * URL clicking in RunView now works
          * text selection implemented in RunView
-         
+
 [0.3.0828]
 2001-08-28
         * fixed stupid error where all font sizes would be the same as that of the
-		  background text, thanks again to tic.		  
+		  background text, thanks again to tic.
 
 [0.3.0822]
 2001-08-22
@@ -330,7 +348,7 @@ http://vision.sourceforge.net
 [0.3.0802]
 2001-08-02
         * fixed status view nick update bug, thanks to EnochRoot
-  
+
 [0.3.07026]
 2001-07-26
         * fixed crash bug in message agent
@@ -346,7 +364,7 @@ http://vision.sourceforge.net
         * added DCC chat
         * added DCC chat item in popups menu, thanks to EnochRoot
         * fixed hanging bug on net_server
-        
+
 [0.3.07023]
 2001-07-23
         * fixed colorspace bug in input control
@@ -375,7 +393,7 @@ http://vision.sourceforge.net
      * Window size is correctly saved.
      * color picker now comes to front if color control is clicked while picker is in the background (appearance prefs)
      * workaround for BTextView colorspace bug (thanks adi!)
-    
+
 [0.3.07016]
 2001-07-16
     * fix to Appearance prefs to account for extremely long fonts
@@ -386,7 +404,7 @@ http://vision.sourceforge.net
 
 [0.3.07015]
 2001-07-15
-    * save settings data on prefs window close.    
+    * save settings data on prefs window close.
 
 [0.3.07014]
 2001-07-14
@@ -405,7 +423,7 @@ http://vision.sourceforge.net
  2001-07-08
    * implemented on-connect commands
    * fixed bug in reconnect/nick retaking logic
- 
+
 [0.2.0704]
  2001-07-04
    * fixed mistakes in some connect messages
@@ -434,7 +452,7 @@ http://vision.sourceforge.net
 [0.2.0620]
  2001-06-20
    * fixed bug where status items wouldn't get updated correctly
- 
+
 [0.2.0619]
  2001-06-19
    * fixed crasher in ServerAgent
@@ -442,7 +460,7 @@ http://vision.sourceforge.net
 [0.2.0612]
  2001-06-12
    * Vision properly recognizes and deals with UnrealIRCd
-   * added numerics parsing for /silence (submitted by Bjorn Oksholen) 
+   * added numerics parsing for /silence (submitted by Bjorn Oksholen)
 
 [0.2.0611]
  2001-06-11
@@ -466,7 +484,7 @@ http://vision.sourceforge.net
    * added ListAgent
    * fixed /op,/deop,NamesView popup to work correctly for > 4 nicks
    * bugfixes/optimizations to identd
-   
+
    * Status bar for ListAgent working
    * fixed memleak in StatusView
    * fixed crash in net_server identd
@@ -480,7 +498,7 @@ http://vision.sourceforge.net
 [0.2.0511]
  2001-05-15
    * Log file lines are now always timestamped regardless if the user has
-     turned on the display of timestamps in the window. 
+     turned on the display of timestamps in the window.
  2001-05-14
    * Rearranged ClientAgentLogger init stuff.
    * Fixed Alt+W catch
@@ -502,7 +520,7 @@ http://vision.sourceforge.net
      in ClientWindow for Alt/Shift+Alt shortcuts (cuts down on BMessage
      allocation). Decreased resource usage!
    * Opt+Cmd+T opens a Terminal session
-   
+
 [0.2.0506]
  2001-05-06
    * Revised WindowList notification colors:
@@ -529,9 +547,9 @@ http://vision.sourceforge.net
         if you change your nickname to someoneAway, and Vision reconnections,
         it wont try to change back to someone. (Actually before it wouldn't
         try to change at all, because it only watchewd for your first nickname)
-     
+
      An example of why Nickhold (and its new improvments) is useful
-     
+
        <me> I'm going to goto sleep.
        *** me is now known as meZzZ
        [...]
@@ -557,7 +575,7 @@ http://vision.sourceforge.net
    * Some ClientInputFilter fixes
    * Properly support &channels and !channels in ParseEvents
    * Other ParseEvents code cleanups
-   * Invite support   
+   * Invite support
 
 [0.2.0421]
  2001-04-23
@@ -751,7 +769,7 @@ http://vision.sourceforge.net
    * Double clicking on a NickListItem opens a query window
    * /q|/query works now
    * Support numeric 451 (Not registered)
-   
+
 [0.1.0324]
  2001-03-24
    * Add support for numeric 439 (target change too fast)
@@ -780,7 +798,7 @@ http://vision.sourceforge.net
      and nick change. Channel name's to follow.
  2001-03-22
    * Added support for !channels to /j|/join (the ID is still shown everywhere
-     though--todo for later) 
+     though--todo for later)
    * Fixed a shadowing BMessage I overlooked when I added /msg (it was actually
      declaring x but using msg y (declared somewhere else!) oops!
    * Add support for numeric 437 -- nick/channel unavailable. Vision can
@@ -815,4 +833,4 @@ http://vision.sourceforge.net
    * Fix bug with \n's in StringToURI()
    * Rename RelativePath() to RelToAbsPath()
    * Changed some BString <<'s to +='s in ParseENums (faster)
-   
+
