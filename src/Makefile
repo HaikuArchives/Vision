@@ -94,11 +94,11 @@ SRCS = AboutWindow.cpp \
 
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.
-RDEFS =
+RDEFS = Vision.rdef
 
 #	Specify the resource files to use. Full or relative paths can be used.
 #	Both RDEFS and RSRCS can be utilized in the same Makefile.
-RSRCS = Vision.rsrc
+RSRCS =
 
 # End Pe/Eddie support.
 # @<-src@
