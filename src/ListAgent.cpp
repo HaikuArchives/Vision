@@ -1,21 +1,21 @@
-/* 
- * The contents of this file are subject to the Mozilla Public 
- * License Version 1.1 (the "License"); you may not use this file 
- * except in compliance with the License. You may obtain a copy of 
- * the License at http://www.mozilla.org/MPL/ 
- * 
- * Software distributed under the License is distributed on an "AS 
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * rights and limitations under the License. 
- * 
- * The Original Code is Vision. 
- * 
+/*
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Vision.
+ *
  * The Initial Developer of the Original Code is The Vision Team.
  * Portions created by The Vision Team are
  * Copyright (C) 1999, 2000, 2001 The Vision Team.  All Rights
  * Reserved.
- * 
+ *
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Rene Gollent
  *                 Todd Lair
@@ -27,8 +27,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ColumnTypes.h"
-#include "ColumnListView.h"
+#include <ColumnTypes.h>
+#include <ColumnListView.h>
+
 #include "Prompt.h"
 #include "StatusView.h"
 #include "Vision.h"
@@ -45,7 +46,7 @@
   <kurros> regurg, yes. mine
   <regurg> I understand.
   <kurros> regurg, no. i don't think you do
-  <regurg> Does this make you feel unhappy? 
+  <regurg> Does this make you feel unhappy?
   <Brazilian> hmm, eliza is just broke
   <kurros> regurg, i just want my buttocks fondled
   <regurg> Why do you say your?
@@ -75,23 +76,23 @@ ListAgent::ListAgent (
   processing (false)
 {
   frame = Bounds();
-  
+
   listMenu = new BMenu (S_LIST_MENU);
 
   listMenu->AddItem (mFind = new BMenuItem (
-    S_LIST_MENU_FIND B_UTF8_ELLIPSIS, 
+    S_LIST_MENU_FIND B_UTF8_ELLIPSIS,
     new BMessage (M_LIST_FIND)));
   listMenu->AddItem (mFindAgain = new BMenuItem (
-    S_LIST_MENU_FINDNEXT, 
+    S_LIST_MENU_FINDNEXT,
     new BMessage (M_LIST_FAGAIN)));
   listMenu->AddItem (mFilter = new BMenuItem (
     S_LIST_MENU_FILTER B_UTF8_ELLIPSIS,
     new BMessage (M_LIST_FILTER)));
-  
+
   mFind->SetEnabled (false);
   mFindAgain->SetEnabled (false);
   mFilter->SetEnabled (false);
-  
+
 
   BView *bgView (new BView (
     frame,
@@ -103,7 +104,7 @@ ListAgent::ListAgent (
   AddChild (bgView);
 
   frame = bgView->Bounds().InsetByCopy (1, 1);
-  
+
   listView = new BColumnListView (
     frame,
     "list",
@@ -147,10 +148,10 @@ ListAgent::~ListAgent (void)
     listView->RemoveRow (row);
     delete row;
   }
-  
+
   while (hiddenItems.CountItems() > 0)
     delete hiddenItems.RemoveItemAt (0L);
-  
+
   delete fSMsgr;
   delete fAgentWinItem;
 
@@ -173,12 +174,12 @@ ListAgent::Show (void)
 {
   Window()->PostMessage (M_STATUS_CLEAR);
   this->fMsgr.SendMessage (M_STATUS_ADDITEMS);
-#ifdef __INTEL__  
+#ifdef __INTEL__
   vision_app->pClientWin()->AddMenu (listMenu);
   listMenu->SetTargetForItems (this);
 #endif
   const BRect *agentRect (dynamic_cast<ClientWindow *>(Window())->AgentRect());
-  
+
   if (*agentRect != Frame())
   {
     ResizeTo (agentRect->Width(), agentRect->Height());
@@ -204,7 +205,7 @@ ListAgent::AddBatch (void)
   while ((row = fBuildList.RemoveItemAt (0L)) != NULL)
     listView->AddRow (row);
   Window()->EnableUpdates();
-        
+
   BString cString;
   cString << listView->CountRows();
   if (!IsHidden())
@@ -228,7 +229,7 @@ ListAgent::MessageReceived (BMessage *msg)
         }
       }
       break;
-      
+
     case M_THEME_FOREGROUND_CHANGE:
       {
         int32 which (msg->FindInt16 ("which"));
@@ -241,7 +242,7 @@ ListAgent::MessageReceived (BMessage *msg)
             activeTheme->ReadUnlock();
             refresh = true;
             break;
-            
+
           case C_TEXT:
             activeTheme->ReadLock();
             listView->SetColor (B_COLOR_TEXT, activeTheme->ForegroundAt (C_TEXT));
@@ -249,13 +250,13 @@ ListAgent::MessageReceived (BMessage *msg)
             refresh = true;
             break;
 
-          case C_SELECTION:             
+          case C_SELECTION:
             activeTheme->ReadLock();
             listView->SetColor (B_COLOR_SELECTION, activeTheme->ForegroundAt (C_SELECTION));
             activeTheme->ReadUnlock();
             refresh = true;
             break;
-            
+
           default:
             break;
         }
@@ -263,13 +264,13 @@ ListAgent::MessageReceived (BMessage *msg)
           Invalidate();
       }
       break;
-      
+
     case M_STATUS_ADDITEMS:
       {
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTCOUNT, ""), true);
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTSTAT, ""), true);
         vision_app->pClientWin()->pStatusView()->AddItem (new StatusItem (S_STATUS_LISTFILTER, "", STATUS_ALIGN_LEFT), true);
- 
+
         BString cString;
         cString << listView->CountRows();
         vision_app->pClientWin()->pStatusView()->SetItemValue (0, cString.String(), false);
@@ -283,9 +284,9 @@ ListAgent::MessageReceived (BMessage *msg)
         if (!processing)
         {
           BMessage sMsg (M_SERVER_SEND);
-          
+
           BString command ("LIST");
-          
+
           BString params (msg->FindString ("cmd"));
           if (params != "-9z99")
           {
@@ -307,13 +308,13 @@ ListAgent::MessageReceived (BMessage *msg)
     case M_LIST_BEGIN:
       {
         BMessage msg (M_LIST_UPDATE);
-        listUpdateTrigger = new BMessageRunner (BMessenger(this), &msg, 3000000); 
+        listUpdateTrigger = new BMessageRunner (BMessenger(this), &msg, 3000000);
         statusStr = S_LIST_STATUS_LOADING;
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
       }
       break;
-      
+
     case M_LIST_DONE:
       {
         if (listUpdateTrigger)
@@ -325,7 +326,7 @@ ListAgent::MessageReceived (BMessage *msg)
 
         listView->SetSortingEnabled (true);
         listView->SetSortColumn (channelColumn, true, true);
-        
+
         if (!IsHidden())
           vision_app->pClientWin()->pStatusView()->SetItemValue (1, statusStr.String(), true);
 
@@ -334,7 +335,7 @@ ListAgent::MessageReceived (BMessage *msg)
         mFilter->SetEnabled (true);
 
         processing = false;
-        
+
         // empty out any remaining channels that fell below the batch cut off
         AddBatch();
 
@@ -352,20 +353,20 @@ ListAgent::MessageReceived (BMessage *msg)
         msg->FindString ("channel", &channel);
         msg->FindString ("users", &users);
         msg->FindString ("topic", &topic);
-        
+
         BRow *row (new BRow ());
-        
-        
+
+
         BStringField *channelField (new BStringField (channel));
         BIntegerField *userField (new BIntegerField (atoi(users)));
         BStringField *topicField (new BStringField (topic));
-        
+
         row->SetField (channelField, channelColumn->LogicalFieldNum());
         row->SetField (userField, usersColumn->LogicalFieldNum());
         row->SetField (topicField, topicColumn->LogicalFieldNum());
 
         fBuildList.AddItem (row);
-        
+
         if (fBuildList.CountItems() == LIST_BATCH_SIZE)
           AddBatch();
       }
@@ -392,8 +393,8 @@ ListAgent::MessageReceived (BMessage *msg)
 						&re,
 						filter.String(),
 						REG_EXTENDED | REG_ICASE | REG_NOSUB);
-					
-					BRow *currentRow;	
+
+					BRow *currentRow;
 					BStringField *channel,
 					             *topic;
 
@@ -406,7 +407,7 @@ ListAgent::MessageReceived (BMessage *msg)
 					if (filter != NULL)
 					{
   					  int32 k (0);
-  					    					  					
+
 					  while (k < listView->CountRows())
 					  {
 					     currentRow = listView->RowAt (k);
@@ -514,7 +515,7 @@ ListAgent::MessageReceived (BMessage *msg)
 					new RegExValidate ("Find:"),
 					true));
 				prompt->Show();
-			} 
+			}
 			break;
 
 		case M_LIST_FAGAIN:
@@ -531,9 +532,9 @@ ListAgent::MessageReceived (BMessage *msg)
 		{
 			BMessage msg (M_SUBMIT);
 			BString buffer;
-				
+
 			BRow *row (listView->CurrentSelection());
-				
+
 			if (row)
 			{
                  buffer = "/JOIN ";
@@ -545,7 +546,7 @@ ListAgent::MessageReceived (BMessage *msg)
             }
 		}
 		break;
-		
+
 		case M_CLIENT_QUIT:
 		{
 		  fSMsgr->SendMessage(M_LIST_SHUTDOWN);
@@ -555,7 +556,7 @@ ListAgent::MessageReceived (BMessage *msg)
           vision_app->pClientWin()->PostMessage (&deathchant);
 		}
 		break;
-		
+
 		default:
 			BView::MessageReceived (msg);
 	}
