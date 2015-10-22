@@ -38,7 +38,7 @@ public:
 		fLaunchUrl = url;
 	};
 
-	virtual void MouseDown(BPoint);
+	virtual void			MouseDown(BPoint);
 };
 
 #endif

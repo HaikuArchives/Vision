@@ -24,7 +24,8 @@
 #include "Vision.h"
 #include "ClickView.h"
 
-void ClickView::MouseDown(BPoint)
+void
+ClickView::MouseDown(BPoint pt)
 {
 	vision_app->LoadURL(fLaunchUrl.String());
 }

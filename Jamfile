@@ -5,7 +5,7 @@ SubDirHdrs [ FDirName $(TOP) src ] ;
 
 HDRS += "/boot/system/develop/headers/private/interface" ;
 
-SubDirC++Flags -DVERSION_STRING=\\\"0.9.8-01092008\\\" -DBUILD_DATE=\\\"Sep_01_2008\\\" -DSINGLE_BINARY -DBONE_BUILD ;
+SubDirC++Flags -DVERSION_STRING=\\\"0.9.8-15102015\\\" -DBUILD_DATE=\\\"Oct_21_2015\\\" -DSINGLE_BINARY -DBONE_BUILD ;
 C++FLAGS += "-O2" ;
 
 actions AddResources
@@ -16,6 +16,7 @@ actions AddResources
 	resattr -o $(1) objects/Vision.rsrc
 	xres -o $(1) objects/VisionImages.rsrc
 }
+
 
 Main	Vision :
 	[ GLOB $(TOP) src : *.cpp ]
