@@ -239,17 +239,13 @@ void AgentDockHeaderString::MouseMoved(BPoint where, uint32 transitcode, const B
 {
 	switch (transitcode) {
 	case B_ENTERED_VIEW:
-		SetViewColor(tint_color(ui_color(B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-		Parent()->SetViewColor(tint_color(ui_color(B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-		Invalidate();
-		Parent()->Invalidate();
+		SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_1_TINT);
+		Parent()->SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_1_TINT);
 		break;
 
 	case B_EXITED_VIEW:
-		SetViewColor(ui_color(B_MENU_BACKGROUND_COLOR));
-		Parent()->SetViewColor(ui_color(B_MENU_BACKGROUND_COLOR));
-		Invalidate();
-		Parent()->Invalidate();
+		SetViewUIColor(B_MENU_BACKGROUND_COLOR);
+		Parent()->SetViewUIColor(B_MENU_BACKGROUND_COLOR);
 		break;
 	}
 
@@ -258,19 +254,15 @@ void AgentDockHeaderString::MouseMoved(BPoint where, uint32 transitcode, const B
 
 void AgentDockHeaderString::MouseDown(BPoint where)
 {
-	SetViewColor(tint_color(ui_color(B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
-	Parent()->SetViewColor(tint_color(ui_color(B_MENU_BACKGROUND_COLOR), B_DARKEN_2_TINT));
-	Invalidate();
-	Parent()->Invalidate();
+	SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_2_TINT);
+	Parent()->SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_2_TINT);
 	BStringView::MouseDown(where);
 }
 
 void AgentDockHeaderString::MouseUp(BPoint where)
 {
-	SetViewColor(tint_color(ui_color(B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-	Parent()->SetViewColor(tint_color(ui_color(B_MENU_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-	Invalidate();
-	Parent()->Invalidate();
+	SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_1_TINT);
+	Parent()->SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_1_TINT);
 
 	// check if this header string belongs to notify list and send resize message if so
 	BView* notifyList(Parent());
@@ -288,7 +280,7 @@ void AgentDockHeaderString::MouseUp(BPoint where)
 AgentDockHeader::AgentDockHeader(BRect frame, const char* name, uint32 resize)
 	: BView(frame, "AgentDockHeader", resize, B_WILL_DRAW)
 {
-	SetViewColor(ui_color(B_MENU_BACKGROUND_COLOR));
+	AdoptSystemColors();
 
 	BRect stringRect(frame);
 	stringRect.left = stringRect.left + 3;

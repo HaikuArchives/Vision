@@ -300,6 +300,8 @@ void NamesView::ClearList(void)
 void NamesView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
+	case B_COLORS_UPDATED:
+		break;
 	case M_THEME_FOREGROUND_CHANGE: {
 		int16 which(msg->FindInt16("which"));
 		bool refresh(false);

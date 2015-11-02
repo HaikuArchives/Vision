@@ -589,6 +589,11 @@ void ClientWindow::Init(void)
 
 	fStatus = new StatusView(frame);
 	bgView->AddChild(fStatus);
+	float fontDelta = be_plain_font->Size() - 12.0f;
+	if (fontDelta < 0)
+		fontDelta = 0;
+	fStatus->ResizeBy(0, fontDelta);
+	fStatus->MoveBy(0, -fontDelta);
 
 	fStatus->AddItem(new StatusItem("irc.elric.net", 0), true);
 
