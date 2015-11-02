@@ -69,10 +69,10 @@ GeneralPrefsView::GeneralPrefsView(BRect frame, const char* title, uint32 redraw
 			 fPrefsBox->Bounds().Height() + 5);
 	fPrefsBox->MoveTo(scroller->Frame().right + 5, 5);
 	AddChild(fPrefsBox);
-	BRect bounds(fPrefsBox->Bounds());
+	BRect bounds(fPrefsBox->InnerFrame());
 	bounds.left += 3;
 	bounds.right -= 3;
-	bounds.top += 12;
+	bounds.top += be_plain_font->Size() + 5;
 	bounds.bottom -= 5;
 
 	fPrefsItems[piAlias] = new AliasesPrefsView(bounds);
