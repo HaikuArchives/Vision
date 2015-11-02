@@ -205,4 +205,6 @@ const int VERSION_DATE = 2;
 const int THREAD_S = 1; // socket
 const int THREAD_L = 2; // thread
 
+const int32 kItemSpacing = 15;
+
 #endif

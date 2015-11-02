@@ -33,7 +33,7 @@ static const char* EventControlLabels[] = {
 EventPrefsView::EventPrefsView(BRect frame)
 	: BView(frame, "Event prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	BRect bounds(Bounds());
 	bounds.left += 3;
 	bounds.right -= B_V_SCROLL_BAR_WIDTH + 3;
@@ -48,7 +48,7 @@ EventPrefsView::EventPrefsView(BRect frame)
 			label_width = StringWidth(EventControlLabels[i]);
 
 	BView* bgView(new BView(bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
-	bgView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	bgView->AdoptSystemColors();
 	fEvents = new VTextControl* [MAX_EVENTS];
 
 	for (i = 0; i < MAX_EVENTS; ++i) {

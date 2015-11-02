@@ -9,7 +9,7 @@
 
 class LogoView : public BView {
 public:
-								LogoView(BRect frame, int32 border);
+								LogoView(BRect frame);
 	virtual						~LogoView();
 
 	virtual	void				AttachedToWindow();
@@ -22,7 +22,6 @@ public:
 private:
 			BBitmap*			fLogo;
 			BRect				fLogoFrame;
-			int32				fBorder;
 };
 
 

@@ -56,7 +56,7 @@ ServerEntryView::ServerEntryView(BRect bounds, BHandler* handler, BMessage* invo
 	ASSERT(handler != NULL);
 	memset(&currentServer, 0, sizeof(ServerData));
 	if (size != 0) memcpy(&currentServer, data, size);
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	serverName = new VTextControl(
 		BRect(0, 0, 0, 0), "serverName", S_SERVERWIN_SERVER, (data) ? data->serverName : "",
 		new BMessage(M_SERVER_NAME_CHANGED), B_FOLLOW_LEFT | B_FOLLOW_TOP);

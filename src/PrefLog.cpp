@@ -39,7 +39,7 @@
 LogPrefsView::LogPrefsView(BRect frame)
 	: BView(frame, "DCC prefs", B_FOLLOW_NONE, B_WILL_DRAW | B_FRAME_EVENTS)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 
 	BRect checkboxRect(Bounds());
 	BRect trackingBoundsRect(0.0, 0.0, 0, 0);

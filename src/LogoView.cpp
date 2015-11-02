@@ -6,11 +6,10 @@
 #include "Vision.h"
 
 
-LogoView::LogoView(BRect frame, int32 border)
+LogoView::LogoView(BRect frame)
 	:
 	BView(frame, "LogoView", B_FOLLOW_NONE, B_WILL_DRAW | B_FRAME_EVENTS),
-	fLogo(NULL),
-	fBorder(border)
+	fLogo(NULL)
 {
 	BResources* rsrcs = BApplication::AppResources();
 	size_t size = 0;
@@ -60,7 +59,7 @@ LogoView::FrameResized(float width, float height)
 		height / 2 - rect.Height() / 2);
 
 	fLogoFrame = fLogoFrame & Bounds();
-	fLogoFrame.InsetBy(fBorder, fBorder);
+	fLogoFrame.InsetBy(kItemSpacing, kItemSpacing);
 
 	Invalidate();
 }

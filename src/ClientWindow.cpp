@@ -582,7 +582,7 @@ void ClientWindow::Init(void)
 	frame.top = fMenuBar->Frame().bottom + 1;
 	bgView = new BView(frame, "Background", B_FOLLOW_ALL_SIDES, 0);
 
-	bgView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	bgView->AdoptSystemColors();
 	AddChild(bgView);
 
 	frame = bgView->Bounds();

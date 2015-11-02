@@ -39,9 +39,6 @@
 #include <stdio.h>
 
 
-const int32 kItemSpacing = 15;
-
-
 SetupWindow::SetupWindow(void)
 	: BWindow(BRect(108.0, 88.0, 500.0, 320.0), S_SETUP_TITLE, B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
@@ -54,7 +51,7 @@ SetupWindow::SetupWindow(void)
 	bgView->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 
 	BRect rect = Bounds();
-	LogoView* logo = new LogoView(rect, kItemSpacing);
+	LogoView* logo = new LogoView(rect);
 
 	rect.top = logo->PreferredHeight();
 	rect.bottom = Bounds().bottom;
@@ -105,6 +102,10 @@ SetupWindow::SetupWindow(void)
 	logo->ResizeTo(newWidth, rect.Height());
 
 	connectButton->SetEnabled(false);
+
+	rect = vision_app->GetRect("SetupWinRect");
+	if (rect.Width() > 0)
+		MoveTo(rect.LeftTop());
 }
 
 SetupWindow::~SetupWindow(void)
@@ -114,6 +115,7 @@ SetupWindow::~SetupWindow(void)
 
 bool SetupWindow::QuitRequested(void)
 {
+	vision_app->SetRect("SetupWinRect", Frame());
 	be_app_messenger.SendMessage(M_SETUP_CLOSE);
 	return true;
 }

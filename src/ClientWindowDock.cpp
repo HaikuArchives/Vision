@@ -45,7 +45,7 @@ ClientWindowDock::ClientWindowDock(BRect frame)
 	: BView(frame, "agentDock", B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, B_WILL_DRAW | B_FRAME_EVENTS),
 	  fNotifyExpanded(false)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 
 	fWorkingFrame = Bounds();
 

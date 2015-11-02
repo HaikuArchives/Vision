@@ -157,7 +157,7 @@ FontPrefsView::FontPrefsView(BRect frame)
 	  fFontElementField(NULL),
 	  fActiveFont(0)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	BMenu* fElementMenu(new BMenu("elements"));
 	for (int32 i = 0; FontControlLabels[i]; i++) {
 		BMessage* msg(new BMessage(M_FONT_ELEMENT_CHANGE));

@@ -39,7 +39,7 @@
 GeneralPrefsView::GeneralPrefsView(BRect frame, const char* title, uint32 redraw, uint32 flags)
 	: BView(frame, title, redraw, flags), fLastindex(0)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	fPrefsItems[piWindow] = new AppWindowPrefsView(BRect(0, 0, 0, 0));
 	fPrefsItems[piColor] = new ColorPrefsView(BRect(0, 0, 0, 0));
 	fPrefsBox = new BBox(

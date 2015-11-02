@@ -79,7 +79,7 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	  fDupePrompt(NULL),
 	  fServerPrefs(NULL)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	BMenu* menu(new BMenu(S_NETPREFS_NETMENU));
 	menu->AddItem(new BMenuItem(S_NETPREFS_DEFAULTS_ITEM, new BMessage(M_NETWORK_DEFAULTS)));
 	menu->AddSeparatorItem();
@@ -90,14 +90,14 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	menu->AddItem(fDupeItem = new BMenuItem(S_NETPREFS_DUPE B_UTF8_ELLIPSIS,
 											new BMessage(M_DUPE_CURRENT_NETWORK)));
 	fNetworkMenu = new BMenuField(BRect(0, 0, 100, 30), "NetList", NULL, menu);
-	fMainNetBox = new BBox(Bounds().InsetByCopy(5, 5));
+	fMainNetBox = new BBox(Bounds().InsetByCopy(kItemSpacing, kItemSpacing));
 	fMainNetBox->SetLabel(fNetworkMenu);
 	AddChild(fMainNetBox);
-	BRect boundsRect(Bounds().InsetByCopy(10, 15));
+	BRect boundsRect(fMainNetBox->InnerFrame());
 	boundsRect.right /= 2;
-	boundsRect.right -= 8;
-	boundsRect.top += 15;
-	boundsRect.bottom -= 30;
+	boundsRect.right -= kItemSpacing/2;
+	boundsRect.top += kItemSpacing;
+
 	fNetDetailsBox = new BBox(boundsRect);
 	fNetDetailsBox->SetLabel(S_NETPREFS_NET_BOX);
 	fMainNetBox->AddChild(fNetDetailsBox);

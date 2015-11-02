@@ -511,6 +511,9 @@ void VisionApp::LoadDefaults(int32 section)
 		if (!fVisionSettings->HasRect("NetPrefWinRect"))
 			fVisionSettings->AddRect("NetPrefWinRect", BRect(0, 0, 0, 0));
 
+		if (!fVisionSettings->HasRect("SetupWinRect"))
+			fVisionSettings->AddRect("SetupWinRect", BRect(100, 100, 0, 0));
+
 		if (!fVisionSettings->HasRect("namesListRect"))
 			fVisionSettings->AddRect("namesListRect", BRect(0, 0, 100, 0));
 
