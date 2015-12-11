@@ -180,21 +180,12 @@ void StatusView::DrawSplit(float x)
 
 	PushState();
 
-#ifdef __HAIKU__
 	SetDrawingMode(B_OP_ALPHA);
 	SetHighColor(0, 0, 0, 40);
 	StrokeLine(BPoint(x, bounds.top + 3.0), BPoint(x, bounds.bottom - 2.0));
 
 	SetHighColor(255, 255, 255, 80);
 	StrokeLine(BPoint(x + 1, bounds.top + 3.0), BPoint(x + 1, bounds.bottom - 2.0));
-#else
-	SetDrawingMode(B_OP_COPY);
-	SetHighColor(131, 131, 131, 255);
-	StrokeLine(BPoint(x, bounds.top + 2.0), BPoint(x, bounds.bottom));
-
-	SetHighColor(255, 255, 255, 255);
-	StrokeLine(BPoint(x + 1, bounds.top + 2.0), BPoint(x + 1, bounds.bottom));
-#endif
 
 	PopState();
 }

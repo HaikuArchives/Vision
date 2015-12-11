@@ -59,11 +59,7 @@
   <Brazilian> I have a monkey who draws on my wall really fast
 */
 
-#ifdef __HAIKU__
 static const char* skTermSig = "application/x-vnd.Haiku-Terminal";
-#else
-static const char* skTermSig = "application/x-vnd.Be-SHEL";
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 /// Begin BWindow functions

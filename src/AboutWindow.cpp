@@ -192,10 +192,6 @@ void AboutWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
 	case M_ABOUT_SCROLL: {
-#if B_BEOS_VERSION_DANO
-		fCredits->SetDoubleBuffering(0xf);
-#endif
-
 		BPoint point(fCredits->PointAt(fCredits->TextLength() - 1));
 		fCredits->ScrollBy(0, 1);
 

@@ -5,11 +5,9 @@
 //
 //******************************************************************************
 
-#if !B_BEOS_VERSION_DANO
-#include "ColorSwatch.h"
-#endif
 
 #include "ColorSelector.h"
+#include "ColorSwatch.h"
 #include "Vision.h"
 
 #include <ColorControl.h>
@@ -224,16 +222,11 @@ ColorSelector::ColorSelector(BRect frame, const char* name, const char* label,
 
 	fColorPalette = new BColorControl(dummyRect.LeftTop(), B_CELLS_32x8, 8, "Palette",
 									  new BMessage(CMD_SET_UI_COLOR), true);
-#if B_BEOS_VERSION_DANO
-	fColorPalette->SetModeFlags(B_CC_32BIT_MODE | B_CC_SHOW_SWATCH);
-	fColorPalette->SetDoubleBuffering(B_UPDATE_INVALIDATED | B_UPDATE_RESIZED | B_UPDATE_EXPOSED);
-#else
 	rgb_color* color(NULL);
 	ssize_t size(0);
 	fColors.FindData("color", B_RGB_COLOR_TYPE, 0, (const void**)(&color), &size);
 	swatch = new ColorSwatch(dummyRect, "swatch", *color);
 	AddChild(swatch);
-#endif
 	AddChild(fColorPalette);
 }
 
@@ -268,9 +261,6 @@ void ColorSelector::AttachedToWindow()
 		it->SetMarked(true);
 		dynamic_cast<BInvoker*>(it)->Invoke();
 	}
-#if B_BEOS_VERSION_DANO
-	LayoutViews(true);
-#endif
 }
 
 void ColorSelector::AllAttached()
@@ -291,23 +281,14 @@ void ColorSelector::LayoutViews(bool really)
 		if (Window()) Window()->BeginViewTransaction();
 		fColorField->MoveTo(b.left, b.top);
 		fColorField->ResizeTo(b.Width() + 1, mh);
-#if !B_BEOS_VERSION_DANO
-		fColorField->MenuBar()->SetMaxContentWidth(99999999);
-#endif
 		fColorPalette->MoveTo(b.left, b.top + mh + SPACE);
 		fColorPalette->ResizeTo(cw, ch);
-#if !B_BEOS_VERSION_DANO
 		swatch->MoveTo(fColorPalette->Bounds().Width() + 5, b.top + mh + SPACE);
 		swatch->ResizeTo(ch, ch);
-#endif
 		if (Window()) Window()->EndViewTransaction();
 	}
 
-#if B_BEOS_VERSION_DANO
-	fPrefWidth = (mw > cw ? mw : cw);
-#else
 	fPrefWidth = (mw > cw ? mw : cw) + 5 + swatch->Bounds().Width();
-#endif
 	fPrefHeight = mh + SPACE + ch;
 	fSizeValid = true;
 }
@@ -320,9 +301,7 @@ void ColorSelector::MessageReceived(BMessage* msg)
 		if (msg->FindData("RGBColor", B_RGB_COLOR_TYPE, (const void**)&color, &size) == B_OK) {
 			if (fColorPalette) {
 				fColorPalette->SetValue(*color);
-#if !B_BEOS_VERSION_DANO
 				swatch->SetColor(*color);
-#endif
 				fColorPalette->Invoke();
 			}
 		} else {
@@ -343,9 +322,7 @@ void ColorSelector::MessageReceived(BMessage* msg)
 			if (fColors.FindData("color", B_RGB_COLOR_TYPE, index, (const void**)(&color), &size) ==
 				B_OK) {
 				fColorPalette->SetValue(*color);
-#if !B_BEOS_VERSION_DANO
 				swatch->SetColor(*color);
-#endif
 			}
 		}
 	} break;
@@ -356,9 +333,7 @@ void ColorSelector::MessageReceived(BMessage* msg)
 			BMessage colors;
 			int32 index;
 			rgb_color c = fColorPalette->ValueAsColor();
-#if !B_BEOS_VERSION_DANO
 			swatch->SetColor(c);
-#endif
 			ColorMenuItem* item((ColorMenuItem*)(fColorMenu->FindItem(fCurrentField.String())));
 			if (item) {
 				BMessage* curMsg(item->Message());
@@ -444,9 +419,7 @@ void ColorSelector::Update(const BMessage& changes)
 
 	if (fColors.FindData("color", B_RGB_COLOR_TYPE, index, (const void**)(&color), &size) == B_OK) {
 		fColorPalette->SetValue(*color);
-#if !B_BEOS_VERSION_DANO
 		swatch->SetColor(*color);
-#endif
 	}
 }
 

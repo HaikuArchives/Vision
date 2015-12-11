@@ -139,11 +139,7 @@ void ServerEntryView::AttachedToWindow(void)
 							passwordField->Bounds().Height());
 	passwordField->MoveTo(usePassword->Frame().right + 5, usePassword->Frame().top);
 	passwordField->TextView()->HideTyping(true);
-#if B_BEOS_VERSION_DANO
-	statusField->MoveTo((Bounds().Width() - statusField->Bounds().Width()) / 2.0,
-#else
 	statusField->MoveTo((Bounds().Width() - statusField->Bounds().Width()) / 4.0,
-#endif
 						usePassword->Frame().bottom + 15);
 
 	cancelButton->SetTarget(this);
