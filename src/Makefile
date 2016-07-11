@@ -79,7 +79,6 @@ SRCS = AboutWindow.cpp \
 	ServerEntryWindow.cpp \
 	SettingsFile.cpp \
 	SetupWindow.cpp \
-	SpeedButton.cpp \
 	StatusView.cpp \
 	Theme.cpp \
 	URLCrunch.cpp \

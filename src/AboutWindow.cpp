@@ -97,6 +97,7 @@ AboutWindow::AboutWindow(void)
 				   "Bjorn Oksholen (GuinnessM)\n"
 				   "Jean-Baptiste M. Quéru (jbq)\n"
 				   "Humdinger\n"
+				   "looncraz"
 				   "\n\n\n"
 
 				   "\n\n\n\nUnit C\n[Support Crew]\n"
