@@ -56,7 +56,7 @@ PromptWindow::PromptWindow(BPoint point, const char* label, const char* title, c
 
 	BView* bgView(new BView(frame, "Background", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
 
-	bgView->SetViewColor(222, 222, 222, 255);
+	bgView->AdoptSystemColors();
 	AddChild(bgView);
 
 	field = new VTextControl(
