@@ -21,7 +21,7 @@
  *                 Todd Lair
  *                 Andrew Bazan
  *                 Jamie Wilkinson
- *				   Joseph Groover <looncraz@looncraz.net>
+ *                 Joseph Groover <looncraz@looncraz.net>
  */
 
 #include <ControlLook.h>
