@@ -11,9 +11,7 @@ class BPopUpMenu;
 class BMenuField;
 class BColorControl;
 
-#if !B_BEOS_VERSION_DANO
 class ColorSwatch;
-#endif
 
 class ColorSelector : public BControl
 {
@@ -56,9 +54,7 @@ private:
 
 	bool fSizeValid;
 	float fPrefWidth, fPrefHeight;
-#if !B_BEOS_VERSION_DANO
 	ColorSwatch* swatch;
-#endif
 };
 
 /*------------------------------------------------------------*/

@@ -45,11 +45,7 @@
 // I M P L E M E N T A T I O N
 //------------------------------------------------------------------------------
 
-#ifdef __HAIKU__
 const color_space kIconColorSpace = B_RGBA32;
-#else
-const color_space kIconColorSpace = B_CMAP8;
-#endif
 
 TIconMenu::TIconMenu(BBitmap* icon, BMenu* menu) : BMenuItem(menu), bounds(), iconLabel(NULL)
 {

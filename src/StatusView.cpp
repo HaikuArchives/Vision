@@ -21,11 +21,10 @@
  *                 Todd Lair
  *                 Andrew Bazan
  *                 Jamie Wilkinson
+ *                 Joseph Groover <looncraz@looncraz.net>
  */
 
-#ifdef __HAIKU__
 #include <ControlLook.h>
-#endif
 #include <MenuItem.h>
 #include <PopUpMenu.h>
 
@@ -34,26 +33,21 @@
 #include "Vision.h"
 
 StatusView::StatusView(BRect frame)
-	: BView(BRect(frame.left, frame.bottom - STATUS_HEIGHT, frame.right, frame.bottom), "status",
+	: BView(BRect(frame.left, frame.bottom - (be_plain_font->Size() + 2), frame.right, frame.bottom), "status",
 			B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM, B_WILL_DRAW)
 {
 	BFont font(be_plain_font);
 	font_height fh;
 
 	font.GetHeight(&fh);
-	while (fh.ascent + fh.leading > STATUS_HEIGHT - 2) {
-		font.SetSize(font.Size() - 2);
+	while (fh.ascent + fh.leading > be_plain_font->Size()) {
+		font.SetSize(font.Size() - 1);
 		font.GetHeight(&fh);
 	}
 
 	SetFont(&font);
 
-	SetLowColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-#ifdef __HAIKU__
-	SetViewColor(B_TRANSPARENT_COLOR);
-#else
-	SetViewColor(LowColor());
-#endif
+	AdoptSystemColors();
 }
 
 StatusView::~StatusView(void)
@@ -143,16 +137,12 @@ void StatusView::SetItemValue(int32 which, const char* value, bool redraw)
 void StatusView::Draw(BRect update)
 {
 	SetDrawingMode(B_OP_COPY);
-	SetHighColor(tint_color(LowColor(), B_DARKEN_2_TINT));
+	SetHighUIColor(LowUIColor(), B_DARKEN_2_TINT);
 	StrokeLine(BPoint(update.left, Bounds().top), BPoint(update.right, Bounds().top));
-#ifdef __HAIKU__
+
 	BRect rect(Bounds());
 	rect.top++;
 	be_control_look->DrawMenuBarBackground(this, rect, update, LowColor());
-#else
-	SetHighColor(255, 255, 255, 255);
-	StrokeLine(BPoint(update.left, Bounds().top + 1), BPoint(update.right, Bounds().top + 1));
-#endif
 
 	float width(5.0);
 	font_height fh;
@@ -160,7 +150,7 @@ void StatusView::Draw(BRect update)
 	GetFontHeight(&fh);
 
 	SetDrawingMode(B_OP_OVER);
-	SetHighColor(tint_color(LowColor(), 1.7));
+	SetHighColor(mix_color(ViewColor(), ui_color(B_PANEL_TEXT_COLOR), 192));
 
 	for (int32 i = 0; i < items.CountItems(); ++i) {
 		if (i) {
@@ -190,21 +180,12 @@ void StatusView::DrawSplit(float x)
 
 	PushState();
 
-#ifdef __HAIKU__
 	SetDrawingMode(B_OP_ALPHA);
 	SetHighColor(0, 0, 0, 40);
 	StrokeLine(BPoint(x, bounds.top + 3.0), BPoint(x, bounds.bottom - 2.0));
 
 	SetHighColor(255, 255, 255, 80);
 	StrokeLine(BPoint(x + 1, bounds.top + 3.0), BPoint(x + 1, bounds.bottom - 2.0));
-#else
-	SetDrawingMode(B_OP_COPY);
-	SetHighColor(131, 131, 131, 255);
-	StrokeLine(BPoint(x, bounds.top + 2.0), BPoint(x, bounds.bottom));
-
-	SetHighColor(255, 255, 255, 255);
-	StrokeLine(BPoint(x + 1, bounds.top + 2.0), BPoint(x + 1, bounds.bottom));
-#endif
 
 	PopState();
 }

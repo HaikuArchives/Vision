@@ -42,7 +42,7 @@ public:
 
 private:
 	void InitServerStartup(void);
-	void BuildNetworkMenu(void);
+
 	BView* bgView;
 	BButton* connectButton, *netPrefsButton, *prefsButton;
 	BMenuField* netList;

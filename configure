@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ ! -e objects ]
+then
+	mkdir objects
+fi
+
+if [ ! -e objects/src ]
+then
+	mkdir objects/src
+fi
+

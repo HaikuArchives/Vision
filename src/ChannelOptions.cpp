@@ -56,7 +56,7 @@ void ChannelOptions::Init(void)
 
 	bgView = new BView(Bounds(), "Background", B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
 
-	bgView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	bgView->AdoptSystemColors();
 	AddChild(bgView);
 
 	BStringView* tempStringView = new BStringView(Bounds(), "temp", "AEIOUglqj", 0, 0);

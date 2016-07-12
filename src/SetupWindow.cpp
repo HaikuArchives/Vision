@@ -26,62 +26,86 @@
 #include <View.h>
 #include <MenuField.h>
 #include <MenuItem.h>
+#include <Resources.h>
 #include <TranslationUtils.h>
 
 #include "ClickView.h"
 #include "ClientWindow.h"
+#include "LogoView.h"
 #include "SetupWindow.h"
 #include "Vision.h"
 #include "NetworkMenu.h"
 
 #include <stdio.h>
 
+
 SetupWindow::SetupWindow(void)
-	: BWindow(BRect(108.0, 88.0, 455.0, 290.0), S_SETUP_TITLE, B_TITLED_WINDOW,
+	: BWindow(BRect(108.0, 88.0, 500.0, 320.0), S_SETUP_TITLE, B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
 
 	AddShortcut('/', B_SHIFT_KEY, new BMessage(M_PREFS_SHOW));
 
-	bgView = new BView(Bounds(), "background", B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
+	bgView = new BView(Bounds(), "background", B_FOLLOW_ALL, B_WILL_DRAW);
 	AddChild(bgView);
-	bgView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-	BBitmap* bmp(NULL);
-	if ((bmp = BTranslationUtils::GetBitmap('bits', "vision-logo")) != 0) {
-		BRect bounds(Bounds());
-		bounds.left = (bounds.Width() - bmp->Bounds().Width()) / 2.0;
-		bounds.right = (bounds.left + bmp->Bounds().Width());
-		bounds.top = 16.0;
-		bounds.bottom = bounds.top + bmp->Bounds().Height();
-		ClickView* logo = new ClickView(bounds, "image", B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW,
-										"http://vision.sourceforge.net");
-		bgView->AddChild(logo);
-		logo->SetViewBitmap(bmp);
-		delete bmp;
-	}
+	bgView->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 
-	connectButton = new BButton(BRect(0, 0, 0, 0), "connect", S_SETUP_CONNECT_BUTTON,
+	BRect rect = Bounds();
+	LogoView* logo = new LogoView(rect);
+
+	rect.top = logo->PreferredHeight();
+	rect.bottom = Bounds().bottom;
+	rect.left = kItemSpacing;
+
+	BMenu* netMenu(new NetworkMenu(S_SETUP_CHOOSENET, M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
+	netMenu->SetLabelFromMarked(true);
+	netList = new BMenuField(rect, "Network List", S_SETUP_CHOOSELABEL, netMenu);
+	netList->ResizeToPreferred();
+	netList->SetDivider(be_plain_font->StringWidth(S_SETUP_CHOOSELABEL) + 5);
+
+	rect = netList->Frame();
+	rect.OffsetBy(0, rect.Height() + kItemSpacing);
+	connectButton = new BButton(rect, "connect", S_SETUP_CONNECT_BUTTON,
 								new BMessage(M_CONNECT_NETWORK));
 	connectButton->ResizeToPreferred();
-	netPrefsButton = new BButton(BRect(0, 0, 0, 0), "netprefs", S_SETUP_NETPREFS B_UTF8_ELLIPSIS,
+
+	rect = connectButton->Frame();
+	rect.OffsetBy(rect.Width() + kItemSpacing, 0);
+
+	netPrefsButton = new BButton(rect, "netprefs", S_SETUP_NETPREFS B_UTF8_ELLIPSIS,
 								 new BMessage(M_NETWORK_SHOW));
 	netPrefsButton->ResizeToPreferred();
 	netPrefsButton->SetTarget(vision_app);
-	prefsButton = new BButton(BRect(0, 0, 0, 0), "prefs", S_SETUP_GENPREFS B_UTF8_ELLIPSIS,
+
+	rect = netPrefsButton->Frame();
+	rect.OffsetBy(rect.Width() + kItemSpacing, 0);
+
+	prefsButton = new BButton(rect, "prefs", S_SETUP_GENPREFS B_UTF8_ELLIPSIS,
 							  new BMessage(M_PREFS_SHOW));
 	prefsButton->ResizeToPreferred();
 	prefsButton->SetTarget(vision_app);
-	prefsButton->MoveTo(bgView->Bounds().right - (prefsButton->Bounds().Width() + 10),
-						bgView->Bounds().bottom - (prefsButton->Bounds().Height() + 5));
+
+	rect = prefsButton->Frame();
+	float newWidth = rect.right + kItemSpacing;
+	float newHeight = rect.bottom + kItemSpacing;
+
+	ResizeTo(newWidth, newHeight);
+
+	bgView->AddChild(logo);
+	bgView->AddChild(netList);
 	bgView->AddChild(prefsButton);
-	netPrefsButton->MoveTo(prefsButton->Frame().left - (netPrefsButton->Bounds().Width() + 5),
-						   prefsButton->Frame().top);
 	bgView->AddChild(netPrefsButton);
-	connectButton->MoveTo(netPrefsButton->Frame().left - (connectButton->Bounds().Width() + 15),
-						  prefsButton->Frame().top);
 	bgView->AddChild(connectButton);
-	BuildNetworkMenu();
+
+	rect = Bounds();
+	rect.bottom = netList->Frame().bottom - (kItemSpacing * 2);
+	logo->ResizeTo(newWidth, rect.Height());
+
 	connectButton->SetEnabled(false);
+
+	rect = vision_app->GetRect("SetupWinRect");
+	if (rect.Width() > 0)
+		MoveTo(rect.LeftTop());
 }
 
 SetupWindow::~SetupWindow(void)
@@ -91,20 +115,11 @@ SetupWindow::~SetupWindow(void)
 
 bool SetupWindow::QuitRequested(void)
 {
+	vision_app->SetRect("SetupWinRect", Frame());
 	be_app_messenger.SendMessage(M_SETUP_CLOSE);
 	return true;
 }
 
-void SetupWindow::BuildNetworkMenu(void)
-{
-	BMenu* netMenu(new NetworkMenu(S_SETUP_CHOOSENET, M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
-	netMenu->SetLabelFromMarked(true);
-	netList = new BMenuField(BRect(0, 0, 0, 0), "Network List", S_SETUP_CHOOSELABEL, netMenu);
-	netList->ResizeToPreferred();
-	netList->SetDivider(be_plain_font->StringWidth(S_SETUP_CHOOSELABEL) + 5);
-	bgView->AddChild(netList);
-	netList->MoveTo(10, connectButton->Frame().top - (netList->Bounds().Height() + 20));
-}
 
 void SetupWindow::MessageReceived(BMessage* msg)
 {

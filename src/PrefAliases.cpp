@@ -37,7 +37,7 @@ AliasesPrefsView::AliasesPrefsView(BRect frame)
 	  fAddButton(NULL),
 	  fRemoveButton(NULL)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 }
 
 AliasesPrefsView::~AliasesPrefsView(void)

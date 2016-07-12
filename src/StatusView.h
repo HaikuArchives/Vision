@@ -29,8 +29,6 @@
 #define STATUS_ALIGN_RIGHT 0
 #define STATUS_ALIGN_LEFT 1
 
-#define STATUS_HEIGHT 13
-
 #include <View.h>
 #include <List.h>
 #include <String.h>

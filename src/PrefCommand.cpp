@@ -33,7 +33,7 @@ static const char* CommandControlLabels[] = {
 CommandPrefsView::CommandPrefsView(BRect frame)
 	: BView(frame, "Command prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	BRect bounds(Bounds());
 	int32 i(0);
 	bounds.left += 3;
@@ -47,7 +47,7 @@ CommandPrefsView::CommandPrefsView(BRect frame)
 			label_width = StringWidth(CommandControlLabels[i]);
 
 	BView* bgView(new BView(bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
-	bgView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	bgView->AdoptSystemColors();
 	fCommands = new VTextControl* [MAX_COMMANDS];
 
 	for (i = 0; i < MAX_COMMANDS; ++i) {

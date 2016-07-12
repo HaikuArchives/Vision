@@ -112,7 +112,7 @@ ServerData ServerListItem::GetServerInfo(void)
 NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenger target)
 	: BView(bounds, name, B_FOLLOW_ALL_SIDES, B_WILL_DRAW), fEntryWin(NULL), fNetWin(target)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	BRect boundsRect(Bounds());
 	BBox* mainBox(new BBox(bounds.InsetByCopy(-1, -1), NULL, B_FOLLOW_ALL_SIDES));
 	AddChild(mainBox);

@@ -40,7 +40,7 @@ ResizeView::ResizeView(BView* child, BRect frame, const char* title, uint32 resi
 {
 	assert(attachedView != NULL);
 
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 }
 
 ResizeView::~ResizeView()

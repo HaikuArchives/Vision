@@ -39,7 +39,6 @@ class BStringView;
 class PromptWindow;
 class NetPrefServerWindow;
 class BColumnListView;
-class TSpeedButton;
 struct ServerData;
 
 class NetworkPrefsView : public BView
@@ -50,6 +49,7 @@ public:
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow(void);
 	virtual void DetachedFromWindow(void);
+	virtual void FrameResized(float width, float height);
 
 private:
 	void SetConnectServer(const char*);
@@ -65,8 +65,6 @@ private:
 	BBox* fMainNetBox, *fNetDetailsBox, *fPersonalBox;
 
 	BButton* fServerButton, *fNickAddButton, *fNickRemoveButton;
-
-	TSpeedButton* fNickUpButton, *fNickDnButton;
 
 	BCheckBox* fNickDefaultsBox, *fLagCheckBox, *fStartupBox;
 

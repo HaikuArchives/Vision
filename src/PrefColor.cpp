@@ -68,7 +68,7 @@ ColorPrefsView::ColorPrefsView(BRect frame)
 	: BView(frame, "Color Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW)
 {
 	int32 i(0);
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	for (i = 0; i < MAX_COLORS; i++) fColors[i] = vision_app->GetColor(i);
 
 	BMessage mycolors, labels;
@@ -79,7 +79,7 @@ ColorPrefsView::ColorPrefsView(BRect frame)
 	}
 
 	fSelector = new ColorSelector(frame, "fSelector", NULL, mycolors, labels, new BMessage('vtst'));
-	fSelector->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	fSelector->AdoptSystemColors();
 	fSelector->ResizeToPreferred();
 	fRevert = new BButton(BRect(0, 0, 0, 0), "fRevert", S_PREFCOLOR_REVERT,
 						  new BMessage(M_REVERT_COLOR_SELECTIONS));

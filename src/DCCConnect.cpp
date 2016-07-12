@@ -54,7 +54,7 @@ DCCConnect::DCCConnect(const char* n, const char* fn, const char* sz, const char
 	  fTid(-1),
 	  fIsStopped(false)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 
 	char trail[128];
 	sprintf(trail, " / %.1fk", atol(fSize.String()) / 1024.0);

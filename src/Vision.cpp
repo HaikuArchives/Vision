@@ -328,11 +328,7 @@ void VisionApp::InitDefaults(void)
 	fCommands[CMD_UNIGNORE] = "*** $N is no longer ignored.";
 	fCommands[CMD_AWAY] = "is idle: $R";
 	fCommands[CMD_BACK] = "has returned";
-#ifdef __HAIKU__
 	fCommands[CMD_UPTIME] = "OS Uptime [Haiku]: $U";
-#else
-	fCommands[CMD_UPTIME] = "OS Uptime [BeOS]: $U";
-#endif
 	uint32 i = 0;
 
 	for (const char* eventName = kSoundEventNames[i]; eventName != NULL;
@@ -510,6 +506,9 @@ void VisionApp::LoadDefaults(int32 section)
 
 		if (!fVisionSettings->HasRect("NetPrefWinRect"))
 			fVisionSettings->AddRect("NetPrefWinRect", BRect(0, 0, 0, 0));
+
+		if (!fVisionSettings->HasRect("SetupWinRect"))
+			fVisionSettings->AddRect("SetupWinRect", BRect(100, 100, 0, 0));
 
 		if (!fVisionSettings->HasRect("namesListRect"))
 			fVisionSettings->AddRect("namesListRect", BRect(0, 0, 100, 0));
@@ -1765,9 +1764,10 @@ int32 VisionApp::CountAliases(void) const
 
 bool VisionApp::GetNextAlias(void** cookie, BString& name, BString& value)
 {
-	map<BString, BString>::const_iterator* it(NULL);
+	typedef map<BString, BString>::const_iterator ConstMapIterator;
+	ConstMapIterator* it = NULL;
 	if (*cookie == NULL) {
-		it = new map<BString, BString>::const_iterator;
+		it = new ConstMapIterator;
 		*it = fAliases.begin();
 		*cookie = it;
 	} else {
@@ -1779,7 +1779,7 @@ bool VisionApp::GetNextAlias(void** cookie, BString& name, BString& value)
 		++(*it);
 		return true;
 	} else {
-		delete *cookie;
+		delete reinterpret_cast<ConstMapIterator*>(*cookie);
 		return false;
 	}
 }

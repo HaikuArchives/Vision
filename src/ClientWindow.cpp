@@ -59,11 +59,7 @@
   <Brazilian> I have a monkey who draws on my wall really fast
 */
 
-#ifdef __HAIKU__
 static const char* skTermSig = "application/x-vnd.Haiku-Terminal";
-#else
-static const char* skTermSig = "application/x-vnd.Be-SHEL";
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 /// Begin BWindow functions
@@ -582,13 +578,18 @@ void ClientWindow::Init(void)
 	frame.top = fMenuBar->Frame().bottom + 1;
 	bgView = new BView(frame, "Background", B_FOLLOW_ALL_SIDES, 0);
 
-	bgView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	bgView->AdoptSystemColors();
 	AddChild(bgView);
 
 	frame = bgView->Bounds();
 
 	fStatus = new StatusView(frame);
 	bgView->AddChild(fStatus);
+	float fontDelta = be_plain_font->Size() - 12.0f;
+	if (fontDelta < 0)
+		fontDelta = 0;
+	fStatus->ResizeBy(0, fontDelta);
+	fStatus->MoveBy(0, -fontDelta);
 
 	fStatus->AddItem(new StatusItem("irc.elric.net", 0), true);
 

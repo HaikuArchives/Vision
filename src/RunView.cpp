@@ -188,10 +188,6 @@ RunView::~RunView(void)
 void RunView::AttachedToWindow(void)
 {
 	BView::AttachedToWindow();
-#if B_BEOS_VERSION_DANO
-	SetDoubleBuffering(B_UPDATE_INVALIDATED | B_UPDATE_SCROLLED | B_UPDATE_EXPOSED |
-					   B_UPDATE_RESIZED);
-#endif
 	RecalcScrollBar(false);
 	fTheme->WriteLock();
 	fTheme->AddView(this);

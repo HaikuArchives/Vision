@@ -153,7 +153,7 @@ void ClientAgent::Show(void)
 
 void ClientAgent::Init(void)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 
 	fInput = new VTextControl(BRect(0,
 									fFrame.top, // tmp. will be moved

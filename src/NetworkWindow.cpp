@@ -30,20 +30,27 @@
 
 #include <stdio.h>
 
+
 NetworkWindow::NetworkWindow(void)
-	: BWindow(BRect(50, 50, 500, 350), S_NETWORK_WINDOW_TITLE, B_TITLED_WINDOW,
-			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
+	: BWindow(BRect(50, 50, 550, 430), S_NETWORK_WINDOW_TITLE, B_TITLED_WINDOW,
+			  B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE | B_NOT_ZOOMABLE*/)
 {
-	AddChild(new NetworkPrefsView(Bounds(), "network"));
-	BRect netFrame(0, 0, 0, 0);
-	netFrame = vision_app->GetRect("NetPrefWinRect");
-	if (netFrame.Width() != 0.0) MoveTo(netFrame.left, netFrame.top);
+	NetworkPrefsView* netView = new NetworkPrefsView(Bounds(), "network");
+	ResizeTo(netView->Bounds().Width(), netView->Bounds().Height());
+	AddChild(netView);
+
+	BRect netFrame = vision_app->GetRect("NetPrefWinRect");
+
+	if (netFrame.Width() != 0.0)
+		MoveTo(netFrame.left, netFrame.top);
 }
+
 
 NetworkWindow::~NetworkWindow(void)
 {
 	//
 }
+
 
 bool NetworkWindow::QuitRequested(void)
 {
@@ -52,23 +59,28 @@ bool NetworkWindow::QuitRequested(void)
 	return true;
 }
 
+
 NetPrefServerWindow::NetPrefServerWindow(BHandler* target)
 	: BWindow(BRect(50, 50, 350, 250), S_SERVERPREFS_TITLE, B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
-	AddChild(
-		(serverView = new NetPrefsServerView(Bounds(), "server settings", BMessenger(target))));
+	serverView = new NetPrefsServerView(Bounds(), "server settings", BMessenger(target));
+	ResizeTo(serverView->Bounds().Width(), serverView->Bounds().Height());
+	AddChild(serverView);
 }
+
 
 NetPrefServerWindow::~NetPrefServerWindow(void)
 {
 	//
 }
 
+
 bool NetPrefServerWindow::QuitRequested(void)
 {
 	return true;
 }
+
 
 void NetPrefServerWindow::SetNetworkData(BMessage* msg)
 {

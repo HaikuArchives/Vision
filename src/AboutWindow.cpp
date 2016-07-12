@@ -97,6 +97,7 @@ AboutWindow::AboutWindow(void)
 				   "Bjorn Oksholen (GuinnessM)\n"
 				   "Jean-Baptiste M. Quéru (jbq)\n"
 				   "Humdinger\n"
+				   "looncraz\n"
 				   "\n\n\n"
 
 				   "\n\n\n\nUnit C\n[Support Crew]\n"
@@ -192,10 +193,6 @@ void AboutWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
 	case M_ABOUT_SCROLL: {
-#if B_BEOS_VERSION_DANO
-		fCredits->SetDoubleBuffering(0xf);
-#endif
-
 		BPoint point(fCredits->PointAt(fCredits->TextLength() - 1));
 		fCredits->ScrollBy(0, 1);
 

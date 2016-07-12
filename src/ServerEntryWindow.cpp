@@ -56,7 +56,7 @@ ServerEntryView::ServerEntryView(BRect bounds, BHandler* handler, BMessage* invo
 	ASSERT(handler != NULL);
 	memset(&currentServer, 0, sizeof(ServerData));
 	if (size != 0) memcpy(&currentServer, data, size);
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	serverName = new VTextControl(
 		BRect(0, 0, 0, 0), "serverName", S_SERVERWIN_SERVER, (data) ? data->serverName : "",
 		new BMessage(M_SERVER_NAME_CHANGED), B_FOLLOW_LEFT | B_FOLLOW_TOP);
@@ -139,11 +139,7 @@ void ServerEntryView::AttachedToWindow(void)
 							passwordField->Bounds().Height());
 	passwordField->MoveTo(usePassword->Frame().right + 5, usePassword->Frame().top);
 	passwordField->TextView()->HideTyping(true);
-#if B_BEOS_VERSION_DANO
-	statusField->MoveTo((Bounds().Width() - statusField->Bounds().Width()) / 2.0,
-#else
 	statusField->MoveTo((Bounds().Width() - statusField->Bounds().Width()) / 4.0,
-#endif
 						usePassword->Frame().bottom + 15);
 
 	cancelButton->SetTarget(this);

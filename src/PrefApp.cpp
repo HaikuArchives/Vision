@@ -33,7 +33,7 @@
 AppWindowPrefsView::AppWindowPrefsView(BRect frame)
 	: BView(frame, "App/Window Prefs", B_FOLLOW_NONE, B_WILL_DRAW)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	AdoptSystemColors();
 	BMessage msg(M_APPWINDOWPREFS_SETTING_CHANGED);
 	float maxWidth(0), maxHeight(0);
 	BRect trackingBoundsRect(0.0, 0.0, 0, 0);
