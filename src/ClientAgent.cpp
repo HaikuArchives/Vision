@@ -242,11 +242,12 @@ void ClientAgent::SetEditStates(BMenu* menu, bool targetonly)
 		BClipboard clipboard("system");
 		BMessage* clip((BMessage*)NULL);
 		if (clipboard.Lock()) {
-			if ((clip = clipboard.Data()))
+			if ((clip = clipboard.Data())) {
 				if (clip->HasData("text/plain", B_MIME_TYPE))
 					menuItem->SetEnabled(true);
 				else
 					menuItem->SetEnabled(false);
+			}
 			clipboard.Unlock();
 		}
 		menuItem = menu->FindItem(S_CW_EDIT_SELECT_ALL);

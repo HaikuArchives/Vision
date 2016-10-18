@@ -457,7 +457,7 @@ NetworkPrefsView::FrameResized(float width, float)
 
 	bounds.InsetBy(kItemSpacing, kItemSpacing);
 	bounds.right /= 2;
-	bounds.right - kItemSpacing;
+	bounds.right -= kItemSpacing;
 
 	bounds.bottom = fStartupBox->Frame().top - kItemSpacing;
 
