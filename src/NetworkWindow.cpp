@@ -21,6 +21,7 @@
 
 #include <View.h>
 #include <Messenger.h>
+#include <Font.h>
 
 #include "ClientWindow.h"
 #include "NetworkPrefsView.h"
@@ -43,6 +44,9 @@ NetworkWindow::NetworkWindow(void)
 
 	if (netFrame.Width() != 0.0)
 		MoveTo(netFrame.left, netFrame.top);
+
+	BFont font;
+	SetSizeLimits(font.Size() * 44.7, 10000, font.Size() * 33.4, 10000); 
 }
 
 
