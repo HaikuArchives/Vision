@@ -258,15 +258,6 @@ void NetworkPrefsView::AttachedToWindow(void)
 	BuildNetworkList();
 
 	FrameResized(0, 0);
-
-	// Correct size of fNickScroller
-	BRect boundsRect = fNickScroller->Frame();
-	boundsRect.bottom = fIdent->Frame().top - kItemSpacing;
-	fNickScroller->ResizeTo(boundsRect.Width(), boundsRect.Height());
-
-	boundsRect = fNickScroller->Bounds();
-	boundsRect.right -= B_V_SCROLL_BAR_WIDTH;
-	fListView->ResizeTo(boundsRect.Width(), boundsRect.Height());
 }
 
 void NetworkPrefsView::DetachedFromWindow(void)
