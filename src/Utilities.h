@@ -21,8 +21,8 @@
  *                 Andrew Bazan
  */
 
-#ifndef _UTILITIES_H
-#define _UTILITIES_H
+#ifndef _UTILITIES_H_
+#define _UTILITIES_H_
 
 #include <String.h>
 
