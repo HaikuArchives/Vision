@@ -24,7 +24,7 @@
 
 #include <View.h>
 
-class VTextControl;
+class BTextControl;
 class BMenuField;
 class BCheckBox;
 class BBox;
@@ -41,7 +41,7 @@ public:
 
 private:
 	BMenuField* fBlockSize;
-	VTextControl* fDefDir, *fDccPortMin, *fDccPortMax;
+	BTextControl* fDefDir, *fDccPortMin, *fDccPortMax;
 	BCheckBox* fAutoAccept, *fPrivateCheck;
 	BBox* fBox;
 };

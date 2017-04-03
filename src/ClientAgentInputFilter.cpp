@@ -28,6 +28,7 @@
 #include <NodeInfo.h>
 #include <ScrollView.h>
 #include <String.h>
+#include <TextControl.h>
 
 #include <stdio.h>
 
@@ -37,7 +38,6 @@
 #include "RunView.h"
 #include "Vision.h"
 #include "VisionBase.h"
-#include "VTextControl.h"
 #include "WindowList.h"
 
 ClientAgentInputFilter::ClientAgentInputFilter(ClientAgent* agent)

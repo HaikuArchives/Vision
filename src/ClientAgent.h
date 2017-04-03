@@ -30,7 +30,7 @@
 #include <Messenger.h>
 
 class BScrollView;
-class VTextControl;
+class BTextControl;
 
 class BMenu;
 class BPopUpMenu;
@@ -103,7 +103,7 @@ protected:
 	HistoryList* fHistory;
 	RunView* fText;
 	BScrollView* fTextScroll;
-	VTextControl* fInput;
+	BTextControl* fInput;
 	Theme* fActiveTheme;
 
 	static const char* endl;

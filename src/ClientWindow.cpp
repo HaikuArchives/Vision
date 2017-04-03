@@ -29,6 +29,7 @@
 #include <MenuBar.h>
 #include <Rect.h>
 #include <MessageRunner.h>
+#include <TextControl.h>
 #include <Roster.h>
 
 #include <stdio.h>
@@ -47,7 +48,6 @@
 #include "SettingsFile.h"
 #include "StatusView.h"
 #include "Vision.h"
-#include "VTextControl.h"
 #include "WindowList.h"
 
 /*

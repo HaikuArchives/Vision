@@ -24,8 +24,8 @@
  */
 
 #include <String.h>
+#include <TextControl.h>
 
-#include "VTextControl.h"
 #include "VisionBase.h"
 #include "HistoryList.h"
 
@@ -33,7 +33,7 @@ HistoryList::HistoryList() : bufferFree(0), bufferPos(0)
 {
 }
 
-void HistoryList::PreviousBuffer(VTextControl* input)
+void HistoryList::PreviousBuffer(BTextControl* input)
 {
 	if (bufferPos) {
 		if (input->TextView()->TextLength() > 0 && bufferFree < BACK_BUFFER_SIZE &&
@@ -47,7 +47,7 @@ void HistoryList::PreviousBuffer(VTextControl* input)
 	}
 }
 
-void HistoryList::NextBuffer(VTextControl* input)
+void HistoryList::NextBuffer(BTextControl* input)
 {
 	BString buffer;
 

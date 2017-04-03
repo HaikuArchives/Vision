@@ -27,7 +27,7 @@
 
 #define MAX_COMMANDS 7
 
-class VTextControl;
+class BTextControl;
 class BScrollView;
 
 class CommandPrefsView : public BView
@@ -41,7 +41,7 @@ public:
 	virtual void FrameResized(float, float);
 
 private:
-	VTextControl** fCommands;
+	BTextControl** fCommands;
 	BScrollView* fScroller;
 	float fMaxheight;
 	float fProportionheight;

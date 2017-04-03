@@ -24,7 +24,7 @@
 
 #include <View.h>
 
-class VTextControl;
+class BTextControl;
 class BMenuField;
 class BCheckBox;
 class BBox;
@@ -42,7 +42,7 @@ public:
 	virtual void FrameResized(float, float);
 
 private:
-	VTextControl* fLogBaseDir, *fLogStampFormat;
+	BTextControl* fLogBaseDir, *fLogStampFormat;
 
 	BCheckBox* fLogEnabled, *fLogFileTimestamp, *fTimeStamp;
 	BButton* fClearLogs;

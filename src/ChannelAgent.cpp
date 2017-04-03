@@ -31,6 +31,7 @@
 #include <PopUpMenu.h>
 #include <Roster.h>
 #include <ScrollView.h>
+#include <TextControl.h>
 
 #include <stdio.h>
 
@@ -41,7 +42,6 @@
 #include "StatusView.h"
 #include "ClientWindow.h"
 #include "Utilities.h"
-#include "VTextControl.h"
 #include "ChannelOptions.h"
 #include "ResizeView.h"
 
@@ -350,7 +350,7 @@ void ChannelAgent::TabExpansion(void)
 {
 	/*
 	 * Function purpose: Get the characters before the caret's current position,
-	 *                   and update the fInput VTextControl with a relevant match
+	 *                   and update the fInput BTextControl with a relevant match
 	 *                   from the ChannelAgent's NamesView
 	 */
 

@@ -25,7 +25,7 @@
 
 #include <View.h>
 
-class VTextControl;
+class BTextControl;
 class BScrollView;
 class BMenuField;
 class BTextControl;
@@ -43,7 +43,7 @@ public:
 private:
 	BMenuField* fFontMenuField;
 	BMenuField* fFontElementField;
-	VTextControl* fTextControl;
+	BTextControl* fTextControl;
 	int32 fActiveFont;
 };
 

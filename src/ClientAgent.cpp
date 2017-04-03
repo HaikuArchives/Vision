@@ -30,6 +30,7 @@
 #include <Path.h>
 #include <PopUpMenu.h>
 #include <ScrollView.h>
+#include <TextControl.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -46,7 +47,6 @@
 #include "Utilities.h"
 #include "Theme.h"
 #include "Vision.h"
-#include "VTextControl.h"
 #include "WindowList.h"
 
 const char* ClientAgent::endl("\1\1\1\1\1");
@@ -155,7 +155,7 @@ void ClientAgent::Init(void)
 {
 	AdoptSystemColors();
 
-	fInput = new VTextControl(BRect(0,
+	fInput = new BTextControl(BRect(0,
 									fFrame.top, // tmp. will be moved
 									fFrame.right - fFrame.left - 4, fFrame.bottom),
 							  "Input", 0, 0, 0, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);

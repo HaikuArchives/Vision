@@ -26,7 +26,7 @@
 #include <View.h>
 #include "VisionBase.h"
 
-class VTextControl;
+class BTextControl;
 class BScrollView;
 
 class EventPrefsView : public BView
@@ -40,7 +40,7 @@ public:
 	virtual void FrameResized(float, float);
 
 private:
-	VTextControl** fEvents;
+	BTextControl** fEvents;
 	BScrollView* fScroller;
 	float fMaxheight, fProportionheight;
 };

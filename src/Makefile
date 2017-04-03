@@ -6,7 +6,7 @@
 
 # The name of the binary.
 NAME = Vision
-VERSION := 0.9.8pre9
+VERSION := 0.9.9pre0
 TARGET_DIR = ../dist
 
 # The type of binary, must be one of:
@@ -84,7 +84,6 @@ SRCS = AboutWindow.cpp \
 	URLCrunch.cpp \
 	Utilities.cpp \
 	Vision.cpp \
-	VTextControl.cpp \
 	WindowList.cpp
 
 #	Specify the resource definition files to use. Full or relative paths can be

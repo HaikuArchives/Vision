@@ -23,7 +23,6 @@
 #include "NumericFilter.h"
 #include "PrefLog.h"
 #include "Vision.h"
-#include "VTextControl.h"
 
 #include <Alert.h>
 #include <Button.h>
@@ -32,6 +31,7 @@
 #include <FindDirectory.h>
 #include <Entry.h>
 #include <Path.h>
+#include <TextControl.h>
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -45,7 +45,7 @@ LogPrefsView::LogPrefsView(BRect frame)
 	BRect trackingBoundsRect(0.0, 0.0, 0, 0);
 	float maxWidth(0), maxHeight(0);
 
-	fLogBaseDir = new VTextControl(BRect(0, 0, 0, 0), NULL, S_PREFLOG_LOGPATH,
+	fLogBaseDir = new BTextControl(BRect(0, 0, 0, 0), NULL, S_PREFLOG_LOGPATH,
 								   vision_app->GetString("logBaseDir"),
 								   new BMessage(M_PREFLOG_LOGPATH_CHANGED));
 	fLogBaseDir->ResizeToPreferred();
@@ -56,7 +56,7 @@ LogPrefsView::LogPrefsView(BRect frame)
 	AddChild(fLogBaseDir);
 	checkboxRect = fLogBaseDir->Bounds();
 
-	fLogStampFormat = new VTextControl(BRect(0, 0, 0, 0), NULL, S_PREFLOG_TS_FORMAT,
+	fLogStampFormat = new BTextControl(BRect(0, 0, 0, 0), NULL, S_PREFLOG_TS_FORMAT,
 									   vision_app->GetString("timestamp_format"),
 									   new BMessage(M_PREFLOG_TS_FORMAT_CHANGED));
 	fLogBaseDir->ResizeToPreferred();

@@ -25,12 +25,12 @@
 #include <MenuField.h>
 #include <Menu.h>
 #include <MenuItem.h>
+#include <TextControl.h>
 #include <Window.h>
 
 #include "NumericFilter.h"
 #include "ServerEntryWindow.h"
 #include "Vision.h"
-#include "VTextControl.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,7 +57,7 @@ ServerEntryView::ServerEntryView(BRect bounds, BHandler* handler, BMessage* invo
 	memset(&currentServer, 0, sizeof(ServerData));
 	if (size != 0) memcpy(&currentServer, data, size);
 	AdoptSystemColors();
-	serverName = new VTextControl(
+	serverName = new BTextControl(
 		BRect(0, 0, 0, 0), "serverName", S_SERVERWIN_SERVER, (data) ? data->serverName : "",
 		new BMessage(M_SERVER_NAME_CHANGED), B_FOLLOW_LEFT | B_FOLLOW_TOP);
 	BString strPort("");
@@ -65,7 +65,7 @@ ServerEntryView::ServerEntryView(BRect bounds, BHandler* handler, BMessage* invo
 		strPort << data->port;
 	else
 		strPort << 6667;
-	port = new VTextControl(BRect(0, 0, 0, 0), "portVal", S_SERVERWIN_PORT, strPort.String(),
+	port = new BTextControl(BRect(0, 0, 0, 0), "portVal", S_SERVERWIN_PORT, strPort.String(),
 							new BMessage(M_SERVER_PORT_CHANGED), B_FOLLOW_LEFT | B_FOLLOW_TOP);
 	port->SetDivider(be_plain_font->StringWidth("Port: ") + 5);
 
@@ -91,7 +91,7 @@ ServerEntryView::ServerEntryView(BRect bounds, BHandler* handler, BMessage* invo
 								new BMessage(M_SERVER_USEPASS), B_FOLLOW_LEFT | B_FOLLOW_TOP,
 								B_WILL_DRAW | B_NAVIGABLE);
 
-	passwordField = new VTextControl(BRect(0, 0, 0, 0), "password", NULL, password.String(), NULL,
+	passwordField = new BTextControl(BRect(0, 0, 0, 0), "password", NULL, password.String(), NULL,
 									 B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
 
 	AddChild(statusField);

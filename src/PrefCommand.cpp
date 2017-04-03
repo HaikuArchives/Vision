@@ -22,9 +22,9 @@
 
 #include "PrefCommand.h"
 #include "Vision.h"
-#include "VTextControl.h"
 
 #include <ScrollView.h>
+#include <TextControl.h>
 
 static const char* CommandControlLabels[] = {
 	S_PREFCOMMAND_QUIT, S_PREFCOMMAND_KICK, S_PREFCOMMAND_IGNORE, S_PREFCOMMAND_UNIGNORE,
@@ -48,10 +48,10 @@ CommandPrefsView::CommandPrefsView(BRect frame)
 
 	BView* bgView(new BView(bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
 	bgView->AdoptSystemColors();
-	fCommands = new VTextControl* [MAX_COMMANDS];
+	fCommands = new BTextControl* [MAX_COMMANDS];
 
 	for (i = 0; i < MAX_COMMANDS; ++i) {
-		fCommands[i] = new VTextControl(
+		fCommands[i] = new BTextControl(
 			BRect(5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()),
 				  5 + bounds.right - be_plain_font->StringWidth("gP"),
 				  be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),

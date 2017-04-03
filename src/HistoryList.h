@@ -28,7 +28,7 @@
 
 #define BACK_BUFFER_SIZE 20
 
-class VTextControl;
+class BTextControl;
 class BString;
 
 class HistoryList
@@ -38,8 +38,8 @@ class HistoryList
 
 public:
 	HistoryList(void);
-	void PreviousBuffer(VTextControl*);
-	void NextBuffer(VTextControl*);
+	void PreviousBuffer(BTextControl*);
+	void NextBuffer(BTextControl*);
 	BString Submit(const char*);
 	bool HasHistory(void) const;
 };

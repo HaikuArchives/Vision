@@ -19,11 +19,11 @@
  * Contributor(s): Rene Gollent
  */
 
-#include "VTextControl.h"
 #include "PrefEvent.h"
 #include "Vision.h"
 
 #include <ScrollView.h>
+#include <TextControl.h>
 
 static const char* EventControlLabels[] = {
 	S_PREFEVENT_JOIN,	 S_PREFEVENT_PART,		 S_PREFEVENT_NICK,	S_PREFEVENT_QUIT,
@@ -49,10 +49,10 @@ EventPrefsView::EventPrefsView(BRect frame)
 
 	BView* bgView(new BView(bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
 	bgView->AdoptSystemColors();
-	fEvents = new VTextControl* [MAX_EVENTS];
+	fEvents = new BTextControl* [MAX_EVENTS];
 
 	for (i = 0; i < MAX_EVENTS; ++i) {
-		fEvents[i] = new VTextControl(
+		fEvents[i] = new BTextControl(
 			BRect(5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()),
 				  5 + bounds.right - be_plain_font->StringWidth("gP"),
 				  be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),

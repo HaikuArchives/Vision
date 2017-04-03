@@ -29,6 +29,7 @@
 #include <Notification.h>
 #include <PopUpMenu.h>
 #include <Roster.h>
+#include <TextControl.h>
 #include <UTF8.h>
 
 #include "MessageAgent.h"
@@ -37,7 +38,6 @@
 #include "StatusView.h"
 #include "Utilities.h"
 #include "Vision.h"
-#include "VTextControl.h"
 
 #include <unistd.h>
 #include <stdlib.h>

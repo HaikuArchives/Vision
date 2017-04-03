@@ -24,10 +24,10 @@
 #include <Application.h>
 #include <Button.h>
 #include <Handler.h>
+#include <TextControl.h>
 
 #include "Prompt.h"
 #include "VisionBase.h"
-#include "VTextControl.h"
 
 PromptValidate::PromptValidate(void)
 {
@@ -59,7 +59,7 @@ PromptWindow::PromptWindow(BPoint point, const char* label, const char* title, c
 	bgView->AdoptSystemColors();
 	AddChild(bgView);
 
-	field = new VTextControl(
+	field = new BTextControl(
 		BRect(10, 10, (width = be_plain_font->StringWidth(label ? label : "")) + 135, 25), "field",
 		label ? label : "", text ? text : "", 0, B_FOLLOW_LEFT | B_FOLLOW_TOP);
 

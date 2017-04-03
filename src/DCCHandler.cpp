@@ -31,13 +31,13 @@
 #include <Invoker.h>
 #include <Path.h>
 #include <MessageFilter.h>
+#include <TextControl.h>
 #include <stdlib.h>
 
 #include "ClientWindow.h"
 #include "ServerAgent.h"
 #include "Utilities.h"
 #include "Vision.h"
-#include "VTextControl.h"
 
 class DCCFileFilter : public BMessageFilter
 {

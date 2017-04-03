@@ -30,7 +30,7 @@
 class BButton;
 class BHandler;
 class BMessage;
-class VTextControl;
+class BTextControl;
 class BMenuField;
 class BCheckBox;
 
@@ -55,7 +55,7 @@ private:
 
 	BMessage* invocation;
 	BHandler* target;
-	VTextControl* serverName, *port, *passwordField;
+	BTextControl* serverName, *port, *passwordField;
 	BMenuField* statusField;
 	BButton* okButton, *cancelButton;
 	BCheckBox* usePassword;

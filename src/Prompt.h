@@ -31,7 +31,7 @@
 #ifdef __INTEL__
 #include <regex.h>
 #endif
-class VTextControl;
+class BTextControl;
 class BButton;
 
 class PromptValidate
@@ -61,7 +61,7 @@ class PromptWindow : public BWindow
 	BHandler* handler;
 	BMessage* invoked;
 
-	VTextControl* field;
+	BTextControl* field;
 	BButton* done, *cancel;
 	PromptValidate* validate;
 	bool blanks;
