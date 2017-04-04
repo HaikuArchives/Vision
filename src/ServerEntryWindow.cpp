@@ -27,6 +27,7 @@
 #include <MenuItem.h>
 #include <TextControl.h>
 #include <Window.h>
+#include <LayoutBuilder.h>
 
 #include "NumericFilter.h"
 #include "ServerEntryWindow.h"
@@ -39,149 +40,120 @@
 #define B_TRANSLATION_CONTEXT "ServerEntryWindow"
 
 ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked, const ServerData* data,
-									 int32 size)
-	: BWindow(BRect(50, 50, 350, 250), B_TRANSLATE("Add server"), B_TITLED_WINDOW,
-			  B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS)
-{
-	AddChild(new ServerEntryView(Bounds(), handler, invoked, data, size));
-}
-
-ServerEntryWindow::~ServerEntryWindow(void)
-{
-}
-
-ServerEntryView::ServerEntryView(BRect bounds, BHandler* handler, BMessage* invoked,
-								 const ServerData* data, int32 size)
-	: BView(bounds, "entryView", B_FOLLOW_ALL_SIDES, B_WILL_DRAW),
-	  invocation(invoked),
-	  target(handler)
+	int32 size)
+	: BWindow(BRect(50, 50, 350, 250), B_TRANSLATE("Add server"),
+		B_TITLED_WINDOW, B_AUTO_UPDATE_SIZE_LIMITS |
+		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS),
+	invocation(invoked),
+	target(handler)
 {
 	ASSERT(handler != NULL);
 	memset(&currentServer, 0, sizeof(ServerData));
-	if (size != 0) memcpy(&currentServer, data, size);
-	AdoptSystemColors();
+	if (size != 0)
+		memcpy(&currentServer, data, size);
+
 	serverName = new BTextControl(
-		BRect(0, 0, 0, 0), "serverName", B_TRANSLATE("Server: "), (data) ? data->serverName : "",
-		new BMessage(M_SERVER_NAME_CHANGED), B_FOLLOW_LEFT | B_FOLLOW_TOP);
+		"serverName", B_TRANSLATE("Server: "), (data) ? data->serverName : "",
+		new BMessage(M_SERVER_NAME_CHANGED));
 	BString strPort("");
 	if (data)
 		strPort << data->port;
 	else
 		strPort << 6667;
-	port = new BTextControl(BRect(0, 0, 0, 0), "portVal", B_TRANSLATE("Port: "), strPort.String(),
-							new BMessage(M_SERVER_PORT_CHANGED), B_FOLLOW_LEFT | B_FOLLOW_TOP);
+	port = new BTextControl("portVal", B_TRANSLATE("Port: "), strPort.String(),
+		new BMessage(M_SERVER_PORT_CHANGED));
 	port->SetDivider(be_plain_font->StringWidth("Port: ") + 5);
 
 	BMenu* stateMenu = new BMenu(B_TRANSLATE("Choose status"));
-	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Primary"), new BMessage(M_SERVER_STATE)));
-	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Secondary"), new BMessage(M_SERVER_STATE)));
-	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Disabled"), new BMessage(M_SERVER_STATE)));
-	statusField = new BMenuField(BRect(0, 0, 0, 0), "states", B_TRANSLATE("State: "), stateMenu,
-								 B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
+	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Primary"),
+		new BMessage(M_SERVER_STATE)));
+	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Secondary"),
+		new BMessage(M_SERVER_STATE)));
+	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Disabled"),
+		new BMessage(M_SERVER_STATE)));
+	statusField = new BMenuField("states",
+		B_TRANSLATE("State: "), stateMenu, B_WILL_DRAW | B_NAVIGABLE);
 
-	okButton = new BButton(BRect(0, 0, 0, 0), "serverOk", B_TRANSLATE("Done"),
-						   new BMessage(M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP,
-						   B_WILL_DRAW | B_NAVIGABLE);
+	okButton = new BButton("serverOk", B_TRANSLATE("Done"),
+		new BMessage(M_SERVER_DONE), B_WILL_DRAW | B_NAVIGABLE);
 
-	cancelButton = new BButton(BRect(0, 0, 0, 0), "serverCancel", B_TRANSLATE("Cancel"),
-							   new BMessage(M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP,
-							   B_WILL_DRAW | B_NAVIGABLE);
+	cancelButton = new BButton("serverCancel", B_TRANSLATE("Cancel"),
+		new BMessage(M_SERVER_CANCEL), B_WILL_DRAW | B_NAVIGABLE);
 
 	BString password("");
-	if (strlen(currentServer.password) > 0) password = currentServer.password;
+	if (strlen(currentServer.password) > 0)
+		password = currentServer.password;
 
-	usePassword = new BCheckBox(BRect(0, 0, 0, 0), "usePass", B_TRANSLATE("Use password: "),
-								new BMessage(M_SERVER_USEPASS), B_FOLLOW_LEFT | B_FOLLOW_TOP,
-								B_WILL_DRAW | B_NAVIGABLE);
+	usePassword = new BCheckBox("usePass", B_TRANSLATE("Use password: "),
+		new BMessage(M_SERVER_USEPASS), B_WILL_DRAW | B_NAVIGABLE);
 
-	passwordField = new BTextControl(BRect(0, 0, 0, 0), "password", NULL, password.String(), NULL,
-									 B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
+	passwordField = new BTextControl("password", NULL, password.String(), NULL,
+		B_WILL_DRAW | B_NAVIGABLE);
 
-	AddChild(statusField);
-	AddChild(serverName);
-	AddChild(port);
-	AddChild(okButton);
-	AddChild(cancelButton);
-	AddChild(usePassword);
-	AddChild(passwordField);
-}
-
-ServerEntryView::~ServerEntryView(void)
-{
-	delete invocation;
-}
-
-void ServerEntryView::AttachedToWindow(void)
-{
-	BView::AttachedToWindow();
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_HALF_ITEM_INSETS)
+		.Add(serverName)
+		.Add(port)
+		.AddGroup(B_HORIZONTAL)
+			.Add(usePassword)
+			.Add(passwordField)
+		.End()
+		.Add(statusField)
+		.AddGroup(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
+			.AddGlue()
+			.Add(cancelButton)
+			.Add(okButton)
+		.End()
+	.End();
 
 	serverName->SetDivider(be_plain_font->StringWidth(B_TRANSLATE("Server: ")) + 5);
-	serverName->ResizeToPreferred();
-	serverName->ResizeTo(Bounds().Width() / 2, serverName->Bounds().Height());
-	serverName->MoveTo(10, 10);
 	serverName->SetTarget(this);
 
-	port->ResizeToPreferred();
-	port->MoveTo(serverName->Frame().right + 15, serverName->Frame().top);
 	port->SetTarget(this);
 	port->TextView()->AddFilter(new NumericFilter());
 
-	float diff(0);
-	if ((diff = (port->Frame().right - Bounds().right)) > 0.0) ResizeBy(diff, 0.0);
+	ResizeToPreferred();
 
-	statusField->ResizeToPreferred();
 	statusField->Menu()->SetTargetForItems(this);
 
-	usePassword->ResizeToPreferred();
-	usePassword->MoveTo(serverName->Frame().left, serverName->Frame().bottom + 15);
 	usePassword->SetTarget(this);
 	usePassword->SetValue((strlen(currentServer.password) > 0) ? B_CONTROL_ON : B_CONTROL_OFF);
 	passwordField->SetEnabled(usePassword->Value() == B_CONTROL_ON);
-	passwordField->ResizeToPreferred();
-	passwordField->ResizeTo(port->Frame().right - usePassword->Frame().right - 5,
-							passwordField->Bounds().Height());
-	passwordField->MoveTo(usePassword->Frame().right + 5, usePassword->Frame().top);
 	passwordField->TextView()->HideTyping(true);
-	statusField->MoveTo((Bounds().Width() - statusField->Bounds().Width()) / 4.0,
-						usePassword->Frame().bottom + 15);
 
 	cancelButton->SetTarget(this);
 	okButton->SetTarget(this);
-	okButton->ResizeToPreferred();
-	okButton->MoveTo(port->Frame().right - okButton->Bounds().Width(),
-					 statusField->Frame().bottom + 30);
-	cancelButton->ResizeToPreferred();
-	cancelButton->MoveTo(okButton->Frame().left - (cancelButton->Frame().Width() + 5),
-						 okButton->Frame().top);
 
 	okButton->SetEnabled(false);
 
-	Window()->ResizeTo(okButton->Frame().right + 5, okButton->Frame().bottom + 10);
+	dynamic_cast<BInvoker*>(
+		statusField->Menu()->ItemAt(currentServer.state))->Invoke();
 
-	dynamic_cast<BInvoker*>(statusField->Menu()->ItemAt(currentServer.state))->Invoke();
-}
-
-void ServerEntryView::AllAttached(void)
-{
-	BView::AllAttached();
 	port->MakeFocus(false);
 	port->MakeFocus(true);
 	serverName->MakeFocus(false);
 	serverName->MakeFocus(true);
 }
 
-void ServerEntryView::CheckDoneState(void)
+ServerEntryWindow::~ServerEntryWindow()
 {
-	if (serverName->TextView()->TextLength() != 0)
-		if (port->TextView()->TextLength() != 0)
+	delete invocation;
+}
+
+void ServerEntryWindow::CheckDoneState()
+{
+	if (serverName->TextView()->TextLength() != 0) {
+		if (port->TextView()->TextLength() != 0) {
 			if (statusField->Menu()->FindMarked() != NULL) {
 				okButton->SetEnabled(true);
 				return;
 			}
+		}
+	}
 	okButton->SetEnabled(false);
 }
 
-void ServerEntryView::MessageReceived(BMessage* msg)
+void ServerEntryWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
 	case M_SERVER_STATE: {
@@ -219,10 +191,10 @@ void ServerEntryView::MessageReceived(BMessage* msg)
 	}
 
 	case M_SERVER_CANCEL:
-		Window()->PostMessage(B_QUIT_REQUESTED);
+		PostMessage(B_QUIT_REQUESTED);
 		break;
 
 	default:
-		BView::MessageReceived(msg);
+		BWindow::MessageReceived(msg);
 	}
 }

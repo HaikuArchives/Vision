@@ -38,20 +38,12 @@ class ServerEntryWindow : public BWindow
 {
 public:
 	ServerEntryWindow(BHandler*, BMessage*, const ServerData*, int32);
-	virtual ~ServerEntryWindow(void);
-};
+	virtual ~ServerEntryWindow();
 
-class ServerEntryView : public BView
-{
-public:
-	ServerEntryView(BRect, BHandler*, BMessage*, const ServerData*, int32);
-	virtual ~ServerEntryView(void);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
 	virtual void MessageReceived(BMessage*);
 
 private:
-	void CheckDoneState(void);
+	void CheckDoneState();
 
 	BMessage* invocation;
 	BHandler* target;
