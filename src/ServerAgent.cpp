@@ -34,14 +34,12 @@
 #include <MessageRunner.h>
 #include <Path.h>
 #include <String.h>
+#include <Socket.h>
 
 #include <arpa/inet.h>
 #include <ctype.h>
-#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/socket.h>
-#include <sys/select.h>
 
 #include "ClientAgent.h"
 #include "ClientAgentLogger.h"
@@ -67,7 +65,6 @@ class failToLock
 int32 ServerAgent::fServerSeed = 0;
 
 ServerAgent::ServerAgent(const char* id_, BMessage& net, BRect frame_)
-
 	: ClientAgent(id_, id_, net.FindString("nick"), frame_),
 	  fLocalip(""),
 	  fMyNick(net.FindString("nick")),
@@ -88,7 +85,7 @@ ServerAgent::ServerAgent(const char* id_, BMessage& net, BRect frame_)
 	  fLagCheck(0),
 	  fLagCount(0),
 	  fNickAttempt(0),
-	  fServerSocket(-1),
+	  fSocket(NULL),
 	  fLoginThread(-1),
 	  fSenderThread(-1),
 	  fEvents(vision_app->fEvents),
@@ -296,7 +293,7 @@ int32 ServerAgent::Establish(void* arg)
 	BMessage getMsg;
 	BString remoteIP;
 	int32 serverSid;
-	int32 serverSock(-1);
+	BSocket* serverSock = NULL;
 	if (!(sMsgrE->IsValid() && (sMsgrE->SendMessage(M_GET_ESTABLISH_DATA, &getMsg) == B_OK))) {
 		printf(":ERROR: sMsgr not valid in Establish() -- bailing\n");
 		return B_ERROR;
@@ -314,7 +311,8 @@ int32 ServerAgent::Establish(void* arg)
 		getMsg.FindData("server", B_ANY_TYPE, reinterpret_cast<const void**>(&serverData), &size);
 		// better safe than sorry, seems under certain circumstances the SendMessage can fail
 		// "silently"
-		if (serverData == NULL) throw failToLock();
+		if (serverData == NULL)
+			throw failToLock();
 		connectId = serverData->serverName;
 		connectPort << serverData->port;
 		getMsg.FindString("ident", &ident);
@@ -336,9 +334,11 @@ int32 ServerAgent::Establish(void* arg)
 				snooze(1000000 * retrycount * retrycount); // wait 1, 4, 9, 16 ... seconds
 			}
 
-			if (sMsgrE->SendMessage(M_INC_RECONNECT) != B_OK) throw failToLock();
+			if (sMsgrE->SendMessage(M_INC_RECONNECT) != B_OK)
+				throw failToLock();
 			statString = B_TRANSLATE("[@] Attempting to ");
-			if (retrycount != 0) statString += B_TRANSLATE("re");
+			if (retrycount != 0)
+				statString += B_TRANSLATE("re");
 			statString += B_TRANSLATE("connect (attempt ");
 			statString << retrycount + 1;
 			statString += B_TRANSLATE(" of ");
@@ -357,27 +357,19 @@ int32 ServerAgent::Establish(void* arg)
 		ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
 		sMsgrE->SendMessage(&statMsg);
 
-		struct sockaddr_in remoteAddr;
-		remoteAddr.sin_family = AF_INET;
-		if (inet_aton(connectId.String(), &remoteAddr.sin_addr) == 0) {
-			struct hostent* remoteInet(gethostbyname(connectId.String()));
-			if (remoteInet)
-				remoteAddr.sin_addr = *((in_addr*)remoteInet->h_addr_list[0]);
-			else {
-				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not create connection to address and port. Make sure your internet connection is operational.\n"), C_ERROR);
-				sMsgrE->SendMessage(&statMsg);
-				sMsgrE->SendMessage(M_NOT_CONNECTING);
-				sMsgrE->SendMessage(M_SERVER_DISCONNECT);
-				throw failToLock();
-			}
+		BNetworkAddress remoteAddr(AF_INET, connectId.String(), connectPort);
+		if (remoteAddr.InitCheck() != B_OK) {
+			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not create connection to address and port. Make sure your internet connection is operational.\n"), C_ERROR);
+			sMsgrE->SendMessage(&statMsg);
+			sMsgrE->SendMessage(M_NOT_CONNECTING);
+			sMsgrE->SendMessage(M_SERVER_DISCONNECT);
+			throw failToLock();
 		}
 
-		remoteAddr.sin_port = htons(atoi(connectPort.String()));
-		remoteIP = inet_ntoa(remoteAddr.sin_addr);
-
+		remoteIP = inet_ntoa(((sockaddr_in&)remoteAddr.SockAddr()).sin_addr);
 		vision_app->AddIdent(remoteIP.String(), ident.String());
 
-		if ((serverSock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+		if ((serverSock = new BSocket) == NULL) {
 			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not create connection to address and port. Make sure your internet connection is operational.\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 			sMsgrE->SendMessage(M_NOT_CONNECTING);
@@ -391,13 +383,12 @@ int32 ServerAgent::Establish(void* arg)
 		sMsgrE->SendMessage(&statMsg);
 		sMsgrE->SendMessage(M_LAG_CHANGED);
 
-		if (connect(serverSock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr)) >= 0) {
+		if (serverSock->Connect(remoteAddr) == B_OK) {
 			BString ip("");
-			struct sockaddr_in sockin;
+			sockaddr_in& sockin = (sockaddr_in&)serverSock->Local().SockAddr();
 
 			// store local ip address for future use (dcc, etc)
-			int addrlength(sizeof(struct sockaddr_in));
-			if (getsockname(serverSock, (struct sockaddr*)&sockin, (socklen_t*)&addrlength)) {
+			if (sockin.sin_len == 0) {
 				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Error getting local IP\n"), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 				BMessage setIP(M_SET_IP);
@@ -434,7 +425,7 @@ int32 ServerAgent::Establish(void* arg)
 			dataSend.AddString("data", "blah");
 
 			BMessage endpointMsg(M_SET_ENDPOINT);
-			endpointMsg.AddInt32("socket", serverSock);
+			endpointMsg.AddPointer("socket", serverSock);
 			if (sMsgrE->SendMessage(&endpointMsg, &reply) != B_OK) throw failToLock();
 
 			if (strlen(serverData->password) > 0) {
@@ -479,31 +470,14 @@ int32 ServerAgent::Establish(void* arg)
 		return B_ERROR;
 	}
 
-	struct fd_set eset, rset, wset;
-	int selResult(0);
-
-	FD_ZERO(&eset);
-	FD_ZERO(&rset);
-	FD_ZERO(&wset);
-
 	BString buffer;
-
-	FD_SET(serverSock, &eset);
-	FD_SET(serverSock, &rset);
-	FD_SET(serverSock, &wset);
-
 	while (sMsgrE->IsValid()) {
 		char indata[1024];
 		int32 length(0);
 
-		FD_SET(serverSock, &eset);
-		FD_SET(serverSock, &rset);
-		FD_SET(serverSock, &wset);
 		memset(indata, 0, 1024);
-		struct timeval tv = {0, 0};
-		if ((selResult = select(serverSock + 1, &rset, 0, &eset, &tv)) > 0 &&
-			FD_ISSET(serverSock, &rset) && !FD_ISSET(serverSock, &eset)) {
-			if ((length = recv(serverSock, indata, 1023, 0)) > 0) {
+		if (serverSock != NULL && serverSock->IsConnected()) {
+			if ((length = serverSock->Read(indata, 1023)) > 0) {
 				BString temp;
 				int32 index;
 
@@ -537,17 +511,12 @@ int32 ServerAgent::Establish(void* arg)
 					sMsgrE->SendMessage(&msg);
 				}
 			}
-			if (FD_ISSET(serverSock, &eset) || (FD_ISSET(serverSock, &rset) && length == 0) ||
-				!FD_ISSET(serverSock, &wset) || length < 0) {
+			if (!serverSock->IsConnected()) {
 				// we got disconnected :(
 
 				if (vision_app->fDebugRecv) {
 					// print interesting info
 					printf("Negative from endpoint receive! (%" B_PRId32 ")\n", length);
-					printf("eset : %s\nrset: %s\nwset: %s\n",
-						   FD_ISSET(serverSock, &eset) ? "true" : "false",
-						   FD_ISSET(serverSock, &rset) ? "true" : "false",
-						   FD_ISSET(serverSock, &wset) ? "true" : "false");
 				}
 				// tell the user all about it
 				sMsgrE->SendMessage(M_NOT_CONNECTING);
@@ -556,12 +525,6 @@ int32 ServerAgent::Establish(void* arg)
 			}
 		}
 
-		// select error, treat this as a disconnect as well
-		if (selResult < 0) {
-			sMsgrE->SendMessage(M_NOT_CONNECTING);
-			sMsgrE->SendMessage(M_SERVER_DISCONNECT);
-			break;
-		}
 		// take a nap, so the ServerAgent can do things
 		snooze(20000);
 	}
@@ -602,27 +565,15 @@ void ServerAgent::AsyncSendData(const char* cData)
 		strlcpy(fSend_buffer, data.String(), dest_length);
 		dest_length = strlen(fSend_buffer);
 	}
-	if (fServerSocket <= 0) {
+	if (fSocket == NULL || !fSocket->IsConnected()) {
 		// doh, we aren't even connected.
 		return;
 	}
 
-	struct fd_set eset, wset;
-	FD_ZERO(&wset);
-	FD_ZERO(&eset);
-	FD_SET(fServerSocket, &wset);
-	FD_SET(fServerSocket, &eset);
-	struct timeval tv = {5, 0};
-	// do a select to prevent the writer thread from deadlocking in the send call
-	if (select(fServerSocket + 1, NULL, &wset, &eset, &tv) <= 0 || FD_ISSET(fServerSocket, &eset) ||
-		!FD_ISSET(fServerSocket, &wset)) {
-		//    if (!fReconnecting && !fIsConnecting)
-		//      fMsgr.SendMessage (M_SERVER_DISCONNECT);
-	} else {
-		if ((length = send(fServerSocket, fSend_buffer, dest_length, 0) < 0)) {
-			if (!fReconnecting && !fIsConnecting) fMsgr.SendMessage(M_SERVER_DISCONNECT);
-			// doh, we aren't even connected.
-		}
+	if ((length = fSocket->Write(fSend_buffer, dest_length) < 0)) {
+		if (!fReconnecting && !fIsConnecting)
+			fMsgr.SendMessage(M_SERVER_DISCONNECT);
+		// doh, we aren't even connected.
 	}
 
 	if (vision_app->fDebugSend) {
@@ -1002,7 +953,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 	} break;
 
 	case M_SET_ENDPOINT:
-		msg->FindInt32("socket", &fServerSocket);
+		msg->FindPointer("socket", (void**)&fSocket);
 		break;
 
 	case M_NOT_CONNECTING:
@@ -1208,7 +1159,9 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		fMyLag = B_TRANSLATE("Disconnected");
 		fMsgr.SendMessage(M_LAG_CHANGED);
 		fCheckingLag = false;
-		fServerSocket = -1;
+		if (fSocket != NULL)
+			delete fSocket;
+		fSocket = NULL;
 
 		// attempt a reconnect
 		if (!fIsConnecting) HandleReconnect();
@@ -1329,7 +1282,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 			fQuitMsg = quitstr;
 		}
 
-		if (!fIsQuitting && fIsConnected && fServerSocket) {
+		if (!fIsQuitting && fIsConnected && fSocket != NULL) {
 			if (fQuitMsg.Length() == 0) {
 				const char* expansions[1];
 				BString version;

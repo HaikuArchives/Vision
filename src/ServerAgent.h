@@ -40,6 +40,7 @@
 class NotifyListItem;
 class ClientAgentLogger;
 class BMessageRunner;
+class BSocket;
 class ListAgent;
 struct ServerData;
 
@@ -135,7 +136,8 @@ private:
 		fRetryLimit, // connect retry limit
 		fLagCheck,   // system_time()
 		fLagCount,   // passes made waiting
-		fNickAttempt, fServerSocket;
+		fNickAttempt;
+	BSocket* fSocket;
 	char fSend_buffer[2048]; // buffer for sending
 
 	char fParse_buffer[2048]; // buffer for parsing
