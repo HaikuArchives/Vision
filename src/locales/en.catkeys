@@ -1,0 +1,341 @@
+1	English	application/x-vnd.Ink-Vision	3761360718
+mIRC dark blue	PrefColor		mIRC dark blue
+Winlist text status	PrefColor		Winlist text status
+Alias	PrefAliases		Alias
+Error: Invalid parameters	ParseCmd		Error: Invalid parameters
+Timestamp	PrefColor		Timestamp
+Action	PrefColor		Action
+[@] Disconnected from 	ServerAgent		[@] Disconnected from 
+Preferred nicks:	NetworkPrefsView		Preferred nicks:
+List channels…	ClientWindow		List channels…
+Unignore:	PrefCommand		Unignore:
+Quit	PrefColor		Quit
+Doing listen call.	DCCConnect		Doing listen call.
+*** Hostmask added to SILENCE list: 	ParseEvents		*** Hostmask added to SILENCE list: 
+Close	WindowList		Close
+Join	PrefColor		Join
+You may change any of these options.	ChannelOptions		You may change any of these options.
+Vision has been running for 	ParseCmd		Vision has been running for 
+Notify offline	PrefColor		Notify offline
+Lag: 	ChannelAgent		Lag: 
+Remove	NetPrefsServerView		Remove
+Wallops	PrefColor		Wallops
+Log base path:	PrefLog		Log base path:
+/pexec: command failed	ParseCmd		/pexec: command failed
+Key: 	NetPrefsServerView		Key: 
+ is not in 	ParseENums		 is not in 
+mIRC aqua	PrefColor		mIRC aqua
+ response	ParseCTCP		 response
+*** Trying new nick 	ParseCmd		*** Trying new nick 
+Enable logging	PrefLog		Enable logging
+Show timestamps in IRC window	PrefLog		Show timestamps in IRC window
+[x] Unknown MODE flag.\n	ParseENums		[x] Unknown MODE flag.\n
+Names background	PrefColor		Names background
+ (bad channel key)\n	ParseENums		 (bad channel key)\n
+User notice:	PrefEvent		User notice:
+Kick:	PrefCommand		Kick:
+Timestamp format:	PrefLog		Timestamp format:
+ has been invited to 	ParseENums		 has been invited to 
+Smart down	ClientWindow		Smart down
+* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* Please type /NICK <NEWNICK> to try another.\n
+ before next attempt…\n	ServerAgent		 before next attempt…\n
+*** Hostmask removed from SILENCE list: 	ParseEvents		*** Hostmask removed from SILENCE list: 
+Setup window	SetupWindow		Setup window
+Done	ServerEntryWindow		Done
+Network name: 	NetworkPrefsView		Network name: 
+[@] Attempting a connection to 	ServerAgent		[@] Attempting a connection to 
+Default path: 	PrefDCC		Default path: 
+Connecting to sender.	DCCConnect		Connecting to sender.
+Error setting bool	ParseCmd		Error setting bool
+Established connection.	DCCConnect		Established connection.
+*** Topic set by 	ParseENums		*** Topic set by 
+OK	NetPrefsServerView		OK
+ (you're banned)\n	ParseENums		 (you're banned)\n
+Open new query on message	PrefApp		Open new query on message
+Fonts	PrefGeneral		Fonts
+Network setup…	SetupWindow		Network setup…
+[x] Nickname/Channel 	ParseENums		[x] Nickname/Channel 
+receive of 	ClientAgent		receive of 
+*** You have been kicked from 	ChannelAgent		*** You have been kicked from 
+Add	PrefAliases		Add
+Part:	PrefEvent		Part:
+Notify online	PrefColor		Notify online
+Whois	PrefColor		Whois
+Notify list selection	PrefColor		Notify list selection
+OK	PrefLog		OK
+\" to 	DCCConnect		\" to 
+Kick	PrefColor		Kick
+*** Users in 	ParseENums		*** Users in 
+mIRC teal	PrefColor		mIRC teal
+Nickname edges	PrefColor		Nickname edges
+Error	PrefLog		Error
+ other	NetworkPrefsView		 other
+Font: 	PrefFont		Font: 
+DCC block size: 	PrefDCC		DCC block size: 
+Ignore:	PrefCommand		Ignore:
+Add nickname	NetworkPrefsView		Add nickname
+ is already in 	ParseENums		 is already in 
+Done	ListAgent		Done
+Choose status	ServerEntryWindow		Choose status
+Application	PrefGeneral		Application
+Filter: 	ListAgent		Filter: 
+Name	PrefAliases		Name
+Trying to connect to address 	MessageAgent		Trying to connect to address 
+second	ParseCTCP		second
+Select servers for 	NetPrefsServerView		Select servers for 
+Setup…	ClientWindow		Setup…
+Logging	PrefGeneral		Logging
+  - = disabled	NetPrefsServerView		  - = disabled
+Sending \"	DCCConnect		Sending \"
+Real name: 	NetworkPrefsView		Real name: 
+ bytes	ClientAgent		 bytes
+Users	ListAgent		Users
+Down	ClientWindow		Down
+Notify on:	PrefEvent		Notify on:
+Names (helper)	PrefColor		Names (helper)
+Timestamp background	PrefColor		Timestamp background
+mIRC orange	PrefColor		mIRC orange
+Query	NotifyList		Query
+Count: 	ListAgent		Count: 
+re	ServerAgent		re
+Quit	ClientWindow		Quit
+Remove	NetworkPrefsView		Remove
+Network details	NetworkPrefsView		Network details
+Winlist selection status	PrefColor		Winlist selection status
+URL	PrefColor		URL
+Choose network	SetupWindow		Choose network
+Kick:	PrefEvent		Kick:
+DCC chat terminated.\n	MessageAgent		DCC chat terminated.\n
+Unable to resolve 	ParseCmd		Unable to resolve 
+mIRC white	PrefColor		mIRC white
+Topic	ListAgent		Topic
+[@] Established\n	ServerAgent		[@] Established\n
+ is already in use or unavailable.\n	ParseENums		 is already in use or unavailable.\n
+ from 	ClientAgent		 from 
+Acquiring DCC lock…	DCCConnect		Acquiring DCC lock…
+send of 	ClientAgent		send of 
+Names (OP)	PrefColor		Names (OP)
+Channel	ListAgent		Channel
+Send	ParseCmd		Send
+Add…	NetPrefsServerView		Add…
+CONNECTION PROBLEM	ServerAgent		CONNECTION PROBLEM
+Find next	ListAgent		Find next
+About…	ClientWindow		About…
+Connected!\n	MessageAgent		Connected!\n
+Min: 	PrefDCC		Min: 
+s	NetworkPrefsView		s
+Commands	PrefGeneral		Commands
+Remove	NotifyList		Remove
+Names list	PrefFont		Names list
+Selection	PrefColor		Selection
+Terminated 	ClientAgent		Terminated 
+mIRC black	PrefColor		mIRC black
+mIRC yellow	PrefColor		mIRC yellow
+Add new…	NetworkPrefsView		Add new…
+Join:	PrefEvent		Join:
+User nickname edges	PrefColor		User nickname edges
+DCC chat	NotifyList		DCC chat
+Size: 	PrefFont		Size: 
+Timestamp	PrefFont		Timestamp
+Window list	PrefFont		Window list
+Server: 	ServerEntryWindow		Server: 
+ second	ServerAgent		 second
+Cut	ClientAgent		Cut
+URLs	PrefFont		URLs
+Edit…	NetPrefsServerView		Edit…
+Idle: 	ParseENums		Idle: 
+Loading	ListAgent		Loading
+mIRC grey	PrefColor		mIRC grey
+Back:	PrefCommand		Back:
+Move network up	ClientWindow		Move network up
+Whois	NotifyList		Whois
+*** Attempting to rejoin 	ChannelAgent		*** Attempting to rejoin 
+falling back to 9 others.	NetworkPrefsView		falling back to 9 others.
+\" in use or unavailable.. trying \"	ParseENums		\" in use or unavailable.. trying \"
+Server text	PrefColor		Server text
+Delete Log Files	PrefLog		Delete Log Files
+Select all	ClientAgent		Select all
+Error	PrefColor		Error
+Smart up	ClientWindow		Smart up
+[@] Successful reconnect\n	ParseENums		[@] Successful reconnect\n
+Modes: 	ChannelAgent		Modes: 
+Port	NetPrefsServerView		Port
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Connection open, waiting for reply from server\n
+Names (voice)	PrefColor		Names (voice)
+Servers	NetworkWindow		Servers
+*** User mode changed: 	ParseEvents		*** User mode changed: 
+[@] Waiting 	ServerAgent		[@] Waiting 
+Nick:	PrefEvent		Nick:
+The log path you have entered is invalid.	PrefLog		The log path you have entered is invalid.
+Error binding socket.\n	MessageAgent		Error binding socket.\n
+You are currently a channel operator. 	ChannelOptions		You are currently a channel operator. 
+Preferences…	SetupWindow		Preferences…
+Quit:	PrefCommand		Quit:
+Revert	PrefColor		Revert
+Use password: 	ServerEntryWindow		Use password: 
+Server notice:	PrefEvent		Server notice:
+Connect	SetupWindow		Connect
+mIRC purple	PrefColor		mIRC purple
+DCC port range	PrefDCC		DCC port range
+mIRC green	PrefColor		mIRC green
+ Options	ChannelOptions		 Options
+, port 	MessageAgent		, port 
+Sending a file to 	ParseCmd		Sending a file to 
+mIRC silver	PrefColor		mIRC silver
+Error writing data.	DCCConnect		Error writing data.
+created	ParseENums		created
+Ops: 	ChannelAgent		Ops: 
+Strip mIRC colors	PrefApp		Strip mIRC colors
+Move network down	ClientWindow		Move network down
+State: 	ServerEntryWindow		State: 
+*** Now talking in 	ChannelAgent		*** Now talking in 
+s	ServerAgent		s
+Append timestamp to log filenames	PrefLog		Append timestamp to log filenames
+Expand network	ClientWindow		Expand network
+Up	ClientWindow		Up
+DCC	PrefGeneral		DCC
+  + = secondary (fallback)	NetPrefsServerView		  + = secondary (fallback)
+Collapse network	ClientWindow		Collapse network
+Ident: 	NetworkPrefsView		Ident: 
+Text	PrefFont		Text
+Quit:	PrefEvent		Quit:
+New terminal	ClientWindow		New terminal
+- Server Message Of The Day:\n	ParseENums		- Server Message Of The Day:\n
+Notify list	ClientWindowDock		Notify list
+*** Topic: 	ParseENums		*** Topic: 
+Preferences…	ClientWindow		Preferences…
+Connect to…	ClientWindow		Connect to…
+Disabled	ServerAgent		Disabled
+Server	ClientWindow		Server
+Automatically check for NAT IP	PrefDCC		Automatically check for NAT IP
+[@] Handshaking\n	ServerAgent		[@] Handshaking\n
+ of 	ServerAgent		 of 
+Duplicate network	NetworkPrefsView		Duplicate network
+ to 	ParseCmd		 to 
+[x] No topic set in 	ParseENums		[x] No topic set in 
+Background	PrefColor		Background
+Require double CMD+Q/W to close	PrefApp		Require double CMD+Q/W to close
+Automatically accept incoming sends	PrefDCC		Automatically accept incoming sends
+seconds	ParseCTCP		seconds
+Names (normal)	PrefColor		Names (normal)
+Notice	PrefColor		Notice
+Nickname: 	NetworkPrefsView		Nickname: 
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Could not create connection to address and port. Make sure your internet connection is operational.\n
+Port: 	ServerEntryWindow		Port: 
+[x] Unknown channel mode: '	ParseENums		[x] Unknown channel mode: '
+Channels	ListAgent		Channels
+mIRC brown	PrefColor		mIRC brown
+ to 	ClientAgent		 to 
+Network setup	NetworkWindow		Network setup
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n
+Channel list	PrefFont		Channel list
+Notify list background	PrefColor		Notify list background
+Network window	ClientWindow		Network window
+Resolved 	ParseCmd		Resolved 
+Previous window	ClientWindow		Previous window
+Ignore	PrefColor		Ignore
+* All your pre-selected nicknames are in use.\n	ParseENums		* All your pre-selected nicknames are in use.\n
+Signon: 	ParseENums		Signon: 
+Error connecting socket.\n	MessageAgent		Error connecting socket.\n
+* Nickname \"	ParseENums		* Nickname \"
+[@] Sending password\n	ServerAgent		[@] Sending password\n
+Uptime:	PrefCommand		Uptime:
+Waiting for acceptance	DCCConnect		Waiting for acceptance
+CTCP reply	PrefColor		CTCP reply
+Filter…	ListAgent		Filter…
+Warn when multiline pasting	PrefApp		Warn when multiline pasting
+Paste	ClientAgent		Paste
+Topic:	PrefEvent		Topic:
+mIRC pink	PrefColor		mIRC pink
+Window	ClientWindow		Window
+Remove current	NetworkPrefsView		Remove current
+Remove	PrefAliases		Remove
+Notify off:	PrefEvent		Notify off:
+Aliases	PrefGeneral		Aliases
+Autoexec:	NetworkPrefsView		Autoexec:
+Find…	ListAgent		Find…
+*** Channel mode for 	ParseENums		*** Channel mode for 
+Cancel	ServerEntryWindow		Cancel
+*** Channel lock for 	ParseENums		*** Channel lock for 
+[@] Error getting local IP\n	ServerAgent		[@] Error getting local IP\n
+mIRC light blue	PrefColor		mIRC light blue
+Window list	ClientWindowDock		Window list
+[x] You're not in 	ParseENums		[x] You're not in 
+Secondary	ServerEntryWindow		Secondary
+Receiving \"	DCCConnect		Receiving \"
+Input background	PrefColor		Input background
+Close subwindow	ClientWindow		Close subwindow
+Copy	ClientWindow		Copy
+Winlist event status	PrefColor		Winlist event status
+Colors	PrefGeneral		Colors
+[x] your current mode is: 	ParseENums		[x] your current mode is: 
+ wants to begin a DCC chat with you.	DCCHandler		 wants to begin a DCC chat with you.
+  * = primary	NetPrefsServerView		  * = primary
+Status	NetPrefsServerView		Status
+Input text	PrefFont		Input text
+[was]	ParseENums		[was]
+Server messages	PrefFont		Server messages
+Defaults	NetworkPrefsView		Defaults
+Away:	PrefCommand		Away:
+Winlist nick alert status	PrefColor		Winlist nick alert status
+mIRC red	PrefColor		mIRC red
+Status: 	ListAgent		Status: 
+Winlist background	PrefColor		Winlist background
+Enable lag checking	NetworkPrefsView		Enable lag checking
+    Find:	ListAgent		    Find:
+[x] Channels: 	ParseENums		[x] Channels: 
+ (invite only)\n	ParseENums		 (invite only)\n
+Disabled	ServerEntryWindow		Disabled
+Select all	ClientWindow		Select all
+mIRC lime	PrefColor		mIRC lime
+Unable to establish connection.	DCCConnect		Unable to establish connection.
+Copy	ClientAgent		Copy
+ cps\n	ClientAgent		 cps\n
+Winlist normal status	PrefColor		Winlist normal status
+[x] Channel key already set in 	ParseENums		[x] Channel key already set in 
+Duplicate current…	NetworkPrefsView		Duplicate current…
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n
+Show OS information in version reply	PrefApp		Show OS information in version reply
+Connect to this network when Vision starts up	NetworkPrefsView		Connect to this network when Vision starts up
+connect (attempt 	ServerAgent		connect (attempt 
+Add network	NetworkPrefsView		Add network
+*** You have been invited to 	ParseEvents		*** You have been invited to 
+Personal details	NetworkPrefsView		Personal details
+Text	PrefColor		Text
+Add…	NetworkPrefsView		Add…
+falling back to 	NetworkPrefsView		falling back to 
+Cut	ClientWindow		Cut
+Max: 	PrefDCC		Max: 
+ set mode 	ChannelAgent		 set mode 
+[@] Local IP: 	ServerAgent		[@] Local IP: 
+[@] Attempting to 	ServerAgent		[@] Attempting to 
+Names selection	PrefColor		Names selection
+Find	ListAgent		Find
+bps: 	DCCConnect		bps: 
+Network: 	SetupWindow		Network: 
+Use defaults	NetworkPrefsView		Use defaults
+\" from 	DCCConnect		\" from 
+Accepting connection on address 	MessageAgent		Accepting connection on address 
+Preferences	PrefsWindow		Preferences
+Will connect to	NetworkPrefsView		Will connect to
+Nickname text	PrefColor		Nickname text
+Error creating socket.\n	MessageAgent		Error creating socket.\n
+Server	NetPrefsServerView		Server
+ by 	ChannelAgent		 by 
+ by 	ParseEvents		 by 
+[@] Attempting to rejoin…\n	ChannelAgent		[@] Attempting to rejoin…\n
+Completed 	ClientAgent		Completed 
+Primary	ServerEntryWindow		Primary
+Bool has been set	ParseCmd		Bool has been set
+Add server	ServerEntryWindow		Add server
+Users: 	ChannelAgent		Users: 
+CTCP request	PrefColor		CTCP request
+Edit	ClientWindow		Edit
+Networks	NetworkPrefsView		Networks
+Paste	ClientWindow		Paste
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Could not establish a connection to the server. Sorry.\n
+Events	PrefGeneral		Events
+Disconnected	ServerAgent		Disconnected
+Change servers…	NetworkPrefsView		Change servers…
+Input text	PrefColor		Input text
+Waiting for connection 	DCCConnect		Waiting for connection 
