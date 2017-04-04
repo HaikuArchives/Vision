@@ -149,7 +149,6 @@ private:
 
 	bool fInitialMotd, fIdentd;
 	BString fCmds;
-	int32 fSocket; // socket
 
 	BObjectList<BString> fStartupChannels, *fPendingSends;
 	BObjectList<NotifyListItem> fNotifyNicks;

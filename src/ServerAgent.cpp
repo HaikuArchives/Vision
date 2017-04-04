@@ -95,7 +95,6 @@ ServerAgent::ServerAgent(const char* id_, BMessage& net, BRect frame_)
 	  fServerHostName(id_),
 	  fInitialMotd(true),
 	  fCmds(net.FindString("autoexec")),
-	  fSocket(-1),
 	  fListAgent(NULL),
 	  fNetworkData(net),
 	  fServerIndex(0),
@@ -107,24 +106,24 @@ ServerAgent::ServerAgent(const char* id_, BMessage& net, BRect frame_)
 
 ServerAgent::~ServerAgent(void)
 {
-	if (fLagRunner) delete fLagRunner;
+	if (fLagRunner)
+		delete fLagRunner;
 
-	while (fStartupChannels.CountItems() != 0) delete fStartupChannels.RemoveItemAt(0L);
+	while (fStartupChannels.CountItems() != 0)
+		delete fStartupChannels.RemoveItemAt(0L);
 
 	delete fLogger;
 
 	delete_sem(fSendSyncSem);
 
-	if (fSocket >= 0) {
-		close(fSocket);
-	}
 	//  wait_for_thread (fLoginThread, &result);
 
 	/*
 	  while (fIgnoreNicks.CountItems() > 0)
 		delete fIgnoreNicks.RemoveItem(0L);
 	*/
-	while (fNotifyNicks.CountItems() > 0) delete fNotifyNicks.RemoveItemAt(0L);
+	while (fNotifyNicks.CountItems() > 0)
+		delete fNotifyNicks.RemoveItemAt(0L);
 }
 
 void ServerAgent::AttachedToWindow(void)
@@ -1182,9 +1181,8 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		break;
 
 	case M_SERVER_DISCONNECT: {
-		close(fSocket);
-		fSocket = -1;
-		if (fIsQuitting) break;
+		if (fIsQuitting)
+			break;
 
 		// store current nick for reconnect use (might be an away nick, etc)
 		if (fReacquiredNick) {
