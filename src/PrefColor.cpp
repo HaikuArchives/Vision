@@ -35,6 +35,9 @@
 
 #include <stdio.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "PrefColor"
+
 // data structures for font prefs
 
 struct FontStat {
@@ -44,25 +47,25 @@ struct FontStat {
 };
 
 static const char* ColorLabels[] = {
-	S_PREFCOLOR_TEXT,		  S_PREFCOLOR_BACKGROUND, S_PREFCOLOR_URL,
-	S_PREFCOLOR_SERVERTEXT,   S_PREFCOLOR_NOTICE,	 S_PREFCOLOR_ACTION,
-	S_PREFCOLOR_QUIT,		  S_PREFCOLOR_ERROR,	  S_PREFCOLOR_NICK_EDGES,
-	S_PREFCOLOR_UNICK_EDGES,  S_PREFCOLOR_NICK_TEXT,  S_PREFCOLOR_JOIN,
-	S_PREFCOLOR_KICK,		  S_PREFCOLOR_WHOIS,	  S_PREFCOLOR_NAMES_NORM,
-	S_PREFCOLOR_NAMES_OP,	 S_PREFCOLOR_NAMES_HELP, S_PREFCOLOR_NAMES_VOICE,
-	S_PREFCOLOR_NAMES_SEL,	S_PREFCOLOR_NAMES_BG,   S_PREFCOLOR_CTCP_REQ,
-	S_PREFCOLOR_CTCP_RPY,	 S_PREFCOLOR_IGNORE,	 S_PREFCOLOR_INPUT_TXT,
-	S_PREFCOLOR_INPUT_BG,	 S_PREFCOLOR_WLIST_NORM, S_PREFCOLOR_WLIST_TXT,
-	S_PREFCOLOR_WLIST_NICK,   S_PREFCOLOR_WLIST_SEL,  S_PREFCOLOR_WLIST_EVT,
-	S_PREFCOLOR_WLIST_BG,	 S_PREFCOLOR_WALLOPS,	S_PREFCOLOR_TIMESTAMP,
-	S_PREFCOLOR_TIMESTAMP_BG, S_PREFCOLOR_SELECTION,  S_PREFCOLOR_MIRCWHITE,
-	S_PREFCOLOR_MIRCBLACK,	S_PREFCOLOR_MIRCDBLUE,  S_PREFCOLOR_MIRCGREEN,
-	S_PREFCOLOR_MIRCRED,	  S_PREFCOLOR_MIRCBROWN,  S_PREFCOLOR_MIRCPURPLE,
-	S_PREFCOLOR_MIRCORANGE,   S_PREFCOLOR_MIRCYELLOW, S_PREFCOLOR_MIRCLIME,
-	S_PREFCOLOR_MIRCTEAL,	 S_PREFCOLOR_MIRCAQUA,   S_PREFCOLOR_MIRCLBLUE,
-	S_PREFCOLOR_MIRCPINK,	 S_PREFCOLOR_MIRCGREY,   S_PREFCOLOR_MIRCSILVER,
-	S_PREFCOLOR_NOTIFY_ON,	S_PREFCOLOR_NOTIFY_OFF, S_PREFCOLOR_NOTIFY_BG,
-	S_PREFCOLOR_NOTIFY_SEL};
+	B_TRANSLATE("Text"),		  B_TRANSLATE("Background"), B_TRANSLATE("URL"),
+	B_TRANSLATE("Server text"),   B_TRANSLATE("Notice"),	 B_TRANSLATE("Action"),
+	B_TRANSLATE("Quit"),		  B_TRANSLATE("Error"),	  B_TRANSLATE("Nickname edges"),
+	B_TRANSLATE("User nickname edges"),  B_TRANSLATE("Nickname text"),  B_TRANSLATE("Join"),
+	B_TRANSLATE("Kick"),		  B_TRANSLATE("Whois"),	  B_TRANSLATE("Names (normal)"),
+	B_TRANSLATE("Names (OP)"),	 B_TRANSLATE("Names (helper)"), B_TRANSLATE("Names (voice)"),
+	B_TRANSLATE("Names selection"),	B_TRANSLATE("Names background"),   B_TRANSLATE("CTCP request"),
+	B_TRANSLATE("CTCP reply"),	 B_TRANSLATE("Ignore"),	 B_TRANSLATE("Input text"),
+	B_TRANSLATE("Input background"),	 B_TRANSLATE("Winlist normal status"), B_TRANSLATE("Winlist text status"),
+	B_TRANSLATE("Winlist nick alert status"),   B_TRANSLATE("Winlist selection status"),  B_TRANSLATE("Winlist event status"),
+	B_TRANSLATE("Winlist background"),	 B_TRANSLATE("Wallops"),	B_TRANSLATE("Timestamp"),
+	B_TRANSLATE("Timestamp background"), B_TRANSLATE("Selection"),  B_TRANSLATE("mIRC white"),
+	B_TRANSLATE("mIRC black"),	B_TRANSLATE("mIRC dark blue"),  B_TRANSLATE("mIRC green"),
+	B_TRANSLATE("mIRC red"),	  B_TRANSLATE("mIRC brown"),  B_TRANSLATE("mIRC purple"),
+	B_TRANSLATE("mIRC orange"),   B_TRANSLATE("mIRC yellow"), B_TRANSLATE("mIRC lime"),
+	B_TRANSLATE("mIRC teal"),	 B_TRANSLATE("mIRC aqua"),   B_TRANSLATE("mIRC light blue"),
+	B_TRANSLATE("mIRC pink"),	 B_TRANSLATE("mIRC grey"),   B_TRANSLATE("mIRC silver"),
+	B_TRANSLATE("Notify online"),	B_TRANSLATE("Notify offline"), B_TRANSLATE("Notify list background"),
+	B_TRANSLATE("Notify list selection")};
 
 ColorPrefsView::ColorPrefsView(BRect frame)
 	: BView(frame, "Color Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW)
@@ -81,7 +84,7 @@ ColorPrefsView::ColorPrefsView(BRect frame)
 	fSelector = new ColorSelector(frame, "fSelector", NULL, mycolors, labels, new BMessage('vtst'));
 	fSelector->AdoptSystemColors();
 	fSelector->ResizeToPreferred();
-	fRevert = new BButton(BRect(0, 0, 0, 0), "fRevert", S_PREFCOLOR_REVERT,
+	fRevert = new BButton(BRect(0, 0, 0, 0), "fRevert", B_TRANSLATE("Revert"),
 						  new BMessage(M_REVERT_COLOR_SELECTIONS));
 	fRevert->ResizeToPreferred();
 	ResizeTo(fSelector->Bounds().Width() + 30,

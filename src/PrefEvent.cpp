@@ -25,10 +25,13 @@
 #include <ScrollView.h>
 #include <TextControl.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "PrefEvent"
+
 static const char* EventControlLabels[] = {
-	S_PREFEVENT_JOIN,	 S_PREFEVENT_PART,		 S_PREFEVENT_NICK,	S_PREFEVENT_QUIT,
-	S_PREFEVENT_KICK,	 S_PREFEVENT_TOPIC,	 S_PREFEVENT_SNOTICE, S_PREFEVENT_UNOTICE,
-	S_PREFEVENT_NOTIFYON, S_PREFEVENT_NOTIFYOFF, 0};
+	B_TRANSLATE("Join:"),	 B_TRANSLATE("Part:"),		 B_TRANSLATE("Nick:"),	B_TRANSLATE("Quit:"),
+	B_TRANSLATE("Kick:"),	 B_TRANSLATE("Topic:"),	 B_TRANSLATE("Server notice:"), B_TRANSLATE("User notice:"),
+	B_TRANSLATE("Notify on:"), B_TRANSLATE("Notify off:"), 0};
 
 EventPrefsView::EventPrefsView(BRect frame)
 	: BView(frame, "Event prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)

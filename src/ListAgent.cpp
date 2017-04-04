@@ -57,6 +57,9 @@
   <regurg> But your .
 */
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ListAgent"
+
 const int32 LIST_BATCH_SIZE = 75;
 
 ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
@@ -70,14 +73,14 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 {
 	frame = Bounds();
 
-	listMenu = new BMenu(S_LIST_MENU);
+	listMenu = new BMenu(B_TRANSLATE("Channels"));
 
 	listMenu->AddItem(
-		mFind = new BMenuItem(S_LIST_MENU_FIND B_UTF8_ELLIPSIS, new BMessage(M_LIST_FIND)));
+		mFind = new BMenuItem(B_TRANSLATE("Find" B_UTF8_ELLIPSIS), new BMessage(M_LIST_FIND)));
 	listMenu->AddItem(mFindAgain =
-						  new BMenuItem(S_LIST_MENU_FINDNEXT, new BMessage(M_LIST_FAGAIN)));
+						  new BMenuItem(B_TRANSLATE("Find next"), new BMessage(M_LIST_FAGAIN)));
 	listMenu->AddItem(
-		mFilter = new BMenuItem(S_LIST_MENU_FILTER B_UTF8_ELLIPSIS, new BMessage(M_LIST_FILTER)));
+		mFilter = new BMenuItem(B_TRANSLATE("Filter" B_UTF8_ELLIPSIS), new BMessage(M_LIST_FILTER)));
 
 	mFind->SetEnabled(false);
 	mFindAgain->SetEnabled(false);
@@ -98,14 +101,14 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 	listView->MakeFocus(true);
 	listView->SetTarget(this);
 	channelColumn =
-		new BStringColumn(S_LIST_COLUMN_CHAN, be_plain_font->StringWidth(S_LIST_COLUMN_CHAN) * 2, 0,
+		new BStringColumn(B_TRANSLATE("Channel"), be_plain_font->StringWidth(B_TRANSLATE("Channel")) * 2, 0,
 						  frame.Width(), 0);
 	listView->AddColumn(channelColumn, 0);
 	usersColumn =
-		new BIntegerColumn(S_LIST_COLUMN_USER, be_plain_font->StringWidth(S_LIST_COLUMN_USER) * 2,
+		new BIntegerColumn(B_TRANSLATE("Users"), be_plain_font->StringWidth(B_TRANSLATE("Users")) * 2,
 						   0, frame.Width(), B_ALIGN_CENTER);
 	listView->AddColumn(usersColumn, 1);
-	topicColumn = new BStringColumn(S_LIST_COLUMN_TOPIC, frame.Width() / 2, 0, frame.Width(), 0);
+	topicColumn = new BStringColumn(B_TRANSLATE("Topic"), frame.Width() / 2, 0, frame.Width(), 0);
 	listView->AddColumn(topicColumn, 2);
 	listView->SetSelectionMode(B_SINGLE_SELECTION_LIST);
 	activeTheme->ReadLock();
@@ -231,12 +234,12 @@ void ListAgent::MessageReceived(BMessage* msg)
 	} break;
 
 	case M_STATUS_ADDITEMS: {
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(S_STATUS_LISTCOUNT, ""),
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Count: "), ""),
 														 true);
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(S_STATUS_LISTSTAT, ""),
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Status: "), ""),
 														 true);
 		vision_app->pClientWin()->pStatusView()->AddItem(
-			new StatusItem(S_STATUS_LISTFILTER, "", STATUS_ALIGN_LEFT), true);
+			new StatusItem(B_TRANSLATE("Filter: "), "", STATUS_ALIGN_LEFT), true);
 
 		BString cString;
 		cString << listView->CountRows();
@@ -269,7 +272,7 @@ void ListAgent::MessageReceived(BMessage* msg)
 	case M_LIST_BEGIN: {
 		BMessage msg(M_LIST_UPDATE);
 		listUpdateTrigger = new BMessageRunner(BMessenger(this), &msg, 3000000);
-		statusStr = S_LIST_STATUS_LOADING;
+		statusStr = B_TRANSLATE("Loading");
 		if (!IsHidden())
 			vision_app->pClientWin()->pStatusView()->SetItemValue(1, statusStr.String(), true);
 	} break;
@@ -279,7 +282,7 @@ void ListAgent::MessageReceived(BMessage* msg)
 			delete listUpdateTrigger;
 			listUpdateTrigger = 0;
 		}
-		statusStr = S_LIST_STATUS_DONE;
+		statusStr = B_TRANSLATE("Done");
 
 		listView->SetSortingEnabled(true);
 		listView->SetSortColumn(channelColumn, true, true);
@@ -424,7 +427,7 @@ void ListAgent::MessageReceived(BMessage* msg)
 		} else {
 			PromptWindow* prompt(new PromptWindow(
 				BPoint((Window()->Frame().right / 2) - 100, (Window()->Frame().bottom / 2) - 50),
-				S_LIST_PROMPT_LABEL, S_LIST_PROMPT_TITLE, find.String(), this,
+				B_TRANSLATE("    Find:"), B_TRANSLATE("Find"), find.String(), this,
 				new BMessage(M_LIST_FIND), new RegExValidate("Find:"), true));
 			prompt->Show();
 		}

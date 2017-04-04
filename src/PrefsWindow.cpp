@@ -28,8 +28,11 @@
 #include <Box.h>
 #include <ScrollView.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "PrefsWindow"
+
 PrefsWindow::PrefsWindow(void)
-	: BWindow(BRect(88.0, 108.0, 0.0, 0.0), S_PREFSWIN_TITLE, B_TITLED_WINDOW,
+	: BWindow(BRect(88.0, 108.0, 0.0, 0.0), B_TRANSLATE("Preferences"), B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS)
 {
 	GeneralPrefsView* generalView =

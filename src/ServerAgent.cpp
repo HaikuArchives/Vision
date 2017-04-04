@@ -57,6 +57,9 @@
 #include "Vision.h"
 #include "WindowList.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ServerAgent"
+
 class failToLock
 {/* exception in Establish */
 };
@@ -68,7 +71,7 @@ ServerAgent::ServerAgent(const char* id_, BMessage& net, BRect frame_)
 	: ClientAgent(id_, id_, net.FindString("nick"), frame_),
 	  fLocalip(""),
 	  fMyNick(net.FindString("nick")),
-	  fMyLag((net.FindBool("lagCheck")) ? "0.000" : S_SERVER_LAG_DISABLED),
+	  fMyLag((net.FindBool("lagCheck")) ? "0.000" : B_TRANSLATE("Disabled")),
 	  fLname(net.FindString("realname")),
 	  fLident(net.FindString("ident")),
 	  fLocalip_private(false),
@@ -324,22 +327,22 @@ int32 ServerAgent::Establish(void* arg)
 			int retrycount(reply.FindInt32("retries"));
 
 			if (retrycount) {
-				statString = S_SERVER_WAITING_RETRY;
+				statString = B_TRANSLATE("[@] Waiting ");
 				statString << (retrycount * retrycount);
-				statString += S_SERVER_WAITING_SECONDS;
-				if (retrycount > 1) statString += S_SERVER_WAITING_PLURAL;
-				statString += S_SERVER_WAITING_ENDING B_UTF8_ELLIPSIS "\n";
+				statString += B_TRANSLATE(" second");
+				if (retrycount > 1) statString += B_TRANSLATE("s");
+				statString += B_TRANSLATE(" before next attempt" B_UTF8_ELLIPSIS "\n");
 				ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 				snooze(1000000 * retrycount * retrycount); // wait 1, 4, 9, 16 ... seconds
 			}
 
 			if (sMsgrE->SendMessage(M_INC_RECONNECT) != B_OK) throw failToLock();
-			statString = S_SERVER_ATTEMPT1;
-			if (retrycount != 0) statString += S_SERVER_ATTEMPT2;
-			statString += S_SERVER_ATTEMPT3;
+			statString = B_TRANSLATE("[@] Attempting to ");
+			if (retrycount != 0) statString += B_TRANSLATE("re");
+			statString += B_TRANSLATE("connect (attempt ");
 			statString << retrycount + 1;
-			statString += S_SERVER_ATTEMPT4;
+			statString += B_TRANSLATE(" of ");
 			statString << reply.FindInt32("max_retries");
 			statString += ")\n";
 			ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
@@ -347,7 +350,7 @@ int32 ServerAgent::Establish(void* arg)
 		} else
 			throw failToLock();
 
-		statString = S_SERVER_ATTEMPT5;
+		statString = B_TRANSLATE("[@] Attempting a connection to ");
 		statString << connectId;
 		statString += ":";
 		statString << connectPort;
@@ -362,7 +365,7 @@ int32 ServerAgent::Establish(void* arg)
 			if (remoteInet)
 				remoteAddr.sin_addr = *((in_addr*)remoteInet->h_addr_list[0]);
 			else {
-				ClientAgent::PackDisplay(&statMsg, S_SERVER_CONN_ERROR1 "\n", C_ERROR);
+				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not create connection to address and port. Make sure your internet connection is operational.\n"), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 				sMsgrE->SendMessage(M_NOT_CONNECTING);
 				sMsgrE->SendMessage(M_SERVER_DISCONNECT);
@@ -376,7 +379,7 @@ int32 ServerAgent::Establish(void* arg)
 		vision_app->AddIdent(remoteIP.String(), ident.String());
 
 		if ((serverSock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-			ClientAgent::PackDisplay(&statMsg, S_SERVER_CONN_ERROR1 "\n", C_ERROR);
+			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not create connection to address and port. Make sure your internet connection is operational.\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 			sMsgrE->SendMessage(M_NOT_CONNECTING);
 			sMsgrE->SendMessage(M_SERVER_DISCONNECT);
@@ -385,7 +388,7 @@ int32 ServerAgent::Establish(void* arg)
 
 		// just see if he's still hanging around before
 		// we got blocked for a minute
-		ClientAgent::PackDisplay(&statMsg, S_SERVER_CONN_OPEN "\n", C_ERROR);
+		ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Connection open, waiting for reply from server\n"), C_ERROR);
 		sMsgrE->SendMessage(&statMsg);
 		sMsgrE->SendMessage(M_LAG_CHANGED);
 
@@ -396,7 +399,7 @@ int32 ServerAgent::Establish(void* arg)
 			// store local ip address for future use (dcc, etc)
 			int addrlength(sizeof(struct sockaddr_in));
 			if (getsockname(serverSock, (struct sockaddr*)&sockin, (socklen_t*)&addrlength)) {
-				ClientAgent::PackDisplay(&statMsg, S_SERVER_LOCALIP_ERROR "\n", C_ERROR);
+				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Error getting local IP\n"), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 				BMessage setIP(M_SET_IP);
 				setIP.AddString("ip", "127.0.0.1");
@@ -412,7 +415,7 @@ int32 ServerAgent::Establish(void* arg)
 				}
 				setIP.AddString("ip", ip.String());
 				sMsgrE->SendMessage(&setIP);
-				statString = S_SERVER_LOCALIP;
+				statString = B_TRANSLATE("[@] Local IP: ");
 				statString += ip.String();
 				statString += "\n";
 				ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
@@ -420,11 +423,11 @@ int32 ServerAgent::Establish(void* arg)
 			}
 
 			if (vision_app->GetBool("dccPrivateCheck") && PrivateIPCheck(ip.String())) {
-				ClientAgent::PackDisplay(&statMsg, S_SERVER_PROXY_MSG "\n", C_ERROR);
+				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n"), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 			}
 
-			ClientAgent::PackDisplay(&statMsg, S_SERVER_HANDSHAKE "\n", C_ERROR);
+			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Handshaking\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 
 			BString string;
@@ -436,7 +439,7 @@ int32 ServerAgent::Establish(void* arg)
 			if (sMsgrE->SendMessage(&endpointMsg, &reply) != B_OK) throw failToLock();
 
 			if (strlen(serverData->password) > 0) {
-				ClientAgent::PackDisplay(&statMsg, S_SERVER_PASS_MSG "\n", C_ERROR);
+				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Sending password\n"), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 				string = "PASS ";
 				string += serverData->password;
@@ -462,11 +465,11 @@ int32 ServerAgent::Establish(void* arg)
 
 			// resume normal business matters.
 
-			ClientAgent::PackDisplay(&statMsg, S_SERVER_ESTABLISH "\n", C_ERROR);
+			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Established\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 		} else // No endpoint->connect
 		{
-			ClientAgent::PackDisplay(&statMsg, S_SERVER_CONN_ERROR2 "\n", C_ERROR);
+			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not establish a connection to the server. Sorry.\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 			sMsgrE->SendMessage(M_NOT_CONNECTING);
 			sMsgrE->SendMessage(M_SERVER_DISCONNECT);
@@ -793,7 +796,7 @@ void ServerAgent::HandleReconnect(void)
 		fReconnecting = false;
 		fRetry = 0;
 		const char* soSorry;
-		soSorry = S_SERVER_RETRY_LIMIT "\n";
+		soSorry = B_TRANSLATE("[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n");
 		Display(soSorry, C_ERROR);
 		ClientAgent* agent(ActiveClient());
 		if (agent && (agent != this)) agent->Display(soSorry, C_ERROR, C_BACKGROUND, F_SERVER);
@@ -1192,7 +1195,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		if (fIsConnected) {
 			fIsConnected = false;
 			BString sAnnounce;
-			sAnnounce += S_SERVER_DISCONNECT;
+			sAnnounce += B_TRANSLATE("[@] Disconnected from ");
 			sAnnounce += fServerName;
 			sAnnounce += "\n";
 			Display(sAnnounce.String(), C_ERROR);
@@ -1204,7 +1207,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		// let other agents know about it
 		Broadcast(msg);
 
-		fMyLag = S_SERVER_DISCON_STATUS;
+		fMyLag = B_TRANSLATE("Disconnected");
 		fMsgr.SendMessage(M_LAG_CHANGED);
 		fCheckingLag = false;
 		fServerSocket = -1;
@@ -1243,7 +1246,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 					if (fLagCount > 4) {
 						// we've waited 50 seconds
 						// connection problems?
-						fMyLag = S_SERVER_CONN_PROBLEM;
+						fMyLag = B_TRANSLATE("CONNECTION PROBLEM");
 						fMsgr.SendMessage(M_LAG_CHANGED);
 					} else {
 						// wait some more

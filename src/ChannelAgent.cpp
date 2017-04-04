@@ -45,6 +45,9 @@
 #include "ChannelOptions.h"
 #include "ResizeView.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ChannelAgent"
+
 ChannelAgent::ChannelAgent(const char* id_, const char* serverName_, int ircdtype_,
 						   const char* nick, BMessenger& sMsgr_, BRect& frame_)
 
@@ -122,7 +125,7 @@ void ChannelAgent::Init(void)
 
 	AddChild(fResize);
 
-	Display(S_CHANNEL_INIT, C_JOIN);
+	Display(B_TRANSLATE("*** Now talking in "), C_JOIN);
 	Display(fId.String(), C_JOIN);
 	Display("\n", C_JOIN);
 }
@@ -641,7 +644,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		if (!IsHidden())
 			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, fMyNick.String());
 
-		Display(S_CHANNEL_RECON_REJOIN B_UTF8_ELLIPSIS "\n", C_ERROR, C_BACKGROUND, F_SERVER);
+		Display(B_TRANSLATE("[@] Attempting to rejoin" B_UTF8_ELLIPSIS "\n"), C_ERROR, C_BACKGROUND, F_SERVER);
 
 		// send join cmd
 		BMessage send(M_SERVER_SEND);
@@ -703,9 +706,9 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 
 		BMessage wegotkicked(M_DISPLAY); // "you were kicked"
 		BString buffer;
-		buffer += S_CHANNEL_GOT_KICKED;
+		buffer += B_TRANSLATE("*** You have been kicked from ");
 		buffer += theChannel;
-		buffer += " " S_CHANNEL_GOT_KICKED2 " ";
+		buffer += B_TRANSLATE(" by ");
 		buffer += kicker;
 		buffer += " (";
 		buffer += rest;
@@ -720,7 +723,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		fMsgr.SendMessage(&wegotkicked);
 
 		BMessage attemptrejoin(M_DISPLAY); // "you were kicked"
-		buffer = S_CHANNEL_REJOIN;
+		buffer = B_TRANSLATE("*** Attempting to rejoin ");
 		buffer += theChannel;
 		buffer += B_UTF8_ELLIPSIS "\n";
 		PackDisplay(&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
@@ -1001,16 +1004,16 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, ""), true);
 
 		vision_app->pClientWin()->pStatusView()->AddItem(
-			new StatusItem(S_STATUS_LAG, "", STATUS_ALIGN_LEFT), true);
+			new StatusItem(B_TRANSLATE("Lag: "), "", STATUS_ALIGN_LEFT), true);
 
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, "", STATUS_ALIGN_LEFT),
 														 true);
 
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(S_STATUS_USERS, ""), true);
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Users: "), ""), true);
 
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(S_STATUS_OPS, ""), true);
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Ops: "), ""), true);
 
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(S_STATUS_MODES, ""), true);
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Modes: "), ""), true);
 
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem("", "", STATUS_ALIGN_LEFT),
 														 true);
@@ -1181,7 +1184,7 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 
 	buffer += "*** ";
 	buffer += theNick;
-	buffer += S_CHANNEL_SET_MODE;
+	buffer += B_TRANSLATE(" set mode ");
 	buffer += mode;
 
 	if (targetS != "-9z99") {

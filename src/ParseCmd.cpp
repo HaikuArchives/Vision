@@ -51,6 +51,9 @@
 #include "RunView.h"
 #include "WindowList.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ParseCmd"
+
 bool ClientAgent::ParseCmd(const char* data)
 {
 	BString firstWord(GetWord(data, 1).ToUpper());
@@ -270,8 +273,12 @@ bool ClientAgent::ParseCmd(const char* data)
 			AddSend(&sendMsg, "PRIVMSG ");
 			AddSend(&sendMsg, theTarget << " :\1" << theAction << "\1");
 			AddSend(&sendMsg, endl);
-		} else
-			Display("[x] /ctcp: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /ctcp: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -309,14 +316,14 @@ bool ClientAgent::ParseCmd(const char* data)
 				}
 			}
 			BFilePanel* myPanel(new BFilePanel(B_OPEN_PANEL, NULL, NULL, 0, false));
-			BString myTitle(S_PCMD_SEND_TITLE);
+			BString myTitle(B_TRANSLATE("Sending a file to "));
 
 			myTitle.Append(theNick);
 			myPanel->Window()->SetTitle(myTitle.String());
 			myPanel->SetTarget(fSMsgr);
 			myPanel->SetMessage(msg);
 
-			myPanel->SetButtonLabel(B_DEFAULT_BUTTON, S_PCMD_SEND_BUTTON);
+			myPanel->SetButtonLabel(B_DEFAULT_BUTTON, B_TRANSLATE("Send"));
 			myPanel->Show();
 		}
 
@@ -357,7 +364,8 @@ bool ClientAgent::ParseCmd(const char* data)
 			BString dispString("[x] ");
 			dispString += firstWord.ToLower();
 			dispString += ": ";
-			dispString += S_PCMD_PARAMETER_ERROR "\n";
+			dispString += B_TRANSLATE("Error: Invalid parameters");
+			dispString += "\n";
 			Display(dispString.String(), C_ERROR);
 		}
 		return true;
@@ -423,8 +431,12 @@ bool ClientAgent::ParseCmd(const char* data)
 				spawn_thread(DNSLookup, "dns_lookup", B_LOW_PRIORITY, lookupmsg);
 
 			resume_thread(lookupThread);
-		} else
-			Display("[x] /dns: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /dns: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -496,8 +508,12 @@ bool ClientAgent::ParseCmd(const char* data)
 			AddSend(&sendMsg, "INVITE ");
 			AddSend(&sendMsg, theUser << " " << theChan);
 			AddSend(&sendMsg, endl);
-		} else
-			Display("[x] /invite: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /invite: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -531,8 +547,12 @@ bool ClientAgent::ParseCmd(const char* data)
 					}
 				}
 			}
-		} else
-			Display("[x] /join: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /join: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -554,8 +574,12 @@ bool ClientAgent::ParseCmd(const char* data)
 			AddSend(&sendMsg, " :");
 			AddSend(&sendMsg, theReason);
 			AddSend(&sendMsg, endl);
-		} else
-			Display("[x] /kick: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /kick: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -592,10 +616,14 @@ bool ClientAgent::ParseCmd(const char* data)
 	if (firstWord == "/ME") {
 		BString theAction(RestOfString(data, 2));
 
-		if (theAction != "-9z99")
+		if (theAction != "-9z99") {
 			ActionMessage(theAction.String(), fMyNick.String());
-		else
-			Display("[x] /me: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /me: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -611,8 +639,12 @@ bool ClientAgent::ParseCmd(const char* data)
 				AddSend(&sendMsg, theTarget << " " << theMode);
 
 			AddSend(&sendMsg, endl);
-		} else
-			Display("[x] /mode: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /mode: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -648,7 +680,7 @@ bool ClientAgent::ParseCmd(const char* data)
 		BString newNick(GetWord(data, 2));
 
 		if (newNick != "-9z99") {
-			BString tempString(S_PCMD_TRY_NEW_NICK);
+			BString tempString(B_TRANSLATE("*** Trying new nick "));
 
 			tempString << newNick << ".\n";
 			Display(tempString.String());
@@ -656,8 +688,12 @@ bool ClientAgent::ParseCmd(const char* data)
 			AddSend(&sendMsg, "NICK ");
 			AddSend(&sendMsg, newNick);
 			AddSend(&sendMsg, endl);
-		} else
-			Display("[x] /nick: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /nick: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -677,8 +713,12 @@ bool ClientAgent::ParseCmd(const char* data)
 			tempString += theMsg;
 			tempString += '\n';
 			Display(tempString.String());
-		} else
-			Display("[x] /notice: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /notice: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -723,7 +763,8 @@ bool ClientAgent::ParseCmd(const char* data)
 			BString dispString("[x] ");
 			dispString += firstWord.ToLower();
 			dispString += ": ";
-			dispString += S_PCMD_PARAMETER_ERROR "\n";
+			dispString += B_TRANSLATE("Error: Invalid parameters");
+			dispString += "\n";
 			Display(dispString.String(), C_ERROR);
 		}
 		return true;
@@ -802,8 +843,12 @@ bool ClientAgent::ParseCmd(const char* data)
 			tempString << theRaw << '\n';
 
 			Display(tempString.String());
-		} else
-			Display("[x] /raw: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /raw: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -828,13 +873,23 @@ bool ClientAgent::ParseCmd(const char* data)
 		}
 
 		if (!caught || value == "-9z99") {
-			Display("[x] /setbool: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+			BString buffer("[x] /setbool: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
 		} else {
 			status_t returned(vision_app->SetBool(var.String(), newvalue));
-			if (returned == B_OK)
-				Display("[x] /setbool: " S_PCMD_SET_BOOL_SUCCESS "\n", C_ERROR);
-			else
-				Display("[x] /setbool: " S_PCMD_SET_BOOL_FAILURE "\n", C_ERROR);
+			if (returned == B_OK) {
+				BString buffer("[x] /setbool: ");
+				buffer += B_TRANSLATE("Bool has been set");
+				buffer += "\n";
+				Display(buffer.String(), C_ERROR);
+			} else {
+				BString buffer("[x] /setbool: ");
+				buffer += B_TRANSLATE("Error setting bool");
+				buffer += "\n";
+				Display(buffer.String(), C_ERROR);
+			}
 		}
 		return true;
 	}
@@ -912,7 +967,7 @@ bool ClientAgent::ParseCmd(const char* data)
 
 	if (firstWord == "/VUPTIME") {
 		BString parms(GetWord(data, 2)), clientUptime(DurationString(vision_app->VisionUptime())),
-			expandedString(S_PCMD_VIS_UPTIME);
+			expandedString(B_TRANSLATE("Vision has been running for "));
 		expandedString += clientUptime;
 
 		if ((fId != fServerName) && (parms == "-9z99")) {
@@ -983,10 +1038,14 @@ bool ClientAgent::ParseCmd(const char* data)
 	if (firstWord == "/VISIT") {
 		BString buffer(GetWord(data, 2));
 
-		if (buffer != "-9z99")
+		if (buffer != "-9z99") {
 			vision_app->LoadURL(buffer.String());
-		else
-			Display("[x] /visit: " S_PCMD_PARAMETER_ERROR "\n", C_ERROR);
+		} else {
+			BString buffer("[x] /visit: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
+		}
 		return true;
 	}
 
@@ -1047,7 +1106,10 @@ int32 ClientAgent::ExecPipe(void* arg)
 
 	if (fp == NULL) {
 		msg->what = M_DISPLAY;
-		PackDisplay(msg, "[x] " S_PCMD_PEXEC_ERROR "\n", C_ERROR);
+		BString buffer("[x] ");
+		buffer += B_TRANSLATE("/pexec: command failed");
+		buffer += "\n";
+		PackDisplay(msg, buffer.String(), C_ERROR);
 		self_destruct_in_15_seconds.SendMessage(msg);
 	} else {
 		char data[768]; // should be long enough for any line...
@@ -1098,12 +1160,12 @@ int32 ClientAgent::DNSLookup(void* arg)
 
 			in_addr* addr = (in_addr*)hp->h_addr_list[0];
 			strcpy(addr_buf, inet_ntoa(*addr));
-			output += S_PCMD_DNS1;
+			output += B_TRANSLATE("Resolved ");
 			output += resolve.String();
-			output += S_PCMD_DNS2;
+			output += B_TRANSLATE(" to ");
 			output += addr_buf;
 		} else {
-			output += S_PCMD_DNS_ERROR;
+			output += B_TRANSLATE("Unable to resolve ");
 			output += resolve.String();
 		}
 	} else {
@@ -1111,12 +1173,12 @@ int32 ClientAgent::DNSLookup(void* arg)
 		hostent* hp = gethostbyaddr((const char*)&addr, 4, AF_INET);
 
 		if (hp) {
-			output += S_PCMD_DNS1;
+			output += B_TRANSLATE("Resolved ");
 			output += resolve.String();
-			output += S_PCMD_DNS2;
+			output += B_TRANSLATE(" to ");
 			output += hp->h_name;
 		} else {
-			output += S_PCMD_DNS_ERROR;
+			output += B_TRANSLATE("Unable to resolve ");
 			output += resolve.String();
 		}
 	}

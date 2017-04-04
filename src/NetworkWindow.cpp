@@ -31,9 +31,11 @@
 
 #include <stdio.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "NetworkWindow"
 
 NetworkWindow::NetworkWindow(void)
-	: BWindow(BRect(50, 50, 550, 430), S_NETWORK_WINDOW_TITLE, B_TITLED_WINDOW,
+	: BWindow(BRect(50, 50, 550, 430), B_TRANSLATE("Network setup"), B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE | B_NOT_ZOOMABLE*/)
 {
 	NetworkPrefsView* netView = new NetworkPrefsView(Bounds(), "network");
@@ -46,7 +48,7 @@ NetworkWindow::NetworkWindow(void)
 		MoveTo(netFrame.left, netFrame.top);
 
 	BFont font;
-	SetSizeLimits(font.Size() * 44.7, 10000, font.Size() * 33.4, 10000); 
+	SetSizeLimits(font.Size() * 44.7, 10000, font.Size() * 33.4, 10000);
 }
 
 
@@ -65,7 +67,7 @@ bool NetworkWindow::QuitRequested(void)
 
 
 NetPrefServerWindow::NetPrefServerWindow(BHandler* target)
-	: BWindow(BRect(50, 50, 350, 250), S_SERVERPREFS_TITLE, B_TITLED_WINDOW,
+	: BWindow(BRect(50, 50, 350, 250), B_TRANSLATE("Servers"), B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
 	serverView = new NetPrefsServerView(Bounds(), "server settings", BMessenger(target));

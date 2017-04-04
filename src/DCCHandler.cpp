@@ -39,6 +39,9 @@
 #include "Utilities.h"
 #include "Vision.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "DCCHandler"
+
 class DCCFileFilter : public BMessageFilter
 {
 	BFilePanel* panel;
@@ -56,7 +59,7 @@ public:
 void ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
 {
 	BString theText(theNick);
-	theText << S_SERVER_DCC_CHAT_PROMPT;
+	theText << B_TRANSLATE(" wants to begin a DCC chat with you.");
 	BAlert* myAlert = new BAlert("DCC request", theText.String(), "Accept", "Refuse");
 	myAlert->SetFeel(B_FLOATING_APP_WINDOW_FEEL);
 	BMessage* myMessage = new BMessage(M_CHAT_ACCEPT);

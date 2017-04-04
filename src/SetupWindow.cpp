@@ -38,9 +38,11 @@
 
 #include <stdio.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "SetupWindow"
 
 SetupWindow::SetupWindow(void)
-	: BWindow(BRect(108.0, 88.0, 500.0, 320.0), S_SETUP_TITLE, B_TITLED_WINDOW,
+	: BWindow(BRect(108.0, 88.0, 500.0, 320.0), B_TRANSLATE("Setup window"), B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
 
@@ -57,22 +59,22 @@ SetupWindow::SetupWindow(void)
 	rect.bottom = Bounds().bottom;
 	rect.left = kItemSpacing;
 
-	BMenu* netMenu(new NetworkMenu(S_SETUP_CHOOSENET, M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
+	BMenu* netMenu(new NetworkMenu(B_TRANSLATE("Choose network"), M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
 	netMenu->SetLabelFromMarked(true);
-	netList = new BMenuField(rect, "Network List", S_SETUP_CHOOSELABEL, netMenu);
+	netList = new BMenuField(rect, "Network List", B_TRANSLATE("Network: "), netMenu);
 	netList->ResizeToPreferred();
-	netList->SetDivider(be_plain_font->StringWidth(S_SETUP_CHOOSELABEL) + 5);
+	netList->SetDivider(be_plain_font->StringWidth(B_TRANSLATE("Network: ")) + 5);
 
 	rect = netList->Frame();
 	rect.OffsetBy(0, rect.Height() + kItemSpacing);
-	connectButton = new BButton(rect, "connect", S_SETUP_CONNECT_BUTTON,
+	connectButton = new BButton(rect, "connect", B_TRANSLATE("Connect"),
 								new BMessage(M_CONNECT_NETWORK));
 	connectButton->ResizeToPreferred();
 
 	rect = connectButton->Frame();
 	rect.OffsetBy(rect.Width() + kItemSpacing, 0);
 
-	netPrefsButton = new BButton(rect, "netprefs", S_SETUP_NETPREFS B_UTF8_ELLIPSIS,
+	netPrefsButton = new BButton(rect, "netprefs", B_TRANSLATE("Network setup" B_UTF8_ELLIPSIS),
 								 new BMessage(M_NETWORK_SHOW));
 	netPrefsButton->ResizeToPreferred();
 	netPrefsButton->SetTarget(vision_app);
@@ -80,7 +82,7 @@ SetupWindow::SetupWindow(void)
 	rect = netPrefsButton->Frame();
 	rect.OffsetBy(rect.Width() + kItemSpacing, 0);
 
-	prefsButton = new BButton(rect, "prefs", S_SETUP_GENPREFS B_UTF8_ELLIPSIS,
+	prefsButton = new BButton(rect, "prefs", B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS),
 							  new BMessage(M_PREFS_SHOW));
 	prefsButton->ResizeToPreferred();
 	prefsButton->SetTarget(vision_app);

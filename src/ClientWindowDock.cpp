@@ -32,6 +32,9 @@
 
 #include <stdio.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ClientWindowDock"
+
 static float label_height()
 {
 	return 8 + ceilf(be_plain_font->Size());
@@ -139,7 +142,7 @@ AgentDockWinList::AgentDockWinList(BRect frame_)
 	BRect headerFrame(frame);
 	headerFrame.bottom = label_height() - 1;
 	fAHeader =
-		new AgentDockHeader(headerFrame, S_CWD_WINLIST_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+		new AgentDockHeader(headerFrame, B_TRANSLATE("Window list"), B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
 	AddChild(fAHeader);
 
 	frame.top = headerFrame.bottom + 1;
@@ -182,7 +185,7 @@ AgentDockNotifyList::AgentDockNotifyList(BRect frame_)
 	headerFrame.top = 0;
 	headerFrame.bottom = label_height() - 1;
 	fAHeader =
-		new AgentDockHeader(headerFrame, S_CWD_NOTIFY_HEADER, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+		new AgentDockHeader(headerFrame, B_TRANSLATE("Notify list"), B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
 	headerFrame.top = headerFrame.bottom + 1;
 	// BScrollView in R5 has an odd bug where if you initialize it too small,
 	// it never draws its scrollbar arrows correctly

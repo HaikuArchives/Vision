@@ -36,6 +36,9 @@
 #include <ListView.h>
 #include <ScrollView.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "PrefGeneral"
+
 GeneralPrefsView::GeneralPrefsView(BRect frame, const char* title, uint32 redraw, uint32 flags)
 	: BView(frame, title, redraw, flags), fLastindex(0)
 {
@@ -53,14 +56,14 @@ GeneralPrefsView::GeneralPrefsView(BRect frame, const char* title, uint32 redraw
 							fPrefsItems[piWindow]->Bounds().bottom),
 					  "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
 	fPrefsList->MoveTo(5, 5);
-	fPrefsList->AddItem(new BStringItem(S_PREFGEN_ALIAS_ITEM));
-	fPrefsList->AddItem(new BStringItem(S_PREFGEN_APP_ITEM));
-	fPrefsList->AddItem(new BStringItem(S_PREFGEN_COLOR_ITEM));
-	fPrefsList->AddItem(new BStringItem(S_PREFGEN_FONT_ITEM));
-	fPrefsList->AddItem(new BStringItem(S_PREFGEN_COMMAND_ITEM));
-	fPrefsList->AddItem(new BStringItem(S_PREFGEN_EVENT_ITEM));
-	fPrefsList->AddItem(new BStringItem(S_PREFGEN_DCC_ITEM));
-	fPrefsList->AddItem(new BStringItem(S_PREFGEN_LOG_ITEM));
+	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Aliases")));
+	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Application")));
+	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Colors")));
+	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Fonts")));
+	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Commands")));
+	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Events")));
+	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("DCC")));
+	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Logging")));
 	fPrefsList->SetSelectionMessage(new BMessage(M_GENERALPREFS_SELECTION_CHANGED));
 	BScrollView* scroller(new BScrollView("list scroller", fPrefsList,
 										  B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, 0, false, true));

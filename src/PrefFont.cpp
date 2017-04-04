@@ -35,6 +35,9 @@
 
 #include "NumericFilter.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "PrefFont"
+
 struct FontStat {
 	font_family family;
 	int32 style_count;
@@ -148,9 +151,9 @@ void FontMenu::AttachedToWindow(void)
 }
 
 static const char* FontControlLabels[] = {
-	S_PREFFONT_TEXT,	  S_PREFFONT_SMESSAGES,  S_PREFFONT_URLS,
-	S_PREFFONT_NAMESLIST, S_PREFFONT_INPUT_TEXT, S_PREFFONT_WINLIST,
-	S_PREFFONT_CHANLIST,  S_PREFFONT_TSTAMP,	 0};
+	B_TRANSLATE("Text"),	  B_TRANSLATE("Server messages"),  B_TRANSLATE("URLs"),
+	B_TRANSLATE("Names list"), B_TRANSLATE("Input text"), B_TRANSLATE("Window list"),
+	B_TRANSLATE("Channel list"),  B_TRANSLATE("Timestamp"),	 0};
 
 FontPrefsView::FontPrefsView(BRect frame)
 	: BView(frame, "Font prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS),
@@ -169,9 +172,9 @@ FontPrefsView::FontPrefsView(BRect frame)
 		new BMenuField(BRect(10, 10, 200, 50), "elements", "Element: ", fElementMenu);
 	AddChild(fFontElementField);
 	FontMenu* menu(new FontMenu("fonts"));
-	fFontMenuField = new BMenuField(BRect(10, 10, 200, 50), "fonts", S_PREFFONT_FONTLABEL, menu);
+	fFontMenuField = new BMenuField(BRect(10, 10, 200, 50), "fonts", B_TRANSLATE("Font: "), menu);
 	AddChild(fFontMenuField);
-	fTextControl = new BTextControl(BRect(60, 60, 200, 90), "", S_PREFFONT_SIZELABEL, "",
+	fTextControl = new BTextControl(BRect(60, 60, 200, 90), "", B_TRANSLATE("Size: "), "",
 									new BMessage(M_FONT_SIZE_CHANGE));
 	fTextControl->TextView()->AddFilter(new NumericFilter());
 	AddChild(fTextControl);

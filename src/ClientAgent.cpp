@@ -49,6 +49,9 @@
 #include "Vision.h"
 #include "WindowList.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ClientAgent"
+
 const char* ClientAgent::endl("\1\1\1\1\1");
 
 ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* myNick_,
@@ -213,7 +216,7 @@ void ClientAgent::SetEditStates(BMenu* menu, bool targetonly)
 			return;
 		}
 
-		BMenuItem* menuItem(menu->FindItem(S_CW_EDIT_CUT));
+		BMenuItem* menuItem(menu->FindItem(B_TRANSLATE("Cut")));
 		int32 start(0), finish(0);
 		fInput->TextView()->GetSelection(&start, &finish);
 		if (start == finish) {
@@ -222,7 +225,7 @@ void ClientAgent::SetEditStates(BMenu* menu, bool targetonly)
 			menuItem->SetEnabled(true);
 			menuItem->SetTarget(fInput->TextView());
 		}
-		menuItem = menu->FindItem(S_CW_EDIT_COPY);
+		menuItem = menu->FindItem(B_TRANSLATE("Copy"));
 		if (start == finish) {
 			BString string;
 			// check text display
@@ -237,7 +240,7 @@ void ClientAgent::SetEditStates(BMenu* menu, bool targetonly)
 			menuItem->SetTarget(fInput->TextView());
 			menuItem->SetEnabled(true);
 		}
-		menuItem = menu->FindItem(S_CW_EDIT_PASTE);
+		menuItem = menu->FindItem(B_TRANSLATE("Paste"));
 		menuItem->SetTarget(fInput->TextView());
 		BClipboard clipboard("system");
 		BMessage* clip((BMessage*)NULL);
@@ -250,7 +253,7 @@ void ClientAgent::SetEditStates(BMenu* menu, bool targetonly)
 			}
 			clipboard.Unlock();
 		}
-		menuItem = menu->FindItem(S_CW_EDIT_SELECT_ALL);
+		menuItem = menu->FindItem(B_TRANSLATE("Select all"));
 		if (fInput->TextView()->TextLength() == 0)
 			menuItem->SetTarget(fText);
 		else
@@ -815,21 +818,21 @@ void ClientAgent::MessageReceived(BMessage* msg)
 
 		/// send mesage ///
 		if (completed)
-			completionMsg << S_CLIENT_DCC_SUCCESS;
+			completionMsg << B_TRANSLATE("Completed ");
 		else
-			completionMsg << S_CLIENT_DCC_FAILED;
+			completionMsg << B_TRANSLATE("Terminated ");
 
 		if (type == "SEND")
-			completionMsg << S_CLIENT_DCC_SENDTYPE << pFile.Leaf() << S_CLIENT_DCC_TO;
+			completionMsg << B_TRANSLATE("send of ") << pFile.Leaf() << B_TRANSLATE(" to ");
 		else
-			completionMsg << S_CLIENT_DCC_RECVTYPE << pFile.Leaf() << S_CLIENT_DCC_FROM;
+			completionMsg << B_TRANSLATE("receive of ") << pFile.Leaf() << B_TRANSLATE(" from ");
 
 		completionMsg << nick << " (";
 
 		if (!completed) completionMsg << fAck << "/";
 
-		completionMsg << size << S_CLIENT_DCC_SIZE_UNITS "), ";
-		completionMsg << rate << S_CLIENT_DCC_SPEED_UNITS "\n";
+		completionMsg << size << B_TRANSLATE(" bytes") << "), ";
+		completionMsg << rate << B_TRANSLATE(" cps\n") << "\n";
 
 		Display(completionMsg.String(), C_CTCP_RPY);
 	} break;

@@ -39,6 +39,9 @@
 #include "DCCConnect.h"
 #include "PlayButton.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "DCCConnect"
+
 DCCConnect::DCCConnect(const char* n, const char* fn, const char* sz, const char* i, const char* p,
 					   const BMessenger& c)
 	: BView(BRect(0.0, 0.0, 275.0, 150.0), "dcc connect", B_FOLLOW_LEFT | B_FOLLOW_TOP,
@@ -60,7 +63,7 @@ DCCConnect::DCCConnect(const char* n, const char* fn, const char* sz, const char
 	sprintf(trail, " / %.1fk", atol(fSize.String()) / 1024.0);
 
 	fBar = new BStatusBar(BRect(10, 10, Bounds().right - 30, Bounds().bottom - 10), "progress",
-						  S_DCC_SPEED, trail);
+						  B_TRANSLATE("bps: "), trail);
 	fBar->SetMaxValue(atol(fSize.String()));
 	fBar->SetBarHeight(8.0);
 	AddChild(fBar);
@@ -247,7 +250,7 @@ int32 DCCReceive::Transfer(void* arg)
 	int32 dccSock(-1);
 
 	if ((dccSock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		UpdateStatus(msgr, S_DCC_ESTABLISH_ERROR);
+		UpdateStatus(msgr, B_TRANSLATE("Unable to establish connection."));
 		return B_ERROR;
 	}
 
@@ -260,9 +263,9 @@ int32 DCCReceive::Transfer(void* arg)
 	address.sin_port = htons(atoi(reply.FindString("port")));
 	address.sin_addr.s_addr = htonl(strtoul(reply.FindString("ip"), 0, 10));
 
-	UpdateStatus(msgr, S_DCC_CONNECT_TO_SENDER);
+	UpdateStatus(msgr, B_TRANSLATE("Connecting to sender."));
 	if (connect(dccSock, (sockaddr*)&address, sizeof(address)) < 0) {
-		UpdateStatus(msgr, S_DCC_ESTABLISH_ERROR);
+		UpdateStatus(msgr, B_TRANSLATE("Unable to establish connection."));
 		close(dccSock);
 		return B_ERROR;
 	}
@@ -271,7 +274,7 @@ int32 DCCReceive::Transfer(void* arg)
 	BString buffer;
 	off_t file_size(0);
 
-	buffer << S_DCC_RECV1 << path.Leaf() << S_DCC_RECV2 << reply.FindString("nick") << ".";
+	buffer << B_TRANSLATE("Receiving \"") << path.Leaf() << B_TRANSLATE("\" from ") << reply.FindString("nick") << ".";
 
 	UpdateStatus(msgr, buffer.String());
 
@@ -389,7 +392,7 @@ int32 DCCSend::Transfer(void* arg)
 	fileName.ReplaceAll(" ", "_");
 
 	if ((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		UpdateStatus(msgr, S_DCC_ESTABLISH_ERROR);
+		UpdateStatus(msgr, B_TRANSLATE("Unable to establish connection."));
 		return 0;
 	}
 
@@ -401,19 +404,19 @@ int32 DCCSend::Transfer(void* arg)
 	int sin_size;
 	sin_size = (sizeof(struct sockaddr_in));
 
-	UpdateStatus(msgr, S_DCC_LOCK_ACQUIRE B_UTF8_ELLIPSIS);
+	UpdateStatus(msgr, B_TRANSLATE("Acquiring DCC lock" B_UTF8_ELLIPSIS));
 
 	vision_app->AcquireDCCLock();
 
 	if (!msgr.IsValid() || bind(sd, (sockaddr*)&address, sin_size) < 0) {
-		UpdateStatus(msgr, S_DCC_ESTABLISH_ERROR);
+		UpdateStatus(msgr, B_TRANSLATE("Unable to establish connection."));
 		vision_app->ReleaseDCCLock();
 
 		close(sd);
 		return 0;
 	}
 
-	UpdateStatus(msgr, S_DCC_ACK_WAIT);
+	UpdateStatus(msgr, B_TRANSLATE("Waiting for acceptance"));
 
 	sendaddr.s_addr = inet_addr(ipdata.FindString("ip"));
 
@@ -427,9 +430,9 @@ int32 DCCSend::Transfer(void* arg)
 		msg.AddString("data", status.String());
 		if (callmsgr.IsValid()) callmsgr.SendMessage(&msg);
 
-		UpdateStatus(msgr, S_DCC_LISTEN_CALL);
+		UpdateStatus(msgr, B_TRANSLATE("Doing listen call."));
 		if (listen(sd, 1) < 0) {
-			UpdateStatus(msgr, S_DCC_ESTABLISH_ERROR);
+			UpdateStatus(msgr, B_TRANSLATE("Unable to establish connection."));
 			vision_app->ReleaseDCCLock();
 			close(sd);
 			return 0;
@@ -449,7 +452,7 @@ int32 DCCSend::Transfer(void* arg)
 		FD_SET(sd, &rset);
 
 		if (select(sd + 1, &rset, 0, 0, &t) < 0) {
-			UpdateStatus(msgr, S_DCC_ESTABLISH_ERROR);
+			UpdateStatus(msgr, B_TRANSLATE("Unable to establish connection."));
 			vision_app->ReleaseDCCLock();
 			close(sd);
 			return 0;
@@ -457,12 +460,12 @@ int32 DCCSend::Transfer(void* arg)
 
 		if (FD_ISSET(sd, &rset)) {
 			dccSock = accept(sd, (sockaddr*)&address, (socklen_t*)&sin_size);
-			UpdateStatus(msgr, S_DCC_ESTABLISH_SUCCEEDED);
+			UpdateStatus(msgr, B_TRANSLATE("Established connection."));
 			break;
 		}
 
 		++try_count;
-		status = S_DCC_WAIT_FOR_CONNECTION;
+		status = B_TRANSLATE("Waiting for connection ");
 		status << try_count << ".";
 		UpdateStatus(msgr, status.String());
 	}
@@ -487,8 +490,8 @@ int32 DCCSend::Transfer(void* arg)
 		bytes_sent = seekpos;
 	}
 
-	status = S_DCC_SEND1;
-	status << path.Leaf() << S_DCC_SEND2 << reply.FindString("nick") << ".";
+	status = B_TRANSLATE("Sending \"");
+	status << path.Leaf() << B_TRANSLATE("\" to ") << reply.FindString("nick") << ".";
 	UpdateStatus(msgr, status.String());
 
 	int cps(0);
@@ -510,7 +513,7 @@ int32 DCCSend::Transfer(void* arg)
 			int sent;
 
 			if ((sent = send(dccSock, buffer, count, 0)) < count) {
-				UpdateStatus(msgr, S_DCC_WRITE_ERROR);
+				UpdateStatus(msgr, B_TRANSLATE("Error writing data."));
 				break;
 			}
 

@@ -16,6 +16,9 @@
 #include "ColumnTypes.h"
 #include "Vision.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "NetPrefsServerView"
+
 const rgb_color serverItemNormalColor = {0, 0, 0, 255};
 const rgb_color serverItemDefaultColor = {0, 127, 0, 255};
 const rgb_color serverItemDisabledColor = {0, 0, 192, 255};
@@ -126,22 +129,22 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 	fServerList->SetSelectionMessage(new BMessage(M_SERVER_ITEM_SELECTED));
 	mainBox->AddChild(fServerList);
 	fServerList->MoveTo(5, fSelectTitleString->Frame().bottom + 3);
-	BStringColumn* status(new BStringColumn(S_PREFSERVER_STATUS_COLUMN,
+	BStringColumn* status(new BStringColumn(B_TRANSLATE("Status"),
 											be_plain_font->StringWidth("Status") * 2, 0,
 											bounds.Width(), 0, B_ALIGN_CENTER));
 	fServerList->AddColumn(status, 0);
-	BStringColumn* data(new BStringColumn(S_PREFSERVER_SERVER_COLUMN,
+	BStringColumn* data(new BStringColumn(B_TRANSLATE("Server"),
 										  be_plain_font->StringWidth("Server") * 2, 0,
 										  bounds.Width(), 0));
 	fServerList->AddColumn(data, 1);
 	BStringColumn* port(new BStringColumn(
-		S_PREFSERVER_PORT_COLUMN, be_plain_font->StringWidth("Port") * 2, 0, bounds.Width(), 0));
+		B_TRANSLATE("Port"), be_plain_font->StringWidth("Port") * 2, 0, bounds.Width(), 0));
 	fServerList->AddColumn(port, 2);
-	fAddButton = new BButton(BRect(0, 0, 0, 0), NULL, S_PREFSERVER_ADD_BUTTON B_UTF8_ELLIPSIS,
+	fAddButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
 							 new BMessage(M_SERVER_ADD_ITEM));
-	fRemoveButton = new BButton(BRect(0, 0, 0, 0), NULL, S_PREFSERVER_REMOVE_BUTTON,
+	fRemoveButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Remove"),
 								new BMessage(M_SERVER_REMOVE_ITEM));
-	fEditButton = new BButton(BRect(0, 0, 0, 0), NULL, S_PREFSERVER_EDIT_BUTTON B_UTF8_ELLIPSIS,
+	fEditButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Edit" B_UTF8_ELLIPSIS),
 							  new BMessage(M_SERVER_EDIT_ITEM));
 	fAddButton->ResizeToPreferred();
 	fRemoveButton->ResizeToPreferred();
@@ -155,23 +158,23 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 	fEditButton->MoveTo(fAddButton->Frame().left - (fEditButton->Frame().Width() + 15),
 						fAddButton->Frame().top);
 	mainBox->AddChild(fEditButton);
-	BStringView* legend1 = new BStringView(BRect(0, 0, 0, 0), "str1", S_PREFSERVER_DESC1);
+	BStringView* legend1 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("Key: "));
 	legend1->ResizeToPreferred();
 	mainBox->AddChild(legend1);
 	legend1->MoveTo(fServerList->Frame().left + 5, fAddButton->Frame().bottom + 5);
-	BStringView* legend2 = new BStringView(BRect(0, 0, 0, 0), "str1", S_PREFSERVER_DESC2);
+	BStringView* legend2 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("  * = primary"));
 	legend2->ResizeToPreferred();
 	mainBox->AddChild(legend2);
 	legend2->MoveTo(legend1->Frame().left, legend1->Frame().bottom);
-	BStringView* legend3 = new BStringView(BRect(0, 0, 0, 0), "str1", S_PREFSERVER_DESC3);
+	BStringView* legend3 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("  + = secondary (fallback)"));
 	legend3->ResizeToPreferred();
 	mainBox->AddChild(legend3);
 	legend3->MoveTo(legend2->Frame().left, legend2->Frame().bottom);
-	fLegend4 = new BStringView(BRect(0, 0, 0, 0), "str1", S_PREFSERVER_DESC4);
+	fLegend4 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("  - = disabled"));
 	fLegend4->ResizeToPreferred();
 	mainBox->AddChild(fLegend4);
 	fLegend4->MoveTo(legend3->Frame().left, legend3->Frame().bottom);
-	fOkButton = new BButton(BRect(0, 0, 0, 0), NULL, S_PREFSERVER_OK_BUTTON,
+	fOkButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("OK"),
 							new BMessage(B_QUIT_REQUESTED));
 	fOkButton->ResizeToPreferred();
 	mainBox->AddChild(fOkButton);
@@ -294,7 +297,7 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 		delete row;
 	}
 
-	BString netString(S_PREFSERVER_SEL_STRING);
+	BString netString(B_TRANSLATE("Select servers for "));
 	netString += msg->FindString("name");
 	netString += ":";
 	type_code type;

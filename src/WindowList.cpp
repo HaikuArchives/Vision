@@ -39,6 +39,9 @@
 #include "Utilities.h"
 #include <stdio.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "WindowList"
+
 //////////////////////////////////////////////////////////////////////////////
 /// Begin WindowList functions
 //////////////////////////////////////////////////////////////////////////////
@@ -241,12 +244,12 @@ void WindowList::KeyDown(const char*, int32)
 #if 0
   if (CurrentSelection() == -1)
     return;
-    
-  BMessage inputMsg (M_INPUT_FOCUS); 
-  BString buffer; 
 
-  buffer.Append (bytes, numBytes); 
-  inputMsg.AddString ("text", buffer.String()); 
+  BMessage inputMsg (M_INPUT_FOCUS);
+  BString buffer;
+
+  buffer.Append (bytes, numBytes);
+  inputMsg.AddString ("text", buffer.String());
 
   WindowListItem *activeitem ((WindowListItem *)ItemAt (CurrentSelection()));
   ClientAgent *activeagent (dynamic_cast<ClientAgent *>(activeitem->pAgent()));
@@ -649,7 +652,7 @@ void WindowList::BuildPopUp(void)
 		if (activeagent) activeagent->AddMenuItems(fMyPopUp);
 	}
 
-	item = new BMenuItem(S_WINLIST_CLOSE_ITEM, new BMessage(M_MENU_NUKE));
+	item = new BMenuItem(B_TRANSLATE("Close"), new BMessage(M_MENU_NUKE));
 	item->SetTarget(this);
 	fMyPopUp->AddItem(item);
 

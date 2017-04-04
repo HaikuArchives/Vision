@@ -23,9 +23,11 @@
 #include "ColumnListView.h"
 #include "PrefAliases.h"
 #include "Vision.h"
-#include "VisionStrings.h"
 
 #include <Button.h>
+
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "PrefAliases"
 
 const uint32 M_ALIAS_SELECTION_CHANGED = 'mASC';
 const uint32 M_ALIAS_ADD = 'mADD';
@@ -83,20 +85,20 @@ void AliasesPrefsView::AttachedToWindow(void)
 		new BColumnListView(bounds, "clv", B_FOLLOW_ALL_SIDES, B_WILL_DRAW, B_FANCY_BORDER);
 	AddChild(fAliasView);
 	fAliasView->SetSelectionMessage(new BMessage(M_ALIAS_SELECTION_CHANGED));
-	fAliasView->AddColumn(new BStringColumn(S_PREFALIAS_COLUMN_NAME,
-											StringWidth(S_PREFALIAS_COLUMN_NAME) * 2.0, 0,
+	fAliasView->AddColumn(new BStringColumn(B_TRANSLATE("Name"),
+											StringWidth(B_TRANSLATE("Name")) * 2.0, 0,
 											bounds.Width(), 0),
 						  0);
-	fAliasView->AddColumn(new BStringColumn(S_PREFALIAS_COLUMN_ALIAS,
-											StringWidth(S_PREFALIAS_COLUMN_ALIAS) * 6.0, 0,
+	fAliasView->AddColumn(new BStringColumn(B_TRANSLATE("Alias"),
+											StringWidth(B_TRANSLATE("Alias")) * 6.0, 0,
 											bounds.Width(), 0),
 						  1);
 
-	fAddButton = new BButton(BRect(0, 0, 0, 0), "alAdd", S_PREFALIAS_ADD, new BMessage(M_ALIAS_ADD),
+	fAddButton = new BButton(BRect(0, 0, 0, 0), "alAdd", B_TRANSLATE("Add"), new BMessage(M_ALIAS_ADD),
 							 B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
 	AddChild(fAddButton);
 	fAddButton->ResizeToPreferred();
-	fRemoveButton = new BButton(BRect(0, 0, 0, 0), "alRemove", S_PREFALIAS_REMOVE,
+	fRemoveButton = new BButton(BRect(0, 0, 0, 0), "alRemove", B_TRANSLATE("Remove"),
 								new BMessage(M_ALIAS_REMOVE), B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
 	AddChild(fRemoveButton);
 	fRemoveButton->ResizeToPreferred();

@@ -44,6 +44,9 @@
 <kurros> yeah
 */
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ParseEvents"
+
 bool ServerAgent::ParseEvents(const char* data)
 {
 	BString firstWord = GetWord(data, 1).ToUpper();
@@ -439,7 +442,7 @@ bool ServerAgent::ParseEvents(const char* data)
 
 			theMode.RemoveFirst(":");
 
-			buffer += S_PEVENTS_UMODE_CHANGE;
+			buffer += B_TRANSLATE("*** User mode changed: ");
 			buffer += theMode;
 			buffer += "\n";
 
@@ -489,9 +492,9 @@ bool ServerAgent::ParseEvents(const char* data)
 
 		theChannel.RemoveFirst(":");
 
-		tempString += S_PEVENTS_INVITE1;
+		tempString += B_TRANSLATE("*** You have been invited to ");
 		tempString += theChannel;
-		tempString += S_PEVENTS_INVITE2;
+		tempString += B_TRANSLATE(" by ");
 		tempString += GetNick(data);
 		tempString += ".\n";
 
@@ -508,10 +511,10 @@ bool ServerAgent::ParseEvents(const char* data)
 		const char* hostmask = theHostmask.String();
 
 		if (hostmask[0] == '+') {
-			tempString += S_PEVENTS_SILENCE_ADDED;
+			tempString += B_TRANSLATE("*** Hostmask added to SILENCE list: ");
 			theHostmask.RemoveFirst("+");
 		} else {
-			tempString += S_PEVENTS_SILENCE_REMOVED;
+			tempString += B_TRANSLATE("*** Hostmask removed from SILENCE list: ");
 			theHostmask.RemoveFirst("-");
 		}
 

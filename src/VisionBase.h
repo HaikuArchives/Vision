@@ -26,10 +26,10 @@
 #define _VISIONBASE_H_
 
 #include "VisionMessages.h"
-#include "VisionStrings.h"
 
 /// base includes and defines ///
 #include <GraphicsDefs.h>
+#include <Catalog.h>
 
 #include <Debug.h>
 #include <String.h>

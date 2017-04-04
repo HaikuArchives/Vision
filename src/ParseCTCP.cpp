@@ -31,6 +31,9 @@
 #include "Utilities.h"
 #include "ServerAgent.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ParseCTCP"
+
 void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 {
 	BString theCTCP(GetWord(theMsg.String(), 1).ToUpper()),
@@ -298,19 +301,26 @@ void ServerAgent::ParseCTCPResponse(BString theNick, BString theMsg)
 		}
 		tempString += "[";
 		tempString += theNick;
-		tempString += " PING" S_PCTCP_RESPONSE "]: ";
+		tempString += " PING";
+		tempString += B_TRANSLATE(" response");
+		tempString += "]: ";
 		if (theSeconds != 1) {
 			tempString << theSeconds;
-			tempString += " " S_PCTCP_SECOND_PLURAL "\n";
+			tempString += " ";
+			tempString += B_TRANSLATE("seconds");
+			tempString += "\n";
 		} else
-			tempString += "1 " S_PCTCP_SECOND "\n";
+			tempString += "1 ";
+			tempString += B_TRANSLATE("second");
+			tempString += "\n";
 	} else {
 		BString theReply = RestOfString(theResponse.String(), 2);
 		tempString += "[";
 		tempString += theNick;
 		tempString += " ";
 		tempString += firstWord;
-		tempString += S_PCTCP_RESPONSE "]: ";
+		tempString += B_TRANSLATE(" response");
+		tempString += "]: ";
 		tempString += theReply;
 		tempString += '\n';
 	}

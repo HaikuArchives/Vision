@@ -28,6 +28,9 @@
 
 #include <stdio.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ChannelOptions"
+
 ChannelOptions::ChannelOptions(const char* chan_name_, ChannelAgent* parent_)
 	: BWindow(BRect(188.0, 88.0, 600.0, 390.0), "", B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE),
@@ -50,7 +53,7 @@ bool ChannelOptions::QuitRequested(void)
 
 void ChannelOptions::Init(void)
 {
-	BString temp(S_CHANOPTS_TITLE);
+	BString temp(B_TRANSLATE(" Options"));
 	temp.Prepend(chan_name);
 	SetTitle(temp.String());
 
@@ -72,8 +75,8 @@ void ChannelOptions::Init(void)
 	bgView->AddChild(privilegesView);
 
 	BString privString; // this will become dynamic based on the current mode
-	privString += S_CHANOPTS_OPID1;
-	privString += S_CHANOPTS_OPID2;
+	privString += B_TRANSLATE("You are currently a channel operator. ");
+	privString += B_TRANSLATE("You may change any of these options.");
 
 	BStringView* privMsgView =
 		new BStringView(BRect(privilegesView->Bounds().left, privilegesView->Bounds().top,

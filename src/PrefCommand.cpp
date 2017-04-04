@@ -26,9 +26,12 @@
 #include <ScrollView.h>
 #include <TextControl.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "PrefCommand"
+
 static const char* CommandControlLabels[] = {
-	S_PREFCOMMAND_QUIT, S_PREFCOMMAND_KICK, S_PREFCOMMAND_IGNORE, S_PREFCOMMAND_UNIGNORE,
-	S_PREFCOMMAND_AWAY, S_PREFCOMMAND_BACK, S_PREFCOMMAND_UPTIME, 0};
+	B_TRANSLATE("Quit:"), B_TRANSLATE("Kick:"), B_TRANSLATE("Ignore:"), B_TRANSLATE("Unignore:"),
+	B_TRANSLATE("Away:"), B_TRANSLATE("Back:"), B_TRANSLATE("Uptime:"), 0};
 
 CommandPrefsView::CommandPrefsView(BRect frame)
 	: BView(frame, "Command prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)

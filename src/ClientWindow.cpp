@@ -50,6 +50,9 @@
 #include "Vision.h"
 #include "WindowList.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ClientWindow"
+
 /*
   -- #beos was here --
   <Electroly> kurros has a l33t ass projector, I saw a picture of it just once
@@ -79,7 +82,7 @@ public:
 	virtual void DetachedFromWindow(void);
 };
 
-DynamicEditMenu::DynamicEditMenu(void) : BMenu(S_CW_EDIT_MENU)
+DynamicEditMenu::DynamicEditMenu(void) : BMenu(B_TRANSLATE("Edit"))
 {
 }
 
@@ -500,74 +503,74 @@ void ClientWindow::Init(void)
 	menu = new BMenu("App");
 
 	menu->AddItem(
-		item = new BMenuItem(S_CW_APP_ABOUT B_UTF8_ELLIPSIS, new BMessage(B_ABOUT_REQUESTED)));
+		item = new BMenuItem(B_TRANSLATE("About" B_UTF8_ELLIPSIS), new BMessage(B_ABOUT_REQUESTED)));
 	item->SetTarget(vision_app);
-	menu->AddItem(item = new BMenuItem(S_CW_APP_PREFS B_UTF8_ELLIPSIS, new BMessage(M_PREFS_SHOW)));
+	menu->AddItem(item = new BMenuItem(B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS), new BMessage(M_PREFS_SHOW)));
 	item->SetTarget(vision_app);
 
 	menu->AddSeparatorItem();
 	menu->AddItem(
-		item = new BMenuItem(S_CW_APP_TERMINAL, new BMessage(M_OPEN_TERM), 'T', B_OPTION_KEY));
+		item = new BMenuItem(B_TRANSLATE("New terminal"), new BMessage(M_OPEN_TERM), 'T', B_OPTION_KEY));
 	menu->AddSeparatorItem();
-	menu->AddItem(item = new BMenuItem(S_CW_APP_QUIT, new BMessage(B_QUIT_REQUESTED)));
+	menu->AddItem(item = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED)));
 	item->SetTarget(vision_app);
 
 	fApp = new TIconMenu(menu);
 	fMenuBar->AddItem(fApp);
 
-	fServer = new BMenu(S_CW_SERVER_MENU);
-	fServer->AddItem(menu = new NetworkMenu(S_CW_SERVER_CONNECT B_UTF8_ELLIPSIS, M_CONNECT_NETWORK,
+	fServer = new BMenu(B_TRANSLATE("Server"));
+	fServer->AddItem(menu = new NetworkMenu(B_TRANSLATE("Connect to" B_UTF8_ELLIPSIS), M_CONNECT_NETWORK,
 											BMessenger(vision_app)));
 
-	fServer->AddItem(item = new BMenuItem(S_CW_SERVER_SETUP B_UTF8_ELLIPSIS,
+	fServer->AddItem(item = new BMenuItem(B_TRANSLATE("Setup" B_UTF8_ELLIPSIS),
 										  new BMessage(M_SETUP_SHOW), '/', B_SHIFT_KEY));
 	item->SetTarget(vision_app);
 	fServer->AddSeparatorItem();
 	fServer->AddItem(
-		item = new BMenuItem(S_CW_APP_CHANLIST B_UTF8_ELLIPSIS, new BMessage(M_LIST_COMMAND), 'L'));
+		item = new BMenuItem(B_TRANSLATE("List channels" B_UTF8_ELLIPSIS), new BMessage(M_LIST_COMMAND), 'L'));
 	fMenuBar->AddItem(fServer);
 
 	// Edit menu
 	fEdit = new DynamicEditMenu();
 
-	fEdit->AddItem(item = new BMenuItem(S_CW_EDIT_CUT, new BMessage(B_CUT), 'X'));
-	fEdit->AddItem(item = new BMenuItem(S_CW_EDIT_COPY, new BMessage(B_COPY), 'C'));
-	fEdit->AddItem(item = new BMenuItem(S_CW_EDIT_PASTE, new BMessage(B_PASTE), 'V'));
+	fEdit->AddItem(item = new BMenuItem(B_TRANSLATE("Cut"), new BMessage(B_CUT), 'X'));
+	fEdit->AddItem(item = new BMenuItem(B_TRANSLATE("Copy"), new BMessage(B_COPY), 'C'));
+	fEdit->AddItem(item = new BMenuItem(B_TRANSLATE("Paste"), new BMessage(B_PASTE), 'V'));
 	fEdit->AddItem(
-		item = new BMenuItem(S_CW_EDIT_SELECT_ALL, new BMessage(B_SELECT_ALL), 'A', B_OPTION_KEY));
+		item = new BMenuItem(B_TRANSLATE("Select all"), new BMessage(B_SELECT_ALL), 'A', B_OPTION_KEY));
 	fMenuBar->AddItem(fEdit);
 
 	// Window menu
-	fWindow = new BMenu(S_CW_WINDOW_MENU);
+	fWindow = new BMenu(B_TRANSLATE("Window"));
 
-	fWindow->AddItem(item = new BMenuItem(S_CW_WINDOW_UP, new BMessage(M_UP_CLIENT), B_UP_ARROW));
+	fWindow->AddItem(item = new BMenuItem(B_TRANSLATE("Up"), new BMessage(M_UP_CLIENT), B_UP_ARROW));
 	fWindow->AddItem(
-		item = new BMenuItem(S_CW_WINDOW_DOWN, new BMessage(M_DOWN_CLIENT), B_DOWN_ARROW));
+		item = new BMenuItem(B_TRANSLATE("Down"), new BMessage(M_DOWN_CLIENT), B_DOWN_ARROW));
 
 	// bowser muscle memory
 	AddShortcut(',', B_COMMAND_KEY, new BMessage(M_UP_CLIENT));
 	AddShortcut('.', B_COMMAND_KEY, new BMessage(M_DOWN_CLIENT));
 
-	fWindow->AddItem(item = new BMenuItem(S_CW_WINDOW_SM_UP, new BMessage(M_SMART_UP_CLIENT),
+	fWindow->AddItem(item = new BMenuItem(B_TRANSLATE("Smart up"), new BMessage(M_SMART_UP_CLIENT),
 										  B_UP_ARROW, B_SHIFT_KEY));
-	fWindow->AddItem(item = new BMenuItem(S_CW_WINDOW_SM_DOWN, new BMessage(M_SMART_DOWN_CLIENT),
+	fWindow->AddItem(item = new BMenuItem(B_TRANSLATE("Smart down"), new BMessage(M_SMART_DOWN_CLIENT),
 										  B_DOWN_ARROW, B_SHIFT_KEY));
 	fWindow->AddItem(item =
-						 new BMenuItem(S_CW_WINDOW_NETWORK, new BMessage(M_NETWORK_CLIENT), '/'));
-	fWindow->AddItem(item = new BMenuItem(S_CW_WINDOW_PREVIOUS, new BMessage(M_PREVIOUS_CLIENT),
+						 new BMenuItem(B_TRANSLATE("Network window"), new BMessage(M_NETWORK_CLIENT), '/'));
+	fWindow->AddItem(item = new BMenuItem(B_TRANSLATE("Previous window"), new BMessage(M_PREVIOUS_CLIENT),
 										  '0', B_SHIFT_KEY));
 	AddShortcut(B_INSERT, B_SHIFT_KEY, new BMessage(M_PREVIOUS_CLIENT));
 	fWindow->AddSeparatorItem();
 	fWindow->AddItem(
-		item = new BMenuItem(S_CW_WINDOW_NET_UP, new BMessage(M_NETWORK_UP), 'U', B_SHIFT_KEY));
+		item = new BMenuItem(B_TRANSLATE("Move network up"), new BMessage(M_NETWORK_UP), 'U', B_SHIFT_KEY));
 	fWindow->AddItem(
-		item = new BMenuItem(S_CW_WINDOW_NET_DOWN, new BMessage(M_NETWORK_DOWN), 'D', B_SHIFT_KEY));
+		item = new BMenuItem(B_TRANSLATE("Move network down"), new BMessage(M_NETWORK_DOWN), 'D', B_SHIFT_KEY));
 	fWindow->AddItem(
-		item = new BMenuItem(S_CW_WINDOW_COLLAPSE, new BMessage(M_COLLAPSE_NETWORK), B_LEFT_ARROW));
+		item = new BMenuItem(B_TRANSLATE("Collapse network"), new BMessage(M_COLLAPSE_NETWORK), B_LEFT_ARROW));
 	fWindow->AddItem(
-		item = new BMenuItem(S_CW_WINDOW_EXPAND, new BMessage(M_EXPAND_NETWORK), B_RIGHT_ARROW));
+		item = new BMenuItem(B_TRANSLATE("Expand network"), new BMessage(M_EXPAND_NETWORK), B_RIGHT_ARROW));
 	fWindow->AddSeparatorItem();
-	fWindow->AddItem(item = new BMenuItem(S_CW_WINDOW_PART, new BMessage(M_CW_ALTP), 'P'));
+	fWindow->AddItem(item = new BMenuItem(B_TRANSLATE("Close subwindow"), new BMessage(M_CW_ALTP), 'P'));
 
 	item->SetTarget(this);
 	fMenuBar->AddItem(fWindow);

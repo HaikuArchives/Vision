@@ -46,6 +46,9 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ParseENums"
+
 bool ServerAgent::ParseENums(const char* data, const char* sWord)
 {
 	int num(atoi(sWord));
@@ -279,7 +282,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case RPL_UMODEIS: // 221
 	{
-		BString theMode(GetWord(data, 4)), tempString(S_PENUM_CURMODE);
+		BString theMode(GetWord(data, 4)), tempString(B_TRANSLATE("[x] your current mode is: "));
 		tempString += theMode;
 		tempString += '\n';
 
@@ -573,7 +576,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 			theName(RestOfString(data, 8)), tempString("[x] ");
 		theName.RemoveFirst(":");
 		tempString += theNick;
-		tempString += " " S_PENUM_WHOWAS " (";
+		tempString += " ";
+		tempString += B_TRANSLATE("[was]");
+		tempString += " (";
 		tempString += theIdent;
 		tempString += "@";
 		tempString += theAddress;
@@ -591,7 +596,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 			theTime(GetWord(data, 5)), signOnTime(GetWord(data, 6));
 
 		int64 idleTime(strtoul(theTime.String(), NULL, 0));
-		tempString += S_PENUM_IDLE;
+		tempString += B_TRANSLATE("Idle: ");
 		tempString += DurationString(idleTime * 1000 * 1000);
 		tempString += "\n";
 
@@ -605,7 +610,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BString signOnTimeParsed(str);
 		signOnTimeParsed.RemoveAll("\n");
 
-		tempString2 += S_PENUM_SIGNON;
+		tempString2 += B_TRANSLATE("Signon: ");
 		tempString2 += signOnTimeParsed;
 		tempString2 += "\n";
 
@@ -633,7 +638,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BMessage display(M_DISPLAY);
 		BString buffer;
 
-		buffer += S_PENUM_WHOIS_CHANNELS;
+		buffer += B_TRANSLATE("[x] Channels: ");
 		buffer += theChannels;
 		buffer += "\n";
 		PackDisplay(&display, buffer.String(), C_WHOIS, C_BACKGROUND, F_SERVER);
@@ -682,7 +687,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 		ClientAgent* aClient(ActiveClient()), *theClient(Client(theChan.String()));
 
-		BString tempString(S_PENUM_CHANMODE);
+		BString tempString(B_TRANSLATE("*** Channel mode for "));
 		tempString += theChan;
 		tempString += ": ";
 		tempString += theMode;
@@ -705,7 +710,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case RPL_CHANNELMLOCK: // 325
 	{
-		BString theChan(GetWord(data, 4)), mLock(GetWord(data, 8)), lockMessage(S_PENUM_MLOCK);
+		BString theChan(GetWord(data, 4)), mLock(GetWord(data, 8)), lockMessage(B_TRANSLATE("*** Channel lock for "));
 		lockMessage += theChan;
 		lockMessage += ": ";
 		lockMessage += mLock;
@@ -737,7 +742,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		theTimeParsed.RemoveAll("\n");
 
 		tempString += theChan;
-		tempString += " " S_PENUM_CHANCREATED " ";
+		tempString += " ";
+		tempString += B_TRANSLATE("created");
+		tempString += " ";
 		tempString += theTimeParsed;
 		tempString += '\n';
 		Display(tempString.String());
@@ -746,7 +753,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case RPL_NOTOPIC: // 331
 	{
-		BString theChan(GetWord(data, 4)), tempString(S_PENUM_NO_TOPIC);
+		BString theChan(GetWord(data, 4)), tempString(B_TRANSLATE("[x] No topic set in "));
 		tempString += theChan;
 		tempString += '\n';
 
@@ -767,7 +774,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 			BMessage display(M_DISPLAY);
 			BString buffer;
 
-			buffer += S_PENUM_DISP_TOPIC;
+			buffer += B_TRANSLATE("*** Topic: ");
 			buffer += theTopic;
 			buffer += '\n';
 			PackDisplay(&display, buffer.String(), C_WHOIS);
@@ -801,7 +808,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 			BMessage display(M_DISPLAY);
 			BString buffer;
 
-			buffer += S_PENUM_TOPIC_SET_BY;
+			buffer += B_TRANSLATE("*** Topic set by ");
 			buffer += user;
 			buffer += " @ ";
 			buffer += theTimeParsed;
@@ -818,7 +825,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 		tempString += "*** ";
 		tempString += theNick;
-		tempString += S_PENUM_INVITING;
+		tempString += B_TRANSLATE(" has been invited to ");
 		tempString += channel;
 		tempString += ".\n";
 
@@ -835,7 +842,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		ClientAgent* client(Client(channel.String()));
 		names.RemoveFirst(":");
 
-		BString tempString(S_PENUM_NAMEREPLY);
+		BString tempString(B_TRANSLATE("*** Users in "));
 		tempString += channel;
 		tempString += ": ";
 		tempString += names;
@@ -908,7 +915,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case RPL_MOTDSTART: // 375
 	{
-		BString tempString(S_PENUM_SERVER_MOTD "\n");
+		BString tempString(B_TRANSLATE("- Server Message Of The Day:\n"));
 		Display(tempString.String(), C_SERVER, C_BACKGROUND, F_SERVER);
 	}
 		return true;
@@ -956,7 +963,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 		if (fReconnecting) {
 			const char* reString;
-			reString = S_PENUM_RECON_SUCCESS "\n";
+			reString = B_TRANSLATE("[@] Successful reconnect\n");
 			Display(reString, C_ERROR);
 			DisplayAll(reString, C_ERROR, C_BACKGROUND, F_SERVER);
 			fMsgr.SendMessage(M_REJOIN_ALL);
@@ -988,9 +995,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		if (fIsConnecting) {
 			BString nextNick(GetNextNick());
 			if (nextNick != "") {
-				Display(S_PENUM_NICKINUSE1);
+				Display(B_TRANSLATE("* Nickname \""));
 				Display(theNick.String());
-				Display(S_PENUM_NICKINUSE2);
+				Display(B_TRANSLATE("\" in use or unavailable.. trying \""));
 				Display(nextNick.String());
 				Display("\"\n");
 
@@ -999,15 +1006,15 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 				SendData(tempString.String());
 				return true;
 			} else {
-				Display(S_PENUM_ALLNICKSUSED1 "\n");
-				Display(S_PENUM_ALLNICKSUSED2 "\n");
+				Display(B_TRANSLATE("* All your pre-selected nicknames are in use.\n"));
+				Display(B_TRANSLATE("* Please type /NICK <NEWNICK> to try another.\n"));
 				return true;
 			}
 		}
 		BString tempString;
-		tempString += S_PENUM_NICKINUSE3;
+		tempString += B_TRANSLATE("[x] Nickname/Channel ");
 		tempString += theNick;
-		tempString += S_PENUM_NICKINUSE4 "\n";
+		tempString += B_TRANSLATE(" is already in use or unavailable.\n");
 
 		BMessage display(M_DISPLAY);
 		PackDisplay(&display, tempString.String(), C_NICK);
@@ -1019,7 +1026,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 	{
 		BString theChannel(GetWord(data, 5)), theNick(GetWord(data, 4)), tempString("[x] ");
 		tempString += theNick;
-		tempString += S_PENUM_NOTINCHANNEL;
+		tempString += B_TRANSLATE(" is not in ");
 		tempString += theChannel;
 		tempString += ".\n";
 
@@ -1031,7 +1038,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case ERR_NOTONCHANNEL: // 442
 	{
-		BString theChannel(GetWord(data, 4)), tempString(S_PENUM_ME_NOTINCHANNEL);
+		BString theChannel(GetWord(data, 4)), tempString(B_TRANSLATE("[x] You're not in "));
 		tempString += theChannel;
 		tempString += ".\n";
 
@@ -1045,7 +1052,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 	{
 		BString theChannel(GetWord(data, 5)), theNick(GetWord(data, 4)), tempString("[x] ");
 		tempString += theNick;
-		tempString += S_PENUM_ALREADYINCHANNEL;
+		tempString += B_TRANSLATE(" is already in ");
 		tempString += theChannel;
 		tempString += ".\n";
 
@@ -1057,7 +1064,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case ERR_KEYSET: // 467
 	{
-		BString theChannel(GetWord(data, 4)), tempString(S_PENUM_KEY_ALREADY_SET);
+		BString theChannel(GetWord(data, 4)), tempString(B_TRANSLATE("[x] Channel key already set in "));
 		tempString += theChannel;
 		tempString += ".\n";
 
@@ -1069,7 +1076,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case ERR_UNKNOWNMODE: // 472
 	{
-		BString theMode(GetWord(data, 4)), tempString(S_PENUM_UNKNOWNCHANMODE);
+		BString theMode(GetWord(data, 4)), tempString(B_TRANSLATE("[x] Unknown channel mode: '"));
 		tempString += theMode;
 		tempString += "'\n";
 
@@ -1085,7 +1092,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		theReason.RemoveFirst(":");
 		theReason.ReplaceLast("channel", theChan.String());
 		tempString += theReason;
-		tempString += S_PENUM_INVITE_ONLY "\n";
+		tempString += B_TRANSLATE(" (invite only)\n");
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);
@@ -1101,7 +1108,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		theReason.ReplaceLast("channel", theChan.String());
 
 		tempString += theReason;
-		tempString += S_PENUM_BANNED "\n";
+		tempString += B_TRANSLATE(" (you're banned)\n");
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);
@@ -1116,7 +1123,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		theReason.RemoveFirst(":");
 		theReason.ReplaceLast("channel", theChan.String());
 		tempString += theReason;
-		tempString += S_PENUM_BADCHANKEY "\n";
+		tempString += B_TRANSLATE(" (bad channel key)\n");
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);
@@ -1130,7 +1137,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BMessage msg(M_DISPLAY);
 		BString buffer;
 
-		buffer += S_PENUM_UNKNOWNMODE "\n";
+		buffer += B_TRANSLATE("[x] Unknown MODE flag.\n");
 		PackDisplay(&msg, buffer.String(), C_QUIT);
 		PostActive(&msg);
 	}

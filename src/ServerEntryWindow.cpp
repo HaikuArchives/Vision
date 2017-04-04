@@ -35,9 +35,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ServerEntryWindow"
+
 ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked, const ServerData* data,
 									 int32 size)
-	: BWindow(BRect(50, 50, 350, 250), S_SERVERWIN_TITLE, B_TITLED_WINDOW,
+	: BWindow(BRect(50, 50, 350, 250), B_TRANSLATE("Add server"), B_TITLED_WINDOW,
 			  B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS)
 {
 	AddChild(new ServerEntryView(Bounds(), handler, invoked, data, size));
@@ -58,36 +61,36 @@ ServerEntryView::ServerEntryView(BRect bounds, BHandler* handler, BMessage* invo
 	if (size != 0) memcpy(&currentServer, data, size);
 	AdoptSystemColors();
 	serverName = new BTextControl(
-		BRect(0, 0, 0, 0), "serverName", S_SERVERWIN_SERVER, (data) ? data->serverName : "",
+		BRect(0, 0, 0, 0), "serverName", B_TRANSLATE("Server: "), (data) ? data->serverName : "",
 		new BMessage(M_SERVER_NAME_CHANGED), B_FOLLOW_LEFT | B_FOLLOW_TOP);
 	BString strPort("");
 	if (data)
 		strPort << data->port;
 	else
 		strPort << 6667;
-	port = new BTextControl(BRect(0, 0, 0, 0), "portVal", S_SERVERWIN_PORT, strPort.String(),
+	port = new BTextControl(BRect(0, 0, 0, 0), "portVal", B_TRANSLATE("Port: "), strPort.String(),
 							new BMessage(M_SERVER_PORT_CHANGED), B_FOLLOW_LEFT | B_FOLLOW_TOP);
 	port->SetDivider(be_plain_font->StringWidth("Port: ") + 5);
 
-	BMenu* stateMenu = new BMenu(S_SERVERWIN_MENU1);
-	stateMenu->AddItem(new BMenuItem(S_SERVERWIN_MENU_PRI, new BMessage(M_SERVER_STATE)));
-	stateMenu->AddItem(new BMenuItem(S_SERVERWIN_MENU_SEC, new BMessage(M_SERVER_STATE)));
-	stateMenu->AddItem(new BMenuItem(S_SERVERWIN_MENU_DIS, new BMessage(M_SERVER_STATE)));
-	statusField = new BMenuField(BRect(0, 0, 0, 0), "states", S_SERVERWIN_STATE, stateMenu,
+	BMenu* stateMenu = new BMenu(B_TRANSLATE("Choose status"));
+	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Primary"), new BMessage(M_SERVER_STATE)));
+	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Secondary"), new BMessage(M_SERVER_STATE)));
+	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Disabled"), new BMessage(M_SERVER_STATE)));
+	statusField = new BMenuField(BRect(0, 0, 0, 0), "states", B_TRANSLATE("State: "), stateMenu,
 								 B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
 
-	okButton = new BButton(BRect(0, 0, 0, 0), "serverOk", S_SERVERWIN_DONE_BUTTON,
+	okButton = new BButton(BRect(0, 0, 0, 0), "serverOk", B_TRANSLATE("Done"),
 						   new BMessage(M_SERVER_DONE), B_FOLLOW_LEFT | B_FOLLOW_TOP,
 						   B_WILL_DRAW | B_NAVIGABLE);
 
-	cancelButton = new BButton(BRect(0, 0, 0, 0), "serverCancel", S_SERVERWIN_CANCEL_BUTTON,
+	cancelButton = new BButton(BRect(0, 0, 0, 0), "serverCancel", B_TRANSLATE("Cancel"),
 							   new BMessage(M_SERVER_CANCEL), B_FOLLOW_LEFT | B_FOLLOW_TOP,
 							   B_WILL_DRAW | B_NAVIGABLE);
 
 	BString password("");
 	if (strlen(currentServer.password) > 0) password = currentServer.password;
 
-	usePassword = new BCheckBox(BRect(0, 0, 0, 0), "usePass", S_SERVERWIN_PASS_CHECK,
+	usePassword = new BCheckBox(BRect(0, 0, 0, 0), "usePass", B_TRANSLATE("Use password: "),
 								new BMessage(M_SERVER_USEPASS), B_FOLLOW_LEFT | B_FOLLOW_TOP,
 								B_WILL_DRAW | B_NAVIGABLE);
 
@@ -112,7 +115,7 @@ void ServerEntryView::AttachedToWindow(void)
 {
 	BView::AttachedToWindow();
 
-	serverName->SetDivider(be_plain_font->StringWidth(S_SERVERWIN_SERVER) + 5);
+	serverName->SetDivider(be_plain_font->StringWidth(B_TRANSLATE("Server: ")) + 5);
 	serverName->ResizeToPreferred();
 	serverName->ResizeTo(Bounds().Width() / 2, serverName->Bounds().Height());
 	serverName->MoveTo(10, 10);
