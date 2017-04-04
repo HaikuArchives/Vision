@@ -36,7 +36,6 @@
 #include <String.h>
 #include <Socket.h>
 
-#include <arpa/inet.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -366,7 +365,7 @@ int32 ServerAgent::Establish(void* arg)
 			throw failToLock();
 		}
 
-		remoteIP = inet_ntoa(((sockaddr_in&)remoteAddr.SockAddr()).sin_addr);
+		remoteIP = remoteAddr.ToString(false);
 		vision_app->AddIdent(remoteIP.String(), ident.String());
 
 		if ((serverSock = new BSocket) == NULL) {
@@ -384,11 +383,10 @@ int32 ServerAgent::Establish(void* arg)
 		sMsgrE->SendMessage(M_LAG_CHANGED);
 
 		if (serverSock->Connect(remoteAddr) == B_OK) {
-			BString ip("");
-			sockaddr_in& sockin = (sockaddr_in&)serverSock->Local().SockAddr();
+			BString ip(serverSock->Local().ToString(false));
 
 			// store local ip address for future use (dcc, etc)
-			if (sockin.sin_len == 0) {
+			if (ip.IsEmpty()) {
 				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Error getting local IP\n"), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 				BMessage setIP(M_SET_IP);
@@ -397,7 +395,6 @@ int32 ServerAgent::Establish(void* arg)
 				sMsgrE->SendMessage(&setIP);
 			} else {
 				BMessage setIP(M_SET_IP);
-				ip = inet_ntoa(sockin.sin_addr);
 				if (vision_app->GetBool("dccPrivateCheck")) {
 					setIP.AddBool("private", PrivateIPCheck(ip.String()));
 				} else {
