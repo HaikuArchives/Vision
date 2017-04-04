@@ -211,6 +211,7 @@ const uint32 M_PREFS_CLOSE = 0x2232;
 const uint32 M_CONNECT_NETWORK = 0x2233;
 const uint32 M_SERVER_USEPASS = 0x2234;
 const uint32 M_NETPREFS_TEXT_INVOKE = 0x2235;
+const uint32 M_SERVER_SECUREPORT = 0x2236;
 
 // general prefs
 

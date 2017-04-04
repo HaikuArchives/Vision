@@ -36,7 +36,7 @@
 
 NetworkWindow::NetworkWindow(void)
 	: BWindow(BRect(50, 50, 550, 430), B_TRANSLATE("Network setup"), B_TITLED_WINDOW,
-			  B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE | B_NOT_ZOOMABLE*/)
+		B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE | B_NOT_ZOOMABLE*/)
 {
 	NetworkPrefsView* netView = new NetworkPrefsView(Bounds(), "network");
 	ResizeTo(netView->Bounds().Width(), netView->Bounds().Height());
@@ -67,10 +67,11 @@ bool NetworkWindow::QuitRequested(void)
 
 
 NetPrefServerWindow::NetPrefServerWindow(BHandler* target)
-	: BWindow(BRect(50, 50, 350, 250), B_TRANSLATE("Servers"), B_TITLED_WINDOW,
+	: BWindow(BRect(50, 50, 400, 250), B_TRANSLATE("Servers"), B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
-	serverView = new NetPrefsServerView(Bounds(), "server settings", BMessenger(target));
+	serverView = new NetPrefsServerView(Bounds(), "server settings",
+		BMessenger(target));
 	ResizeTo(serverView->Bounds().Width(), serverView->Bounds().Height());
 	AddChild(serverView);
 }

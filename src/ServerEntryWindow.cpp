@@ -39,8 +39,8 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ServerEntryWindow"
 
-ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked, const ServerData* data,
-	int32 size)
+ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
+	const ServerData* data, int32 size)
 	: BWindow(BRect(50, 50, 350, 250), B_TRANSLATE("Add server"),
 		B_TITLED_WINDOW, B_AUTO_UPDATE_SIZE_LIMITS |
 		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS),
@@ -86,6 +86,8 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked, const
 
 	usePassword = new BCheckBox("usePass", B_TRANSLATE("Use password: "),
 		new BMessage(M_SERVER_USEPASS), B_WILL_DRAW | B_NAVIGABLE);
+	securePort = new BCheckBox("securePort", B_TRANSLATE("Secure port: "),
+		new BMessage(M_SERVER_SECUREPORT), B_WILL_DRAW | B_NAVIGABLE);
 
 	passwordField = new BTextControl("password", NULL, password.String(), NULL,
 		B_WILL_DRAW | B_NAVIGABLE);
@@ -97,6 +99,10 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked, const
 		.AddGroup(B_HORIZONTAL)
 			.Add(usePassword)
 			.Add(passwordField)
+		.End()
+		.AddGroup(B_HORIZONTAL)
+			.Add(securePort)
+			.AddGlue()
 		.End()
 		.Add(statusField)
 		.AddGroup(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
@@ -120,6 +126,9 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked, const
 	usePassword->SetValue((strlen(currentServer.password) > 0) ? B_CONTROL_ON : B_CONTROL_OFF);
 	passwordField->SetEnabled(usePassword->Value() == B_CONTROL_ON);
 	passwordField->TextView()->HideTyping(true);
+
+	securePort->SetTarget(this);
+	securePort->SetValue(data->secure ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	cancelButton->SetTarget(this);
 	okButton->SetTarget(this);
@@ -182,6 +191,7 @@ void ServerEntryWindow::MessageReceived(BMessage* msg)
 		strcpy(data.serverName, serverName->Text());
 		data.port = atoi(port->Text());
 		data.state = menu->IndexOf(menu->FindMarked());
+		data.secure = securePort->Value() == B_CONTROL_ON;
 		if (usePassword->Value() == B_CONTROL_ON)
 			strcpy(data.password, passwordField->TextView()->Text());
 		BMessenger msgr(target);

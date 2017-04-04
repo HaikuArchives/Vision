@@ -186,6 +186,7 @@ struct ServerData {
 	uint32 port;
 	uint32 state;
 	char password[255];
+	bool secure;
 };
 
 #endif

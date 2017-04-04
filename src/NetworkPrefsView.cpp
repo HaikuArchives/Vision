@@ -334,9 +334,14 @@ void NetworkPrefsView::UpdateNetworkData(BMessage& msg)
 	uint32 altCount(0);
 	ssize_t size;
 	const ServerData* data(NULL);
-	for (int32 i = 0; msg.FindData("server", B_ANY_TYPE, i, reinterpret_cast<const void**>(&data),
-								   &size) == B_OK;
+	for (int32 i = 0; msg.FindData("server", B_ANY_TYPE, i,
+		reinterpret_cast<const void**>(&data), &size) == B_OK;
 		 i++) {
+		if (size < sizeof(ServerData)) {
+			printf("WARNING! Old ServerData format loaded.\n");
+			// FIXME: We really need to get rid of ServerData
+			const_cast<ServerData*>(data)->secure = false;
+		}
 		if (data->state == 0)
 			SetConnectServer(data->serverName);
 		else if (data->state == 1)

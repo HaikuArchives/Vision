@@ -732,10 +732,11 @@ bool VisionApp::CheckNetworkValid(const char* name)
 		const ServerData* data(NULL);
 		ssize_t size;
 		for (int32 i = 0; netData.FindData("server", B_RAW_TYPE, i,
-										   reinterpret_cast<const void**>(&data), &size) == B_OK;
+			reinterpret_cast<const void**>(&data), &size) == B_OK;
 			 i++) {
 			// look for a primary server
-			if (data->state == SERVER_PRIMARY) return true;
+			if (data->state == SERVER_PRIMARY)
+				return true;
 		}
 	}
 	return false;

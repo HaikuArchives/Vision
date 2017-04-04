@@ -123,40 +123,44 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 	fSelectTitleString->ResizeToPreferred();
 	mainBox->AddChild(fSelectTitleString);
 	fSelectTitleString->MoveTo(11, 11);
-	fServerList = new BColumnListView(BRect(0, 0, boundsRect.Width() - 10, boundsRect.Height() / 2),
-									  "fServerList", B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW,
-									  B_PLAIN_BORDER);
+	fServerList = new BColumnListView(BRect(0, 0, boundsRect.Width() - 10,
+		boundsRect.Height() / 2), "fServerList",
+		B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW, B_PLAIN_BORDER);
 	fServerList->SetSelectionMessage(new BMessage(M_SERVER_ITEM_SELECTED));
 	mainBox->AddChild(fServerList);
 	fServerList->MoveTo(5, fSelectTitleString->Frame().bottom + 3);
+
 	BStringColumn* status(new BStringColumn(B_TRANSLATE("Status"),
-											be_plain_font->StringWidth("Status") * 2, 0,
-											bounds.Width(), 0, B_ALIGN_CENTER));
+		be_plain_font->StringWidth("Status") * 2, 0,
+		bounds.Width(), 0, B_ALIGN_CENTER));
 	fServerList->AddColumn(status, 0);
 	BStringColumn* data(new BStringColumn(B_TRANSLATE("Server"),
-										  be_plain_font->StringWidth("Server") * 2, 0,
-										  bounds.Width(), 0));
+		be_plain_font->StringWidth("Server") * 2, 0, bounds.Width(), 0));
 	fServerList->AddColumn(data, 1);
 	BStringColumn* port(new BStringColumn(
 		B_TRANSLATE("Port"), be_plain_font->StringWidth("Port") * 2, 0, bounds.Width(), 0));
 	fServerList->AddColumn(port, 2);
+	BStringColumn* secure(new BStringColumn(
+		B_TRANSLATE("Secure?"), be_plain_font->StringWidth("Secure") * 2, 0, bounds.Width(), 0));
+	fServerList->AddColumn(secure, 3);
+
 	fAddButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
-							 new BMessage(M_SERVER_ADD_ITEM));
+		new BMessage(M_SERVER_ADD_ITEM));
 	fRemoveButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Remove"),
-								new BMessage(M_SERVER_REMOVE_ITEM));
+		new BMessage(M_SERVER_REMOVE_ITEM));
 	fEditButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Edit" B_UTF8_ELLIPSIS),
-							  new BMessage(M_SERVER_EDIT_ITEM));
+		 new BMessage(M_SERVER_EDIT_ITEM));
 	fAddButton->ResizeToPreferred();
 	fRemoveButton->ResizeToPreferred();
 	fEditButton->ResizeToPreferred();
 	fRemoveButton->MoveTo(fServerList->Frame().right - fRemoveButton->Frame().Width(),
-						  fServerList->Frame().bottom + 5);
+		fServerList->Frame().bottom + 5);
 	mainBox->AddChild(fRemoveButton);
 	fAddButton->MoveTo(fRemoveButton->Frame().left - (fAddButton->Frame().Width() + 5),
-					   fRemoveButton->Frame().top);
+		fRemoveButton->Frame().top);
 	mainBox->AddChild(fAddButton);
 	fEditButton->MoveTo(fAddButton->Frame().left - (fEditButton->Frame().Width() + 15),
-						fAddButton->Frame().top);
+		fAddButton->Frame().top);
 	mainBox->AddChild(fEditButton);
 	BStringView* legend1 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("Key: "));
 	legend1->ResizeToPreferred();
@@ -175,11 +179,11 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 	mainBox->AddChild(fLegend4);
 	fLegend4->MoveTo(legend3->Frame().left, legend3->Frame().bottom);
 	fOkButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("OK"),
-							new BMessage(B_QUIT_REQUESTED));
+		new BMessage(B_QUIT_REQUESTED));
 	fOkButton->ResizeToPreferred();
 	mainBox->AddChild(fOkButton);
 	fOkButton->MoveTo(fServerList->Frame().right - fOkButton->Frame().Width(),
-					  fLegend4->Frame().bottom + 5);
+		fLegend4->Frame().bottom + 5);
 }
 
 NetPrefsServerView::~NetPrefsServerView(void)
@@ -230,6 +234,9 @@ void NetPrefsServerView::AddServer(const ServerData* data)
 	server << data->port;
 	BStringField* portField(new BStringField(server.String()));
 	row->SetField(portField, 2);
+	BStringField* secureField(new BStringField(data->secure ?
+		B_TRANSLATE("Yes") : ""));
+	row->SetField(secureField, 3);
 	fServerList->AddRow(row);
 }
 

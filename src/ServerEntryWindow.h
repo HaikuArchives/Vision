@@ -50,7 +50,7 @@ private:
 	BTextControl* serverName, *port, *passwordField;
 	BMenuField* statusField;
 	BButton* okButton, *cancelButton;
-	BCheckBox* usePassword;
+	BCheckBox* usePassword, *securePort;
 	ServerData currentServer;
 };
 

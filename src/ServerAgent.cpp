@@ -35,6 +35,7 @@
 #include <Path.h>
 #include <String.h>
 #include <Socket.h>
+#include <SecureSocket.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -368,7 +369,8 @@ int32 ServerAgent::Establish(void* arg)
 		remoteIP = remoteAddr.ToString(false);
 		vision_app->AddIdent(remoteIP.String(), ident.String());
 
-		if ((serverSock = new BSocket) == NULL) {
+		serverSock = serverData->secure ? new BSecureSocket : new BSocket;
+		if (serverSock == NULL) {
 			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not create connection to address and port. Make sure your internet connection is operational.\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 			sMsgrE->SendMessage(M_NOT_CONNECTING);
