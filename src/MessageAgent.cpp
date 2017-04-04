@@ -49,12 +49,11 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "MessageAgent"
 
-MessageAgent::MessageAgent(BRect& frame_, const char* id_, const char* fServerName_,
-						   const BMessenger& fSMsgr_, const char* nick, const char* addyString,
-						   bool chat, bool initiate, const char* IP, const char* port)
-
+MessageAgent::MessageAgent(BRect& frame_, const char* id_,
+	const char* fServerName_, const BMessenger& fSMsgr_, const char* nick,
+	const char* addyString, bool chat, bool initiate, const char* IP,
+	const char* port)
 	: ClientAgent(id_, fServerName_, nick, fSMsgr_, frame_),
-
 	  fChatAddy(addyString ? addyString : ""),
 	  fChatee(id_),
 	  fDIP(IP),
@@ -72,8 +71,10 @@ MessageAgent::~MessageAgent(void)
 {
 	fDConnected = false;
 	if (fDChat) {
-		if (fMySocket) close(fMySocket);
-		if (fAcceptSocket) close(fAcceptSocket);
+		if (fMySocket)
+			close(fMySocket);
+		if (fAcceptSocket)
+			close(fAcceptSocket);
 	}
 }
 
@@ -81,10 +82,13 @@ void MessageAgent::AllAttached(void)
 {
 	// initialize threads here since messenger will otherwise not be valid
 	if (fDChat) {
-		if (fDInitiate)
-			fDataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY, this);
-		else
-			fDataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY, this);
+		if (fDInitiate) {
+			fDataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY,
+				this);
+		} else {
+			fDataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY,
+				this);
+		}
 
 		resume_thread(fDataThread);
 	}
@@ -139,8 +143,7 @@ void MessageAgent::DCCServerSetup(void)
 	BMessage statMsg(M_DISPLAY);
 
 	if (fMySocket < 0) {
-		ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("Error creating socket.
-"), C_ERROR);
+		ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("Error creating socket.\n"), C_ERROR);
 		fMsgr.SendMessage(&statMsg);
 		return;
 	}
@@ -152,8 +155,7 @@ void MessageAgent::DCCServerSetup(void)
 	sa.sin_port = htons(myPort);
 
 	if (bind(fMySocket, (struct sockaddr*)&sa, sizeof(sa)) == -1) {
-		ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("Error binding socket.
-"), C_ERROR);
+		ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("Error binding socket.\n"), C_ERROR);
 		fMsgr.SendMessage(&statMsg);
 		return;
 	}
@@ -206,8 +208,7 @@ status_t MessageAgent::DCCIn(void* arg)
 
 	BMessage msg(M_DISPLAY);
 
-	ClientAgent::PackDisplay(&msg, B_TRANSLATE("Connected!
-"));
+	ClientAgent::PackDisplay(&msg, B_TRANSLATE("Connected!\n"));
 	mMsgr.SendMessage(&msg);
 
 	char tempBuffer[2];
@@ -226,8 +227,7 @@ status_t MessageAgent::DCCIn(void* arg)
 				BMessage termMsg(M_DISPLAY);
 
 				agent->fDConnected = false;
-				ClientAgent::PackDisplay(&termMsg, B_TRANSLATE("DCC chat terminated.
-"));
+				ClientAgent::PackDisplay(&termMsg, B_TRANSLATE("DCC chat terminated.\n"));
 				mMsgr.SendMessage(&termMsg);
 				break;
 			}
@@ -264,8 +264,7 @@ status_t MessageAgent::DCCIn(void* arg)
 		} else if (FD_ISSET(dccAcceptSocket, &eset)) {
 			BMessage termMsg(M_DISPLAY);
 			agent->fDConnected = false;
-			ClientAgent::PackDisplay(&termMsg, B_TRANSLATE("DCC chat terminated.
-"));
+			ClientAgent::PackDisplay(&termMsg, B_TRANSLATE("DCC chat terminated.\n"));
 			mMsgr.SendMessage(&termMsg);
 			break;
 		}
@@ -291,8 +290,7 @@ status_t MessageAgent::DCCOut(void* arg)
 	if ((dccAcceptSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		BMessage msg(M_DISPLAY);
 
-		ClientAgent::PackDisplay(&msg, B_TRANSLATE("Error creating socket.
-"));
+		ClientAgent::PackDisplay(&msg, B_TRANSLATE("Error creating socket.\n"));
 		mMsgr.SendMessage(&msg);
 		return false;
 	}
@@ -321,8 +319,7 @@ status_t MessageAgent::DCCOut(void* arg)
 	if (status < 0) {
 		BMessage msg(M_DISPLAY);
 
-		ClientAgent::PackDisplay(&msg, B_TRANSLATE("Error connecting socket.
-"));
+		ClientAgent::PackDisplay(&msg, B_TRANSLATE("Error connecting socket.\n"));
 		mMsgr.SendMessage(&msg);
 		close(agent->fMySocket);
 		return false;
@@ -331,8 +328,7 @@ status_t MessageAgent::DCCOut(void* arg)
 	agent->fDConnected = true;
 
 	BMessage msg(M_DISPLAY);
-	ClientAgent::PackDisplay(&msg, B_TRANSLATE("Connected!
-"));
+	ClientAgent::PackDisplay(&msg, B_TRANSLATE("Connected!\n"));
 	mMsgr.SendMessage(&msg);
 
 	char tempBuffer[2];
@@ -353,8 +349,7 @@ status_t MessageAgent::DCCOut(void* arg)
 				BMessage termMsg(M_DISPLAY);
 
 				agent->fDConnected = false;
-				ClientAgent::PackDisplay(&termMsg, B_TRANSLATE("DCC chat terminated.
-"));
+				ClientAgent::PackDisplay(&termMsg, B_TRANSLATE("DCC chat terminated.\n"));
 				mMsgr.SendMessage(&termMsg);
 				break;
 			}
@@ -380,8 +375,7 @@ status_t MessageAgent::DCCOut(void* arg)
 		} else if (FD_ISSET(dccAcceptSocket, &eset)) {
 			BMessage termMsg(M_DISPLAY);
 			agent->fDConnected = false;
-			ClientAgent::PackDisplay(&termMsg, B_TRANSLATE("DCC chat terminated.
-"));
+			ClientAgent::PackDisplay(&termMsg, B_TRANSLATE("DCC chat terminated.\n"));
 			mMsgr.SendMessage(&termMsg);
 			break;
 		} else
@@ -554,8 +548,7 @@ void MessageAgent::ActionMessage(const char* msg, const char* nick)
 
 		if (send(fAcceptSocket, convBuffer, destLength, 0) < 0) {
 			fDConnected = false;
-			Display(B_TRANSLATE("DCC chat terminated.
-"));
+			Display(B_TRANSLATE("DCC chat terminated.\n"));
 			return;
 		}
 		outTemp.RemoveLast("\n");
@@ -587,8 +580,7 @@ void MessageAgent::Parser(const char* buffer)
 
 		if (send(fAcceptSocket, convBuffer, destLength, 0) < 0) {
 			fDConnected = false;
-			Display(B_TRANSLATE("DCC chat terminated.
-"));
+			Display(B_TRANSLATE("DCC chat terminated.\n"));
 			return;
 		}
 	} else
