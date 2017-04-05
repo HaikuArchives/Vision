@@ -501,11 +501,8 @@ int32 DCCSend::Transfer(void* arg)
 	if (file.InitCheck() == B_NO_ERROR) {
 		bigtime_t last(system_time()), now;
 		const uint32 DCC_BLOCK_SIZE(atoi(vision_app->GetString("dccBlockSize")));
-#ifdef __INTEL__
 		char buffer[DCC_BLOCK_SIZE];
-#else
-		char* buffer = new char[DCC_BLOCK_SIZE];
-#endif
+
 		int period(0);
 		ssize_t count(0);
 		bigtime_t start = system_time();
@@ -552,9 +549,6 @@ int32 DCCSend::Transfer(void* arg)
 			}
 			UpdateBar(msgr, sent, cps, bytes_sent, hit);
 		}
-#ifndef __INTEL__
-		delete[] buffer;
-#endif
 	}
 	if (msgr.IsValid()) {
 		BMessage msg(M_DCC_STOP_BUTTON);

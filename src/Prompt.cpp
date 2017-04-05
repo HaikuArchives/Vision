@@ -149,21 +149,17 @@ filter_result EscapeFilter::Filter(BMessage* msg, BHandler**)
 
 RegExValidate::RegExValidate(const char* title_) : compiled(false), title(title_)
 {
-#ifdef __INTEL__
 	memset(&re, 0, sizeof(re));
-#endif
 }
 
 RegExValidate::~RegExValidate(void)
 {
-#ifdef __INTEL__
-	if (compiled) regfree(&re);
-#endif
+	if (compiled)
+		regfree(&re);
 }
 
 bool RegExValidate::Validate(const char* text)
 {
-#ifdef __INTEL__
 	if (compiled) {
 		regfree(&re);
 		memset(&re, 0, sizeof(re));
@@ -193,6 +189,5 @@ bool RegExValidate::Validate(const char* text)
 		return false;
 	}
 
-#endif
 	return true;
 }

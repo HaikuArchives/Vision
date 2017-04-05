@@ -1663,11 +1663,7 @@ void Line::FigureEdges(Theme* theme, float width)
 
 		const BFont& f(theme->FontAt(fFcs[cur_font].fIndex));
 
-#ifdef __INTEL__
 		float eshift[ccount];
-#else
-		float* eshift = new float[ccount];
-#endif
 		f.GetEscapements(fText + fFcs[cur_fFcs].fOffset, ccount, eshift);
 
 		// This is not perfect, because we are including the left edge,
@@ -1711,9 +1707,6 @@ void Line::FigureEdges(Theme* theme, float width)
 
 		cur_fFcs = next_fFcs;
 		fEdge_count += ccount;
-#ifndef __INTEL__
-		delete[] eshift;
-#endif
 	}
 
 	SoftBreaks(theme, width);

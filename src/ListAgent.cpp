@@ -117,10 +117,9 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 	listView->SetColor(B_COLOR_SELECTION, activeTheme->ForegroundAt(C_SELECTION));
 	listView->SetFont(B_FONT_ROW, &activeTheme->FontAt(F_LISTAGENT));
 	activeTheme->ReadUnlock();
-#ifdef __INTEL__
+
 	memset(&re, 0, sizeof(re));
 	memset(&fre, 0, sizeof(fre));
-#endif
 }
 
 ListAgent::~ListAgent(void)
@@ -139,10 +138,8 @@ ListAgent::~ListAgent(void)
 	delete fSMsgr;
 	delete fAgentWinItem;
 
-#ifdef __INTEL__
 	regfree(&re);
 	regfree(&fre);
-#endif
 }
 
 void ListAgent::AttachedToWindow(void)
@@ -155,10 +152,10 @@ void ListAgent::Show(void)
 {
 	Window()->PostMessage(M_STATUS_CLEAR);
 	this->fMsgr.SendMessage(M_STATUS_ADDITEMS);
-#ifdef __INTEL__
+
 	vision_app->pClientWin()->AddMenu(listMenu);
 	listMenu->SetTargetForItems(this);
-#endif
+
 	const BRect* agentRect(dynamic_cast<ClientWindow*>(Window())->AgentRect());
 
 	if (*agentRect != Frame()) {
@@ -333,8 +330,6 @@ void ListAgent::MessageReceived(BMessage* msg)
 		if (fBuildList.CountItems() == LIST_BATCH_SIZE) AddBatch();
 	} break;
 
-#ifdef __INTEL__
-
 	case M_LIST_FILTER:
 		if (msg->HasString("text")) {
 			const char* buffer;
@@ -446,7 +441,6 @@ void ListAgent::MessageReceived(BMessage* msg)
 			fMsgr.SendMessage(msg);
 		}
 		break;
-#endif
 
 	case M_LIST_INVOKE: {
 		BMessage msg(M_SUBMIT);

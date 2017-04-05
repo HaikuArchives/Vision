@@ -30,9 +30,8 @@
 #include <String.h>
 #include <Messenger.h>
 #include <MessageRunner.h>
-#ifdef __INTEL__
 #include <regex.h>
-#endif
+
 #include "ObjectList.h"
 
 class BColumnListView;
@@ -70,9 +69,7 @@ private:
 	StatusView* status;
 
 	BString filter, find, statusStr;
-#ifdef __INTEL__
 	regex_t re, fre;
-#endif
 
 	bool processing;
 
