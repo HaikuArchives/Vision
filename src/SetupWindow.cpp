@@ -29,7 +29,6 @@
 #include <Resources.h>
 #include <TranslationUtils.h>
 
-#include "ClickView.h"
 #include "ClientWindow.h"
 #include "LogoView.h"
 #include "SetupWindow.h"

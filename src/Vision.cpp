@@ -32,6 +32,7 @@ class VisionApp* vision_app;
 */
 
 #include <Alert.h>
+#include <AboutWindow.h>
 #include <Resources.h>
 #include <FindDirectory.h>
 #include <Font.h>
@@ -39,6 +40,7 @@ class VisionApp* vision_app;
 #include <Mime.h>
 #include <Autolock.h>
 #include <Roster.h>
+#include <TranslationUtils.h>
 #include <Beep.h>
 #include <UTF8.h>
 
@@ -49,7 +51,6 @@ class VisionApp* vision_app;
 #include <sys/select.h>
 #include <sys/socket.h>
 
-#include "AboutWindow.h"
 #include "Vision.h"
 #include "ClientWindow.h"
 #include "DCCConnect.h"
@@ -62,11 +63,39 @@ class VisionApp* vision_app;
 #include "URLCrunch.h"
 #include "Utilities.h"
 #include "WindowList.h"
+
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "Vision"
+
+// Copyrights
+const char* kAuthors[] = {
+	"Alan Ellis (voidref)",
+	"Rene Gollent (AnEvilYak)",
+	"Todd Lair (tlair)",
+	"Wade Majors (kurros)",
+	"Augustin Cavalier (waddlesplash)",
+	NULL
+};
+const char* kSpecialThanks[] = {
+   "Olathe",
+   "Terminus",
+   "Bob Maple",
+   "Ted Stodgell",
+   "Seth Flaxman",
+   "David Aquilina",
+   "Kurt von Finck",
+   "Kristine Gouveia",
+   "Be, Inc., Menlo Park, CA",
+   "Pizza Hut, Winter Haven, FL (now give me that free pizza Mike)",
+   NULL
+};
+
 // sound event name definitions
 const char* kSoundEventNames[] = {"Vision Nick Notification", 0};
 
 const char* kAliasPathName = "Vision/Aliases";
 const char* kTrackerSig = "application/x-vnd.Be-TRAK";
+const char* kVisionSig = "application/x-vnd.Ink-Vision";
 
 // And so it begins....
 int main(void)
@@ -86,7 +115,7 @@ int main(void)
 //////////////////////////////////////////////////////////////////////////////
 
 VisionApp::VisionApp(void)
-	: BApplication("application/x-vnd.Ink-Vision"),
+	: BApplication(kVisionSig),
 	  fAboutWin(NULL),
 	  fSetupWin(NULL),
 	  fClientWin(NULL),
@@ -614,19 +643,24 @@ bool VisionApp::QuitRequested(void)
 {
 	fShuttingDown = true;
 
-	if (fIdentSocket >= 0) close(fIdentSocket);
+	if (fIdentSocket >= 0)
+		close(fIdentSocket);
 
 	BMessenger msgr(fClientWin);
-	if (msgr.IsValid()) msgr.SendMessage(B_QUIT_REQUESTED);
+	if (msgr.IsValid())
+		msgr.SendMessage(B_QUIT_REQUESTED);
 
 	if (fSetupWin) BMessenger(fSetupWin).SendMessage(B_QUIT_REQUESTED);
 
-	if (fPrefsWin) BMessenger(fPrefsWin).SendMessage(B_QUIT_REQUESTED);
+	if (fPrefsWin)
+		BMessenger(fPrefsWin).SendMessage(B_QUIT_REQUESTED);
 
-	if (fNetWin) BMessenger(fPrefsWin).SendMessage(B_QUIT_REQUESTED);
+	if (fNetWin)
+		BMessenger(fPrefsWin).SendMessage(B_QUIT_REQUESTED);
 
 	// give our child threads a chance to die gracefully
-	while (ThreadStates() > 2) snooze(100000);
+	while (ThreadStates() > 2)
+		snooze(100000);
 
 	if (fSettingsLoaded) {
 		SaveSettings();
@@ -640,10 +674,50 @@ void VisionApp::AboutRequested(void)
 {
 	if (fAboutWin) {
 		fAboutWin->Activate();
-	} else {
-		fAboutWin = new AboutWindow();
-		fAboutWin->Show();
+		return;
 	}
+
+	fAboutWin = new BAboutWindow(B_TRANSLATE_SYSTEM_NAME("Vision"), kVisionSig);
+	fAboutWin->AddDescription(B_TRANSLATE("A native Haiku IRC client that is "
+		"feature filled, fast, lightweight, and stable."));
+	fAboutWin->SetVersion(VERSION_STRING);
+	fAboutWin->AddCopyright(2017, "The Vision Team");
+	fAboutWin->AddAuthors(kAuthors);
+	fAboutWin->SetIcon(BTranslationUtils::GetBitmap('bits', "vision"));
+	fAboutWin->AddText(B_TRANSLATE(
+		"Brought to you in part by contributions from:\n"
+		"Seth Flaxman (Flax)\n"
+		"Joshua Jensen\n"
+		"Gord McLeod (G_McLeod)\n"
+		"John Robinson ([geo])\n"
+		"Bjorn Oksholen (GuinnessM)\n"
+		"Jean-Baptiste M. Quéru (jbq)\n"
+		"Humdinger\n"
+		"looncraz"));
+	fAboutWin->AddSpecialThanks(kSpecialThanks);
+	fAboutWin->AddText(B_TRANSLATE(
+		"Support crew:\n"
+		"Assistant to Wade Majors: Patches\n"
+		"Music Supervisor: Baron Arnold\n"
+		"Assistant to Baron Arnold: Ficus Kirkpatrick\n"
+		"Stunt Coordinator: Gilligan\n"
+		"Counselors: regurg and helix\n\n\n"
+		"No animals were injured during the production of this IRC client.\n"
+		"Soundtrack available on Catastrophe Records."));
+	fAboutWin->AddText(B_TRANSLATE(
+		"\"A human being should be able to change "
+		"a diaper, plan an invasion, butcher a "
+		"hog, conn a ship, design a building, "
+		"write a sonnet, balance accounts, build "
+		"a wall, set a bone, comfort the dying, "
+		"take orders, give orders, cooperate, act "
+		"alone, solve equations, analyze a new "
+		"problem, pitch manure, program a com"
+		"puter, cook a tasty meal, fight effi"
+		"ciently, die gallantly. Specialization "
+		"is for insects.\" -- Robert A. Heinlein"));
+
+	fAboutWin->Show();
 }
 
 void VisionApp::ArgvReceived(int32 ac, char** av)
