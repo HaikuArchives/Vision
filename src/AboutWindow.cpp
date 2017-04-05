@@ -32,10 +32,13 @@
 #include "Vision.h"
 #include "ClickView.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "AboutWindow"
+
 class ClickView;
 
 AboutWindow::AboutWindow(void)
-	: BWindow(BRect(0.0, 0.0, 420.0, 266.0), "About Vision", B_TITLED_WINDOW,
+	: BWindow(BRect(0.0, 0.0, 420.0, 266.0), B_TRANSLATE("About Vision"), B_TITLED_WINDOW,
 			  B_WILL_DRAW | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
 	/*
@@ -71,7 +74,7 @@ AboutWindow::AboutWindow(void)
 	fCredits->SetAlignment(B_ALIGN_CENTER);
 	fBackground->AddChild(fCredits);
 
-	fCreditsText = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+	fCreditsText = B_TRANSLATE("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 				   "Unit A\n[Vision]\n"
 				   "{A-Z}\n"
 				   "Alan Ellis (voidref)\n"
@@ -135,7 +138,7 @@ AboutWindow::AboutWindow(void)
 				   "problem, pitch manure, program a com"
 				   "puter, cook a tasty meal, fight effi"
 				   "ciently, die gallantly. Specialization "
-				   "is for insects.\" -- Robert A. Heinlein";
+				   "is for insects.\" -- Robert A. Heinlein");
 
 	rgb_color myBlack = {0, 0, 0, 255};
 	fTextRun.count = 1;

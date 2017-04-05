@@ -40,6 +40,9 @@
 #include "VisionBase.h"
 #include "WindowList.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ClientAgentInputFilter"
+
 ClientAgentInputFilter::ClientAgentInputFilter(ClientAgent* agent)
 	: BMessageFilter(B_ANY_DELIVERY, B_ANY_SOURCE), fWindow(agent), fHandledDrop(false)
 {
@@ -455,16 +458,14 @@ void ClientAgentInputFilter::HandleDrop(const char* buffer)
 	if (lines > 1) {
 		if (true == vision_app->GetBool("Newbie Spam Mode")) {
 			BString str;
+			str.SetToFormat(B_TRANSLATE("As if there isn't enough, you are "
+				"about to add %" B_PRId32 " more lines of spam to the "
+				"internet.  How would you like to go about this?"), lines);
 
-			str += "As if there isn't enough, you ";
-			str += "are about to add ";
-			str << lines;
-			str += " more lines of spam to ";
-			str += "the internet.  How ";
-			str += "would you like to go about this?";
-
-			BAlert* alert(new BAlert("Spam", str.String(), "Cancel", "Spam!", "Single line",
-									 B_WIDTH_FROM_WIDEST, B_OFFSET_SPACING, B_WARNING_ALERT));
+			BAlert* alert(new BAlert(B_TRANSLATE("Spam"), str.String(),
+				B_TRANSLATE("Cancel"), B_TRANSLATE("Spam!"),
+				B_TRANSLATE("Single line"),
+				B_WIDTH_FROM_WIDEST, B_OFFSET_SPACING, B_WARNING_ALERT));
 
 			BMessage* invokeMsg(new BMessage(msg));
 			BInvoker* invoker(new BInvoker(invokeMsg, msgr));

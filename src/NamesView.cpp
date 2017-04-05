@@ -36,6 +36,9 @@
 #include "Names.h"
 #include "Theme.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "NamesView"
+
 NamesView::NamesView(BRect frame)
 	: BListView(frame, "namesList", B_MULTIPLE_SELECTION_LIST, B_FOLLOW_ALL),
 	  fActiveTheme(vision_app->ActiveTheme())
@@ -67,26 +70,26 @@ void NamesView::KeyDown(const char* bytes, int32 numBytes)
 
 void NamesView::AttachedToWindow(void)
 {
-	fMyPopUp = new BPopUpMenu("User selection", false, false);
+	fMyPopUp = new BPopUpMenu(B_TRANSLATE("User selection"), false, false);
 
 	BMessage* myMessage = new BMessage(M_NAMES_POPUP_WHOIS);
-	fMyPopUp->AddItem(new BMenuItem("Whois", myMessage));
+	fMyPopUp->AddItem(new BMenuItem(B_TRANSLATE("Whois"), myMessage));
 
 	myMessage = new BMessage(M_OPEN_MSGAGENT);
-	fMyPopUp->AddItem(new BMenuItem("Query", myMessage));
+	fMyPopUp->AddItem(new BMenuItem(B_TRANSLATE("Query"), myMessage));
 
 	myMessage = new BMessage(M_NAMES_POPUP_NOTIFY);
-	fMyPopUp->AddItem(new BMenuItem("Add to notify", myMessage));
+	fMyPopUp->AddItem(new BMenuItem(B_TRANSLATE("Add to notify"), myMessage));
 
 	fMyPopUp->AddSeparatorItem();
 
 	myMessage = new BMessage(M_NAMES_POPUP_DCCSEND);
-	fMyPopUp->AddItem(new BMenuItem("DCC send", myMessage));
+	fMyPopUp->AddItem(new BMenuItem(B_TRANSLATE("DCC send"), myMessage));
 
 	myMessage = new BMessage(M_NAMES_POPUP_DCCCHAT);
-	fMyPopUp->AddItem(new BMenuItem("DCC chat", myMessage));
+	fMyPopUp->AddItem(new BMenuItem(B_TRANSLATE("DCC chat"), myMessage));
 
-	fCTCPPopUp = new BMenu("CTCP");
+	fCTCPPopUp = new BMenu(B_TRANSLATE("CTCP"));
 	fMyPopUp->AddItem(fCTCPPopUp);
 
 	myMessage = new BMessage(M_NAMES_POPUP_CTCP);

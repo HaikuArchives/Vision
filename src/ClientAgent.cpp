@@ -772,7 +772,7 @@ void ClientAgent::MessageReceived(BMessage* msg)
 		BString lookup;
 		msg->FindString("string", &lookup);
 		lookup = StringToURI(lookup.String());
-		lookup.Prepend("http://www.m-w.com/cgi-bin/dictionary?va=");
+		lookup.Prepend("https://www.merriam-webster.com/dictionary/");
 		vision_app->LoadURL(lookup.String());
 	} break;
 
@@ -780,7 +780,7 @@ void ClientAgent::MessageReceived(BMessage* msg)
 		BString lookup;
 		msg->FindString("string", &lookup);
 		lookup = StringToURI(lookup.String());
-		lookup.Prepend("http://www.google.com/search?q=");
+		lookup.Prepend("https://www.google.com/search?q=");
 		vision_app->LoadURL(lookup.String());
 	} break;
 
@@ -788,7 +788,7 @@ void ClientAgent::MessageReceived(BMessage* msg)
 		BString lookup;
 		msg->FindString("string", &lookup);
 		lookup = StringToURI(lookup.String());
-		lookup.Prepend("http://www.acronymfinder.com/af-query.asp?String=exact&Acronym=");
+		lookup.Prepend("https://www.acronymfinder.com/af-query.asp?String=exact&Acronym=");
 		lookup.Append("&Find=Find");
 		vision_app->LoadURL(lookup.String());
 	} break;
@@ -814,27 +814,30 @@ void ClientAgent::MessageReceived(BMessage* msg)
 
 		fAck << xfersize;
 
-		if (size.ICompare(fAck)) completed = false;
+		if (size.ICompare(fAck))
+			completed = false;
 
 		/// send mesage ///
-		if (completed)
-			completionMsg << B_TRANSLATE("Completed ");
-		else
-			completionMsg << B_TRANSLATE("Terminated ");
+		if (completed && (type == "SEND"))
+			completionMsg =+ B_TRANSLATE("Completed send of %file% to %nick% (%ack% %size% bytes), %" B_PRId32 "cps\n\n");
+		if (!completed && (type == "SEND"))
+			completionMsg =+ B_TRANSLATE("Terminated send of %file% to %nick% (%ack% %size% bytes), %" B_PRId32 "cps\n\n");
+		if (completed && (type != "SEND"))
+			completionMsg =+ B_TRANSLATE("Completed receive of %file% from %nick% (%ack% %size% bytes), %" B_PRId32 "cps\n\n");
+		if (!completed && (type != "SEND"))
+			completionMsg =+ B_TRANSLATE("Terminated receive of %file% from %nick% (%ack% %size% bytes), %" B_PRId32 "cps\n\n");
 
-		if (type == "SEND")
-			completionMsg << B_TRANSLATE("send of ") << pFile.Leaf() << B_TRANSLATE(" to ");
-		else
-			completionMsg << B_TRANSLATE("receive of ") << pFile.Leaf() << B_TRANSLATE(" from ");
+		completionMsg.ReplaceFirst("%file%", pFile.Leaf());
+		completionMsg.ReplaceFirst("%nick%", nick);
 
-		completionMsg << nick << " (";
+		if (!completed)
+			completionMsg.ReplaceFirst("%ack%", fAck << "/");
 
-		if (!completed) completionMsg << fAck << "/";
+		completionMsg.ReplaceFirst("%size%", size);
+		BString compMsg;
+		compMsg.SetToFormat(completionMsg, rate);
 
-		completionMsg << size << B_TRANSLATE(" bytes") << "), ";
-		completionMsg << rate << B_TRANSLATE(" cps\n") << "\n";
-
-		Display(completionMsg.String(), C_CTCP_RPY);
+		Display(compMsg.String(), C_CTCP_RPY);
 	} break;
 
 	default:

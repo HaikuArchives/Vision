@@ -282,9 +282,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case RPL_UMODEIS: // 221
 	{
-		BString theMode(GetWord(data, 4)), tempString(B_TRANSLATE("[x] your current mode is: "));
-		tempString += theMode;
-		tempString += '\n';
+		BString theMode(GetWord(data, 4));
+		BString tempString(B_TRANSLATE("[x] your current mode is: %mode%\n"));
+		tempString.ReplaceFirst("%mode%", theMode.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_WHOIS);
@@ -435,17 +435,18 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 		if (offlined.Length()) {
 			BNotification notification(B_INFORMATION_NOTIFICATION);
-			notification.SetGroup(BString("Vision"));
+			notification.SetGroup(BString(B_TRANSLATE_SYSTEM_NAME("Vision")));
 			entry_ref ref = vision_app->AppRef();
 			notification.SetOnClickFile(&ref);
 			notification.SetTitle(fServerName.String());
 			BString content;
-			content << offlined;
-			if (offlined.FindFirst(' ') > -1)
-				content << " are offline";
-			else
-				content << " is offline";
 
+			if (offlined.FindFirst(' ') > -1)
+				content = B_TRANSLATE("%people% are offline");
+			else
+				content = B_TRANSLATE("%people% is offline");
+
+			content.ReplaceFirst("%people%", offlined.String());
 			notification.SetContent(content);
 			notification.Send();
 		}
@@ -457,12 +458,13 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 			notification.SetOnClickFile(&ref);
 			notification.SetTitle(fServerName.String());
 			BString content;
-			content << onlined;
-			if (onlined.FindFirst(' ') > -1)
-				content << " are online";
-			else
-				content << " is online";
 
+			if (onlined.FindFirst(' ') > -1)
+				content = B_TRANSLATE("%people% are online");
+			else
+				content = B_TRANSLATE("%people% is online");
+
+			content.ReplaceFirst("%people%", onlined.String());
 			notification.SetContent(content);
 			notification.Send();
 		}
@@ -558,13 +560,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		theInfo.RemoveFirst(":");
 
 		BMessage display(M_DISPLAY);
-		BString buffer;
-
-		buffer += "[x] Server: ";
-		buffer += theServer;
-		buffer += " (";
-		buffer += theInfo;
-		buffer += ")\n";
+		BString buffer(B_TRANSLATE("[x] Server: %server% (%info%)\n"));
+		buffer.ReplaceFirst("%server%", theServer.String());
+		buffer.ReplaceFirst("%info%", theInfo.String());
 		PackDisplay(&display, buffer.String(), C_WHOIS, C_BACKGROUND, F_SERVER);
 		PostActive(&display);
 	}
@@ -575,14 +573,10 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BString theNick(GetWord(data, 4)), theIdent(GetWord(data, 5)), theAddress(GetWord(data, 6)),
 			theName(RestOfString(data, 8)), tempString("[x] ");
 		theName.RemoveFirst(":");
-		tempString += theNick;
-		tempString += " ";
-		tempString += B_TRANSLATE("[was]");
-		tempString += " (";
-		tempString += theIdent;
-		tempString += "@";
-		tempString += theAddress;
-		tempString += ")\n";
+		tempString = B_TRANSLATE("[x] %nick% [was] (%ident%@%address%)/n");
+		tempString.ReplaceFirst("%nick%", theNick.String());
+		tempString.ReplaceFirst("%ident%", theIdent.String());
+		tempString.ReplaceFirst("%address%", theAddress.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_WHOIS, C_BACKGROUND, F_SERVER);
@@ -596,7 +590,8 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 			theTime(GetWord(data, 5)), signOnTime(GetWord(data, 6));
 
 		int64 idleTime(strtoul(theTime.String(), NULL, 0));
-		tempString += B_TRANSLATE("Idle: ");
+		tempString += B_TRANSLATE("Idle:");
+		tempString += " ";
 		tempString += DurationString(idleTime * 1000 * 1000);
 		tempString += "\n";
 
@@ -610,7 +605,8 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BString signOnTimeParsed(str);
 		signOnTimeParsed.RemoveAll("\n");
 
-		tempString2 += B_TRANSLATE("Signon: ");
+		tempString2 += B_TRANSLATE("Sign-on:");
+		tempString2 += " ";
 		tempString2 += signOnTimeParsed;
 		tempString2 += "\n";
 
@@ -638,7 +634,8 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BMessage display(M_DISPLAY);
 		BString buffer;
 
-		buffer += B_TRANSLATE("[x] Channels: ");
+		buffer += B_TRANSLATE("[x] Channels:");
+		buffer += " ";
 		buffer += theChannels;
 		buffer += "\n";
 		PackDisplay(&display, buffer.String(), C_WHOIS, C_BACKGROUND, F_SERVER);
@@ -687,11 +684,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 		ClientAgent* aClient(ActiveClient()), *theClient(Client(theChan.String()));
 
-		BString tempString(B_TRANSLATE("*** Channel mode for "));
-		tempString += theChan;
-		tempString += ": ";
-		tempString += theMode;
-		tempString += '\n';
+		BString tempString(B_TRANSLATE("*** Channel mode for %channel%: %mode%\n"));
+		tempString.ReplaceFirst("%channel%", theChan.String());
+		tempString.ReplaceFirst("%mode%", theMode.String());
 
 		BMessage msg(M_CHANNEL_MODES);
 
@@ -710,11 +705,10 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case RPL_CHANNELMLOCK: // 325
 	{
-		BString theChan(GetWord(data, 4)), mLock(GetWord(data, 8)), lockMessage(B_TRANSLATE("*** Channel lock for "));
-		lockMessage += theChan;
-		lockMessage += ": ";
-		lockMessage += mLock;
-		lockMessage += "\n";
+		BString theChan(GetWord(data, 4)), mLock(GetWord(data, 8));
+		BString lockMessage(B_TRANSLATE("*** Channel lock for %channel%: %lock%\n"));
+		lockMessage.ReplaceFirst("%channel%", theChan.String());
+		lockMessage.ReplaceFirst("%lock%", mLock.String());
 
 		BMessage display(M_DISPLAY);
 
@@ -741,21 +735,19 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BString theTimeParsed(str);
 		theTimeParsed.RemoveAll("\n");
 
-		tempString += theChan;
-		tempString += " ";
-		tempString += B_TRANSLATE("created");
-		tempString += " ";
-		tempString += theTimeParsed;
-		tempString += '\n';
+		tempString = B_TRANSLATE("%channel% created on %time%\n");
+		tempString.ReplaceFirst("%channel%", theChan.String());
+		tempString.ReplaceFirst("%time%", theTimeParsed.String());
+
 		Display(tempString.String());
 	}
 		return true;
 
 	case RPL_NOTOPIC: // 331
 	{
-		BString theChan(GetWord(data, 4)), tempString(B_TRANSLATE("[x] No topic set in "));
-		tempString += theChan;
-		tempString += '\n';
+		BString theChan(GetWord(data, 4));
+		BString tempString(B_TRANSLATE("[x] No topic set in %channel%\n"));
+		tempString.ReplaceFirst("%channel%", theChan.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_ERROR);
@@ -772,11 +764,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 		if (client) {
 			BMessage display(M_DISPLAY);
-			BString buffer;
 
-			buffer += B_TRANSLATE("*** Topic: ");
-			buffer += theTopic;
-			buffer += '\n';
+			BString buffer(B_TRANSLATE("*** Topic: %topic%\n"));
+			buffer.ReplaceFirst("%topic%", theTopic.String());
 			PackDisplay(&display, buffer.String(), C_WHOIS);
 
 			BMessage msg(M_CHANNEL_TOPIC);
@@ -806,13 +796,10 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 		if (client) {
 			BMessage display(M_DISPLAY);
-			BString buffer;
+			BString buffer(B_TRANSLATE("*** Topic set by %user% @ %time%\n"));
+			buffer.ReplaceFirst("%user%", user.String());
+			buffer.ReplaceFirst("%time%", theTimeParsed.String());
 
-			buffer += B_TRANSLATE("*** Topic set by ");
-			buffer += user;
-			buffer += " @ ";
-			buffer += theTimeParsed;
-			buffer += '\n';
 			PackDisplay(&display, buffer.String(), C_WHOIS);
 			if (client->fMsgr.IsValid()) client->fMsgr.SendMessage(&display);
 		}
@@ -821,13 +808,11 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case RPL_INVITING: // 341
 	{
-		BString channel(GetWord(data, 5)), theNick(GetWord(data, 4)), tempString;
+		BString channel(GetWord(data, 5)), theNick(GetWord(data, 4));
 
-		tempString += "*** ";
-		tempString += theNick;
-		tempString += B_TRANSLATE(" has been invited to ");
-		tempString += channel;
-		tempString += ".\n";
+		BString tempString(B_TRANSLATE("*** %nick% has been invited to %channel%.\n"));
+		tempString.ReplaceFirst("%nick%", theNick.String());
+		tempString.ReplaceFirst("%channel%", channel.String());
 
 		BMessage display(M_DISPLAY);
 
@@ -842,11 +827,10 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		ClientAgent* client(Client(channel.String()));
 		names.RemoveFirst(":");
 
-		BString tempString(B_TRANSLATE("*** Users in "));
-		tempString += channel;
-		tempString += ": ";
-		tempString += names;
-		tempString += '\n';
+		BString tempString(B_TRANSLATE("*** Users in %channel%: %names%\n"));
+		tempString.ReplaceFirst("%channel%", channel.String());
+		tempString.ReplaceFirst("%names%", names.String());
+
 		Display(tempString.String(), C_TEXT);
 
 		if (client) // in the channel
@@ -995,11 +979,11 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		if (fIsConnecting) {
 			BString nextNick(GetNextNick());
 			if (nextNick != "") {
-				Display(B_TRANSLATE("* Nickname \""));
-				Display(theNick.String());
-				Display(B_TRANSLATE("\" in use or unavailable.. trying \""));
-				Display(nextNick.String());
-				Display("\"\n");
+				BString text(B_TRANSLATE("* Nickname \"%nick%\" in use or unavailable... "
+					"trying \"%nextnick%\"\n\n"));
+				text.ReplaceFirst("%nick%", theNick.String());
+				text.ReplaceFirst("%nextnick%", nextNick.String());
+				Display(text.String());
 
 				BString tempString("NICK ");
 				tempString += nextNick;
@@ -1012,9 +996,8 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 			}
 		}
 		BString tempString;
-		tempString += B_TRANSLATE("[x] Nickname/Channel ");
-		tempString += theNick;
-		tempString += B_TRANSLATE(" is already in use or unavailable.\n");
+		tempString += B_TRANSLATE("[x] Nickname/Channel %nick% is already in use or unavailable.\n");
+		tempString.ReplaceFirst("%nick%", theNick.String());
 
 		BMessage display(M_DISPLAY);
 		PackDisplay(&display, tempString.String(), C_NICK);
@@ -1024,11 +1007,10 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case ERR_USERNOTINCHANNEL: // 441
 	{
-		BString theChannel(GetWord(data, 5)), theNick(GetWord(data, 4)), tempString("[x] ");
-		tempString += theNick;
-		tempString += B_TRANSLATE(" is not in ");
-		tempString += theChannel;
-		tempString += ".\n";
+		BString theChannel(GetWord(data, 5)), theNick(GetWord(data, 4));
+		BString tempString(B_TRANSLATE("[x] %nick% is not in %channel%.\n"));
+		tempString.ReplaceFirst("%nick%", theNick.String());
+		tempString.ReplaceFirst("%channel%", theChannel.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_ERROR);
@@ -1038,9 +1020,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case ERR_NOTONCHANNEL: // 442
 	{
-		BString theChannel(GetWord(data, 4)), tempString(B_TRANSLATE("[x] You're not in "));
-		tempString += theChannel;
-		tempString += ".\n";
+		BString theChannel(GetWord(data, 4));
+		BString tempString(B_TRANSLATE("[x] You're not in %channel%.\n"));
+		tempString.ReplaceFirst("%channel%", theChannel.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_ERROR);
@@ -1050,11 +1032,10 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case ERR_USERONCHANNEL: // 443
 	{
-		BString theChannel(GetWord(data, 5)), theNick(GetWord(data, 4)), tempString("[x] ");
-		tempString += theNick;
-		tempString += B_TRANSLATE(" is already in ");
-		tempString += theChannel;
-		tempString += ".\n";
+		BString theChannel(GetWord(data, 5)), theNick(GetWord(data, 4));
+		BString tempString(B_TRANSLATE("[x] %nick% is already in %channel%.\n"));
+		tempString.ReplaceFirst("%nick%", theNick.String());
+		tempString.ReplaceFirst("%channel%", theChannel.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_ERROR);
@@ -1064,9 +1045,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case ERR_KEYSET: // 467
 	{
-		BString theChannel(GetWord(data, 4)), tempString(B_TRANSLATE("[x] Channel key already set in "));
-		tempString += theChannel;
-		tempString += ".\n";
+		BString theChannel(GetWord(data, 4));
+		BString tempString(B_TRANSLATE("[x] Channel key already set in %channel%.\n"));
+		tempString.ReplaceFirst("%channel%", theChannel.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_ERROR);
@@ -1076,9 +1057,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 
 	case ERR_UNKNOWNMODE: // 472
 	{
-		BString theMode(GetWord(data, 4)), tempString(B_TRANSLATE("[x] Unknown channel mode: '"));
-		tempString += theMode;
-		tempString += "'\n";
+		BString theMode(GetWord(data, 4));
+		BString tempString(B_TRANSLATE("[x] Unknown channel mode: '%mode%'\n"));
+		tempString.ReplaceFirst("%mode%", theMode.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_QUIT);
@@ -1091,8 +1072,8 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BString theChan(GetWord(data, 4)), tempString("[x] "), theReason(RestOfString(data, 5));
 		theReason.RemoveFirst(":");
 		theReason.ReplaceLast("channel", theChan.String());
-		tempString += theReason;
-		tempString += B_TRANSLATE(" (invite only)\n");
+		tempString += B_TRANSLATE("%channel% (invite only)\n");
+		tempString.ReplaceFirst("%channel%", theReason.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);
@@ -1107,8 +1088,8 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		theReason.RemoveFirst(":");
 		theReason.ReplaceLast("channel", theChan.String());
 
-		tempString += theReason;
-		tempString += B_TRANSLATE(" (you're banned)\n");
+		tempString += B_TRANSLATE("%channel% (you're banned)\n");
+		tempString.ReplaceFirst("%channel%", theReason.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);
@@ -1122,8 +1103,9 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BString theChan(GetWord(data, 4)), theReason(RestOfString(data, 5)), tempString("[x] ");
 		theReason.RemoveFirst(":");
 		theReason.ReplaceLast("channel", theChan.String());
-		tempString += theReason;
-		tempString += B_TRANSLATE(" (bad channel key)\n");
+
+		tempString += B_TRANSLATE("%channel% (bad channel key)\n");
+		tempString.ReplaceFirst("%channel%", theReason.String());
 
 		BMessage msg(M_DISPLAY);
 		PackDisplay(&msg, tempString.String(), C_QUIT, C_BACKGROUND, F_SERVER);

@@ -442,9 +442,8 @@ bool ServerAgent::ParseEvents(const char* data)
 
 			theMode.RemoveFirst(":");
 
-			buffer += B_TRANSLATE("*** User mode changed: ");
-			buffer += theMode;
-			buffer += "\n";
+			buffer = B_TRANSLATE("*** User mode changed: %mode%\n");
+			buffer.ReplaceFirst("%mode%", theMode.String());
 
 			PackDisplay(&msg, buffer.String());
 			PostActive(&msg);
@@ -492,11 +491,9 @@ bool ServerAgent::ParseEvents(const char* data)
 
 		theChannel.RemoveFirst(":");
 
-		tempString += B_TRANSLATE("*** You have been invited to ");
-		tempString += theChannel;
-		tempString += B_TRANSLATE(" by ");
-		tempString += GetNick(data);
-		tempString += ".\n";
+		tempString += B_TRANSLATE("*** You have been invited to %channel% by %nick%.\n");
+		tempString.ReplaceFirst("%channel%", theChannel.String());
+		tempString.ReplaceFirst("%nick%", GetNick(data));
 
 		BMessage msg(M_DISPLAY);
 
@@ -511,15 +508,14 @@ bool ServerAgent::ParseEvents(const char* data)
 		const char* hostmask = theHostmask.String();
 
 		if (hostmask[0] == '+') {
-			tempString += B_TRANSLATE("*** Hostmask added to SILENCE list: ");
+			tempString += B_TRANSLATE("*** Hostmask added to SILENCE list: %hostmask%.\n");
 			theHostmask.RemoveFirst("+");
 		} else {
-			tempString += B_TRANSLATE("*** Hostmask removed from SILENCE list: ");
+			tempString += B_TRANSLATE("*** Hostmask removed from SILENCE list: %hostmask%.\n");
 			theHostmask.RemoveFirst("-");
 		}
 
-		tempString += theHostmask;
-		tempString += ".\n";
+		tempString.ReplaceFirst("%hostmask%", theHostmask.String());
 
 		BMessage msg(M_DISPLAY);
 

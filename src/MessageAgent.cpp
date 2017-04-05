@@ -98,7 +98,7 @@ void MessageAgent::AllAttached(void)
 void MessageAgent::AddMenuItems(BPopUpMenu* pMenu)
 {
 	BMenuItem* item(NULL);
-	item = new BMenuItem("Whois", new BMessage(M_MSG_WHOIS));
+	item = new BMenuItem(B_TRANSLATE("Whois"), new BMessage(M_MSG_WHOIS));
 	item->SetTarget(this);
 	if (Id().FindFirst(" [DCC]") >= 0) // dont enable for dcc sessions
 		item->SetEnabled(false);
@@ -107,7 +107,7 @@ void MessageAgent::AddMenuItems(BPopUpMenu* pMenu)
 	BString command("/dcc send ");
 	command += fId;
 	msg->AddString("input", command.String());
-	item = new BMenuItem("DCC send", msg);
+	item = new BMenuItem(B_TRANSLATE("DCC send"), msg);
 	item->SetTarget(this);
 	if (Id().FindFirst(" [DCC]") >= 0) // dont enable for dcc sessions
 		item->SetEnabled(false);
@@ -178,7 +178,10 @@ void MessageAgent::DCCServerSetup(void)
 	struct in_addr addr;
 
 	addr.s_addr = inet_addr(address.String());
-	dataBuffer << B_TRANSLATE("Accepting connection on address ") << address.String() << B_TRANSLATE(", port ") << myPort << "\n";
+
+	dataBuffer.SetToFormat(B_TRANSLATE("Accepting connection on address %s, port %" B_PRId32 "\n"),
+		address.String(), myPort);
+
 	ClientAgent::PackDisplay(&statMsg, dataBuffer.String(), C_TEXT);
 	fMsgr.SendMessage(&statMsg);
 	return;
@@ -309,7 +312,9 @@ status_t MessageAgent::DCCOut(void* arg)
 
 		addr.s_addr = ntohl(realIP);
 
-		buffer << B_TRANSLATE("Trying to connect to address ") << inet_ntoa(addr) << B_TRANSLATE(", port ") << agent->fDPort << "\n";
+		buffer << B_TRANSLATE("Trying to connect to address %adress%, port %port%\n");
+		buffer.ReplaceFirst("%adress%", inet_ntoa(addr));
+		buffer.ReplaceFirst("%port%", agent->fDPort);
 
 		ClientAgent::PackDisplay(&msg, buffer.String());
 		mMsgr.SendMessage(&msg);
@@ -444,7 +449,9 @@ void MessageAgent::MessageReceived(BMessage* msg)
 			}
 
 			BString content;
-			content.SetToFormat("%s said: %s", nick, tempString.String());
+			content.SetToFormat(B_TRANSLATE_COMMENT("%s said: %s",
+				"as in 'nickname' said: 'bla bla bla'"), nick,
+				tempString.String());
 			notification.SetContent(content);
 			notification.Send();
 		}
@@ -508,8 +515,10 @@ void MessageAgent::MessageReceived(BMessage* msg)
 	case M_STATUS_ADDITEMS: {
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, ""), true);
 
+		BString itemText(B_TRANSLATE("Lag:"));
+		itemText.Append(" ");
 		vision_app->pClientWin()->pStatusView()->AddItem(
-			new StatusItem("Lag: ", "", STATUS_ALIGN_LEFT), true);
+			new StatusItem(itemText.String(), "", STATUS_ALIGN_LEFT), true);
 
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, "", STATUS_ALIGN_LEFT),
 														 true);

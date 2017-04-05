@@ -125,9 +125,9 @@ void ChannelAgent::Init(void)
 
 	AddChild(fResize);
 
-	Display(B_TRANSLATE("*** Now talking in "), C_JOIN);
-	Display(fId.String(), C_JOIN);
-	Display("\n", C_JOIN);
+	BString text(B_TRANSLATE("*** Now talking in %channel%\n"));
+	text.ReplaceFirst("%channel%", fId.String());
+	Display(text.String(), C_JOIN);
 }
 
 void ChannelAgent::Show(void)
@@ -455,7 +455,8 @@ void ChannelAgent::TabExpansion(void)
 void ChannelAgent::AddMenuItems(BPopUpMenu* pMenu)
 {
 	BMenuItem* item(NULL);
-	item = new BMenuItem("Channel Options", new BMessage(M_CHANNEL_OPTIONS_SHOW));
+	item = new BMenuItem(B_TRANSLATE("Channel options"),
+		new BMessage(M_CHANNEL_OPTIONS_SHOW));
 	item->SetTarget(this);
 	pMenu->AddItem(item);
 	pMenu->AddSeparatorItem();
@@ -644,7 +645,8 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		if (!IsHidden())
 			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, fMyNick.String());
 
-		Display(B_TRANSLATE("[@] Attempting to rejoin" B_UTF8_ELLIPSIS "\n"), C_ERROR, C_BACKGROUND, F_SERVER);
+		Display(B_TRANSLATE("[@] Attempting to rejoin" B_UTF8_ELLIPSIS "\n"),
+			C_ERROR, C_BACKGROUND, F_SERVER);
 
 		// send join cmd
 		BMessage send(M_SERVER_SEND);
@@ -706,13 +708,10 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 
 		BMessage wegotkicked(M_DISPLAY); // "you were kicked"
 		BString buffer;
-		buffer += B_TRANSLATE("*** You have been kicked from ");
-		buffer += theChannel;
-		buffer += B_TRANSLATE(" by ");
-		buffer += kicker;
-		buffer += " (";
-		buffer += rest;
-		buffer += ")\n";
+		buffer = B_TRANSLATE("*** You have been kicked from %channel% by %kicker% (%rest%)\n");
+		buffer.ReplaceFirst("%channel%", theChannel);
+		buffer.ReplaceFirst("%kicker%", kicker);
+		buffer.ReplaceFirst("%rest%", rest);
 		PackDisplay(&wegotkicked, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
 
 		// clean up
@@ -723,9 +722,8 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		fMsgr.SendMessage(&wegotkicked);
 
 		BMessage attemptrejoin(M_DISPLAY); // "you were kicked"
-		buffer = B_TRANSLATE("*** Attempting to rejoin ");
-		buffer += theChannel;
-		buffer += B_UTF8_ELLIPSIS "\n";
+		buffer = B_TRANSLATE("*** Attempting to rejoin %channel%" B_UTF8_ELLIPSIS "\n");
+		buffer.ReplaceFirst("%channel%", theChannel);
 		PackDisplay(&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
 		fMsgr.SendMessage(&attemptrejoin);
 
@@ -760,13 +758,13 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 				}
 
 				BNotification notification(B_INFORMATION_NOTIFICATION);
-				notification.SetGroup(BString("Vision"));
+				notification.SetGroup(BString(B_TRANSLATE_SYSTEM_NAME("Vision")));
 				entry_ref ref = vision_app->AppRef();
 				notification.SetOnClickFile(&ref);
 				notification.SetTitle(fServerName.String());
 				BString content;
-				content.SetToFormat("%s - %s said: %s", fId.String(), theNick.String(),
-									tempString.String());
+				content.SetToFormat(B_TRANSLATE("%s - %s said: %s"),
+					fId.String(), theNick.String(), tempString.String());
 				notification.SetContent(content);
 				notification.Send();
 			}
@@ -1003,17 +1001,24 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 	case M_STATUS_ADDITEMS: {
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, ""), true);
 
+		BString text(B_TRANSLATE("Lag:"));
+		text.Append(" ");
 		vision_app->pClientWin()->pStatusView()->AddItem(
-			new StatusItem(B_TRANSLATE("Lag: "), "", STATUS_ALIGN_LEFT), true);
+			new StatusItem(text.String(), "", STATUS_ALIGN_LEFT), true);
 
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, "", STATUS_ALIGN_LEFT),
 														 true);
+		text = B_TRANSLATE("Users:");
+		text.Append(" ");
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(text.String(), ""), true);
 
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Users: "), ""), true);
+		text = B_TRANSLATE("Ops:");
+		text.Append(" ");
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(text.String(), ""), true);
 
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Ops: "), ""), true);
-
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Modes: "), ""), true);
+		text = B_TRANSLATE("Modes:");
+		text.Append(" ");
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(text.String(), ""), true);
 
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem("", "", STATUS_ALIGN_LEFT),
 														 true);
@@ -1182,17 +1187,14 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 
 	BString buffer, targetS(target);
 
-	buffer += "*** ";
-	buffer += theNick;
-	buffer += B_TRANSLATE(" set mode ");
-	buffer += mode;
+	buffer += "*** %nickname% set mode %mode% %targetS%\n";
+	buffer.ReplaceFirst("%nickname%", theNick);
+	buffer.ReplaceFirst("%mode%", mode);
 
-	if (targetS != "-9z99") {
-		buffer += " ";
-		buffer += targetS;
-	}
-
-	buffer += "\n";
+	if (targetS != "-9z99")
+		buffer.ReplaceFirst("%targetS%", targetS);
+	else
+		buffer.ReplaceFirst("%targetS%", "");
 
 	BMessenger display(this);
 

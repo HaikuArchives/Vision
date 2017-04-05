@@ -25,8 +25,11 @@
 #include "DCCConnect.h"
 #include "DCCFileWindow.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "DCCFileWindow"
+
 DCCFileWindow::DCCFileWindow(DCCConnect* view)
-	: BWindow(BRect(50, 50, 100, 100), "DCC Transfers", B_TITLED_WINDOW,
+	: BWindow(BRect(50, 50, 100, 100), B_TRANSLATE("DCC transfers"), B_TITLED_WINDOW,
 			  B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_NOT_MINIMIZABLE | B_NOT_CLOSABLE |
 				  B_ASYNCHRONOUS_CONTROLS)
 {

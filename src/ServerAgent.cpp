@@ -31,6 +31,7 @@
 #include <Directory.h>
 #include <Entry.h>
 #include <FilePanel.h>
+#include <MessageFormat.h>
 #include <MessageRunner.h>
 #include <Path.h>
 #include <String.h>
@@ -324,11 +325,13 @@ int32 ServerAgent::Establish(void* arg)
 			int retrycount(reply.FindInt32("retries"));
 
 			if (retrycount) {
-				statString = B_TRANSLATE("[@] Waiting ");
-				statString << (retrycount * retrycount);
-				statString += B_TRANSLATE(" second");
-				if (retrycount > 1) statString += B_TRANSLATE("s");
-				statString += B_TRANSLATE(" before next attempt" B_UTF8_ELLIPSIS "\n");
+				BString text;
+				static BMessageFormat format(B_TRANSLATE("{0, plural,"
+					"one{[@] Waiting # second before next attempt}"
+					"other{[@] Waiting # seconds before next attempt}}"));
+				format.Format(statString, retrycount * retrycount);
+				statString.Append(B_UTF8_ELLIPSIS "\n");
+
 				ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 				snooze(1000000 * retrycount * retrycount); // wait 1, 4, 9, 16 ... seconds
@@ -336,30 +339,28 @@ int32 ServerAgent::Establish(void* arg)
 
 			if (sMsgrE->SendMessage(M_INC_RECONNECT) != B_OK)
 				throw failToLock();
-			statString = B_TRANSLATE("[@] Attempting to ");
-			if (retrycount != 0)
-				statString += B_TRANSLATE("re");
-			statString += B_TRANSLATE("connect (attempt ");
-			statString << retrycount + 1;
-			statString += B_TRANSLATE(" of ");
-			statString << reply.FindInt32("max_retries");
-			statString += ")\n";
+
+			statString.SetToFormat(B_TRANSLATE("[@] Attempting to connect "
+				"(attempt %" B_PRId32 " of %" B_PRId32 ")\n"),
+				retrycount + 1, reply.FindInt32("max_retries"));
+
 			ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 		} else
 			throw failToLock();
 
-		statString = B_TRANSLATE("[@] Attempting a connection to ");
-		statString << connectId;
-		statString += ":";
-		statString << connectPort;
-		statString += B_UTF8_ELLIPSIS "\n";
+		statString = B_TRANSLATE("[@] Attempting a connection to %id%:%port%" B_UTF8_ELLIPSIS "\n");
+		statString.ReplaceFirst("%id%", connectId);
+		statString.ReplaceFirst("%port%", connectPort);
+
 		ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
 		sMsgrE->SendMessage(&statMsg);
 
 		BNetworkAddress remoteAddr(AF_INET, connectId.String(), connectPort);
 		if (remoteAddr.InitCheck() != B_OK) {
-			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not create connection to address and port. Make sure your internet connection is operational.\n"), C_ERROR);
+			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE(
+				"[@] Could not create connection to address and port. Make "
+				"sure your internet connection is operational.\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 			sMsgrE->SendMessage(M_NOT_CONNECTING);
 			sMsgrE->SendMessage(M_SERVER_DISCONNECT);
@@ -380,7 +381,8 @@ int32 ServerAgent::Establish(void* arg)
 
 		// just see if he's still hanging around before
 		// we got blocked for a minute
-		ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Connection open, waiting for reply from server\n"), C_ERROR);
+		ClientAgent::PackDisplay(&statMsg, B_TRANSLATE(
+			"[@] Connection open, waiting for reply from server\n"), C_ERROR);
 		sMsgrE->SendMessage(&statMsg);
 		sMsgrE->SendMessage(M_LAG_CHANGED);
 
@@ -389,7 +391,8 @@ int32 ServerAgent::Establish(void* arg)
 
 			// store local ip address for future use (dcc, etc)
 			if (ip.IsEmpty()) {
-				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Error getting local IP\n"), C_ERROR);
+				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE(
+					"[@] Error getting local IP\n"), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 				BMessage setIP(M_SET_IP);
 				setIP.AddString("ip", "127.0.0.1");
@@ -404,15 +407,18 @@ int32 ServerAgent::Establish(void* arg)
 				}
 				setIP.AddString("ip", ip.String());
 				sMsgrE->SendMessage(&setIP);
-				statString = B_TRANSLATE("[@] Local IP: ");
-				statString += ip.String();
-				statString += "\n";
+				statString = B_TRANSLATE("[@] Local IP: %ip%\n");
+				statString.ReplaceFirst("%ip%", ip.String());
 				ClientAgent::PackDisplay(&statMsg, statString.String(), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 			}
 
 			if (vision_app->GetBool("dccPrivateCheck") && PrivateIPCheck(ip.String())) {
-				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n"), C_ERROR);
+				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE(
+					"[@] (It looks like you are behind an internet gateway. "
+					"Vision will query the IRC server upon successful "
+					"connection for your gateway's internet address. "
+					"This will be used for DCC communication.)\n"), C_ERROR);
 				sMsgrE->SendMessage(&statMsg);
 			}
 
@@ -458,7 +464,8 @@ int32 ServerAgent::Establish(void* arg)
 			sMsgrE->SendMessage(&statMsg);
 		} else // No endpoint->connect
 		{
-			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Could not establish a connection to the server. Sorry.\n"), C_ERROR);
+			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE(
+				"[@] Could not establish a connection to the server. Sorry.\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 			sMsgrE->SendMessage(M_NOT_CONNECTING);
 			sMsgrE->SendMessage(M_SERVER_DISCONNECT);
@@ -1143,9 +1150,8 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		if (fIsConnected) {
 			fIsConnected = false;
 			BString sAnnounce;
-			sAnnounce += B_TRANSLATE("[@] Disconnected from ");
-			sAnnounce += fServerName;
-			sAnnounce += "\n";
+			sAnnounce += B_TRANSLATE("[@] Disconnected from %server%\n");
+			sAnnounce.ReplaceFirst("%server%", fServerName);
 			Display(sAnnounce.String(), C_ERROR);
 			ClientAgent* agent(ActiveClient());
 			if (agent && (agent != this))
@@ -1169,8 +1175,10 @@ void ServerAgent::MessageReceived(BMessage* msg)
 	case M_STATUS_ADDITEMS: {
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, ""), true);
 
+		BString itemText(B_TRANSLATE("Lag:"));
+		itemText.Append(" ");
 		vision_app->pClientWin()->pStatusView()->AddItem(
-			new StatusItem("Lag: ", "", STATUS_ALIGN_LEFT), true);
+			new StatusItem(itemText.String(), "", STATUS_ALIGN_LEFT), true);
 
 		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, "", STATUS_ALIGN_LEFT),
 														 true);

@@ -58,9 +58,10 @@ public:
 
 void ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
 {
-	BString theText(theNick);
-	theText << B_TRANSLATE(" wants to begin a DCC chat with you.");
-	BAlert* myAlert = new BAlert("DCC request", theText.String(), "Accept", "Refuse");
+	BString theText(B_TRANSLATE("%nick% wants to begin a DCC chat with you."));
+	theText.ReplaceFirst("%nick%", theNick);
+	BAlert* myAlert = new BAlert(B_TRANSLATE("DCC request"), theText.String(),
+		B_TRANSLATE("Accept"), B_TRANSLATE("Refuse"));
 	myAlert->SetFeel(B_FLOATING_APP_WINDOW_FEEL);
 	BMessage* myMessage = new BMessage(M_CHAT_ACCEPT);
 	myMessage->AddString("nick", theNick.String());
@@ -89,8 +90,8 @@ void ServerAgent::DCCGetDialog(BString nick, BString file, BString size, BString
 	text << nick << ": " << file << " (" << size << " bytes)";
 
 	panel = new BFilePanel(B_SAVE_PANEL, &fSMsgr, 0, 0, false, &msg);
-	panel->SetButtonLabel(B_DEFAULT_BUTTON, "Accept");
-	panel->SetButtonLabel(B_CANCEL_BUTTON, "Refuse");
+	panel->SetButtonLabel(B_DEFAULT_BUTTON, B_TRANSLATE("Accept"));
+	panel->SetButtonLabel(B_CANCEL_BUTTON, B_TRANSLATE("Refuse"));
 	panel->SetSaveText(file.String());
 
 	BWindow* panelWindow(panel->Window());
@@ -174,15 +175,16 @@ filter_result DCCFileFilter::HandleButton(BMessage*)
 				panel->Window()->PostMessage(&msg);
 				result = B_SKIP_MESSAGE;
 			} else {
-				BString buffer;
 				BAlert* alert;
+				BString buffer(B_TRANSLATE("The file \"%file%\" already exists "
+					"in the specified folder. Do you want to continue the "
+					"transfer?"));
+				buffer.ReplaceFirst("%file%", paneltext->Text());
 
-				buffer << "The file \"" << paneltext->Text()
-					   << "\" already exists in the specified folder.  "
-						  "Do you want to continue the transfer?";
-
-				alert = new BAlert("DCC Request", buffer.String(), "Cancel", "Replace", "Resume",
-								   B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
+				alert = new BAlert(B_TRANSLATE("DCC request"), buffer.String(),
+					B_TRANSLATE("Cancel"), B_TRANSLATE("Replace"),
+					B_TRANSLATE("Resume"),
+					B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
 
 				alert->Go(new BInvoker(new BMessage(M_FILE_PANEL_ALERT), panel->Window()));
 

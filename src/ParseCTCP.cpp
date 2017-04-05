@@ -24,6 +24,7 @@
  */
 
 #include <AppFileInfo.h>
+#include <MessageFormat.h>
 #include <sys/utsname.h>
 #include <stdlib.h>
 
@@ -299,30 +300,20 @@ void ServerAgent::ParseCTCPResponse(BString theNick, BString theMsg)
 				}
 			}
 		}
-		tempString += "[";
-		tempString += theNick;
-		tempString += " PING";
-		tempString += B_TRANSLATE(" response");
-		tempString += "]: ";
-		if (theSeconds != 1) {
-			tempString << theSeconds;
-			tempString += " ";
-			tempString += B_TRANSLATE("seconds");
-			tempString += "\n";
-		} else
-			tempString += "1 ";
-			tempString += B_TRANSLATE("second");
-			tempString += "\n";
+
+		BString text;
+		static BMessageFormat format(B_TRANSLATE("{0, plural,"
+			"one{[%nick% PING response]: # second\n}"
+			"other{[%nick% PING response]: # seconds\n}}"));
+			format.Format(tempString, theSeconds);
+		tempString.ReplaceFirst("%nick%", theNick.String());
+
 	} else {
 		BString theReply = RestOfString(theResponse.String(), 2);
-		tempString += "[";
-		tempString += theNick;
-		tempString += " ";
-		tempString += firstWord;
-		tempString += B_TRANSLATE(" response");
-		tempString += "]: ";
-		tempString += theReply;
-		tempString += '\n';
+		tempString = B_TRANSLATE("[%nick% %command% response]: %reply%\n");
+		tempString.ReplaceFirst("%nick%", theNick.String());
+		tempString.ReplaceFirst("%command%", firstWord.String());
+		tempString.ReplaceFirst("%reply%", theReply.String());
 	}
 
 	BMessage display(M_DISPLAY);

@@ -42,19 +42,23 @@ DCCPrefsView::DCCPrefsView(BRect frame)
 	: BView(frame, "DCC prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
 {
 	AdoptSystemColors();
-	BMenu* menu(new BMenu(B_TRANSLATE("DCC block size: ")));
+	BString text(B_TRANSLATE("DCC block size:"));
+	text.Append(" ");
+	BMenu* menu(new BMenu(text.String()));
 	menu->AddItem(new BMenuItem("1024", new BMessage(M_BLOCK_SIZE_CHANGED)));
 	menu->AddItem(new BMenuItem("2048", new BMessage(M_BLOCK_SIZE_CHANGED)));
 	menu->AddItem(new BMenuItem("4096", new BMessage(M_BLOCK_SIZE_CHANGED)));
 	menu->AddItem(new BMenuItem("8192", new BMessage(M_BLOCK_SIZE_CHANGED)));
-	fBlockSize = new BMenuField(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("DCC block size: "), menu);
+	fBlockSize = new BMenuField(BRect(0, 0, 0, 0), NULL, text.String(), menu);
 	fAutoAccept = new BCheckBox(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Automatically accept incoming sends"),
 								new BMessage(M_AUTO_ACCEPT_CHANGED));
 	fPrivateCheck = new BCheckBox(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Automatically check for NAT IP"),
 								  new BMessage(M_DCC_PRIVATE_CHANGED));
-	fDefDir = new BTextControl(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Default path: "), "",
+	text = B_TRANSLATE("Default path:");
+	text.Append(" ");
+	fDefDir = new BTextControl(BRect(0, 0, 0, 0), NULL, text.String(), "",
 							   new BMessage(M_DEFAULT_PATH_CHANGED));
-	fDefDir->SetDivider(fDefDir->StringWidth(B_TRANSLATE("Default path: ") + 5));
+	fDefDir->SetDivider(fDefDir->StringWidth(text.String() + 5));
 	fBox = new BBox(BRect(0, 0, 0, 0), NULL);
 	fBox->SetLabel(B_TRANSLATE("DCC port range"));
 	AddChild(fDefDir);
@@ -62,14 +66,18 @@ DCCPrefsView::DCCPrefsView(BRect frame)
 	AddChild(fAutoAccept);
 	AddChild(fBlockSize);
 	AddChild(fBox);
-	fDccPortMin = new BTextControl(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Min: "), "",
+	text = B_TRANSLATE("Min:");
+	text.Append(" ");
+	fDccPortMin = new BTextControl(BRect(0, 0, 0, 0), NULL, text.String(), "",
 								   new BMessage(M_DCC_MIN_PORT_CHANGED));
 	fDccPortMin->TextView()->AddFilter(new NumericFilter());
-	fDccPortMin->SetDivider(fDccPortMin->StringWidth(B_TRANSLATE("Min: ")) + 5);
+	fDccPortMin->SetDivider(fDccPortMin->StringWidth(text.String()) + 5);
 	fBox->AddChild(fDccPortMin);
-	fDccPortMax = new BTextControl(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Max: "), "",
+	text = B_TRANSLATE("Max:");
+	text.Append(" ");
+	fDccPortMax = new BTextControl(BRect(0, 0, 0, 0), NULL, text.String(), "",
 								   new BMessage(M_DCC_MAX_PORT_CHANGED));
-	fDccPortMax->SetDivider(fDccPortMax->StringWidth(B_TRANSLATE("Max: ")) + 5);
+	fDccPortMax->SetDivider(fDccPortMax->StringWidth(text.String()) + 5);
 	fDccPortMax->TextView()->AddFilter(new NumericFilter());
 	fBox->AddChild(fDccPortMax);
 }
@@ -94,7 +102,9 @@ void DCCPrefsView::AttachedToWindow(void)
 	fPrivateCheck->MoveTo(fAutoAccept->Frame().left, fAutoAccept->Frame().bottom + 5);
 	fBlockSize->ResizeToPreferred();
 	fBlockSize->ResizeTo(Bounds().Width() - 15, fBlockSize->Bounds().Height());
-	fBlockSize->SetDivider(fBlockSize->StringWidth(B_TRANSLATE("DCC block size: ")) + 5);
+	BString text(B_TRANSLATE("DCC block size:"));
+	text.Append(" ");
+	fBlockSize->SetDivider(fBlockSize->StringWidth(text.String()) + 5);
 	fBlockSize->MoveTo(fPrivateCheck->Frame().left, fPrivateCheck->Frame().bottom + 5);
 	fBlockSize->Menu()->SetLabelFromMarked(true);
 

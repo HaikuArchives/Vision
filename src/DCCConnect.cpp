@@ -62,8 +62,10 @@ DCCConnect::DCCConnect(const char* n, const char* fn, const char* sz, const char
 	char trail[128];
 	sprintf(trail, " / %.1fk", atol(fSize.String()) / 1024.0);
 
+	BString text(B_TRANSLATE("bps:"));
+	text.Append(" ");
 	fBar = new BStatusBar(BRect(10, 10, Bounds().right - 30, Bounds().bottom - 10), "progress",
-						  B_TRANSLATE("bps: "), trail);
+						  text.String(), trail);
 	fBar->SetMaxValue(atol(fSize.String()));
 	fBar->SetBarHeight(8.0);
 	AddChild(fBar);
@@ -271,10 +273,10 @@ int32 DCCReceive::Transfer(void* arg)
 	}
 
 	BPath path(reply.FindString("name"));
-	BString buffer;
 	off_t file_size(0);
-
-	buffer << B_TRANSLATE("Receiving \"") << path.Leaf() << B_TRANSLATE("\" from ") << reply.FindString("nick") << ".";
+	BString buffer(B_TRANSLATE("Receiving \"%file%\" from %nick%."));
+	buffer.ReplaceFirst("%file%",  path.Leaf());
+	buffer.ReplaceFirst("%nick%",  reply.FindString("nick"));
 
 	UpdateStatus(msgr, buffer.String());
 
@@ -465,8 +467,7 @@ int32 DCCSend::Transfer(void* arg)
 		}
 
 		++try_count;
-		status = B_TRANSLATE("Waiting for connection ");
-		status << try_count << ".";
+		status.SetToFormat(B_TRANSLATE("Waiting for connection %" B_PRId32 "."), try_count);
 		UpdateStatus(msgr, status.String());
 	}
 
@@ -490,8 +491,9 @@ int32 DCCSend::Transfer(void* arg)
 		bytes_sent = seekpos;
 	}
 
-	status = B_TRANSLATE("Sending \"");
-	status << path.Leaf() << B_TRANSLATE("\" to ") << reply.FindString("nick") << ".";
+	status = B_TRANSLATE("Sending \"%file%\" to %nick%.");
+	status.ReplaceFirst("%file%", path.Leaf());
+	status.ReplaceFirst("%nick%", reply.FindString("nick"));
 	UpdateStatus(msgr, status.String());
 
 	int cps(0);

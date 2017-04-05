@@ -23,6 +23,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ColorSelector"
+
 namespace ColorControlPrivate
 {
 
@@ -212,11 +215,14 @@ ColorSelector::ColorSelector(BRect frame, const char* name, const char* label,
 {
 	const BRect dummyRect(-100, -100, -10, -10);
 
-	fColorMenu = new BPopUpMenu("Colors");
+	fColorMenu = new BPopUpMenu(B_TRANSLATE("Colors"));
 	populate_colors(fColorMenu, fColors, fNames, &fInitColors);
+	BString text(B_TRANSLATE("Color:"));
+	text.Append(" ");
 	fColorField =
-		new BMenuField(dummyRect, "Color", "Color: ", fColorMenu, B_FOLLOW_LEFT | B_FOLLOW_TOP,
-					   B_WILL_DRAW | B_FRAME_EVENTS | B_NAVIGABLE);
+		new BMenuField(dummyRect, "Color", text.String(), fColorMenu,
+			B_FOLLOW_LEFT | B_FOLLOW_TOP,
+			B_WILL_DRAW | B_FRAME_EVENTS | B_NAVIGABLE);
 	AddChild(fColorField);
 	fColorField->SetFont(be_bold_font);
 

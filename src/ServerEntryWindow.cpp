@@ -52,17 +52,22 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 	if (size != 0)
 		memcpy(&currentServer, data, size);
 
+	BString text(B_TRANSLATE("Server:"));
+	text.Append(" ");
 	serverName = new BTextControl(
-		"serverName", B_TRANSLATE("Server: "), (data) ? data->serverName : "",
+		"serverName", text.String(), (data) ? data->serverName : "",
 		new BMessage(M_SERVER_NAME_CHANGED));
 	BString strPort("");
 	if (data)
 		strPort << data->port;
 	else
 		strPort << 6667;
-	port = new BTextControl("portVal", B_TRANSLATE("Port: "), strPort.String(),
+
+	text = B_TRANSLATE("Port:");
+	text.Append(" ");
+	port = new BTextControl("portVal", text.String(), strPort.String(),
 		new BMessage(M_SERVER_PORT_CHANGED));
-	port->SetDivider(be_plain_font->StringWidth("Port: ") + 5);
+	port->SetDivider(be_plain_font->StringWidth(text.String()) + 5);
 
 	BMenu* stateMenu = new BMenu(B_TRANSLATE("Choose status"));
 	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Primary"),
@@ -71,8 +76,11 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 		new BMessage(M_SERVER_STATE)));
 	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Disabled"),
 		new BMessage(M_SERVER_STATE)));
+
+	text = B_TRANSLATE("State:");
+	text.Append(" ");
 	statusField = new BMenuField("states",
-		B_TRANSLATE("State: "), stateMenu, B_WILL_DRAW | B_NAVIGABLE);
+		text.String(), stateMenu, B_WILL_DRAW | B_NAVIGABLE);
 
 	okButton = new BButton("serverOk", B_TRANSLATE("Done"),
 		new BMessage(M_SERVER_DONE), B_WILL_DRAW | B_NAVIGABLE);
@@ -84,9 +92,14 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 	if (strlen(currentServer.password) > 0)
 		password = currentServer.password;
 
-	usePassword = new BCheckBox("usePass", B_TRANSLATE("Use password: "),
+	text = B_TRANSLATE("Use password:");
+	text.Append(" ");
+	usePassword = new BCheckBox("usePass", text.String(),
 		new BMessage(M_SERVER_USEPASS), B_WILL_DRAW | B_NAVIGABLE);
-	securePort = new BCheckBox("securePort", B_TRANSLATE("Secure port: "),
+
+	text = B_TRANSLATE("Secure port:");
+	text.Append(" ");
+	securePort = new BCheckBox("securePort", text.String(),
 		new BMessage(M_SERVER_SECUREPORT), B_WILL_DRAW | B_NAVIGABLE);
 
 	passwordField = new BTextControl("password", NULL, password.String(), NULL,
@@ -112,7 +125,9 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 		.End()
 	.End();
 
-	serverName->SetDivider(be_plain_font->StringWidth(B_TRANSLATE("Server: ")) + 5);
+	text = B_TRANSLATE("Server:");
+	text.Append(" ");
+	serverName->SetDivider(be_plain_font->StringWidth(text.String()) + 5);
 	serverName->SetTarget(this);
 
 	port->SetTarget(this);

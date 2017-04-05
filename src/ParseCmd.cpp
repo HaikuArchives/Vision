@@ -316,9 +316,8 @@ bool ClientAgent::ParseCmd(const char* data)
 				}
 			}
 			BFilePanel* myPanel(new BFilePanel(B_OPEN_PANEL, NULL, NULL, 0, false));
-			BString myTitle(B_TRANSLATE("Sending a file to "));
-
-			myTitle.Append(theNick);
+			BString myTitle(B_TRANSLATE("Sending a file to %nick%"));
+			myTitle.ReplaceFirst("%nick%", theNick);
 			myPanel->Window()->SetTitle(myTitle.String());
 			myPanel->SetTarget(fSMsgr);
 			myPanel->SetMessage(msg);
@@ -453,7 +452,10 @@ bool ClientAgent::ParseCmd(const char* data)
 
 			resume_thread(execThread);
 		} else {
-			Display("[x] /pexec: Error: Invalid parameters\n", C_ERROR);
+			BString buffer("[x] /pexec: ");
+			buffer += B_TRANSLATE("Error: Invalid parameters");
+			buffer += "\n";
+			Display(buffer.String(), C_ERROR);
 			delete theCmd;
 		}
 		return true;
@@ -680,9 +682,8 @@ bool ClientAgent::ParseCmd(const char* data)
 		BString newNick(GetWord(data, 2));
 
 		if (newNick != "-9z99") {
-			BString tempString(B_TRANSLATE("*** Trying new nick "));
-
-			tempString << newNick << ".\n";
+			BString tempString(B_TRANSLATE("*** Trying new nick %nick%./n"));
+			tempString.ReplaceFirst("%nick%", newNick);
 			Display(tempString.String());
 
 			AddSend(&sendMsg, "NICK ");
@@ -967,8 +968,8 @@ bool ClientAgent::ParseCmd(const char* data)
 
 	if (firstWord == "/VUPTIME") {
 		BString parms(GetWord(data, 2)), clientUptime(DurationString(vision_app->VisionUptime())),
-			expandedString(B_TRANSLATE("Vision has been running for "));
-		expandedString += clientUptime;
+			expandedString(B_TRANSLATE("Vision has been running for %time%"));
+			expandedString.ReplaceFirst("%time%", clientUptime.String());
 
 		if ((fId != fServerName) && (parms == "-9z99")) {
 			AddSend(&sendMsg, "PRIVMSG ");
@@ -980,8 +981,9 @@ bool ClientAgent::ParseCmd(const char* data)
 			ChannelMessage(expandedString.String(), fMyNick.String());
 		} else if ((parms == "-l") || (fId == fServerName)) // echo locally
 		{
-			BString tempString;
-			tempString << "Vision Uptime: " << clientUptime.String() << "\n";
+			BString tempString(B_TRANSLATE("Vision Uptime: %time%\n"));
+			tempString.ReplaceFirst("%time%", clientUptime.String());
+
 			Display(tempString.String(), C_WHOIS);
 		}
 		return true;
@@ -1005,8 +1007,9 @@ bool ClientAgent::ParseCmd(const char* data)
 			ChannelMessage(expandedString.String(), fMyNick.String());
 		} else if ((parms == "-l") || (fId == fServerName)) // echo locally
 		{
-			BString tempString;
-			tempString << "Uptime: " << expandedString << "\n";
+			BString tempString(B_TRANSLATE("Uptime: %time%\n"));
+			tempString.ReplaceFirst("%time%", expandedString.String());
+
 			Display(tempString.String(), C_WHOIS);
 		}
 		return true;
@@ -1057,7 +1060,7 @@ bool ClientAgent::ParseCmd(const char* data)
 			lookup.AddString("string", buffer);
 			fMsgr.SendMessage(&lookup);
 		} else
-			vision_app->LoadURL("http://www.m-w.com");
+			vision_app->LoadURL("https://www.merriam-webster.com/");
 		return true;
 	}
 
@@ -1160,26 +1163,24 @@ int32 ClientAgent::DNSLookup(void* arg)
 
 			in_addr* addr = (in_addr*)hp->h_addr_list[0];
 			strcpy(addr_buf, inet_ntoa(*addr));
-			output += B_TRANSLATE("Resolved ");
-			output += resolve.String();
-			output += B_TRANSLATE(" to ");
-			output += addr_buf;
+			output += B_TRANSLATE("Resolved %lookup% to %address%");
+			output.ReplaceFirst("%lookup%", resolve.String());
+			output.ReplaceFirst("%address%", addr_buf);
 		} else {
-			output += B_TRANSLATE("Unable to resolve ");
-			output += resolve.String();
+			output += B_TRANSLATE("Unable to resolve %lookup%");
+			output.ReplaceFirst("%lookup%", resolve.String());
 		}
 	} else {
 		ulong addr = inet_addr(resolve.String());
 		hostent* hp = gethostbyaddr((const char*)&addr, 4, AF_INET);
 
 		if (hp) {
-			output += B_TRANSLATE("Resolved ");
-			output += resolve.String();
-			output += B_TRANSLATE(" to ");
-			output += hp->h_name;
+			output += B_TRANSLATE("Resolved %lookup% to %name%");
+			output.ReplaceFirst("%lookup%", resolve.String());
+			output.ReplaceFirst("%name%", hp->h_name);
 		} else {
-			output += B_TRANSLATE("Unable to resolve ");
-			output += resolve.String();
+			output += B_TRANSLATE("Unable to resolve %lookup%");
+			output.ReplaceFirst("%lookup%", resolve.String());
 		}
 	}
 

@@ -234,12 +234,18 @@ void ListAgent::MessageReceived(BMessage* msg)
 	} break;
 
 	case M_STATUS_ADDITEMS: {
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Count: "), ""),
+		BString itemText(B_TRANSLATE("Count:"));
+		itemText.Append(" ");
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(itemText.String(), ""),
 														 true);
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(B_TRANSLATE("Status: "), ""),
+		itemText = B_TRANSLATE("Status:");
+		itemText.Append(" ");
+		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(itemText.String(), ""),
 														 true);
+		itemText= B_TRANSLATE("Filter:");
+		itemText.Append(" ");
 		vision_app->pClientWin()->pStatusView()->AddItem(
-			new StatusItem(B_TRANSLATE("Filter: "), "", STATUS_ALIGN_LEFT), true);
+			new StatusItem(itemText.String(), "", STATUS_ALIGN_LEFT), true);
 
 		BString cString;
 		cString << listView->CountRows();
@@ -375,8 +381,8 @@ void ListAgent::MessageReceived(BMessage* msg)
 		} else {
 			PromptWindow* prompt(new PromptWindow(
 				BPoint((Window()->Frame().right / 2) - 100, (Window()->Frame().bottom / 2) - 50),
-				"  Filter:", "List Filter", filter.String(), this, new BMessage(M_LIST_FILTER),
-				new RegExValidate("Filter"), true));
+				B_TRANSLATE("Filter:"), B_TRANSLATE("List filter"), filter.String(), this,
+				new BMessage(M_LIST_FILTER), new RegExValidate("Filter"), true));
 			prompt->Show();
 		}
 
@@ -427,7 +433,7 @@ void ListAgent::MessageReceived(BMessage* msg)
 		} else {
 			PromptWindow* prompt(new PromptWindow(
 				BPoint((Window()->Frame().right / 2) - 100, (Window()->Frame().bottom / 2) - 50),
-				B_TRANSLATE("    Find:"), B_TRANSLATE("Find"), find.String(), this,
+				B_TRANSLATE("Find:"), B_TRANSLATE("Find"), find.String(), this,
 				new BMessage(M_LIST_FIND), new RegExValidate("Find:"), true));
 			prompt->Show();
 		}

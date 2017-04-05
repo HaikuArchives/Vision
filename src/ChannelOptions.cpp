@@ -53,8 +53,8 @@ bool ChannelOptions::QuitRequested(void)
 
 void ChannelOptions::Init(void)
 {
-	BString temp(B_TRANSLATE(" Options"));
-	temp.Prepend(chan_name);
+	BString temp(B_TRANSLATE("%channel% options"));
+	temp.ReplaceFirst("%channel%", chan_name);
 	SetTitle(temp.String());
 
 	bgView = new BView(Bounds(), "Background", B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
@@ -75,8 +75,8 @@ void ChannelOptions::Init(void)
 	bgView->AddChild(privilegesView);
 
 	BString privString; // this will become dynamic based on the current mode
-	privString += B_TRANSLATE("You are currently a channel operator. ");
-	privString += B_TRANSLATE("You may change any of these options.");
+	privString += B_TRANSLATE("You are currently a channel operator. "
+		"You may change any of these options.");
 
 	BStringView* privMsgView =
 		new BStringView(BRect(privilegesView->Bounds().left, privilegesView->Bounds().top,

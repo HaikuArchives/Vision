@@ -103,7 +103,8 @@ void DynamicEditMenu::DetachedFromWindow(void)
 }
 
 ClientWindow::ClientWindow(BRect frame)
-	: BWindow(frame, "Vision", B_DOCUMENT_WINDOW, B_ASYNCHRONOUS_CONTROLS)
+	: BWindow(frame, B_TRANSLATE_SYSTEM_NAME("Vision"),
+		B_DOCUMENT_WINDOW, B_ASYNCHRONOUS_CONTROLS)
 {
 	Init();
 }
@@ -503,14 +504,14 @@ void ClientWindow::Init(void)
 	menu = new BMenu("App");
 
 	menu->AddItem(
-		item = new BMenuItem(B_TRANSLATE("About" B_UTF8_ELLIPSIS), new BMessage(B_ABOUT_REQUESTED)));
+		item = new BMenuItem(B_TRANSLATE("About Vision"), new BMessage(B_ABOUT_REQUESTED)));
 	item->SetTarget(vision_app);
 	menu->AddItem(item = new BMenuItem(B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS), new BMessage(M_PREFS_SHOW)));
 	item->SetTarget(vision_app);
 
 	menu->AddSeparatorItem();
 	menu->AddItem(
-		item = new BMenuItem(B_TRANSLATE("New terminal"), new BMessage(M_OPEN_TERM), 'T', B_OPTION_KEY));
+		item = new BMenuItem(B_TRANSLATE("Open Terminal"), new BMessage(M_OPEN_TERM), 'T', B_OPTION_KEY));
 	menu->AddSeparatorItem();
 	menu->AddItem(item = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED)));
 	item->SetTarget(vision_app);
@@ -570,7 +571,7 @@ void ClientWindow::Init(void)
 	fWindow->AddItem(
 		item = new BMenuItem(B_TRANSLATE("Expand network"), new BMessage(M_EXPAND_NETWORK), B_RIGHT_ARROW));
 	fWindow->AddSeparatorItem();
-	fWindow->AddItem(item = new BMenuItem(B_TRANSLATE("Close subwindow"), new BMessage(M_CW_ALTP), 'P'));
+	fWindow->AddItem(item = new BMenuItem(B_TRANSLATE("Close this sub-window"), new BMessage(M_CW_ALTP), 'P'));
 
 	item->SetTarget(this);
 	fMenuBar->AddItem(fWindow);

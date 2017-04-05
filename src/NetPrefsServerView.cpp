@@ -131,17 +131,17 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 	fServerList->MoveTo(5, fSelectTitleString->Frame().bottom + 3);
 
 	BStringColumn* status(new BStringColumn(B_TRANSLATE("Status"),
-		be_plain_font->StringWidth("Status") * 2, 0,
+		be_plain_font->StringWidth(B_TRANSLATE("Status")) * 2, 0,
 		bounds.Width(), 0, B_ALIGN_CENTER));
 	fServerList->AddColumn(status, 0);
 	BStringColumn* data(new BStringColumn(B_TRANSLATE("Server"),
-		be_plain_font->StringWidth("Server") * 2, 0, bounds.Width(), 0));
+		be_plain_font->StringWidth(B_TRANSLATE("Server")) * 2, 0, bounds.Width(), 0));
 	fServerList->AddColumn(data, 1);
 	BStringColumn* port(new BStringColumn(
-		B_TRANSLATE("Port"), be_plain_font->StringWidth("Port") * 2, 0, bounds.Width(), 0));
+		B_TRANSLATE("Port"), be_plain_font->StringWidth(B_TRANSLATE("Port")) * 2, 0, bounds.Width(), 0));
 	fServerList->AddColumn(port, 2);
 	BStringColumn* secure(new BStringColumn(
-		B_TRANSLATE("Secure?"), be_plain_font->StringWidth("Secure") * 2, 0, bounds.Width(), 0));
+		B_TRANSLATE("Secure?"), be_plain_font->StringWidth(B_TRANSLATE("Secure?")) * 2, 0, bounds.Width(), 0));
 	fServerList->AddColumn(secure, 3);
 
 	fAddButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
@@ -162,19 +162,31 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 	fEditButton->MoveTo(fAddButton->Frame().left - (fEditButton->Frame().Width() + 15),
 		fAddButton->Frame().top);
 	mainBox->AddChild(fEditButton);
-	BStringView* legend1 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("Key: "));
+
+	BString text(B_TRANSLATE("Key:"));
+	text.Append(" ");
+	BStringView* legend1 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
 	legend1->ResizeToPreferred();
 	mainBox->AddChild(legend1);
 	legend1->MoveTo(fServerList->Frame().left + 5, fAddButton->Frame().bottom + 5);
-	BStringView* legend2 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("  * = primary"));
+
+	text = B_TRANSLATE("* = primary");
+	text.Prepend("  ");
+	BStringView* legend2 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
 	legend2->ResizeToPreferred();
 	mainBox->AddChild(legend2);
 	legend2->MoveTo(legend1->Frame().left, legend1->Frame().bottom);
-	BStringView* legend3 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("  + = secondary (fallback)"));
+
+	text = B_TRANSLATE("+ = secondary (fallback)");
+	text.Prepend("  ");
+	BStringView* legend3 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
 	legend3->ResizeToPreferred();
 	mainBox->AddChild(legend3);
 	legend3->MoveTo(legend2->Frame().left, legend2->Frame().bottom);
-	fLegend4 = new BStringView(BRect(0, 0, 0, 0), "str1", B_TRANSLATE("  - = disabled"));
+
+	text = B_TRANSLATE("- = disabled");
+	text.Prepend("  ");
+	fLegend4 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
 	fLegend4->ResizeToPreferred();
 	mainBox->AddChild(fLegend4);
 	fLegend4->MoveTo(legend3->Frame().left, legend3->Frame().bottom);
@@ -304,9 +316,8 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 		delete row;
 	}
 
-	BString netString(B_TRANSLATE("Select servers for "));
-	netString += msg->FindString("name");
-	netString += ":";
+	BString netString(B_TRANSLATE("Select servers for %name%:"));
+	netString.ReplaceFirst("%name%", msg->FindString("name"));
 	type_code type;
 	int32 count;
 	ssize_t size;

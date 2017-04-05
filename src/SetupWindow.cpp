@@ -61,9 +61,12 @@ SetupWindow::SetupWindow(void)
 
 	BMenu* netMenu(new NetworkMenu(B_TRANSLATE("Choose network"), M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
 	netMenu->SetLabelFromMarked(true);
-	netList = new BMenuField(rect, "Network List", B_TRANSLATE("Network: "), netMenu);
+
+	BString text(B_TRANSLATE("Network:"));
+	text.Append(" ");
+	netList = new BMenuField(rect, "Network List", text.String(), netMenu);
 	netList->ResizeToPreferred();
-	netList->SetDivider(be_plain_font->StringWidth(B_TRANSLATE("Network: ")) + 5);
+	netList->SetDivider(be_plain_font->StringWidth(text.String()) + 5);
 
 	rect = netList->Frame();
 	rect.OffsetBy(0, rect.Height() + kItemSpacing);

@@ -168,13 +168,19 @@ FontPrefsView::FontPrefsView(BRect frame)
 		msg->AddInt32("index", i);
 		fElementMenu->AddItem(new BMenuItem(FontControlLabels[i], msg));
 	}
+	BString text(B_TRANSLATE("Element:"));
+	text.Append(" ");
 	fFontElementField =
-		new BMenuField(BRect(10, 10, 200, 50), "elements", "Element: ", fElementMenu);
+		new BMenuField(BRect(10, 10, 200, 50), "elements", text.String(), fElementMenu);
 	AddChild(fFontElementField);
 	FontMenu* menu(new FontMenu("fonts"));
-	fFontMenuField = new BMenuField(BRect(10, 10, 200, 50), "fonts", B_TRANSLATE("Font: "), menu);
+	text = B_TRANSLATE("Font:");
+	text.Append(" ");
+	fFontMenuField = new BMenuField(BRect(10, 10, 200, 50), "fonts", text.String(), menu);
 	AddChild(fFontMenuField);
-	fTextControl = new BTextControl(BRect(60, 60, 200, 90), "", B_TRANSLATE("Size: "), "",
+	text = B_TRANSLATE("Size:");
+	text.Append(" ");
+	fTextControl = new BTextControl(BRect(60, 60, 200, 90), "", text.String(), "",
 									new BMessage(M_FONT_SIZE_CHANGE));
 	fTextControl->TextView()->AddFilter(new NumericFilter());
 	AddChild(fTextControl);

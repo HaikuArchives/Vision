@@ -34,6 +34,9 @@
 #include "Utilities.h"
 #include "Vision.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "ClientAgentLogger"
+
 ClientAgentLogger::ClientAgentLogger(BString server)
 {
 	fServerName = server;
@@ -123,9 +126,11 @@ void ClientAgentLogger::RegisterLogger(const char* logName)
 		char tempTime[96];
 		if (logFile.Position() == 0) // new file
 		{
-			strftime(tempTime, 96, "Session Start: %a %b %d %H:%M %Y\n", &ptr);
+			strftime(tempTime, 96,
+				B_TRANSLATE("Session start: %a %b %d %H:%M %Y\n"), &ptr);
 		} else {
-			strftime(tempTime, 96, "\n\nSession Start: %a %b %d %H:%M %Y\n", &ptr);
+			strftime(tempTime, 96,
+				B_TRANSLATE("\n\nSession start: %a %b %d %H:%M %Y\n"), &ptr);
 		}
 
 		BString timeString(tempTime);
@@ -175,7 +180,7 @@ void ClientAgentLogger::CloseSession(BFile& logFile)
 		struct tm ptr;
 		localtime_r(&myTime, &ptr);
 		char tempTime[96];
-		strftime(tempTime, 96, "Session Close: %a %b %d %H:%M %Y\n", &ptr);
+		strftime(tempTime, 96, B_TRANSLATE("Session close: %a %b %d %H:%M %Y\n"), &ptr);
 		size_t len = strlen(tempTime);
 		logFile.Write(tempTime, len);
 		logFile.Unset();
