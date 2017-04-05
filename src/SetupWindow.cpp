@@ -26,14 +26,14 @@
 #include <View.h>
 #include <MenuField.h>
 #include <MenuItem.h>
-#include <Resources.h>
 #include <TranslationUtils.h>
+#include <LayoutBuilder.h>
 
 #include "ClientWindow.h"
-#include "LogoView.h"
 #include "SetupWindow.h"
 #include "Vision.h"
 #include "NetworkMenu.h"
+#include "ClickView.h"
 
 #include <stdio.h>
 
@@ -41,80 +41,67 @@
 #define B_TRANSLATION_CONTEXT "SetupWindow"
 
 SetupWindow::SetupWindow(void)
-	: BWindow(BRect(108.0, 88.0, 500.0, 320.0), B_TRANSLATE("Setup window"), B_TITLED_WINDOW,
-			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
+	:
+	BWindow(BRect(108, 88, 500, 320), B_TRANSLATE("Setup window"),
+		B_TITLED_WINDOW,
+		B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE |
+		B_AUTO_UPDATE_SIZE_LIMITS)
 {
-
 	AddShortcut('/', B_SHIFT_KEY, new BMessage(M_PREFS_SHOW));
 
-	bgView = new BView(Bounds(), "background", B_FOLLOW_ALL, B_WILL_DRAW);
-	AddChild(bgView);
-	bgView->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
+	BBitmap* bmp = NULL;
+	ClickView* logo = new ClickView("image", B_WILL_DRAW,
+		"https://github.com/HaikuArchives/Vision");
 
-	BRect rect = Bounds();
-	LogoView* logo = new LogoView(rect);
-
-	rect.top = logo->PreferredHeight();
-	rect.bottom = Bounds().bottom;
-	rect.left = kItemSpacing;
-
-	BMenu* netMenu(new NetworkMenu(B_TRANSLATE("Choose network"), M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
+	BMenu* netMenu(new NetworkMenu(B_TRANSLATE("Choose network"),
+		M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
 	netMenu->SetLabelFromMarked(true);
 
 	BString text(B_TRANSLATE("Network:"));
 	text.Append(" ");
-	netList = new BMenuField(rect, "Network List", text.String(), netMenu);
-	netList->ResizeToPreferred();
-	netList->SetDivider(be_plain_font->StringWidth(text.String()) + 5);
+	netList = new BMenuField("Network List", text.String(), netMenu);
+	//netList->SetDivider(be_plain_font->StringWidth(text.String()) + 5);
 
-	rect = netList->Frame();
-	rect.OffsetBy(0, rect.Height() + kItemSpacing);
-	connectButton = new BButton(rect, "connect", B_TRANSLATE("Connect"),
-								new BMessage(M_CONNECT_NETWORK));
-	connectButton->ResizeToPreferred();
+	connectButton = new BButton("connect", B_TRANSLATE("Connect"),
+		new BMessage(M_CONNECT_NETWORK));
 
-	rect = connectButton->Frame();
-	rect.OffsetBy(rect.Width() + kItemSpacing, 0);
-
-	netPrefsButton = new BButton(rect, "netprefs", B_TRANSLATE("Network setup" B_UTF8_ELLIPSIS),
-								 new BMessage(M_NETWORK_SHOW));
-	netPrefsButton->ResizeToPreferred();
+	netPrefsButton = new BButton("netprefs",
+		B_TRANSLATE("Network setup" B_UTF8_ELLIPSIS),
+		new BMessage(M_NETWORK_SHOW));
 	netPrefsButton->SetTarget(vision_app);
 
-	rect = netPrefsButton->Frame();
-	rect.OffsetBy(rect.Width() + kItemSpacing, 0);
-
-	prefsButton = new BButton(rect, "prefs", B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS),
-							  new BMessage(M_PREFS_SHOW));
-	prefsButton->ResizeToPreferred();
+	prefsButton = new BButton("prefs",
+		B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS), new BMessage(M_PREFS_SHOW));
 	prefsButton->SetTarget(vision_app);
 
-	rect = prefsButton->Frame();
-	float newWidth = rect.right + kItemSpacing;
-	float newHeight = rect.bottom + kItemSpacing;
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_HALF_ITEM_INSETS)
+		.Add(logo)
+		.Add(netList)
+		.AddGroup(B_HORIZONTAL)
+			.Add(connectButton)
+			.Add(netPrefsButton)
+			.Add(prefsButton)
+		.End()
+	.End();
 
-	ResizeTo(newWidth, newHeight);
-
-	bgView->AddChild(logo);
-	bgView->AddChild(netList);
-	bgView->AddChild(prefsButton);
-	bgView->AddChild(netPrefsButton);
-	bgView->AddChild(connectButton);
-
-	rect = Bounds();
-	rect.bottom = netList->Frame().bottom - (kItemSpacing * 2);
-	logo->ResizeTo(newWidth, rect.Height());
+	if ((bmp = BTranslationUtils::GetBitmap('bits', "vision-logo")) != 0) {
+		logo->SetViewBitmap(bmp);
+		logo->SetExplicitMinSize(bmp->Bounds().Size());
+		logo->SetExplicitMaxSize(bmp->Bounds().Size());
+		delete bmp;
+	}
 
 	connectButton->SetEnabled(false);
 
-	rect = vision_app->GetRect("SetupWinRect");
+	BRect rect = vision_app->GetRect("SetupWinRect");
 	if (rect.Width() > 0)
 		MoveTo(rect.LeftTop());
+	ResizeTo(0, 0);
 }
 
 SetupWindow::~SetupWindow(void)
 {
-	//
 }
 
 bool SetupWindow::QuitRequested(void)

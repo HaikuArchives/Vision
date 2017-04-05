@@ -32,8 +32,8 @@ class ClickView : public BView
 public:
 	BString fLaunchUrl;
 
-	ClickView(BRect frame, const char* name, uint32 resizeMask, uint32 flags, const char* url)
-		: BView(frame, name, resizeMask, flags)
+	ClickView(const char* name, uint32 flags, const char* url)
+		: BView(name, flags)
 	{
 		fLaunchUrl = url;
 	};

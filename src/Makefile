@@ -33,6 +33,7 @@ APP_MIME_SIG = application/x-vnd.Ink-Vision
 SRCS = \
 	ChannelAgent.cpp \
 	ChannelOptions.cpp \
+	ClickView.cpp \
 	ClientAgent.cpp \
 	ClientAgentInputFilter.cpp \
 	ClientAgentLogger.cpp \
@@ -46,7 +47,6 @@ SRCS = \
 	HistoryList.cpp \
 	IconMenu.cpp \
 	ListAgent.cpp \
-	LogoView.cpp \
 	MessageAgent.cpp \
 	NameItem.cpp \
 	NamesView.cpp \
