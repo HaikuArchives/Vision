@@ -91,7 +91,7 @@ AppWindowPrefsView::AppWindowPrefsView(BRect frame)
 
 	checkboxRect.OffsetBy(0.0, fSpamMode->Bounds().Height() * 1.2);
 	msg.ReplaceString("setting", "queryOnMsg");
-	fQueryMsg = new BCheckBox(checkboxRect, "queryOnMsg", B_TRANSLATE("Open new query on message"), new BMessage(msg));
+	fQueryMsg = new BCheckBox(checkboxRect, "queryOnMsg", B_TRANSLATE("Open new query on private message"), new BMessage(msg));
 	fQueryMsg->SetValue((vision_app->GetBool("queryOnMsg")) ? B_CONTROL_ON : B_CONTROL_OFF);
 	fQueryMsg->MoveBy(be_plain_font->StringWidth("S"), 0);
 	fQueryMsg->ResizeToPreferred();
@@ -107,7 +107,9 @@ AppWindowPrefsView::AppWindowPrefsView(BRect frame)
 	checkboxRect.right = Bounds().Width();
 	checkboxRect.bottom += fQueryMsg->Bounds().Height() * 1.2;
 
-	fEncodings = new BMenuField(checkboxRect, "encoding", "Encoding: ", encMenu);
+	BString text(B_TRANSLATE("Encoding:"));
+	text.Append(" ");
+	fEncodings = new BMenuField(checkboxRect, "encoding", text.String(), encMenu);
 
 	AddChild(fEncodings);
 	fEncodings->Menu()->SetLabelFromMarked(true);
@@ -137,7 +139,7 @@ void AppWindowPrefsView::AllAttached(void)
 	fQueryMsg->SetTarget(this);
 	fEncodings->Menu()->SetTargetForItems(this);
 	fEncodings->ResizeTo(Bounds().Width() - 15, fEncodings->Bounds().Height());
-	fEncodings->SetDivider(StringWidth("Encoding: ") + 5);
+	fEncodings->SetDivider(StringWidth(B_TRANSLATE("Encoding:")) + 5);
 	fEncodings->MoveTo(fQueryMsg->Frame().left + 5, fQueryMsg->Frame().bottom + 5);
 	SetEncodingItem(vision_app->GetInt32("encoding"));
 	BView::AllAttached();
@@ -160,35 +162,35 @@ BMenu* AppWindowPrefsView::CreateEncodingMenu(void)
 	BMessage msg(M_APPWINDOWPREFS_ENCODING_CHANGED);
 	BMenu* encMenu(new BMenu("Encodings"));
 	msg.AddInt32("encoding", B_ISO1_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Western (ISO 8859-1)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Western (ISO 8859-1)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_ISO2_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Central European (ISO 8859-2)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Central European (ISO 8859-2)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_ISO5_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Cyrillic (ISO 8859-5)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Cyrillic (ISO 8859-5)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_KOI8R_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Cyrillic (KOI8-R)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Cyrillic (KOI8-R)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_ISO13_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Baltic (ISO 8859-13)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Baltic (ISO 8859-13)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_MS_DOS_866_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Cyrillic (MS-DOS 866)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Cyrillic (MS-DOS 866)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_MS_WINDOWS_1251_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Cyrillic (Windows 1251)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Cyrillic (Windows 1251)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_ISO7_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Greek (ISO 8859-7)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Greek (ISO 8859-7)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_SJIS_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Japanese (Shift-JIS)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Japanese (Shift-JIS)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_EUC_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Japanese (EUC)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Japanese (EUC)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_JIS_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Japanese (JIS)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Japanese (JIS)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_EUC_KR_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Korean (EUC)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Korean (EUC)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_UNICODE_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Unicode (UTF-8)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Unicode (UTF-8)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_MAC_ROMAN_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Western (Mac Roman)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Western (Mac Roman)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_MS_WINDOWS_CONVERSION);
-	encMenu->AddItem(new BMenuItem("Western (Windows)", new BMessage(msg)));
+	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Western (Windows)"), new BMessage(msg)));
 	return encMenu;
 }
 

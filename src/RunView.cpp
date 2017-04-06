@@ -58,6 +58,9 @@
 #include "Vision.h"
 #include "Utilities.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "RunView"
+
 // cursor data for hovering over URLs
 
 static unsigned char URLCursorData[] = {
@@ -470,33 +473,33 @@ void RunView::BuildPopUp(void)
 	BMessage* lookup;
 	lookup = new BMessage(M_LOOKUP_WEBSTER);
 	lookup->AddString("string", querystring);
-	item = new BMenuItem("Lookup (dictionary)", lookup);
+	item = new BMenuItem(B_TRANSLATE("Lookup (dictionary)"), lookup);
 	item->SetEnabled(enablelookup);
 	item->SetTarget(Parent());
 	fMyPopUp->AddItem(item);
 
 	lookup = new BMessage(M_LOOKUP_GOOGLE);
 	lookup->AddString("string", querystring);
-	item = new BMenuItem("Lookup (Google)", lookup);
+	item = new BMenuItem(B_TRANSLATE("Lookup (Google)"), lookup);
 	item->SetEnabled(enablelookup);
 	item->SetTarget(Parent());
 	fMyPopUp->AddItem(item);
 
 	lookup = new BMessage(M_LOOKUP_ACRONYM);
 	lookup->AddString("string", querystring);
-	item = new BMenuItem("Lookup (acronym finder)", lookup);
+	item = new BMenuItem(B_TRANSLATE("Lookup (acronym finder)"), lookup);
 	item->SetEnabled(enablelookup);
 	item->SetTarget(Parent());
 	fMyPopUp->AddItem(item);
 
 	fMyPopUp->AddSeparatorItem();
 
-	item = new BMenuItem("Copy", new BMessage(B_COPY), 'C');
+	item = new BMenuItem(B_TRANSLATE("Copy"), new BMessage(B_COPY), 'C');
 	item->SetEnabled(enablecopy);
 	item->SetTarget(this);
 	fMyPopUp->AddItem(item);
 
-	item = new BMenuItem("Select all", new BMessage(B_SELECT_ALL), 'A');
+	item = new BMenuItem(B_TRANSLATE("Select all"), new BMessage(B_SELECT_ALL), 'A');
 	item->SetEnabled(enableselectall);
 	item->SetTarget(this);
 	fMyPopUp->AddItem(item);
@@ -666,7 +669,9 @@ void RunView::MouseMoved(BPoint point, uint32 transit, const BMessage* msg)
 			GetSelectionText(text);
 			msg.AddData("text/plain", B_MIME_TYPE, text.String(), text.Length());
 
-			BString clip_name(" Clipping");
+			BString clip_name(B_TRANSLATE_COMMENT("Clipping",
+				"as suffix for dropped text clippings"));
+			clip_name.Prepend(" ");
 
 			if (fClipping_name)
 				clip_name.Prepend(fClipping_name);

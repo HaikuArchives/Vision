@@ -1,4 +1,4 @@
-1	English	application/x-vnd.Ink-Vision	4173175022
+1	English	application/x-vnd.Ink-Vision	3932130148
 [@] Attempting to rejoin…\n	ChannelAgent		[@] Attempting to rejoin…\n
 *** Attempting to rejoin %channel%…\n	ChannelAgent		*** Attempting to rejoin %channel%…\n
 *** Now talking in %channel%\n	ChannelAgent		*** Now talking in %channel%\n
@@ -114,7 +114,6 @@ Whois	NamesView		Whois
 + = secondary (fallback)	NetPrefsServerView		+ = secondary (fallback)
 Add…	NetPrefsServerView		Add…
 Edit…	NetPrefsServerView		Edit…
-Key:	NetPrefsServerView		Key:
 OK	NetPrefsServerView		OK
 Port	NetPrefsServerView		Port
 Remove	NetPrefsServerView		Remove
@@ -123,14 +122,16 @@ Select servers for %name%:	NetPrefsServerView		Select servers for %name%:
 Server	NetPrefsServerView		Server
 Status	NetPrefsServerView		Status
 Yes	NetPrefsServerView		Yes
-{0, plural,one{falling back to # other.}other{falling back to # others.}}	NetworkPrefsView		{0, plural,one{falling back to # other.}other{falling back to # others.}}
+Key:	NetPrefsServerView	like a legend of a map describing the used symbols	Key:
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}
 Add network	NetworkPrefsView		Add network
 Add new…	NetworkPrefsView		Add new…
 Add nickname	NetworkPrefsView		Add nickname
 Add…	NetworkPrefsView		Add…
 Auto-connect to this network	NetworkPrefsView		Auto-connect to this network
-Autoexec:	NetworkPrefsView		Autoexec:
+Automatically execute:	NetworkPrefsView		Automatically execute:
 Change servers…	NetworkPrefsView		Change servers…
+Connects to server:	NetworkPrefsView		Connects to server:
 Defaults	NetworkPrefsView		Defaults
 Duplicate current…	NetworkPrefsView		Duplicate current…
 Duplicate network	NetworkPrefsView		Duplicate network
@@ -147,7 +148,6 @@ Real name:	NetworkPrefsView		Real name:
 Remove	NetworkPrefsView		Remove
 Remove current	NetworkPrefsView		Remove current
 Use defaults	NetworkPrefsView		Use defaults
-Will connect to	NetworkPrefsView		Will connect to
 <N/A>	NetworkPrefsView	as in 'not available	<N/A>
 Network setup	NetworkWindow		Network setup
 Servers	NetworkWindow		Servers
@@ -211,11 +211,27 @@ Add	PrefAliases		Add
 Alias	PrefAliases		Alias
 Name	PrefAliases		Name
 Remove	PrefAliases		Remove
-Open new query on message	PrefApp		Open new query on message
+Baltic (ISO 8859-13)	PrefApp		Baltic (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		Central European (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		Cyrillic (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		Cyrillic (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		Cyrillic (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		Cyrillic (Windows 1251)
+Encoding:	PrefApp		Encoding:
+Greek (ISO 8859-7)	PrefApp		Greek (ISO 8859-7)
+Japanese (EUC)	PrefApp		Japanese (EUC)
+Japanese (JIS)	PrefApp		Japanese (JIS)
+Japanese (Shift-JIS)	PrefApp		Japanese (Shift-JIS)
+Korean (EUC)	PrefApp		Korean (EUC)
+Open new query on private message	PrefApp		Open new query on private message
 Require double CMD+Q/W to close	PrefApp		Require double CMD+Q/W to close
 Show OS information in version reply	PrefApp		Show OS information in version reply
 Strip mIRC colors	PrefApp		Strip mIRC colors
+Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
 Warn when multiline pasting	PrefApp		Warn when multiline pasting
+Western (ISO 8859-1)	PrefApp		Western (ISO 8859-1)
+Western (Mac Roman)	PrefApp		Western (Mac Roman)
+Western (Windows)	PrefApp		Western (Windows)
 Action	PrefColor		Action
 Background	PrefColor		Background
 CTCP reply	PrefColor		CTCP reply
@@ -248,7 +264,7 @@ Names (OP)	PrefColor		Names (OP)
 Names (voice)	PrefColor		Names (voice)
 Names background	PrefColor		Names background
 Names selection	PrefColor		Names selection
-Nickname edges	PrefColor		Nickname edges
+Nickname < >	PrefColor		Nickname < >
 Nickname text	PrefColor		Nickname text
 Notice	PrefColor		Notice
 Notify list background	PrefColor		Notify list background
@@ -260,18 +276,18 @@ Revert	PrefColor		Revert
 Selection	PrefColor		Selection
 Server text	PrefColor		Server text
 Text	PrefColor		Text
-Timestamp	PrefColor		Timestamp
 Timestamp background	PrefColor		Timestamp background
+Timestamp text	PrefColor		Timestamp text
 URL	PrefColor		URL
-User nickname edges	PrefColor		User nickname edges
+User nickname < >	PrefColor		User nickname < >
 Wallops	PrefColor		Wallops
 Whois	PrefColor		Whois
-Winlist background	PrefColor		Winlist background
-Winlist event status	PrefColor		Winlist event status
-Winlist nick alert status	PrefColor		Winlist nick alert status
-Winlist normal status	PrefColor		Winlist normal status
-Winlist selection status	PrefColor		Winlist selection status
-Winlist text status	PrefColor		Winlist text status
+Window list activity	PrefColor		Window list activity
+Window list background	PrefColor		Window list background
+Window list event	PrefColor		Window list event
+Window list nick alert	PrefColor		Window list nick alert
+Window list normal	PrefColor		Window list normal
+Window list selection	PrefColor		Window list selection
 Away:	PrefCommand		Away:
 Back:	PrefCommand		Back:
 Ignore:	PrefCommand		Ignore:
@@ -325,6 +341,12 @@ Show timestamps in IRC window	PrefLog		Show timestamps in IRC window
 The log path you have entered is invalid.	PrefLog		The log path you have entered is invalid.
 Timestamp format:	PrefLog		Timestamp format:
 Preferences	PrefsWindow		Preferences
+Copy	RunView		Copy
+Lookup (acronym finder)	RunView		Lookup (acronym finder)
+Lookup (dictionary)	RunView		Lookup (dictionary)
+Lookup (Google)	RunView		Lookup (Google)
+Select all	RunView		Select all
+Clipping	RunView	as suffix for dropped text clippings	Clipping
 [@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n
 [@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Attempting a connection to %id%:%port%…\n
 [@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Attempting to connect (attempt %ld of %ld)\n
@@ -338,7 +360,7 @@ Preferences	PrefsWindow		Preferences
 [@] Local IP: %ip%\n	ServerAgent		[@] Local IP: %ip%\n
 [@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n
 [@] Sending password\n	ServerAgent		[@] Sending password\n
-{0, plural,one{[@] Waiting # second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Waiting # second before next attempt}other{[@] Waiting # seconds before next attempt}}
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}
 CONNECTION PROBLEM	ServerAgent		CONNECTION PROBLEM
 Disabled	ServerAgent		Disabled
 Disconnected	ServerAgent		Disconnected

@@ -327,7 +327,7 @@ int32 ServerAgent::Establish(void* arg)
 			if (retrycount) {
 				BString text;
 				static BMessageFormat format(B_TRANSLATE("{0, plural,"
-					"one{[@] Waiting # second before next attempt}"
+					"one{[@] Waiting one second before next attempt}"
 					"other{[@] Waiting # seconds before next attempt}}"));
 				format.Format(statString, retrycount * retrycount);
 				statString.Append(B_UTF8_ELLIPSIS "\n");

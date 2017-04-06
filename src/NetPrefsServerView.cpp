@@ -163,7 +163,8 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 		fAddButton->Frame().top);
 	mainBox->AddChild(fEditButton);
 
-	BString text(B_TRANSLATE("Key:"));
+	BString text(B_TRANSLATE_COMMENT("Key:",
+		"like a legend of a map describing the used symbols"));
 	text.Append(" ");
 	BStringView* legend1 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
 	legend1->ResizeToPreferred();

@@ -114,7 +114,8 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	boundsRect.top = kItemSpacing;
 	boundsRect.bottom += kItemSpacing * 2;
 
-	BStringView* stringView1(new BStringView(boundsRect, NULL, B_TRANSLATE("Will connect to")));
+	BStringView* stringView1(new BStringView(boundsRect, NULL,
+		B_TRANSLATE("Connects to server:")));
 	stringView1->ResizeToPreferred();
 	stringView1->MoveTo(fNetDetailsBox->InnerFrame().left + kItemSpacing,
 		fNetDetailsBox->InnerFrame().top + kItemSpacing);
@@ -137,7 +138,7 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	fServerButton->MoveTo(kItemSpacing, fAlternates->Frame().bottom + 5);
 	fNetDetailsBox->AddChild(fServerButton);
 
-	BStringView* stringView4(new BStringView(boundsRect, NULL, B_TRANSLATE("Autoexec:")));
+	BStringView* stringView4(new BStringView(boundsRect, NULL, B_TRANSLATE("Automatically execute:")));
 	stringView4->ResizeToPreferred();
 	stringView4->MoveTo(fAlternates->Frame().left, fServerButton->Frame().bottom + 5);
 	fNetDetailsBox->AddChild(stringView4);
@@ -303,8 +304,8 @@ void NetworkPrefsView::SetAlternateCount(uint32 altCount)
 
 	BString text;
 	static BMessageFormat format(B_TRANSLATE("{0, plural,"
-		"one{falling back to # other.}"
-		"other{falling back to # others.}}"));
+		"one{with a fallback to one other.}"
+		"other{with a fallback to # others.}}"));
 		format.Format(text, altCount);
 
 		fAlternates->SetText(text.String());
