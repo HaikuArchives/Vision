@@ -683,7 +683,6 @@ void VisionApp::AboutRequested(void)
 	fAboutWin->SetVersion(VERSION_STRING);
 	fAboutWin->AddCopyright(2017, "The Vision Team");
 	fAboutWin->AddAuthors(kAuthors);
-	fAboutWin->SetIcon(BTranslationUtils::GetBitmap('bits', "vision"));
 	fAboutWin->AddText(B_TRANSLATE(
 		"Brought to you in part by contributions from:\n"
 		"Seth Flaxman (Flax)\n"
