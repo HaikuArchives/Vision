@@ -143,7 +143,7 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 	passwordField->TextView()->HideTyping(true);
 
 	securePort->SetTarget(this);
-	securePort->SetValue(data->secure ? B_CONTROL_ON : B_CONTROL_OFF);
+	securePort->SetValue(currentServer.secure ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	cancelButton->SetTarget(this);
 	okButton->SetTarget(this);
