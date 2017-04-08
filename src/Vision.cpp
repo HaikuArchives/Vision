@@ -116,7 +116,6 @@ int main()
 
 VisionApp::VisionApp()
 	: BApplication(kVisionSig),
-	  fAboutWin(NULL),
 	  fSetupWin(NULL),
 	  fClientWin(NULL),
 	  fPrefsWin(NULL),
@@ -672,12 +671,7 @@ bool VisionApp::QuitRequested()
 
 void VisionApp::AboutRequested()
 {
-	if (fAboutWin) {
-		fAboutWin->Activate();
-		return;
-	}
-
-	fAboutWin = new BAboutWindow(B_TRANSLATE_SYSTEM_NAME("Vision"), kVisionSig);
+	BAboutWindow* fAboutWin = new BAboutWindow(B_TRANSLATE_SYSTEM_NAME("Vision"), kVisionSig);
 	fAboutWin->AddDescription(B_TRANSLATE("A native Haiku IRC client that is "
 		"feature filled, fast, lightweight, and stable."));
 	fAboutWin->SetVersion(VERSION_STRING);
@@ -872,8 +866,9 @@ void VisionApp::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
 	case M_ABOUT_CLOSE: {
-		fAboutWin = 0;
-		if (fShuttingDown) PostMessage(B_QUIT_REQUESTED);
+		// TODO: remove this case?
+		if (fShuttingDown)
+			PostMessage(B_QUIT_REQUESTED);
 	} break;
 
 	case M_SETUP_SHOW: {
@@ -888,7 +883,8 @@ void VisionApp::MessageReceived(BMessage* msg)
 	case M_SETUP_CLOSE: {
 		SaveSettings();
 		fSetupWin = 0;
-		if (fClientWin == NULL) PostMessage(B_QUIT_REQUESTED);
+		if (fClientWin == NULL)
+			PostMessage(B_QUIT_REQUESTED);
 	} break;
 
 	case M_PREFS_SHOW: {

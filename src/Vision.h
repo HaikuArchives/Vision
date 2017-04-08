@@ -36,7 +36,6 @@
 
 class BFont;
 class Theme;
-class BAboutWindow;
 class SetupWindow;
 class PrefsWindow;
 class ClientWindow;
@@ -164,7 +163,6 @@ private:
 
 	volatile bool fShuttingDown;
 
-	BAboutWindow* fAboutWin;
 	SetupWindow* fSetupWin;
 	ClientWindow* fClientWin;
 	PrefsWindow* fPrefsWin;
