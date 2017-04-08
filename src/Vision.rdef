@@ -5,7 +5,7 @@ resource app_flags B_EXCLUSIVE_LAUNCH;
 resource app_version {
 	major  = 0,
 	middle = 10,
-	minor  = 0,
+	minor  = 1,
 
 	// B_APPV_DEVELOPMENT
 	// B_APPV_ALPHA
@@ -13,7 +13,7 @@ resource app_version {
 	// B_APPV_GAMMA
 	// B_APPV_GOLDEN_MASTER
 	// B_APPV_FINAL
-	variety = B_APPV_FINAL,
+	variety = B_APPV_DEVELOPMENT,
 	internal = 0,
 
 	short_info = "Vision",
