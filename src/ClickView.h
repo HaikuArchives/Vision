@@ -24,6 +24,7 @@
 #ifndef _CLICKVIEW_H
 #define _CLICKVIEW_H
 
+#include <Cursor.h>
 #include <View.h>
 #include <String.h>
 
@@ -37,6 +38,11 @@ public:
 	{
 		fLaunchUrl = url;
 	};
+
+	virtual void AttachedToWindow()
+	{
+		SetViewCursor(new BCursor(B_CURSOR_ID_FOLLOW_LINK));
+	}
 
 	virtual void MouseDown(BPoint);
 };
