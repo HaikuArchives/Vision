@@ -41,7 +41,7 @@ class StatusView : public BView
 
 public:
 	StatusView(BRect);
-	virtual ~StatusView(void);
+	virtual ~StatusView();
 
 	void AddItem(StatusItem*, bool);
 	StatusItem* ItemAt(int32) const;
@@ -49,7 +49,7 @@ public:
 	void SetItemValue(int32, const char*, bool = true);
 	virtual void Draw(BRect);
 	virtual void MouseDown(BPoint);
-	void Clear(void);
+	void Clear();
 
 protected:
 	void DrawSplit(float);
@@ -60,7 +60,7 @@ class StatusItem
 public:
 	StatusItem(const char*, const char*, int32 = STATUS_ALIGN_RIGHT);
 
-	virtual ~StatusItem(void);
+	virtual ~StatusItem();
 
 	void GeneratePopUp(BPoint, BRect);
 

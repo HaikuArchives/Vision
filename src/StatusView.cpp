@@ -50,7 +50,7 @@ StatusView::StatusView(BRect frame)
 	AdoptSystemColors();
 }
 
-StatusView::~StatusView(void)
+StatusView::~StatusView()
 {
 	while (!items.IsEmpty()) {
 		StatusItem* item((StatusItem*)items.RemoveItem((int32)0));
@@ -93,7 +93,7 @@ void StatusView::MouseDown(BPoint point)
 	BView::MouseDown(point);
 }
 
-void StatusView::Clear(void)
+void StatusView::Clear()
 {
 	int32 i, all(items.CountItems());
 
@@ -197,7 +197,7 @@ StatusItem::StatusItem(const char* label_, const char* value_, int32 alignment_)
 	alignment = alignment_;
 }
 
-StatusItem::~StatusItem(void)
+StatusItem::~StatusItem()
 {
 }
 

@@ -48,7 +48,7 @@ ClientAgentLogger::ClientAgentLogger(BString server)
 	StartLogging();
 }
 
-ClientAgentLogger::~ClientAgentLogger(void)
+ClientAgentLogger::~ClientAgentLogger()
 {
 	// tell log thread it's time to die
 	StopLogging();
@@ -62,7 +62,7 @@ ClientAgentLogger::~ClientAgentLogger(void)
 		CloseSession(it->second);
 }
 
-void ClientAgentLogger::StartLogging(void)
+void ClientAgentLogger::StartLogging()
 {
 	// someone tried to call StartLogging while a logger was already active, do nothing.
 	if (fLogThread != -1) return;
@@ -83,7 +83,7 @@ void ClientAgentLogger::StartLogging(void)
 	if (fLogThread >= B_OK) resume_thread(fLogThread);
 }
 
-void ClientAgentLogger::StopLogging(void)
+void ClientAgentLogger::StopLogging()
 {
 	fIsLogging = false;
 	delete_sem(fLogSyncherLock);
@@ -187,7 +187,7 @@ void ClientAgentLogger::CloseSession(BFile& logFile)
 	}
 }
 
-void ClientAgentLogger::SetupLogging(void)
+void ClientAgentLogger::SetupLogging()
 {
 	if (fLogSetupDone) return;
 

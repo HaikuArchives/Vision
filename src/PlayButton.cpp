@@ -29,11 +29,11 @@ StopButton::StopButton(BPoint left_top, BMessage* msg)
 {
 }
 
-StopButton::~StopButton(void)
+StopButton::~StopButton()
 {
 }
 
-void StopButton::AttachedToWindow(void)
+void StopButton::AttachedToWindow()
 {
 	BButton::AttachedToWindow();
 	ResizeTo(22, 18);

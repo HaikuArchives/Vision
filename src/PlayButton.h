@@ -29,10 +29,10 @@ class StopButton : public BButton
 {
 public:
 	StopButton(BPoint, BMessage*);
-	virtual ~StopButton(void);
+	virtual ~StopButton();
 
 	virtual void Draw(BRect);
-	virtual void AttachedToWindow(void);
+	virtual void AttachedToWindow();
 };
 
 #endif

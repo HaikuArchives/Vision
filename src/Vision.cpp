@@ -98,7 +98,7 @@ const char* kTrackerSig = "application/x-vnd.Be-TRAK";
 const char* kVisionSig = "application/x-vnd.Ink-Vision";
 
 // And so it begins....
-int main(void)
+int main()
 {
 	// Seed it!
 	srand(time(0));
@@ -114,7 +114,7 @@ int main(void)
 /// Begin BApplication functions
 //////////////////////////////////////////////////////////////////////////////
 
-VisionApp::VisionApp(void)
+VisionApp::VisionApp()
 	: BApplication(kVisionSig),
 	  fAboutWin(NULL),
 	  fSetupWin(NULL),
@@ -145,7 +145,7 @@ VisionApp::VisionApp(void)
 	URLCrunch::UpdateTagList();
 }
 
-VisionApp::~VisionApp(void)
+VisionApp::~VisionApp()
 {
 	int32 i(0);
 	for (; i < MAX_FONTS; i++) delete fClientFont[i];
@@ -153,7 +153,7 @@ VisionApp::~VisionApp(void)
 	delete fActiveTheme;
 }
 
-int32 VisionApp::ThreadStates(void)
+int32 VisionApp::ThreadStates()
 {
 	thread_id team(Team());
 	int32 cookie(0);
@@ -234,7 +234,7 @@ int32 VisionApp::ThreadStates(void)
 	return t_count;
 }
 
-void VisionApp::InitDefaults(void)
+void VisionApp::InitDefaults()
 {
 	const rgb_color myBlack = {0, 0, 0, 255};
 	const rgb_color myWhite = {255, 255, 255, 255};
@@ -365,7 +365,7 @@ void VisionApp::InitDefaults(void)
 		add_system_beep_event(eventName);
 }
 
-void VisionApp::InitSettings(void)
+void VisionApp::InitSettings()
 {
 	// initialize arrays with Vision's default settings in case of new user
 	InitDefaults();
@@ -431,7 +431,7 @@ void VisionApp::InitSettings(void)
 	if (fDebugSettings) printf(":SETTINGS: done loading\n");
 }
 
-bool VisionApp::SaveSettings(void)
+bool VisionApp::SaveSettings()
 {
 	BAutolock saveLock(const_cast<BLocker*>(&fSettingsLock));
 
@@ -446,7 +446,7 @@ bool VisionApp::SaveSettings(void)
 	return false;
 }
 
-void VisionApp::LoadInitialSettings(void)
+void VisionApp::LoadInitialSettings()
 {
 	image_info info;
 	int32 cookie = 0;
@@ -639,7 +639,7 @@ void VisionApp::LoadDefaults(int32 section)
 	}
 }
 
-bool VisionApp::QuitRequested(void)
+bool VisionApp::QuitRequested()
 {
 	fShuttingDown = true;
 
@@ -670,7 +670,7 @@ bool VisionApp::QuitRequested(void)
 	return true;
 }
 
-void VisionApp::AboutRequested(void)
+void VisionApp::AboutRequested()
 {
 	if (fAboutWin) {
 		fAboutWin->Activate();
@@ -777,7 +777,7 @@ void VisionApp::ArgvReceived(int32 ac, char** av)
 // check if any networks have the connect on startup flag marked...
 // if they do, start them
 
-bool VisionApp::CheckStartupNetworks(void)
+bool VisionApp::CheckStartupNetworks()
 {
 	bool autoStarted(false);
 	if (!fDisableAutostart) {
@@ -815,7 +815,7 @@ bool VisionApp::CheckNetworkValid(const char* name)
 	return false;
 }
 
-void VisionApp::ReadyToRun(void)
+void VisionApp::ReadyToRun()
 {
 	InitSettings();
 
@@ -1007,7 +1007,7 @@ ClientWindow* VisionApp::pClientWin() const
 	return fClientWin;
 }
 
-entry_ref VisionApp::AppRef(void) const
+entry_ref VisionApp::AppRef() const
 {
 	return fAppRef;
 };
@@ -1394,7 +1394,7 @@ status_t VisionApp::RemoveNetwork(const char* network)
 	return B_OK;
 }
 
-Theme* VisionApp::ActiveTheme(void)
+Theme* VisionApp::ActiveTheme()
 {
 	return fActiveTheme;
 }
@@ -1702,17 +1702,17 @@ void VisionApp::RemoveIgnoreNick(const char* network, const char* nick, bool exc
 	if (i < attrCount) SetNetwork(network, &netMsg);
 }
 
-void VisionApp::AcquireDCCLock(void)
+void VisionApp::AcquireDCCLock()
 {
 	fDccLock.Lock();
 }
 
-void VisionApp::ReleaseDCCLock(void)
+void VisionApp::ReleaseDCCLock()
 {
 	fDccLock.Unlock();
 }
 
-bigtime_t VisionApp::VisionUptime(void)
+bigtime_t VisionApp::VisionUptime()
 {
 	return system_time() - fStartupTime;
 }
@@ -1776,7 +1776,7 @@ void VisionApp::RemoveAlias(const BString& cmd)
 	}
 }
 
-void VisionApp::LoadAliases(void)
+void VisionApp::LoadAliases()
 {
 	BPath settingsPath;
 	if (find_directory(B_USER_SETTINGS_DIRECTORY, &settingsPath) < B_OK) return;
@@ -1813,7 +1813,7 @@ void VisionApp::LoadAliases(void)
 	}
 }
 
-void VisionApp::SaveAliases(void)
+void VisionApp::SaveAliases()
 {
 	BPath settingsPath;
 	if (find_directory(B_USER_SETTINGS_DIRECTORY, &settingsPath) < B_OK) return;
@@ -1831,7 +1831,7 @@ void VisionApp::SaveAliases(void)
 	}
 }
 
-int32 VisionApp::CountAliases(void) const
+int32 VisionApp::CountAliases() const
 {
 	return fAliases.size();
 }

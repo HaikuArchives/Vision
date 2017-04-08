@@ -63,13 +63,13 @@ protected:
 
 public:
 	ClientWindow(BRect);
-	virtual ~ClientWindow(void);
+	virtual ~ClientWindow();
 	virtual void FrameMoved(BPoint);
 	virtual void FrameResized(float width, float height);
 	virtual void MessageReceived(BMessage*);
-	virtual bool QuitRequested(void);
+	virtual bool QuitRequested();
 	virtual void ScreenChanged(BRect, color_space);
-	virtual void Show(void);
+	virtual void Show();
 
 	// accessors that add/remove menus to the main Vision menu bar
 	void AddMenu(BMenu*);
@@ -83,16 +83,16 @@ public:
 
 	BView* bgView;
 
-	BRect* AgentRect(void) const;
-	WindowList* pWindowList(void) const;
-	NotifyList* pNotifyList(void) const;
-	ClientWindowDock* pCwDock(void) const;
-	StatusView* pStatusView(void) const;
+	BRect* AgentRect() const;
+	WindowList* pWindowList() const;
+	NotifyList* pNotifyList() const;
+	ClientWindowDock* pCwDock() const;
+	StatusView* pStatusView() const;
 	BString joinStrings; // used to keep track of channel
 						 // keys on u2 ircds
 
 private:
-	void Init(void);
+	void Init();
 
 	bool fShutdown_in_progress;
 	bool fWait_for_quits;

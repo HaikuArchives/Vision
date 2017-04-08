@@ -45,10 +45,10 @@ class NetworkPrefsView : public BView
 {
 public:
 	NetworkPrefsView(BRect, const char*);
-	virtual ~NetworkPrefsView(void);
+	virtual ~NetworkPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void DetachedFromWindow(void);
+	virtual void AttachedToWindow();
+	virtual void DetachedFromWindow();
 	virtual void FrameResized(float width, float height);
 
 private:
@@ -57,7 +57,7 @@ private:
 	void UpdateNetworkData(BMessage&);
 	void UpdatePersonalData(BMessage&);
 	void SetupDefaults(BMessage&);
-	void BuildNetworkList(void);
+	void BuildNetworkList();
 	void SaveCurrentNetwork();
 	BMenuField* fNetworkMenu;
 	BScrollView* fExecScroller, *fNickScroller;

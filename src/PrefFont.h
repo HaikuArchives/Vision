@@ -34,10 +34,10 @@ class FontPrefsView : public BView
 {
 public:
 	FontPrefsView(BRect);
-	virtual ~FontPrefsView(void);
+	virtual ~FontPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
 	virtual void FrameResized(float, float);
 
 private:

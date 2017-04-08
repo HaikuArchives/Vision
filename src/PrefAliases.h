@@ -31,13 +31,13 @@ class AliasesPrefsView : public BView
 {
 public:
 	AliasesPrefsView(BRect);
-	virtual ~AliasesPrefsView(void);
+	virtual ~AliasesPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
 
 private:
-	void BuildAliasList(void);
+	void BuildAliasList();
 
 	BColumnListView* fAliasView;
 	BButton* fAddButton;

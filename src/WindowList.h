@@ -43,18 +43,18 @@ class WindowListItem : public BListItem
 {
 public:
 	WindowListItem(const char*, int32, int32, BView*);
-	virtual ~WindowListItem(void);
-	BString Name(void) const;
-	int32 Type(void) const;
-	int32 Status(void) const;
-	int32 SubStatus(void) const;
-	int32 BlinkState(void) const;
-	BView* pAgent(void) const;
+	virtual ~WindowListItem();
+	BString Name() const;
+	int32 Type() const;
+	int32 Status() const;
+	int32 SubStatus() const;
+	int32 BlinkState() const;
+	BView* pAgent() const;
 
 	void SetName(const char*);
 	void SetStatus(int32);
 	void SetSubStatus(int32);
-	void ActivateItem(void);
+	void ActivateItem();
 
 	virtual void DrawItem(BView*, BRect, bool complete = false);
 	void SetNotifyBlinker(int32);
@@ -75,31 +75,31 @@ class WindowList : public BOutlineListView
 {
 public:
 	WindowList(BRect);
-	virtual ~WindowList(void);
-	virtual void AttachedToWindow(void);
-	virtual void DetachedFromWindow(void);
+	virtual ~WindowList();
+	virtual void AttachedToWindow();
+	virtual void DetachedFromWindow();
 	virtual void MouseDown(BPoint);
 	virtual void MessageReceived(BMessage*);
-	virtual void SelectionChanged(void);
+	virtual void SelectionChanged();
 	virtual void KeyDown(const char*, int32);
 
-	void ClearList(void);
+	void ClearList();
 	void Activate(int32);
-	void CloseActive(void);
-	void SelectLast(void);
-	void CollapseCurrentServer(void);
-	void ExpandCurrentServer(void);
+	void CloseActive();
+	void SelectLast();
+	void CollapseCurrentServer();
+	void ExpandCurrentServer();
 
 	void BlinkNotifyChange(int32, ServerAgent*);
 
 	int32 GetServer(int32);
-	void SelectServer(void);
+	void SelectServer();
 
-	void ContextSelectUp(void);
-	void ContextSelectDown(void);
+	void ContextSelectUp();
+	void ContextSelectDown();
 
-	void MoveCurrentUp(void);
-	void MoveCurrentDown(void);
+	void MoveCurrentUp();
+	void MoveCurrentDown();
 
 	//    ClientAgent                     *Agent (int32, const char *);
 
@@ -114,7 +114,7 @@ private:
 
 	Theme* fActiveTheme;
 
-	void BuildPopUp(void);
+	void BuildPopUp();
 
 	int16 fLastButton, fClickCount;
 

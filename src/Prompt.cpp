@@ -29,11 +29,11 @@
 #include "Prompt.h"
 #include "VisionBase.h"
 
-PromptValidate::PromptValidate(void)
+PromptValidate::PromptValidate()
 {
 }
 
-PromptValidate::~PromptValidate(void)
+PromptValidate::~PromptValidate()
 {
 }
 
@@ -88,7 +88,7 @@ PromptWindow::PromptWindow(BPoint point, const char* label, const char* title, c
 	field->MakeFocus(true);
 }
 
-PromptWindow::~PromptWindow(void)
+PromptWindow::~PromptWindow()
 {
 	delete invoked;
 
@@ -125,7 +125,7 @@ EscapeFilter::EscapeFilter(BWindow* window_)
 {
 }
 
-EscapeFilter::~EscapeFilter(void)
+EscapeFilter::~EscapeFilter()
 {
 }
 
@@ -152,7 +152,7 @@ RegExValidate::RegExValidate(const char* title_) : compiled(false), title(title_
 	memset(&re, 0, sizeof(re));
 }
 
-RegExValidate::~RegExValidate(void)
+RegExValidate::~RegExValidate()
 {
 	if (compiled)
 		regfree(&re);

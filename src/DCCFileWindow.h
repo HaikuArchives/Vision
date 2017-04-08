@@ -33,12 +33,12 @@ class DCCFileWindow : public BWindow
 {
 public:
 	DCCFileWindow(DCCConnect*);
-	virtual ~DCCFileWindow(void);
+	virtual ~DCCFileWindow();
 
-	virtual bool QuitRequested(void);
+	virtual bool QuitRequested();
 	virtual void MessageReceived(BMessage*);
-	virtual void Hide(void);
-	virtual void Show(void);
+	virtual void Hide();
+	virtual void Show();
 };
 
 #endif

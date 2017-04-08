@@ -21,14 +21,14 @@ class NetPrefsServerView : public BView
 {
 public:
 	NetPrefsServerView(BRect, const char*, BMessenger);
-	virtual ~NetPrefsServerView(void);
+	virtual ~NetPrefsServerView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
+	virtual void AttachedToWindow();
 	void SetNetworkData(BMessage*);
 
 private:
 	void AddServer(const ServerData*);
-	void RemoveServer(void);
+	void RemoveServer();
 	void UpdateNetworkData(const ServerData*);
 	BStringView* fSelectTitleString, *fLegend4;
 	BColumnListView* fServerList;

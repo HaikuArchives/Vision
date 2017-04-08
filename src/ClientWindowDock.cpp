@@ -59,18 +59,18 @@ ClientWindowDock::ClientWindowDock(BRect frame)
 	AddWinList();
 }
 
-ClientWindowDock::~ClientWindowDock(void)
+ClientWindowDock::~ClientWindowDock()
 {
 	//
 }
 
-void ClientWindowDock::AddWinList(void)
+void ClientWindowDock::AddWinList()
 {
 	fWinListAgent = new AgentDockWinList(fWorkingFrame);
 	AddChild(fWinListAgent);
 }
 
-void ClientWindowDock::AddNotifyList(void)
+void ClientWindowDock::AddNotifyList()
 {
 	BRect notifyFrame(fWorkingFrame);
 	notifyFrame.top = fWorkingFrame.bottom - label_height() + 2;
@@ -81,17 +81,17 @@ void ClientWindowDock::AddNotifyList(void)
 	AddChild(fNotifyAgent);
 }
 
-WindowList* ClientWindowDock::pWindowList(void) const
+WindowList* ClientWindowDock::pWindowList() const
 {
 	return fWinListAgent->pWindowList();
 }
 
-NotifyList* ClientWindowDock::pNotifyList(void) const
+NotifyList* ClientWindowDock::pNotifyList() const
 {
 	return fNotifyAgent->pNotifyList();
 }
 
-void ClientWindowDock::AllAttached(void)
+void ClientWindowDock::AllAttached()
 {
 	if (vision_app->GetBool("notifyExpanded")) {
 		BMessenger dockMsgr(this);
@@ -156,12 +156,12 @@ AgentDockWinList::AgentDockWinList(BRect frame_)
 	AddChild(fWinListScroll);
 }
 
-AgentDockWinList::~AgentDockWinList(void)
+AgentDockWinList::~AgentDockWinList()
 {
 	//
 }
 
-WindowList* AgentDockWinList::pWindowList(void) const
+WindowList* AgentDockWinList::pWindowList() const
 {
 	return fWinList;
 }
@@ -199,17 +199,17 @@ AgentDockNotifyList::AgentDockNotifyList(BRect frame_)
 	AddChild(fNotifyScroll);
 }
 
-AgentDockNotifyList::~AgentDockNotifyList(void)
+AgentDockNotifyList::~AgentDockNotifyList()
 {
 	//
 }
 
-NotifyList* AgentDockNotifyList::pNotifyList(void) const
+NotifyList* AgentDockNotifyList::pNotifyList() const
 {
 	return fNotifyList;
 }
 
-void AgentDockNotifyList::AllAttached(void)
+void AgentDockNotifyList::AllAttached()
 {
 	// hack to deal with some R5 scrollbar drawing bugs
 	fNotifyScroll->ResizeBy(0.0, Bounds().Height() - fNotifyScroll->Bounds().Height() -
@@ -234,7 +234,7 @@ AgentDockHeaderString::AgentDockHeaderString(BRect frame_, const char* name)
 {
 }
 
-AgentDockHeaderString::~AgentDockHeaderString(void)
+AgentDockHeaderString::~AgentDockHeaderString()
 {
 }
 
@@ -293,7 +293,7 @@ AgentDockHeader::AgentDockHeader(BRect frame, const char* name, uint32 resize)
 	AddChild(fHeaderView);
 }
 
-AgentDockHeader::~AgentDockHeader(void)
+AgentDockHeader::~AgentDockHeader()
 {
 	// nothing
 }

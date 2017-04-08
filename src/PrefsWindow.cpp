@@ -31,7 +31,7 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "PrefsWindow"
 
-PrefsWindow::PrefsWindow(void)
+PrefsWindow::PrefsWindow()
 	: BWindow(BRect(88.0, 108.0, 0.0, 0.0), B_TRANSLATE("Preferences"), B_TITLED_WINDOW,
 			  B_ASYNCHRONOUS_CONTROLS)
 {
@@ -55,11 +55,11 @@ PrefsWindow::PrefsWindow(void)
 	}
 }
 
-PrefsWindow::~PrefsWindow(void)
+PrefsWindow::~PrefsWindow()
 {
 }
 
-bool PrefsWindow::QuitRequested(void)
+bool PrefsWindow::QuitRequested()
 {
 	vision_app->SetRect("GenPrefWinRect", Frame());
 	be_app_messenger.SendMessage(M_PREFS_CLOSE);

@@ -35,17 +35,17 @@ class NotifyList : public BListView
 {
 public:
 	NotifyList(BRect);
-	virtual ~NotifyList(void);
+	virtual ~NotifyList();
 
 	void UpdateList(BObjectList<NotifyListItem>*);
 
-	virtual void AttachedToWindow(void);
-	virtual void DetachedFromWindow(void);
+	virtual void AttachedToWindow();
+	virtual void DetachedFromWindow();
 	virtual void MessageReceived(BMessage*);
 	virtual void MouseDown(BPoint);
 
 private:
-	void BuildPopUp(void);
+	void BuildPopUp();
 
 	Theme* fActiveTheme;
 	int16 fLastButton, fClickCount;
@@ -60,9 +60,9 @@ class NotifyListItem : public BStringItem
 public:
 	NotifyListItem(const char*, bool);
 	NotifyListItem(const NotifyListItem&);
-	virtual ~NotifyListItem(void);
+	virtual ~NotifyListItem();
 	void SetState(bool);
-	bool GetState(void) const;
+	bool GetState() const;
 
 	virtual void DrawItem(BView*, BRect, bool);
 

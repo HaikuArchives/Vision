@@ -30,11 +30,11 @@ NetworkMenu::NetworkMenu(const char* title, uint32 what, BMessenger msgTarget)
 {
 }
 
-NetworkMenu::~NetworkMenu(void)
+NetworkMenu::~NetworkMenu()
 {
 }
 
-void NetworkMenu::AttachedToWindow(void)
+void NetworkMenu::AttachedToWindow()
 {
 	if (CountItems()) {
 		BMenuItem* item(NULL);

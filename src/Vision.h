@@ -53,22 +53,22 @@ using std::map;
 class VisionApp : public BApplication
 {
 public:
-	VisionApp(void);
-	virtual ~VisionApp(void);
+	VisionApp();
+	virtual ~VisionApp();
 
 	virtual void MessageReceived(BMessage*);
-	virtual void AboutRequested(void);
-	virtual bool QuitRequested(void);
+	virtual void AboutRequested();
+	virtual bool QuitRequested();
 	virtual void ArgvReceived(int32, char**);
-	virtual void ReadyToRun(void);
+	virtual void ReadyToRun();
 
 	void LoadURL(const char*);
 
 	void VisionVersion(int, BString&);
 
-	void LoadInitialSettings(void);
+	void LoadInitialSettings();
 
-	void InitDefaults(void);
+	void InitDefaults();
 
 	void LoadDefaults(int32);
 
@@ -103,7 +103,7 @@ public:
 	status_t RemoveNetwork(const char*);
 	bool CheckNetworkValid(const char*);
 
-	Theme* ActiveTheme(void);
+	Theme* ActiveTheme();
 
 	void GetThreadName(int, BString&);
 
@@ -122,12 +122,12 @@ public:
 	void AddIgnoreNick(const char*, const char*, bool = false);
 	void RemoveIgnoreNick(const char*, const char*, bool = false);
 
-	void AcquireDCCLock(void);
-	void ReleaseDCCLock(void);
+	void AcquireDCCLock();
+	void ReleaseDCCLock();
 
-	bool SaveSettings(void);
+	bool SaveSettings();
 
-	bigtime_t VisionUptime(void);
+	bigtime_t VisionUptime();
 
 	bool HasAlias(const BString&) const;
 	BString ParseAlias(const char*, const BString&);
@@ -153,14 +153,14 @@ public:
 	int32 fBench1;
 	int32 fBench2;
 
-	ClientWindow* pClientWin(void) const;
+	ClientWindow* pClientWin() const;
 
-	entry_ref AppRef(void) const;
+	entry_ref AppRef() const;
 
 private:
-	void InitSettings(void);
-	int32 ThreadStates(void);
-	bool CheckStartupNetworks(void);
+	void InitSettings();
+	int32 ThreadStates();
+	bool CheckStartupNetworks();
 
 	volatile bool fShuttingDown;
 

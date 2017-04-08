@@ -35,8 +35,8 @@ class BButton;
 class PromptValidate
 {
 public:
-	PromptValidate(void);
-	virtual ~PromptValidate(void);
+	PromptValidate();
+	virtual ~PromptValidate();
 	virtual bool Validate(const char*) = 0;
 };
 
@@ -48,7 +48,7 @@ class RegExValidate : public PromptValidate
 
 public:
 	RegExValidate(const char*);
-	virtual ~RegExValidate(void);
+	virtual ~RegExValidate();
 	virtual bool Validate(const char*);
 };
 
@@ -66,7 +66,7 @@ public:
 	PromptWindow(BPoint, const char*, const char*, const char*, BHandler*, BMessage*,
 				 PromptValidate* = 0, bool = false);
 
-	virtual ~PromptWindow(void);
+	virtual ~PromptWindow();
 	virtual void MessageReceived(BMessage*);
 };
 
@@ -76,7 +76,7 @@ class EscapeFilter : public BMessageFilter
 
 public:
 	EscapeFilter(BWindow*);
-	virtual ~EscapeFilter(void);
+	virtual ~EscapeFilter();
 	virtual filter_result Filter(BMessage*, BHandler**);
 };
 

@@ -48,15 +48,15 @@ public:
 				 const char*, // nick
 				 BMessenger&, // sMsgr (ServerAgent pointer)
 				 BRect&);	 // frame
-	virtual ~ChannelAgent(void);
+	virtual ~ChannelAgent();
 
-	virtual void AttachedToWindow(void);
+	virtual void AttachedToWindow();
 	virtual void MessageReceived(BMessage*);
 	virtual void Parser(const char*);
-	virtual void TabExpansion(void);
+	virtual void TabExpansion();
 	virtual void ChannelMessage(const char*, const char* = 0, const char* = 0, const char* = 0);
 	virtual void AddMenuItems(BPopUpMenu*);
-	virtual void Show(void);
+	virtual void Show();
 
 	void AddUser(const char*, const int32);
 	bool RemoveUser(const char*);

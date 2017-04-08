@@ -45,7 +45,7 @@ public:
 
 	SelectPos(const SelectPos& pos) : fLine(pos.fLine), fOffset(pos.fOffset) {}
 
-	~SelectPos(void) {}
+	~SelectPos() {}
 
 	SelectPos& operator=(const SelectPos& pos)
 	{
@@ -90,21 +90,21 @@ class RunView : public BView
 	bigtime_t fLastClickTime;
 
 	bool RecalcScrollBar(bool constrain);
-	void ResizeRecalc(void);
-	void FontChangeRecalc(void);
+	void ResizeRecalc();
+	void FontChangeRecalc();
 	void ExtendTrackingSelect(BPoint);
 	void ShiftTrackingSelect(BPoint, bool, bigtime_t);
 	void CheckURLCursor(BPoint);
-	void BuildPopUp(void);
+	void BuildPopUp();
 
 	bool CheckClickBounds(const SelectPos&, const BPoint&) const;
 
 public:
 	RunView(BRect, const char*, Theme*, uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP, uint32 = 0UL);
-	virtual ~RunView(void);
+	virtual ~RunView();
 
-	virtual void AttachedToWindow(void);
-	virtual void DetachedFromWindow(void);
+	virtual void AttachedToWindow();
+	virtual void DetachedFromWindow();
 	virtual void FrameResized(float, float);
 	virtual void TargetedByScrollView(BScrollView*);
 	virtual void Show();
@@ -124,9 +124,9 @@ public:
 
 	void Append(const char*, int32, int16, int16, int16);
 	void Append(const char*, int16, int16, int16);
-	void Clear(void);
+	void Clear();
 
-	int16 LineCount(void) const;
+	int16 LineCount() const;
 	const char* LineAt(int16) const;
 
 	void SetTimeStampFormat(const char*);
@@ -139,10 +139,10 @@ public:
 	bool IntersectSelection(const SelectPos&, const SelectPos&) const;
 	void GetSelectionText(BString&) const;
 	void Select(const SelectPos&, const SelectPos&);
-	void SelectAll(void);
+	void SelectAll();
 	void SetClippingName(const char*);
-	void ScrollToSelection(void);
-	void ScrollToBottom(void);
+	void ScrollToSelection();
+	void ScrollToBottom();
 	bool FindText(const char*);
 };
 

@@ -72,7 +72,7 @@ Theme::Theme(const char* n, int16 foreCount, int16 backCount, int16 fontCount)
 	for (i = 1; i < back_count; ++i) backs[i] = def_back;
 }
 
-Theme::~Theme(void)
+Theme::~Theme()
 {
 	delete_sem(sid);
 
@@ -82,37 +82,37 @@ Theme::~Theme(void)
 	delete[] name;
 }
 
-int16 Theme::CountForegrounds(void) const
+int16 Theme::CountForegrounds() const
 {
 	return fore_count;
 }
 
-int16 Theme::CountBackgrounds(void) const
+int16 Theme::CountBackgrounds() const
 {
 	return back_count;
 }
 
-int16 Theme::CountFonts(void) const
+int16 Theme::CountFonts() const
 {
 	return font_count;
 }
 
-void Theme::ReadLock(void)
+void Theme::ReadLock()
 {
 	acquire_sem(sid);
 }
 
-void Theme::ReadUnlock(void)
+void Theme::ReadUnlock()
 {
 	release_sem(sid);
 }
 
-void Theme::WriteLock(void)
+void Theme::WriteLock()
 {
 	acquire_sem_etc(sid, NUMBER_THEME_READERS, 0, 0);
 }
 
-void Theme::WriteUnlock(void)
+void Theme::WriteUnlock()
 {
 	release_sem_etc(sid, NUMBER_THEME_READERS, 0);
 }

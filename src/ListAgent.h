@@ -48,17 +48,17 @@ class ListAgent : public BView
 {
 public:
 	ListAgent(BRect, const char*, BMessenger*);
-	virtual ~ListAgent(void);
+	virtual ~ListAgent();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void Show(void);
-	virtual void Hide(void);
+	virtual void AttachedToWindow();
+	virtual void Show();
+	virtual void Hide();
 
 	WindowListItem* fAgentWinItem;
 	BMessenger fMsgr;
 
 private:
-	void AddBatch(void);
+	void AddBatch();
 	Theme* activeTheme;
 	BMessenger* fSMsgr;
 	BMessageRunner* listUpdateTrigger;

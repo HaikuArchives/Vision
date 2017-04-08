@@ -75,28 +75,28 @@ static const char* skTermSig = "application/x-vnd.Haiku-Terminal";
 class DynamicEditMenu : public BMenu
 {
 public:
-	DynamicEditMenu(void);
-	virtual ~DynamicEditMenu(void);
+	DynamicEditMenu();
+	virtual ~DynamicEditMenu();
 
-	virtual void AllAttached(void);
-	virtual void DetachedFromWindow(void);
+	virtual void AllAttached();
+	virtual void DetachedFromWindow();
 };
 
-DynamicEditMenu::DynamicEditMenu(void) : BMenu(B_TRANSLATE("Edit"))
+DynamicEditMenu::DynamicEditMenu() : BMenu(B_TRANSLATE("Edit"))
 {
 }
 
-DynamicEditMenu::~DynamicEditMenu(void)
+DynamicEditMenu::~DynamicEditMenu()
 {
 }
 
-void DynamicEditMenu::AllAttached(void)
+void DynamicEditMenu::AllAttached()
 {
 	BMenu::AllAttached();
 	vision_app->pClientWin()->SetEditStates(false);
 }
 
-void DynamicEditMenu::DetachedFromWindow(void)
+void DynamicEditMenu::DetachedFromWindow()
 {
 	BMenu::DetachedFromWindow();
 	for (int32 i = 0; i < CountItems(); i++) ItemAt(i)->SetEnabled(true);
@@ -109,12 +109,12 @@ ClientWindow::ClientWindow(BRect frame)
 	Init();
 }
 
-ClientWindow::~ClientWindow(void)
+ClientWindow::~ClientWindow()
 {
 	delete fAgentrect;
 }
 
-bool ClientWindow::QuitRequested(void)
+bool ClientWindow::QuitRequested()
 {
 	if (!fShutdown_in_progress) {
 		fShutdown_in_progress = true;
@@ -415,7 +415,7 @@ void ClientWindow::SetEditStates(bool retargetonly)
 	}
 }
 
-BRect* ClientWindow::AgentRect(void) const
+BRect* ClientWindow::AgentRect() const
 {
 	fAgentrect->left = fResize->Frame().right - fCwDock->Frame().left + 1;
 	fAgentrect->top = Bounds().top;
@@ -424,22 +424,22 @@ BRect* ClientWindow::AgentRect(void) const
 	return fAgentrect;
 }
 
-WindowList* ClientWindow::pWindowList(void) const
+WindowList* ClientWindow::pWindowList() const
 {
 	return fCwDock->pWindowList();
 }
 
-NotifyList* ClientWindow::pNotifyList(void) const
+NotifyList* ClientWindow::pNotifyList() const
 {
 	return fCwDock->pNotifyList();
 }
 
-ClientWindowDock* ClientWindow::pCwDock(void) const
+ClientWindowDock* ClientWindow::pCwDock() const
 {
 	return fCwDock;
 }
 
-StatusView* ClientWindow::pStatusView(void) const
+StatusView* ClientWindow::pStatusView() const
 {
 	return fStatus;
 }
@@ -469,7 +469,7 @@ bool ClientWindow::ServerBroadcast(BMessage* outmsg_) const
 	return reply;
 }
 
-void ClientWindow::Show(void)
+void ClientWindow::Show()
 {
 	// nothing yet
 	BWindow::Show();
@@ -483,7 +483,7 @@ void ClientWindow::Show(void)
 /// Begin Private Functions
 //////////////////////////////////////////////////////////////////////////////
 
-void ClientWindow::Init(void)
+void ClientWindow::Init()
 {
 	SetSizeLimits(330, 2000, 150, 2000);
 

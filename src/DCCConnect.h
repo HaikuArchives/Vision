@@ -41,20 +41,20 @@ class DCCConnect : public BView
 {
 public:
 	DCCConnect(const char*, const char*, const char*, const char*, const char*, const BMessenger&);
-	virtual ~DCCConnect(void);
+	virtual ~DCCConnect();
 
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
-	virtual void DetachedFromWindow(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
+	virtual void DetachedFromWindow();
 	virtual void Draw(BRect);
 	virtual void MessageReceived(BMessage*);
 	static void UpdateBar(const BMessenger&, int, int, uint32, bool);
 	static void UpdateStatus(const BMessenger&, const char*);
 
 protected:
-	virtual void Stopped(void);
-	virtual void Lock(void);
-	virtual void Unlock(void);
+	virtual void Stopped();
+	virtual void Lock();
+	virtual void Unlock();
 
 	StopButton* fStop;
 	BMessenger fCaller;
@@ -79,8 +79,8 @@ public:
 	DCCReceive(const char*, const char*, const char*, const char*, const char*, const BMessenger&,
 			   bool);
 
-	virtual ~DCCReceive(void);
-	virtual void AttachedToWindow(void);
+	virtual ~DCCReceive();
+	virtual void AttachedToWindow();
 	static int32 Transfer(void*);
 
 protected:
@@ -94,8 +94,8 @@ class DCCSend : public DCCConnect
 public:
 	DCCSend(const char*, const char*, const char*, const BMessenger&);
 
-	virtual ~DCCSend(void);
-	virtual void AttachedToWindow(void);
+	virtual ~DCCSend();
+	virtual void AttachedToWindow();
 	static int32 Transfer(void*);
 	bool IsMatch(const char*, const char*) const;
 	void SetResume(off_t);

@@ -38,9 +38,9 @@ class NameItem : public BListItem
 {
 public:
 	NameItem(const char*, int32);
-	BString Name(void) const;
-	BString Address(void) const;
-	int32 Status(void) const;
+	BString Name() const;
+	BString Address() const;
+	int32 Status() const;
 
 	void SetName(const char*);
 	void SetAddress(const char*);
@@ -57,16 +57,16 @@ class NamesView : public BListView
 {
 public:
 	NamesView(BRect);
-	virtual ~NamesView(void);
-	virtual void AttachedToWindow(void);
-	virtual void DetachedFromWindow(void);
+	virtual ~NamesView();
+	virtual void AttachedToWindow();
+	virtual void DetachedFromWindow();
 	virtual void MouseDown(BPoint);
 	virtual void MouseMoved(BPoint, uint32, const BMessage*);
 	virtual void MouseUp(BPoint);
 	virtual void KeyDown(const char*, int32);
 	virtual void MessageReceived(BMessage*);
 
-	void ClearList(void);
+	void ClearList();
 
 private:
 	bool fTracking;

@@ -29,8 +29,8 @@
 class NumericFilter : public BMessageFilter
 {
 public:
-	NumericFilter(void);
-	virtual ~NumericFilter(void);
+	NumericFilter();
+	virtual ~NumericFilter();
 	virtual filter_result Filter(BMessage*, BHandler**);
 };
 

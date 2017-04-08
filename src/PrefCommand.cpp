@@ -80,18 +80,18 @@ CommandPrefsView::CommandPrefsView(BRect frame)
 	AddChild(fScroller);
 }
 
-CommandPrefsView::~CommandPrefsView(void)
+CommandPrefsView::~CommandPrefsView()
 {
 	delete[] fCommands;
 }
 
-void CommandPrefsView::AttachedToWindow(void)
+void CommandPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	for (int32 i = 0; i < MAX_COMMANDS; i++) fCommands[i]->SetTarget(this);
 }
 
-void CommandPrefsView::AllAttached(void)
+void CommandPrefsView::AllAttached()
 {
 	BView::AllAttached();
 }

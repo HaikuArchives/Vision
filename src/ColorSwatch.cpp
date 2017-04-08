@@ -43,11 +43,11 @@ ColorSwatch::ColorSwatch(
 {
 }
 
-ColorSwatch::~ColorSwatch(void)
+ColorSwatch::~ColorSwatch()
 {
 }
 
-void ColorSwatch::AttachedToWindow(void)
+void ColorSwatch::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 
@@ -116,7 +116,7 @@ void ColorSwatch::Draw(BRect)
 	PopState();
 }
 
-rgb_color ColorSwatch::ValueAsColor(void) const
+rgb_color ColorSwatch::ValueAsColor() const
 {
 	return fColor;
 }
@@ -139,7 +139,7 @@ rgb_color ColorSwatch::ShiftColor(rgb_color c, float percent) const
 	return result;
 }
 
-rgb_color ColorSwatch::Inverted(void) const
+rgb_color ColorSwatch::Inverted() const
 {
 	rgb_color baseColor, value = ValueAsColor();
 

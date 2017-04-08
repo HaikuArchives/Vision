@@ -43,11 +43,11 @@ class GeneralPrefsView : public BView
 
 public:
 	GeneralPrefsView(BRect, const char*, uint32, uint32);
-	virtual ~GeneralPrefsView(void);
+	virtual ~GeneralPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
-	virtual void Show(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
+	virtual void Show();
 
 private:
 	BListView* fPrefsList;

@@ -49,8 +49,8 @@ class FontMenuItem : public BMenuItem
 public:
 	FontMenuItem(const char*, const char*, BMessage*);
 	FontMenuItem(const char*, const char*, BMenu*, BMessage* = NULL);
-	virtual ~FontMenuItem(void);
-	virtual void DrawContent(void);
+	virtual ~FontMenuItem();
+	virtual void DrawContent();
 
 private:
 	const char* fontName;
@@ -70,11 +70,11 @@ FontMenuItem::FontMenuItem(const char* font, const char* style, BMenu* menu, BMe
 	myFont.SetFamilyAndStyle(font, style);
 }
 
-FontMenuItem::~FontMenuItem(void)
+FontMenuItem::~FontMenuItem()
 {
 }
 
-void FontMenuItem::DrawContent(void)
+void FontMenuItem::DrawContent()
 {
 	BMenu* menu(Menu());
 	if (menu) menu->SetFont(&myFont, B_FONT_FAMILY_AND_STYLE);
@@ -86,8 +86,8 @@ class FontMenu : public BMenu
 {
 public:
 	FontMenu(const char*);
-	virtual ~FontMenu(void);
-	virtual void AttachedToWindow(void);
+	virtual ~FontMenu();
+	virtual void AttachedToWindow();
 };
 
 FontMenu::FontMenu(const char* name) : BMenu(name)
@@ -145,7 +145,7 @@ FontMenu::~FontMenu()
 {
 }
 
-void FontMenu::AttachedToWindow(void)
+void FontMenu::AttachedToWindow()
 {
 	BMenu::AttachedToWindow();
 }
@@ -186,16 +186,16 @@ FontPrefsView::FontPrefsView(BRect frame)
 	AddChild(fTextControl);
 }
 
-FontPrefsView::~FontPrefsView(void)
+FontPrefsView::~FontPrefsView()
 {
 }
 
-void FontPrefsView::AttachedToWindow(void)
+void FontPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 }
 
-void FontPrefsView::AllAttached(void)
+void FontPrefsView::AllAttached()
 {
 	BView::AllAttached();
 	fFontElementField->SetDivider(fFontElementField->StringWidth(fFontElementField->Label()) + 5);

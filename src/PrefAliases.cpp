@@ -42,7 +42,7 @@ AliasesPrefsView::AliasesPrefsView(BRect frame)
 	AdoptSystemColors();
 }
 
-AliasesPrefsView::~AliasesPrefsView(void)
+AliasesPrefsView::~AliasesPrefsView()
 {
 }
 
@@ -73,7 +73,7 @@ void AliasesPrefsView::MessageReceived(BMessage* msg)
 	}
 }
 
-void AliasesPrefsView::AttachedToWindow(void)
+void AliasesPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 
@@ -112,7 +112,7 @@ void AliasesPrefsView::AttachedToWindow(void)
 	BuildAliasList();
 }
 
-void AliasesPrefsView::AllAttached(void)
+void AliasesPrefsView::AllAttached()
 {
 	BView::AllAttached();
 	fAliasView->SetTarget(this);
@@ -120,7 +120,7 @@ void AliasesPrefsView::AllAttached(void)
 	fRemoveButton->SetTarget(this);
 }
 
-void AliasesPrefsView::BuildAliasList(void)
+void AliasesPrefsView::BuildAliasList()
 {
 	void* cookie(NULL);
 	BString name, value;

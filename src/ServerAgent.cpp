@@ -102,7 +102,7 @@ ServerAgent::ServerAgent(const char* id_, BMessage& net, BRect frame_)
 	fLogger = new ClientAgentLogger(fId);
 }
 
-ServerAgent::~ServerAgent(void)
+ServerAgent::~ServerAgent()
 {
 	if (fLagRunner)
 		delete fLagRunner;
@@ -124,13 +124,13 @@ ServerAgent::~ServerAgent(void)
 		delete fNotifyNicks.RemoveItemAt(0L);
 }
 
-void ServerAgent::AttachedToWindow(void)
+void ServerAgent::AttachedToWindow()
 {
 	Init();
 	ClientAgent::AttachedToWindow();
 }
 
-void ServerAgent::AllAttached(void)
+void ServerAgent::AllAttached()
 {
 	fSMsgr = BMessenger(this);
 	ClientAgent::AllAttached();
@@ -160,7 +160,7 @@ void ServerAgent::AddMenuItems(BPopUpMenu*)
 {
 }
 
-void ServerAgent::Init(void)
+void ServerAgent::Init()
 {
 	BString revString;
 	Display("Vision ");
@@ -184,7 +184,7 @@ void ServerAgent::Init(void)
 	CreateEstablishThread();
 }
 
-void ServerAgent::CreateSenderThread(void)
+void ServerAgent::CreateSenderThread()
 {
 	fPendingSends = new BObjectList<BString>();
 	fSendLock = new BLocker();
@@ -206,7 +206,7 @@ void ServerAgent::CreateSenderThread(void)
 	}
 }
 
-void ServerAgent::CreateEstablishThread(void)
+void ServerAgent::CreateEstablishThread()
 {
 	BString name;
 
@@ -221,7 +221,7 @@ void ServerAgent::CreateEstablishThread(void)
 	}
 }
 
-int ServerAgent::IRCDType(void)
+int ServerAgent::IRCDType()
 {
 	return fIrcdtype;
 }
@@ -649,7 +649,7 @@ ClientAgent* ServerAgent::Client(const char* cName)
 	return client;
 }
 
-ClientAgent* ServerAgent::ActiveClient(void)
+ClientAgent* ServerAgent::ActiveClient()
 {
 	ClientAgent* client(NULL);
 	//  printf("finding active client\n");
@@ -722,7 +722,7 @@ void ServerAgent::PostActive(BMessage* msg)
 		fSMsgr.SendMessage(msg);
 }
 
-void ServerAgent::HandleReconnect(void)
+void ServerAgent::HandleReconnect()
 {
 	/*
 	 * Function purpose: Setup the environment and attempt a new connection

@@ -31,7 +31,7 @@ template <class T> class AutoDestructor
 public:
 	AutoDestructor(T* t) { fObject = t; }
 
-	virtual ~AutoDestructor(void) { delete fObject; }
+	virtual ~AutoDestructor() { delete fObject; }
 
 	void SetTo(T* t)
 	{
@@ -51,7 +51,7 @@ BString RestOfString(const char*, int32);
 BString GetNick(const char*);
 BString GetIdent(const char*);
 BString GetAddress(const char*);
-BString TimeStamp(void);
+BString TimeStamp();
 BString ExpandKeyed(const char*, const char*, const char**);
 BString DurationString(int64);
 BString StringToURI(const char*);

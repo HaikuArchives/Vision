@@ -49,7 +49,7 @@ class DCCFileFilter : public BMessageFilter
 
 public:
 	DCCFileFilter(BFilePanel*, const BMessage&);
-	virtual ~DCCFileFilter(void);
+	virtual ~DCCFileFilter();
 
 	virtual filter_result Filter(BMessage*, BHandler**);
 	filter_result HandleButton(BMessage*);
@@ -124,7 +124,7 @@ DCCFileFilter::DCCFileFilter(BFilePanel* p, const BMessage& msg)
 {
 }
 
-DCCFileFilter::~DCCFileFilter(void)
+DCCFileFilter::~DCCFileFilter()
 {
 }
 

@@ -118,11 +118,11 @@ LogPrefsView::LogPrefsView(BRect frame)
 	AddChild(fLogFileTimestamp);
 }
 
-LogPrefsView::~LogPrefsView(void)
+LogPrefsView::~LogPrefsView()
 {
 }
 
-void LogPrefsView::AttachedToWindow(void)
+void LogPrefsView::AttachedToWindow()
 {
 	fLogBaseDir->SetTarget(this);
 	fLogBaseDir->ResizeTo(Bounds().Width() - 15, fLogBaseDir->Bounds().Height());
@@ -141,7 +141,7 @@ void LogPrefsView::AttachedToWindow(void)
 	ResizeTo(fLogBaseDir->Frame().Width() + 15.0, fLogFileTimestamp->Frame().bottom + 15.0);
 }
 
-void LogPrefsView::AllAttached(void)
+void LogPrefsView::AllAttached()
 {
 	BView::AllAttached();
 }

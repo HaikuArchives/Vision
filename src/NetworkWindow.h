@@ -32,17 +32,17 @@ class NetworkWindow : public BWindow
 {
 public:
 	NetworkWindow();
-	virtual ~NetworkWindow(void);
-	virtual bool QuitRequested(void);
+	virtual ~NetworkWindow();
+	virtual bool QuitRequested();
 };
 
 class NetPrefServerWindow : public BWindow
 {
 public:
 	NetPrefServerWindow(BHandler*);
-	virtual ~NetPrefServerWindow(void);
+	virtual ~NetPrefServerWindow();
 	void SetNetworkData(BMessage*);
-	virtual bool QuitRequested(void);
+	virtual bool QuitRequested();
 
 private:
 	NetPrefsServerView* serverView;

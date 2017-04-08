@@ -81,12 +81,12 @@ EventPrefsView::EventPrefsView(BRect frame)
 	AddChild(fScroller);
 }
 
-EventPrefsView::~EventPrefsView(void)
+EventPrefsView::~EventPrefsView()
 {
 	delete[] fEvents;
 }
 
-void EventPrefsView::AttachedToWindow(void)
+void EventPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	for (int32 i = 0; i < MAX_EVENTS; i++) fEvents[i]->SetTarget(this);
@@ -95,7 +95,7 @@ void EventPrefsView::AttachedToWindow(void)
 	if (bar) bar->SetSteps(3.0, 5.0);
 }
 
-void EventPrefsView::AllAttached(void)
+void EventPrefsView::AllAttached()
 {
 	BView::AllAttached();
 }

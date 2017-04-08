@@ -56,18 +56,18 @@ public:
 	static int16 SelectionBack;
 
 	Theme(const char*, int16, int16, int16);
-	virtual ~Theme(void);
+	virtual ~Theme();
 
-	const char* Name(void) const { return name; }
+	const char* Name() const { return name; }
 
-	void ReadLock(void);
-	void ReadUnlock(void);
-	void WriteLock(void);
-	void WriteUnlock(void);
+	void ReadLock();
+	void ReadUnlock();
+	void WriteLock();
+	void WriteUnlock();
 
-	int16 CountForegrounds(void) const;
-	int16 CountBackgrounds(void) const;
-	int16 CountFonts(void) const;
+	int16 CountForegrounds() const;
+	int16 CountBackgrounds() const;
+	int16 CountFonts() const;
 
 	const rgb_color ForegroundAt(int16) const;
 	const rgb_color BackgroundAt(int16) const;

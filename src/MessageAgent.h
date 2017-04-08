@@ -37,21 +37,21 @@ public:
 	MessageAgent(BRect&, const char*, const char*, const BMessenger&, const char*, const char*,
 				 bool = false, bool = false, const char* = "", const char* = "");
 
-	virtual ~MessageAgent(void);
-	virtual void AllAttached(void);
+	virtual ~MessageAgent();
+	virtual void AllAttached();
 	virtual void AddMenuItems(BPopUpMenu*);
 
 	virtual void MessageReceived(BMessage*);
 	virtual void Parser(const char*);
 	virtual void DroppedFile(BMessage*);
-	virtual void TabExpansion(void);
+	virtual void TabExpansion();
 	virtual void ActionMessage(const char*, const char*);
 
 	virtual void ChannelMessage(const char*, const char* = 0, const char* = 0, const char* = 0);
 
 private:
-	void Init(void);
-	void DCCServerSetup(void);
+	void Init();
+	void DCCServerSetup();
 	static status_t DCCIn(void*);
 	static status_t DCCOut(void*);
 

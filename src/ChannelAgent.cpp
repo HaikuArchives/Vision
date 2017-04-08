@@ -69,7 +69,7 @@ ChannelAgent::ChannelAgent(const char* id_, const char* serverName_, int ircdtyp
 	 */
 }
 
-ChannelAgent::~ChannelAgent(void)
+ChannelAgent::~ChannelAgent()
 {
 	/*
 	 * Function purpose: Clean up
@@ -84,7 +84,7 @@ ChannelAgent::~ChannelAgent(void)
 	while (fCompletionNicks.CountItems() > 0) delete fCompletionNicks.RemoveItemAt(0L);
 }
 
-void ChannelAgent::AttachedToWindow(void)
+void ChannelAgent::AttachedToWindow()
 {
 	/*
 	 * Function purpose: Once the BView has been successfully attached,
@@ -95,7 +95,7 @@ void ChannelAgent::AttachedToWindow(void)
 	ClientAgent::AttachedToWindow();
 }
 
-void ChannelAgent::Init(void)
+void ChannelAgent::Init()
 {
 	/*
 	 * Function purpose: Setup everything
@@ -130,7 +130,7 @@ void ChannelAgent::Init(void)
 	Display(text.String(), C_JOIN);
 }
 
-void ChannelAgent::Show(void)
+void ChannelAgent::Show()
 {
 	const BRect namesListRect(vision_app->GetRect("namesListRect"));
 	int32 difference((int32)(fNamesList->Bounds().Width() - namesListRect.Width()));
@@ -175,7 +175,7 @@ int ChannelAgent::FindPosition(const char* data) const
 	return -1;
 }
 
-const NamesView* ChannelAgent::pNamesList(void) const
+const NamesView* ChannelAgent::pNamesList() const
 {
 	return fNamesList;
 }
@@ -349,7 +349,7 @@ int ChannelAgent::SortNames(const void* name1, const void* name2)
 	return first.ICompare(second);
 }
 
-void ChannelAgent::TabExpansion(void)
+void ChannelAgent::TabExpansion()
 {
 	/*
 	 * Function purpose: Get the characters before the caret's current position,

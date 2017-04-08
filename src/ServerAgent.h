@@ -56,21 +56,21 @@ public:
 	ServerAgent(const char*, // id_
 				BMessage&,
 				BRect); // frame
-	virtual ~ServerAgent(void);
+	virtual ~ServerAgent();
 
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
 	virtual void AddMenuItems(BPopUpMenu*);
 	void PostActive(BMessage*);
 	void Broadcast(BMessage*, bool = false);
 	void RepliedBroadcast(BMessage*);
 	status_t NewTimer(const char*, int32, int32);
 
-	int IRCDType(void);
+	int IRCDType();
 
 private:
-	virtual void Init(void);
+	virtual void Init();
 	void DCCChatDialog(BString, BString, BString);
 	void DCCGetDialog(BString, BString, BString, BString, BString);
 	void SendData(const char*);
@@ -83,13 +83,13 @@ private:
 
 	static int SortNotifyItems(const NotifyListItem*, const NotifyListItem*);
 
-	void HandleReconnect(void);
+	void HandleReconnect();
 	static bool PrivateIPCheck(BString);
-	const char* GetNextNick(void);
-	const ServerData* GetNextServer(void);
+	const char* GetNextNick();
+	const ServerData* GetNextServer();
 
 	ClientAgent* Client(const char*);
-	ClientAgent* ActiveClient(void);
+	ClientAgent* ActiveClient();
 
 	void DisplayAll(const char*, const uint32 = 0, const uint32 = 0, const uint32 = 0);
 
@@ -97,8 +97,8 @@ private:
 
 	void RemoveAutoexecChan(const BString&);
 	void ParseAutoexecChans(const BString&);
-	void CreateSenderThread(void);
-	void CreateEstablishThread(void);
+	void CreateSenderThread();
+	void CreateEstablishThread();
 
 	BLocker* fEndPointLock, *fSendLock;
 

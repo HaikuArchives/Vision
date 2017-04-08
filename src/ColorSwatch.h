@@ -31,19 +31,19 @@ public:
 	ColorSwatch(BRect, const char*, rgb_color, uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP,
 				uint32 = B_WILL_DRAW | B_NAVIGABLE);
 
-	virtual ~ColorSwatch(void);
+	virtual ~ColorSwatch();
 
-	virtual void AttachedToWindow(void);
+	virtual void AttachedToWindow();
 	virtual void Draw(BRect);
 
-	rgb_color ValueAsColor(void) const;
+	rgb_color ValueAsColor() const;
 	virtual void SetColor(rgb_color);
 
-	BRect ColorRect(void) const;
+	BRect ColorRect() const;
 
 private:
 	rgb_color ShiftColor(rgb_color, float) const;
-	rgb_color Inverted(void) const;
+	rgb_color Inverted() const;
 
 protected:
 	rgb_color fColor;

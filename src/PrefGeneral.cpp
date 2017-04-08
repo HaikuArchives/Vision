@@ -108,17 +108,17 @@ GeneralPrefsView::GeneralPrefsView(BRect frame, const char* title, uint32 redraw
 	fPrefsItems[piLog]->Hide();
 }
 
-GeneralPrefsView::~GeneralPrefsView(void)
+GeneralPrefsView::~GeneralPrefsView()
 {
 	while (fPrefsList->CountItems() != 0) delete fPrefsList->RemoveItem((int32)0);
 }
 
-void GeneralPrefsView::AttachedToWindow(void)
+void GeneralPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 }
 
-void GeneralPrefsView::AllAttached(void)
+void GeneralPrefsView::AllAttached()
 {
 	BView::AllAttached();
 	fPrefsList->SetTarget(this);
@@ -126,7 +126,7 @@ void GeneralPrefsView::AllAttached(void)
 	fPrefsList->MakeFocus();
 }
 
-void GeneralPrefsView::Show(void)
+void GeneralPrefsView::Show()
 {
 	BView::Show();
 }

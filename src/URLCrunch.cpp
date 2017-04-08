@@ -38,7 +38,7 @@ URLCrunch::URLCrunch(const char* data, int32 len) : buffer(""), current_pos(0)
 	buffer.Append(data, len);
 }
 
-URLCrunch::~URLCrunch(void)
+URLCrunch::~URLCrunch()
 {
 }
 
@@ -83,7 +83,7 @@ int32 URLCrunch::Crunch(BString* url)
 	return marker < buffer.Length() ? marker : B_ERROR;
 }
 
-status_t URLCrunch::UpdateTagList(void)
+status_t URLCrunch::UpdateTagList()
 {
 	int i;
 

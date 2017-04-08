@@ -52,7 +52,7 @@ NamesView::NamesView(BRect frame)
 	fTracking = false;
 }
 
-NamesView::~NamesView(void)
+NamesView::~NamesView()
 {
 	if (fMyPopUp) delete fMyPopUp;
 }
@@ -68,7 +68,7 @@ void NamesView::KeyDown(const char* bytes, int32 numBytes)
 	reinterpret_cast<ChannelAgent*>(Parent()->Parent())->fMsgr.SendMessage(&inputMsg);
 }
 
-void NamesView::AttachedToWindow(void)
+void NamesView::AttachedToWindow()
 {
 	fMyPopUp = new BPopUpMenu(B_TRANSLATE("User selection"), false, false);
 
@@ -151,7 +151,7 @@ void NamesView::AttachedToWindow(void)
 	fActiveTheme->WriteUnlock();
 }
 
-void NamesView::DetachedFromWindow(void)
+void NamesView::DetachedFromWindow()
 {
 	BView::DetachedFromWindow();
 	fActiveTheme->WriteLock();
@@ -295,7 +295,7 @@ void NamesView::MouseMoved(BPoint myPoint, uint32 transitcode, const BMessage* d
 		BListView::MouseMoved(myPoint, transitcode, dragMessage);
 }
 
-void NamesView::ClearList(void)
+void NamesView::ClearList()
 {
 	while (CountItems() > 0) delete RemoveItem((int32)0);
 }

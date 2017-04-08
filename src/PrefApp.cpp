@@ -121,16 +121,16 @@ AppWindowPrefsView::AppWindowPrefsView(BRect frame)
 	ResizeTo(maxWidth, maxHeight);
 }
 
-AppWindowPrefsView::~AppWindowPrefsView(void)
+AppWindowPrefsView::~AppWindowPrefsView()
 {
 }
 
-void AppWindowPrefsView::AttachedToWindow(void)
+void AppWindowPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 }
 
-void AppWindowPrefsView::AllAttached(void)
+void AppWindowPrefsView::AllAttached()
 {
 	fVersionParanoid->SetTarget(this);
 	fCatchAltW->SetTarget(this);
@@ -157,7 +157,7 @@ void AppWindowPrefsView::SetEncodingItem(int32 encoding)
 	}
 }
 
-BMenu* AppWindowPrefsView::CreateEncodingMenu(void)
+BMenu* AppWindowPrefsView::CreateEncodingMenu()
 {
 	BMessage msg(M_APPWINDOWPREFS_ENCODING_CHANGED);
 	BMenu* encMenu(new BMenu("Encodings"));

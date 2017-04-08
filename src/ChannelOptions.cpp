@@ -40,18 +40,18 @@ ChannelOptions::ChannelOptions(const char* chan_name_, ChannelAgent* parent_)
 	Init();
 }
 
-ChannelOptions::~ChannelOptions(void)
+ChannelOptions::~ChannelOptions()
 {
 	//
 }
 
-bool ChannelOptions::QuitRequested(void)
+bool ChannelOptions::QuitRequested()
 {
 	parent->fMsgr.SendMessage(M_CHANNEL_OPTIONS_CLOSE);
 	return true;
 }
 
-void ChannelOptions::Init(void)
+void ChannelOptions::Init()
 {
 	BString temp(B_TRANSLATE("%channel% options"));
 	temp.ReplaceFirst("%channel%", chan_name);

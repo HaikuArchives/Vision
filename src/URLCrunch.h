@@ -38,10 +38,10 @@ class URLCrunch
 
 public:
 	URLCrunch(const char*, int32);
-	~URLCrunch(void);
+	~URLCrunch();
 	int32 Crunch(BString*);
 
-	static status_t UpdateTagList(void);
+	static status_t UpdateTagList();
 
 private:
 	static BLocker fLocker; // protects members below

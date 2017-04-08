@@ -33,10 +33,10 @@ class DCCPrefsView : public BView
 {
 public:
 	DCCPrefsView(BRect);
-	virtual ~DCCPrefsView(void);
+	virtual ~DCCPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
 	virtual void FrameResized(float, float);
 
 private:

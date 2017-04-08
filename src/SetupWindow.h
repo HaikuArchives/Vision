@@ -35,14 +35,14 @@ class BMessage;
 class SetupWindow : public BWindow
 {
 public:
-	SetupWindow(void);
-	virtual ~SetupWindow(void);
-	virtual bool QuitRequested(void);
+	SetupWindow();
+	virtual ~SetupWindow();
+	virtual bool QuitRequested();
 	virtual void MessageReceived(BMessage*);
 
 private:
-	void InitServerStartup(void);
-	void BuildNetworkMenu(void);
+	void InitServerStartup();
+	void BuildNetworkMenu();
 	BButton* connectButton, *netPrefsButton, *prefsButton;
 	BMenuField* netList;
 };

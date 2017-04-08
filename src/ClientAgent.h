@@ -55,30 +55,30 @@ public:
 				const BMessenger&, // sMsgr pointer
 				BRect);			   // frame
 
-	virtual ~ClientAgent(void);
+	virtual ~ClientAgent();
 
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
-	virtual void DetachedFromWindow(void);
-	virtual void Show(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
+	virtual void DetachedFromWindow();
+	virtual void Show();
 
 	virtual void AddMenuItems(BPopUpMenu*) = 0;
 
-	float ScrollPos(void) const;
+	float ScrollPos() const;
 	void SetScrollPos(float);
 	void ScrollRange(float*, float*) const;
 	void SetServerName(const char*);
 	void SetEditStates(BMenu*, bool);
 
 	bool ParseCmd(const char*);
-	virtual void TabExpansion(void);
+	virtual void TabExpansion();
 	static int32 DNSLookup(void*);
 	static int32 ExecPipe(void*);
 
 	virtual void DroppedFile(BMessage*);
 
-	const BString& Id(void) const;
+	const BString& Id() const;
 
 	BMessenger fMsgr, fSMsgr;
 
@@ -95,7 +95,7 @@ public:
 	WindowListItem* fAgentWinItem;
 
 private:
-	void Init(void);
+	void Init();
 
 	bool fCancelMLPaste;
 

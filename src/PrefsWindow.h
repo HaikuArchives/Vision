@@ -27,8 +27,8 @@
 class PrefsWindow : public BWindow
 {
 public:
-	PrefsWindow(void);
-	virtual ~PrefsWindow(void);
-	virtual bool QuitRequested(void);
+	PrefsWindow();
+	virtual ~PrefsWindow();
+	virtual bool QuitRequested();
 };
 #endif // _PREFS_WINDOW_H

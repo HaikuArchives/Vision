@@ -27,17 +27,17 @@ class ServerListItem : public BStringItem
 {
 public:
 	ServerListItem(ServerData&);
-	~ServerListItem(void);
+	~ServerListItem();
 	virtual void DrawItem(BView*, BRect, bool);
 	void SetState(uint32);
 	void SetServer(const char*);
 	void SetPort(uint32);
 
-	ServerData GetServerInfo(void);
+	ServerData GetServerInfo();
 
 private:
-	void UpdateItemText(void);
-	inline rgb_color GetItemColor(void);
+	void UpdateItemText();
+	inline rgb_color GetItemColor();
 
 	uint32 state;
 	BString serverName;
@@ -52,11 +52,11 @@ ServerListItem::ServerListItem(ServerData& data) : BStringItem("")
 	UpdateItemText();
 }
 
-ServerListItem::~ServerListItem(void)
+ServerListItem::~ServerListItem()
 {
 }
 
-void ServerListItem::UpdateItemText(void)
+void ServerListItem::UpdateItemText()
 {
 	BString itemText;
 	itemText += serverName;
@@ -65,7 +65,7 @@ void ServerListItem::UpdateItemText(void)
 	SetText(itemText.String());
 }
 
-inline rgb_color ServerListItem::GetItemColor(void)
+inline rgb_color ServerListItem::GetItemColor()
 {
 	switch (state) {
 	case 1:
@@ -102,7 +102,7 @@ void ServerListItem::SetPort(uint32 newPort)
 	UpdateItemText();
 }
 
-ServerData ServerListItem::GetServerInfo(void)
+ServerData ServerListItem::GetServerInfo()
 {
 	ServerData data;
 	data.port = port;
@@ -199,13 +199,13 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 		fLegend4->Frame().bottom + 5);
 }
 
-NetPrefsServerView::~NetPrefsServerView(void)
+NetPrefsServerView::~NetPrefsServerView()
 {
 	BMessenger msgr(fEntryWin);
 	if (msgr.IsValid()) msgr.SendMessage(B_QUIT_REQUESTED);
 }
 
-void NetPrefsServerView::AttachedToWindow(void)
+void NetPrefsServerView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	fAddButton->SetTarget(this);

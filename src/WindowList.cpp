@@ -67,13 +67,13 @@ WindowList::WindowList(BRect frame)
 	SetTarget(this);
 }
 
-WindowList::~WindowList(void)
+WindowList::~WindowList()
 {
 	delete fMyPopUp;
 	//
 }
 
-void WindowList::AttachedToWindow(void)
+void WindowList::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	fActiveTheme->WriteLock();
@@ -81,7 +81,7 @@ void WindowList::AttachedToWindow(void)
 	fActiveTheme->WriteUnlock();
 }
 
-void WindowList::DetachedFromWindow(void)
+void WindowList::DetachedFromWindow()
 {
 	BView::DetachedFromWindow();
 	fActiveTheme->WriteLock();
@@ -169,7 +169,7 @@ void WindowList::MessageReceived(BMessage* msg)
 	}
 }
 
-void WindowList::CloseActive(void)
+void WindowList::CloseActive()
 {
 	WindowListItem* myItem(dynamic_cast<WindowListItem*>(ItemAt(CurrentSelection())));
 	if (myItem) {
@@ -258,7 +258,7 @@ void WindowList::KeyDown(const char*, int32)
 #endif
 }
 
-void WindowList::SelectionChanged(void)
+void WindowList::SelectionChanged()
 {
 	int32 currentIndex(CurrentSelection());
 	if (currentIndex >= 0) // dont bother casting unless somethings selected
@@ -285,7 +285,7 @@ void WindowList::SelectionChanged(void)
 	BOutlineListView::SelectionChanged();
 }
 
-void WindowList::ClearList(void)
+void WindowList::ClearList()
 {
 	// never ever call this function unless you understand
 	// the consequences!
@@ -294,7 +294,7 @@ void WindowList::ClearList(void)
 	for (i = 0; i < all; i++) delete static_cast<WindowListItem*>(RemoveItem((int32)0));
 }
 
-void WindowList::SelectLast(void)
+void WindowList::SelectLast()
 {
 	/*
 	 * Function purpose: Select the last active agent
@@ -329,7 +329,7 @@ void WindowList::Collapse(BListItem* collapseItem)
 	BOutlineListView::Collapse(collapseItem);
 }
 
-void WindowList::CollapseCurrentServer(void)
+void WindowList::CollapseCurrentServer()
 {
 	int32 currentsel(CurrentSelection());
 	if (currentsel < 0) return;
@@ -350,7 +350,7 @@ void WindowList::Expand(BListItem* expandItem)
 	BOutlineListView::Expand(expandItem);
 }
 
-void WindowList::ExpandCurrentServer(void)
+void WindowList::ExpandCurrentServer()
 {
 	int32 currentsel(CurrentSelection());
 	if (currentsel < 0) return;
@@ -374,7 +374,7 @@ int32 WindowList::GetServer(int32 index)
 	return IndexOf(Superitem(citem));
 }
 
-void WindowList::SelectServer(void)
+void WindowList::SelectServer()
 {
 	int32 currentsel(CurrentSelection());
 	if (currentsel < 0) return;
@@ -385,7 +385,7 @@ void WindowList::SelectServer(void)
 	Select(serversel);
 }
 
-void WindowList::ContextSelectUp(void)
+void WindowList::ContextSelectUp()
 {
 	int32 currentsel(CurrentSelection());
 	if (currentsel < 0) return;
@@ -410,7 +410,7 @@ void WindowList::ContextSelectUp(void)
 	ScrollToSelection();
 }
 
-void WindowList::ContextSelectDown(void)
+void WindowList::ContextSelectDown()
 {
 	int32 currentsel(CurrentSelection());
 	if (currentsel < 0) return;
@@ -435,7 +435,7 @@ void WindowList::ContextSelectDown(void)
 	ScrollToSelection();
 }
 
-void WindowList::MoveCurrentUp(void)
+void WindowList::MoveCurrentUp()
 {
 	int32 currentsel(FullListCurrentSelection());
 	if (currentsel < 0) return;
@@ -462,7 +462,7 @@ void WindowList::MoveCurrentUp(void)
 	}
 }
 
-void WindowList::MoveCurrentDown(void)
+void WindowList::MoveCurrentDown()
 {
 	int32 currentsel(FullListCurrentSelection());
 	if (currentsel < 0) return;
@@ -640,7 +640,7 @@ int WindowList::SortListItems(const BListItem* name1, const BListItem* name2)
 	return firstName.ICompare(secondName);
 }
 
-void WindowList::BuildPopUp(void)
+void WindowList::BuildPopUp()
 {
 	delete fMyPopUp;
 	fMyPopUp = new BPopUpMenu("Window Selection", false, false);
@@ -681,12 +681,12 @@ WindowListItem::WindowListItem(const char* name, int32 winType, int32 winStatus,
 {
 }
 
-WindowListItem::~WindowListItem(void)
+WindowListItem::~WindowListItem()
 {
 	if (fBlinker) delete fBlinker;
 }
 
-BString WindowListItem::Name(void) const
+BString WindowListItem::Name() const
 {
 	return fMyName;
 }
@@ -755,7 +755,7 @@ void WindowListItem::SetStatus(int32 winStatus)
 	//  vision_app->pClientWin()->Unlock();
 }
 
-void WindowListItem::ActivateItem(void)
+void WindowListItem::ActivateItem()
 {
 	int32 myIndex(vision_app->pClientWin()->pWindowList()->IndexOf(this));
 	vision_app->pClientWin()->pWindowList()->Activate(myIndex);

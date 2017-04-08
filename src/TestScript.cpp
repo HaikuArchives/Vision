@@ -4,7 +4,7 @@
 #include "TestScript.h"
 #include "Utilities.h"
 
-TestScript::TestScript (void)
+TestScript::TestScript ()
 {
   RunTestScripts();
 }
@@ -149,7 +149,7 @@ TestScript::DoScriptArrayTest()
 
 
 void
-TestScript::RunTestScripts (void)
+TestScript::RunTestScripts ()
 {
 	DoScriptIniWriteTest();
 	DoScriptIniReadTest();

@@ -35,12 +35,12 @@ NameItem::NameItem(const char* name, int32 userStatus)
 {
 }
 
-BString NameItem::Name(void) const
+BString NameItem::Name() const
 {
 	return myName;
 }
 
-BString NameItem::Address(void) const
+BString NameItem::Address() const
 {
 	return myAddress;
 }

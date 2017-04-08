@@ -34,7 +34,7 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "NetworkWindow"
 
-NetworkWindow::NetworkWindow(void)
+NetworkWindow::NetworkWindow()
 	: BWindow(BRect(50, 50, 550, 430), B_TRANSLATE("Network setup"), B_TITLED_WINDOW,
 		B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE | B_NOT_ZOOMABLE*/)
 {
@@ -52,13 +52,13 @@ NetworkWindow::NetworkWindow(void)
 }
 
 
-NetworkWindow::~NetworkWindow(void)
+NetworkWindow::~NetworkWindow()
 {
 	//
 }
 
 
-bool NetworkWindow::QuitRequested(void)
+bool NetworkWindow::QuitRequested()
 {
 	vision_app->SetRect("NetPrefWinRect", Frame());
 	be_app_messenger.SendMessage(M_NETWORK_CLOSE);
@@ -77,13 +77,13 @@ NetPrefServerWindow::NetPrefServerWindow(BHandler* target)
 }
 
 
-NetPrefServerWindow::~NetPrefServerWindow(void)
+NetPrefServerWindow::~NetPrefServerWindow()
 {
 	//
 }
 
 
-bool NetPrefServerWindow::QuitRequested(void)
+bool NetPrefServerWindow::QuitRequested()
 {
 	return true;
 }

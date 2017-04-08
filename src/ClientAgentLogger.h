@@ -39,17 +39,17 @@ class ClientAgentLogger
 {
 public:
 	ClientAgentLogger(BString);
-	virtual ~ClientAgentLogger(void);
-	void StartLogging(void);
+	virtual ~ClientAgentLogger();
+	void StartLogging();
 	void RegisterLogger(const char*);
 	void UnregisterLogger(const char*);
 	void Log(const char*, const char*);
-	void StopLogging(void);
+	void StopLogging();
 	bool fIsQuitting;
 	bool fIsLogging;
 
 private:
-	void SetupLogging(void);
+	void SetupLogging();
 	void CloseSession(BFile&);
 	static int32 AsyncLogger(void*);
 

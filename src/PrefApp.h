@@ -33,13 +33,13 @@ class AppWindowPrefsView : public BView
 {
 public:
 	AppWindowPrefsView(BRect);
-	virtual ~AppWindowPrefsView(void);
+	virtual ~AppWindowPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
 
 private:
-	BMenu* CreateEncodingMenu(void);
+	BMenu* CreateEncodingMenu();
 	void SetEncodingItem(int32);
 	BMenuField* fEncodings;
 	BCheckBox* fVersionParanoid, *fCatchAltW, *fTimeStamp, *fLogEnabled, *fLogFileTimestamp,

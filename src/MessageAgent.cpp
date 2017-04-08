@@ -67,7 +67,7 @@ MessageAgent::MessageAgent(BRect& frame_, const char* id_,
 	Init();
 }
 
-MessageAgent::~MessageAgent(void)
+MessageAgent::~MessageAgent()
 {
 	fDConnected = false;
 	if (fDChat) {
@@ -78,7 +78,7 @@ MessageAgent::~MessageAgent(void)
 	}
 }
 
-void MessageAgent::AllAttached(void)
+void MessageAgent::AllAttached()
 {
 	// initialize threads here since messenger will otherwise not be valid
 	if (fDChat) {
@@ -115,12 +115,12 @@ void MessageAgent::AddMenuItems(BPopUpMenu* pMenu)
 	pMenu->AddSeparatorItem();
 }
 
-void MessageAgent::Init(void)
+void MessageAgent::Init()
 {
 	// empty Init, call DCCServerSetup from input thread to avoid deadlocks
 }
 
-void MessageAgent::DCCServerSetup(void)
+void MessageAgent::DCCServerSetup()
 {
 	int32 myPort(atoi(vision_app->GetString("dccMinPort")));
 	int32 diff(atoi(vision_app->GetString("dccMaxPort")) - myPort);
@@ -610,7 +610,7 @@ void MessageAgent::DroppedFile(BMessage*)
 	// TODO: implement this when DCC's ready
 }
 
-void MessageAgent::TabExpansion(void)
+void MessageAgent::TabExpansion()
 {
 	int32 start, finish;
 

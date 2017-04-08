@@ -34,10 +34,10 @@ class CommandPrefsView : public BView
 {
 public:
 	CommandPrefsView(BRect);
-	virtual ~CommandPrefsView(void);
+	virtual ~CommandPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
 	virtual void FrameResized(float, float);
 
 private:

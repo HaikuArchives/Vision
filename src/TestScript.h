@@ -10,15 +10,15 @@ class lua_State;
 class TestScript
 {
 public:
-	TestScript(void);
+	TestScript();
 	static int Script_PrintNumber(lua_State*);
 	static int Script_Add(lua_State*);
-	void DoScriptIniWriteTest(void);
-	void DoScriptIniReadTest(void);
-	void DoScriptCallbackTest(void);
-	void DoScriptSaveTest(void);
-	void DoScriptArrayTest(void);
-	void RunTestScripts(void);
+	void DoScriptIniWriteTest();
+	void DoScriptIniReadTest();
+	void DoScriptCallbackTest();
+	void DoScriptSaveTest();
+	void DoScriptArrayTest();
+	void RunTestScripts();
 };
 
 #endif

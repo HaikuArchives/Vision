@@ -91,7 +91,7 @@ BString HistoryList::Submit(const char* buffer)
 	return cmd;
 }
 
-bool HistoryList::HasHistory(void) const
+bool HistoryList::HasHistory() const
 {
 	return bufferFree != 0;
 }

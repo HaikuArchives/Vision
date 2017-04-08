@@ -51,7 +51,7 @@ class InvokingTextView : public BTextView, public BInvoker
 {
 public:
 	InvokingTextView(BRect, const char*, BMessage*, BHandler*, uint32, uint32);
-	virtual ~InvokingTextView(void);
+	virtual ~InvokingTextView();
 
 	virtual void KeyDown(const char*, int32);
 };
@@ -63,7 +63,7 @@ InvokingTextView::InvokingTextView(BRect frame, const char* name, BMessage* msg,
 {
 }
 
-InvokingTextView::~InvokingTextView(void)
+InvokingTextView::~InvokingTextView()
 {
 }
 
@@ -239,7 +239,7 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	fPersonalBox->AddChild(fRealName);
 }
 
-NetworkPrefsView::~NetworkPrefsView(void)
+NetworkPrefsView::~NetworkPrefsView()
 {
 	BMessenger(fNickPrompt).SendMessage(B_QUIT_REQUESTED);
 	BMessenger(fNetPrompt).SendMessage(B_QUIT_REQUESTED);
@@ -247,7 +247,7 @@ NetworkPrefsView::~NetworkPrefsView(void)
 	BMessenger(fServerPrefs).SendMessage(B_QUIT_REQUESTED);
 }
 
-void NetworkPrefsView::AttachedToWindow(void)
+void NetworkPrefsView::AttachedToWindow()
 {
 	fNetworkMenu->Menu()->SetTargetForItems(this);
 	fServerButton->SetTarget(this);
@@ -269,7 +269,7 @@ void NetworkPrefsView::AttachedToWindow(void)
 	FrameResized(0, 0);
 }
 
-void NetworkPrefsView::DetachedFromWindow(void)
+void NetworkPrefsView::DetachedFromWindow()
 {
 	// save changes to active network
 	// get autoexec commands
@@ -277,7 +277,7 @@ void NetworkPrefsView::DetachedFromWindow(void)
 	SaveCurrentNetwork();
 }
 
-void NetworkPrefsView::BuildNetworkList(void)
+void NetworkPrefsView::BuildNetworkList()
 {
 	if (fNetworkMenu == NULL) return;
 
@@ -417,7 +417,7 @@ void NetworkPrefsView::SetupDefaults(BMessage& msg)
 	UpdatePersonalData(msg);
 }
 
-void NetworkPrefsView::SaveCurrentNetwork(void)
+void NetworkPrefsView::SaveCurrentNetwork()
 {
 	if (fActiveNetwork.FindString("name") == NULL) return;
 

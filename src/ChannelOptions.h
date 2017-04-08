@@ -33,11 +33,11 @@ class ChannelOptions : public BWindow
 {
 public:
 	ChannelOptions(const char*, ChannelAgent*);
-	virtual ~ChannelOptions(void);
-	virtual bool QuitRequested(void);
+	virtual ~ChannelOptions();
+	virtual bool QuitRequested();
 
 private:
-	void Init(void);
+	void Init();
 	ChannelAgent* parent;
 	const char* chan_name;
 

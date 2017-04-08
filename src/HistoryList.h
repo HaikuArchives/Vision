@@ -37,11 +37,11 @@ class HistoryList
 	int32 bufferFree, bufferPos;
 
 public:
-	HistoryList(void);
+	HistoryList();
 	void PreviousBuffer(BTextControl*);
 	void NextBuffer(BTextControl*);
 	BString Submit(const char*);
-	bool HasHistory(void) const;
+	bool HasHistory() const;
 };
 
 #endif

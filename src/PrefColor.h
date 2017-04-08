@@ -33,10 +33,10 @@ class ColorPrefsView : public BView
 {
 public:
 	ColorPrefsView(BRect);
-	virtual ~ColorPrefsView(void);
+	virtual ~ColorPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
 
 private:
 	rgb_color fColors[MAX_COLORS];

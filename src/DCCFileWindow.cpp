@@ -37,11 +37,11 @@ DCCFileWindow::DCCFileWindow(DCCConnect* view)
 	ResizeTo(view->Bounds().Width(), view->Bounds().Height());
 }
 
-DCCFileWindow::~DCCFileWindow(void)
+DCCFileWindow::~DCCFileWindow()
 {
 }
 
-bool DCCFileWindow::QuitRequested(void)
+bool DCCFileWindow::QuitRequested()
 {
 	be_app->PostMessage(M_DCC_FILE_WIN_DONE);
 	return true;
@@ -133,14 +133,14 @@ void DCCFileWindow::MessageReceived(BMessage* msg)
 	}
 }
 
-void DCCFileWindow::Hide(void)
+void DCCFileWindow::Hide()
 {
 	// we do this to keep it out of the deskbar
 	SetFlags(Flags() | B_AVOID_FOCUS);
 	BWindow::Hide();
 }
 
-void DCCFileWindow::Show(void)
+void DCCFileWindow::Show()
 {
 	SetFlags(Flags() & ~(B_AVOID_FOCUS));
 	SetWorkspaces(B_CURRENT_WORKSPACE);

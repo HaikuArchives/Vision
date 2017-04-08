@@ -34,7 +34,7 @@ class AgentDockHeaderString : public BStringView
 {
 public:
 	AgentDockHeaderString(BRect, const char*);
-	virtual ~AgentDockHeaderString(void);
+	virtual ~AgentDockHeaderString();
 
 	virtual void MouseMoved(BPoint, uint32, const BMessage*);
 	virtual void MouseDown(BPoint);
@@ -45,7 +45,7 @@ class AgentDockHeader : public BView
 {
 public:
 	AgentDockHeader(BRect, const char*, uint32);
-	virtual ~AgentDockHeader(void);
+	virtual ~AgentDockHeader();
 
 private:
 	AgentDockHeaderString* fHeaderView;
@@ -55,9 +55,9 @@ class AgentDockWinList : public BView
 {
 public:
 	AgentDockWinList(BRect);
-	virtual ~AgentDockWinList(void);
+	virtual ~AgentDockWinList();
 
-	WindowList* pWindowList(void) const;
+	WindowList* pWindowList() const;
 
 private:
 	WindowList* fWinList;
@@ -70,11 +70,11 @@ class AgentDockNotifyList : public BView
 {
 public:
 	AgentDockNotifyList(BRect);
-	virtual ~AgentDockNotifyList(void);
+	virtual ~AgentDockNotifyList();
 
-	NotifyList* pNotifyList(void) const;
+	NotifyList* pNotifyList() const;
 
-	virtual void AllAttached(void);
+	virtual void AllAttached();
 
 private:
 	AgentDockHeader* fAHeader;
@@ -86,14 +86,14 @@ class ClientWindowDock : public BView
 {
 public:
 	ClientWindowDock(BRect);
-	virtual ~ClientWindowDock(void);
+	virtual ~ClientWindowDock();
 
-	void AddWinList(void);
-	void AddNotifyList(void);
-	WindowList* pWindowList(void) const;
-	NotifyList* pNotifyList(void) const;
+	void AddWinList();
+	void AddNotifyList();
+	WindowList* pWindowList() const;
+	NotifyList* pNotifyList() const;
 
-	virtual void AllAttached(void);
+	virtual void AllAttached();
 	virtual void MessageReceived(BMessage*);
 
 private:

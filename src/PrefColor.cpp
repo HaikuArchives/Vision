@@ -93,16 +93,16 @@ ColorPrefsView::ColorPrefsView(BRect frame)
 	AddChild(fRevert);
 }
 
-ColorPrefsView::~ColorPrefsView(void)
+ColorPrefsView::~ColorPrefsView()
 {
 }
 
-void ColorPrefsView::AttachedToWindow(void)
+void ColorPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 }
 
-void ColorPrefsView::AllAttached(void)
+void ColorPrefsView::AllAttached()
 {
 	BView::AllAttached();
 	fSelector->ResizeToPreferred();

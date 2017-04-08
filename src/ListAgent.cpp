@@ -122,7 +122,7 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 	memset(&fre, 0, sizeof(fre));
 }
 
-ListAgent::~ListAgent(void)
+ListAgent::~ListAgent()
 {
 	BRow* row(NULL);
 	if (listUpdateTrigger) delete listUpdateTrigger;
@@ -142,13 +142,13 @@ ListAgent::~ListAgent(void)
 	regfree(&fre);
 }
 
-void ListAgent::AttachedToWindow(void)
+void ListAgent::AttachedToWindow()
 {
 	fMsgr = BMessenger(this);
 	listView->SetTarget(this);
 }
 
-void ListAgent::Show(void)
+void ListAgent::Show()
 {
 	Window()->PostMessage(M_STATUS_CLEAR);
 	this->fMsgr.SendMessage(M_STATUS_ADDITEMS);
@@ -166,13 +166,13 @@ void ListAgent::Show(void)
 	BView::Show();
 }
 
-void ListAgent::Hide(void)
+void ListAgent::Hide()
 {
 	vision_app->pClientWin()->RemoveMenu(listMenu);
 	BView::Hide();
 }
 
-void ListAgent::AddBatch(void)
+void ListAgent::AddBatch()
 {
 	// make sure you call this from a locked looper
 	BRow* row(NULL);

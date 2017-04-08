@@ -30,11 +30,11 @@
 
 #include <stdio.h>
 
-NumericFilter::NumericFilter(void) : BMessageFilter(B_ANY_DELIVERY, B_ANY_SOURCE)
+NumericFilter::NumericFilter() : BMessageFilter(B_ANY_DELIVERY, B_ANY_SOURCE)
 {
 }
 
-NumericFilter::~NumericFilter(void)
+NumericFilter::~NumericFilter()
 {
 }
 

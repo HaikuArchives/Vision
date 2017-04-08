@@ -82,11 +82,11 @@ DCCPrefsView::DCCPrefsView(BRect frame)
 	fBox->AddChild(fDccPortMax);
 }
 
-DCCPrefsView::~DCCPrefsView(void)
+DCCPrefsView::~DCCPrefsView()
 {
 }
 
-void DCCPrefsView::AttachedToWindow(void)
+void DCCPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	fBlockSize->Menu()->SetTargetForItems(this);
@@ -140,7 +140,7 @@ void DCCPrefsView::AttachedToWindow(void)
 	if (item) dynamic_cast<BInvoker*>(item)->Invoke();
 }
 
-void DCCPrefsView::AllAttached(void)
+void DCCPrefsView::AllAttached()
 {
 	BView::AllAttached();
 }

@@ -121,12 +121,12 @@ struct Line {
 	Line(const char* buffer, int16 fLength, float top, float width, Theme* fTheme,
 		 const char* fStamp_format, int16 fore, int16 back, int16 font);
 
-	~Line(void);
+	~Line();
 
 	void Append(const char* buffer, int16 len, float width, Theme* fTheme, int16 fore, int16 back,
 				int16 font);
 
-	void FigureSpaces(void);
+	void FigureSpaces();
 
 	void FigureFontColors(int16 pos, int16 fore, int16 back, int16 font);
 
@@ -178,7 +178,7 @@ RunView::RunView(BRect frame, const char* name, Theme* theme, uint32 resizingMod
 	fTheme->ReadUnlock();
 }
 
-RunView::~RunView(void)
+RunView::~RunView()
 {
 	for (int16 i = 0; i < fLine_count; ++i) delete fLines[i];
 
@@ -188,7 +188,7 @@ RunView::~RunView(void)
 	delete[] fClipping_name;
 }
 
-void RunView::AttachedToWindow(void)
+void RunView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	RecalcScrollBar(false);
@@ -197,7 +197,7 @@ void RunView::AttachedToWindow(void)
 	fTheme->WriteUnlock();
 }
 
-void RunView::DetachedFromWindow(void)
+void RunView::DetachedFromWindow()
 {
 	fTheme->WriteLock();
 	fTheme->RemoveView(this);
@@ -221,7 +221,7 @@ void RunView::TargetedByScrollView(BScrollView* s)
 	BView::TargetedByScrollView(fScroller);
 }
 
-void RunView::Show(void)
+void RunView::Show()
 {
 	if (fFontsdirty) {
 		FontChangeRecalc();
@@ -448,7 +448,7 @@ void RunView::SetViewColor(rgb_color color)
 	BView::SetViewColor(color);
 }
 
-void RunView::BuildPopUp(void)
+void RunView::BuildPopUp()
 {
 	// This function checks certain criteria (fText is selected,
 	// TextView is editable, etc) to determine fWhich MenuItems
@@ -934,7 +934,7 @@ void RunView::MessageReceived(BMessage* msg)
 	}
 }
 
-void RunView::ResizeRecalc(void)
+void RunView::ResizeRecalc()
 {
 	float width(Bounds().Width() - MARGIN_WIDTH);
 	int16 fSoftie_size(0), fSoftie_used(0);
@@ -992,7 +992,7 @@ void RunView::ResizeRecalc(void)
 	delete[] fSofties;
 }
 
-void RunView::FontChangeRecalc(void)
+void RunView::FontChangeRecalc()
 {
 	float width(Bounds().Width() - MARGIN_WIDTH);
 	float top(0.0);
@@ -1185,7 +1185,7 @@ void RunView::Append(const char* buffer, int32 len, int16 fore, int16 back, int1
 	fTheme->ReadUnlock();
 }
 
-void RunView::Clear(void)
+void RunView::Clear()
 {
 	for (int16 i = 0; i < fLine_count; ++i) delete fLines[i];
 
@@ -1200,7 +1200,7 @@ void RunView::Clear(void)
 	if (fWorking) fWorking->fTop = 0.0;
 }
 
-int16 RunView::LineCount(void) const
+int16 RunView::LineCount() const
 {
 	return fLine_count;
 }
@@ -1430,7 +1430,7 @@ void RunView::Select(const SelectPos& start, const SelectPos& end)
 	}
 }
 
-void RunView::SelectAll(void)
+void RunView::SelectAll()
 {
 	if (fLine_count) {
 		fSp_start = SelectPos(0, 0);
@@ -1471,7 +1471,7 @@ Line::Line(const char* buffer, int16 len, float top, float width, Theme* theme,
 	Append(buffer, len, width, theme, fore, back, font);
 }
 
-Line::~Line(void)
+Line::~Line()
 {
 	delete[] fSpaces;
 	delete[] fEdges;
@@ -1526,7 +1526,7 @@ void Line::Append(const char* buffer, int16 len, float width, Theme* theme, int1
 	}
 }
 
-void Line::FigureSpaces(void)
+void Line::FigureSpaces()
 {
 	const char spacers[] = " \t\n-\\/";
 	const char* buffer(fText);
@@ -1990,7 +1990,7 @@ bool RunView::FindText(const char* text)
 	return result;
 }
 
-void RunView::ScrollToSelection(void)
+void RunView::ScrollToSelection()
 {
 	if (fLine_count > 0) {
 		if (fSp_start != fSp_end) {
@@ -1999,7 +1999,7 @@ void RunView::ScrollToSelection(void)
 	}
 }
 
-void RunView::ScrollToBottom(void)
+void RunView::ScrollToBottom()
 {
 	if (fLine_count > 0) {
 		ScrollTo(0.0, fLines[fLine_count - 1]->fTop);

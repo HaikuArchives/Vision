@@ -50,7 +50,7 @@ NotifyList::NotifyList(BRect _frame)
 	fActiveTheme->ReadUnlock();
 }
 
-NotifyList::~NotifyList(void)
+NotifyList::~NotifyList()
 {
 	while (CountItems() > 0) delete RemoveItem((int32)0);
 	delete fMyPopUp;
@@ -66,13 +66,13 @@ void NotifyList::UpdateList(BObjectList<NotifyListItem>* newList)
 	AddList(&updateList);
 }
 
-void NotifyList::AttachedToWindow(void)
+void NotifyList::AttachedToWindow()
 {
 	fActiveTheme->AddView(this);
 	BListView::AttachedToWindow();
 }
 
-void NotifyList::DetachedFromWindow(void)
+void NotifyList::DetachedFromWindow()
 {
 	fActiveTheme->RemoveView(this);
 	BListView::DetachedFromWindow();
@@ -137,7 +137,7 @@ void NotifyList::MouseDown(BPoint myPoint)
 	}
 }
 
-void NotifyList::BuildPopUp(void)
+void NotifyList::BuildPopUp()
 {
 	delete fMyPopUp;
 	fMyPopUp = new BPopUpMenu("Notify selection", false, false);
@@ -240,7 +240,7 @@ NotifyListItem::NotifyListItem(const NotifyListItem& copyItem)
 	// empty copy c'tor
 }
 
-NotifyListItem::~NotifyListItem(void)
+NotifyListItem::~NotifyListItem()
 {
 	// empty d'tor
 }
@@ -250,7 +250,7 @@ void NotifyListItem::SetState(bool newState)
 	fNotifyState = newState;
 }
 
-bool NotifyListItem::GetState(void) const
+bool NotifyListItem::GetState() const
 {
 	return fNotifyState;
 }

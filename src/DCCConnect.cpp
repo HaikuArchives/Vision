@@ -80,16 +80,16 @@ DCCConnect::DCCConnect(const char* n, const char* fn, const char* sz, const char
 	AddChild(fStop);
 }
 
-DCCConnect::~DCCConnect(void)
+DCCConnect::~DCCConnect()
 {
 }
 
-void DCCConnect::AttachedToWindow(void)
+void DCCConnect::AttachedToWindow()
 {
 	fStop->SetTarget(this);
 }
 
-void DCCConnect::AllAttached(void)
+void DCCConnect::AllAttached()
 {
 	fStop->MoveTo(fBar->Frame().right + 15, fBar->Frame().bottom - 18);
 	fLabel->MoveTo(fLabel->Frame().left, fBar->Frame().bottom + 1);
@@ -100,7 +100,7 @@ void DCCConnect::AllAttached(void)
 	ResizeTo(fStop->Frame().right + 5, fLabel->Frame().bottom + 5.0);
 }
 
-void DCCConnect::DetachedFromWindow(void)
+void DCCConnect::DetachedFromWindow()
 {
 }
 
@@ -163,7 +163,7 @@ void DCCConnect::MessageReceived(BMessage* msg)
 	}
 }
 
-void DCCConnect::Stopped(void)
+void DCCConnect::Stopped()
 {
 	if (fTotalTransferred > 0) {
 		BMessage xfermsg(M_DCC_COMPLETE);
@@ -189,11 +189,11 @@ void DCCConnect::Stopped(void)
 	Window()->PostMessage(&msg);
 }
 
-void DCCConnect::Lock(void)
+void DCCConnect::Lock()
 {
 }
 
-void DCCConnect::Unlock(void)
+void DCCConnect::Unlock()
 {
 }
 
@@ -231,11 +231,11 @@ DCCReceive::DCCReceive(const char* n, const char* fn, const char* sz, const char
 {
 }
 
-DCCReceive::~DCCReceive(void)
+DCCReceive::~DCCReceive()
 {
 }
 
-void DCCReceive::AttachedToWindow(void)
+void DCCReceive::AttachedToWindow()
 {
 	DCCConnect::AttachedToWindow();
 
@@ -358,11 +358,11 @@ DCCSend::DCCSend(const char* n, const char* fn, const char* sz, const BMessenger
 	fPort << dccPort;
 }
 
-DCCSend::~DCCSend(void)
+DCCSend::~DCCSend()
 {
 }
 
-void DCCSend::AttachedToWindow(void)
+void DCCSend::AttachedToWindow()
 {
 	DCCConnect::AttachedToWindow();
 

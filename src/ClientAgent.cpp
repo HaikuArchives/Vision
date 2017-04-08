@@ -89,13 +89,13 @@ ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* m
 	fSMsgr.SendMessage(M_LAG_CHANGED);
 }
 
-ClientAgent::~ClientAgent(void)
+ClientAgent::~ClientAgent()
 {
 	delete fAgentWinItem;
 	delete fHistory;
 }
 
-void ClientAgent::AttachedToWindow(void)
+void ClientAgent::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	fActiveTheme->WriteLock();
@@ -103,7 +103,7 @@ void ClientAgent::AttachedToWindow(void)
 	fActiveTheme->WriteUnlock();
 }
 
-void ClientAgent::DetachedFromWindow(void)
+void ClientAgent::DetachedFromWindow()
 {
 	BView::DetachedFromWindow();
 	fActiveTheme->WriteLock();
@@ -111,7 +111,7 @@ void ClientAgent::DetachedFromWindow(void)
 	fActiveTheme->WriteUnlock();
 }
 
-void ClientAgent::AllAttached(void)
+void ClientAgent::AllAttached()
 {
 	fMsgr = BMessenger(this);
 
@@ -131,7 +131,7 @@ void ClientAgent::AllAttached(void)
 	}
 }
 
-void ClientAgent::Show(void)
+void ClientAgent::Show()
 {
 	Window()->PostMessage(M_STATUS_CLEAR);
 	this->fMsgr.SendMessage(M_STATUS_ADDITEMS);
@@ -154,7 +154,7 @@ void ClientAgent::Show(void)
 	BView::Show();
 }
 
-void ClientAgent::Init(void)
+void ClientAgent::Init()
 {
 	AdoptSystemColors();
 
@@ -193,7 +193,7 @@ void ClientAgent::ScrollRange(float* scrollMin, float* scrollMax) const
 	fTextScroll->ScrollBar(B_VERTICAL)->GetRange(scrollMin, scrollMax);
 }
 
-float ClientAgent::ScrollPos(void) const
+float ClientAgent::ScrollPos() const
 {
 	return fTextScroll->ScrollBar(B_VERTICAL)->Value();
 }
@@ -478,7 +478,7 @@ void ClientAgent::Parser(const char*)
 	// do nothing
 }
 
-void ClientAgent::TabExpansion(void)
+void ClientAgent::TabExpansion()
 {
 	// do nothing
 }
@@ -845,7 +845,7 @@ void ClientAgent::MessageReceived(BMessage* msg)
 	}
 }
 
-const BString& ClientAgent::Id(void) const
+const BString& ClientAgent::Id() const
 {
 	return fId;
 }

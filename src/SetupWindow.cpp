@@ -40,7 +40,7 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "SetupWindow"
 
-SetupWindow::SetupWindow(void)
+SetupWindow::SetupWindow()
 	:
 	BWindow(BRect(108, 88, 500, 320), B_TRANSLATE("Setup window"),
 		B_TITLED_WINDOW,
@@ -100,11 +100,11 @@ SetupWindow::SetupWindow(void)
 	ResizeTo(0, 0);
 }
 
-SetupWindow::~SetupWindow(void)
+SetupWindow::~SetupWindow()
 {
 }
 
-bool SetupWindow::QuitRequested(void)
+bool SetupWindow::QuitRequested()
 {
 	vision_app->SetRect("SetupWinRect", Frame());
 	be_app_messenger.SendMessage(M_SETUP_CLOSE);

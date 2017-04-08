@@ -35,10 +35,10 @@ class LogPrefsView : public BView
 {
 public:
 	LogPrefsView(BRect);
-	virtual ~LogPrefsView(void);
+	virtual ~LogPrefsView();
 	virtual void MessageReceived(BMessage*);
-	virtual void AttachedToWindow(void);
-	virtual void AllAttached(void);
+	virtual void AttachedToWindow();
+	virtual void AllAttached();
 	virtual void FrameResized(float, float);
 
 private:

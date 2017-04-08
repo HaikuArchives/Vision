@@ -30,8 +30,8 @@ class NetworkMenu : public BMenu
 {
 public:
 	NetworkMenu(const char*, uint32, BMessenger);
-	virtual ~NetworkMenu(void);
-	virtual void AttachedToWindow(void);
+	virtual ~NetworkMenu();
+	virtual void AttachedToWindow();
 
 private:
 	uint32 fMsgConst;
