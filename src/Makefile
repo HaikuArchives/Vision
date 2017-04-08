@@ -6,7 +6,7 @@
 
 # The name of the binary.
 NAME = Vision
-VERSION := 0.9.9pre0
+VERSION := 0.10.0
 TARGET_DIR = ../dist
 
 # The type of binary, must be one of:

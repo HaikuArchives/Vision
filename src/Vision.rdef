@@ -1,13 +1,19 @@
 resource app_signature "application/x-vnd.Ink-Vision";
 
-resource app_flags B_SINGLE_LAUNCH;
+resource app_flags B_EXCLUSIVE_LAUNCH;
 
 resource app_version {
 	major  = 0,
-	middle = 9,
-	minor  = 9,
+	middle = 10,
+	minor  = 0,
 
-	variety = B_APPV_DEVELOPMENT,
+	// B_APPV_DEVELOPMENT
+	// B_APPV_ALPHA
+	// B_APPV_BETA
+	// B_APPV_GAMMA
+	// B_APPV_GOLDEN_MASTER
+	// B_APPV_FINAL
+	variety = B_APPV_FINAL,
 	internal = 0,
 
 	short_info = "Vision",
