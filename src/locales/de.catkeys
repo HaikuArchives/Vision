@@ -36,7 +36,7 @@ Cut	ClientWindow		Ausschneiden
 Down	ClientWindow		Runter
 Edit	ClientWindow		Bearbeiten
 Expand network	ClientWindow		Netzwerk ausklappen
-Help	ClientWindow		Help
+Help	ClientWindow		Hilfe
 List channels…	ClientWindow		Kanäle auflisten…
 Move network down	ClientWindow		Netzwerk runter
 Move network up	ClientWindow		Netzwerk rauf

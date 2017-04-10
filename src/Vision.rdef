@@ -13,7 +13,7 @@ resource app_version {
 	// B_APPV_GAMMA
 	// B_APPV_GOLDEN_MASTER
 	// B_APPV_FINAL
-	variety = B_APPV_DEVELOPMENT,
+	variety = B_APPV_FINAL,
 	internal = 0,
 
 	short_info = "Vision",
