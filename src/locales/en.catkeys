@@ -1,4 +1,4 @@
-1	English	application/x-vnd.Ink-Vision	3932130148
+1	English	application/x-vnd.Ink-Vision	3406632783
 [@] Attempting to rejoin…\n	ChannelAgent		[@] Attempting to rejoin…\n
 *** Attempting to rejoin %channel%…\n	ChannelAgent		*** Attempting to rejoin %channel%…\n
 *** Now talking in %channel%\n	ChannelAgent		*** Now talking in %channel%\n
@@ -36,6 +36,7 @@ Cut	ClientWindow		Cut
 Down	ClientWindow		Down
 Edit	ClientWindow		Edit
 Expand network	ClientWindow		Expand network
+Help	ClientWindow		Help
 List channels…	ClientWindow		List channels…
 Move network down	ClientWindow		Move network down
 Move network up	ClientWindow		Move network up

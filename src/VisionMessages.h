@@ -162,6 +162,7 @@ const uint32 M_OPEN_TERM = 0x2005;
 const uint32 M_MAKE_NEW_NETWORK = 0x2006;
 const uint32 M_STATUS_CLEAR = 0x2007;
 const uint32 M_STATUS_ADDITEMS = 0x2008;
+const uint32 M_HELP_SHOW = 0x2009;
 
 // names view
 

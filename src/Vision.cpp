@@ -887,6 +887,10 @@ void VisionApp::MessageReceived(BMessage* msg)
 			PostMessage(B_QUIT_REQUESTED);
 	} break;
 
+	case M_HELP_SHOW: {
+		LoadURL("https://www.haiku-os.org/docs/userguide/en/applications/vision.html");
+	} break;
+
 	case M_PREFS_SHOW: {
 		if (fPrefsWin)
 			fPrefsWin->Activate();

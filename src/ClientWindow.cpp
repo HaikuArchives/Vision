@@ -506,6 +506,9 @@ void ClientWindow::Init()
 	menu->AddItem(
 		item = new BMenuItem(B_TRANSLATE("About Vision"), new BMessage(B_ABOUT_REQUESTED)));
 	item->SetTarget(vision_app);
+	menu->AddItem(
+		item = new BMenuItem(B_TRANSLATE("Help"), new BMessage(M_HELP_SHOW)));
+	item->SetTarget(vision_app);
 	menu->AddItem(item = new BMenuItem(B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS), new BMessage(M_PREFS_SHOW)));
 	item->SetTarget(vision_app);
 

@@ -1,4 +1,4 @@
-1	german	application/x-vnd.Ink-Vision	3932130148
+1	german	application/x-vnd.Ink-Vision	3406632783
 [@] Attempting to rejoin…\n	ChannelAgent		[@] Versuche einen Rejoin…\n
 *** Attempting to rejoin %channel%…\n	ChannelAgent		*** Versuche einen Rejoin mit %channel%…\n
 *** Now talking in %channel%\n	ChannelAgent		*** Momentan in %channel%\n
@@ -36,6 +36,7 @@ Cut	ClientWindow		Ausschneiden
 Down	ClientWindow		Runter
 Edit	ClientWindow		Bearbeiten
 Expand network	ClientWindow		Netzwerk ausklappen
+Help	ClientWindow		Help
 List channels…	ClientWindow		Kanäle auflisten…
 Move network down	ClientWindow		Netzwerk runter
 Move network up	ClientWindow		Netzwerk rauf
