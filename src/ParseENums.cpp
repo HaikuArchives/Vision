@@ -573,7 +573,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 		BString theNick(GetWord(data, 4)), theIdent(GetWord(data, 5)), theAddress(GetWord(data, 6)),
 			theName(RestOfString(data, 8)), tempString("[x] ");
 		theName.RemoveFirst(":");
-		tempString = B_TRANSLATE("[x] %nick% [was] (%ident%@%address%)/n");
+		tempString = B_TRANSLATE("[x] %nick% [was] (%ident%@%address%)\n");
 		tempString.ReplaceFirst("%nick%", theNick.String());
 		tempString.ReplaceFirst("%ident%", theIdent.String());
 		tempString.ReplaceFirst("%address%", theAddress.String());

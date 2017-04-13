@@ -1,4 +1,4 @@
-1	English	application/x-vnd.Ink-Vision	3406632783
+1	English	application/x-vnd.Ink-Vision	3154840961
 [@] Attempting to rejoin…\n	ChannelAgent		[@] Attempting to rejoin…\n
 *** Attempting to rejoin %channel%…\n	ChannelAgent		*** Attempting to rejoin %channel%…\n
 *** Now talking in %channel%\n	ChannelAgent		*** Now talking in %channel%\n
@@ -156,7 +156,7 @@ DCC chat	NotifyList		DCC chat
 Query	NotifyList		Query
 Remove	NotifyList		Remove
 Whois	NotifyList		Whois
-*** Trying new nick %nick%./n	ParseCmd		*** Trying new nick %nick%./n
+*** Trying new nick %nick%.\n	ParseCmd		*** Trying new nick %nick%.\n
 /pexec: command failed	ParseCmd		/pexec: command failed
 Bool has been set	ParseCmd		Bool has been set
 Error setting bool	ParseCmd		Error setting bool
@@ -173,7 +173,7 @@ Vision Uptime: %time%\n	ParseCmd		Vision Uptime: %time%\n
 {0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}
 - Server Message Of The Day:\n	ParseENums		- Server Message Of The Day:\n
 [@] Successful reconnect\n	ParseENums		[@] Successful reconnect\n
-[x] %nick% [was] (%ident%@%address%)/n	ParseENums		[x] %nick% [was] (%ident%@%address%)/n
+[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [was] (%ident%@%address%)\n
 [x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% is already in %channel%.\n
 [x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% is not in %channel%.\n
 [x] Channel key already set in %channel%.\n	ParseENums		[x] Channel key already set in %channel%.\n

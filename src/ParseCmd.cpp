@@ -682,7 +682,7 @@ bool ClientAgent::ParseCmd(const char* data)
 		BString newNick(GetWord(data, 2));
 
 		if (newNick != "-9z99") {
-			BString tempString(B_TRANSLATE("*** Trying new nick %nick%./n"));
+			BString tempString(B_TRANSLATE("*** Trying new nick %nick%.\n"));
 			tempString.ReplaceFirst("%nick%", newNick);
 			Display(tempString.String());
 

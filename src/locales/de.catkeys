@@ -1,4 +1,4 @@
-1	german	application/x-vnd.Ink-Vision	3406632783
+1	german	application/x-vnd.Ink-Vision	3154840961
 [@] Attempting to rejoin…\n	ChannelAgent		[@] Versuche einen Rejoin…\n
 *** Attempting to rejoin %channel%…\n	ChannelAgent		*** Versuche einen Rejoin mit %channel%…\n
 *** Now talking in %channel%\n	ChannelAgent		*** Momentan in %channel%\n
@@ -12,7 +12,7 @@ Users:	ChannelAgent		Benutzer:
 %channel% options	ChannelOptions		Optionen für %channel%
 You are currently a channel operator. You may change any of these options.	ChannelOptions		Du bist momentan ein Operator für diesen Kanal. All diese Optionen können geändert werden.
 Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%file% wurde vollständig von %nick% empfangen  (%ack% %size% Bytes), %ld Zeichen/s\n\n
-Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%file% wurde vollständig an %nick% gesandt (%ack% %size% Bytes), %ld Zeichen/s\n/n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%file% wurde vollständig an %nick% gesandt (%ack% %size% Bytes), %ld Zeichen/s\n\n
 Copy	ClientAgent		Kopieren
 Cut	ClientAgent		Ausschneiden
 Paste	ClientAgent		Einfügen
@@ -103,7 +103,7 @@ Lag:	MessageAgent		Verz.:
 Trying to connect to address %adress%, port %port%\n	MessageAgent		Versuche Verbindung mit Adresse %adress%, Port %port%\n
 Whois	MessageAgent		Whois
 %s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s sprach: %s
-Add to notify	NamesView		Zu Mitteilungen hinzufügen
+Add to notify	NamesView		In Mitteilungsliste aufnehmen
 CTCP	NamesView		CTCP
 DCC chat	NamesView		DCC Chat
 DCC send	NamesView		DCC Versand
@@ -156,7 +156,7 @@ DCC chat	NotifyList		DCC Chat
 Query	NotifyList		Gespräch (Query)
 Remove	NotifyList		Entfernen
 Whois	NotifyList		Whois
-*** Trying new nick %nick%./n	ParseCmd		*** Versuche neuen Nicknamen %nick%./n
+*** Trying new nick %nick%.\n	ParseCmd		*** Versuche neuen Nicknamen %nick%.\n
 /pexec: command failed	ParseCmd		/pexec: Befehl gescheitert
 Bool has been set	ParseCmd		Bool wurde gesetzt
 Error setting bool	ParseCmd		Fehler beim Setzen von Bool
@@ -173,7 +173,7 @@ Vision Uptime: %time%\n	ParseCmd		Vision Betriebszeit: %time%\n
 {0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING Antwort]: # Sekunde\n}other{[%nick% PING Antwort]: # Sekunden\n}}
 - Server Message Of The Day:\n	ParseENums		- Server Message des Tages:\n
 [@] Successful reconnect\n	ParseENums		[@] Erfolgreich wieder-verbunden\n
-[x] %nick% [was] (%ident%@%address%)/n	ParseENums		[x] %nick% [war] (%ident%@%address%)/n
+[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [war] (%ident%@%address%)\n
 [x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% ist bereits in %channel%.\n
 [x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% ist nicht in %channel%.\n
 [x] Channel key already set in %channel%.\n	ParseENums		[x] Kanal-Schlüssel ist in %channel% bereits gesetzt.\n
