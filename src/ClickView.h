@@ -24,26 +24,35 @@
 #ifndef _CLICKVIEW_H
 #define _CLICKVIEW_H
 
+#include <Bitmap.h>
 #include <Cursor.h>
-#include <View.h>
+#include <TranslationUtils.h>
 #include <String.h>
+#include <View.h>
 
 class ClickView : public BView
 {
 public:
 	BString fLaunchUrl;
+	BBitmap* fLogo;
 
 	ClickView(const char* name, uint32 flags, const char* url)
 		: BView(name, flags)
 	{
 		fLaunchUrl = url;
+		fLogo = BTranslationUtils::GetBitmap('bits', "vision-logo");
 	};
 
 	virtual void AttachedToWindow()
 	{
 		SetViewCursor(new BCursor(B_CURSOR_ID_FOLLOW_LINK));
+		if (fLogo != NULL) {
+			SetExplicitMinSize(fLogo->Bounds().Size());
+			SetExplicitMaxSize(fLogo->Bounds().Size());
+		}
 	}
 
+	virtual void Draw(BRect);
 	virtual void MouseDown(BPoint);
 };
 

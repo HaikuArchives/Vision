@@ -22,11 +22,9 @@
  */
 
 #include <Button.h>
-#include <Bitmap.h>
 #include <View.h>
 #include <MenuField.h>
 #include <MenuItem.h>
-#include <TranslationUtils.h>
 #include <LayoutBuilder.h>
 
 #include "ClientWindow.h"
@@ -49,7 +47,6 @@ SetupWindow::SetupWindow()
 {
 	AddShortcut('/', B_SHIFT_KEY, new BMessage(M_PREFS_SHOW));
 
-	BBitmap* bmp = NULL;
 	ClickView* logo = new ClickView("image", B_WILL_DRAW,
 		"https://github.com/HaikuArchives/Vision");
 
@@ -84,13 +81,6 @@ SetupWindow::SetupWindow()
 			.Add(prefsButton)
 		.End()
 	.End();
-
-	if ((bmp = BTranslationUtils::GetBitmap('bits', "vision-logo")) != 0) {
-		logo->SetViewBitmap(bmp);
-		logo->SetExplicitMinSize(bmp->Bounds().Size());
-		logo->SetExplicitMaxSize(bmp->Bounds().Size());
-		delete bmp;
-	}
 
 	connectButton->SetEnabled(false);
 

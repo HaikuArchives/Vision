@@ -24,6 +24,20 @@
 #include "Vision.h"
 #include "ClickView.h"
 
+void ClickView::Draw(BRect rect)
+{
+	rgb_color bgColor = ui_color(B_PANEL_BACKGROUND_COLOR);
+	SetHighColor(bgColor);
+	SetLowColor(bgColor);
+	FillRect(rect);
+
+	SetDrawingMode(B_OP_ALPHA);
+	SetViewColor(B_TRANSPARENT_COLOR);
+
+	if (fLogo != NULL)
+		DrawBitmap(fLogo, B_ORIGIN);
+}
+
 void ClickView::MouseDown(BPoint)
 {
 	vision_app->LoadURL(fLaunchUrl.String());
