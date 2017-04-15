@@ -26,11 +26,12 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#include <ScrollView.h>
+#include <LayoutBuilder.h>
 #include <Menu.h>
 #include <MenuBar.h>
 #include <MenuField.h>
 #include <MenuItem.h>
+#include <ScrollView.h>
 #include <TextControl.h>
 
 #include "NumericFilter.h"
@@ -171,19 +172,32 @@ FontPrefsView::FontPrefsView(BRect frame)
 	BString text(B_TRANSLATE("Element:"));
 	text.Append(" ");
 	fFontElementField =
-		new BMenuField(BRect(10, 10, 200, 50), "elements", text.String(), fElementMenu);
-	AddChild(fFontElementField);
+		new BMenuField("elements", text.String(), fElementMenu);
+
 	FontMenu* menu(new FontMenu("fonts"));
 	text = B_TRANSLATE("Font:");
 	text.Append(" ");
-	fFontMenuField = new BMenuField(BRect(10, 10, 200, 50), "fonts", text.String(), menu);
-	AddChild(fFontMenuField);
+	fFontMenuField = new BMenuField("fonts", text.String(), menu);
+
 	text = B_TRANSLATE("Size:");
 	text.Append(" ");
-	fTextControl = new BTextControl(BRect(60, 60, 200, 90), "", text.String(), "",
-									new BMessage(M_FONT_SIZE_CHANGE));
+	fTextControl = new BTextControl("", text.String(), "",
+		new BMessage(M_FONT_SIZE_CHANGE));
 	fTextControl->TextView()->AddFilter(new NumericFilter());
-	AddChild(fTextControl);
+
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_HALF_ITEM_INSETS)
+		.AddGroup(B_HORIZONTAL)
+			.Add(fFontElementField)
+			.AddGlue(10.0)
+		.End()
+		.AddGroup(B_HORIZONTAL)
+			.Add(fFontMenuField)
+			.Add(fTextControl)
+			.AddGlue(10.0)
+		.End()
+		.AddGlue()
+	.End();
 }
 
 FontPrefsView::~FontPrefsView()

@@ -69,7 +69,8 @@ CommandPrefsView::CommandPrefsView(BRect frame)
 		fCommands[i]->SetModificationMessage(msg);
 		bgView->AddChild(fCommands[i]);
 	}
-	fScroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES, 0, false, true);
+	fScroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES,
+		0, false, true, B_NO_BORDER);
 	BScrollBar* bar(fScroller->ScrollBar(B_VERTICAL));
 
 	fMaxheight = bgView->Bounds().Height();

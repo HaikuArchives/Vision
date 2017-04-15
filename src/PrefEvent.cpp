@@ -70,7 +70,8 @@ EventPrefsView::EventPrefsView(BRect frame)
 		fEvents[i]->SetModificationMessage(msg);
 		bgView->AddChild(fEvents[i]);
 	}
-	fScroller = new BScrollView("command fScroller", bgView, B_FOLLOW_ALL_SIDES, 0, false, true);
+	fScroller = new BScrollView("command fScroller", bgView, B_FOLLOW_ALL_SIDES,
+		0, false, true, B_NO_BORDER);
 	BScrollBar* bar(fScroller->ScrollBar(B_VERTICAL));
 
 	fMaxheight = bgView->Bounds().Height();
