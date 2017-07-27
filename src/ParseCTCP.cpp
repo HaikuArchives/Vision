@@ -301,7 +301,7 @@ void ServerAgent::ParseCTCPResponse(BString theNick, BString theMsg)
 			}
 		}
 
-		BString text;
+//		BString text;
 		static BMessageFormat format(B_TRANSLATE("{0, plural,"
 			"one{[%nick% PING response]: # second\n}"
 			"other{[%nick% PING response]: # seconds\n}}"));
