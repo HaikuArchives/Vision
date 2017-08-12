@@ -141,6 +141,8 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 	usePassword->SetValue((strlen(currentServer.password) > 0) ? B_CONTROL_ON : B_CONTROL_OFF);
 	passwordField->SetEnabled(usePassword->Value() == B_CONTROL_ON);
 	passwordField->TextView()->HideTyping(true);
+	// HideTyping erases the text from the field, so set the password only now.
+	passwordField->TextView()->SetText(password.String());
 
 	securePort->SetTarget(this);
 	securePort->SetValue(currentServer.secure ? B_CONTROL_ON : B_CONTROL_OFF);
