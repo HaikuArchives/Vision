@@ -74,7 +74,7 @@ private:
 	void DCCChatDialog(BString, BString, BString);
 	void DCCGetDialog(BString, BString, BString, BString, BString);
 	void SendData(const char*);
-	void AsyncSendData(const char*);
+	int AsyncSendData(const char*);
 	void ParseLine(const char*);
 	bool ParseEvents(const char*);
 	bool ParseENums(const char*, const char*);
@@ -97,8 +97,7 @@ private:
 
 	void RemoveAutoexecChan(const BString&);
 	void ParseAutoexecChans(const BString&);
-	void CreateSenderThread();
-	void CreateEstablishThread();
+	void CreateSocketThread();
 
 	BLocker* fEndPointLock, *fSendLock;
 
@@ -142,7 +141,7 @@ private:
 
 	char fParse_buffer[2048]; // buffer for parsing
 
-	volatile thread_id fLoginThread, fSenderThread; // thread that receives
+	volatile thread_id fSocketThread; // thread that receives
 
 	BObjectList<ClientAgent> fClients; // agents this server "owns"
 
@@ -156,8 +155,8 @@ private:
 	BObjectList<NotifyListItem> fNotifyNicks;
 	//                                fIgnoreNicks;
 
-	static int32 Establish(void*);
-	static int32 Sender(void*);
+	static status_t SocketThreadEntry(void*);
+	status_t SocketThread();
 	static int32 Timer(void*);
 
 	ListAgent* fListAgent;

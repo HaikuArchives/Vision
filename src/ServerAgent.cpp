@@ -87,8 +87,7 @@ ServerAgent::ServerAgent(const char* id_, BMessage& net, BRect frame_)
 	  fLagCount(0),
 	  fNickAttempt(0),
 	  fSocket(NULL),
-	  fLoginThread(-1),
-	  fSenderThread(-1),
+	  fSocketThread(-1),
 	  fEvents(vision_app->fEvents),
 	  fServerHostName(id_),
 	  fInitialMotd(true),
@@ -114,7 +113,7 @@ ServerAgent::~ServerAgent()
 
 	delete_sem(fSendSyncSem);
 
-	//  wait_for_thread (fLoginThread, &result);
+	//  wait_for_thread (fSocketThread, &result);
 
 	/*
 	  while (fIgnoreNicks.CountItems() > 0)
@@ -180,44 +179,31 @@ void ServerAgent::Init()
 									10000000, // 10 seconds
 									-1);	  // forever
 
-	CreateSenderThread();
-	CreateEstablishThread();
+	CreateSocketThread();
 }
 
-void ServerAgent::CreateSenderThread()
+void ServerAgent::CreateSocketThread()
 {
+	if (fSocketThread != -1) {
+		printf("error: attempting to create socket thread when one exists\n");
+		return;
+	}
+	BString name;
+	vision_app->GetThreadName(THREAD_S, name);
+
 	fPendingSends = new BObjectList<BString>();
 	fSendLock = new BLocker();
 	fSendSyncSem = create_sem(0, "VisionSendSync");
 
-	BString name;
+	fSocketThread = spawn_thread(SocketThreadEntry, name.String(),
+		B_NORMAL_PRIORITY, this);
 
-	name = "t>";
-
-	name += (rand() % 2) ? "Tima" : "Kenichi";
-
-	fSenderThread = spawn_thread(Sender, name.String(), B_NORMAL_PRIORITY, this);
-
-	if (fSenderThread >= B_OK)
-		resume_thread(fSenderThread);
-	else {
-		printf("ERROR: could not create transmitter thread, aborting\n");
-		delete_sem(fSendSyncSem);
-	}
-}
-
-void ServerAgent::CreateEstablishThread()
-{
-	BString name;
-
-	vision_app->GetThreadName(THREAD_S, name);
-
-	fLoginThread = spawn_thread(Establish, name.String(), B_NORMAL_PRIORITY, new BMessenger(this));
-
-	if (fLoginThread >= B_OK)
-		resume_thread(fLoginThread);
-	else {
+	if (fSocketThread >= B_OK) {
+		resume_thread(fSocketThread);
+	} else {
 		printf("ERROR: could not create login/establish thread, aborting\n");
+		delete_sem(fSendSyncSem);
+		fSocketThread = -1;
 	}
 }
 
@@ -249,52 +235,19 @@ int32 ServerAgent::Timer(void* arg)
 	return B_OK;
 }
 
-int32 ServerAgent::Sender(void* arg)
+status_t ServerAgent::SocketThreadEntry(void* serverAgent)
 {
-	ServerAgent* agent(reinterpret_cast<ServerAgent*>(arg));
-	BMessenger msgr(agent);
-	sem_id sendSyncLock(-1);
-	BLocker* sendDataLock(NULL);
-	BObjectList<BString>* pendingSends(NULL);
-
-	BMessage reply;
-	if (msgr.IsValid() && (msgr.SendMessage(M_GET_SENDER_DATA, &reply) == B_OK)) {
-		sendSyncLock = reply.FindInt32("sendSyncLock");
-		reply.FindPointer("sendDataLock", reinterpret_cast<void**>(&sendDataLock));
-		reply.FindPointer("pendingSends", reinterpret_cast<void**>(&pendingSends));
-	} else
-		return B_ERROR;
-
-	BString* data(NULL);
-	while (acquire_sem(sendSyncLock) == B_NO_ERROR) {
-		sendDataLock->Lock();
-		if (!pendingSends->IsEmpty()) {
-			data = pendingSends->RemoveItemAt(0);
-			sendDataLock->Unlock();
-			agent->AsyncSendData(data->String());
-			delete data;
-			data = NULL;
-		} else
-			sendDataLock->Unlock();
-	}
-
-	// sender takes possession of pending sends and sendDataLock structures
-	// allows for self-contained cleanups
-	while (pendingSends->CountItems() > 0) delete pendingSends->RemoveItemAt(0L);
-	delete pendingSends;
-	delete sendDataLock;
-
-	return B_OK;
+	return static_cast<ServerAgent*>(serverAgent)->SocketThread();
 }
 
-int32 ServerAgent::Establish(void* arg)
+status_t ServerAgent::SocketThread()
 {
-	BMessenger* sMsgrE(reinterpret_cast<BMessenger*>(arg));
-	AutoDestructor<BMessenger> msgrKiller(sMsgrE);
+	BMessenger msgr(this);
+	BMessenger* sMsgrE = &msgr;
+
 	BMessage getMsg;
 	BString remoteIP;
 	int32 serverSid;
-	BSocket* serverSock = NULL;
 	if (!(sMsgrE->IsValid() && (sMsgrE->SendMessage(M_GET_ESTABLISH_DATA, &getMsg) == B_OK))) {
 		printf(":ERROR: sMsgr not valid in Establish() -- bailing\n");
 		return B_ERROR;
@@ -303,7 +256,9 @@ int32 ServerAgent::Establish(void* arg)
 	BMessage statMsg(M_DISPLAY);
 	BString statString;
 
+	// Connection init
 	try {
+		BSocket* serverSock = NULL;
 		BMessage reply;
 		BString connectId, connectPort, ident, name, connectNick;
 		const ServerData* serverData(NULL);
@@ -429,9 +384,7 @@ int32 ServerAgent::Establish(void* arg)
 			BMessage dataSend(M_SERVER_SEND);
 			dataSend.AddString("data", "blah");
 
-			BMessage endpointMsg(M_SET_ENDPOINT);
-			endpointMsg.AddPointer("socket", serverSock);
-			if (sMsgrE->SendMessage(&endpointMsg, &reply) != B_OK) throw failToLock();
+			fSocket = serverSock;
 
 			if (strlen(serverData->password) > 0) {
 				ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Sending password\n"), C_ERROR);
@@ -460,6 +413,7 @@ int32 ServerAgent::Establish(void* arg)
 
 			// resume normal business matters.
 
+			serverSock->SetTimeout(10);
 			ClientAgent::PackDisplay(&statMsg, B_TRANSLATE("[@] Established\n"), C_ERROR);
 			sMsgrE->SendMessage(&statMsg);
 		} else // No endpoint->connect
@@ -476,48 +430,59 @@ int32 ServerAgent::Establish(void* arg)
 		return B_ERROR;
 	}
 
+	// Protocol loop
+	object_wait_info owis[2];
+	owis[0].object = fSocket->Socket();
+	owis[0].type = B_OBJECT_TYPE_FD;
+	owis[1].object = fSendSyncSem;
+	owis[1].type = B_OBJECT_TYPE_SEMAPHORE;;
+
 	BString buffer;
-	while (sMsgrE->IsValid()) {
+	while (sMsgrE != NULL && sMsgrE->IsValid()) {
 		char indata[1024];
 		int32 length(0);
 
-		memset(indata, 0, 1024);
-		if (serverSock != NULL && serverSock->IsConnected()) {
-			if ((length = serverSock->Read(indata, 1023)) > 0) {
-				BString temp;
-				int32 index;
+		owis[0].events = B_EVENT_READ;
+		owis[1].events = B_EVENT_ACQUIRE_SEMAPHORE;
+		wait_for_objects_etc(owis, 2, B_TIMEOUT, 300000);
 
+		if (fSocket != NULL && fSocket->IsConnected()) {
+			memset(indata, 0, 1024);
+			BString temp;
+			while ((length = fSocket->Read(indata, 1023)) > 0) {
 				temp.SetTo(indata, strlen(indata));
 				buffer += temp;
 
-				while ((index = buffer.FindFirst('\n')) != B_ERROR) {
-					temp.SetTo(buffer, index);
-					buffer.Remove(0, index + 1);
-
-					temp.RemoveLast("\r");
-
-					if (vision_app->fDebugRecv) {
-						printf("RECEIVED: (%03" B_PRId32 ":%03" B_PRId32 ") \"", serverSid,
-							   temp.Length());
-						for (int32 i = 0; i < temp.Length(); ++i) {
-							if (isprint(temp[i]))
-								printf("%c", temp.String()[i]);
-							else
-								printf("[0x%02x]", temp.String()[i]);
-						}
-						printf("\"\n");
-					}
-
-					// We ship it off this way because
-					// we want this thread to loop relatively
-					// quickly.  Let ServerWindow's main thread
-					// handle the processing of incoming data!
-					BMessage msg(M_PARSE_LINE);
-					msg.AddString("line", temp.String());
-					sMsgrE->SendMessage(&msg);
-				}
+				memset(indata, 0, 1024);
 			}
-			if (!serverSock->IsConnected()) {
+			int32 index;
+			while ((index = buffer.FindFirst('\n')) != B_ERROR) {
+				temp.SetTo(buffer, index);
+				buffer.Remove(0, index + 1);
+
+				temp.RemoveLast("\r");
+
+				if (vision_app->fDebugRecv) {
+					printf("RECEIVED: (%03" B_PRId32 ":%03" B_PRId32 ") \"", serverSid,
+						   temp.Length());
+					for (int32 i = 0; i < temp.Length(); ++i) {
+						if (isprint(temp[i]))
+							printf("%c", temp.String()[i]);
+						else
+							printf("[0x%02x]", temp.String()[i]);
+					}
+					printf("\"\n");
+				}
+
+				// We ship it off this way because
+				// we want this thread to loop relatively
+				// quickly.  Let ServerWindow's main thread
+				// handle the processing of incoming data!
+				BMessage msg(M_PARSE_LINE);
+				msg.AddString("line", temp.String());
+				sMsgrE->SendMessage(&msg);
+			}
+			if (!fSocket->IsConnected()) {
 				// we got disconnected :(
 
 				if (vision_app->fDebugRecv) {
@@ -527,15 +492,41 @@ int32 ServerAgent::Establish(void* arg)
 				// tell the user all about it
 				sMsgrE->SendMessage(M_NOT_CONNECTING);
 				sMsgrE->SendMessage(M_SERVER_DISCONNECT);
+				sMsgrE = NULL;
 				break;
 			}
 		}
 
-		// take a nap, so the ServerAgent can do things
-		snooze(20000);
+		BString* data(NULL);
+		// either send or take a nap, so the ServerAgent can do things
+		while (acquire_sem_etc(fSendSyncSem, 1, B_TIMEOUT, 10) == B_NO_ERROR) {
+			fSendLock->Lock();
+			if (!fPendingSends->IsEmpty()) {
+				data = fPendingSends->RemoveItemAt(0);
+				fSendLock->Unlock();
+				if (AsyncSendData(data->String()) < 0)
+					sMsgrE = NULL;
+				delete data;
+				data = NULL;
+			} else
+				fSendLock->Unlock();
+		}
 	}
 	vision_app->RemoveIdent(remoteIP.String());
 
+	// sender takes possession of pending sends and fSendLock structures
+	// allows for self-contained cleanups
+	while (fPendingSends->CountItems() > 0)
+		delete fPendingSends->RemoveItemAt(0L);
+	delete fPendingSends;
+	fPendingSends = NULL;
+	delete fSendLock;
+	fSendLock = NULL;
+
+	delete fSocket;
+	fSocket = NULL;
+
+	fSocketThread = -1;
 	return B_OK;
 }
 
@@ -551,10 +542,10 @@ int ServerAgent::SortNotifyItems(const NotifyListItem* item1, const NotifyListIt
 	return name.ICompare(item2->Text());
 }
 
-void ServerAgent::AsyncSendData(const char* cData)
+int ServerAgent::AsyncSendData(const char* cData)
 {
 	int32 length(0);
-	if (!cData) return;
+	if (!cData) return 0;
 
 	BString data(cData);
 
@@ -573,10 +564,11 @@ void ServerAgent::AsyncSendData(const char* cData)
 	}
 	if (fSocket == NULL || !fSocket->IsConnected()) {
 		// doh, we aren't even connected.
-		return;
+		return -1;
 	}
 
 	if ((length = fSocket->Write(fSend_buffer, dest_length) < 0)) {
+		return -1;
 		if (!fReconnecting && !fIsConnecting)
 			fMsgr.SendMessage(M_SERVER_DISCONNECT);
 		// doh, we aren't even connected.
@@ -587,10 +579,13 @@ void ServerAgent::AsyncSendData(const char* cData)
 		data.RemoveAll("\r");
 		printf("    SENT: (%03" B_PRId32 ") \"%s\"\n", length, data.String());
 	}
+	return 1;
 }
 
 void ServerAgent::SendData(const char* cData)
 {
+	if (!fSendLock || !fPendingSends)
+		return; // disconnected?
 	// this function simply queues up the data into the requests buffer, then releases
 	// the sender thread to take care of it
 	BString* data(new BString(cData));
@@ -738,15 +733,13 @@ void ServerAgent::HandleReconnect()
 
 	delete_sem(fSendSyncSem);
 
-	CreateSenderThread();
-
 	if (fRetry < fRetryLimit) {
 		// we are go for main engine start
 		fReconnecting = true;
 		fIsConnecting = true;
 		fNickAttempt = 0;
 		fEstablishHasLock = false;
-		CreateEstablishThread();
+		CreateSocketThread();
 	} else {
 		// we've hit our fRetry limit. throw in the towel
 		fReconnecting = false;
@@ -947,20 +940,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		reply.AddString("nick", fMyNick.String());
 		msg->SendReply(&reply);
 		fEstablishHasLock = true;
-
 	} break;
-
-	case M_GET_SENDER_DATA: {
-		BMessage reply;
-		reply.AddInt32("sendSyncLock", fSendSyncSem);
-		reply.AddPointer("sendDataLock", fSendLock);
-		reply.AddPointer("pendingSends", fPendingSends);
-		msg->SendReply(&reply);
-	} break;
-
-	case M_SET_ENDPOINT:
-		msg->FindPointer("socket", (void**)&fSocket);
-		break;
 
 	case M_NOT_CONNECTING:
 		fIsConnecting = false;
@@ -1164,12 +1144,10 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		fMyLag = B_TRANSLATE("Disconnected");
 		fMsgr.SendMessage(M_LAG_CHANGED);
 		fCheckingLag = false;
-		if (fSocket != NULL)
-			delete fSocket;
-		fSocket = NULL;
 
 		// attempt a reconnect
-		if (!fIsConnecting) HandleReconnect();
+		if (!fIsConnecting)
+			HandleReconnect();
 	} break;
 
 	case M_STATUS_ADDITEMS: {
