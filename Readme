@@ -1,0 +1,8 @@
+Vision is a wonderful IRC application for HAIKU, which has the following features:
+* Add new network hosts
+* Detailed configuration of the client and chat
+* Detailed network setup
+        * Ability to add new servers
+        * Configure user authentication details
+* Has nice little things like lag detection
+
