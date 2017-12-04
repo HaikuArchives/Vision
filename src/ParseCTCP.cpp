@@ -49,9 +49,7 @@ void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 		tempString += " :";
 		tempString += theMsg;
 		SendData(tempString.String());
-	}
-
-	else if ((theCTCP == "VERSION") || (theCTCP == "CLIENTINFO")) {
+	} else if ((theCTCP == "VERSION") || (theCTCP == "CLIENTINFO")) {
 		BString sysInfoString;
 		if (!vision_app->GetBool("versionParanoid")) {
 			system_info myInfo;
@@ -100,7 +98,7 @@ void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 		tempString += " :\1VERSION Vision-";
 		tempString += tempString2;
 		tempString += sysInfoString;
-		tempString += "http://vision.sourceforge.net";
+		tempString += "https://github.com/HaikuArchives/Vision";
 
 		tempString += '\1';
 		SendData(tempString.String());
