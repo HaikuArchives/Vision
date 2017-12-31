@@ -327,7 +327,7 @@ void VisionApp::InitDefaults()
 	fColors[C_MIRC_SILVER] = MIRC_SILVER;
 	fColors[C_NOTIFY_ON] = JOIN_COLOR;
 	fColors[C_NOTIFY_OFF] = myBlack;
-	fColors[C_NOTIFYLIST_BACKGROUND] = WINLIST_BG_COLOR;
+	fColors[C_NOTIFYLIST_BACKGROUND] = B_TRANSPARENT_COLOR;
 	fColors[C_NOTIFYLIST_SELECTION] = WINLIST_SEL_COLOR;
 
 	fClientFont[F_TEXT] = new BFont(be_plain_font);
