@@ -233,6 +233,8 @@ void WindowList::MouseDown(BPoint myPoint)
 			}
 		}
 	}
+
+	BListView::MouseDown(myPoint);
 }
 
 void WindowList::KeyDown(const char*, int32)

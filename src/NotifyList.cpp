@@ -135,6 +135,8 @@ void NotifyList::MouseDown(BPoint myPoint)
 			}
 		}
 	}
+
+	BListView::MouseDown(myPoint);
 }
 
 void NotifyList::BuildPopUp()
