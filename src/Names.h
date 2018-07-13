@@ -69,12 +69,12 @@ public:
 	void ClearList();
 
 private:
-	bool fTracking;
-
 	BPopUpMenu* fMyPopUp;
 	BMenu* fCTCPPopUp;
 	int32 fLastSelected, fLastButton, fCurrentindex;
 	Theme* fActiveTheme;
+	bool fTracking;
+	bool fMouseDownHandled;
 };
 
 #endif
