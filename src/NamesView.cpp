@@ -41,8 +41,8 @@
 
 NamesView::NamesView(BRect frame)
 	: BListView(frame, "namesList", B_MULTIPLE_SELECTION_LIST, B_FOLLOW_ALL),
-	  fActiveTheme(vision_app->ActiveTheme(),
-	  fTracking(false), fMouseDownHandled(false))
+	  fActiveTheme(vision_app->ActiveTheme()),
+	  fTracking(false), fMouseDownHandled(false)
 {
 	fActiveTheme->ReadLock();
 	SetFont(&fActiveTheme->FontAt(F_NAMES));
