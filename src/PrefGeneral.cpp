@@ -55,11 +55,11 @@ GeneralPrefsView::GeneralPrefsView(const char* title)
 	fPrefsItems[piDCC] = new DCCPrefsView();
 	fPrefsItems[piLog] = new LogPrefsView();
 
-	BBox *fPrefsBox = new BBox("prefsBox");
+	fPrefsBox = new BBox("prefsBox");
 	fPrefsContainerBox = new BView("prefsContainerBox", 0);
 	fPrefsContainerBox->SetLayout(new BCardLayout());
 	fPrefsBox->AddChild(fPrefsContainerBox);
-	fPrefsBox->SetLabel("item->Text()");
+
 
 	for (int32 i = 0; i < piEND; i++)
 		((BCardLayout*) fPrefsContainerBox->GetLayout())->AddView(fPrefsItems[i]);
@@ -116,7 +116,6 @@ void GeneralPrefsView::Show()
 
 void GeneralPrefsView::MessageReceived(BMessage* msg)
 {
-	msg->PrintToStream();
 	switch (msg->what) {
 	case M_GENERALPREFS_SELECTION_CHANGED: {
 		//int32 selectedItem(msg->FindInt32("index"));
@@ -124,8 +123,8 @@ void GeneralPrefsView::MessageReceived(BMessage* msg)
 
 		if (selectedItem >= 0L && selectedItem < piEND)
 		{
-			//BStringItem* item((BStringItem*)fPrefsListView->ItemAt(selectedItem));
-			//fPrefsBox->SetLabel(item->Text());
+			BStringItem* item((BStringItem*)fPrefsListView->ItemAt(selectedItem));
+			fPrefsBox->SetLabel(item->Text());
 			((BCardLayout*) fPrefsContainerBox->GetLayout())->SetVisibleItem(selectedItem);
 			fPreviousSelection = selectedItem;
 		}
