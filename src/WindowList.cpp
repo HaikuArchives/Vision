@@ -53,12 +53,12 @@ AgentCard::AgentCard(BView *agent):
 	fAgent(agent)
 {
 	// Mega hack to add the BSplitView to parent/child
-	AddChild(agent);
+	AddChild(agent, 8);
 	ChannelAgent* channelAgent;
 	if ((channelAgent = dynamic_cast<ChannelAgent*>(agent)) != NULL)
 	{
 		BScrollView* scrollView = new BScrollView("scroll_names", (BView*)channelAgent->pNamesList(), 0, false, true, B_PLAIN_BORDER);
-		AddChild(scrollView);
+		AddChild(scrollView, 2);
 	}
 }
 
