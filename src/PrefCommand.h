@@ -33,7 +33,7 @@ class BScrollView;
 class CommandPrefsView : public BView
 {
 public:
-	CommandPrefsView(BRect);
+	CommandPrefsView();
 	virtual ~CommandPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

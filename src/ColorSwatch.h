@@ -28,7 +28,7 @@
 class ColorSwatch : public BView
 {
 public:
-	ColorSwatch(BRect, const char*, rgb_color, uint32 = B_FOLLOW_LEFT | B_FOLLOW_TOP,
+	ColorSwatch(const char*, rgb_color,
 				uint32 = B_WILL_DRAW | B_NAVIGABLE);
 
 	virtual ~ColorSwatch();

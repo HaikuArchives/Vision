@@ -26,10 +26,12 @@
 
 #include <Beep.h>
 #include <FilePanel.h>
+#include <Layout.h>
 #include <MenuItem.h>
 #include <Notification.h>
 #include <PopUpMenu.h>
 #include <Roster.h>
+#include <SplitView.h>
 #include <ScrollView.h>
 #include <TextControl.h>
 
@@ -67,6 +69,9 @@ ChannelAgent::ChannelAgent(const char* id_, const char* serverName_, int ircdtyp
 	/*
 	 * Function purpose: Consctruct
 	 */
+
+	 fNamesList = new NamesView(this);
+
 }
 
 ChannelAgent::~ChannelAgent()
@@ -101,29 +106,11 @@ void ChannelAgent::Init()
 	 * Function purpose: Setup everything
 	 */
 
-	const BRect namesRect(vision_app->GetRect("nameListRect"));
+//	fNamesList = new NamesView(fFrame);
 
-	fTextScroll->ResizeTo(Frame().Width() - ((namesRect.Width() == 0.0) ? 100 : namesRect.Width()),
-						  fTextScroll->Frame().Height());
-
-	fFrame = Bounds();
-	fFrame.left = fTextScroll->Frame().right + 6;
-	fFrame.right -= B_V_SCROLL_BAR_WIDTH + 1;
-	fFrame.bottom = fTextScroll->Frame().bottom - 1;
-
-	fNamesList = new NamesView(fFrame);
-
-	fNamesScroll = new BScrollView("scroll_names", fNamesList, B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM,
-								   0, false, true, B_PLAIN_BORDER);
-
-	fResize = new ResizeView(fNamesList,
-							 BRect(fTextScroll->Frame().right + 1, Bounds().top + 1,
-								   fTextScroll->Frame().right + 5, fTextScroll->Frame().Height()),
-							 "resize", B_FOLLOW_RIGHT | B_FOLLOW_TOP_BOTTOM);
-
-	AddChild(fNamesScroll);
-
-	AddChild(fResize);
+//	fNamesScroll = new BScrollView("scroll_names", fNamesList, 0, false, true, B_PLAIN_BORDER);
+//	AddChild(fResize);
+//	AddChild(fNamesScroll);
 
 	BString text(B_TRANSLATE("*** Now talking in %channel%\n"));
 	text.ReplaceFirst("%channel%", fId.String());
@@ -132,16 +119,6 @@ void ChannelAgent::Init()
 
 void ChannelAgent::Show()
 {
-	const BRect namesListRect(vision_app->GetRect("namesListRect"));
-	int32 difference((int32)(fNamesList->Bounds().Width() - namesListRect.Width()));
-	if (difference != 0) {
-		fResize->MoveBy(difference, 0.0);
-		fTextScroll->ResizeBy(difference, 0.0);
-		fNamesScroll->ResizeBy(-difference, 0.0);
-		fNamesScroll->MoveBy(difference, 0.0);
-		Sync();
-	}
-
 	ClientAgent::Show();
 }
 
@@ -227,7 +204,7 @@ void ChannelAgent::AddUser(const char* nick, const int32 status)
 		}
 	}
 
-	if (!IsHidden())
+	if (GetLayout()->IsVisible())
 		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_USERS, buffer.String());
 }
 
@@ -258,7 +235,7 @@ bool ChannelAgent::RemoveUser(const char* data)
 				--fOpsCount;
 				buffer << fOpsCount;
 
-				if (!IsHidden())
+				if (GetLayout()->IsVisible())
 					vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS,
 																		  buffer.String());
 
@@ -267,7 +244,7 @@ bool ChannelAgent::RemoveUser(const char* data)
 
 			--fUserCount;
 			buffer << fUserCount;
-			if (!IsHidden())
+			if (GetLayout()->IsVisible())
 				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_USERS,
 																	  buffer.String());
 
@@ -514,7 +491,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 			break;
 		}
 
-		if (fMyNick.ICompare(oldNick) == 0 && !IsHidden())
+		if (fMyNick.ICompare(oldNick) == 0 && GetLayout()->IsVisible())
 			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, newNick);
 
 		if (((thePos = FindPosition(oldNick)) >= 0) &&
@@ -595,7 +572,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 
 		fNamesList->SortItems(SortNames);
 
-		if (!IsHidden()) {
+		if (GetLayout()->IsVisible()) {
 			BString buffer;
 			buffer << fOpsCount;
 			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS, buffer.String());
@@ -606,7 +583,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		}
 	} break;
 
-	case M_RESIZE_VIEW: {
+	case M_RESIZE_VIEW: {/*
 		BPoint point;
 		msg->FindPoint("loc", &point);
 		point.x -= Frame().left;
@@ -616,7 +593,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		fNamesScroll->ResizeBy(-offset, 0.0);
 		fNamesScroll->MoveBy(offset, 0.0);
 		BRect namesRect(0, 0, fNamesScroll->Bounds().Width(), 0);
-		vision_app->SetRect("namesListRect", namesRect);
+		vision_app->SetRect("namesListRect", namesRect); */
 	} break;
 
 	case M_SERVER_DISCONNECT: {
@@ -642,7 +619,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 
 		fMyNick = newNick; // update nickname (might have changed on reconnect)
 
-		if (!IsHidden())
+		if (GetLayout()->IsVisible())
 			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, fMyNick.String());
 
 		Display(B_TRANSLATE("[@] Attempting to rejoin" B_UTF8_ELLIPSIS "\n"),
@@ -669,7 +646,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		}
 		fTopic = theTopic;
 
-		if (!IsHidden())
+		if (GetLayout()->IsVisible())
 			vision_app->pClientWin()->pStatusView()->SetItemValue(
 				STATUS_META, FilterCrap(theTopic, true).String());
 
@@ -814,7 +791,7 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 				} // end u2-kludge stuff
 			}
 			fChanMode = mode;
-			if (!IsHidden())
+			if (GetLayout()->IsVisible())
 				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_MODES,
 																	  fChanMode.String());
 		}
@@ -1169,7 +1146,7 @@ void ChannelAgent::UpdateMode(char theSign, char theMode)
 		fChanMode = tempString;
 	}
 
-	if (!IsHidden())
+	if (GetLayout()->IsVisible())
 		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_MODES, fChanMode.String());
 }
 
@@ -1230,7 +1207,7 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 
 					buffer = "";
 					buffer << fOpsCount;
-					if (!IsHidden())
+					if (GetLayout()->IsVisible())
 						vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS,
 																			  buffer.String());
 				}
@@ -1248,7 +1225,7 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 					buffer = "";
 					buffer << fOpsCount;
 
-					if (!IsHidden())
+					if (GetLayout()->IsVisible())
 						vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS,
 																			  buffer.String());
 				}

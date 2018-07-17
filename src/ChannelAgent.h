@@ -30,11 +30,12 @@
 #include <String.h>
 #include "ClientAgent.h"
 #include <ObjectList.h>
+#include "Names.h"
 
 class ChannelOptions;
 class BScrollView;
 class ServerWindow;
-class NamesView;
+
 class ResizeView;
 
 const int32 MAX_RECENT_NICKS = 5;

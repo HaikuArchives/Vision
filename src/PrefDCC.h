@@ -32,7 +32,7 @@ class BBox;
 class DCCPrefsView : public BView
 {
 public:
-	DCCPrefsView(BRect);
+	DCCPrefsView();
 	virtual ~DCCPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();
@@ -44,6 +44,7 @@ private:
 	BTextControl* fDefDir, *fDccPortMin, *fDccPortMax;
 	BCheckBox* fAutoAccept, *fPrivateCheck;
 	BBox* fBox;
+	BView* fContainerBox;
 };
 
 #endif // _PREFDCC_H

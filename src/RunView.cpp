@@ -168,7 +168,7 @@ RunView::RunView(BRect frame, const char* name, Theme* theme, uint32 resizingMod
 	  fLastClickTime(0)
 {
 	memset(fLines, 0, sizeof(fLines));
-	fURLCursor = new BCursor(URLCursorData);
+	fURLCursor = new BCursor(B_CURSOR_ID_FOLLOW_LINK); // TODO use B_CURSOR_ID_FOLLOW_LINK
 	fTheme->ReadLock();
 
 	BView::SetViewColor(B_TRANSPARENT_COLOR);

@@ -22,7 +22,7 @@
  *                 Andrew Bazan
  *                 Jamie Wilkinson
  */
-
+#include <LayoutBuilder.h>
 #include <ScrollView.h>
 #include <Menu.h>
 #include <MenuItem.h>
@@ -104,7 +104,8 @@ void DynamicEditMenu::DetachedFromWindow()
 
 ClientWindow::ClientWindow(BRect frame)
 	: BWindow(frame, B_TRANSLATE_SYSTEM_NAME("Vision"),
-		B_DOCUMENT_WINDOW, B_ASYNCHRONOUS_CONTROLS)
+		B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS),
+		fAgentrect(new BRect(0,0,10,10))
 {
 	Init();
 }
@@ -252,6 +253,7 @@ void ClientWindow::MessageReceived(BMessage* msg)
 	} break;
 
 	case M_OBITUARY: {
+		msg->PrintToStream();
 		WindowListItem* agentitem;
 		BView* agentview;
 		if ((msg->FindPointer("agent", reinterpret_cast<void**>(&agentview)) != B_OK) ||
@@ -260,7 +262,7 @@ void ClientWindow::MessageReceived(BMessage* msg)
 			return;
 		}
 
-		pWindowList()->RemoveAgent(agentview, agentitem);
+		pWindowList()->RemoveAgent(agentitem);
 
 		if (fShutdown_in_progress && pWindowList()->CountItems() == 0)
 			PostMessage(B_QUIT_REQUESTED);
@@ -301,7 +303,7 @@ void ClientWindow::MessageReceived(BMessage* msg)
 			pWindowList()->CountItems() > 0 ? false : true); // grab focus if none present
 	} break;
 
-	case M_RESIZE_VIEW: {
+	case M_RESIZE_VIEW: {/*
 		BView* view(NULL);
 		msg->FindPointer("view", reinterpret_cast<void**>(&view));
 		WindowListItem* item(dynamic_cast<WindowListItem*>(
@@ -318,7 +320,7 @@ void ClientWindow::MessageReceived(BMessage* msg)
 				agent->MoveTo(agRect->left, agRect->top);
 			}
 		} else
-			DispatchMessage(msg, agent);
+			DispatchMessage(msg, agent);*/
 	} break;
 
 	case M_OPEN_TERM: {
@@ -414,13 +416,9 @@ void ClientWindow::SetEditStates(bool retargetonly)
 		if (agent != NULL) agent->SetEditStates(fEdit, retargetonly);
 	}
 }
-
+// TODO Nuke this function
 BRect* ClientWindow::AgentRect() const
 {
-	fAgentrect->left = fResize->Frame().right - fCwDock->Frame().left + 1;
-	fAgentrect->top = Bounds().top;
-	fAgentrect->right = Bounds().Width() + 1;
-	fAgentrect->bottom = fCwDock->Frame().Height();
 	return fAgentrect;
 }
 
@@ -495,7 +493,7 @@ void ClientWindow::Init()
 	AddShortcut('Q', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
 
 	BRect frame(Bounds());
-	fMenuBar = new BMenuBar(frame, "menu_bar");
+	fMenuBar = new BMenuBar("menu_bar");
 
 	BMenuItem* item;
 	BMenu* menu;
@@ -579,41 +577,33 @@ void ClientWindow::Init()
 	item->SetTarget(this);
 	fMenuBar->AddItem(fWindow);
 
-	AddChild(fMenuBar);
 
 	// add objects
-	frame.top = fMenuBar->Frame().bottom + 1;
-	bgView = new BView(frame, "Background", B_FOLLOW_ALL_SIDES, 0);
-
+	bgView = new BView("cards", 0);
+	bgView->SetLayout(new BCardLayout());
 	bgView->AdoptSystemColors();
-	AddChild(bgView);
-
-	frame = bgView->Bounds();
 
 	fStatus = new StatusView(frame);
-	bgView->AddChild(fStatus);
-	float fontDelta = be_plain_font->Size() - 12.0f;
-	if (fontDelta < 0)
-		fontDelta = 0;
-	fStatus->ResizeBy(0, fontDelta);
-	fStatus->MoveBy(0, -fontDelta);
 
 	fStatus->AddItem(new StatusItem("irc.elric.net", 0), true);
 
-	BRect cwDockRect(vision_app->GetRect("windowDockRect"));
-	fCwDock = new ClientWindowDock(BRect(0, frame.top,
-										 (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(),
-										 fStatus->Frame().top - 1));
+//	BRect cwDockRect(vision_app->GetRect("windowDockRect")); // TODO Use SplitView
+	fCwDock = new ClientWindowDock();
 
-	bgView->AddChild(fCwDock);
+	BView* backgroundView = new BView("Background", 0);
+	BLayoutBuilder::Group<>(backgroundView, B_HORIZONTAL,0)
+		.SetInsets(0, 0, 0, 0)
+		.AddSplit(B_HORIZONTAL, 0)
+			.Add(fCwDock, 1)
+			.Add(bgView, 9);
 
-	fResize = new ResizeView(fCwDock, BRect(fCwDock->Frame().right + 1, Bounds().top,
-											fCwDock->Frame().right + 3, fStatus->Frame().top - 1));
-
-	bgView->AddChild(fResize);
-
-	fAgentrect = new BRect((fResize->Frame().right - fCwDock->Frame().left) + 1, Bounds().top + 1,
-						   Bounds().Width() - 1, fCwDock->Frame().Height());
+	BLayoutBuilder::Group<>(this,B_VERTICAL,0)
+		.Add(fMenuBar)
+		.AddGroup(B_VERTICAL,0)
+			.SetInsets(0, 0, 0, 0)
+			.Add(backgroundView)
+			.Add(fStatus)
+		.End();
 }
 
 //////////////////////////////////////////////////////////////////////////////

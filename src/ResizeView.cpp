@@ -33,7 +33,7 @@
 
 ResizeView::ResizeView(BView* child, BRect frame, const char* title, uint32 resizeMode,
 					   uint32 flags)
-	: BView(frame, title, resizeMode, flags),
+	: BView(title, resizeMode),
 	  mousePressed(false),
 	  attachedView(child),
 	  cursor(kHorizontalResizeCursor)

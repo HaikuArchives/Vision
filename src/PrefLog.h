@@ -34,7 +34,7 @@ class BEntry;
 class LogPrefsView : public BView
 {
 public:
-	LogPrefsView(BRect);
+	LogPrefsView();
 	virtual ~LogPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

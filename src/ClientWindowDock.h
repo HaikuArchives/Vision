@@ -33,7 +33,7 @@ class BScrollView;
 class AgentDockHeaderString : public BStringView
 {
 public:
-	AgentDockHeaderString(BRect, const char*);
+	AgentDockHeaderString(const char*);
 	virtual ~AgentDockHeaderString();
 
 	virtual void MouseMoved(BPoint, uint32, const BMessage*);
@@ -44,7 +44,7 @@ public:
 class AgentDockHeader : public BView
 {
 public:
-	AgentDockHeader(BRect, const char*, uint32);
+	AgentDockHeader(const char*);
 	virtual ~AgentDockHeader();
 
 private:
@@ -54,7 +54,7 @@ private:
 class AgentDockWinList : public BView
 {
 public:
-	AgentDockWinList(BRect);
+	AgentDockWinList();
 	virtual ~AgentDockWinList();
 
 	WindowList* pWindowList() const;
@@ -69,12 +69,10 @@ private:
 class AgentDockNotifyList : public BView
 {
 public:
-	AgentDockNotifyList(BRect);
+	AgentDockNotifyList();
 	virtual ~AgentDockNotifyList();
 
 	NotifyList* pNotifyList() const;
-
-	virtual void AllAttached();
 
 private:
 	AgentDockHeader* fAHeader;
@@ -85,11 +83,9 @@ private:
 class ClientWindowDock : public BView
 {
 public:
-	ClientWindowDock(BRect);
+	ClientWindowDock();
 	virtual ~ClientWindowDock();
 
-	void AddWinList();
-	void AddNotifyList();
 	WindowList* pWindowList() const;
 	NotifyList* pNotifyList() const;
 
@@ -97,7 +93,6 @@ public:
 	virtual void MessageReceived(BMessage*);
 
 private:
-	BRect fWorkingFrame;
 
 	AgentDockWinList* fWinListAgent;
 	AgentDockNotifyList* fNotifyAgent;

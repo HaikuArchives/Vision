@@ -30,6 +30,7 @@
 #include <Directory.h>
 #include <FindDirectory.h>
 #include <Entry.h>
+#include <LayoutBuilder.h>
 #include <Path.h>
 #include <TextControl.h>
 
@@ -39,83 +40,53 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "PrefLog"
 
-LogPrefsView::LogPrefsView(BRect frame)
-	: BView(frame, "DCC prefs", B_FOLLOW_NONE, B_WILL_DRAW | B_FRAME_EVENTS)
+LogPrefsView::LogPrefsView()
+	: BView("DCC prefs", B_WILL_DRAW | B_FRAME_EVENTS)
 {
 	AdoptSystemColors();
 
-	BRect checkboxRect(Bounds());
-	BRect trackingBoundsRect(0.0, 0.0, 0, 0);
-	float maxWidth(0), maxHeight(0);
-
-	fLogBaseDir = new BTextControl(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Log base path:"),
+	fLogBaseDir = new BTextControl(NULL, B_TRANSLATE("Log base path:"),
 								   vision_app->GetString("logBaseDir"),
 								   new BMessage(M_PREFLOG_LOGPATH_CHANGED));
-	fLogBaseDir->ResizeToPreferred();
-	fLogBaseDir->ResizeToPreferred();
-	fLogBaseDir->SetDivider(fLogBaseDir->StringWidth(B_TRANSLATE("Log base path:")) + 5);
-	fLogBaseDir->ResizeTo(Bounds().Width() - 15, fLogBaseDir->Bounds().Height());
-	fLogBaseDir->MoveTo(be_plain_font->StringWidth("S"), be_plain_font->Size());
-	AddChild(fLogBaseDir);
-	checkboxRect = fLogBaseDir->Bounds();
 
-	fLogStampFormat = new BTextControl(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Timestamp format:"),
+	fLogStampFormat = new BTextControl(NULL, B_TRANSLATE("Timestamp format:"),
 									   vision_app->GetString("timestamp_format"),
 									   new BMessage(M_PREFLOG_TS_FORMAT_CHANGED));
-	fLogBaseDir->ResizeToPreferred();
-	fLogStampFormat->SetDivider(fLogBaseDir->StringWidth(B_TRANSLATE("Timestamp format:")) + 5);
-	fLogStampFormat->MoveTo(be_plain_font->StringWidth("S"),
-							fLogBaseDir->Frame().bottom + be_plain_font->Size());
-	AddChild(fLogStampFormat);
-	checkboxRect.top += fLogStampFormat->Bounds().Height() * 1.2;
+
 	BMessage msg(M_PREFLOG_CHECKBOX_CHANGED);
 
-	fClearLogs = new BButton(BRect(0, 0, 0, 0), "Clear Logs", B_TRANSLATE("Delete Log Files"),
+	fClearLogs = new BButton("Clear Logs", B_TRANSLATE("Delete Log Files"),
 							 new BMessage(M_PREFLOG_DELETE_LOGS));
-	fClearLogs->ResizeToPreferred();
-	fClearLogs->MoveTo(fLogBaseDir->Bounds().Width() + 200,
-					   fLogBaseDir->Frame().bottom + be_plain_font->Size());
 	if (_CheckIfEmpty()) fClearLogs->SetEnabled(false);
-	AddChild(fClearLogs);
 
-	checkboxRect.top += be_plain_font->Size();
-	checkboxRect.bottom = checkboxRect.top;
 	msg.AddString("setting", "timestamp");
 	fTimeStamp =
-		new BCheckBox(checkboxRect, "timestamp", B_TRANSLATE("Show timestamps in IRC window"), new BMessage(msg));
+		new BCheckBox("timestamp", B_TRANSLATE("Show timestamps in IRC window"), new BMessage(msg));
 	fTimeStamp->SetValue((vision_app->GetBool("timestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
-	fTimeStamp->MoveBy(be_plain_font->StringWidth("S"), 0);
-	fTimeStamp->ResizeToPreferred();
-	trackingBoundsRect = fTimeStamp->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxHeight += trackingBoundsRect.Height() * 1.5;
-	AddChild(fTimeStamp);
 
-	checkboxRect.top += fTimeStamp->Bounds().Height() * 1.2;
 	msg.ReplaceString("setting", "log_enabled");
 	fLogEnabled =
-		new BCheckBox(checkboxRect, "fLogEnabled", B_TRANSLATE("Enable logging"), new BMessage(msg));
+		new BCheckBox("fLogEnabled", B_TRANSLATE("Enable logging"), new BMessage(msg));
 	fLogEnabled->SetValue((vision_app->GetBool("log_enabled")) ? B_CONTROL_ON : B_CONTROL_OFF);
-	fLogEnabled->MoveBy(be_plain_font->StringWidth("S"), 0);
-	fLogEnabled->ResizeToPreferred();
-	trackingBoundsRect = fLogEnabled->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxHeight += trackingBoundsRect.Height() * 1.5;
-	AddChild(fLogEnabled);
 
-	checkboxRect.top += fLogEnabled->Bounds().Height() * 1.2;
 	msg.ReplaceString("setting", "log_filetimestamp");
-	fLogFileTimestamp = new BCheckBox(checkboxRect, "fLogFileTimestamp", B_TRANSLATE("Append timestamp to log filenames"),
+	fLogFileTimestamp = new BCheckBox("fLogFileTimestamp", B_TRANSLATE("Append timestamp to log filenames"),
 									  new BMessage(msg));
 	fLogFileTimestamp->SetValue(vision_app->GetBool(("log_filetimestamp")) ? B_CONTROL_ON :
 																			 B_CONTROL_OFF);
-	fLogFileTimestamp->MoveBy(be_plain_font->StringWidth("S"), 0);
-	fLogFileTimestamp->ResizeToPreferred();
-	trackingBoundsRect = fLogFileTimestamp->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxWidth *= 1.2;
-	maxHeight += trackingBoundsRect.Height() * 1.5;
-	AddChild(fLogFileTimestamp);
+
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_SPACING)
+			.Add(fLogBaseDir)
+			.AddGroup(B_HORIZONTAL) // TODO improve this it doesn't look good
+				.Add(fLogStampFormat)
+//				.AddGlue()
+				.Add(fClearLogs)
+			.End()
+			.Add(fTimeStamp)
+			.Add(fLogEnabled)
+			.Add(fLogFileTimestamp)
+		.End();
 }
 
 LogPrefsView::~LogPrefsView()
@@ -125,20 +96,12 @@ LogPrefsView::~LogPrefsView()
 void LogPrefsView::AttachedToWindow()
 {
 	fLogBaseDir->SetTarget(this);
-	fLogBaseDir->ResizeTo(Bounds().Width() - 15, fLogBaseDir->Bounds().Height());
 	fLogStampFormat->SetTarget(this);
-	fLogStampFormat->ResizeTo(Bounds().Width() / 2.0, fLogStampFormat->Bounds().Height());
 	fClearLogs->SetTarget(this);
 	fTimeStamp->SetTarget(this);
-	fTimeStamp->MoveTo(be_plain_font->StringWidth("S"),
-					   fLogStampFormat->Frame().bottom + fLogStampFormat->Bounds().Height());
 	fLogEnabled->SetTarget(this);
-	fLogEnabled->MoveBy(0, fTimeStamp->Frame().bottom - fLogEnabled->Frame().bottom +
-							   fLogEnabled->Bounds().Height() * 1.2);
 	fLogFileTimestamp->SetTarget(this);
-	fLogFileTimestamp->MoveBy(0, fLogEnabled->Frame().bottom - fLogFileTimestamp->Frame().bottom +
-									 fLogFileTimestamp->Bounds().Height() * 1.2);
-	ResizeTo(fLogBaseDir->Frame().Width() + 15.0, fLogFileTimestamp->Frame().bottom + 15.0);
+//	ResizeTo(fLogBaseDir->Frame().Width() + 15.0, fLogFileTimestamp->Frame().bottom + 15.0);
 }
 
 void LogPrefsView::AllAttached()

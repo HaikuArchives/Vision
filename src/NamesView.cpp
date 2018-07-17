@@ -39,8 +39,9 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "NamesView"
 
-NamesView::NamesView(BRect frame)
-	: BListView(frame, "namesList", B_MULTIPLE_SELECTION_LIST, B_FOLLOW_ALL),
+NamesView::NamesView(ChannelAgent *channelAgent)
+	: BListView("namesList", B_MULTIPLE_SELECTION_LIST),
+	  fChannelAgent(channelAgent),
 	  fActiveTheme(vision_app->ActiveTheme()),
 	  fTracking(false), fMouseDownHandled(false)
 {
@@ -66,7 +67,7 @@ void NamesView::KeyDown(const char* bytes, int32 numBytes)
 	buffer.Append(bytes, numBytes);
 	inputMsg.AddString("text", buffer.String());
 
-	reinterpret_cast<ChannelAgent*>(Parent()->Parent())->fMsgr.SendMessage(&inputMsg);
+	fChannelAgent->fMsgr.SendMessage(&inputMsg);
 }
 
 void NamesView::AttachedToWindow()
@@ -144,8 +145,8 @@ void NamesView::AttachedToWindow()
 	fMyPopUp->SetFont(be_plain_font);
 	fCTCPPopUp->SetFont(be_plain_font);
 
-	fMyPopUp->SetTargetForItems(this);
-	fCTCPPopUp->SetTargetForItems(this);
+	fMyPopUp->SetTargetForItems(fChannelAgent->fMsgr);
+	fCTCPPopUp->SetTargetForItems(fChannelAgent->fMsgr);
 
 	fActiveTheme->WriteLock();
 	fActiveTheme->AddView(this);
@@ -196,7 +197,7 @@ void NamesView::MouseDown(BPoint myPoint)
 			BMessage msg(M_OPEN_MSGAGENT);
 
 			msg.AddString("nick", theNick.String());
-			reinterpret_cast<ChannelAgent*>(Parent()->Parent())->fMsgr.SendMessage(&msg);
+			fChannelAgent->fMsgr.SendMessage(&msg);
 		}
 
 		fMouseDownHandled = true;
@@ -303,7 +304,7 @@ void NamesView::ClearList()
 }
 
 void NamesView::MessageReceived(BMessage* msg)
-{
+{msg->PrintToStream();
 	switch (msg->what) {
 	case B_COLORS_UPDATED:
 		break;
@@ -358,7 +359,7 @@ void NamesView::MessageReceived(BMessage* msg)
 				BMessage msg(M_CHOSE_FILE);
 				msg.AddString("nick", item->Name());
 				msg.AddRef("refs", &ref);
-				ClientAgent* myParent(dynamic_cast<ClientAgent*>(Parent()->Parent()));
+				ClientAgent* myParent(dynamic_cast<ClientAgent*>(fChannelAgent));
 				if (myParent) myParent->fSMsgr.SendMessage(&msg);
 			}
 		}

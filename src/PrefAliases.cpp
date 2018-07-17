@@ -25,6 +25,7 @@
 #include "Vision.h"
 
 #include <Button.h>
+#include <LayoutBuilder.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "PrefAliases"
@@ -33,8 +34,8 @@ const uint32 M_ALIAS_SELECTION_CHANGED = 'mASC';
 const uint32 M_ALIAS_ADD = 'mADD';
 const uint32 M_ALIAS_REMOVE = 'MARE';
 
-AliasesPrefsView::AliasesPrefsView(BRect frame)
-	: BView(frame, "Alias Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW),
+AliasesPrefsView::AliasesPrefsView()
+	: BView("Alias Prefs", 0),
 	  fAliasView(NULL),
 	  fAddButton(NULL),
 	  fRemoveButton(NULL)
@@ -77,37 +78,32 @@ void AliasesPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 
-	BRect bounds(Bounds());
-	bounds.InsetBySelf(10, 10);
-	bounds.bottom -= 50;
+	fAliasView = new BColumnListView("clv", B_WILL_DRAW, B_FANCY_BORDER);
 
-	fAliasView =
-		new BColumnListView(bounds, "clv", B_FOLLOW_ALL_SIDES, B_WILL_DRAW, B_FANCY_BORDER);
-	AddChild(fAliasView);
 	fAliasView->SetSelectionMessage(new BMessage(M_ALIAS_SELECTION_CHANGED));
 	fAliasView->AddColumn(new BStringColumn(B_TRANSLATE("Name"),
 											StringWidth(B_TRANSLATE("Name")) * 2.0, 0,
-											bounds.Width(), 0),
+											300, 0),
 						  0);
 	fAliasView->AddColumn(new BStringColumn(B_TRANSLATE("Alias"),
 											StringWidth(B_TRANSLATE("Alias")) * 6.0, 0,
-											bounds.Width(), 0),
+											300, 0),
 						  1);
 
-	fAddButton = new BButton(BRect(0, 0, 0, 0), "alAdd", B_TRANSLATE("Add"), new BMessage(M_ALIAS_ADD),
-							 B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
-	AddChild(fAddButton);
-	fAddButton->ResizeToPreferred();
-	fRemoveButton = new BButton(BRect(0, 0, 0, 0), "alRemove", B_TRANSLATE("Remove"),
-								new BMessage(M_ALIAS_REMOVE), B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
-	AddChild(fRemoveButton);
-	fRemoveButton->ResizeToPreferred();
-	fRemoveButton->MoveTo(fAliasView->Frame().right - fRemoveButton->Bounds().Width(),
-						  fAliasView->Frame().bottom + 10.0);
-	fAddButton->MoveTo(fRemoveButton->Frame().left - (fAddButton->Frame().Width() + 5.0),
-					   fRemoveButton->Frame().top);
+	fAddButton = new BButton("alAdd", B_TRANSLATE("Add"), new BMessage(M_ALIAS_ADD));
+	fRemoveButton = new BButton("alRemove", B_TRANSLATE("Remove"),	new BMessage(M_ALIAS_REMOVE));
 
 	fRemoveButton->SetEnabled(false);
+
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.Add(fAliasView)
+		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+			.AddGlue()
+			.Add(fAddButton)
+			.Add(fRemoveButton)
+			.End()
+		.SetInsets(B_USE_WINDOW_SPACING)
+	.End();
 
 	BuildAliasList();
 }

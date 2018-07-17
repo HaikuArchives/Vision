@@ -156,8 +156,8 @@ static const char* FontControlLabels[] = {
 	B_TRANSLATE("Names list"), B_TRANSLATE("Input text"), B_TRANSLATE("Window list"),
 	B_TRANSLATE("Channel list"),  B_TRANSLATE("Timestamp"),	 0};
 
-FontPrefsView::FontPrefsView(BRect frame)
-	: BView(frame, "Font prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS),
+FontPrefsView::FontPrefsView()
+	: BView("Font prefs", 0),
 	  fFontMenuField(NULL),
 	  fFontElementField(NULL),
 	  fActiveFont(0)
@@ -169,19 +169,14 @@ FontPrefsView::FontPrefsView(BRect frame)
 		msg->AddInt32("index", i);
 		fElementMenu->AddItem(new BMenuItem(FontControlLabels[i], msg));
 	}
-	BString text(B_TRANSLATE("Element:"));
-	text.Append(" ");
+
 	fFontElementField =
-		new BMenuField("elements", text.String(), fElementMenu);
+		new BMenuField("elements", B_TRANSLATE("Element:"), fElementMenu);
 
 	FontMenu* menu(new FontMenu("fonts"));
-	text = B_TRANSLATE("Font:");
-	text.Append(" ");
-	fFontMenuField = new BMenuField("fonts", text.String(), menu);
+	fFontMenuField = new BMenuField("fonts", B_TRANSLATE("Font:"), menu);
 
-	text = B_TRANSLATE("Size:");
-	text.Append(" ");
-	fTextControl = new BTextControl("", text.String(), "",
+	fTextControl = new BTextControl("", "Size:", "",
 		new BMessage(M_FONT_SIZE_CHANGE));
 	fTextControl->TextView()->AddFilter(new NumericFilter());
 
@@ -212,12 +207,7 @@ void FontPrefsView::AttachedToWindow()
 void FontPrefsView::AllAttached()
 {
 	BView::AllAttached();
-	fFontElementField->SetDivider(fFontElementField->StringWidth(fFontElementField->Label()) + 5);
-	fFontElementField->ResizeToPreferred();
-	fFontMenuField->SetDivider(fFontMenuField->StringWidth(fFontMenuField->Label()) + 5);
-	fFontMenuField->ResizeToPreferred();
-	fTextControl->SetDivider(fTextControl->StringWidth(fTextControl->Label()) + 5);
-	BMenu* menu(fFontElementField->Menu());
+	BMenu* menu = fFontElementField->Menu();
 	fTextControl->SetTarget(this);
 	menu->SetTargetForItems(this);
 	menu->SetLabelFromMarked(true);
@@ -226,16 +216,9 @@ void FontPrefsView::AllAttached()
 
 	if (it) dynamic_cast<BInvoker*>(it)->Invoke();
 
-	BRect frame(fFontElementField->Frame());
-	fFontMenuField->MoveTo(frame.left, frame.bottom + 20);
 	menu = fFontMenuField->Menu();
 	menu->SetTargetForItems(this);
 	menu->SetLabelFromMarked(true);
-	float width;
-	float height;
-	fFontMenuField->GetPreferredSize(&width, &height);
-	fTextControl->ResizeToPreferred();
-	fTextControl->MoveTo(fFontMenuField->Frame().right + width + 5, fFontMenuField->Frame().top);
 
 	for (int32 i = 0; i < menu->CountItems(); i++)
 		menu->ItemAt(i)->Submenu()->SetTargetForItems(this);

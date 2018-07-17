@@ -33,97 +33,80 @@
 #include <stdio.h>
 
 #include <Box.h>
+#include <CardLayout.h>
+#include <LayoutBuilder.h>
 #include <ListView.h>
 #include <ScrollView.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "PrefGeneral"
 
-GeneralPrefsView::GeneralPrefsView(BRect frame, const char* title, uint32 redraw, uint32 flags)
-	: BView(frame, title, redraw, flags), fLastindex(0)
+GeneralPrefsView::GeneralPrefsView(const char* title)
+	: BView(title, 0), fPreviousSelection(0)
 {
 	AdoptSystemColors();
-	fPrefsItems[piWindow] = new AppWindowPrefsView(BRect(0, 0, 0, 0));
-	fPrefsItems[piColor] = new ColorPrefsView(BRect(0, 0, 0, 0));
-	fPrefsBox = new BBox(
-		BRect(0.0, 0.0, fPrefsItems[piColor]->Bounds().right + 10 + be_plain_font->StringWidth("W"),
-			  fPrefsItems[piWindow]->Bounds().bottom + be_plain_font->Size() / 2),
-		"Bleat", B_FOLLOW_ALL_SIDES);
-	fPrefsBox->AddChild(fPrefsItems[piWindow]);
-	fPrefsBox->AddChild(fPrefsItems[piColor]);
-	fPrefsList =
-		new BListView(BRect(0.0, 0.0, fPrefsItems[piWindow]->Bounds().right / 2,
-							fPrefsItems[piWindow]->Bounds().bottom),
-					  "PrefsList", B_SINGLE_SELECTION_LIST, B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM);
-	fPrefsList->MoveTo(5, 5);
-	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Aliases")));
-	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Application")));
-	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Colors")));
-	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Fonts")));
-	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Commands")));
-	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Events")));
-	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("DCC")));
-	fPrefsList->AddItem(new BStringItem(B_TRANSLATE("Logging")));
-	fPrefsList->SetSelectionMessage(new BMessage(M_GENERALPREFS_SELECTION_CHANGED));
-	BScrollView* scroller(new BScrollView("list scroller", fPrefsList,
-										  B_FOLLOW_LEFT | B_FOLLOW_TOP_BOTTOM, 0, false, true));
-	AddChild(scroller);
-	ResizeTo(scroller->Frame().right + fPrefsBox->Bounds().Width() + 10,
-			 fPrefsBox->Bounds().Height() + 5);
-	fPrefsBox->MoveTo(scroller->Frame().right + 5, 5);
-	AddChild(fPrefsBox);
-	BRect bounds(fPrefsBox->InnerFrame());
-	bounds.left += 3;
-	bounds.right -= 3;
-	bounds.top += be_plain_font->Size() + 5;
-	bounds.bottom -= 5;
 
-	fPrefsItems[piAlias] = new AliasesPrefsView(bounds);
-	fPrefsBox->AddChild(fPrefsItems[piAlias]);
+	fPrefsItems[piWindow] = new AppWindowPrefsView();
+	fPrefsItems[piColor] = new ColorPrefsView();
+	fPrefsItems[piAlias] = new AliasesPrefsView();
+	fPrefsItems[piFonts] = new FontPrefsView();
+	fPrefsItems[piCommands] = new CommandPrefsView();
+	fPrefsItems[piEvents] = new EventPrefsView();
+	fPrefsItems[piDCC] = new DCCPrefsView();
+	fPrefsItems[piLog] = new LogPrefsView();
 
-	fPrefsItems[piWindow]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
-	fPrefsItems[piWindow]->ResizeBy(be_plain_font->StringWidth("i") * 3,
-									-1.2 * (be_plain_font->Size()));
-	fPrefsItems[piWindow]->Hide();
-	fPrefsItems[piColor]->MoveTo(be_plain_font->StringWidth("i"), be_plain_font->Size() * 1.5);
-	fPrefsItems[piColor]->ResizeTo(bounds.Width() - 3, bounds.Height() - 3);
+	BBox *fPrefsBox = new BBox("prefsBox");
+	fPrefsContainerBox = new BView("prefsContainerBox", 0);
+	fPrefsContainerBox->SetLayout(new BCardLayout());
+	fPrefsBox->AddChild(fPrefsContainerBox);
+	fPrefsBox->SetLabel("item->Text()");
 
-	fPrefsItems[piColor]->Hide();
-	fPrefsItems[piFonts] = new FontPrefsView(bounds);
-	fPrefsBox->AddChild(fPrefsItems[piFonts]);
-	fPrefsItems[piFonts]->Hide();
-	fPrefsItems[piCommands] = new CommandPrefsView(bounds);
-	fPrefsBox->AddChild(fPrefsItems[piCommands]);
-	fPrefsItems[piCommands]->Hide();
-	fPrefsItems[piEvents] = new EventPrefsView(bounds);
-	fPrefsBox->AddChild(fPrefsItems[piEvents]);
-	fPrefsItems[piEvents]->Hide();
+	for (int32 i = 0; i < piEND; i++)
+		((BCardLayout*) fPrefsContainerBox->GetLayout())->AddView(fPrefsItems[i]);
 
-	fPrefsItems[piDCC] = new DCCPrefsView(bounds);
-	fPrefsBox->AddChild(fPrefsItems[piDCC]);
-	fPrefsItems[piDCC]->Hide();
+	fPrefsListView = new BListView("PrefsList", B_SINGLE_SELECTION_LIST);
+	fPrefsListView->SetSelectionMessage(new BMessage(M_GENERALPREFS_SELECTION_CHANGED));
 
-	fPrefsItems[piLog] = new LogPrefsView(bounds);
-	fPrefsBox->AddChild(fPrefsItems[piLog]);
-	fPrefsItems[piLog]->Hide();
+	BScrollView* scrollView = new BScrollView("list scrollView", fPrefsListView,
+		B_FRAME_EVENTS | B_WILL_DRAW, false, true);
+
+	BLayoutBuilder::Group<>(this)
+		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+			.Add(scrollView)
+			.Add(fPrefsBox)
+			.End()
+		.SetInsets(B_USE_WINDOW_SPACING)
+	.End();
+	fPrefsBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 }
 
 GeneralPrefsView::~GeneralPrefsView()
 {
-	while (fPrefsList->CountItems() != 0) delete fPrefsList->RemoveItem((int32)0);
+	while (fPrefsListView->CountItems() != 0) delete fPrefsListView->RemoveItem((int32)0);
 }
 
 void GeneralPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
+	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Aliases")));
+	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Application")));
+	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Colors")));
+	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Fonts")));
+	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Commands")));
+	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Events")));
+	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("DCC")));
+	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Logging")));
+
+
 }
 
 void GeneralPrefsView::AllAttached()
 {
 	BView::AllAttached();
-	fPrefsList->SetTarget(this);
-	fPrefsList->Select(0);
-	fPrefsList->MakeFocus();
+	fPrefsListView->SetTarget(this);
+	fPrefsListView->Select(0);
+	fPrefsListView->MakeFocus();
+	//fPrefsListView->Select (0L, false);
 }
 
 void GeneralPrefsView::Show()
@@ -133,19 +116,42 @@ void GeneralPrefsView::Show()
 
 void GeneralPrefsView::MessageReceived(BMessage* msg)
 {
+	msg->PrintToStream();
 	switch (msg->what) {
 	case M_GENERALPREFS_SELECTION_CHANGED: {
-		int32 index(msg->FindInt32("index"));
-		if (index < 0) return;
-		fPrefsItems[fLastindex]->Hide();
-		BStringItem* item((BStringItem*)fPrefsList->ItemAt(index));
-		fPrefsBox->SetLabel(item->Text());
-		fPrefsItems[index]->Show();
-		fLastindex = index;
-		Invalidate();
+		//int32 selectedItem(msg->FindInt32("index"));
+		int32 selectedItem = fPrefsListView->CurrentSelection();
+
+		if (selectedItem >= 0L && selectedItem < piEND)
+		{
+			//BStringItem* item((BStringItem*)fPrefsListView->ItemAt(selectedItem));
+			//fPrefsBox->SetLabel(item->Text());
+			((BCardLayout*) fPrefsContainerBox->GetLayout())->SetVisibleItem(selectedItem);
+			fPreviousSelection = selectedItem;
+		}
+		else
+		{
+			/* Find previously selected item (stored in currentView) and make that the selected view
+				This happens when user tries to deselect an item in the list */
+			fPrefsListView->Select (fPreviousSelection);
+		}
 	} break;
 
 	default:
 		BView::MessageReceived(msg);
 	}
+}
+
+
+void GeneralPrefsView::AddOptionsToListView(BListView* listView, BStringItem* item)
+{
+	listView->AddItem(item);
+	// constraint the listview width so that the longest item fits
+	float width = 0;
+	listView->GetPreferredSize(&width, NULL);
+	printf("%f %s\n", width, item->Text());
+	width += B_V_SCROLL_BAR_WIDTH;
+	listView->SetExplicitMinSize(BSize(width, 0));
+	listView->SetExplicitMaxSize(BSize(width, B_SIZE_UNLIMITED));
+
 }

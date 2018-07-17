@@ -30,7 +30,7 @@ class BColumnListView;
 class AliasesPrefsView : public BView
 {
 public:
-	AliasesPrefsView(BRect);
+	AliasesPrefsView();
 	virtual ~AliasesPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

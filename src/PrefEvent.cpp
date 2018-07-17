@@ -22,6 +22,7 @@
 #include "PrefEvent.h"
 #include "Vision.h"
 
+#include <LayoutBuilder.h>
 #include <ScrollView.h>
 #include <TextControl.h>
 
@@ -33,53 +34,59 @@ static const char* EventControlLabels[] = {
 	B_TRANSLATE("Kick:"),	 B_TRANSLATE("Topic:"),	 B_TRANSLATE("Server notice:"), B_TRANSLATE("User notice:"),
 	B_TRANSLATE("Notify on:"), B_TRANSLATE("Notify off:"), 0};
 
-EventPrefsView::EventPrefsView(BRect frame)
-	: BView(frame, "Event prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
+EventPrefsView::EventPrefsView()
+	: BView("Event prefs", 0)
 {
 	AdoptSystemColors();
-	BRect bounds(Bounds());
-	bounds.left += 3;
-	bounds.right -= B_V_SCROLL_BAR_WIDTH + 3;
-	bounds.top += 3;
-	bounds.bottom -= 5;
-	int32 i(0);
 
-	float label_width(0.0);
-
-	for (i = 0; EventControlLabels[i]; ++i)
-		if (StringWidth(EventControlLabels[i]) > label_width)
-			label_width = StringWidth(EventControlLabels[i]);
-
-	BView* bgView(new BView(bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
+	BView* bgView(new BView("", 0));
 	bgView->AdoptSystemColors();
 	fEvents = new BTextControl* [MAX_EVENTS];
 
-	for (i = 0; i < MAX_EVENTS; ++i) {
-		fEvents[i] = new BTextControl(
-			BRect(5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()),
-				  5 + bounds.right - be_plain_font->StringWidth("gP"),
-				  be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
-			"commands", EventControlLabels[i], vision_app->GetEvent(i).String(), NULL,
-			B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
-
-		fEvents[i]->SetDivider(label_width + 5);
-
+	for (int32 i = 0; i < MAX_EVENTS; ++i) {
+		fEvents[i] = new BTextControl("commands", EventControlLabels[i],
+						vision_app->GetEvent(i).String(), NULL);
 		BMessage* msg(new BMessage(M_EVENT_MODIFIED));
-
 		msg->AddInt32("which", i);
 		fEvents[i]->SetModificationMessage(msg);
-		bgView->AddChild(fEvents[i]);
 	}
-	fScroller = new BScrollView("command fScroller", bgView, B_FOLLOW_ALL_SIDES,
-		0, false, true, B_NO_BORDER);
+
+	BLayoutBuilder::Group<>(bgView, B_VERTICAL, 0)
+		.AddGrid(0.0, 0.0)
+			.Add(fEvents[0]->CreateLabelLayoutItem(), 0, 0)
+			.Add(fEvents[0]->CreateTextViewLayoutItem(), 1, 0)
+			.Add(fEvents[1]->CreateLabelLayoutItem(), 0, 1)
+			.Add(fEvents[1]->CreateTextViewLayoutItem(), 1, 1)
+			.Add(fEvents[2]->CreateLabelLayoutItem(), 0, 2)
+			.Add(fEvents[2]->CreateTextViewLayoutItem(), 1, 2)
+			.Add(fEvents[3]->CreateLabelLayoutItem(), 0, 3)
+			.Add(fEvents[3]->CreateTextViewLayoutItem(), 1, 3)
+			.Add(fEvents[4]->CreateLabelLayoutItem(), 0, 4)
+			.Add(fEvents[4]->CreateTextViewLayoutItem(), 1, 4)
+			.Add(fEvents[5]->CreateLabelLayoutItem(), 0, 5)
+			.Add(fEvents[5]->CreateTextViewLayoutItem(), 1, 5)
+			.Add(fEvents[6]->CreateLabelLayoutItem(), 0, 6)
+			.Add(fEvents[6]->CreateTextViewLayoutItem(), 1, 6)
+			.Add(fEvents[7]->CreateLabelLayoutItem(), 0, 7)
+			.Add(fEvents[7]->CreateTextViewLayoutItem(), 1, 7)
+			.Add(fEvents[8]->CreateLabelLayoutItem(), 0, 8)
+			.Add(fEvents[8]->CreateTextViewLayoutItem(), 1, 8)
+			.Add(fEvents[9]->CreateLabelLayoutItem(), 0, 9)
+			.Add(fEvents[9]->CreateTextViewLayoutItem(), 1, 9);
+/*
+	fScroller = new BScrollView("command fScroller", bgView,
+					0, false, true, B_NO_BORDER);
 	BScrollBar* bar(fScroller->ScrollBar(B_VERTICAL));
 
 	fMaxheight = bgView->Bounds().Height();
 	fProportionheight = fEvents[MAX_EVENTS - 1]->Frame().bottom + 10.0;
 	bar->SetRange(0.0, (fProportionheight - fScroller->Bounds().Height()));
 	bar->SetProportion(fScroller->Bounds().Height() / fProportionheight);
-
-	AddChild(fScroller);
+*/
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+		.SetInsets(B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING)
+//		.Add(fScroller);
+	.Add(bgView);
 }
 
 EventPrefsView::~EventPrefsView()
@@ -91,9 +98,9 @@ void EventPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	for (int32 i = 0; i < MAX_EVENTS; i++) fEvents[i]->SetTarget(this);
-
+/*
 	BScrollBar* bar(fScroller->ScrollBar(B_VERTICAL));
-	if (bar) bar->SetSteps(3.0, 5.0);
+	if (bar) bar->SetSteps(3.0, 5.0); */
 }
 
 void EventPrefsView::AllAttached()
@@ -104,7 +111,7 @@ void EventPrefsView::AllAttached()
 void EventPrefsView::FrameResized(float width, float height)
 {
 	BView::FrameResized(width, height);
-	BScrollBar* bar(fScroller->ScrollBar(B_VERTICAL));
+/*	BScrollBar* bar(fScroller->ScrollBar(B_VERTICAL));
 	if (!bar) return;
 	float min, max, scrollheight(fScroller->Bounds().Height());
 
@@ -115,7 +122,7 @@ void EventPrefsView::FrameResized(float width, float height)
 	} else {
 		bar->SetProportion(1.0);
 		bar->SetRange(0.0, 0.0);
-	}
+	} */
 }
 
 void EventPrefsView::MessageReceived(BMessage* msg)

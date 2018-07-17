@@ -106,8 +106,6 @@ private:
 	StatusView* fStatus;
 
 	ClientWindowDock* fCwDock;
-
-	ResizeView* fResize;
 };
 
 #endif
