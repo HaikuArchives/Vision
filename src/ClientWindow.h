@@ -100,8 +100,6 @@ private:
 
 	BMessageRunner* fAltwRunner;
 
-	BRect* fAgentrect;
-
 	StatusView* fStatus;
 
 	ClientWindowDock* fCwDock;

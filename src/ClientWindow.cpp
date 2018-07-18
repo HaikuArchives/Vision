@@ -571,14 +571,11 @@ void ClientWindow::Init()
 	item->SetTarget(this);
 	fMenuBar->AddItem(fWindow);
 
-
 	// add objects
-	bgView = new BView("cards", 0);
-	bgView->SetLayout(new BCardLayout());
+	bgView = new BCardView("cards");
 	bgView->AdoptSystemColors();
 
 	fStatus = new StatusView(frame);
-
 	fStatus->AddItem(new StatusItem("irc.elric.net", 0), true);
 
 //	BRect cwDockRect(vision_app->GetRect("windowDockRect")); // TODO Use SplitView

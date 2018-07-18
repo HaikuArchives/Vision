@@ -36,10 +36,20 @@ const char** URLCrunch::fTags = NULL;
 URLCrunch::URLCrunch(const char* data, int32 len) : buffer(""), current_pos(0)
 {
 	buffer.Append(data, len);
+
+	const char** tags = fTags;
+
+	// This is used to skip the tag that are not present in the buffer
+	for (fCountTags = 0; tags[fCountTags]; ++fCountTags);
+	missingTags = new bool[fCountTags];
+
+	for (int32 i = 0; i < fCountTags; i++)
+		missingTags[i] = false;
 }
 
 URLCrunch::~URLCrunch()
 {
+	delete[] missingTags;
 }
 
 int32 URLCrunch::Crunch(BString* url)
@@ -56,11 +66,28 @@ int32 URLCrunch::Crunch(BString* url)
 	const char** tags = fTags;
 	if (!tags) return B_ERROR;
 
-	for (i = 0; tags[i]; ++i) {
-		marker_pos = buffer.IFindFirst(tags[i], pos);
+	int32 start_pos = marker;
+	int32 found_pos = B_ERROR;
+
+	for (int j = 0; tags[j]; ++j) {
+		if (missingTags[j])
+			continue;
+		found_pos = buffer.IFindFirst(tags[j], pos);
+		if (found_pos != B_ERROR) {
+			if (found_pos < start_pos)
+			{
+				start_pos = found_pos;
+				i = j;
+			}
+		} else
+			missingTags[j] = true;
+	}
+	marker_pos = start_pos;
+
+//	for (i = 0; tags[i]; ++i) {
+//		marker_pos = buffer.IFindFirst(tags[i], pos);
 		if (marker_pos != B_ERROR) {
 			url_length = marker_pos + strlen(tags[i]);
-
 			url_length += strcspn(buffer.String() + url_length, " \t\n|\\<>\")(][}{;'*^");
 			int len(strlen(tags[i]));
 
@@ -76,8 +103,8 @@ int32 URLCrunch::Crunch(BString* url)
 				pos = marker_pos + 1;
 
 			current_pos = pos;
-			if (current_pos > (marker_pos + 1)) break;
-		}
+			//if (current_pos > (marker_pos + 1)) break;
+//		}
 	}
 
 	return marker < buffer.Length() ? marker : B_ERROR;
@@ -114,6 +141,7 @@ status_t URLCrunch::UpdateTagList()
 		// require slash-slash for those to limit wrong matches
 		if (type == "http:" || type == "ftp:") type << "//";
 		if (type == "file:") type << "/";
+		printf("Type: %s\n", type.String());
 		tags.AddItem(strdup(type.String()));
 	}
 
