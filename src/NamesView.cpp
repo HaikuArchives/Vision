@@ -304,7 +304,7 @@ void NamesView::ClearList()
 }
 
 void NamesView::MessageReceived(BMessage* msg)
-{msg->PrintToStream();
+{
 	switch (msg->what) {
 	case B_COLORS_UPDATED:
 		break;

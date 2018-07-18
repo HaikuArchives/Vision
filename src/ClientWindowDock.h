@@ -29,6 +29,7 @@
 class NotifyList;
 class WindowList;
 class BScrollView;
+class BSplitView;
 
 class AgentDockHeaderString : public BStringView
 {
@@ -91,12 +92,14 @@ public:
 
 	virtual void AllAttached();
 	virtual void MessageReceived(BMessage*);
+	void SaveSettings();
 
 private:
 
 	AgentDockWinList* fWinListAgent;
 	AgentDockNotifyList* fNotifyAgent;
 	bool fNotifyExpanded;
+	BSplitView* fSplitView;
 };
 
 #endif

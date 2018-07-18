@@ -45,7 +45,7 @@ class AgentCard : public BSplitView {
 public:	AgentCard(BView *agent);
 
 		BView*	GetAgent() const;
-
+		bool	IsChannelAgent() const;
 private:
 
 		BView* fAgent;
@@ -122,6 +122,9 @@ public:
 	void RemoveAgent(WindowListItem*);
 	void Expand(BListItem*);
 	void Collapse(BListItem*);
+
+	void SaveSplitSettings(AgentCard* agentCard);
+	void ApplySplitSettings(AgentCard* agentCard);
 
 private:
 	BPopUpMenu* fMyPopUp;

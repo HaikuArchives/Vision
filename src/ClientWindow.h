@@ -41,6 +41,7 @@ class BMenu;
 class BMenuBar;
 class BMenuItem;
 class BScrollView;
+class BSplitView;
 class BView;
 class BMessageRunner;
 class ClientWindowDock;
@@ -89,7 +90,7 @@ public:
 	StatusView* pStatusView() const;
 	BString joinStrings; // used to keep track of channel
 						 // keys on u2 ircds
-
+	void SaveSettings();
 private:
 	void Init();
 
@@ -103,6 +104,7 @@ private:
 	StatusView* fStatus;
 
 	ClientWindowDock* fCwDock;
+	BSplitView* fSplitView;
 };
 
 #endif

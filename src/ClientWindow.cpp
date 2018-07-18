@@ -116,6 +116,9 @@ ClientWindow::~ClientWindow()
 
 bool ClientWindow::QuitRequested()
 {
+	SaveSettings();
+	fCwDock->SaveSettings();
+
 	if (!fShutdown_in_progress) {
 		fShutdown_in_progress = true;
 		BMessage killMsg(M_CLIENT_QUIT);
@@ -252,7 +255,6 @@ void ClientWindow::MessageReceived(BMessage* msg)
 	} break;
 
 	case M_OBITUARY: {
-		msg->PrintToStream();
 		WindowListItem* agentitem;
 		BView* agentview;
 		if ((msg->FindPointer("agent", reinterpret_cast<void**>(&agentview)) != B_OK) ||
@@ -578,13 +580,13 @@ void ClientWindow::Init()
 	fStatus = new StatusView(frame);
 	fStatus->AddItem(new StatusItem("irc.elric.net", 0), true);
 
-//	BRect cwDockRect(vision_app->GetRect("windowDockRect")); // TODO Use SplitView
 	fCwDock = new ClientWindowDock();
 
 	BView* backgroundView = new BView("Background", 0);
 	BLayoutBuilder::Group<>(backgroundView, B_HORIZONTAL,0)
 		.SetInsets(0, 0, 0, 0)
 		.AddSplit(B_HORIZONTAL, 0)
+		.GetSplitView(&fSplitView)
 			.Add(fCwDock, 1)
 			.Add(bgView, 9);
 
@@ -595,8 +597,20 @@ void ClientWindow::Init()
 			.Add(backgroundView)
 			.Add(fStatus)
 		.End();
+
+	fSplitView->SetItemWeight(0, vision_app->GetFloat("weight_WindowDock"), false);
+	fSplitView->SetItemWeight(1, vision_app->GetFloat("weight_BgView"), false);
+	fSplitView->SetItemCollapsed(0, vision_app->GetBool("collapsed_WindowDock"));
+	fSplitView->SetItemCollapsed(1, vision_app->GetBool("collapsed_BgView"));
 }
 
+void ClientWindow::SaveSettings()
+{
+	vision_app->SetFloat("weight_WindowDock", fSplitView->ItemWeight((int32)0));
+	vision_app->SetFloat("weight_BgView", fSplitView->ItemWeight((int32)1));
+	vision_app->SetBool("collapsed_WindowDock", fSplitView->IsItemCollapsed((bool)0));
+	vision_app->SetBool("collapsed_BgView", fSplitView->IsItemCollapsed((bool)1));
+}
 //////////////////////////////////////////////////////////////////////////////
 /// End Private Functions
 //////////////////////////////////////////////////////////////////////////////

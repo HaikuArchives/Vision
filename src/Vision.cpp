@@ -529,9 +529,6 @@ void VisionApp::LoadDefaults(int32 section)
 		if (!fVisionSettings->HasRect("clientWinRect"))
 			fVisionSettings->AddRect("clientWinRect", BRect(100, 100, 600, 460));
 
-		if (!fVisionSettings->HasRect("windowDockRect"))
-			fVisionSettings->AddRect("windowDockRect", BRect(0, 0, 0, 0));
-
 		if (!fVisionSettings->HasRect("NetPrefWinRect"))
 			fVisionSettings->AddRect("NetPrefWinRect", BRect(0, 0, 0, 0));
 
@@ -543,6 +540,43 @@ void VisionApp::LoadDefaults(int32 section)
 
 		if (!fVisionSettings->HasRect("GenPrefWinRect"))
 			fVisionSettings->AddRect("GenPrefWinRect", BRect(0, 0, 0, 0));
+		// SplitView
+
+		if (!fVisionSettings->HasFloat("weight_WindowList"))
+			fVisionSettings->AddFloat("weight_WindowList", 0.0);
+
+		if (!fVisionSettings->HasFloat("weight_NotifyList"))
+			fVisionSettings->AddFloat("weight_NotifyList", 0.0);
+
+		if (!fVisionSettings->HasBool("collapsed_WindowList"))
+			fVisionSettings->AddBool("collapsed_WindowList", false);
+
+		if (!fVisionSettings->HasBool("collapsed_NotifyList"))
+			fVisionSettings->AddBool("collapsed_NotifyList", false);
+
+		if (!fVisionSettings->HasFloat("weight_WindowDock"))
+			fVisionSettings->AddFloat("weight_WindowDock", 1.0);
+
+		if (!fVisionSettings->HasFloat("weight_BgView"))
+			fVisionSettings->AddFloat("weight_BgView", 9.0);
+
+		if (!fVisionSettings->HasBool("collapsed_WindowDock"))
+			fVisionSettings->AddBool("collapsed_WindowDock", false);
+
+		if (!fVisionSettings->HasBool("collapsed_BgView"))
+			fVisionSettings->AddBool("collapsed_BgView", false);
+
+		if (!fVisionSettings->HasFloat("weight_ChannelView"))
+			fVisionSettings->AddFloat("weight_ChannelView", 8.0);
+
+		if (!fVisionSettings->HasFloat("weight_NameList"))
+			fVisionSettings->AddFloat("weight_NameList", 2.0);
+
+		if (!fVisionSettings->HasBool("collapsed_ChannelView"))
+			fVisionSettings->AddBool("collapsed_ChannelView", false);
+
+		if (!fVisionSettings->HasBool("collapsed_NameList"))
+			fVisionSettings->AddBool("collapsed_NameList", false);
 	} break;
 
 	case SET_NOTIFY: {
@@ -1305,6 +1339,27 @@ status_t VisionApp::SetInt32(const char* settingName, int32 value)
 
 	return result;
 }
+
+float VisionApp::GetFloat(const char* settingName)
+{
+	BAutolock intLock(const_cast<BLocker*>(&fSettingsLock));
+
+	if (!intLock.IsLocked()) return B_ERROR;
+
+	return fVisionSettings->FindFloat(settingName);
+}
+
+status_t VisionApp::SetFloat(const char* settingName, float value)
+{
+	BAutolock intLock(const_cast<BLocker*>(&fSettingsLock));
+
+	if (!intLock.IsLocked()) return B_ERROR;
+
+	status_t result = fVisionSettings->ReplaceFloat(settingName, value);
+
+	return result;
+}
+
 
 BMessage VisionApp::GetNetwork(const char* network)
 {

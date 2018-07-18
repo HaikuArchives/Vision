@@ -36,10 +36,6 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ClientWindowDock"
 
-static float label_height()
-{
-	return 8 + ceilf(be_plain_font->Size());
-}
 
 //////////////////////////////////////////////////////////////////////////////
 /// Begin AgentDock functions
@@ -53,15 +49,30 @@ ClientWindowDock::ClientWindowDock()
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.AddSplit(B_VERTICAL, 0)
+		.GetSplitView(&fSplitView)
 			.Add(fWinListAgent = new AgentDockWinList())
 			.Add(fNotifyAgent = new AgentDockNotifyList())
 		.End();
+
+	fSplitView->SetItemWeight(0, vision_app->GetFloat("weight_WindowList"), false);
+	fSplitView->SetItemWeight(1, vision_app->GetFloat("weight_NotifyList"), false);
+	fSplitView->SetItemCollapsed(0, vision_app->GetBool("collapsed_WindowList"));
+	fSplitView->SetItemCollapsed(1, vision_app->GetBool("collapsed_NotifyList"));
+	printf("%f %f\n", fSplitView->ItemWeight((int32)0), fSplitView->ItemWeight((int32)1));
 }
 
 ClientWindowDock::~ClientWindowDock()
 {
-	//
 }
+
+void ClientWindowDock::SaveSettings()
+{
+	vision_app->SetFloat("weight_WindowList", fSplitView->ItemWeight((int32)0));
+	vision_app->SetFloat("weight_NotifyList", fSplitView->ItemWeight((int32)1));
+	vision_app->SetBool("collapsed_WindowList", fSplitView->IsItemCollapsed((bool)0));
+	vision_app->SetBool("collapsed_NotifyList", fSplitView->IsItemCollapsed((bool)1));
+}
+
 
 WindowList* ClientWindowDock::pWindowList() const
 {

@@ -67,6 +67,13 @@ AgentCard::GetAgent() const
 {
 	return fAgent;
 }
+
+bool
+AgentCard::IsChannelAgent() const
+{
+	return (dynamic_cast<ChannelAgent*>(fAgent) != NULL);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 /// Begin WindowList functions
 //////////////////////////////////////////////////////////////////////////////
@@ -592,16 +599,15 @@ void WindowList::Activate(int32 index)
 	BView* newagent(newagentitem->pAgent());
 
 	// find the currently active agent (if there is one)
-	/*
 	BView* activeagent(NULL);
 	for (int32 i(0); i < FullListCountItems(); ++i) {
 		WindowListItem* aitem((WindowListItem*)FullListItemAt(i));
-		if (!aitem->pAgent()->IsHidden()) {
+		if (aitem->pAgentCard()->GetLayout()->IsVisible()) {
 			activeagent = aitem->pAgent();
 			fLastSelected = aitem;
 			break;
 		}
-	}*/
+	}
 /*
 	if (!(newagent = dynamic_cast<BView*>(newagent))) {
 		// stop crash
@@ -618,6 +624,11 @@ void WindowList::Activate(int32 index)
 		}
 	}
 	if (activeagent == 0) newagent->Show(); */
+	printf("fLastSelected %p\n",fLastSelected);
+	if (fLastSelected != NULL)
+		SaveSplitSettings(fLastSelected->pAgentCard());
+
+	ApplySplitSettings(newagentitem->pAgentCard());
 
 	((BCardLayout*) vision_app->pClientWin()->bgView->GetLayout())->SetVisibleItem(newagentitem->pAgentCard()->GetLayout());
 
@@ -647,7 +658,7 @@ void WindowList::RemoveAgent(WindowListItem* agentitem)
 		WindowListItem*	subAgentItem = (WindowListItem*)ItemUnderAt(agentitem, true, i);
 		RemoveAgent(subAgentItem);
 	}
-
+	SaveSplitSettings(agentitem->pAgentCard());
 	agentitem->pAgentCard()->RemoveSelf();
 	BView* agent = agentitem->pAgentCard(); // BSplitView that contains agent
 	RemoveItem(agentitem);
@@ -655,11 +666,38 @@ void WindowList::RemoveAgent(WindowListItem* agentitem)
 	if (fLastSelected == agentitem) fLastSelected = NULL;
 	// agent owns the window list item and destroys it on destruct
 	delete agent;
+	if (fLastSelected != NULL)
+		ApplySplitSettings(fLastSelected->pAgentCard());
 	// if there isn't anything left in the list, don't try to do any ptr comparisons
 	if (CountItems() > 0) SelectLast();
 	fLastSelected = NULL;
 	Window()->EnableUpdates();
 }
+
+
+void WindowList::SaveSplitSettings(AgentCard* agentCard)
+{
+	if (agentCard->IsChannelAgent()) { // save split settings
+			printf("Saving %f %f\n", agentCard->ItemWeight((int32)0), agentCard->ItemWeight((int32)1));
+		vision_app->SetFloat("weight_ChannelView", agentCard->ItemWeight((int32)0));
+		vision_app->SetFloat("weight_NameList", agentCard->ItemWeight((int32)1));
+		vision_app->SetBool("collapsed_ChannelView", agentCard->IsItemCollapsed((bool)0));
+		vision_app->SetBool("collapsed_NameList", agentCard->IsItemCollapsed((bool)1));
+	}
+}
+
+
+void WindowList::ApplySplitSettings(AgentCard* agentCard)
+{
+	if (agentCard->IsChannelAgent()) { // save split settings
+		agentCard->SetItemWeight(0, vision_app->GetFloat("weight_ChannelView"), true);
+		agentCard->SetItemWeight(1, vision_app->GetFloat("weight_NameList"), true);
+		agentCard->SetItemCollapsed(0, vision_app->GetBool("collapsed_ChannelView"));
+		agentCard->SetItemCollapsed(1, vision_app->GetBool("collapsed_NameList"));
+		printf("Restoring %f %f\n", agentCard->ItemWeight((int32)0), agentCard->ItemWeight((int32)1));
+	}
+}
+
 
 int WindowList::SortListItems(const BListItem* name1, const BListItem* name2)
 {
