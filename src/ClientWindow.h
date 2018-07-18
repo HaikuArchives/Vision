@@ -83,7 +83,6 @@ public:
 
 	BView* bgView;
 
-	BRect* AgentRect() const;
 	WindowList* pWindowList() const;
 	NotifyList* pNotifyList() const;
 	ClientWindowDock* pCwDock() const;

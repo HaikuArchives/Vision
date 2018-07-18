@@ -62,7 +62,7 @@
 
 const int32 LIST_BATCH_SIZE = 75;
 
-ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
+ListAgent::ListAgent(const char* title, BMessenger* sMsgr_)
 	: BView(title, B_WILL_DRAW | B_FRAME_EVENTS),
 	  activeTheme(vision_app->ActiveTheme()),
 	  fSMsgr(sMsgr_),
@@ -71,8 +71,6 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 	  find(""),
 	  processing(false)
 {
-	frame = Bounds();
-
 	listMenu = new BMenu(B_TRANSLATE("Channels"));
 
 	listMenu->AddItem(
@@ -92,8 +90,6 @@ SetLayout(new BGroupLayout(B_VERTICAL, 0));
 
 	bgView->SetViewColor(activeTheme->ForegroundAt(C_BACKGROUND));
 	AddChild(bgView);
-
-	frame = bgView->Bounds().InsetByCopy(1, 1);
 
 	listView = new BColumnListView("list",
 		B_WILL_DRAW | B_NAVIGABLE | B_FULL_UPDATE_ON_RESIZE);

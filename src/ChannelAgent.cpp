@@ -51,9 +51,9 @@
 #define B_TRANSLATION_CONTEXT "ChannelAgent"
 
 ChannelAgent::ChannelAgent(const char* id_, const char* serverName_, int ircdtype_,
-						   const char* nick, BMessenger& sMsgr_, BRect& frame_)
+						   const char* nick, BMessenger& sMsgr_)
 
-	: ClientAgent(id_, serverName_, nick, sMsgr_, frame_),
+	: ClientAgent(id_, serverName_, nick, sMsgr_),
 
 	  fChanMode(""),
 	  fChanLimit(""),

@@ -65,8 +65,8 @@ class failToLock
 
 int32 ServerAgent::fServerSeed = 0;
 
-ServerAgent::ServerAgent(const char* id_, BMessage& net, BRect frame_)
-	: ClientAgent(id_, id_, net.FindString("nick"), frame_),
+ServerAgent::ServerAgent(const char* id_, BMessage& net)
+	: ClientAgent(id_, id_, net.FindString("nick")),
 	  fLocalip(""),
 	  fMyNick(net.FindString("nick")),
 	  fMyLag((net.FindBool("lagCheck")) ? "0.000" : B_TRANSLATE("Disabled")),
@@ -1082,8 +1082,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		msg->FindString("port", &thePort);
 
 		theNick.Append(" [DCC]");
-		MessageAgent* newAgent(new MessageAgent(*vision_app->pClientWin()->AgentRect(),
-												theNick.String(), fId.String(), fSMsgr,
+		MessageAgent* newAgent(new MessageAgent(theNick.String(), fId.String(), fSMsgr,
 												fMyNick.String(), "", true, false, theIP, thePort));
 		vision_app->pClientWin()->pWindowList()->AddAgent(newAgent, theNick.String(),
 														  WIN_MESSAGE_TYPE, true);
@@ -1103,8 +1102,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		theId << theNick << " [DCC]";
 
 		if ((client = Client(theId.String())) == 0) {
-			MessageAgent* newAgent(new MessageAgent(
-				*vision_app->pClientWin()->AgentRect(), theId.String(), fId.String(), fSMsgr,
+			MessageAgent* newAgent(new MessageAgent(theId.String(), fId.String(), fSMsgr,
 				fMyNick.String(), "", true, true, "", thePort != "" ? thePort.String() : ""));
 			vision_app->pClientWin()->pWindowList()->AddAgent(newAgent, theId.String(),
 															  WIN_MESSAGE_TYPE, true);
@@ -1237,7 +1235,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 		msg->FindString("nick", &theNick);
 
 		if (!(client = Client(theNick))) {
-			MessageAgent* newAgent(new MessageAgent(*vision_app->pClientWin()->AgentRect(), theNick,
+			MessageAgent* newAgent(new MessageAgent(theNick,
 													fId.String(), fSMsgr, fMyNick.String(), ""));
 			vision_app->pClientWin()->pWindowList()->AddAgent(newAgent, theNick, WIN_MESSAGE_TYPE,
 															  true);
@@ -1314,8 +1312,7 @@ void ServerAgent::MessageReceived(BMessage* msg)
 	case M_LIST_COMMAND: {
 		if (fListAgent) break;
 		vision_app->pClientWin()->pWindowList()->AddAgent(
-			(fListAgent = new ListAgent(*vision_app->pClientWin()->AgentRect(),
-										fServerHostName.String(), new BMessenger(this))),
+			(fListAgent = new ListAgent(fServerHostName.String(), new BMessenger(this))),
 			"Channels", WIN_LIST_TYPE, true);
 		// kind of a hack since Agent() returns a pointer of type ClientAgent, of which
 		// ListAgent is not a subclass...

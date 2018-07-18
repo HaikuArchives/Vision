@@ -47,8 +47,8 @@ public:
 				 const char*, // serverName
 				 int,		  // ircdtype
 				 const char*, // nick
-				 BMessenger&, // sMsgr (ServerAgent pointer)
-				 BRect&);	 // frame
+				 BMessenger&); // sMsgr (ServerAgent pointer)
+
 	virtual ~ChannelAgent();
 
 	virtual void AttachedToWindow();

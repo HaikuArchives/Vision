@@ -56,9 +56,7 @@
 
 const char* ClientAgent::endl("\1\1\1\1\1");
 
-ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* myNick_,
-						 BRect frame_)
-
+ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* myNick_)
 	: BView(id_, B_WILL_DRAW | B_FRAME_EVENTS),
 	  fCancelMLPaste(false),
 	  fActiveTheme(vision_app->ActiveTheme()),
@@ -66,14 +64,13 @@ ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* m
 	  fServerName(serverName_),
 	  fMyNick(myNick_),
 	  fTimeStampState(vision_app->GetBool("timestamp")),
-	  fIsLogging(vision_app->GetBool("log_enabled")),
-	  fFrame(frame_)
+	  fIsLogging(vision_app->GetBool("log_enabled"))
 {
 	Init();
 }
 
 ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* myNick_,
-						 const BMessenger& sMsgr_, BRect frame_)
+						 const BMessenger& sMsgr_)
 
 	: BView(id_, B_WILL_DRAW),
 	  fSMsgr(sMsgr_),
@@ -82,8 +79,7 @@ ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* m
 	  fServerName(serverName_),
 	  fMyNick(myNick_),
 	  fTimeStampState(vision_app->GetBool("timestamp")),
-	  fIsLogging(vision_app->GetBool("log_enabled")),
-	  fFrame(frame_)
+	  fIsLogging(vision_app->GetBool("log_enabled"))
 {
 	fMyLag = "0.000";
 	//SetLayout(new BGroupLayout(B_VERTICAL));
@@ -160,10 +156,7 @@ void ClientAgent::Init()
 
 	fHistory = new HistoryList();
 
-	BRect textrect(2, fFrame.top, fFrame.right - fFrame.left - 1 - B_V_SCROLL_BAR_WIDTH,
-				   fFrame.bottom - fInput->Frame().Height() - 8);
-
-	fText = new RunView(textrect, fId.String(), fActiveTheme, B_FOLLOW_ALL);
+	fText = new RunView(Bounds(), fId.String(), fActiveTheme, B_FOLLOW_ALL);
 
 	fText->SetClippingName(fId.String());
 

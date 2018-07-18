@@ -104,15 +104,14 @@ void DynamicEditMenu::DetachedFromWindow()
 
 ClientWindow::ClientWindow(BRect frame)
 	: BWindow(frame, B_TRANSLATE_SYSTEM_NAME("Vision"),
-		B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS),
-		fAgentrect(new BRect(0,0,10,10))
+		B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS)
 {
 	Init();
 }
 
 ClientWindow::~ClientWindow()
 {
-	delete fAgentrect;
+
 }
 
 bool ClientWindow::QuitRequested()
@@ -298,7 +297,7 @@ void ClientWindow::MessageReceived(BMessage* msg)
 		msg->FindMessage("network", &network);
 		BString netName(network.FindString("name"));
 		pWindowList()->AddAgent(
-			new ServerAgent(netName.String(), network, *AgentRect()), netName.String(),
+			new ServerAgent(netName.String(), network), netName.String(),
 			WIN_SERVER_TYPE,
 			pWindowList()->CountItems() > 0 ? false : true); // grab focus if none present
 	} break;
@@ -415,11 +414,6 @@ void ClientWindow::SetEditStates(bool retargetonly)
 		ClientAgent* agent(dynamic_cast<ClientAgent*>(item->pAgent()));
 		if (agent != NULL) agent->SetEditStates(fEdit, retargetonly);
 	}
-}
-// TODO Nuke this function
-BRect* ClientWindow::AgentRect() const
-{
-	return fAgentrect;
 }
 
 WindowList* ClientWindow::pWindowList() const

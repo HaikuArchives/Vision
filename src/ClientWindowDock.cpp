@@ -229,6 +229,7 @@ AgentDockHeader::AgentDockHeader(const char* name)
 	fHeaderView = new AgentDockHeaderString(name);
 
 	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 0)
+		.SetInsets(B_USE_HALF_ITEM_INSETS, 0, B_USE_HALF_ITEM_INSETS, 0)
 		.Add(fHeaderView)
 		.AddGlue()
 		.End();

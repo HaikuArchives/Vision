@@ -47,7 +47,7 @@ class WindowList;
 class ListAgent : public BView
 {
 public:
-	ListAgent(BRect, const char*, BMessenger*);
+	ListAgent(const char*, BMessenger*);
 	virtual ~ListAgent();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

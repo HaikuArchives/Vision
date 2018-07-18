@@ -49,11 +49,11 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "MessageAgent"
 
-MessageAgent::MessageAgent(BRect& frame_, const char* id_,
+MessageAgent::MessageAgent(const char* id_,
 	const char* fServerName_, const BMessenger& fSMsgr_, const char* nick,
 	const char* addyString, bool chat, bool initiate, const char* IP,
 	const char* port)
-	: ClientAgent(id_, fServerName_, nick, fSMsgr_, frame_),
+	: ClientAgent(id_, fServerName_, nick, fSMsgr_),
 	  fChatAddy(addyString ? addyString : ""),
 	  fChatee(id_),
 	  fDIP(IP),
