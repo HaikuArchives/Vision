@@ -61,13 +61,6 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "RunView"
 
-// cursor data for hovering over URLs
-
-static unsigned char URLCursorData[] = {
-	16,  1,  2,   2,  0,   0,   0,   0,   56,  0,  36,  0,  36,  0,   19,  224, 18,
-	92,  9,  42,  8,  1,   60,  33,  76,  49,  66, 121, 48, 125, 12,  253, 2,   0,
-	1,   0,  0,   0,  0,   0,   56,  0,   60,  0,  60,  0,  31,  224, 31,  252, 15,
-	254, 15, 255, 63, 255, 127, 255, 127, 255, 63, 255, 15, 255, 3,   254, 1,   248};
 
 struct SoftBreak {
 	int16 fOffset;

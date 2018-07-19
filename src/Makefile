@@ -72,7 +72,6 @@ SRCS = \
 	PrefLog.cpp \
 	PrefsWindow.cpp \
 	Prompt.cpp \
-	ResizeView.cpp \
 	RunView.cpp \
 	ServerAgent.cpp \
 	ServerEntryWindow.cpp \

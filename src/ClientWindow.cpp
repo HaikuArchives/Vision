@@ -304,26 +304,6 @@ void ClientWindow::MessageReceived(BMessage* msg)
 			pWindowList()->CountItems() > 0 ? false : true); // grab focus if none present
 	} break;
 
-	case M_RESIZE_VIEW: {/*
-		BView* view(NULL);
-		msg->FindPointer("view", reinterpret_cast<void**>(&view));
-		WindowListItem* item(dynamic_cast<WindowListItem*>(
-			pWindowList()->ItemAt(pWindowList()->CurrentSelection())));
-		BView* agent(item->pAgent());
-		if (dynamic_cast<ClientWindowDock*>(view)) {
-			BPoint point;
-			msg->FindPoint("loc", &point);
-			fResize->MoveTo(point.x, fResize->Frame().top);
-			fCwDock->ResizeTo(point.x - 1, fCwDock->Frame().Height());
-			BRect* agRect(AgentRect());
-			if (agent) {
-				agent->ResizeTo(agRect->Width(), agRect->Height());
-				agent->MoveTo(agRect->left, agRect->top);
-			}
-		} else
-			DispatchMessage(msg, agent);*/
-	} break;
-
 	case M_OPEN_TERM: {
 		status_t result = be_roster->Launch(skTermSig, 0, NULL);
 		if (result != B_OK) {

@@ -102,16 +102,6 @@ void ChannelAgent::AttachedToWindow()
 
 void ChannelAgent::Init()
 {
-	/*
-	 * Function purpose: Setup everything
-	 */
-
-//	fNamesList = new NamesView(fFrame);
-
-//	fNamesScroll = new BScrollView("scroll_names", fNamesList, 0, false, true, B_PLAIN_BORDER);
-//	AddChild(fResize);
-//	AddChild(fNamesScroll);
-
 	BString text(B_TRANSLATE("*** Now talking in %channel%\n"));
 	text.ReplaceFirst("%channel%", fId.String());
 	Display(text.String(), C_JOIN);
@@ -581,19 +571,6 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 			buffer << fUserCount;
 			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_USERS, buffer.String());
 		}
-	} break;
-
-	case M_RESIZE_VIEW: {/*
-		BPoint point;
-		msg->FindPoint("loc", &point);
-		point.x -= Frame().left;
-		float offset((int32)(point.x - (fNamesScroll->Frame().left)));
-		fResize->MoveBy(offset, 0.0);
-		fTextScroll->ResizeBy(offset, 0.0);
-		fNamesScroll->ResizeBy(-offset, 0.0);
-		fNamesScroll->MoveBy(offset, 0.0);
-		BRect namesRect(0, 0, fNamesScroll->Bounds().Width(), 0);
-		vision_app->SetRect("namesListRect", namesRect); */
 	} break;
 
 	case M_SERVER_DISCONNECT: {

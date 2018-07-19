@@ -85,11 +85,8 @@ NotifyList* ClientWindowDock::pNotifyList() const
 }
 
 void ClientWindowDock::AllAttached()
-{	// TODO Replace this with the actual size
-	/*if (vision_app->GetBool("notifyExpanded")) {
-		BMessenger dockMsgr(this);
-		dockMsgr.SendMessage(M_NOTIFYLIST_RESIZE);
-	}*/
+{
+
 }
 
 void ClientWindowDock::MessageReceived(BMessage* msg)

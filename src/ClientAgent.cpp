@@ -82,7 +82,6 @@ ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* m
 	  fIsLogging(vision_app->GetBool("log_enabled"))
 {
 	fMyLag = "0.000";
-	//SetLayout(new BGroupLayout(B_VERTICAL));
 	Init();
 	// force server agent to post a lag meter update immediately
 	fSMsgr.SendMessage(M_LAG_CHANGED);
