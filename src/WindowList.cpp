@@ -93,7 +93,8 @@ WindowList::WindowList()
 	  fLastButton(0),
 	  fClickCount(0),
 	  fLastClick(0, 0),
-	  fLastClickTime(0)
+	  fLastClickTime(0),
+	  fCurrentDrawItem(NULL)
 {
 	fActiveTheme->ReadLock();
 
@@ -109,7 +110,6 @@ WindowList::WindowList()
 WindowList::~WindowList()
 {
 	delete fMyPopUp;
-	//
 }
 
 void WindowList::AttachedToWindow()
@@ -739,6 +739,44 @@ void WindowList::BuildPopUp()
 	fMyPopUp->SetFont(be_plain_font);
 }
 
+
+void WindowList::DrawLatch(BRect itemRect, int32 level, bool collapsed,
+       bool highlighted, bool misTracked)
+{
+      BRect latchRect(LatchRect(itemRect, level));
+
+      rgb_color base = tint_color(ui_color(B_PANEL_BACKGROUND_COLOR), B_DARKEN_4_TINT);
+      if (fCurrentDrawItem != NULL) {
+              fActiveTheme->ReadLock();
+              int32 subStatus = fCurrentDrawItem->SubStatus();
+              if (subStatus > WIN_NORMAL_BIT) {
+                      rgb_color color = ui_color(B_PANEL_BACKGROUND_COLOR);
+                      if ((subStatus & WIN_NEWS_BIT) != 0)
+                              color = fActiveTheme->ForegroundAt(C_WINLIST_NEWS);
+                      else if ((subStatus & WIN_PAGESIX_BIT) != 0)
+                              color = fActiveTheme->ForegroundAt(C_WINLIST_PAGESIX);
+                      else if ((subStatus & WIN_NICK_BIT) != 0)
+                              color = fActiveTheme->ForegroundAt(C_WINLIST_NICK);
+                      base = color;
+              }
+              fActiveTheme->ReadUnlock();
+      }
+
+      int32 arrowDirection = collapsed ? BControlLook::B_RIGHT_ARROW
+              : BControlLook::B_DOWN_ARROW;
+
+      be_control_look->DrawArrowShape(this, latchRect, itemRect, base,
+              arrowDirection, 0, B_NO_TINT);
+}
+
+void
+WindowList::DrawItem(BListItem* item, BRect itemRect, bool complete)
+{
+      fCurrentDrawItem = dynamic_cast<WindowListItem*>(item);
+      BOutlineListView::DrawItem(item, itemRect, complete);
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 /// End WindowList functions
 //////////////////////////////////////////////////////////////////////////////
@@ -852,18 +890,6 @@ void WindowListItem::DrawItem(BView* father, BRect frame, bool complete)
 
 	fActiveTheme->ReadLock();
 
-	if (fSubStatus > WIN_NORMAL_BIT) {
-		rgb_color color;
-		if ((fSubStatus & WIN_NEWS_BIT) != 0)
-			color = fActiveTheme->ForegroundAt(C_WINLIST_NEWS);
-		else if ((fSubStatus & WIN_PAGESIX_BIT) != 0)
-			color = fActiveTheme->ForegroundAt(C_WINLIST_PAGESIX);
-		else if ((fSubStatus & WIN_NICK_BIT) != 0)
-			color = fActiveTheme->ForegroundAt(C_WINLIST_NICK);
-
-		father->SetHighColor(color);
-		father->StrokeRect(BRect(0.0, frame.top, 10.0, frame.top + 10.0));
-	}
 	if (IsSelected()) {
 		father->SetHighColor(fActiveTheme->ForegroundAt(C_WINLIST_SELECTION));
 		father->SetLowColor(fActiveTheme->ForegroundAt(C_WINLIST_BACKGROUND));

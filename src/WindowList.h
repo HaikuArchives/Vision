@@ -25,6 +25,7 @@
 #ifndef _WINDOWLIST_H_
 #define _WINDOWLIST_H_
 
+#include <ControlLook.h>
 #include <ListItem.h>
 #include <OutlineListView.h>
 #include <SplitView.h>
@@ -125,6 +126,12 @@ public:
 
 	void SaveSplitSettings(AgentCard* agentCard);
 	void ApplySplitSettings(AgentCard* agentCard);
+protected:
+	virtual void				DrawLatch(BRect itemRect, int32 level,
+									bool collapsed, bool highlighted,
+									bool misTracked);
+	virtual	void				DrawItem(BListItem* item, BRect itemRect,
+									bool complete = false);
 
 private:
 	BPopUpMenu* fMyPopUp;
@@ -138,7 +145,7 @@ private:
 
 	BPoint fLastClick;
 	bigtime_t fLastClickTime;
-
+	WindowListItem* fCurrentDrawItem;
 	static int SortListItems(const BListItem*, const BListItem*);
 };
 
