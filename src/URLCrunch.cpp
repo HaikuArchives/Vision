@@ -139,9 +139,8 @@ status_t URLCrunch::UpdateTagList()
 		type.RemoveFirst(B_URL_MIME_PREFIX);
 		type << ":";
 		// require slash-slash for those to limit wrong matches
-		if (type == "http:" || type == "ftp:") type << "//";
+		if (type == "https:" || type == "http:" || type == "ftp:") type << "//";
 		if (type == "file:") type << "/";
-		printf("Type: %s\n", type.String());
 		tags.AddItem(strdup(type.String()));
 	}
 

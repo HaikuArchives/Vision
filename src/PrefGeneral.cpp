@@ -148,7 +148,6 @@ void GeneralPrefsView::AddOptionsToListView(BListView* listView, BStringItem* it
 	// constraint the listview width so that the longest item fits
 	float width = 0;
 	listView->GetPreferredSize(&width, NULL);
-	printf("%f %s\n", width, item->Text());
 	width += B_V_SCROLL_BAR_WIDTH;
 	listView->SetExplicitMinSize(BSize(width, 0));
 	listView->SetExplicitMaxSize(BSize(width, B_SIZE_UNLIMITED));

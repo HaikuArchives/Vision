@@ -27,6 +27,7 @@
 #include <CardLayout.h>
 #include <PopUpMenu.h>
 #include <MenuItem.h>
+#include <LayoutBuilder.h>
 #include <List.h>
 #include <ScrollView.h>
 
@@ -58,7 +59,13 @@ AgentCard::AgentCard(BView *agent):
 	if ((channelAgent = dynamic_cast<ChannelAgent*>(agent)) != NULL)
 	{
 		BScrollView* scrollView = new BScrollView("scroll_names", (BView*)channelAgent->pNamesList(), 0, false, true, B_PLAIN_BORDER);
-		AddChild(scrollView, 2);
+
+		BView* removeBottomBorder = new BView ("removeBottomBorder", 0);
+		BLayoutBuilder::Group<>(removeBottomBorder, B_VERTICAL, 0)
+			.SetInsets(0,0,0,-1)
+			.Add(scrollView);
+
+		AddChild(removeBottomBorder, 2);
 	}
 }
 
@@ -577,7 +584,6 @@ void WindowList::AddAgent(BView* agent, const char* name, int32 winType, bool ac
 
 	vision_app->pClientWin()->DisableUpdates();
 
-	printf("Add agent%s\n", name);
 	((BCardLayout*) vision_app->pClientWin()->bgView->GetLayout())->AddView(agentCard);
 
 	vision_app->pClientWin()->EnableUpdates();
@@ -672,7 +678,6 @@ void WindowList::RemoveAgent(WindowListItem* agentitem)
 void WindowList::SaveSplitSettings(AgentCard* agentCard)
 {
 	if (agentCard->IsChannelAgent()) { // save split settings
-			printf("Saving %f %f\n", agentCard->ItemWeight((int32)0), agentCard->ItemWeight((int32)1));
 		vision_app->SetFloat("weight_ChannelView", agentCard->ItemWeight((int32)0));
 		vision_app->SetFloat("weight_NameList", agentCard->ItemWeight((int32)1));
 		vision_app->SetBool("collapsed_ChannelView", agentCard->IsItemCollapsed((bool)0));
@@ -688,7 +693,6 @@ void WindowList::ApplySplitSettings(AgentCard* agentCard)
 		agentCard->SetItemWeight(1, vision_app->GetFloat("weight_NameList"), true);
 		agentCard->SetItemCollapsed(0, vision_app->GetBool("collapsed_ChannelView"));
 		agentCard->SetItemCollapsed(1, vision_app->GetBool("collapsed_NameList"));
-		printf("Restoring %f %f\n", agentCard->ItemWeight((int32)0), agentCard->ItemWeight((int32)1));
 	}
 }
 

@@ -48,6 +48,7 @@ ClientWindowDock::ClientWindowDock()
 	AdoptSystemColors();
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+		.SetInsets(0,0, 0, -1.0)
 		.AddSplit(B_VERTICAL, 0)
 		.GetSplitView(&fSplitView)
 			.Add(fWinListAgent = new AgentDockWinList())
@@ -58,7 +59,6 @@ ClientWindowDock::ClientWindowDock()
 	fSplitView->SetItemWeight(1, vision_app->GetFloat("weight_NotifyList"), false);
 	fSplitView->SetItemCollapsed(0, vision_app->GetBool("collapsed_WindowList"));
 	fSplitView->SetItemCollapsed(1, vision_app->GetBool("collapsed_NotifyList"));
-	printf("%f %f\n", fSplitView->ItemWeight((int32)0), fSplitView->ItemWeight((int32)1));
 }
 
 ClientWindowDock::~ClientWindowDock()
