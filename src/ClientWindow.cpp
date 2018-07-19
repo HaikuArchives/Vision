@@ -22,7 +22,7 @@
  *                 Andrew Bazan
  *                 Jamie Wilkinson
  */
-
+#include <LayoutBuilder.h>
 #include <ScrollView.h>
 #include <Menu.h>
 #include <MenuItem.h>
@@ -43,7 +43,6 @@
 #include "Names.h"
 #include "NetworkMenu.h"
 #include "NotifyList.h"
-#include "ResizeView.h"
 #include "ServerAgent.h"
 #include "SettingsFile.h"
 #include "StatusView.h"
@@ -104,18 +103,21 @@ void DynamicEditMenu::DetachedFromWindow()
 
 ClientWindow::ClientWindow(BRect frame)
 	: BWindow(frame, B_TRANSLATE_SYSTEM_NAME("Vision"),
-		B_DOCUMENT_WINDOW, B_ASYNCHRONOUS_CONTROLS)
+		B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS)
 {
 	Init();
 }
 
 ClientWindow::~ClientWindow()
 {
-	delete fAgentrect;
+
 }
 
 bool ClientWindow::QuitRequested()
 {
+	SaveSettings();
+	fCwDock->SaveSettings();
+
 	if (!fShutdown_in_progress) {
 		fShutdown_in_progress = true;
 		BMessage killMsg(M_CLIENT_QUIT);
@@ -260,7 +262,7 @@ void ClientWindow::MessageReceived(BMessage* msg)
 			return;
 		}
 
-		pWindowList()->RemoveAgent(agentview, agentitem);
+		pWindowList()->RemoveAgent(agentitem);
 
 		if (fShutdown_in_progress && pWindowList()->CountItems() == 0)
 			PostMessage(B_QUIT_REQUESTED);
@@ -296,29 +298,9 @@ void ClientWindow::MessageReceived(BMessage* msg)
 		msg->FindMessage("network", &network);
 		BString netName(network.FindString("name"));
 		pWindowList()->AddAgent(
-			new ServerAgent(netName.String(), network, *AgentRect()), netName.String(),
+			new ServerAgent(netName.String(), network), netName.String(),
 			WIN_SERVER_TYPE,
 			pWindowList()->CountItems() > 0 ? false : true); // grab focus if none present
-	} break;
-
-	case M_RESIZE_VIEW: {
-		BView* view(NULL);
-		msg->FindPointer("view", reinterpret_cast<void**>(&view));
-		WindowListItem* item(dynamic_cast<WindowListItem*>(
-			pWindowList()->ItemAt(pWindowList()->CurrentSelection())));
-		BView* agent(item->pAgent());
-		if (dynamic_cast<ClientWindowDock*>(view)) {
-			BPoint point;
-			msg->FindPoint("loc", &point);
-			fResize->MoveTo(point.x, fResize->Frame().top);
-			fCwDock->ResizeTo(point.x - 1, fCwDock->Frame().Height());
-			BRect* agRect(AgentRect());
-			if (agent) {
-				agent->ResizeTo(agRect->Width(), agRect->Height());
-				agent->MoveTo(agRect->left, agRect->top);
-			}
-		} else
-			DispatchMessage(msg, agent);
 	} break;
 
 	case M_OPEN_TERM: {
@@ -415,15 +397,6 @@ void ClientWindow::SetEditStates(bool retargetonly)
 	}
 }
 
-BRect* ClientWindow::AgentRect() const
-{
-	fAgentrect->left = fResize->Frame().right - fCwDock->Frame().left + 1;
-	fAgentrect->top = Bounds().top;
-	fAgentrect->right = Bounds().Width() + 1;
-	fAgentrect->bottom = fCwDock->Frame().Height();
-	return fAgentrect;
-}
-
 WindowList* ClientWindow::pWindowList() const
 {
 	return fCwDock->pWindowList();
@@ -495,7 +468,7 @@ void ClientWindow::Init()
 	AddShortcut('Q', B_COMMAND_KEY, new BMessage(M_CW_ALTW));
 
 	BRect frame(Bounds());
-	fMenuBar = new BMenuBar(frame, "menu_bar");
+	fMenuBar = new BMenuBar("menu_bar");
 
 	BMenuItem* item;
 	BMenu* menu;
@@ -579,43 +552,49 @@ void ClientWindow::Init()
 	item->SetTarget(this);
 	fMenuBar->AddItem(fWindow);
 
-	AddChild(fMenuBar);
-
 	// add objects
-	frame.top = fMenuBar->Frame().bottom + 1;
-	bgView = new BView(frame, "Background", B_FOLLOW_ALL_SIDES, 0);
-
+	bgView = new BCardView("cards");
 	bgView->AdoptSystemColors();
-	AddChild(bgView);
-
-	frame = bgView->Bounds();
 
 	fStatus = new StatusView(frame);
-	bgView->AddChild(fStatus);
-	float fontDelta = be_plain_font->Size() - 12.0f;
-	if (fontDelta < 0)
-		fontDelta = 0;
-	fStatus->ResizeBy(0, fontDelta);
-	fStatus->MoveBy(0, -fontDelta);
-
 	fStatus->AddItem(new StatusItem("irc.elric.net", 0), true);
 
-	BRect cwDockRect(vision_app->GetRect("windowDockRect"));
-	fCwDock = new ClientWindowDock(BRect(0, frame.top,
-										 (cwDockRect.Width() == 0.0) ? 130 : cwDockRect.Width(),
-										 fStatus->Frame().top - 1));
+	fCwDock = new ClientWindowDock();
 
-	bgView->AddChild(fCwDock);
+	BView* backgroundView = new BView("Background", 0);
+	BView* mainView = new BView("MainView", 0);
+	BLayoutBuilder::Group<>(mainView,B_VERTICAL,0)
+			.SetInsets(0, -1, -1, -1)
+			.Add(bgView);
 
-	fResize = new ResizeView(fCwDock, BRect(fCwDock->Frame().right + 1, Bounds().top,
-											fCwDock->Frame().right + 3, fStatus->Frame().top - 1));
+	BLayoutBuilder::Group<>(backgroundView, B_HORIZONTAL,0)
+		.SetInsets(0, 0, 0, 0)
+		.AddSplit(B_HORIZONTAL, 0)
+		.GetSplitView(&fSplitView)
+			.Add(fCwDock, 1)
+			.Add(mainView, 9);
 
-	bgView->AddChild(fResize);
+	BLayoutBuilder::Group<>(this,B_VERTICAL,0)
+		.Add(fMenuBar)
+		.AddGroup(B_VERTICAL,0)
+			.SetInsets(0, 0, 0, 0)
+			.Add(backgroundView)
+			.Add(fStatus)
+		.End();
 
-	fAgentrect = new BRect((fResize->Frame().right - fCwDock->Frame().left) + 1, Bounds().top + 1,
-						   Bounds().Width() - 1, fCwDock->Frame().Height());
+	fSplitView->SetItemWeight(0, vision_app->GetFloat("weight_WindowDock"), false);
+	fSplitView->SetItemWeight(1, vision_app->GetFloat("weight_BgView"), false);
+	fSplitView->SetItemCollapsed(0, vision_app->GetBool("collapsed_WindowDock"));
+	fSplitView->SetItemCollapsed(1, vision_app->GetBool("collapsed_BgView"));
 }
 
+void ClientWindow::SaveSettings()
+{
+	vision_app->SetFloat("weight_WindowDock", fSplitView->ItemWeight((int32)0));
+	vision_app->SetFloat("weight_BgView", fSplitView->ItemWeight((int32)1));
+	vision_app->SetBool("collapsed_WindowDock", fSplitView->IsItemCollapsed((bool)0));
+	vision_app->SetBool("collapsed_BgView", fSplitView->IsItemCollapsed((bool)1));
+}
 //////////////////////////////////////////////////////////////////////////////
 /// End Private Functions
 //////////////////////////////////////////////////////////////////////////////

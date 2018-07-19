@@ -26,6 +26,8 @@
 #include <Beep.h>
 #include <Clipboard.h>
 #include <File.h>
+#include <GroupLayout.h>
+#include <LayoutBuilder.h>
 #include <MenuItem.h>
 #include <Path.h>
 #include <PopUpMenu.h>
@@ -41,7 +43,6 @@
 #include "ClientAgentInputFilter.h"
 #include "ClientAgentLogger.h"
 #include "HistoryList.h"
-#include "ResizeView.h"
 #include "RunView.h"
 #include "StatusView.h"
 #include "Utilities.h"
@@ -54,34 +55,30 @@
 
 const char* ClientAgent::endl("\1\1\1\1\1");
 
-ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* myNick_,
-						 BRect frame_)
-
-	: BView(frame_, id_, B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS),
+ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* myNick_)
+	: BView(id_, B_WILL_DRAW | B_FRAME_EVENTS),
 	  fCancelMLPaste(false),
 	  fActiveTheme(vision_app->ActiveTheme()),
 	  fId(id_),
 	  fServerName(serverName_),
 	  fMyNick(myNick_),
 	  fTimeStampState(vision_app->GetBool("timestamp")),
-	  fIsLogging(vision_app->GetBool("log_enabled")),
-	  fFrame(frame_)
+	  fIsLogging(vision_app->GetBool("log_enabled"))
 {
 	Init();
 }
 
 ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* myNick_,
-						 const BMessenger& sMsgr_, BRect frame_)
+						 const BMessenger& sMsgr_)
 
-	: BView(frame_, id_, B_FOLLOW_ALL_SIDES, B_WILL_DRAW),
+	: BView(id_, B_WILL_DRAW),
 	  fSMsgr(sMsgr_),
 	  fActiveTheme(vision_app->ActiveTheme()),
 	  fId(id_),
 	  fServerName(serverName_),
 	  fMyNick(myNick_),
 	  fTimeStampState(vision_app->GetBool("timestamp")),
-	  fIsLogging(vision_app->GetBool("log_enabled")),
-	  fFrame(frame_)
+	  fIsLogging(vision_app->GetBool("log_enabled"))
 {
 	fMyLag = "0.000";
 	Init();
@@ -142,13 +139,6 @@ void ClientAgent::Show()
 	statusMsg.AddBool("hidden", false);
 	Window()->PostMessage(&statusMsg);
 
-	const BRect* agentRect(dynamic_cast<ClientWindow*>(Window())->AgentRect());
-
-	if (*agentRect != Frame()) {
-		ResizeTo(agentRect->Width(), agentRect->Height());
-		MoveTo(agentRect->left, agentRect->top);
-	}
-
 	// make RunView recalculate itself
 	fText->Show();
 	BView::Show();
@@ -158,24 +148,13 @@ void ClientAgent::Init()
 {
 	AdoptSystemColors();
 
-	fInput = new BTextControl(BRect(0,
-									fFrame.top, // tmp. will be moved
-									fFrame.right - fFrame.left - 4, fFrame.bottom),
-							  "Input", 0, 0, 0, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
-
-	fInput->SetDivider(0);
-	fInput->ResizeToPreferred();
-	fInput->MoveTo(0, fFrame.bottom - fInput->Frame().Height() - 3);
-	AddChild(fInput);
+	fInput = new BTextControl( "Input", 0, 0, 0);
 	fInput->TextView()->AddFilter(new ClientAgentInputFilter(this));
 	fInput->Invalidate();
 
 	fHistory = new HistoryList();
 
-	BRect textrect(2, fFrame.top, fFrame.right - fFrame.left - 1 - B_V_SCROLL_BAR_WIDTH,
-				   fFrame.bottom - fInput->Frame().Height() - 8);
-
-	fText = new RunView(textrect, fId.String(), fActiveTheme, B_FOLLOW_ALL);
+	fText = new RunView(Bounds(), fId.String(), fActiveTheme, B_FOLLOW_ALL);
 
 	fText->SetClippingName(fId.String());
 
@@ -183,9 +162,17 @@ void ClientAgent::Init()
 		fText->SetTimeStampFormat(vision_app->GetString("timestamp_format"));
 
 	fTextScroll =
-		new BScrollView("textscroll", fText, B_FOLLOW_ALL, 0, false, true, B_PLAIN_BORDER);
+		new BScrollView("textscroll", fText, 0, false, true, B_PLAIN_BORDER);
 
-	AddChild(fTextScroll);
+	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 5)
+		.SetInsets(0, 0, 0, 0)
+		.AddGroup(B_VERTICAL, 0)
+			.Add(fTextScroll)
+			.AddStrut(B_USE_HALF_ITEM_SPACING)
+			.Add(fInput)
+			.AddStrut(B_USE_HALF_ITEM_SPACING)
+		.End()
+	.End();
 }
 
 void ClientAgent::ScrollRange(float* scrollMin, float* scrollMax) const
@@ -688,7 +675,7 @@ void ClientAgent::MessageReceived(BMessage* msg)
 	case M_LAG_CHANGED: {
 		msg->FindString("lag", &fMyLag);
 
-		if (!IsHidden())
+		if (GetLayout()->IsVisible())
 			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_LAG, fMyLag.String());
 	} break;
 

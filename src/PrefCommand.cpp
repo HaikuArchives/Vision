@@ -22,7 +22,7 @@
 
 #include "PrefCommand.h"
 #include "Vision.h"
-
+#include <LayoutBuilder.h>
 #include <ScrollView.h>
 #include <TextControl.h>
 
@@ -33,52 +33,53 @@ static const char* CommandControlLabels[] = {
 	B_TRANSLATE("Quit:"), B_TRANSLATE("Kick:"), B_TRANSLATE("Ignore:"), B_TRANSLATE("Unignore:"),
 	B_TRANSLATE("Away:"), B_TRANSLATE("Back:"), B_TRANSLATE("Uptime:"), 0};
 
-CommandPrefsView::CommandPrefsView(BRect frame)
-	: BView(frame, "Command prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
+CommandPrefsView::CommandPrefsView()
+	: BView("Command prefs", 0)
 {
 	AdoptSystemColors();
-	BRect bounds(Bounds());
-	int32 i(0);
-	bounds.left += 3;
-	bounds.right -= B_V_SCROLL_BAR_WIDTH + 3;
-	bounds.top += 3;
-	bounds.bottom -= 5;
-	float label_width(0.0);
 
-	for (i = 0; CommandControlLabels[i]; ++i)
-		if (StringWidth(CommandControlLabels[i]) > label_width)
-			label_width = StringWidth(CommandControlLabels[i]);
-
-	BView* bgView(new BView(bounds, "", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
+	BView* bgView = new BView("", 0);
 	bgView->AdoptSystemColors();
 	fCommands = new BTextControl* [MAX_COMMANDS];
 
-	for (i = 0; i < MAX_COMMANDS; ++i) {
-		fCommands[i] = new BTextControl(
-			BRect(5, be_plain_font->Size() + ((1.5 * i) * 1.5 * be_plain_font->Size()),
-				  5 + bounds.right - be_plain_font->StringWidth("gP"),
-				  be_plain_font->Size() + (1.5 * (i + 1) * 1.5 * be_plain_font->Size())),
-			"commands", CommandControlLabels[i], vision_app->GetCommand(i).String(), NULL,
-			B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
-
-		fCommands[i]->SetDivider(label_width + 5);
-
+	for (int32 i = 0; i < MAX_COMMANDS; ++i) {
+		fCommands[i] = new BTextControl("commands", CommandControlLabels[i], vision_app->GetCommand(i).String(), NULL);
 		BMessage* msg(new BMessage(M_COMMAND_MODIFIED));
-
 		msg->AddInt32("which", i);
 		fCommands[i]->SetModificationMessage(msg);
-		bgView->AddChild(fCommands[i]);
 	}
-	fScroller = new BScrollView("command scroller", bgView, B_FOLLOW_ALL_SIDES,
-		0, false, true, B_NO_BORDER);
+
+	BLayoutBuilder::Group<>(bgView, B_VERTICAL, 0)
+		.AddGrid(0.0, 0.0)
+			.Add(fCommands[0]->CreateLabelLayoutItem(), 0, 0)
+			.Add(fCommands[0]->CreateTextViewLayoutItem(), 1, 0)
+			.Add(fCommands[1]->CreateLabelLayoutItem(), 0, 1)
+			.Add(fCommands[1]->CreateTextViewLayoutItem(), 1, 1)
+			.Add(fCommands[2]->CreateLabelLayoutItem(), 0, 2)
+			.Add(fCommands[2]->CreateTextViewLayoutItem(), 1, 2)
+			.Add(fCommands[3]->CreateLabelLayoutItem(), 0, 3)
+			.Add(fCommands[3]->CreateTextViewLayoutItem(), 1, 3)
+			.Add(fCommands[4]->CreateLabelLayoutItem(), 0, 4)
+			.Add(fCommands[4]->CreateTextViewLayoutItem(), 1, 4)
+			.Add(fCommands[5]->CreateLabelLayoutItem(), 0, 5)
+			.Add(fCommands[5]->CreateTextViewLayoutItem(), 1, 5)
+			.Add(fCommands[6]->CreateLabelLayoutItem(), 0, 6)
+			.Add(fCommands[6]->CreateTextViewLayoutItem(), 1, 6)
+		.End();
+	/*
+	fScroller = new BScrollView("command scroller", bgView, 0, false, true, B_NO_BORDER);
 	BScrollBar* bar(fScroller->ScrollBar(B_VERTICAL));
 
 	fMaxheight = bgView->Bounds().Height();
 	fProportionheight = fCommands[MAX_COMMANDS - 1]->Frame().bottom + 10.0;
 	bar->SetRange(0.0, (fProportionheight - fScroller->Bounds().Height()));
 	bar->SetProportion(fScroller->Bounds().Height() / fProportionheight);
-
-	AddChild(fScroller);
+	*/
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+		.SetInsets(B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING)
+		.Add(bgView)
+//		.Add(fScroller)
+		.AddGlue();
 }
 
 CommandPrefsView::~CommandPrefsView()

@@ -33,6 +33,7 @@
 class BPopUpMenu;
 class BMenu;
 class Theme;
+class ChannelAgent;
 
 class NameItem : public BListItem
 {
@@ -56,7 +57,7 @@ private:
 class NamesView : public BListView
 {
 public:
-	NamesView(BRect);
+	NamesView(ChannelAgent*);
 	virtual ~NamesView();
 	virtual void AttachedToWindow();
 	virtual void DetachedFromWindow();
@@ -67,8 +68,8 @@ public:
 	virtual void MessageReceived(BMessage*);
 
 	void ClearList();
-
 private:
+	ChannelAgent*  fChannelAgent;
 	BPopUpMenu* fMyPopUp;
 	BMenu* fCTCPPopUp;
 	int32 fLastSelected, fLastButton, fCurrentindex;

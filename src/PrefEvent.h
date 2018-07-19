@@ -32,7 +32,7 @@ class BScrollView;
 class EventPrefsView : public BView
 {
 public:
-	EventPrefsView(BRect);
+	EventPrefsView();
 	virtual ~EventPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

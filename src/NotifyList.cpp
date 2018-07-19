@@ -20,7 +20,7 @@
  *                 Alan Ellis <alan@cgsoftware.org>
  *
  */
-
+#include <GroupLayout.h>
 #include <MenuItem.h>
 #include <PopUpMenu.h>
 
@@ -35,8 +35,8 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "NotifyList"
 
-NotifyList::NotifyList(BRect _frame)
-	: BListView(_frame, "NotifyList", B_SINGLE_SELECTION_LIST, B_FOLLOW_ALL),
+NotifyList::NotifyList()
+	: BListView("NotifyList", B_SINGLE_SELECTION_LIST),
 	  fActiveTheme(vision_app->ActiveTheme()),
 	  fLastButton(0),
 	  fClickCount(0),
@@ -44,6 +44,7 @@ NotifyList::NotifyList(BRect _frame)
 	  fLastClickTime(0),
 	  fMyPopUp(NULL)
 {
+	//SetLayout(new BGroupLayout(B_VERTICAL));
 	fActiveTheme->ReadLock();
 	SetFont(&fActiveTheme->FontAt(F_WINLIST));
 	SetViewColor(fActiveTheme->ForegroundAt(C_NOTIFYLIST_BACKGROUND));

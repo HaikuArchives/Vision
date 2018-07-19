@@ -80,7 +80,7 @@ bool ServerAgent::ParseEvents(const char* data)
 		else if (!(client = Client(theNick.String()))) {
 			BString msgident(GetIdent(data)), msgaddress(GetAddress(data));
 
-			client = new MessageAgent(*vision_app->pClientWin()->AgentRect(), theNick.String(),
+			client = new MessageAgent(theNick.String(),
 									  fId.String(), fSMsgr, fMyNick.String(), addy.String()),
 
 			vision_app->pClientWin()->pWindowList()->AddAgent(client, theNick.String(),
@@ -172,8 +172,7 @@ bool ServerAgent::ParseEvents(const char* data)
 			}
 			if (!client) {
 				ChannelAgent* newAgent(new ChannelAgent(channel.String(), fId.String(), fIrcdtype,
-														fMyNick.String(), fSMsgr,
-														*vision_app->pClientWin()->AgentRect()));
+														fMyNick.String(), fSMsgr));
 
 				vision_app->pClientWin()->pWindowList()->AddAgent(newAgent, channel.String(),
 																  WIN_CHANNEL_TYPE, activateChan);

@@ -37,9 +37,9 @@ extern general_ui_info general_info;
 
 ColorSwatch::ColorSwatch(
 
-	BRect frame, const char* name, rgb_color color_, uint32 resize, uint32 flags)
+	const char* name, rgb_color color_, uint32 flags)
 
-	: BView(frame, name, resize, flags), fColor(color_)
+	: BView(name, flags), fColor(color_)
 {
 }
 

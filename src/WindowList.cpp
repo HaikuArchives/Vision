@@ -24,10 +24,13 @@
  *                 Seth Flaxman
  *                 Alan Ellis <alan@cgsoftware.org>
  */
-
+#include <CardLayout.h>
 #include <PopUpMenu.h>
 #include <MenuItem.h>
+#include <LayoutBuilder.h>
 #include <List.h>
+#include <ScrollView.h>
+
 
 #include "Theme.h"
 #include "Vision.h"
@@ -39,15 +42,51 @@
 #include "Utilities.h"
 #include <stdio.h>
 
+
+#include "ChannelAgent.h"
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "WindowList"
+
+// MOVE OUT INTO HIS HOW FILE
+
+AgentCard::AgentCard(BView *agent):
+	BSplitView(B_HORIZONTAL, 0),
+	fAgent(agent)
+{
+	// Mega hack to add the BSplitView to parent/child
+	AddChild(agent, 8);
+	ChannelAgent* channelAgent;
+	if ((channelAgent = dynamic_cast<ChannelAgent*>(agent)) != NULL)
+	{
+		BScrollView* scrollView = new BScrollView("scroll_names", (BView*)channelAgent->pNamesList(), 0, false, true, B_PLAIN_BORDER);
+/*
+		BView* removeBottomBorder = new BView ("removeBottomBorder", 0);
+		BLayoutBuilder::Group<>(removeBottomBorder, B_VERTICAL, 0)
+			.SetInsets(0,0,0,-1)
+			.Add(scrollView); */
+
+		AddChild(scrollView, 2);
+	}
+}
+
+BView *
+AgentCard::GetAgent() const
+{
+	return fAgent;
+}
+
+bool
+AgentCard::IsChannelAgent() const
+{
+	return (dynamic_cast<ChannelAgent*>(fAgent) != NULL);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 /// Begin WindowList functions
 //////////////////////////////////////////////////////////////////////////////
 
-WindowList::WindowList(BRect frame)
-	: BOutlineListView(frame, "windowList", B_SINGLE_SELECTION_LIST, B_FOLLOW_ALL),
+WindowList::WindowList()
+	: BOutlineListView("windowList", B_SINGLE_SELECTION_LIST),
 	  fMyPopUp(NULL),
 	  fLastSelected(NULL),
 	  fActiveTheme(vision_app->ActiveTheme()),
@@ -513,9 +552,12 @@ void WindowList::AddAgent(BView* agent, const char* name, int32 winType, bool ac
 
 	WindowListItem* currentitem((WindowListItem*)ItemAt(CurrentSelection()));
 
-	WindowListItem* newagentitem(new WindowListItem(name, winType, WIN_NORMAL_BIT, agent));
+	AgentCard *agentCard = new AgentCard(agent);
+
+	WindowListItem* newagentitem(new WindowListItem(name, winType, WIN_NORMAL_BIT, agentCard));
+
 	if (dynamic_cast<ServerAgent*>(agent) != NULL)
-		AddItem(newagentitem);
+		AddItem(newagentitem);  // memory leak?
 	else {
 		BLooper* looper(NULL);
 		ServerAgent* agentParent(NULL);
@@ -535,15 +577,15 @@ void WindowList::AddAgent(BView* agent, const char* name, int32 winType, bool ac
 	// so it can quickly update it's status entry
 	ClientAgent* clicast(NULL);
 	ListAgent* listcast(NULL);
-	if ((clicast = dynamic_cast<ClientAgent*>(agent)) != NULL)
+	if ((clicast = dynamic_cast<ClientAgent*>(agentCard->GetAgent())) != NULL)
 		clicast->fAgentWinItem = newagentitem;
-	else if ((listcast = dynamic_cast<ListAgent*>(agent)) != NULL)
+	else if ((listcast = dynamic_cast<ListAgent*>(agentCard->GetAgent())) != NULL)
 		listcast->fAgentWinItem = newagentitem;
 
 	vision_app->pClientWin()->DisableUpdates();
-	agent->Hide(); // get it out of the way
-	vision_app->pClientWin()->bgView->AddChild(agent);
-	agent->Sync(); // clear artifacts
+
+	((BCardLayout*) vision_app->pClientWin()->bgView->GetLayout())->AddView(agentCard);
+
 	vision_app->pClientWin()->EnableUpdates();
 
 	if (activate && itemindex >= 0) // if activate is true, show the new view now.
@@ -566,25 +608,27 @@ void WindowList::Activate(int32 index)
 	BView* activeagent(NULL);
 	for (int32 i(0); i < FullListCountItems(); ++i) {
 		WindowListItem* aitem((WindowListItem*)FullListItemAt(i));
-		if (!aitem->pAgent()->IsHidden()) {
+		if (aitem->pAgentCard()->GetLayout()->IsVisible()) {
 			activeagent = aitem->pAgent();
 			fLastSelected = aitem;
 			break;
 		}
 	}
 
-	if (!(newagent = dynamic_cast<BView*>(newagent))) {
-		// stop crash
-		printf("no newagent!?\n");
-		return;
-	}
+	if (fLastSelected != NULL)
+		SaveSplitSettings(fLastSelected->pAgentCard());
 
+	ApplySplitSettings(newagentitem->pAgentCard());
+
+	((BCardLayout*) vision_app->pClientWin()->bgView->GetLayout())->SetVisibleItem(newagentitem->pAgentCard()->GetLayout());
+
+	//newagentitem->pAgent()->Show();
+
+	// rethink this convoluted mess
 	if ((activeagent != newagent) && (activeagent != NULL)) {
 		newagent->Show();
-
 		if (activeagent) {
-			activeagent->Hide(); // you arent wanted anymore!
-			activeagent->Sync(); // and take your damned pixels with you!
+			activeagent->Hide();
 		}
 	}
 	if (activeagent == 0) newagent->Show();
@@ -602,22 +646,56 @@ void WindowList::Activate(int32 index)
 	Select(index);
 }
 
-void WindowList::RemoveAgent(BView* agent, WindowListItem* agentitem)
+
+void WindowList::RemoveAgent(WindowListItem* agentitem)
 {
 	Window()->DisableUpdates();
-	agent->Hide();
-	agent->Sync();
-	agent->RemoveSelf();
+
+	// Before remove ItemUnder
+	int32 countItemsUnder = CountItemsUnder(agentitem, true);
+	for (int32 i = 0; i < countItemsUnder; i++) {
+		WindowListItem*	subAgentItem = (WindowListItem*)ItemUnderAt(agentitem, true, i);
+		RemoveAgent(subAgentItem);
+	}
+	SaveSplitSettings(agentitem->pAgentCard());
+	agentitem->pAgentCard()->RemoveSelf();
+	agentitem->pAgent()->Hide(); // ListClient removes the menu Channels
+	BView* agent = agentitem->pAgentCard(); // BSplitView that contains agent
 	RemoveItem(agentitem);
 	// not quite sure why this would happen but better safe than sorry
 	if (fLastSelected == agentitem) fLastSelected = NULL;
 	// agent owns the window list item and destroys it on destruct
 	delete agent;
+	if (fLastSelected != NULL)
+		ApplySplitSettings(fLastSelected->pAgentCard());
 	// if there isn't anything left in the list, don't try to do any ptr comparisons
 	if (CountItems() > 0) SelectLast();
 	fLastSelected = NULL;
 	Window()->EnableUpdates();
 }
+
+
+void WindowList::SaveSplitSettings(AgentCard* agentCard)
+{
+	if (agentCard->IsChannelAgent()) { // save split settings
+		vision_app->SetFloat("weight_ChannelView", agentCard->ItemWeight((int32)0));
+		vision_app->SetFloat("weight_NameList", agentCard->ItemWeight((int32)1));
+		vision_app->SetBool("collapsed_ChannelView", agentCard->IsItemCollapsed((bool)0));
+		vision_app->SetBool("collapsed_NameList", agentCard->IsItemCollapsed((bool)1));
+	}
+}
+
+
+void WindowList::ApplySplitSettings(AgentCard* agentCard)
+{
+	if (agentCard->IsChannelAgent()) { // save split settings
+		agentCard->SetItemWeight(0, vision_app->GetFloat("weight_ChannelView"), true);
+		agentCard->SetItemWeight(1, vision_app->GetFloat("weight_NameList"), true);
+		agentCard->SetItemCollapsed(0, vision_app->GetBool("collapsed_ChannelView"));
+		agentCard->SetItemCollapsed(1, vision_app->GetBool("collapsed_NameList"));
+	}
+}
+
 
 int WindowList::SortListItems(const BListItem* name1, const BListItem* name2)
 {
@@ -669,14 +747,14 @@ void WindowList::BuildPopUp()
 /// Begin WindowListItem functions
 //////////////////////////////////////////////////////////////////////////////
 
-WindowListItem::WindowListItem(const char* name, int32 winType, int32 winStatus, BView* agent)
+WindowListItem::WindowListItem(const char* name, int32 winType, int32 winStatus, AgentCard* agent)
 
 	: BListItem(),
 	  fMyName(name),
 	  fMyStatus(winStatus),
 	  fMyType(winType),
 	  fSubStatus(-1),
-	  fMyAgent(agent),
+	  fAgentCard(agent),
 	  fBlinkState(0),
 	  fBlinkStateCount(0),
 	  fBlinker(NULL)
@@ -713,9 +791,14 @@ int32 WindowListItem::Type() const
 	return fMyType;
 }
 
+AgentCard* WindowListItem::pAgentCard() const
+{
+	return fAgentCard;
+}
+
 BView* WindowListItem::pAgent() const
 {
-	return fMyAgent;
+	return fAgentCard->GetAgent();
 }
 
 // TODO: verify that these Lock/Unlocks are not needed -- in theory they shouldn't be

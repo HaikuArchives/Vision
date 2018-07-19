@@ -30,11 +30,12 @@
 #include <String.h>
 #include "ClientAgent.h"
 #include <ObjectList.h>
+#include "Names.h"
 
 class ChannelOptions;
 class BScrollView;
 class ServerWindow;
-class NamesView;
+
 class ResizeView;
 
 const int32 MAX_RECENT_NICKS = 5;
@@ -46,8 +47,8 @@ public:
 				 const char*, // serverName
 				 int,		  // ircdtype
 				 const char*, // nick
-				 BMessenger&, // sMsgr (ServerAgent pointer)
-				 BRect&);	 // frame
+				 BMessenger&); // sMsgr (ServerAgent pointer)
+
 	virtual ~ChannelAgent();
 
 	virtual void AttachedToWindow();

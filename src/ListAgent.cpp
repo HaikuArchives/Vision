@@ -20,7 +20,7 @@
  *                 Rene Gollent
  *                 Todd Lair
  */
-
+#include <GroupLayout.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
 #include <ScrollView.h>
@@ -62,8 +62,8 @@
 
 const int32 LIST_BATCH_SIZE = 75;
 
-ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
-	: BView(frame, title, B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS),
+ListAgent::ListAgent(const char* title, BMessenger* sMsgr_)
+	: BView(title, B_WILL_DRAW | B_FRAME_EVENTS),
 	  activeTheme(vision_app->ActiveTheme()),
 	  fSMsgr(sMsgr_),
 	  listUpdateTrigger(NULL),
@@ -71,8 +71,6 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 	  find(""),
 	  processing(false)
 {
-	frame = Bounds();
-
 	listMenu = new BMenu(B_TRANSLATE("Channels"));
 
 	listMenu->AddItem(
@@ -85,16 +83,16 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 	mFind->SetEnabled(false);
 	mFindAgain->SetEnabled(false);
 	mFilter->SetEnabled(false);
+SetLayout(new BGroupLayout(B_VERTICAL, 0));
+	BView* bgView(new BView("background", B_WILL_DRAW));
 
-	BView* bgView(new BView(frame, "background", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
+	bgView->SetLayout(new BGroupLayout(B_VERTICAL, 0));
 
 	bgView->SetViewColor(activeTheme->ForegroundAt(C_BACKGROUND));
 	AddChild(bgView);
 
-	frame = bgView->Bounds().InsetByCopy(1, 1);
-
-	listView = new BColumnListView(frame, "list", B_FOLLOW_ALL_SIDES,
-								   B_WILL_DRAW | B_NAVIGABLE | B_FULL_UPDATE_ON_RESIZE);
+	listView = new BColumnListView("list",
+		B_WILL_DRAW | B_NAVIGABLE | B_FULL_UPDATE_ON_RESIZE);
 
 	listView->SetInvocationMessage(new BMessage(M_LIST_INVOKE));
 	bgView->AddChild(listView);
@@ -102,19 +100,20 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 	listView->SetTarget(this);
 	channelColumn =
 		new BStringColumn(B_TRANSLATE("Channel"), be_plain_font->StringWidth(B_TRANSLATE("Channel")) * 2, 0,
-						  frame.Width(), 0);
+						  300, 0);
 	listView->AddColumn(channelColumn, 0);
 	usersColumn =
 		new BIntegerColumn(B_TRANSLATE("Users"), be_plain_font->StringWidth(B_TRANSLATE("Users")) * 2,
-						   0, frame.Width(), B_ALIGN_CENTER);
+						   0, 300, B_ALIGN_CENTER);
 	listView->AddColumn(usersColumn, 1);
-	topicColumn = new BStringColumn(B_TRANSLATE("Topic"), frame.Width() / 2, 0, frame.Width(), 0);
+	topicColumn = new BStringColumn(B_TRANSLATE("Topic"), 300 / 2, 0, 300, 0);
 	listView->AddColumn(topicColumn, 2);
 	listView->SetSelectionMode(B_SINGLE_SELECTION_LIST);
 	activeTheme->ReadLock();
+	/*
 	listView->SetColor(B_COLOR_BACKGROUND, activeTheme->ForegroundAt(C_BACKGROUND));
 	listView->SetColor(B_COLOR_TEXT, activeTheme->ForegroundAt(C_TEXT));
-	listView->SetColor(B_COLOR_SELECTION, activeTheme->ForegroundAt(C_SELECTION));
+	listView->SetColor(B_COLOR_SELECTION, activeTheme->ForegroundAt(C_SELECTION)); */
 	listView->SetFont(B_FONT_ROW, &activeTheme->FontAt(F_LISTAGENT));
 	activeTheme->ReadUnlock();
 
@@ -124,14 +123,7 @@ ListAgent::ListAgent(BRect frame, const char* title, BMessenger* sMsgr_)
 
 ListAgent::~ListAgent()
 {
-	BRow* row(NULL);
 	if (listUpdateTrigger) delete listUpdateTrigger;
-
-	while (listView->CountRows() > 0) {
-		row = listView->RowAt(0);
-		listView->RemoveRow(row);
-		delete row;
-	}
 
 	while (hiddenItems.CountItems() > 0) delete hiddenItems.RemoveItemAt(0L);
 
@@ -155,13 +147,6 @@ void ListAgent::Show()
 
 	vision_app->pClientWin()->AddMenu(listMenu);
 	listMenu->SetTargetForItems(this);
-
-	const BRect* agentRect(dynamic_cast<ClientWindow*>(Window())->AgentRect());
-
-	if (*agentRect != Frame()) {
-		ResizeTo(agentRect->Width(), agentRect->Height());
-		MoveTo(agentRect->left, agentRect->top);
-	}
 
 	BView::Show();
 }

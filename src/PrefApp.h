@@ -32,7 +32,7 @@ class BMenuItem;
 class AppWindowPrefsView : public BView
 {
 public:
-	AppWindowPrefsView(BRect);
+	AppWindowPrefsView();
 	virtual ~AppWindowPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

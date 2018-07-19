@@ -33,7 +33,7 @@ class BTextControl;
 class FontPrefsView : public BView
 {
 public:
-	FontPrefsView(BRect);
+	FontPrefsView();
 	virtual ~FontPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

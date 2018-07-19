@@ -41,6 +41,7 @@ class BMenu;
 class BMenuBar;
 class BMenuItem;
 class BScrollView;
+class BSplitView;
 class BView;
 class BMessageRunner;
 class ClientWindowDock;
@@ -83,14 +84,13 @@ public:
 
 	BView* bgView;
 
-	BRect* AgentRect() const;
 	WindowList* pWindowList() const;
 	NotifyList* pNotifyList() const;
 	ClientWindowDock* pCwDock() const;
 	StatusView* pStatusView() const;
 	BString joinStrings; // used to keep track of channel
 						 // keys on u2 ircds
-
+	void SaveSettings();
 private:
 	void Init();
 
@@ -101,13 +101,10 @@ private:
 
 	BMessageRunner* fAltwRunner;
 
-	BRect* fAgentrect;
-
 	StatusView* fStatus;
 
 	ClientWindowDock* fCwDock;
-
-	ResizeView* fResize;
+	BSplitView* fSplitView;
 };
 
 #endif

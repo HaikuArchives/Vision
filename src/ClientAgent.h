@@ -47,13 +47,12 @@ public:
 	// used by ServerAgent
 	ClientAgent(const char*,	   // id_  (window name)
 				const char*,	   // serverName_
-				const char*,	   // myNick_
-				BRect);			   // frame
+				const char*);	   // myNick_
+
 	ClientAgent(const char*,	   // id_  (window name)
 				const char*,	   // serverName_
 				const char*,	   // myNick_
-				const BMessenger&, // sMsgr pointer
-				BRect);			   // frame
+				const BMessenger&);// sMsgr pointer
 
 	virtual ~ClientAgent();
 
@@ -139,7 +138,6 @@ protected:
 
 	bool fTimeStampState, fCanNotify, fScrolling, fIsLogging;
 
-	BRect fFrame;
 	friend class WindowList;
 };
 

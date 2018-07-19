@@ -34,7 +34,7 @@ class Theme;
 class NotifyList : public BListView
 {
 public:
-	NotifyList(BRect);
+	NotifyList();
 	virtual ~NotifyList();
 
 	void UpdateList(BObjectList<NotifyListItem>*);

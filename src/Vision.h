@@ -96,6 +96,9 @@ public:
 	int32 GetInt32(const char*);
 	status_t SetInt32(const char*, int32);
 
+	float GetFloat(const char*);
+	status_t SetFloat(const char*, float);
+
 	BMessage GetNetwork(const char*);
 	BMessage GetNetwork(int32);
 	status_t SetNetwork(const char*, BMessage*);

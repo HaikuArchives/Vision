@@ -27,6 +27,7 @@
 
 #include <ListItem.h>
 #include <OutlineListView.h>
+#include <SplitView.h>
 #include <String.h>
 
 class BMessageRunner;
@@ -39,10 +40,22 @@ class ClientWindow;
 class BScrollView;
 class Theme;
 
+class AgentCard : public BSplitView {
+
+public:	AgentCard(BView *agent);
+
+		BView*	GetAgent() const;
+		bool	IsChannelAgent() const;
+private:
+
+		BView* fAgent;
+
+};
+
 class WindowListItem : public BListItem
 {
 public:
-	WindowListItem(const char*, int32, int32, BView*);
+	WindowListItem(const char*, int32, int32, AgentCard*);
 	virtual ~WindowListItem();
 	BString Name() const;
 	int32 Type() const;
@@ -50,6 +63,7 @@ public:
 	int32 SubStatus() const;
 	int32 BlinkState() const;
 	BView* pAgent() const;
+	AgentCard* pAgentCard() const;
 
 	void SetName(const char*);
 	void SetStatus(int32);
@@ -66,6 +80,7 @@ private:
 	int32 fMyType;
 	int32 fSubStatus; // servers only -- status of collapsed children
 	BView* fMyAgent;
+	AgentCard* fAgentCard;
 	int32 fBlinkState;
 	int32 fBlinkStateCount;
 	BMessageRunner* fBlinker;
@@ -74,7 +89,7 @@ private:
 class WindowList : public BOutlineListView
 {
 public:
-	WindowList(BRect);
+	WindowList();
 	virtual ~WindowList();
 	virtual void AttachedToWindow();
 	virtual void DetachedFromWindow();
@@ -104,9 +119,12 @@ public:
 	//    ClientAgent                     *Agent (int32, const char *);
 
 	void AddAgent(BView*, const char*, int32, bool);
-	void RemoveAgent(BView*, WindowListItem*);
+	void RemoveAgent(WindowListItem*);
 	void Expand(BListItem*);
 	void Collapse(BListItem*);
+
+	void SaveSplitSettings(AgentCard* agentCard);
+	void ApplySplitSettings(AgentCard* agentCard);
 
 private:
 	BPopUpMenu* fMyPopUp;

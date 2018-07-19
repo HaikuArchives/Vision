@@ -46,6 +46,8 @@ public:
 private:
 	static BLocker fLocker; // protects members below
 	static const char** fTags;
+	bool* missingTags;
+	int32 fCountTags;
 };
 
 #endif

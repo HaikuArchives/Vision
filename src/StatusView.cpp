@@ -33,8 +33,7 @@
 #include "Vision.h"
 
 StatusView::StatusView(BRect frame)
-	: BView(BRect(frame.left, frame.bottom - (be_plain_font->Size() + 2), frame.right, frame.bottom), "status",
-			B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM, B_WILL_DRAW)
+	: BView("status", B_WILL_DRAW)
 {
 	BFont font(be_plain_font);
 	font_height fh;
@@ -46,7 +45,8 @@ StatusView::StatusView(BRect frame)
 	}
 
 	SetFont(&font);
-
+	SetExplicitMinSize(BSize(0, (fh.ascent + fh.leading) * 1.5));
+	SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, (fh.ascent + fh.leading) * 1.5));
 	AdoptSystemColors();
 }
 

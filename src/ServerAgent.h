@@ -54,8 +54,7 @@ class ServerAgent : public ClientAgent
 {
 public:
 	ServerAgent(const char*, // id_
-				BMessage&,
-				BRect); // frame
+				BMessage&); // frame
 	virtual ~ServerAgent();
 
 	virtual void MessageReceived(BMessage*);

@@ -63,7 +63,7 @@ const uint32 M_EXCLUDE_REMOVE = 0x1040;
 const uint32 M_STATE_CHANGE = 0x1041;
 const uint32 M_SERVER_STARTUP = 0x1042;
 const uint32 M_SERVER_CONNECTED = 0x1043;
-const uint32 M_RESIZE_VIEW = 0x1044;
+
 const uint32 M_ABOUT_SCROLL = 0x1045;
 
 const uint32 M_PREVIOUS_INPUT = 0x1046;

@@ -26,6 +26,7 @@
 
 class BListView;
 class BBox;
+class BStringItem;
 
 class GeneralPrefsView : public BView
 {
@@ -42,7 +43,7 @@ class GeneralPrefsView : public BView
 	};
 
 public:
-	GeneralPrefsView(BRect, const char*, uint32, uint32);
+	GeneralPrefsView(const char*);
 	virtual ~GeneralPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();
@@ -50,10 +51,12 @@ public:
 	virtual void Show();
 
 private:
-	BListView* fPrefsList;
+	void AddOptionsToListView(BListView* listView, BStringItem* item);
+	BListView* fPrefsListView;
 	BBox* fPrefsBox;
 	BView* fPrefsItems[piEND];
-	int32 fLastindex;
+	BView* fPrefsContainerBox;
+	int32 fPreviousSelection;
 };
 
 #endif // _PREFGENERAL_H

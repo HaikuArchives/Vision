@@ -25,6 +25,7 @@
 #include <stdio.h>
 
 #include <CheckBox.h>
+#include <LayoutBuilder.h>
 #include <Menu.h>
 #include <MenuField.h>
 #include <MenuItem.h>
@@ -33,92 +34,53 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "PrefApp"
 
-AppWindowPrefsView::AppWindowPrefsView(BRect frame)
-	: BView(frame, "App/Window Prefs", B_FOLLOW_NONE, B_WILL_DRAW)
+AppWindowPrefsView::AppWindowPrefsView()
+	: BView("App/Window Prefs", 0)
 {
 	AdoptSystemColors();
+
 	BMessage msg(M_APPWINDOWPREFS_SETTING_CHANGED);
-	float maxWidth(0), maxHeight(0);
-	BRect trackingBoundsRect(0.0, 0.0, 0, 0);
-	BRect checkboxRect(Bounds());
-	checkboxRect.bottom = checkboxRect.top;
+
 	msg.AddString("setting", "versionParanoid");
-	fVersionParanoid = new BCheckBox(checkboxRect, "version Paranoid", B_TRANSLATE("Show OS information in version reply"),
+	fVersionParanoid = new BCheckBox("version Paranoid", B_TRANSLATE("Show OS information in version reply"),
 									 new BMessage(msg));
 	fVersionParanoid->SetValue((!vision_app->GetBool("versionParanoid")) ? B_CONTROL_ON :
 																		   B_CONTROL_OFF);
-	fVersionParanoid->MoveBy(be_plain_font->StringWidth("S"), 0);
-	fVersionParanoid->ResizeToPreferred();
-	trackingBoundsRect = fVersionParanoid->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxHeight += trackingBoundsRect.Height();
-	AddChild(fVersionParanoid);
 
-	checkboxRect.OffsetBy(0.0, fVersionParanoid->Bounds().Height() * 1.2);
 	msg.ReplaceString("setting", "catchAltW");
-	fCatchAltW = new BCheckBox(checkboxRect, "catch AltW", B_TRANSLATE("Require double CMD+Q/W to close"), new BMessage(msg));
+	fCatchAltW = new BCheckBox("catch AltW", B_TRANSLATE("Require double CMD+Q/W to close"), new BMessage(msg));
 	fCatchAltW->SetValue((vision_app->GetBool("catchAltW")) ? B_CONTROL_ON : B_CONTROL_OFF);
-	fCatchAltW->MoveBy(be_plain_font->StringWidth("S"), 0);
-	fCatchAltW->ResizeToPreferred();
-	trackingBoundsRect = fCatchAltW->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxHeight += trackingBoundsRect.Height() * 1.2;
-	AddChild(fCatchAltW);
 
-	checkboxRect.OffsetBy(0.0, fCatchAltW->Bounds().Height() * 1.2);
 	msg.ReplaceString("setting", "stripcolors");
-	fStripColors =
-		new BCheckBox(checkboxRect, "stripcolors", B_TRANSLATE("Strip mIRC colors"), new BMessage(msg));
+	fStripColors = new BCheckBox("stripcolors", B_TRANSLATE("Strip mIRC colors"), new BMessage(msg));
 	fStripColors->SetValue((vision_app->GetBool("stripcolors")) ? B_CONTROL_ON : B_CONTROL_OFF);
-	fStripColors->MoveBy(be_plain_font->StringWidth("S"), 0);
-	fStripColors->ResizeToPreferred();
-	trackingBoundsRect = fStripColors->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxHeight += trackingBoundsRect.Height() * 1.5;
-	AddChild(fStripColors);
 
-	checkboxRect.OffsetBy(0.0, fStripColors->Bounds().Height() * 1.2);
 	msg.ReplaceString("setting", "Newbie spam mode");
-	fSpamMode =
-		new BCheckBox(checkboxRect, "newbiespammode", B_TRANSLATE("Warn when multiline pasting"), new BMessage(msg));
+	fSpamMode =	new BCheckBox("newbiespammode", B_TRANSLATE("Warn when multiline pasting"), new BMessage(msg));
 	fSpamMode->SetValue((vision_app->GetBool("Newbie Spam Mode")) ? B_CONTROL_ON : B_CONTROL_OFF);
-	fSpamMode->MoveBy(be_plain_font->StringWidth("S"), 0);
-	fSpamMode->ResizeToPreferred();
-	trackingBoundsRect = fSpamMode->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxHeight += trackingBoundsRect.Height() * 1.5;
-	AddChild(fSpamMode);
 
-	checkboxRect.OffsetBy(0.0, fSpamMode->Bounds().Height() * 1.2);
 	msg.ReplaceString("setting", "queryOnMsg");
-	fQueryMsg = new BCheckBox(checkboxRect, "queryOnMsg", B_TRANSLATE("Open new query on private message"), new BMessage(msg));
+	fQueryMsg = new BCheckBox("queryOnMsg", B_TRANSLATE("Open new query on private message"), new BMessage(msg));
 	fQueryMsg->SetValue((vision_app->GetBool("queryOnMsg")) ? B_CONTROL_ON : B_CONTROL_OFF);
-	fQueryMsg->MoveBy(be_plain_font->StringWidth("S"), 0);
-	fQueryMsg->ResizeToPreferred();
-	trackingBoundsRect = fSpamMode->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxHeight += trackingBoundsRect.Height() * 1.5;
-	AddChild(fQueryMsg);
 
-	checkboxRect.OffsetBy(0.0, fQueryMsg->Bounds().Height() * 1.2);
 	BMenu* encMenu(CreateEncodingMenu());
-
-	checkboxRect.left = 0.0;
-	checkboxRect.right = Bounds().Width();
-	checkboxRect.bottom += fQueryMsg->Bounds().Height() * 1.2;
 
 	BString text(B_TRANSLATE("Encoding:"));
 	text.Append(" ");
-	fEncodings = new BMenuField(checkboxRect, "encoding", text.String(), encMenu);
+	fEncodings = new BMenuField("encoding", text.String(), encMenu);
 
-	AddChild(fEncodings);
 	fEncodings->Menu()->SetLabelFromMarked(true);
 
-	trackingBoundsRect = fEncodings->Bounds();
-	maxWidth = (maxWidth < trackingBoundsRect.Width()) ? trackingBoundsRect.Width() : maxWidth;
-	maxHeight += trackingBoundsRect.Height() * 1.5;
-
-	ResizeTo(maxWidth, maxHeight);
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_SPACING)
+			.Add(fVersionParanoid)
+			.Add(fCatchAltW)
+			.Add(fStripColors)
+			.Add(fSpamMode)
+			.Add(fQueryMsg)
+			.Add(fEncodings)
+			.AddGlue()
+		.End();
 }
 
 AppWindowPrefsView::~AppWindowPrefsView()
@@ -138,9 +100,6 @@ void AppWindowPrefsView::AllAttached()
 	fSpamMode->SetTarget(this);
 	fQueryMsg->SetTarget(this);
 	fEncodings->Menu()->SetTargetForItems(this);
-	fEncodings->ResizeTo(Bounds().Width() - 15, fEncodings->Bounds().Height());
-	fEncodings->SetDivider(StringWidth(B_TRANSLATE("Encoding:")) + 5);
-	fEncodings->MoveTo(fQueryMsg->Frame().left + 5, fQueryMsg->Frame().bottom + 5);
 	SetEncodingItem(vision_app->GetInt32("encoding"));
 	BView::AllAttached();
 }

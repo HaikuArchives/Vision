@@ -27,11 +27,12 @@
 #include "Vision.h"
 #include <Box.h>
 #include <Button.h>
+#include <LayoutBuilder.h>
 #include <MenuField.h>
-#include <StringView.h>
 #include <Menu.h>
 #include <MenuItem.h>
 #include <Point.h>
+#include <StringView.h>
 
 #include <stdio.h>
 
@@ -67,8 +68,8 @@ static const char* ColorLabels[] = {
 	B_TRANSLATE("Notify online"),	B_TRANSLATE("Notify offline"), B_TRANSLATE("Notify list background"),
 	B_TRANSLATE("Notify list selection")};
 
-ColorPrefsView::ColorPrefsView(BRect frame)
-	: BView(frame, "Color Prefs", B_FOLLOW_ALL_SIDES, B_WILL_DRAW)
+ColorPrefsView::ColorPrefsView()
+	: BView("Color Prefs", 0)
 {
 	int32 i(0);
 	AdoptSystemColors();
@@ -81,16 +82,17 @@ ColorPrefsView::ColorPrefsView(BRect frame)
 		labels.AddString("color", ColorLabels[i]);
 	}
 
-	fSelector = new ColorSelector(frame, "fSelector", NULL, mycolors, labels, new BMessage('vtst'));
+	fSelector = new ColorSelector(BRect(0,0,0,0),"fSelector", NULL, mycolors, labels, new BMessage('vtst'));
 	fSelector->AdoptSystemColors();
-	fSelector->ResizeToPreferred();
-	fRevert = new BButton(BRect(0, 0, 0, 0), "fRevert", B_TRANSLATE("Revert"),
-						  new BMessage(M_REVERT_COLOR_SELECTIONS));
-	fRevert->ResizeToPreferred();
-	ResizeTo(fSelector->Bounds().Width() + 30,
-			 fSelector->Bounds().Height() + 30 + fRevert->Bounds().Height());
-	AddChild(fSelector);
-	AddChild(fRevert);
+
+	fRevert = new BButton("fRevert", B_TRANSLATE("Revert"), new BMessage(M_REVERT_COLOR_SELECTIONS));
+
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_SPACING)
+			.Add(fSelector)
+			.Add(fRevert)
+			.AddGlue()
+		.End();
 }
 
 ColorPrefsView::~ColorPrefsView()

@@ -34,7 +34,7 @@
 class MessageAgent : public ClientAgent
 {
 public:
-	MessageAgent(BRect&, const char*, const char*, const BMessenger&, const char*, const char*,
+	MessageAgent(const char*, const char*, const BMessenger&, const char*, const char*,
 				 bool = false, bool = false, const char* = "", const char* = "");
 
 	virtual ~MessageAgent();

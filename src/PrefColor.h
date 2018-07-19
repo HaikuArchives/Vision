@@ -32,7 +32,7 @@ class BButton;
 class ColorPrefsView : public BView
 {
 public:
-	ColorPrefsView(BRect);
+	ColorPrefsView();
 	virtual ~ColorPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

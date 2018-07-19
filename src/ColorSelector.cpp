@@ -11,6 +11,7 @@
 #include "Vision.h"
 
 #include <ColorControl.h>
+#include <LayoutBuilder.h>
 #include <MenuField.h>
 #include <MenuItem.h>
 #include <MenuBar.h>
@@ -207,33 +208,51 @@ enum { FRAME = 5, SPACE = 5 };
 ColorSelector::ColorSelector(BRect frame, const char* name, const char* label,
 							 const BMessage& colors, const BMessage& names, BMessage* model,
 							 uint32 resizeMask, uint32 flags)
-	: BControl(frame, name, label, model, resizeMask, flags),
+	: BControl(name, label, model, flags),
 	  fNames(names),
 	  fInitColors(colors),
 	  fColors(colors),
 	  fSizeValid(false)
 {
-	const BRect dummyRect(-100, -100, -10, -10);
-
 	fColorMenu = new BPopUpMenu(B_TRANSLATE("Colors"));
 	populate_colors(fColorMenu, fColors, fNames, &fInitColors);
-	BString text(B_TRANSLATE("Color:"));
-	text.Append(" ");
+
 	fColorField =
-		new BMenuField(dummyRect, "Color", text.String(), fColorMenu,
-			B_FOLLOW_LEFT | B_FOLLOW_TOP,
+		new BMenuField("Color", B_TRANSLATE("Color:"), fColorMenu,
 			B_WILL_DRAW | B_FRAME_EVENTS | B_NAVIGABLE);
-	AddChild(fColorField);
+
 	fColorField->SetFont(be_bold_font);
 
-	fColorPalette = new BColorControl(dummyRect.LeftTop(), B_CELLS_32x8, 8, "Palette",
+	fColorPalette = new BColorControl(BPoint(0,0), B_CELLS_32x8, 8, "Palette",
 									  new BMessage(CMD_SET_UI_COLOR), true);
 	rgb_color* color(NULL);
 	ssize_t size(0);
 	fColors.FindData("color", B_RGB_COLOR_TYPE, 0, (const void**)(&color), &size);
-	swatch = new ColorSwatch(dummyRect, "swatch", *color);
-	AddChild(swatch);
-	AddChild(fColorPalette);
+	swatch = new ColorSwatch("swatch", *color);
+
+// Original
+/*
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_SPACING)
+			.Add(fColorField)
+			.AddGroup(B_HORIZONTAL)
+				.Add(fColorPalette)
+				.AddGroup(B_VERTICAL)
+					.Add(swatch)
+					.AddGlue()
+				.End()
+			.End()
+		.End();
+*/
+
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_SPACING)
+			.Add(fColorField)
+			.Add(swatch)
+			.Add(fColorPalette)
+			.AddGlue()
+		.End();
+
 }
 
 ColorSelector::~ColorSelector()
@@ -277,7 +296,7 @@ void ColorSelector::AllAttached()
 
 void ColorSelector::LayoutViews(bool really)
 {
-	float mw, mh, cw, ch;
+/*	float mw, mh, cw, ch;
 	fColorField->SetDivider(fColorField->StringWidth(fColorField->Label()) + 5);
 	fColorField->GetPreferredSize(&mw, &mh);
 	fColorPalette->GetPreferredSize(&cw, &ch);
@@ -296,7 +315,7 @@ void ColorSelector::LayoutViews(bool really)
 
 	fPrefWidth = (mw > cw ? mw : cw) + 5 + swatch->Bounds().Width();
 	fPrefHeight = mh + SPACE + ch;
-	fSizeValid = true;
+	fSizeValid = true; */
 }
 
 void ColorSelector::MessageReceived(BMessage* msg)
@@ -360,16 +379,18 @@ void ColorSelector::MessageReceived(BMessage* msg)
 	}
 }
 
-void ColorSelector::FrameResized(float, float)
+void ColorSelector::FrameResized(float w, float h)
 {
-	LayoutViews(true);
+	//LayoutViews(true);
+	BView::FrameResized(w, h);
 }
 
 void ColorSelector::GetPreferredSize(float* width, float* height)
 {
-	if (!fSizeValid) LayoutViews(false);
-	*width = fPrefWidth;
-	*height = fPrefHeight;
+	BView::GetPreferredSize(width, height);
+//	if (!fSizeValid) LayoutViews(false);
+//	*width = fPrefWidth;
+//	*height = fPrefHeight;
 }
 
 /*------------------------------------------------------------*/
