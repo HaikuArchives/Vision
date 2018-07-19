@@ -168,9 +168,9 @@ void ClientAgent::Init()
 		.SetInsets(0, 0, 0, 0)
 		.AddGroup(B_VERTICAL, 0)
 			.Add(fTextScroll)
-			.AddStrut(B_USE_HALF_ITEM_SPACING)
+			.AddStrut(5)
 			.Add(fInput)
-			.AddStrut(B_USE_HALF_ITEM_SPACING)
+			.AddStrut(5)
 		.End()
 	.End();
 }
