@@ -59,13 +59,13 @@ AgentCard::AgentCard(BView *agent):
 	if ((channelAgent = dynamic_cast<ChannelAgent*>(agent)) != NULL)
 	{
 		BScrollView* scrollView = new BScrollView("scroll_names", (BView*)channelAgent->pNamesList(), 0, false, true, B_PLAIN_BORDER);
-
+/*
 		BView* removeBottomBorder = new BView ("removeBottomBorder", 0);
 		BLayoutBuilder::Group<>(removeBottomBorder, B_VERTICAL, 0)
 			.SetInsets(0,0,0,-1)
-			.Add(scrollView);
+			.Add(scrollView); */
 
-		AddChild(removeBottomBorder, 2);
+		AddChild(scrollView, 2);
 	}
 }
 

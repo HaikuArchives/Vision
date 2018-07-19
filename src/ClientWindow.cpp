@@ -562,12 +562,17 @@ void ClientWindow::Init()
 	fCwDock = new ClientWindowDock();
 
 	BView* backgroundView = new BView("Background", 0);
+	BView* mainView = new BView("MainView", 0);
+	BLayoutBuilder::Group<>(mainView,B_VERTICAL,0)
+			.SetInsets(0, -1, -1, -1)
+			.Add(bgView);
+
 	BLayoutBuilder::Group<>(backgroundView, B_HORIZONTAL,0)
 		.SetInsets(0, 0, 0, 0)
 		.AddSplit(B_HORIZONTAL, 0)
 		.GetSplitView(&fSplitView)
 			.Add(fCwDock, 1)
-			.Add(bgView, 9);
+			.Add(mainView, 9);
 
 	BLayoutBuilder::Group<>(this,B_VERTICAL,0)
 		.Add(fMenuBar)
