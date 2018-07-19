@@ -608,23 +608,7 @@ void WindowList::Activate(int32 index)
 			break;
 		}
 	}
-/*
-	if (!(newagent = dynamic_cast<BView*>(newagent))) {
-		// stop crash
-		printf("no newagent!?\n");
-		return;
-	}
 
-	if ((activeagent != newagent) && (activeagent != NULL)) {
-		newagent->Show();
-
-		if (activeagent) {
-			activeagent->Hide(); // you arent wanted anymore!
-			activeagent->Sync(); // and take your damned pixels with you!
-		}
-	}
-	if (activeagent == 0) newagent->Show(); */
-	printf("fLastSelected %p\n",fLastSelected);
 	if (fLastSelected != NULL)
 		SaveSplitSettings(fLastSelected->pAgentCard());
 
@@ -632,7 +616,16 @@ void WindowList::Activate(int32 index)
 
 	((BCardLayout*) vision_app->pClientWin()->bgView->GetLayout())->SetVisibleItem(newagentitem->pAgentCard()->GetLayout());
 
-	newagentitem->pAgent()->Show();
+	//newagentitem->pAgent()->Show();
+
+	// rethink this convoluted mess
+	if ((activeagent != newagent) && (activeagent != NULL)) {
+		newagent->Show();
+		if (activeagent) {
+			activeagent->Hide();
+		}
+	}
+	if (activeagent == 0) newagent->Show();
 
 	// activate the input box (if it has one)
 	if ((newagent = dynamic_cast<ClientAgent*>(newagent)))
@@ -660,6 +653,7 @@ void WindowList::RemoveAgent(WindowListItem* agentitem)
 	}
 	SaveSplitSettings(agentitem->pAgentCard());
 	agentitem->pAgentCard()->RemoveSelf();
+	agentitem->pAgent()->Hide(); // ListClient removes the menu Channels
 	BView* agent = agentitem->pAgentCard(); // BSplitView that contains agent
 	RemoveItem(agentitem);
 	// not quite sure why this would happen but better safe than sorry
