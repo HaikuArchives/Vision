@@ -43,7 +43,6 @@
 #include "ClientAgentInputFilter.h"
 #include "ClientAgentLogger.h"
 #include "HistoryList.h"
-#include "ResizeView.h"
 #include "RunView.h"
 #include "StatusView.h"
 #include "Utilities.h"

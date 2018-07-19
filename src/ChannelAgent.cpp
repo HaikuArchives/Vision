@@ -45,7 +45,6 @@
 #include "ClientWindow.h"
 #include "Utilities.h"
 #include "ChannelOptions.h"
-#include "ResizeView.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ChannelAgent"

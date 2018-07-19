@@ -43,7 +43,6 @@
 #include "Names.h"
 #include "NetworkMenu.h"
 #include "NotifyList.h"
-#include "ResizeView.h"
 #include "ServerAgent.h"
 #include "SettingsFile.h"
 #include "StatusView.h"
