@@ -79,6 +79,7 @@ AppWindowPrefsView::AppWindowPrefsView()
 			.Add(fSpamMode)
 			.Add(fQueryMsg)
 			.Add(fEncodings)
+			.AddGlue()
 		.End();
 }
 

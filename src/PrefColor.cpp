@@ -91,6 +91,7 @@ ColorPrefsView::ColorPrefsView()
 		.SetInsets(B_USE_WINDOW_SPACING)
 			.Add(fSelector)
 			.Add(fRevert)
+			.AddGlue()
 		.End();
 }
 

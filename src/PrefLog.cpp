@@ -86,6 +86,7 @@ LogPrefsView::LogPrefsView()
 			.Add(fTimeStamp)
 			.Add(fLogEnabled)
 			.Add(fLogFileTimestamp)
+			.AddGlue()
 		.End();
 }
 

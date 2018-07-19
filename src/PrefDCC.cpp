@@ -85,6 +85,7 @@ DCCPrefsView::DCCPrefsView()
 			.Add(fAutoAccept)
 			.Add(fBlockSize)
 			.Add(fBox)
+			.AddGlue()
 		.End();
 }
 
