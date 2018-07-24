@@ -31,14 +31,48 @@
 #include "ClientAgent.h"
 #include <ObjectList.h>
 #include "Names.h"
-
+#include "Vision.h"
+#include <stdio.h>
 class ChannelOptions;
 class BScrollView;
 class ServerWindow;
 
-class ResizeView;
 
 const int32 MAX_RECENT_NICKS = 5;
+
+class SplitView : public BSplitView
+{
+public:
+	SplitView(orientation o, int a)
+					:
+					BSplitView(o, a) {};
+	virtual			~SplitView() {
+						ChildAt(0)->RemoveSelf();
+					};
+	virtual void	Show() {
+							LoadSplitSettings();
+							BSplitView::Show();
+							ChildAt(0)->Show();
+							};
+	virtual void	Hide() {
+							SaveSplitSettings();
+							BSplitView::Hide();
+							ChildAt(0)->Hide();
+							};
+	void SaveSplitSettings() {
+		vision_app->SetFloat("weight_ChannelView", ItemWeight((int32)0));
+		vision_app->SetFloat("weight_NameList", ItemWeight((int32)1));
+		vision_app->SetBool("collapsed_ChannelView", IsItemCollapsed((bool)0));
+		vision_app->SetBool("collapsed_NameList", IsItemCollapsed((bool)1));
+	}
+	void LoadSplitSettings() {
+		SetItemWeight(0, vision_app->GetFloat("weight_ChannelView"), true);
+		SetItemWeight(1, vision_app->GetFloat("weight_NameList"), true);
+		SetItemCollapsed(0, vision_app->GetBool("collapsed_ChannelView"));
+		SetItemCollapsed(1, vision_app->GetBool("collapsed_NameList"));
+	}
+
+};
 
 class ChannelAgent : public ClientAgent
 {
@@ -58,6 +92,8 @@ public:
 	virtual void ChannelMessage(const char*, const char* = 0, const char* = 0, const char* = 0);
 	virtual void AddMenuItems(BPopUpMenu*);
 	virtual void Show();
+	virtual void Hide();
+	virtual BView* View();
 
 	void AddUser(const char*, const int32);
 	bool RemoveUser(const char*);
@@ -85,7 +121,8 @@ private:
 	NamesView* fNamesList;
 	BScrollView* fNamesScroll;
 	ChannelOptions* fChanOpt;
-	ResizeView* fResize;
+
+	SplitView* fSplitView;
 };
 
 #endif

@@ -100,13 +100,13 @@ SetLayout(new BGroupLayout(B_VERTICAL, 0));
 	listView->SetTarget(this);
 	channelColumn =
 		new BStringColumn(B_TRANSLATE("Channel"), be_plain_font->StringWidth(B_TRANSLATE("Channel")) * 2, 0,
-						  300, 0);
+						  600, 0);
 	listView->AddColumn(channelColumn, 0);
 	usersColumn =
 		new BIntegerColumn(B_TRANSLATE("Users"), be_plain_font->StringWidth(B_TRANSLATE("Users")) * 2,
-						   0, 300, B_ALIGN_CENTER);
+						   0, 200, B_ALIGN_CENTER);
 	listView->AddColumn(usersColumn, 1);
-	topicColumn = new BStringColumn(B_TRANSLATE("Topic"), 300 / 2, 0, 300, 0);
+	topicColumn = new BStringColumn(B_TRANSLATE("Topic"), 200, 0, 600, 0);
 	listView->AddColumn(topicColumn, 2);
 	listView->SetSelectionMode(B_SINGLE_SELECTION_LIST);
 	activeTheme->ReadLock();
@@ -128,7 +128,6 @@ ListAgent::~ListAgent()
 	while (hiddenItems.CountItems() > 0) delete hiddenItems.RemoveItemAt(0L);
 
 	delete fSMsgr;
-	delete fAgentWinItem;
 
 	regfree(&re);
 	regfree(&fre);
@@ -155,6 +154,11 @@ void ListAgent::Hide()
 {
 	vision_app->pClientWin()->RemoveMenu(listMenu);
 	BView::Hide();
+}
+
+BView* ListAgent::View()
+{
+	return this;
 }
 
 void ListAgent::AddBatch()

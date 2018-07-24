@@ -29,6 +29,8 @@
 #include <View.h>
 #include <Messenger.h>
 
+#include "Agent.h"
+
 class BScrollView;
 class BTextControl;
 
@@ -41,7 +43,7 @@ class HistoryList;
 class AgentSettings;
 class WindowListItem;
 
-class ClientAgent : public BView
+class ClientAgent : public BView, public Agent
 {
 public:
 	// used by ServerAgent
@@ -55,12 +57,15 @@ public:
 				const BMessenger&);// sMsgr pointer
 
 	virtual ~ClientAgent();
-
+	// View methods
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();
 	virtual void AllAttached();
 	virtual void DetachedFromWindow();
 	virtual void Show();
+	// Agent methods
+	virtual BView* View();
+	virtual void ActivateInputBox();
 
 	virtual void AddMenuItems(BPopUpMenu*) = 0;
 
@@ -90,8 +95,6 @@ public:
 
 	void CTCPAction(BString theTarget, BString theMsg);
 	bool CancelMultilineTextPaste() const { return fCancelMLPaste; }
-
-	WindowListItem* fAgentWinItem;
 
 private:
 	void Init();
