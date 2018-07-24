@@ -65,7 +65,6 @@ public:
 	virtual void Show();
 	// Agent methods
 	virtual BView* View();
-	virtual void ActivateInputBox();
 
 	virtual void AddMenuItems(BPopUpMenu*) = 0;
 

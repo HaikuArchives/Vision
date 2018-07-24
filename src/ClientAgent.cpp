@@ -139,7 +139,7 @@ void ClientAgent::Show()
 	Window()->PostMessage(&statusMsg);
 
 	// activate the input box
-	ActivateInputBox();
+	fMsgr.SendMessage(M_INPUT_FOCUS);
 
 	// make RunView recalculate itself
 	fText->Show();
@@ -149,11 +149,6 @@ void ClientAgent::Show()
 BView* ClientAgent::View()
 {
 	return this;
-}
-
-void ClientAgent::ActivateInputBox()
-{
-	fMsgr.SendMessage(M_INPUT_FOCUS);
 }
 
 void ClientAgent::Init()

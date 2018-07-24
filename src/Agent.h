@@ -9,7 +9,7 @@ public:
 	Agent();
 	virtual ~Agent();
 	virtual BView *View();
-	virtual void ActivateInputBox();
+
 	WindowListItem* fAgentWinItem;
 
 private:

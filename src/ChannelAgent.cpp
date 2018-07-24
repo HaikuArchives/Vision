@@ -108,22 +108,11 @@ BView* ChannelAgent::View()
 	return fSplitView;
 }
 
-
 void ChannelAgent::Init()
 {
 	BString text(B_TRANSLATE("*** Now talking in %channel%\n"));
 	text.ReplaceFirst("%channel%", fId.String());
 	Display(text.String(), C_JOIN);
-}
-
-void ChannelAgent::Show()
-{
-	ClientAgent::Show();
-}
-
-void ChannelAgent::Hide()
-{
-	ClientAgent::Hide();
 }
 
 int ChannelAgent::FindPosition(const char* data) const

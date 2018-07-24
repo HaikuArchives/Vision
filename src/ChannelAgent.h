@@ -91,8 +91,6 @@ public:
 	virtual void TabExpansion();
 	virtual void ChannelMessage(const char*, const char* = 0, const char* = 0, const char* = 0);
 	virtual void AddMenuItems(BPopUpMenu*);
-	virtual void Show();
-	virtual void Hide();
 	virtual BView* View();
 
 	void AddUser(const char*, const int32);
