@@ -63,6 +63,7 @@ private:
 	BScrollView* fExecScroller, *fNickScroller;
 
 	BBox* fMainNetBox, *fNetDetailsBox, *fPersonalBox;
+	BView* fMainNetContainerBox, *fNetDetailsContainerBox, *fPersonalContainerBox;
 
 	BButton* fServerButton, *fNickAddButton, *fNickRemoveButton;
 

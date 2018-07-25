@@ -19,9 +19,10 @@
  * Contributor(s): Rene Gollent
  */
 
-#include <View.h>
-#include <Messenger.h>
 #include <Font.h>
+#include <LayoutBuilder.h>
+#include <Messenger.h>
+#include <View.h>
 
 #include "ClientWindow.h"
 #include "NetworkPrefsView.h"
@@ -41,6 +42,11 @@ NetworkWindow::NetworkWindow()
 	NetworkPrefsView* netView = new NetworkPrefsView(Bounds(), "network");
 	ResizeTo(netView->Bounds().Width(), netView->Bounds().Height());
 	AddChild(netView);
+
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+		.SetInsets(B_USE_WINDOW_INSETS)
+			.Add(netView)
+		.End();
 
 	BRect netFrame = vision_app->GetRect("NetPrefWinRect");
 

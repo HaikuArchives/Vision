@@ -24,6 +24,7 @@
 #include <Box.h>
 #include <Button.h>
 #include <CheckBox.h>
+#include <LayoutBuilder.h>
 #include <ListItem.h>
 #include <ListView.h>
 #include <MenuField.h>
@@ -36,6 +37,7 @@
 #include <TextControl.h>
 #include <TextView.h>
 #include <TranslationUtils.h>
+
 
 #include <stdio.h>
 
@@ -81,6 +83,7 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	  fServerPrefs(NULL)
 {
 	AdoptSystemColors();
+	SetLayout(new BGroupLayout(B_VERTICAL, 0));
 
 	BMenu* menu(new BMenu(B_TRANSLATE("Networks")));
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Defaults"), new BMessage(M_NETWORK_DEFAULTS)));
@@ -91,152 +94,128 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 					  new BMenuItem(B_TRANSLATE("Remove current"), new BMessage(M_REMOVE_CURRENT_NETWORK)));
 	menu->AddItem(fDupeItem = new BMenuItem(B_TRANSLATE("Duplicate current" B_UTF8_ELLIPSIS),
 											new BMessage(M_DUPE_CURRENT_NETWORK)));
-	fNetworkMenu = new BMenuField(BRect(0, 0, 100, 30), "NetList", NULL, menu);
-	fMainNetBox = new BBox(Bounds().InsetByCopy(kItemSpacing/2, kItemSpacing/2), "", B_FOLLOW_ALL);
+	fNetworkMenu = new BMenuField("NetList", NULL, menu);
+
+	fMainNetBox = new BBox("MainNetBox");
+	fMainNetContainerBox = new BView("MainNetContainerBox", 0);
+	fMainNetContainerBox->SetLayout(new BGroupLayout(B_VERTICAL, 0));
+	fMainNetBox->AddChild(fMainNetContainerBox);
 	fMainNetBox->SetLabel(fNetworkMenu);
+
 	AddChild(fMainNetBox);
 
-	BRect boundsRect(fMainNetBox->InnerFrame());
-	boundsRect.right /= 2;
-	boundsRect.right -= kItemSpacing/2;
-	boundsRect.top += kItemSpacing;
-
-	fNetDetailsBox = new BBox(boundsRect);
+	fNetDetailsBox = new BBox("NetDetailsBox");
+	fNetDetailsContainerBox = new BView("NetDetailsContainerBox", 0);
+	fNetDetailsContainerBox->SetLayout(new BGroupLayout(B_VERTICAL, 0));
+	fNetDetailsBox->AddChild(fNetDetailsContainerBox);
 	fNetDetailsBox->SetLabel(B_TRANSLATE("Network details"));
-	fMainNetBox->AddChild(fNetDetailsBox);
-	fPersonalBox = new BBox(boundsRect);
+
+	fPersonalBox = new BBox("PersonalBox");
+	fPersonalContainerBox = new BView("PersonalContainerBox", 0);
+	fPersonalContainerBox->SetLayout(new BGroupLayout(B_VERTICAL, 0));
+	fPersonalBox->AddChild(fPersonalContainerBox);
 	fPersonalBox->SetLabel(B_TRANSLATE("Personal details"));
-	fMainNetBox->AddChild(fPersonalBox);
-	fPersonalBox->MoveBy(boundsRect.Width() + kItemSpacing, 0);
 
-	boundsRect.left += kItemSpacing;
-	boundsRect.right = boundsRect.left + kItemSpacing;
-	boundsRect.top = kItemSpacing;
-	boundsRect.bottom += kItemSpacing * 2;
-
-	BStringView* stringView1(new BStringView(boundsRect, NULL,
+	BStringView* stringView1(new BStringView(NULL,
 		B_TRANSLATE("Connects to server:")));
-	stringView1->ResizeToPreferred();
-	stringView1->MoveTo(fNetDetailsBox->InnerFrame().left + kItemSpacing,
-		fNetDetailsBox->InnerFrame().top + kItemSpacing);
-	fNetDetailsBox->AddChild(stringView1);
 
-	fConnectServer = new BStringView(boundsRect, NULL, "irc.sorcery.net,");
-	fConnectServer->ResizeToPreferred();
-	fConnectServer->MoveTo(stringView1->Frame().left, stringView1->Frame().bottom);
+	fConnectServer = new BStringView(NULL, "irc.sorcery.net,");
 
-	fAlternates = new BStringView(boundsRect, NULL, B_TRANSLATE("falling back to 9 others."));
-	fAlternates->ResizeToPreferred();
-	fAlternates->MoveTo(fConnectServer->Frame().left, fConnectServer->Frame().bottom);
+	fAlternates = new BStringView(NULL, B_TRANSLATE("falling back to 9 others."));
 
-	fNetDetailsBox->AddChild(fConnectServer);
-	fNetDetailsBox->AddChild(fAlternates);
 
-	fServerButton = new BButton(boundsRect, NULL, B_TRANSLATE("Change servers" B_UTF8_ELLIPSIS),
+
+	fServerButton = new BButton(NULL, B_TRANSLATE("Change servers" B_UTF8_ELLIPSIS),
 								new BMessage(M_SERVER_DIALOG));
-	fServerButton->ResizeToPreferred();
-	fServerButton->MoveTo(kItemSpacing, fAlternates->Frame().bottom + 5);
-	fNetDetailsBox->AddChild(fServerButton);
 
-	BStringView* stringView4(new BStringView(boundsRect, NULL, B_TRANSLATE("Automatically execute:")));
-	stringView4->ResizeToPreferred();
-	stringView4->MoveTo(fAlternates->Frame().left, fServerButton->Frame().bottom + 5);
-	fNetDetailsBox->AddChild(stringView4);
+	BStringView* stringView4(new BStringView(NULL, B_TRANSLATE("Automatically execute:")));
 
-	boundsRect = fNetDetailsBox->Frame();
-	boundsRect.left += kItemSpacing;
-	boundsRect.right -= (20 + B_V_SCROLL_BAR_WIDTH);
-	boundsRect.top = stringView4->Frame().bottom + 5;
-	boundsRect.bottom -= 65;
 
-	fTextView = new InvokingTextView(boundsRect, NULL, new BMessage(M_NETPREFS_TEXT_INVOKE), this,
+	fTextView = new InvokingTextView(BRect(0,0,100,100), NULL, new BMessage(M_NETPREFS_TEXT_INVOKE), this,
 									 B_FOLLOW_ALL, B_WILL_DRAW);
 	fExecScroller =
-		new BScrollView(NULL, fTextView, B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP, 0, false, true);
+		new BScrollView(NULL, fTextView, 0, false, true);
 	fTextView->MakeEditable(true);
 	fTextView->SetStylable(false);
-	fNetDetailsBox->AddChild(fExecScroller);
 
-	fLagCheckBox = new BCheckBox(boundsRect, NULL, B_TRANSLATE("Enable lag checking"),
+	fLagCheckBox = new BCheckBox(NULL, B_TRANSLATE("Enable lag checking"),
 		new BMessage(M_NET_CHECK_LAG), B_FOLLOW_BOTTOM);
-	fLagCheckBox->ResizeToPreferred();
-	fLagCheckBox->MoveTo(kItemSpacing, fNetDetailsBox->InnerFrame().bottom
-		- fLagCheckBox->Bounds().Height());
-	fNetDetailsBox->AddChild(fLagCheckBox);
 
-	fStartupBox = new BCheckBox(boundsRect, NULL, B_TRANSLATE("Auto-connect to this network"),
+	fStartupBox = new BCheckBox(NULL, B_TRANSLATE("Auto-connect to this network"),
 			new BMessage(M_CONNECT_ON_STARTUP), B_FOLLOW_BOTTOM);
-	fStartupBox->ResizeToPreferred();
-	fStartupBox->MoveTo(fNetDetailsBox->Frame().left + kItemSpacing,
-			fMainNetBox->Bounds().bottom - (fStartupBox->Bounds().Height()
-			+ kItemSpacing));
-	fMainNetBox->AddChild(fStartupBox);
 
-	// PERSONAL BOX
-	boundsRect = fPersonalBox->InnerFrame();
-	boundsRect.InsetBy(kItemSpacing, kItemSpacing);
 
 	fNickDefaultsBox =
-		new BCheckBox(boundsRect, NULL, B_TRANSLATE("Use defaults"), new BMessage(M_USE_NICK_DEFAULTS));
-	fNickDefaultsBox->ResizeToPreferred();
-	fPersonalBox->AddChild(fNickDefaultsBox);
+		new BCheckBox(NULL, B_TRANSLATE("Use defaults"), new BMessage(M_USE_NICK_DEFAULTS));
 
 	// Preferred nicks:
-	BStringView* stringView5(new BStringView(boundsRect, NULL, B_TRANSLATE("Preferred nicks:")));
-	stringView5->ResizeToPreferred();
-	stringView5->MoveTo(fAlternates->Frame().left, fAlternates->Frame().top);
-	fPersonalBox->AddChild(stringView5);
+	BStringView* stringView5(new BStringView(NULL, B_TRANSLATE("Preferred nicks:")));
 
-	fListView = new BListView(fExecScroller->Frame(), NULL, B_SINGLE_SELECTION_LIST,
-		B_FOLLOW_ALL);
+
+	fListView = new BListView(NULL, B_SINGLE_SELECTION_LIST);
 	fListView->SetSelectionMessage(new BMessage(M_NICK_SELECTED));
-	fListView->ResizeBy(-B_V_SCROLL_BAR_WIDTH, -(kItemSpacing * 3.5));
-	fListView->MoveTo(fListView->Frame().left, stringView5->Frame().bottom + 5);
-	fNickScroller = new BScrollView(NULL, fListView, B_FOLLOW_ALL, 0, false, true);
-	fPersonalBox->AddChild(fNickScroller);
+
+	fNickScroller = new BScrollView(NULL, fListView, 0, false, true);
+
 
 	// Add/Remove nick buttons
-	boundsRect = fPersonalBox->InnerFrame();
-	boundsRect.InsetBy(kItemSpacing, kItemSpacing);
-	boundsRect.top = boundsRect.bottom - fServerButton->Bounds().Height();
+	fNickAddButton = new BButton(NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
+								 new BMessage(M_ADD_NICK));
 
-	fNickAddButton = new BButton(boundsRect, NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
-								 new BMessage(M_ADD_NICK), B_FOLLOW_BOTTOM);
-	fNickAddButton->ResizeToPreferred();
-
-	boundsRect = fNickAddButton->Frame();
-	boundsRect.OffsetBy(boundsRect.Width() + kItemSpacing, 0);
-
-	fNickRemoveButton = new BButton(boundsRect, NULL, B_TRANSLATE("Remove"),
-		new BMessage(M_REMOVE_NICK), B_FOLLOW_BOTTOM);
-	fNickRemoveButton->ResizeToPreferred();
-
-	fPersonalBox->AddChild(fNickRemoveButton);
-	fPersonalBox->AddChild(fNickAddButton);
-
-	// Ident and Realname text controls
-	boundsRect.OffsetBy(0, -boundsRect.Height());
-	boundsRect.left = fNickScroller->Frame().left;
-	boundsRect.right = fNickScroller->Frame().right;
+	fNickRemoveButton = new BButton(NULL, B_TRANSLATE("Remove"),
+		new BMessage(M_REMOVE_NICK));
 
 	BString text(B_TRANSLATE("Real name:"));
 	text.Append(" ");
-	fRealName = new BTextControl(boundsRect, NULL,
-		text.String(), NULL, NULL, B_FOLLOW_BOTTOM | B_FOLLOW_LEFT_RIGHT);
-	fRealName->ResizeToPreferred();
-	fRealName->ResizeTo(boundsRect.Width(), fRealName->Bounds().Height());
-	fRealName->SetDivider(fRealName->StringWidth(fRealName->Label()) + 5);
-	boundsRect = fRealName->Frame();
+	fRealName = new BTextControl(NULL,
+		text.String(), NULL, NULL);
 
 	text = B_TRANSLATE("Ident:");
 	text.Append(" ");
-	boundsRect.OffsetBy(0, -(boundsRect.Height() + 5));
-	fIdent = new BTextControl(boundsRect, NULL, text.String(), NULL, NULL,
-		B_FOLLOW_BOTTOM | B_FOLLOW_LEFT_RIGHT);
-	fIdent->SetDivider(fRealName->Divider());
 
-	fPersonalBox->AddChild(fIdent);
-	fPersonalBox->AddChild(fRealName);
+	fIdent = new BTextControl(NULL, text.String(), NULL, NULL);
+
+	BLayoutBuilder::Group<>(fNetDetailsContainerBox, B_VERTICAL)
+				.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+					.Add(stringView1)
+					.Add(fConnectServer)
+					.Add(fAlternates)
+				.End()
+				.Add(fServerButton)
+				.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+					.Add(stringView4)
+					.Add(fExecScroller)
+				.End()
+				.Add(fLagCheckBox)
+		.SetInsets(B_USE_WINDOW_SPACING)
+	.End();
+
+	BLayoutBuilder::Group<>(fMainNetContainerBox, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_SPACING)
+			.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+				.Add(fNetDetailsBox)
+				.Add(fPersonalBox)
+			.End()
+			.Add(fStartupBox)
+	.End();
+
+	BLayoutBuilder::Group<>(fPersonalContainerBox, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_SPACING)
+			.Add(fNickDefaultsBox)
+			.AddGrid(0.0, 0.0)
+				.AddTextControl(fIdent, 0, 0)
+				.AddTextControl(fRealName, 0, 1)
+			.End()
+			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+				.Add(stringView5)
+				.Add(fNickScroller)
+			.End()
+			.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+				.AddGlue()
+				.Add(fNickRemoveButton)
+				.Add(fNickAddButton)
+			.End()
+	.End();
 }
 
 NetworkPrefsView::~NetworkPrefsView()
@@ -460,7 +439,7 @@ void
 NetworkPrefsView::FrameResized(float width, float)
 {
 	// Move/resize net details and personal boxes relative to main box:
-	BRect bounds = fMainNetBox->InnerFrame();
+/*	BRect bounds = fMainNetBox->InnerFrame();
 
 	bounds.InsetBy(kItemSpacing, kItemSpacing);
 	bounds.right /= 2;
@@ -468,7 +447,7 @@ NetworkPrefsView::FrameResized(float width, float)
 
 	bounds.bottom = fStartupBox->Frame().top - kItemSpacing;
 
-	fNetDetailsBox->MoveTo(bounds.LeftTop());
+	fNetDetailsContainerBox->MoveTo(bounds.LeftTop());
 	fNetDetailsBox->ResizeTo(bounds.Width(), bounds.Height());
 
 	bounds.OffsetBy(bounds.Width() + kItemSpacing, 0);
@@ -485,7 +464,7 @@ NetworkPrefsView::FrameResized(float width, float)
 	float heightDelta = bounds.Height() - fExecScroller->Frame().Height();
 
 	fExecScroller->ResizeBy(0, heightDelta);
-	fExecScroller->UnlockLooper();
+	fExecScroller->UnlockLooper(); */
 }
 
 
@@ -710,7 +689,8 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 
 	case M_NICK_SELECTED: {
 		int32 index(msg->FindInt32("index"));
-		fNickRemoveButton->SetEnabled((bool)index >= 0);
+		bool enabled = (index >= 0) && fNickAddButton->IsEnabled();
+		fNickRemoveButton->SetEnabled(enabled);
 	} break;
 
 	default:

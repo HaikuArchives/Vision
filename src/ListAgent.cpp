@@ -110,10 +110,7 @@ SetLayout(new BGroupLayout(B_VERTICAL, 0));
 	listView->AddColumn(topicColumn, 2);
 	listView->SetSelectionMode(B_SINGLE_SELECTION_LIST);
 	activeTheme->ReadLock();
-	/*
-	listView->SetColor(B_COLOR_BACKGROUND, activeTheme->ForegroundAt(C_BACKGROUND));
-	listView->SetColor(B_COLOR_TEXT, activeTheme->ForegroundAt(C_TEXT));
-	listView->SetColor(B_COLOR_SELECTION, activeTheme->ForegroundAt(C_SELECTION)); */
+
 	listView->SetFont(B_FONT_ROW, &activeTheme->FontAt(F_LISTAGENT));
 	activeTheme->ReadUnlock();
 
