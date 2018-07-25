@@ -49,7 +49,6 @@ public:
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();
 	virtual void DetachedFromWindow();
-	virtual void FrameResized(float width, float height);
 
 private:
 	void SetConnectServer(const char*);

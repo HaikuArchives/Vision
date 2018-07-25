@@ -54,15 +54,14 @@
 class InvokingTextView : public BTextView, public BInvoker
 {
 public:
-	InvokingTextView(BRect, const char*, BMessage*, BHandler*, uint32, uint32);
+	InvokingTextView(const char*, BMessage*, BHandler*);
 	virtual ~InvokingTextView();
 
 	virtual void KeyDown(const char*, int32);
 };
 
-InvokingTextView::InvokingTextView(BRect frame, const char* name, BMessage* msg, BHandler* target,
-								   uint32 resize, uint32 flags)
-	: BTextView(frame, name, BRect(0.0, 0.0, frame.Width(), frame.Height()), resize, flags),
+InvokingTextView::InvokingTextView(const char* name, BMessage* msg, BHandler* target)
+	: BTextView(name),
 	  BInvoker(msg, target)
 {
 }
@@ -127,26 +126,23 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 
 	fAlternates = new BStringView(NULL, B_TRANSLATE("falling back to 9 others."));
 
-
-
 	fServerButton = new BButton(NULL, B_TRANSLATE("Change servers" B_UTF8_ELLIPSIS),
 								new BMessage(M_SERVER_DIALOG));
 
 	BStringView* stringView4(new BStringView(NULL, B_TRANSLATE("Automatically execute:")));
 
 
-	fTextView = new InvokingTextView(BRect(0,0,100,100), NULL, new BMessage(M_NETPREFS_TEXT_INVOKE), this,
-									 B_FOLLOW_ALL, B_WILL_DRAW);
+	fTextView = new InvokingTextView(NULL, new BMessage(M_NETPREFS_TEXT_INVOKE), this);
 	fExecScroller =
 		new BScrollView(NULL, fTextView, 0, false, true);
 	fTextView->MakeEditable(true);
 	fTextView->SetStylable(false);
 
 	fLagCheckBox = new BCheckBox(NULL, B_TRANSLATE("Enable lag checking"),
-		new BMessage(M_NET_CHECK_LAG), B_FOLLOW_BOTTOM);
+		new BMessage(M_NET_CHECK_LAG));
 
 	fStartupBox = new BCheckBox(NULL, B_TRANSLATE("Auto-connect to this network"),
-			new BMessage(M_CONNECT_ON_STARTUP), B_FOLLOW_BOTTOM);
+			new BMessage(M_CONNECT_ON_STARTUP));
 
 	fNickDefaultsBox =
 		new BCheckBox(NULL, B_TRANSLATE("Use defaults"), new BMessage(M_USE_NICK_DEFAULTS));
@@ -159,15 +155,6 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	fListView->SetSelectionMessage(new BMessage(M_NICK_SELECTED));
 
 	fNickScroller = new BScrollView(NULL, fListView, 0, false, true);
-
-
-	// Add/Remove nick buttons
-	/*
-	fNickAddButton = new BButton(NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
-								 new BMessage(M_ADD_NICK));
-
-	fNickRemoveButton = new BButton(NULL, B_TRANSLATE("Remove"),
-		new BMessage(M_REMOVE_NICK)); */
 
 	// Create buttons with fixed size
 	font_height fontHeight;
@@ -213,10 +200,8 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 		.End()
 		.SetInsets(0, B_USE_WINDOW_SPACING, 0, B_USE_WINDOW_SPACING)
 			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING)
-				//.SetInsets(B_USE_HALF_ITEM_SPACING, 0, B_USE_HALF_ITEM_SPACING, 0)
 				.SetInsets(B_USE_SMALL_SPACING, 0, B_USE_SMALL_SPACING, 0)
-				.AddGroup(B_HORIZONTAL, /*B_USE_HALF_ITEM_SPACING */ B_USE_DEFAULT_SPACING)
-				//.SetInsets(B_USE_HALF_ITEM_SPACING, 0, B_USE_HALF_ITEM_SPACING, 0)
+				.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
 					.Add(fNetDetailsBox)
 					.Add(fPersonalBox)
 				.End()
@@ -237,11 +222,6 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 				.Add(stringView5)
 				.Add(fNickScroller)
 			.End()
-/*			.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-				.AddGlue()
-				.Add(fNickRemoveButton)
-				.Add(fNickAddButton)
-			.End()*/
 			.AddGroup(B_HORIZONTAL, 0, 0.0)
 				// Add and Remove buttons
 				.AddGroup(B_VERTICAL, 0, 0.0)
@@ -481,39 +461,6 @@ void NetworkPrefsView::SaveCurrentNetwork()
 }
 
 
-void
-NetworkPrefsView::FrameResized(float width, float)
-{
-	// Move/resize net details and personal boxes relative to main box:
-/*	BRect bounds = fMainNetBox->InnerFrame();
-
-	bounds.InsetBy(kItemSpacing, kItemSpacing);
-	bounds.right /= 2;
-	bounds.right -= kItemSpacing;
-
-	bounds.bottom = fStartupBox->Frame().top - kItemSpacing;
-
-	fNetDetailsContainerBox->MoveTo(bounds.LeftTop());
-	fNetDetailsBox->ResizeTo(bounds.Width(), bounds.Height());
-
-	bounds.OffsetBy(bounds.Width() + kItemSpacing, 0);
-
-	fPersonalBox->MoveTo(bounds.LeftTop());
-	fPersonalBox->ResizeTo(bounds.Width(), bounds.Height());
-
-	// Resize Autoexec box relative to net details box:
-	fExecScroller->LockLooper();
-
-	bounds.bottom = fLagCheckBox->Frame().top - kItemSpacing;
-	bounds.top = fExecScroller->Frame().top;
-
-	float heightDelta = bounds.Height() - fExecScroller->Frame().Height();
-
-	fExecScroller->ResizeBy(0, heightDelta);
-	fExecScroller->UnlockLooper(); */
-}
-
-
 void NetworkPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
@@ -523,8 +470,8 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 			vision_app->SetNetwork(fActiveNetwork.FindString("name"), &fActiveNetwork);
 		fActiveNetwork = vision_app->GetNetwork("defaults");
 		fNetworkMenu->MenuItem()->SetLabel(B_TRANSLATE("Defaults"));
-		float width = StringWidth(B_TRANSLATE("Defaults"));
-		fNetworkMenu->ResizeTo(width + 30, 30);
+//		float width = StringWidth(B_TRANSLATE("Defaults"));
+//		fNetworkMenu->ResizeTo(width + 30, 30);
 		SetupDefaults(fActiveNetwork);
 		fDupeItem->SetEnabled(false);
 		fRemoveItem->SetEnabled(false);
@@ -537,8 +484,8 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 		SaveCurrentNetwork();
 		fActiveNetwork = vision_app->GetNetwork(item->Label());
 		fNetworkMenu->MenuItem()->SetLabel(item->Label());
-		float width = StringWidth(item->Label());
-		fNetworkMenu->ResizeTo(width + 30, 30);
+//		float width = StringWidth(item->Label());
+//		fNetworkMenu->ResizeTo(width + 30, 30);
 		UpdatePersonalData(fActiveNetwork);
 		UpdateNetworkData(fActiveNetwork);
 		if (BMessenger(fServerPrefs).IsValid()) fServerPrefs->SetNetworkData(&fActiveNetwork);
@@ -602,7 +549,7 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 			for (int32 i = 0; i < menu->CountItems(); i++) {
 				BMenuItem* item(menu->ItemAt(i));
 				if (item && network == item->Label()) {
-					dynamic_cast<BInvoker*>(item)->Invoke();
+				dynamic_cast<BInvoker*>(item)->Invoke();
 					return;
 				}
 			}
