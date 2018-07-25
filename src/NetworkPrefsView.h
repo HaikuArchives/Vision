@@ -62,7 +62,7 @@ private:
 	BMenuField* fNetworkMenu;
 	BScrollView* fExecScroller, *fNickScroller;
 
-	BBox* fMainNetBox, *fNetDetailsBox, *fPersonalBox;
+	BBox *fNetDetailsBox, *fPersonalBox;
 	BView* fMainNetContainerBox, *fNetDetailsContainerBox, *fPersonalContainerBox;
 
 	BButton* fServerButton, *fNickAddButton, *fNickRemoveButton;

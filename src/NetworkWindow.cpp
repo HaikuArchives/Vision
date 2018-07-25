@@ -44,7 +44,7 @@ NetworkWindow::NetworkWindow()
 	AddChild(netView);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
-		.SetInsets(-2, B_USE_WINDOW_INSETS, -2, -2)
+		.SetInsets(0)
 			.Add(netView)
 		.End();
 

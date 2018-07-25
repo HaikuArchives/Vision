@@ -24,6 +24,7 @@
 #include <Box.h>
 #include <Button.h>
 #include <CheckBox.h>
+#include <ControlLook.h>
 #include <LayoutBuilder.h>
 #include <ListItem.h>
 #include <ListView.h>
@@ -31,6 +32,7 @@
 #include <Menu.h>
 #include <MenuItem.h>
 #include <MessageFormat.h>
+#include <SeparatorView.h>
 #include <StringView.h>
 #include <ScrollView.h>
 #include <SupportDefs.h>
@@ -83,7 +85,6 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	  fServerPrefs(NULL)
 {
 	AdoptSystemColors();
-	SetLayout(new BGroupLayout(B_VERTICAL, 0));
 
 	BMenu* menu(new BMenu(B_TRANSLATE("Networks")));
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Defaults"), new BMessage(M_NETWORK_DEFAULTS)));
@@ -96,13 +97,16 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 											new BMessage(M_DUPE_CURRENT_NETWORK)));
 	fNetworkMenu = new BMenuField("NetList", NULL, menu);
 
-	fMainNetBox = new BBox("MainNetBox");
-	fMainNetContainerBox = new BView("MainNetContainerBox", 0);
-	fMainNetContainerBox->SetLayout(new BGroupLayout(B_VERTICAL, 0));
-	fMainNetBox->AddChild(fMainNetContainerBox);
-	fMainNetBox->SetLabel(fNetworkMenu);
+	fNetworkMenu->SetExplicitSize(BSize(180, B_SIZE_UNSET));
+	// Create the Views
+	BSeparatorView* fTitleView = new BSeparatorView(B_HORIZONTAL, B_FANCY_BORDER);
+	fTitleView->SetLabel(fNetworkMenu, false);
+	fTitleView->SetFont(be_bold_font);
+	fTitleView->SetAlignment(BAlignment(B_ALIGN_LEFT, B_ALIGN_VERTICAL_UNSET));
 
-	AddChild(fMainNetBox);
+	BSeparatorView* fTitlePaddingView = new BSeparatorView(B_HORIZONTAL, B_FANCY_BORDER);
+	float padding = be_control_look->ComposeSpacing(B_USE_SMALL_SPACING) - 5;
+	fTitlePaddingView->SetExplicitSize(BSize(padding, B_SIZE_UNSET));
 
 	fNetDetailsBox = new BBox("NetDetailsBox");
 	fNetDetailsContainerBox = new BView("NetDetailsContainerBox", 0);
@@ -144,7 +148,6 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	fStartupBox = new BCheckBox(NULL, B_TRANSLATE("Auto-connect to this network"),
 			new BMessage(M_CONNECT_ON_STARTUP), B_FOLLOW_BOTTOM);
 
-
 	fNickDefaultsBox =
 		new BCheckBox(NULL, B_TRANSLATE("Use defaults"), new BMessage(M_USE_NICK_DEFAULTS));
 
@@ -159,11 +162,24 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 
 
 	// Add/Remove nick buttons
+	/*
 	fNickAddButton = new BButton(NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
 								 new BMessage(M_ADD_NICK));
 
 	fNickRemoveButton = new BButton(NULL, B_TRANSLATE("Remove"),
-		new BMessage(M_REMOVE_NICK));
+		new BMessage(M_REMOVE_NICK)); */
+
+	// Create buttons with fixed size
+	font_height fontHeight;
+	GetFontHeight(&fontHeight);
+	const int16 buttonHeight = int16(fontHeight.ascent + fontHeight.descent + 12);
+		// button size determined by font size
+	BSize btnSize(buttonHeight, buttonHeight);
+
+	fNickAddButton = new BButton("plus", "+", new BMessage(M_ADD_NICK));
+	fNickAddButton->SetExplicitSize(btnSize);
+	fNickRemoveButton = new BButton("minus", "-", new BMessage(M_REMOVE_NICK));
+	fNickRemoveButton->SetExplicitSize(btnSize);
 
 	BString text(B_TRANSLATE("Real name:"));
 	text.Append(" ");
@@ -190,31 +206,61 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 		.SetInsets(B_USE_WINDOW_SPACING)
 	.End();
 
-	BLayoutBuilder::Group<>(fMainNetContainerBox, B_VERTICAL)
-		.SetInsets(B_USE_WINDOW_SPACING)
-			.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-				.Add(fNetDetailsBox)
-				.Add(fPersonalBox)
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.AddGroup(B_HORIZONTAL, 0)
+		.Add(fTitlePaddingView)
+		.Add(fTitleView)
+		.End()
+		.SetInsets(0, B_USE_WINDOW_SPACING, 0, B_USE_WINDOW_SPACING)
+			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING)
+				//.SetInsets(B_USE_HALF_ITEM_SPACING, 0, B_USE_HALF_ITEM_SPACING, 0)
+				.SetInsets(B_USE_SMALL_SPACING, 0, B_USE_SMALL_SPACING, 0)
+				.AddGroup(B_HORIZONTAL, /*B_USE_HALF_ITEM_SPACING */ B_USE_DEFAULT_SPACING)
+				//.SetInsets(B_USE_HALF_ITEM_SPACING, 0, B_USE_HALF_ITEM_SPACING, 0)
+					.Add(fNetDetailsBox)
+					.Add(fPersonalBox)
+				.End()
+				.Add(fStartupBox)
 			.End()
-			.Add(fStartupBox)
 	.End();
-
-	BLayoutBuilder::Group<>(fPersonalContainerBox, B_VERTICAL)
+	const int16 buttonSpacing = 1;
+	BLayoutBuilder::Group<>(fPersonalContainerBox, B_VERTICAL, 0)
 		.SetInsets(B_USE_WINDOW_SPACING)
 			.Add(fNickDefaultsBox)
+			.AddStrut(B_USE_DEFAULT_SPACING)
 			.AddGrid(0.0, 0.0)
 				.AddTextControl(fIdent, 0, 0)
 				.AddTextControl(fRealName, 0, 1)
 			.End()
+			.AddStrut(B_USE_DEFAULT_SPACING)
 			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
 				.Add(stringView5)
 				.Add(fNickScroller)
 			.End()
-			.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+/*			.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
 				.AddGlue()
 				.Add(fNickRemoveButton)
 				.Add(fNickAddButton)
-			.End()
+			.End()*/
+			.AddGroup(B_HORIZONTAL, 0, 0.0)
+				// Add and Remove buttons
+				.AddGroup(B_VERTICAL, 0, 0.0)
+					.AddGroup(B_HORIZONTAL, 0, 0.0)
+						.Add(new BSeparatorView(B_VERTICAL))
+						.AddGroup(B_VERTICAL, 0, 0.0)
+							.AddGroup(B_HORIZONTAL, buttonSpacing, 0.0)
+								.SetInsets(buttonSpacing)
+								.Add(fNickAddButton)
+								.Add(fNickRemoveButton)
+							.End()
+							.Add(new BSeparatorView(B_HORIZONTAL))
+						.End()
+						.Add(new BSeparatorView(B_VERTICAL))
+					.End()
+					.End()
+					.AddGlue()
+				.End()
+
 	.End();
 }
 
