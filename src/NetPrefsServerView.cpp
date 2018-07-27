@@ -1,6 +1,7 @@
 #include <Autolock.h>
 #include <Box.h>
 #include <Button.h>
+#include <LayoutBuilder.h>
 #include <MenuField.h>
 #include <Menu.h>
 #include <MenuItem.h>
@@ -19,184 +20,54 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "NetPrefsServerView"
 
-const rgb_color serverItemNormalColor = {0, 0, 0, 255};
-const rgb_color serverItemDefaultColor = {0, 127, 0, 255};
-const rgb_color serverItemDisabledColor = {0, 0, 192, 255};
-
-class ServerListItem : public BStringItem
-{
-public:
-	ServerListItem(ServerData&);
-	~ServerListItem();
-	virtual void DrawItem(BView*, BRect, bool);
-	void SetState(uint32);
-	void SetServer(const char*);
-	void SetPort(uint32);
-
-	ServerData GetServerInfo();
-
-private:
-	void UpdateItemText();
-	inline rgb_color GetItemColor();
-
-	uint32 state;
-	BString serverName;
-	uint32 port;
-};
-
-ServerListItem::ServerListItem(ServerData& data) : BStringItem("")
-{
-	state = data.state;
-	serverName = data.serverName;
-	port = data.port;
-	UpdateItemText();
-}
-
-ServerListItem::~ServerListItem()
-{
-}
-
-void ServerListItem::UpdateItemText()
-{
-	BString itemText;
-	itemText += serverName;
-	itemText += ":";
-	itemText << port;
-	SetText(itemText.String());
-}
-
-inline rgb_color ServerListItem::GetItemColor()
-{
-	switch (state) {
-	case 1:
-		return serverItemDefaultColor;
-
-	case 2:
-		return serverItemDisabledColor;
-	}
-
-	return serverItemNormalColor;
-}
-
-void ServerListItem::DrawItem(BView* parent, BRect frame, bool complete)
-{
-	parent->SetHighColor(GetItemColor());
-	BStringItem::DrawItem(parent, frame, complete);
-}
-
-void ServerListItem::SetState(uint32 newState)
-{
-	state = newState;
-	UpdateItemText();
-}
-
-void ServerListItem::SetServer(const char* newServer)
-{
-	serverName = newServer;
-	UpdateItemText();
-}
-
-void ServerListItem::SetPort(uint32 newPort)
-{
-	port = newPort;
-	UpdateItemText();
-}
-
-ServerData ServerListItem::GetServerInfo()
-{
-	ServerData data;
-	data.port = port;
-	data.state = state;
-	strcpy(data.serverName, serverName.String());
-	return data;
-}
 // server window
 
 NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenger target)
 	: BView(bounds, name, B_FOLLOW_ALL_SIDES, B_WILL_DRAW), fEntryWin(NULL), fNetWin(target)
 {
 	AdoptSystemColors();
-	BRect boundsRect(Bounds());
-	BBox* mainBox(new BBox(bounds.InsetByCopy(-1, -1), NULL, B_FOLLOW_ALL_SIDES));
-	AddChild(mainBox);
-	fSelectTitleString = new BStringView(BRect(0, 0, 0, 0), NULL, "Select servers for");
-	fSelectTitleString->ResizeToPreferred();
-	mainBox->AddChild(fSelectTitleString);
-	fSelectTitleString->MoveTo(11, 11);
-	fServerList = new BColumnListView(BRect(0, 0, boundsRect.Width() - 10,
-		boundsRect.Height() / 2), "fServerList",
-		B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW, B_PLAIN_BORDER);
-	fServerList->SetSelectionMessage(new BMessage(M_SERVER_ITEM_SELECTED));
-	mainBox->AddChild(fServerList);
-	fServerList->MoveTo(5, fSelectTitleString->Frame().bottom + 3);
 
-	BStringColumn* status(new BStringColumn(B_TRANSLATE("Status"),
-		be_plain_font->StringWidth(B_TRANSLATE("Status")) * 2, 0,
-		bounds.Width(), 0, B_ALIGN_CENTER));
+	fServerList = new BColumnListView("fServerList", B_WILL_DRAW | B_NAVIGABLE, B_PLAIN_BORDER);
+	fServerList->SetSelectionMessage(new BMessage(M_SERVER_ITEM_SELECTED));
+
+	const float columnTitleOffset = 8;
+	const float statusInitialSize = be_plain_font->StringWidth(B_TRANSLATE("Status")) + columnTitleOffset * 2;
+	BStringColumn* status(new BStringColumn(B_TRANSLATE("Status"), statusInitialSize, statusInitialSize,
+		bounds.Width(), B_TRUNCATE_END));
 	fServerList->AddColumn(status, 0);
+
+	const float serverInitialSize = be_plain_font->StringWidth(B_TRANSLATE("Server")) + columnTitleOffset * 2;
 	BStringColumn* data(new BStringColumn(B_TRANSLATE("Server"),
-		be_plain_font->StringWidth(B_TRANSLATE("Server")) * 2, 0, bounds.Width(), 0));
+		serverInitialSize, serverInitialSize, bounds.Width(), B_TRUNCATE_END));
 	fServerList->AddColumn(data, 1);
-	BStringColumn* port(new BStringColumn(
-		B_TRANSLATE("Port"), be_plain_font->StringWidth(B_TRANSLATE("Port")) * 2, 0, bounds.Width(), 0));
+
+	const float portInitialSize = be_plain_font->StringWidth(B_TRANSLATE("Port")) + columnTitleOffset * 2;
+	BStringColumn* port(new BStringColumn(B_TRANSLATE("Port"), portInitialSize, portInitialSize,
+		bounds.Width(), B_TRUNCATE_END));
 	fServerList->AddColumn(port, 2);
+
+	const float secureInitialSize = be_plain_font->StringWidth(B_TRANSLATE("Secure")) + columnTitleOffset * 2;
 	BStringColumn* secure(new BStringColumn(
-		B_TRANSLATE("Secure?"), be_plain_font->StringWidth(B_TRANSLATE("Secure?")) * 2, 0, bounds.Width(), 0));
+		B_TRANSLATE("Secure"), secureInitialSize, secureInitialSize, bounds.Width(), B_TRUNCATE_END));
 	fServerList->AddColumn(secure, 3);
 
-	fAddButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
+	fAddButton = new BButton(NULL, B_TRANSLATE("Add" B_UTF8_ELLIPSIS),
 		new BMessage(M_SERVER_ADD_ITEM));
-	fRemoveButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Remove"),
+	fRemoveButton = new BButton(NULL, B_TRANSLATE("Remove"),
 		new BMessage(M_SERVER_REMOVE_ITEM));
-	fEditButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("Edit" B_UTF8_ELLIPSIS),
+	fEditButton = new BButton(NULL, B_TRANSLATE("Edit" B_UTF8_ELLIPSIS),
 		 new BMessage(M_SERVER_EDIT_ITEM));
-	fAddButton->ResizeToPreferred();
-	fRemoveButton->ResizeToPreferred();
-	fEditButton->ResizeToPreferred();
-	fRemoveButton->MoveTo(fServerList->Frame().right - fRemoveButton->Frame().Width(),
-		fServerList->Frame().bottom + 5);
-	mainBox->AddChild(fRemoveButton);
-	fAddButton->MoveTo(fRemoveButton->Frame().left - (fAddButton->Frame().Width() + 5),
-		fRemoveButton->Frame().top);
-	mainBox->AddChild(fAddButton);
-	fEditButton->MoveTo(fAddButton->Frame().left - (fEditButton->Frame().Width() + 15),
-		fAddButton->Frame().top);
-	mainBox->AddChild(fEditButton);
 
-	BString text(B_TRANSLATE_COMMENT("Key:",
-		"like a legend of a map describing the used symbols"));
-	text.Append(" ");
-	BStringView* legend1 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
-	legend1->ResizeToPreferred();
-	mainBox->AddChild(legend1);
-	legend1->MoveTo(fServerList->Frame().left + 5, fAddButton->Frame().bottom + 5);
-
-	text = B_TRANSLATE("* = primary");
-	text.Prepend("  ");
-	BStringView* legend2 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
-	legend2->ResizeToPreferred();
-	mainBox->AddChild(legend2);
-	legend2->MoveTo(legend1->Frame().left, legend1->Frame().bottom);
-
-	text = B_TRANSLATE("+ = secondary (fallback)");
-	text.Prepend("  ");
-	BStringView* legend3 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
-	legend3->ResizeToPreferred();
-	mainBox->AddChild(legend3);
-	legend3->MoveTo(legend2->Frame().left, legend2->Frame().bottom);
-
-	text = B_TRANSLATE("- = disabled");
-	text.Prepend("  ");
-	fLegend4 = new BStringView(BRect(0, 0, 0, 0), "str1", text.String());
-	fLegend4->ResizeToPreferred();
-	mainBox->AddChild(fLegend4);
-	fLegend4->MoveTo(legend3->Frame().left, legend3->Frame().bottom);
-	fOkButton = new BButton(BRect(0, 0, 0, 0), NULL, B_TRANSLATE("OK"),
-		new BMessage(B_QUIT_REQUESTED));
-	fOkButton->ResizeToPreferred();
-	mainBox->AddChild(fOkButton);
-	fOkButton->MoveTo(fServerList->Frame().right - fOkButton->Frame().Width(),
-		fLegend4->Frame().bottom + 5);
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_SPACING)
+		.Add(fServerList)
+		.AddGroup(B_HORIZONTAL, 0)
+			.AddGlue()
+			.Add(fAddButton)
+			.Add(fRemoveButton)
+			.Add(fEditButton)
+		.End()
+	.End();
 }
 
 NetPrefsServerView::~NetPrefsServerView()
@@ -214,10 +85,6 @@ void NetPrefsServerView::AttachedToWindow()
 	fServerList->SetTarget(this);
 	fEditButton->SetEnabled(false);
 	fRemoveButton->SetEnabled(false);
-	fOkButton->SetTarget(Window());
-
-	if (fOkButton->Frame().bottom > Bounds().Height())
-		Window()->ResizeTo(Bounds().Width(), fOkButton->Frame().bottom + 5);
 }
 
 void NetPrefsServerView::AddServer(const ServerData* data)
@@ -228,15 +95,15 @@ void NetPrefsServerView::AddServer(const ServerData* data)
 	BRow* row(new BRow);
 	switch (data->state) {
 	case SERVER_PRIMARY:
-		row->SetField(new BStringField("*"), 0);
+		row->SetField(new BStringField(B_TRANSLATE("Primary")), 0);
 		break;
 
 	case SERVER_SECONDARY:
-		row->SetField(new BStringField("+"), 0);
+		row->SetField(new BStringField(B_TRANSLATE("Secondary")), 0);
 		break;
 
 	case SERVER_DISABLED:
-		row->SetField(new BStringField("-"), 0);
+		row->SetField(new BStringField(B_TRANSLATE("Disabled")), 0);
 		break;
 	}
 	BString server("");
@@ -317,7 +184,7 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 		delete row;
 	}
 
-	BString netString(B_TRANSLATE("Select servers for %name%:"));
+	BString netString(B_TRANSLATE("Servers for %name%"));
 	netString.ReplaceFirst("%name%", msg->FindString("name"));
 	type_code type;
 	int32 count;
@@ -329,8 +196,8 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 		AddServer(data);
 	}
 	fActiveNetwork = msg;
-	fSelectTitleString->SetText(netString.String());
-	fSelectTitleString->ResizeToPreferred();
+	fServerList->ResizeAllColumnsToPreferred();
+	Window()->SetTitle(netString.String());
 }
 
 void NetPrefsServerView::MessageReceived(BMessage* msg)
@@ -378,6 +245,7 @@ void NetPrefsServerView::MessageReceived(BMessage* msg)
 			BMessage* invoke(new BMessage(M_SERVER_RECV_DATA));
 			invoke->AddBool("edit", true);
 			fEntryWin = new ServerEntryWindow(this, invoke, compData, size);
+			fEntryWin->SetTitle(B_TRANSLATE("Edit server"));
 			fEntryWin->Show();
 		}
 	} break;

@@ -76,8 +76,8 @@ void InvokingTextView::KeyDown(const char* bytes, int32 numBytes)
 	Invoke();
 }
 
-NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
-	: BView(bounds, name, B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS),
+NetworkPrefsView::NetworkPrefsView(const char* name)
+	: BView(name, B_WILL_DRAW | B_FRAME_EVENTS),
 	  fNickPrompt(NULL),
 	  fNetPrompt(NULL),
 	  fDupePrompt(NULL),
@@ -95,12 +95,12 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	menu->AddItem(fDupeItem = new BMenuItem(B_TRANSLATE("Duplicate current" B_UTF8_ELLIPSIS),
 											new BMessage(M_DUPE_CURRENT_NETWORK)));
 	fNetworkMenu = new BMenuField("NetList", NULL, menu);
+	const float width = StringWidth(B_TRANSLATE("Defaults"));
+	fNetworkMenu->SetExplicitSize(BSize(width + 30, B_SIZE_UNSET));
 
-	fNetworkMenu->SetExplicitSize(BSize(180, B_SIZE_UNSET));
 	// Create the Views
 	BSeparatorView* fTitleView = new BSeparatorView(B_HORIZONTAL, B_FANCY_BORDER);
 	fTitleView->SetLabel(fNetworkMenu, false);
-	fTitleView->SetFont(be_bold_font);
 	fTitleView->SetAlignment(BAlignment(B_ALIGN_LEFT, B_ALIGN_VERTICAL_UNSET));
 
 	BSeparatorView* fTitlePaddingView = new BSeparatorView(B_HORIZONTAL, B_FANCY_BORDER);
@@ -122,9 +122,9 @@ NetworkPrefsView::NetworkPrefsView(BRect bounds, const char* name)
 	BStringView* stringView1(new BStringView(NULL,
 		B_TRANSLATE("Connects to server:")));
 
-	fConnectServer = new BStringView(NULL, "irc.sorcery.net,");
+	fConnectServer = new BStringView(NULL, B_EMPTY_STRING);
 
-	fAlternates = new BStringView(NULL, B_TRANSLATE("falling back to 9 others."));
+	fAlternates = new BStringView(NULL, B_EMPTY_STRING);
 
 	fServerButton = new BButton(NULL, B_TRANSLATE("Change servers" B_UTF8_ELLIPSIS),
 								new BMessage(M_SERVER_DIALOG));
@@ -270,8 +270,6 @@ void NetworkPrefsView::AttachedToWindow()
 	fIdent->SetTarget(this);
 	dynamic_cast<BInvoker*>(fNetworkMenu->Menu()->ItemAt(0))->Invoke();
 	BuildNetworkList();
-
-	FrameResized(0, 0);
 }
 
 void NetworkPrefsView::DetachedFromWindow()
@@ -470,8 +468,8 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 			vision_app->SetNetwork(fActiveNetwork.FindString("name"), &fActiveNetwork);
 		fActiveNetwork = vision_app->GetNetwork("defaults");
 		fNetworkMenu->MenuItem()->SetLabel(B_TRANSLATE("Defaults"));
-//		float width = StringWidth(B_TRANSLATE("Defaults"));
-//		fNetworkMenu->ResizeTo(width + 30, 30);
+		float width = StringWidth(B_TRANSLATE("Defaults"));
+		fNetworkMenu->SetExplicitSize(BSize(width + 30, B_SIZE_UNSET));
 		SetupDefaults(fActiveNetwork);
 		fDupeItem->SetEnabled(false);
 		fRemoveItem->SetEnabled(false);
@@ -484,8 +482,8 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 		SaveCurrentNetwork();
 		fActiveNetwork = vision_app->GetNetwork(item->Label());
 		fNetworkMenu->MenuItem()->SetLabel(item->Label());
-//		float width = StringWidth(item->Label());
-//		fNetworkMenu->ResizeTo(width + 30, 30);
+		float width = StringWidth(item->Label());
+		fNetworkMenu->SetExplicitSize(BSize(width + 30, B_SIZE_UNSET));
 		UpdatePersonalData(fActiveNetwork);
 		UpdateNetworkData(fActiveNetwork);
 		if (BMessenger(fServerPrefs).IsValid()) fServerPrefs->SetNetworkData(&fActiveNetwork);

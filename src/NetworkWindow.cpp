@@ -37,11 +37,10 @@
 
 NetworkWindow::NetworkWindow()
 	: BWindow(BRect(50, 50, 550, 430), B_TRANSLATE("Network setup"), B_TITLED_WINDOW,
-		B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE | B_NOT_ZOOMABLE*/)
+		B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE */ | B_NOT_ZOOMABLE)
 {
-	NetworkPrefsView* netView = new NetworkPrefsView(Bounds(), "network");
+	NetworkPrefsView* netView = new NetworkPrefsView("network");
 	ResizeTo(netView->Bounds().Width(), netView->Bounds().Height());
-	AddChild(netView);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.SetInsets(0)
@@ -74,7 +73,7 @@ bool NetworkWindow::QuitRequested()
 
 NetPrefServerWindow::NetPrefServerWindow(BHandler* target)
 	: BWindow(BRect(50, 50, 400, 250), B_TRANSLATE("Servers"), B_TITLED_WINDOW,
-			  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
+			  B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE */ | B_NOT_ZOOMABLE)
 {
 	serverView = new NetPrefsServerView(Bounds(), "server settings",
 		BMessenger(target));

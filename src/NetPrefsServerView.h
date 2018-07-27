@@ -10,8 +10,7 @@ class BMessenger;
 class BMenuItem;
 class BMenuField;
 class BButton;
-class BListView;
-class BStringView;
+
 class BColumnListView;
 class ServerEntryWindow;
 
@@ -30,9 +29,9 @@ private:
 	void AddServer(const ServerData*);
 	void RemoveServer();
 	void UpdateNetworkData(const ServerData*);
-	BStringView* fSelectTitleString, *fLegend4;
+
 	BColumnListView* fServerList;
-	BButton* fAddButton, *fEditButton, *fRemoveButton, *fOkButton;
+	BButton* fAddButton, *fEditButton, *fRemoveButton;
 	BWindow* fEntryWin;
 	BMessage* fActiveNetwork;
 	BMessenger fNetWin;

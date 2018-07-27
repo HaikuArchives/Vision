@@ -44,7 +44,7 @@ struct ServerData;
 class NetworkPrefsView : public BView
 {
 public:
-	NetworkPrefsView(BRect, const char*);
+	NetworkPrefsView(const char*);
 	virtual ~NetworkPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();

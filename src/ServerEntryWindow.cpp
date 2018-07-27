@@ -22,12 +22,13 @@
 #include <Box.h>
 #include <Button.h>
 #include <CheckBox.h>
+#include <LayoutBuilder.h>
 #include <MenuField.h>
 #include <Menu.h>
 #include <MenuItem.h>
+#include <SeparatorView.h>
 #include <TextControl.h>
 #include <Window.h>
-#include <LayoutBuilder.h>
 
 #include "NumericFilter.h"
 #include "ServerEntryWindow.h"
@@ -41,7 +42,7 @@
 
 ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 	const ServerData* data, int32 size)
-	: BWindow(BRect(50, 50, 350, 250), B_TRANSLATE("Add server"),
+	: BWindow(BRect(50, 50, 150, 150), B_TRANSLATE("Add server"),
 		B_TITLED_WINDOW, B_AUTO_UPDATE_SIZE_LIMITS |
 		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS),
 	invocation(invoked),
@@ -76,11 +77,26 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 		new BMessage(M_SERVER_STATE)));
 	stateMenu->AddItem(new BMenuItem(B_TRANSLATE("Disabled"),
 		new BMessage(M_SERVER_STATE)));
+	stateMenu->SetRadioMode(true);
+	stateMenu->SetLabelFromMarked(true);
+
+	float menuFieldSize = be_plain_font->StringWidth(B_TRANSLATE("Primary"));
+	float secondarySize = be_plain_font->StringWidth(B_TRANSLATE("Secondary"));
+	float disabledSize = be_plain_font->StringWidth(B_TRANSLATE("Disabled"));
+
+	if (secondarySize > disabledSize) {
+		if (disabledSize > menuFieldSize)
+			menuFieldSize = secondarySize;
+	} else {
+		if (secondarySize > menuFieldSize)
+			menuFieldSize = disabledSize;
+	}
 
 	text = B_TRANSLATE("State:");
 	text.Append(" ");
 	statusField = new BMenuField("states",
 		text.String(), stateMenu, B_WILL_DRAW | B_NAVIGABLE);
+	statusField->CreateMenuBarLayoutItem()->SetExplicitSize(BSize(menuFieldSize + 30, B_SIZE_UNSET));
 
 	okButton = new BButton("serverOk", B_TRANSLATE("Done"),
 		new BMessage(M_SERVER_DONE), B_WILL_DRAW | B_NAVIGABLE);
@@ -97,40 +113,40 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 	usePassword = new BCheckBox("usePass", text.String(),
 		new BMessage(M_SERVER_USEPASS), B_WILL_DRAW | B_NAVIGABLE);
 
-	text = B_TRANSLATE("Secure port:");
-	text.Append(" ");
+	text = B_TRANSLATE("Secure port");
 	securePort = new BCheckBox("securePort", text.String(),
 		new BMessage(M_SERVER_SECUREPORT), B_WILL_DRAW | B_NAVIGABLE);
 
 	passwordField = new BTextControl("password", NULL, password.String(), NULL,
 		B_WILL_DRAW | B_NAVIGABLE);
 
-	BLayoutBuilder::Grid<>(this)
-		.SetInsets(B_USE_HALF_ITEM_INSETS)
-		.Add(serverName->CreateLabelLayoutItem(), 0, 0)
-		.Add(serverName->CreateTextViewLayoutItem(), 1, 0)
-		.Add(port->CreateLabelLayoutItem(), 0, 1)
-		.Add(port->CreateTextViewLayoutItem(), 1, 1)
-		.Add(usePassword, 0, 2)
-		.Add(passwordField, 1, 2)
-		.Add(securePort, 0, 3, 2)
-		.Add(statusField->CreateLabelLayoutItem(), 0, 4)
-		.Add(statusField->CreateMenuBarLayoutItem(), 1, 4)
-		.AddGroup(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING, 1, 5, 1, 1)
+	BLayoutBuilder::Group<>(this, B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+		.SetInsets(0)
+		.AddGrid()
+			.SetInsets(B_USE_WINDOW_INSETS)
+			.Add(serverName->CreateLabelLayoutItem(), 0, 0)
+			.Add(serverName->CreateTextViewLayoutItem(), 1, 0)
+			.Add(port->CreateLabelLayoutItem(), 0, 1)
+			.Add(port->CreateTextViewLayoutItem(), 1, 1)
+			.Add(securePort, 0, 2, 2)
+			.Add(usePassword, 0, 3)
+			.Add(passwordField, 1, 3)
+			.Add(statusField->CreateLabelLayoutItem(), 0, 4)
+			.Add(statusField->CreateMenuBarLayoutItem(), 1, 4)
+		.End()
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.AddGroup(B_HORIZONTAL)
+			.SetInsets(B_USE_WINDOW_INSETS, B_USE_HALF_ITEM_SPACING, B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
+			.AddGlue()
 			.Add(cancelButton)
 			.Add(okButton)
 		.End()
 	.End();
 
-	text = B_TRANSLATE("Server:");
-	text.Append(" ");
-	serverName->SetDivider(be_plain_font->StringWidth(text.String()) + 5);
 	serverName->SetTarget(this);
 
 	port->SetTarget(this);
 	port->TextView()->AddFilter(new NumericFilter());
-
-	ResizeToPreferred();
 
 	statusField->Menu()->SetTargetForItems(this);
 
@@ -156,6 +172,7 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 	port->MakeFocus(true);
 	serverName->MakeFocus(false);
 	serverName->MakeFocus(true);
+
 }
 
 ServerEntryWindow::~ServerEntryWindow()
@@ -180,13 +197,7 @@ void ServerEntryWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
 	case M_SERVER_STATE: {
-		BMenu* menu(statusField->Menu());
-		BMenuItem* item(NULL);
-		item = menu->FindMarked();
-		if (item) item->SetMarked(false);
-		msg->FindPointer("source", reinterpret_cast<void**>(&item));
-		item->SetMarked(true);
-		statusField->MenuItem()->SetLabel(item->Label());
+		// use SetRadioMode and SetLabelFromMarked
 	}
 
 	case M_SERVER_NAME_CHANGED:
