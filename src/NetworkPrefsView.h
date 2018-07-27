@@ -44,12 +44,11 @@ struct ServerData;
 class NetworkPrefsView : public BView
 {
 public:
-	NetworkPrefsView(BRect, const char*);
+	NetworkPrefsView(const char*);
 	virtual ~NetworkPrefsView();
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();
 	virtual void DetachedFromWindow();
-	virtual void FrameResized(float width, float height);
 
 private:
 	void SetConnectServer(const char*);
@@ -62,7 +61,8 @@ private:
 	BMenuField* fNetworkMenu;
 	BScrollView* fExecScroller, *fNickScroller;
 
-	BBox* fMainNetBox, *fNetDetailsBox, *fPersonalBox;
+	BBox *fNetDetailsBox, *fPersonalBox;
+	BView* fMainNetContainerBox, *fNetDetailsContainerBox, *fPersonalContainerBox;
 
 	BButton* fServerButton, *fNickAddButton, *fNickRemoveButton;
 

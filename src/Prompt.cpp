@@ -23,6 +23,7 @@
 #include <Alert.h>
 #include <Application.h>
 #include <Button.h>
+#include <LayoutBuilder.h>
 #include <Handler.h>
 #include <TextControl.h>
 
@@ -44,46 +45,31 @@ PromptWindow::PromptWindow(BPoint point, const char* label, const char* title, c
 	: BWindow(BRect(point.x, point.y,
 					point.x + 10, // To be resized
 					point.y + 10),
-			  title, B_FLOATING_WINDOW, B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS),
+			  title, B_FLOATING_WINDOW, B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS
+			  | B_AUTO_UPDATE_SIZE_LIMITS),
 
 	  handler(handler_),
 	  invoked(msg),
 	  validate(validate_),
 	  blanks(blanks_)
 {
-	BRect frame(Bounds());
 	float width;
-
-	BView* bgView(new BView(frame, "Background", B_FOLLOW_ALL_SIDES, B_WILL_DRAW));
-
-	bgView->AdoptSystemColors();
-	AddChild(bgView);
-
-	field = new BTextControl(
-		BRect(10, 10, (width = be_plain_font->StringWidth(label ? label : "")) + 135, 25), "field",
-		label ? label : "", text ? text : "", 0, B_FOLLOW_LEFT | B_FOLLOW_TOP);
-
-	field->SetDivider(width + 5);
-	bgView->AddChild(field);
-
+	field = new BTextControl("field", label ? label : "", text ? text : "", 0);
 	field->TextView()->AddFilter(new EscapeFilter(this));
 
-	done = new BButton(BRect(frame.right - 20, field->Frame().bottom + 10, frame.right - 10,
-							 field->Frame().bottom + 30),
-					   "Done", "Done", new BMessage(M_PROMPT_DONE), B_FOLLOW_RIGHT | B_FOLLOW_TOP);
-	done->ResizeToPreferred();
-	done->MoveTo(frame.right - 10 - done->Frame().Width(), done->Frame().top);
-	bgView->AddChild(done);
+	done = new BButton("Done", "Done", new BMessage(M_PROMPT_DONE));
 
-	cancel = new BButton(BRect(done->Frame().left - 20, field->Frame().bottom + 10,
-							   done->Frame().left - 10, field->Frame().bottom + 30),
-						 "Cancel", "Cancel", new BMessage(M_PROMPT_CANCEL),
-						 B_FOLLOW_RIGHT | B_FOLLOW_TOP);
-	cancel->ResizeToPreferred();
-	cancel->MoveTo(done->Frame().left - 10 - cancel->Frame().Width(), cancel->Frame().top);
-	bgView->AddChild(cancel);
+	cancel = new BButton("Cancel", "Cancel", new BMessage(M_PROMPT_CANCEL));
 
-	ResizeTo(width + 145, cancel->Frame().bottom + 10);
+//	ResizeTo(width + 145, cancel->Frame().bottom + 10);
+	BLayoutBuilder::Grid<>(this)
+		.SetInsets(B_USE_WINDOW_SPACING)
+			.Add(field->CreateLabelLayoutItem(), 0, 0)
+			.Add(field->CreateTextViewLayoutItem(), 1, 0, 2)
+			.Add(cancel, 1, 1)
+			.Add(done, 2, 1)
+			.End();
+
 	done->MakeDefault(true);
 	field->MakeFocus(true);
 }
