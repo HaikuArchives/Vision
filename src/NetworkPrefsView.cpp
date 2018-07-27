@@ -76,6 +76,17 @@ void InvokingTextView::KeyDown(const char* bytes, int32 numBytes)
 	Invoke();
 }
 
+// remove when fixed #14303 in Haiku
+
+class SeparatorView : public BSeparatorView {
+public:				SeparatorView(orientation orientation,
+					border_style border = B_PLAIN_BORDER):
+				BSeparatorView(orientation, border) {};
+	virtual void AttachedToWindow()
+					{AdoptSystemColors();};
+
+};
+
 NetworkPrefsView::NetworkPrefsView(const char* name)
 	: BView(name, B_WILL_DRAW | B_FRAME_EVENTS),
 	  fNickPrompt(NULL),
@@ -99,7 +110,7 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 	fNetworkMenu->SetExplicitSize(BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 32, B_SIZE_UNSET));
 
 	// Create the Views
-	BSeparatorView* fTitleView = new BSeparatorView(B_HORIZONTAL, B_FANCY_BORDER);
+	BSeparatorView* fTitleView = new SeparatorView(B_HORIZONTAL, B_FANCY_BORDER);
 	fTitleView->SetLabel(fNetworkMenu, false);
 	fTitleView->SetAlignment(BAlignment(B_ALIGN_LEFT, B_ALIGN_VERTICAL_UNSET));
 

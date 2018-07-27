@@ -53,7 +53,6 @@ PromptWindow::PromptWindow(BPoint point, const char* label, const char* title, c
 	  validate(validate_),
 	  blanks(blanks_)
 {
-	float width;
 	field = new BTextControl("field", label ? label : "", text ? text : "", 0);
 	field->TextView()->AddFilter(new EscapeFilter(this));
 
