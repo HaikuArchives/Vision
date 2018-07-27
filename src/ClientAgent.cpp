@@ -88,7 +88,6 @@ ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* m
 
 ClientAgent::~ClientAgent()
 {
-	delete fAgentWinItem;
 	delete fHistory;
 }
 
@@ -139,9 +138,17 @@ void ClientAgent::Show()
 	statusMsg.AddBool("hidden", false);
 	Window()->PostMessage(&statusMsg);
 
+	// activate the input box
+	fMsgr.SendMessage(M_INPUT_FOCUS);
+
 	// make RunView recalculate itself
 	fText->Show();
 	BView::Show();
+}
+
+BView* ClientAgent::View()
+{
+	return this;
 }
 
 void ClientAgent::Init()

@@ -31,32 +31,24 @@
 #include <SplitView.h>
 #include <String.h>
 
+
+
 class BMessageRunner;
 class BPopUpMenu;
 class BMenu;
 class BList;
+class Agent;
 class ServerAgent;
 class ClientAgent;
 class ClientWindow;
 class BScrollView;
 class Theme;
 
-class AgentCard : public BSplitView {
-
-public:	AgentCard(BView *agent);
-
-		BView*	GetAgent() const;
-		bool	IsChannelAgent() const;
-private:
-
-		BView* fAgent;
-
-};
 
 class WindowListItem : public BListItem
 {
 public:
-	WindowListItem(const char*, int32, int32, AgentCard*);
+	WindowListItem(const char*, int32, int32, Agent*);
 	virtual ~WindowListItem();
 	BString Name() const;
 	int32 Type() const;
@@ -64,7 +56,7 @@ public:
 	int32 SubStatus() const;
 	int32 BlinkState() const;
 	BView* pAgent() const;
-	AgentCard* pAgentCard() const;
+	Agent* GetAgent() const;
 
 	void SetName(const char*);
 	void SetStatus(int32);
@@ -80,8 +72,8 @@ private:
 	int32 fMyStatus;
 	int32 fMyType;
 	int32 fSubStatus; // servers only -- status of collapsed children
-	BView* fMyAgent;
-	AgentCard* fAgentCard;
+	BView* fMyAgent; // remove this
+	Agent* fAgent;
 	int32 fBlinkState;
 	int32 fBlinkStateCount;
 	BMessageRunner* fBlinker;
@@ -123,9 +115,10 @@ public:
 	void RemoveAgent(WindowListItem*);
 	void Expand(BListItem*);
 	void Collapse(BListItem*);
-
+/*
 	void SaveSplitSettings(AgentCard* agentCard);
 	void ApplySplitSettings(AgentCard* agentCard);
+*/
 protected:
 	virtual void				DrawLatch(BRect itemRect, int32 level,
 									bool collapsed, bool highlighted,
@@ -134,7 +127,8 @@ protected:
 									bool complete = false);
 
 private:
-	BPopUpMenu* fMyPopUp;
+	BPopUpMenu*		fMyPopUp;
+	Agent*			fActiveAgent;
 	WindowListItem* fLastSelected;
 
 	Theme* fActiveTheme;

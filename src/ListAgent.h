@@ -32,6 +32,7 @@
 #include <MessageRunner.h>
 #include <regex.h>
 
+#include "Agent.h"
 #include "ObjectList.h"
 
 class BColumnListView;
@@ -44,7 +45,7 @@ class Theme;
 class BRow;
 class WindowList;
 
-class ListAgent : public BView
+class ListAgent : public BView, public Agent
 {
 public:
 	ListAgent(const char*, BMessenger*);
@@ -53,8 +54,8 @@ public:
 	virtual void AttachedToWindow();
 	virtual void Show();
 	virtual void Hide();
+	virtual BView* View();
 
-	WindowListItem* fAgentWinItem;
 	BMessenger fMsgr;
 
 private:

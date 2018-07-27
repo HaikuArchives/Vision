@@ -68,9 +68,12 @@ ChannelAgent::ChannelAgent(const char* id_, const char* serverName_, int ircdtyp
 	/*
 	 * Function purpose: Consctruct
 	 */
-
-	 fNamesList = new NamesView(this);
-
+	fNamesList = new NamesView(this);
+	fSplitView = new SplitView(B_HORIZONTAL, 0);
+	fSplitView->AddChild(this, 8);
+	BScrollView* scrollView = new BScrollView("scroll_names", fNamesList, 0, false, true, B_PLAIN_BORDER);
+	fSplitView->AddChild(scrollView, 2);
+	fSplitView->LoadSplitSettings();
 }
 
 ChannelAgent::~ChannelAgent()
@@ -86,6 +89,7 @@ ChannelAgent::~ChannelAgent()
 
 	// empty nick completion list
 	while (fCompletionNicks.CountItems() > 0) delete fCompletionNicks.RemoveItemAt(0L);
+	delete fSplitView;
 }
 
 void ChannelAgent::AttachedToWindow()
@@ -99,16 +103,16 @@ void ChannelAgent::AttachedToWindow()
 	ClientAgent::AttachedToWindow();
 }
 
+BView* ChannelAgent::View()
+{
+	return fSplitView;
+}
+
 void ChannelAgent::Init()
 {
 	BString text(B_TRANSLATE("*** Now talking in %channel%\n"));
 	text.ReplaceFirst("%channel%", fId.String());
 	Display(text.String(), C_JOIN);
-}
-
-void ChannelAgent::Show()
-{
-	ClientAgent::Show();
 }
 
 int ChannelAgent::FindPosition(const char* data) const
@@ -1262,3 +1266,4 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 		fNamesList->Invalidate();
 	}
 }
+
