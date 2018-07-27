@@ -96,7 +96,7 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 											new BMessage(M_DUPE_CURRENT_NETWORK)));
 	fNetworkMenu = new BMenuField("NetList", NULL, menu);
 	const float width = StringWidth(B_TRANSLATE("Defaults"));
-	fNetworkMenu->SetExplicitSize(BSize(width + 30, B_SIZE_UNSET));
+	fNetworkMenu->SetExplicitSize(BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 32, B_SIZE_UNSET));
 
 	// Create the Views
 	BSeparatorView* fTitleView = new BSeparatorView(B_HORIZONTAL, B_FANCY_BORDER);
@@ -467,9 +467,9 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 		if (fActiveNetwork.HasString("name"))
 			vision_app->SetNetwork(fActiveNetwork.FindString("name"), &fActiveNetwork);
 		fActiveNetwork = vision_app->GetNetwork("defaults");
-		fNetworkMenu->MenuItem()->SetLabel(B_TRANSLATE("Defaults"));
 		float width = StringWidth(B_TRANSLATE("Defaults"));
-		fNetworkMenu->SetExplicitSize(BSize(width + 30, B_SIZE_UNSET));
+		fNetworkMenu->SetExplicitSize(BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 28, B_SIZE_UNSET));
+		fNetworkMenu->MenuItem()->SetLabel(B_TRANSLATE("Defaults"));
 		SetupDefaults(fActiveNetwork);
 		fDupeItem->SetEnabled(false);
 		fRemoveItem->SetEnabled(false);
@@ -481,9 +481,9 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 		msg->FindPointer("source", reinterpret_cast<void**>(&item));
 		SaveCurrentNetwork();
 		fActiveNetwork = vision_app->GetNetwork(item->Label());
-		fNetworkMenu->MenuItem()->SetLabel(item->Label());
 		float width = StringWidth(item->Label());
-		fNetworkMenu->SetExplicitSize(BSize(width + 30, B_SIZE_UNSET));
+		fNetworkMenu->SetExplicitSize(BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 28, B_SIZE_UNSET));
+		fNetworkMenu->MenuItem()->SetLabel(item->Label());
 		UpdatePersonalData(fActiveNetwork);
 		UpdateNetworkData(fActiveNetwork);
 		if (BMessenger(fServerPrefs).IsValid()) fServerPrefs->SetNetworkData(&fActiveNetwork);
