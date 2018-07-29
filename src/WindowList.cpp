@@ -27,6 +27,7 @@
 #include <CardLayout.h>
 #include <PopUpMenu.h>
 #include <MenuItem.h>
+#include <MessageRunner.h>
 #include <LayoutBuilder.h>
 #include <List.h>
 #include <ScrollView.h>

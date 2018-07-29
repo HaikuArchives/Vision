@@ -29,7 +29,6 @@
 #include <View.h>
 #include <String.h>
 #include <Messenger.h>
-#include <MessageRunner.h>
 #include <regex.h>
 
 #include "Agent.h"
@@ -62,7 +61,6 @@ private:
 	void AddBatch();
 	Theme* activeTheme;
 	BMessenger* fSMsgr;
-	BMessageRunner* listUpdateTrigger;
 	BMenu* listMenu;
 	BColumnListView* listView;
 	BColumn* channelColumn, *usersColumn, *topicColumn;

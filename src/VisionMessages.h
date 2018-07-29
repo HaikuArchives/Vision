@@ -51,7 +51,6 @@ const uint32 M_LIST_FIND = 0x1030;
 const uint32 M_LIST_FAGAIN = 0x1031;
 const uint32 M_LIST_FILTER = 0x1032;
 const uint32 M_LIST_INVOKE = 0x1033;
-const uint32 M_LIST_UPDATE = 0x1034;
 
 const uint32 M_IS_IGNORED = 0x1035;
 const uint32 M_IGNORE_ADD = 0x1036;

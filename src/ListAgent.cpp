@@ -66,7 +66,6 @@ ListAgent::ListAgent(const char* title, BMessenger* sMsgr_)
 	: BView(title, B_WILL_DRAW | B_FRAME_EVENTS),
 	  activeTheme(vision_app->ActiveTheme()),
 	  fSMsgr(sMsgr_),
-	  listUpdateTrigger(NULL),
 	  filter(""),
 	  find(""),
 	  processing(false)
@@ -120,8 +119,6 @@ SetLayout(new BGroupLayout(B_VERTICAL, 0));
 
 ListAgent::~ListAgent()
 {
-	if (listUpdateTrigger) delete listUpdateTrigger;
-
 	while (hiddenItems.CountItems() > 0) delete hiddenItems.RemoveItemAt(0L);
 
 	delete fSMsgr;
@@ -259,18 +256,12 @@ void ListAgent::MessageReceived(BMessage* msg)
 	} break;
 
 	case M_LIST_BEGIN: {
-		BMessage msg(M_LIST_UPDATE);
-		listUpdateTrigger = new BMessageRunner(BMessenger(this), &msg, 3000000);
 		statusStr = B_TRANSLATE("Loading");
 		if (!IsHidden())
 			vision_app->pClientWin()->pStatusView()->SetItemValue(1, statusStr.String(), true);
 	} break;
 
 	case M_LIST_DONE: {
-		if (listUpdateTrigger) {
-			delete listUpdateTrigger;
-			listUpdateTrigger = 0;
-		}
 		statusStr = B_TRANSLATE("Done");
 
 		listView->SetSortingEnabled(true);
