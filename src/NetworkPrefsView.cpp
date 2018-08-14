@@ -31,7 +31,7 @@
 #include <MenuField.h>
 #include <Menu.h>
 #include <MenuItem.h>
-#include <MessageFormat.h>
+#include <StringFormat.h>
 #include <SeparatorView.h>
 #include <StringView.h>
 #include <ScrollView.h>
@@ -317,7 +317,7 @@ void NetworkPrefsView::SetAlternateCount(uint32 altCount)
 	if (altCount > 0) {
 
 	BString text;
-	static BMessageFormat format(B_TRANSLATE("{0, plural,"
+	static BStringFormat format(B_TRANSLATE("{0, plural,"
 		"one{with a fallback to one other.}"
 		"other{with a fallback to # others.}}"));
 		format.Format(text, altCount);

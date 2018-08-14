@@ -24,7 +24,7 @@
  */
 
 #include <AppFileInfo.h>
-#include <MessageFormat.h>
+#include <StringFormat.h>
 #include <sys/utsname.h>
 #include <stdlib.h>
 
@@ -300,7 +300,7 @@ void ServerAgent::ParseCTCPResponse(BString theNick, BString theMsg)
 		}
 
 //		BString text;
-		static BMessageFormat format(B_TRANSLATE("{0, plural,"
+		static BStringFormat format(B_TRANSLATE("{0, plural,"
 			"one{[%nick% PING response]: # second\n}"
 			"other{[%nick% PING response]: # seconds\n}}"));
 			format.Format(tempString, theSeconds);

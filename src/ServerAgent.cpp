@@ -31,7 +31,7 @@
 #include <Directory.h>
 #include <Entry.h>
 #include <FilePanel.h>
-#include <MessageFormat.h>
+#include <StringFormat.h>
 #include <MessageRunner.h>
 #include <Path.h>
 #include <String.h>
@@ -281,7 +281,7 @@ status_t ServerAgent::SocketThread()
 
 			if (retrycount) {
 //				BString text;
-				BMessageFormat format(B_TRANSLATE("{0, plural,"
+				BStringFormat format(B_TRANSLATE("{0, plural,"
 					"one{[@] Waiting one second before next attempt}"
 					"other{[@] Waiting # seconds before next attempt}}"));
 				format.Format(statString, retrycount * retrycount);
