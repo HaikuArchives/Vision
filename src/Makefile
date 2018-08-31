@@ -33,7 +33,6 @@ APP_MIME_SIG = application/x-vnd.Ink-Vision
 SRCS = \
 	Agent.cpp \
 	ChannelAgent.cpp \
-	ChannelOptions.cpp \
 	ClickView.cpp \
 	ClientAgent.cpp \
 	ClientAgentInputFilter.cpp \
