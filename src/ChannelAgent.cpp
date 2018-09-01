@@ -44,7 +44,6 @@
 #include "StatusView.h"
 #include "ClientWindow.h"
 #include "Utilities.h"
-#include "ChannelOptions.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ChannelAgent"
@@ -424,12 +423,6 @@ void ChannelAgent::TabExpansion()
 
 void ChannelAgent::AddMenuItems(BPopUpMenu* pMenu)
 {
-	BMenuItem* item(NULL);
-	item = new BMenuItem(B_TRANSLATE("Channel options"),
-		new BMessage(M_CHANNEL_OPTIONS_SHOW));
-	item->SetTarget(this);
-	pMenu->AddItem(item);
-	pMenu->AddSeparatorItem();
 }
 
 void ChannelAgent::MessageReceived(BMessage* msg)
@@ -997,19 +990,6 @@ void ChannelAgent::MessageReceived(BMessage* msg)
 		buffer = "";
 		buffer << fOpsCount;
 		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS, buffer.String(), true);
-	} break;
-
-	case M_CHANNEL_OPTIONS_SHOW: {
-		if (fChanOpt)
-			fChanOpt->Activate();
-		else {
-			fChanOpt = new ChannelOptions(fId.String(), this);
-			fChanOpt->Show();
-		}
-	} break;
-
-	case M_CHANNEL_OPTIONS_CLOSE: {
-		fChanOpt = NULL;
 	} break;
 
 	case M_CLIENT_QUIT: {
