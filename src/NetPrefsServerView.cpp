@@ -178,6 +178,7 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 	BAutolock lock(Looper());
 	if (!lock.IsLocked()) return;
 	// clear previous servers (if any)
+
 	while (fServerList->CountRows() > 0) {
 		BRow* row(fServerList->RowAt(0));
 		fServerList->RemoveRow(row);
@@ -199,6 +200,36 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 	fServerList->ResizeAllColumnsToPreferred();
 	Window()->SetTitle(netString.String());
 }
+
+
+void NetPrefsServerView::ClearNetworkData()
+{
+	fServerList->Clear();
+	/*
+	while (fServerList->CountRows() > 0) {
+		BRow* row(fServerList->RowAt(0));
+		fServerList->RemoveRow(row);
+		delete row;
+	}
+*/
+/*	BString netString(B_TRANSLATE("Servers for %name%"));
+	netString.ReplaceFirst("%name%", msg->FindString("name"));
+	type_code type;
+	int32 count;
+	ssize_t size;
+	const ServerData* data;
+	msg->GetInfo("server", &type, &count);
+	for (int32 i = 0; i < count; i++) {
+		msg->FindData("server", B_ANY_TYPE, i, reinterpret_cast<const void**>(&data), &size);
+		AddServer(data);
+	}
+	fActiveNetwork = msg;
+
+	fServerList->ResizeAllColumnsToPreferred();
+	Window()->SetTitle(netString.String());
+*/
+}
+
 
 void NetPrefsServerView::MessageReceived(BMessage* msg)
 {
@@ -248,6 +279,28 @@ void NetPrefsServerView::MessageReceived(BMessage* msg)
 			fEntryWin->SetTitle(B_TRANSLATE("Edit server"));
 			fEntryWin->Show();
 		}
+	} break;
+
+	case 'setp': {
+		    BRow* row(fServerList->RowAt(0));
+			if (!row) break;
+			int32 count(0);
+			ssize_t size(0);
+			type_code type;
+			fActiveNetwork->GetInfo("server", &type, &count);
+			const ServerData* compData;
+			for (int32 i = 0; i < count; i++) {
+				fActiveNetwork->FindData("server", B_RAW_TYPE, i,
+										 reinterpret_cast<const void**>(&compData), &size);
+				if (!strcmp(compData->serverName, ((BStringField*)row->GetField(1))->String()))
+					break;
+			}
+			BMessage* invoke(new BMessage(M_SERVER_RECV_DATA));
+			invoke->AddBool("edit", true);
+			invoke->AddBool("password", true);
+			fEntryWin = new ServerEntryWindow(this, invoke, compData, size);
+			fEntryWin->SetTitle(B_TRANSLATE("Edit server"));
+			fEntryWin->Show();
 	} break;
 
 	case M_SERVER_REMOVE_ITEM: {

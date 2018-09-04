@@ -44,6 +44,7 @@
 #include <stdio.h>
 
 #include "NetworkPrefsView.h"
+#include "NetPrefsServerView.h"
 #include "NetworkWindow.h"
 #include "Prompt.h"
 #include "Vision.h"
@@ -190,12 +191,13 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 	fIdent = new BTextControl(NULL, text.String(), NULL, NULL);
 
 	BLayoutBuilder::Group<>(fNetDetailsContainerBox, B_VERTICAL)
-				.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
-					.Add(stringView1)
-					.Add(fConnectServer)
-					.Add(fAlternates)
-				.End()
-				.Add(fServerButton)
+//				.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+//					.Add(stringView1)
+//					.Add(fConnectServer)
+//					.Add(fAlternates)
+//				.End()
+//				.Add(fServerButton)
+				.Add(fServerPrefs = new NetPrefsServerView(BRect(0,0,100,100), "server settings", BMessenger(this)))
 				.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
 					.Add(stringView4)
 					.Add(fExecScroller)
@@ -230,6 +232,10 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 			.End()
 			.AddStrut(B_USE_DEFAULT_SPACING)
 			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+				.Add(fSetPassword = new BButton("setPassWord", B_TRANSLATE("Set password"), new BMessage('feds')))
+			.End()
+			.AddStrut(B_USE_DEFAULT_SPACING)
+			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
 				.Add(stringView5)
 				.Add(fNickScroller)
 			.End()
@@ -260,13 +266,14 @@ NetworkPrefsView::~NetworkPrefsView()
 	BMessenger(fNickPrompt).SendMessage(B_QUIT_REQUESTED);
 	BMessenger(fNetPrompt).SendMessage(B_QUIT_REQUESTED);
 	BMessenger(fDupePrompt).SendMessage(B_QUIT_REQUESTED);
-	BMessenger(fServerPrefs).SendMessage(B_QUIT_REQUESTED);
+	//BMessenger(fServerPrefs).SendMessage(B_QUIT_REQUESTED);
 }
 
 void NetworkPrefsView::AttachedToWindow()
 {
 	fNetworkMenu->Menu()->SetTargetForItems(this);
-	fServerButton->SetTarget(this);
+//	fServerButton->SetTarget(this);
+	fSetPassword->SetTarget(this);
 	fLagCheckBox->SetTarget(this);
 	fStartupBox->SetTarget(this);
 	fNickDefaultsBox->SetTarget(this);
@@ -484,6 +491,8 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 		SetupDefaults(fActiveNetwork);
 		fDupeItem->SetEnabled(false);
 		fRemoveItem->SetEnabled(false);
+		fSetPassword->SetEnabled(false);
+		fServerPrefs->ClearNetworkData();
 		break;
 	}
 
@@ -497,9 +506,10 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 		fNetworkMenu->MenuItem()->SetLabel(item->Label());
 		UpdatePersonalData(fActiveNetwork);
 		UpdateNetworkData(fActiveNetwork);
-		if (BMessenger(fServerPrefs).IsValid()) fServerPrefs->SetNetworkData(&fActiveNetwork);
+		fServerPrefs->SetNetworkData(&fActiveNetwork);
 		fDupeItem->SetEnabled(true);
 		fRemoveItem->SetEnabled(true);
+		fSetPassword->SetEnabled(true);
 	} break;
 
 	case M_ADD_NEW_NETWORK: {
@@ -584,7 +594,7 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 	case M_SERVER_DATA_CHANGED: {
 		UpdateNetworkData(fActiveNetwork);
 	} break;
-
+/*
 	case M_SERVER_DIALOG: {
 		BMessenger msgr(fServerPrefs);
 		if (msgr.IsValid())
@@ -595,7 +605,7 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 			fServerPrefs->Show();
 		}
 	} break;
-
+*/
 	case M_NET_CHECK_LAG: {
 		bool value = msg->FindInt32("be:value");
 		if (fActiveNetwork.HasBool("lagCheck"))
@@ -694,6 +704,13 @@ void NetworkPrefsView::MessageReceived(BMessage* msg)
 		bool enabled = (index >= 0) && fNickAddButton->IsEnabled();
 		fNickRemoveButton->SetEnabled(enabled);
 	} break;
+
+	case 'feds': {
+		BMessage message('setp');
+		BMessenger(fServerPrefs).SendMessage(&message);
+	} break;
+
+
 
 	default:
 		BView::MessageReceived(msg);
