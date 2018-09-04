@@ -166,7 +166,7 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 	fListView = new BListView(NULL, B_SINGLE_SELECTION_LIST);
 	fListView->SetSelectionMessage(new BMessage(M_NICK_SELECTED));
 
-	fNickScroller = new BScrollView(NULL, fListView, 0, false, true);
+	fNickScroller = new BScrollView(NULL, fListView, 0, false, true, B_PLAIN_BORDER);
 
 	// Create buttons with fixed size
 	font_height fontHeight;

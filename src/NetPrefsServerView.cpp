@@ -59,7 +59,7 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 		 new BMessage(M_SERVER_EDIT_ITEM));
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
-		.SetInsets(B_USE_WINDOW_SPACING)
+		.SetInsets(0)
 		.Add(fServerList)
 		.AddGroup(B_HORIZONTAL, 0)
 			.AddGlue()
