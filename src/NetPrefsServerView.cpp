@@ -83,6 +83,7 @@ void NetPrefsServerView::AttachedToWindow()
 	fEditButton->SetTarget(this);
 	fRemoveButton->SetTarget(this);
 	fServerList->SetTarget(this);
+	fAddButton->SetEnabled(false);
 	fEditButton->SetEnabled(false);
 	fRemoveButton->SetEnabled(false);
 }
@@ -179,11 +180,8 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 	if (!lock.IsLocked()) return;
 	// clear previous servers (if any)
 
-	while (fServerList->CountRows() > 0) {
-		BRow* row(fServerList->RowAt(0));
-		fServerList->RemoveRow(row);
-		delete row;
-	}
+	fAddButton->SetEnabled(true);
+	fServerList->Clear();
 
 	BString netString(B_TRANSLATE("Servers for %name%"));
 	netString.ReplaceFirst("%name%", msg->FindString("name"));
@@ -198,20 +196,15 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 	}
 	fActiveNetwork = msg;
 	fServerList->ResizeAllColumnsToPreferred();
-	Window()->SetTitle(netString.String());
+//	Window()->SetTitle(netString.String());
 }
 
 
 void NetPrefsServerView::ClearNetworkData()
 {
 	fServerList->Clear();
-	/*
-	while (fServerList->CountRows() > 0) {
-		BRow* row(fServerList->RowAt(0));
-		fServerList->RemoveRow(row);
-		delete row;
-	}
-*/
+	fAddButton->SetEnabled(false);
+
 /*	BString netString(B_TRANSLATE("Servers for %name%"));
 	netString.ReplaceFirst("%name%", msg->FindString("name"));
 	type_code type;
