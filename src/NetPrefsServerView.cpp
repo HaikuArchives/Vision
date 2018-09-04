@@ -204,6 +204,8 @@ void NetPrefsServerView::ClearNetworkData()
 {
 	fServerList->Clear();
 	fAddButton->SetEnabled(false);
+	fRemoveButton->SetEnabled(false);
+	fEditButton->SetEnabled(false);
 
 /*	BString netString(B_TRANSLATE("Servers for %name%"));
 	netString.ReplaceFirst("%name%", msg->FindString("name"));
