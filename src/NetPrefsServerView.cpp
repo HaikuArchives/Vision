@@ -61,7 +61,7 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.Add(fServerList)
-		.AddGroup(B_HORIZONTAL, 0)
+		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
 			.AddGlue()
 			.Add(fAddButton)
 			.Add(fRemoveButton)
