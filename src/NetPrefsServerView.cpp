@@ -277,6 +277,10 @@ void NetPrefsServerView::MessageReceived(BMessage* msg)
 	} break;
 
 	case 'setp': {
+		BMessenger msgr(fEntryWin);
+		if (msgr.IsValid())
+			fEntryWin->Activate();
+		else {
 		    BRow* row(fServerList->RowAt(0));
 			if (!row) break;
 			int32 count(0);
@@ -296,6 +300,7 @@ void NetPrefsServerView::MessageReceived(BMessage* msg)
 			fEntryWin = new ServerEntryWindow(this, invoke, compData, size);
 			fEntryWin->SetTitle(B_TRANSLATE("Edit server"));
 			fEntryWin->Show();
+		}
 	} break;
 
 	case M_SERVER_REMOVE_ITEM: {
