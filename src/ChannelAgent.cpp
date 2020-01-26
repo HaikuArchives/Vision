@@ -366,7 +366,8 @@ void ChannelAgent::TabExpansion()
 			// list in the correct order
 			for (i = 0; i < count; i++) {
 				BString* name(new BString(*fRecentNicks.ItemAt(i)));
-				if (!(name->ICompare(fLastExpansion.String(), strlen(fLastExpansion.String())))) {
+				if (!(name->ICompare(fLastExpansion.String(), strlen(fLastExpansion.String()))) &&
+					FindPosition(name.String()) > 0) {
 					// parse through list and nuke duplicate if present
 					for (int32 j = fCompletionNicks.CountItems() - 1; j >= 0; j--) {
 						if (!(name->ICompare(*fCompletionNicks.ItemAt(j)))) {
