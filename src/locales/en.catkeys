@@ -1,392 +1,384 @@
-1	English	application/x-vnd.Ink-Vision	3154840961
-[@] Attempting to rejoin…\n	ChannelAgent		[@] Attempting to rejoin…\n
-*** Attempting to rejoin %channel%…\n	ChannelAgent		*** Attempting to rejoin %channel%…\n
-*** Now talking in %channel%\n	ChannelAgent		*** Now talking in %channel%\n
-*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** You have been kicked from %channel% by %kicker% (%rest%)\n
-%s - %s said: %s	ChannelAgent		%s - %s said: %s
-Channel options	ChannelAgent		Channel options
-Lag:	ChannelAgent		Lag:
-Modes:	ChannelAgent		Modes:
-Ops:	ChannelAgent		Ops:
-Users:	ChannelAgent		Users:
-%channel% options	ChannelOptions		%channel% options
-You are currently a channel operator. You may change any of these options.	ChannelOptions		You are currently a channel operator. You may change any of these options.
-Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n
-Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n
-Copy	ClientAgent		Copy
-Cut	ClientAgent		Cut
-Paste	ClientAgent		Paste
-Select all	ClientAgent		Select all
-Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n
-Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n
-As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?
-Cancel	ClientAgentInputFilter		Cancel
-Single line	ClientAgentInputFilter		Single line
-Spam	ClientAgentInputFilter		Spam
-Spam!	ClientAgentInputFilter		Spam!
-\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nSession start: %a %b %d %H:%M %Y\n
-Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Session close: %a %b %d %H:%M %Y\n
-Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Session start: %a %b %d %H:%M %Y\n
-About Vision	ClientWindow		About Vision
-Close this sub-window	ClientWindow		Close this sub-window
-Collapse network	ClientWindow		Collapse network
-Connect to…	ClientWindow		Connect to…
-Copy	ClientWindow		Copy
-Cut	ClientWindow		Cut
-Down	ClientWindow		Down
-Edit	ClientWindow		Edit
-Expand network	ClientWindow		Expand network
-Help	ClientWindow		Help
-List channels…	ClientWindow		List channels…
-Move network down	ClientWindow		Move network down
-Move network up	ClientWindow		Move network up
-Network window	ClientWindow		Network window
-Open Terminal	ClientWindow		Open Terminal
-Paste	ClientWindow		Paste
-Preferences…	ClientWindow		Preferences…
-Previous window	ClientWindow		Previous window
-Quit	ClientWindow		Quit
-Select all	ClientWindow		Select all
-Server	ClientWindow		Server
-Setup…	ClientWindow		Setup…
-Smart down	ClientWindow		Smart down
-Smart up	ClientWindow		Smart up
-Up	ClientWindow		Up
-Window	ClientWindow		Window
-Notify list	ClientWindowDock		Notify list
-Window list	ClientWindowDock		Window list
-Color:	ColorSelector		Color:
-Colors	ColorSelector		Colors
-Acquiring DCC lock…	DCCConnect		Acquiring DCC lock…
-bps:	DCCConnect		bps:
-Connecting to sender.	DCCConnect		Connecting to sender.
-Doing listen call.	DCCConnect		Doing listen call.
-Error writing data.	DCCConnect		Error writing data.
-Established connection.	DCCConnect		Established connection.
-Receiving \"%file%\" from %nick%.	DCCConnect		Receiving \"%file%\" from %nick%.
-Sending \"%file%\" to %nick%.	DCCConnect		Sending \"%file%\" to %nick%.
-Unable to establish connection.	DCCConnect		Unable to establish connection.
-Waiting for acceptance	DCCConnect		Waiting for acceptance
+1	English	application/x-vnd.Ink-Vision	2720096392
 Waiting for connection %ld.	DCCConnect		Waiting for connection %ld.
-DCC transfers	DCCFileWindow		DCC transfers
-%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% wants to begin a DCC chat with you.
-Accept	DCCHandler		Accept
-Cancel	DCCHandler		Cancel
-DCC request	DCCHandler		DCC request
-Refuse	DCCHandler		Refuse
-Replace	DCCHandler		Replace
-Resume	DCCHandler		Resume
-The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?
-Channel	ListAgent		Channel
-Channels	ListAgent		Channels
-Count:	ListAgent		Count:
-Done	ListAgent		Done
-Filter:	ListAgent		Filter:
-Filter…	ListAgent		Filter…
-Find	ListAgent		Find
-Find next	ListAgent		Find next
-Find:	ListAgent		Find:
-Find…	ListAgent		Find…
-List filter	ListAgent		List filter
-Loading	ListAgent		Loading
-Status:	ListAgent		Status:
-Topic	ListAgent		Topic
-Users	ListAgent		Users
-Accepting connection on address %s, port %ld\n	MessageAgent		Accepting connection on address %s, port %ld\n
-Connected!\n	MessageAgent		Connected!\n
-DCC chat terminated.\n	MessageAgent		DCC chat terminated.\n
-DCC send	MessageAgent		DCC send
-Error binding socket.\n	MessageAgent		Error binding socket.\n
-Error connecting socket.\n	MessageAgent		Error connecting socket.\n
-Error creating socket.\n	MessageAgent		Error creating socket.\n
-Lag:	MessageAgent		Lag:
-Trying to connect to address %adress%, port %port%\n	MessageAgent		Trying to connect to address %adress%, port %port%\n
-Whois	MessageAgent		Whois
-%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s said: %s
-Add to notify	NamesView		Add to notify
-CTCP	NamesView		CTCP
-DCC chat	NamesView		DCC chat
-DCC send	NamesView		DCC send
-Query	NamesView		Query
-User selection	NamesView		User selection
-Whois	NamesView		Whois
-- = disabled	NetPrefsServerView		- = disabled
-* = primary	NetPrefsServerView		* = primary
-+ = secondary (fallback)	NetPrefsServerView		+ = secondary (fallback)
-Add…	NetPrefsServerView		Add…
-Edit…	NetPrefsServerView		Edit…
-OK	NetPrefsServerView		OK
-Port	NetPrefsServerView		Port
-Remove	NetPrefsServerView		Remove
-Secure?	NetPrefsServerView		Secure?
-Select servers for %name%:	NetPrefsServerView		Select servers for %name%:
-Server	NetPrefsServerView		Server
-Status	NetPrefsServerView		Status
-Yes	NetPrefsServerView		Yes
-Key:	NetPrefsServerView	like a legend of a map describing the used symbols	Key:
-{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}
-Add network	NetworkPrefsView		Add network
-Add new…	NetworkPrefsView		Add new…
-Add nickname	NetworkPrefsView		Add nickname
-Add…	NetworkPrefsView		Add…
 Auto-connect to this network	NetworkPrefsView		Auto-connect to this network
-Automatically execute:	NetworkPrefsView		Automatically execute:
-Change servers…	NetworkPrefsView		Change servers…
-Connects to server:	NetworkPrefsView		Connects to server:
-Defaults	NetworkPrefsView		Defaults
-Duplicate current…	NetworkPrefsView		Duplicate current…
-Duplicate network	NetworkPrefsView		Duplicate network
-Enable lag checking	NetworkPrefsView		Enable lag checking
-falling back to 9 others.	NetworkPrefsView		falling back to 9 others.
-Ident:	NetworkPrefsView		Ident:
-Network details	NetworkPrefsView		Network details
-Network name:	NetworkPrefsView		Network name:
-Networks	NetworkPrefsView		Networks
-Nickname:	NetworkPrefsView		Nickname:
-Personal details	NetworkPrefsView		Personal details
-Preferred nicks:	NetworkPrefsView		Preferred nicks:
-Real name:	NetworkPrefsView		Real name:
-Remove	NetworkPrefsView		Remove
-Remove current	NetworkPrefsView		Remove current
-Use defaults	NetworkPrefsView		Use defaults
-<N/A>	NetworkPrefsView	as in 'not available	<N/A>
-Network setup	NetworkWindow		Network setup
-Servers	NetworkWindow		Servers
-DCC chat	NotifyList		DCC chat
-Query	NotifyList		Query
-Remove	NotifyList		Remove
-Whois	NotifyList		Whois
-*** Trying new nick %nick%.\n	ParseCmd		*** Trying new nick %nick%.\n
-/pexec: command failed	ParseCmd		/pexec: command failed
-Bool has been set	ParseCmd		Bool has been set
-Error setting bool	ParseCmd		Error setting bool
-Error: Invalid parameters	ParseCmd		Error: Invalid parameters
-Resolved %lookup% to %address%	ParseCmd		Resolved %lookup% to %address%
-Resolved %lookup% to %name%	ParseCmd		Resolved %lookup% to %name%
-Send	ParseCmd		Send
-Sending a file to %nick%	ParseCmd		Sending a file to %nick%
-Unable to resolve %lookup%	ParseCmd		Unable to resolve %lookup%
-Uptime: %time%\n	ParseCmd		Uptime: %time%\n
-Vision has been running for %time%	ParseCmd		Vision has been running for %time%
-Vision Uptime: %time%\n	ParseCmd		Vision Uptime: %time%\n
-[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% response]: %reply%\n
-{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}
-- Server Message Of The Day:\n	ParseENums		- Server Message Of The Day:\n
-[@] Successful reconnect\n	ParseENums		[@] Successful reconnect\n
-[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [was] (%ident%@%address%)\n
-[x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% is already in %channel%.\n
-[x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% is not in %channel%.\n
-[x] Channel key already set in %channel%.\n	ParseENums		[x] Channel key already set in %channel%.\n
-[x] Channels:	ParseENums		[x] Channels:
-[x] Nickname/Channel %nick% is already in use or unavailable.\n	ParseENums		[x] Nickname/Channel %nick% is already in use or unavailable.\n
-[x] No topic set in %channel%\n	ParseENums		[x] No topic set in %channel%\n
-[x] Server: %server% (%info%)\n	ParseENums		[x] Server: %server% (%info%)\n
-[x] Unknown channel mode: '%mode%'\n	ParseENums		[x] Unknown channel mode: '%mode%'\n
-[x] Unknown MODE flag.\n	ParseENums		[x] Unknown MODE flag.\n
-[x] You're not in %channel%.\n	ParseENums		[x] You're not in %channel%.\n
-[x] your current mode is: %mode%\n	ParseENums		[x] your current mode is: %mode%\n
-* All your pre-selected nicknames are in use.\n	ParseENums		* All your pre-selected nicknames are in use.\n
-* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n	ParseENums		* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n
-* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* Please type /NICK <NEWNICK> to try another.\n
-*** %nick% has been invited to %channel%.\n	ParseENums		*** %nick% has been invited to %channel%.\n
-*** Channel lock for %channel%: %lock%\n	ParseENums		*** Channel lock for %channel%: %lock%\n
-*** Channel mode for %channel%: %mode%\n	ParseENums		*** Channel mode for %channel%: %mode%\n
-*** Topic set by %user% @ %time%\n	ParseENums		*** Topic set by %user% @ %time%\n
-*** Topic: %topic%\n	ParseENums		*** Topic: %topic%\n
-*** Users in %channel%: %names%\n	ParseENums		*** Users in %channel%: %names%\n
-%channel% (bad channel key)\n	ParseENums		%channel% (bad channel key)\n
-%channel% (invite only)\n	ParseENums		%channel% (invite only)\n
-%channel% (you're banned)\n	ParseENums		%channel% (you're banned)\n
-%channel% created on %time%\n	ParseENums		%channel% created on %time%\n
-%people% are offline	ParseENums		%people% are offline
-%people% are online	ParseENums		%people% are online
-%people% is offline	ParseENums		%people% is offline
-%people% is online	ParseENums		%people% is online
-Idle:	ParseENums		Idle:
-Sign-on:	ParseENums		Sign-on:
-*** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Hostmask added to SILENCE list: %hostmask%.\n
-*** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Hostmask removed from SILENCE list: %hostmask%.\n
-*** User mode changed: %mode%\n	ParseEvents		*** User mode changed: %mode%\n
-*** You have been invited to %channel% by %nick%.\n	ParseEvents		*** You have been invited to %channel% by %nick%.\n
-Add	PrefAliases		Add
-Alias	PrefAliases		Alias
-Name	PrefAliases		Name
-Remove	PrefAliases		Remove
-Baltic (ISO 8859-13)	PrefApp		Baltic (ISO 8859-13)
-Central European (ISO 8859-2)	PrefApp		Central European (ISO 8859-2)
-Cyrillic (ISO 8859-5)	PrefApp		Cyrillic (ISO 8859-5)
-Cyrillic (KOI8-R)	PrefApp		Cyrillic (KOI8-R)
-Cyrillic (MS-DOS 866)	PrefApp		Cyrillic (MS-DOS 866)
-Cyrillic (Windows 1251)	PrefApp		Cyrillic (Windows 1251)
-Encoding:	PrefApp		Encoding:
-Greek (ISO 8859-7)	PrefApp		Greek (ISO 8859-7)
-Japanese (EUC)	PrefApp		Japanese (EUC)
-Japanese (JIS)	PrefApp		Japanese (JIS)
-Japanese (Shift-JIS)	PrefApp		Japanese (Shift-JIS)
-Korean (EUC)	PrefApp		Korean (EUC)
-Open new query on private message	PrefApp		Open new query on private message
-Require double CMD+Q/W to close	PrefApp		Require double CMD+Q/W to close
-Show OS information in version reply	PrefApp		Show OS information in version reply
-Strip mIRC colors	PrefApp		Strip mIRC colors
-Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
-Warn when multiline pasting	PrefApp		Warn when multiline pasting
-Western (ISO 8859-1)	PrefApp		Western (ISO 8859-1)
-Western (Mac Roman)	PrefApp		Western (Mac Roman)
-Western (Windows)	PrefApp		Western (Windows)
-Action	PrefColor		Action
-Background	PrefColor		Background
-CTCP reply	PrefColor		CTCP reply
-CTCP request	PrefColor		CTCP request
-Error	PrefColor		Error
-Ignore	PrefColor		Ignore
-Input background	PrefColor		Input background
-Input text	PrefColor		Input text
-Join	PrefColor		Join
-Kick	PrefColor		Kick
-mIRC aqua	PrefColor		mIRC aqua
-mIRC black	PrefColor		mIRC black
-mIRC brown	PrefColor		mIRC brown
-mIRC dark blue	PrefColor		mIRC dark blue
-mIRC green	PrefColor		mIRC green
-mIRC grey	PrefColor		mIRC grey
-mIRC light blue	PrefColor		mIRC light blue
-mIRC lime	PrefColor		mIRC lime
-mIRC orange	PrefColor		mIRC orange
-mIRC pink	PrefColor		mIRC pink
-mIRC purple	PrefColor		mIRC purple
-mIRC red	PrefColor		mIRC red
-mIRC silver	PrefColor		mIRC silver
-mIRC teal	PrefColor		mIRC teal
-mIRC white	PrefColor		mIRC white
-mIRC yellow	PrefColor		mIRC yellow
-Names (helper)	PrefColor		Names (helper)
-Names (normal)	PrefColor		Names (normal)
-Names (OP)	PrefColor		Names (OP)
-Names (voice)	PrefColor		Names (voice)
-Names background	PrefColor		Names background
-Names selection	PrefColor		Names selection
-Nickname < >	PrefColor		Nickname < >
-Nickname text	PrefColor		Nickname text
-Notice	PrefColor		Notice
-Notify list background	PrefColor		Notify list background
-Notify list selection	PrefColor		Notify list selection
-Notify offline	PrefColor		Notify offline
-Notify online	PrefColor		Notify online
-Quit	PrefColor		Quit
-Revert	PrefColor		Revert
-Selection	PrefColor		Selection
-Server text	PrefColor		Server text
-Text	PrefColor		Text
-Timestamp background	PrefColor		Timestamp background
-Timestamp text	PrefColor		Timestamp text
-URL	PrefColor		URL
-User nickname < >	PrefColor		User nickname < >
-Wallops	PrefColor		Wallops
-Whois	PrefColor		Whois
-Window list activity	PrefColor		Window list activity
-Window list background	PrefColor		Window list background
-Window list event	PrefColor		Window list event
-Window list nick alert	PrefColor		Window list nick alert
-Window list normal	PrefColor		Window list normal
-Window list selection	PrefColor		Window list selection
-Away:	PrefCommand		Away:
-Back:	PrefCommand		Back:
-Ignore:	PrefCommand		Ignore:
-Kick:	PrefCommand		Kick:
-Quit:	PrefCommand		Quit:
-Unignore:	PrefCommand		Unignore:
-Uptime:	PrefCommand		Uptime:
-Automatically accept incoming sends	PrefDCC		Automatically accept incoming sends
-Automatically check for NAT IP	PrefDCC		Automatically check for NAT IP
-DCC block size:	PrefDCC		DCC block size:
-DCC port range	PrefDCC		DCC port range
-Default path:	PrefDCC		Default path:
-Max:	PrefDCC		Max:
-Min:	PrefDCC		Min:
-Join:	PrefEvent		Join:
-Kick:	PrefEvent		Kick:
-Nick:	PrefEvent		Nick:
-Notify off:	PrefEvent		Notify off:
-Notify on:	PrefEvent		Notify on:
-Part:	PrefEvent		Part:
-Quit:	PrefEvent		Quit:
-Server notice:	PrefEvent		Server notice:
-Topic:	PrefEvent		Topic:
-User notice:	PrefEvent		User notice:
-Channel list	PrefFont		Channel list
-Element:	PrefFont		Element:
-Font:	PrefFont		Font:
-Input text	PrefFont		Input text
-Names list	PrefFont		Names list
-Server messages	PrefFont		Server messages
-Size:	PrefFont		Size:
-Text	PrefFont		Text
-Timestamp	PrefFont		Timestamp
-URLs	PrefFont		URLs
-Window list	PrefFont		Window list
-Aliases	PrefGeneral		Aliases
-Application	PrefGeneral		Application
-Colors	PrefGeneral		Colors
-Commands	PrefGeneral		Commands
-DCC	PrefGeneral		DCC
-Events	PrefGeneral		Events
-Fonts	PrefGeneral		Fonts
-Logging	PrefGeneral		Logging
-Append timestamp to log filenames	PrefLog		Append timestamp to log filenames
 Delete Log Files	PrefLog		Delete Log Files
-Enable logging	PrefLog		Enable logging
-Error	PrefLog		Error
-Log base path:	PrefLog		Log base path:
-OK	PrefLog		OK
-Show timestamps in IRC window	PrefLog		Show timestamps in IRC window
-The log path you have entered is invalid.	PrefLog		The log path you have entered is invalid.
-Timestamp format:	PrefLog		Timestamp format:
+Resume	DCCHandler		Resume
+Network details	NetworkPrefsView		Network details
+Logging	PrefGeneral		Logging
+Names list	PrefFont		Names list
+Automatically accept incoming sends	PrefDCC		Automatically accept incoming sends
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n
+Western (Windows)	PrefApp		Western (Windows)
+About Vision	ClientWindow		About Vision
 Preferences	PrefsWindow		Preferences
-Copy	RunView		Copy
-Lookup (acronym finder)	RunView		Lookup (acronym finder)
-Lookup (dictionary)	RunView		Lookup (dictionary)
-Lookup (Google)	RunView		Lookup (Google)
-Select all	RunView		Select all
-Clipping	RunView	as suffix for dropped text clippings	Clipping
-[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n
-[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Attempting a connection to %id%:%port%…\n
-[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Attempting to connect (attempt %ld of %ld)\n
+Timestamp format:	PrefLog		Timestamp format:
+Kick	PrefColor		Kick
 [@] Connection open, waiting for reply from server\n	ServerAgent		[@] Connection open, waiting for reply from server\n
-[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Could not create connection to address and port. Make sure your internet connection is operational.\n
-[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Could not establish a connection to the server. Sorry.\n
-[@] Disconnected from %server%\n	ServerAgent		[@] Disconnected from %server%\n
+Timestamp background	PrefColor		Timestamp background
+<N/A>	NetworkPrefsView	as in 'not available	<N/A>
+*** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Hostmask added to SILENCE list: %hostmask%.\n
+mIRC black	PrefColor		mIRC black
+Change servers…	NetworkPrefsView		Change servers…
+Window list selection	PrefColor		Window list selection
+Notify list	ClientWindowDock		Notify list
+Whois	NamesView		Whois
+Element:	PrefFont		Element:
+Enable lag checking	NetworkPrefsView		Enable lag checking
+*** Channel mode for %channel%: %mode%\n	ParseENums		*** Channel mode for %channel%: %mode%\n
+Secure port	ServerEntryWindow		Secure port
+DCC	PrefGeneral		DCC
+[x] Nickname/Channel %nick% is already in use or unavailable.\n	ParseENums		[x] Nickname/Channel %nick% is already in use or unavailable.\n
+Away:	PrefCommand		Away:
+Resolved %lookup% to %address%	ParseCmd		Resolved %lookup% to %address%
+Window	ClientWindow		Window
+Names (helper)	PrefColor		Names (helper)
+Loading	ListAgent		Loading
+[x] Channels:	ParseENums		[x] Channels:
+Single line	ClientAgentInputFilter		Single line
 [@] Error getting local IP\n	ServerAgent		[@] Error getting local IP\n
-[@] Established\n	ServerAgent		[@] Established\n
-[@] Handshaking\n	ServerAgent		[@] Handshaking\n
-[@] Local IP: %ip%\n	ServerAgent		[@] Local IP: %ip%\n
-[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n
-[@] Sending password\n	ServerAgent		[@] Sending password\n
-{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}
-CONNECTION PROBLEM	ServerAgent		CONNECTION PROBLEM
-Disabled	ServerAgent		Disabled
-Disconnected	ServerAgent		Disconnected
-Lag:	ServerAgent		Lag:
-Add server	ServerEntryWindow		Add server
-Cancel	ServerEntryWindow		Cancel
-Choose status	ServerEntryWindow		Choose status
-Disabled	ServerEntryWindow		Disabled
-Done	ServerEntryWindow		Done
-Port:	ServerEntryWindow		Port:
-Primary	ServerEntryWindow		Primary
-Secondary	ServerEntryWindow		Secondary
-Secure port:	ServerEntryWindow		Secure port:
-Server:	ServerEntryWindow		Server:
-State:	ServerEntryWindow		State:
-Use password:	ServerEntryWindow		Use password:
-Choose network	SetupWindow		Choose network
-Connect	SetupWindow		Connect
+Error	PrefLog		Error
+Use defaults	NetworkPrefsView		Use defaults
+* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* Please type /NICK <NEWNICK> to try another.\n
+Edit…	NetPrefsServerView		Edit…
+Collapse network	ClientWindow		Collapse network
+mIRC dark blue	PrefColor		mIRC dark blue
+Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Session close: %a %b %d %H:%M %Y\n
+Find:	ListAgent		Find:
+Secure	NetPrefsServerView		Secure
+Fonts	PrefGeneral		Fonts
+Acquiring DCC lock…	DCCConnect		Acquiring DCC lock…
 Network setup…	SetupWindow		Network setup…
-Network:	SetupWindow		Network:
-Preferences…	SetupWindow		Preferences…
-Setup window	SetupWindow		Setup window
-Vision	System name		Vision
-\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein
+Accepting connection on address %s, port %ld\n	MessageAgent		Accepting connection on address %s, port %ld\n
+Vision Uptime: %time%\n	ParseCmd		Vision Uptime: %time%\n
+Modes:	ChannelAgent		Modes:
+Error: Invalid parameters	ParseCmd		Error: Invalid parameters
+DCC port range	PrefDCC		DCC port range
+Lag:	MessageAgent		Lag:
+CTCP request	PrefColor		CTCP request
+Server text	PrefColor		Server text
+DCC send	NamesView		DCC send
+Unable to resolve %lookup%	ParseCmd		Unable to resolve %lookup%
+*** Trying new nick %nick%.\n	ParseCmd		*** Trying new nick %nick%.\n
+Status:	ListAgent		Status:
+/pexec: command failed	ParseCmd		/pexec: command failed
+Cancel	DCCHandler		Cancel
+Close this sub-window	ClientWindow		Close this sub-window
+Select all	RunView		Select all
+[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [was] (%ident%@%address%)\n
+[x] Unknown channel mode: '%mode%'\n	ParseENums		[x] Unknown channel mode: '%mode%'\n
+Japanese (JIS)	PrefApp		Japanese (JIS)
+Server	ClientWindow		Server
+Connect to…	ClientWindow		Connect to…
+OK	PrefLog		OK
+[@] Sending password\n	ServerAgent		[@] Sending password\n
+Input background	PrefColor		Input background
+Network window	ClientWindow		Network window
+Clipping	RunView	as suffix for dropped text clippings	Clipping
+Down	ClientWindow		Down
+Join	PrefColor		Join
+Whois	MessageAgent		Whois
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Could not create connection to address and port. Make sure your internet connection is operational.\n
+Secondary	ServerEntryWindow		Secondary
+Quit:	PrefCommand		Quit:
+Cyrillic (MS-DOS 866)	PrefApp		Cyrillic (MS-DOS 866)
+Open new query on private message	PrefApp		Open new query on private message
+List filter	ListAgent		List filter
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}
+Japanese (EUC)	PrefApp		Japanese (EUC)
+Error creating socket.\n	MessageAgent		Error creating socket.\n
+Text	PrefColor		Text
+Notice	PrefColor		Notice
+[@] Successful reconnect\n	ParseENums		[@] Successful reconnect\n
+*** Users in %channel%: %names%\n	ParseENums		*** Users in %channel%: %names%\n
+Lookup (acronym finder)	RunView		Lookup (acronym finder)
+Ignore	PrefColor		Ignore
+Alias	PrefAliases		Alias
+Western (ISO 8859-1)	PrefApp		Western (ISO 8859-1)
+DCC chat terminated.\n	MessageAgent		DCC chat terminated.\n
+Select all	ClientWindow		Select all
+* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n	ParseENums		* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n
+Error setting bool	ParseCmd		Error setting bool
+Resolved %lookup% to %name%	ParseCmd		Resolved %lookup% to %name%
+Use password:	ServerEntryWindow		Use password:
+Window list background	PrefColor		Window list background
+Error binding socket.\n	MessageAgent		Error binding socket.\n
+Sending \"%file%\" to %nick%.	DCCConnect		Sending \"%file%\" to %nick%.
+*** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Hostmask removed from SILENCE list: %hostmask%.\n
 A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		A native Haiku IRC client that is feature filled, fast, lightweight, and stable.
-Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
-Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.
+Choose status	ServerEntryWindow		Choose status
+Names (voice)	PrefColor		Names (voice)
+%people% are online	ParseENums		%people% are online
+Channel	ListAgent		Channel
+Timestamp text	PrefColor		Timestamp text
+Edit	ClientWindow		Edit
+Disabled	NetPrefsServerView		Disabled
+Cyrillic (ISO 8859-5)	PrefApp		Cyrillic (ISO 8859-5)
+Choose network	SetupWindow		Choose network
+Uptime:	PrefCommand		Uptime:
+Vision has been running for %time%	ParseCmd		Vision has been running for %time%
+Real name:	NetworkPrefsView		Real name:
+Warn when multiline pasting	PrefApp		Warn when multiline pasting
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?
+Names (OP)	PrefColor		Names (OP)
+Users:	ChannelAgent		Users:
+Wallops	PrefColor		Wallops
+Notify list selection	PrefColor		Notify list selection
+[x] You're not in %channel%.\n	ParseENums		[x] You're not in %channel%.\n
+Error writing data.	DCCConnect		Error writing data.
+Quit	PrefColor		Quit
+Events	PrefGeneral		Events
+Window list	PrefFont		Window list
+Names background	PrefColor		Names background
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}
+Enable logging	PrefLog		Enable logging
+Greek (ISO 8859-7)	PrefApp		Greek (ISO 8859-7)
+Unable to establish connection.	DCCConnect		Unable to establish connection.
+Nickname:	NetworkPrefsView		Nickname:
 Close	WindowList		Close
+Refuse	DCCHandler		Refuse
+CONNECTION PROBLEM	ServerAgent		CONNECTION PROBLEM
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n
+Add server	ServerEntryWindow		Add server
+Cut	ClientWindow		Cut
+Find	ListAgent		Find
+mIRC grey	PrefColor		mIRC grey
+mIRC brown	PrefColor		mIRC brown
+Sending a file to %nick%	ParseCmd		Sending a file to %nick%
+Replace	DCCHandler		Replace
+Setup…	ClientWindow		Setup…
+mIRC orange	PrefColor		mIRC orange
+\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nSession start: %a %b %d %H:%M %Y\n
+Topic	ListAgent		Topic
+[x] Unknown MODE flag.\n	ParseENums		[x] Unknown MODE flag.\n
+Network:	SetupWindow		Network:
+DCC block size:	PrefDCC		DCC block size:
+Query	NamesView		Query
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Could not establish a connection to the server. Sorry.\n
+Query	NotifyList		Query
+Quit:	PrefEvent		Quit:
+DCC send	MessageAgent		DCC send
+Add…	NetPrefsServerView		Add…
+Preferred nicks:	NetworkPrefsView		Preferred nicks:
+Cancel	ServerEntryWindow		Cancel
+State:	ServerEntryWindow		State:
+User selection	NamesView		User selection
+Server	NetPrefsServerView		Server
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
+Up	ClientWindow		Up
+Send	ParseCmd		Send
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n
+Previous window	ClientWindow		Previous window
+Cut	ClientAgent		Cut
+%channel% (bad channel key)\n	ParseENums		%channel% (bad channel key)\n
+Back:	PrefCommand		Back:
+URL	PrefColor		URL
+*** %nick% has been invited to %channel%.\n	ParseENums		*** %nick% has been invited to %channel%.\n
+Append timestamp to log filenames	PrefLog		Append timestamp to log filenames
+%people% are offline	ParseENums		%people% are offline
+mIRC purple	PrefColor		mIRC purple
+Edit server	NetPrefsServerView		Edit server
+Spam!	ClientAgentInputFilter		Spam!
+Personal details	NetworkPrefsView		Personal details
+Paste	ClientWindow		Paste
+Names selection	PrefColor		Names selection
+Done	ServerEntryWindow		Done
+Encoding:	PrefApp		Encoding:
+Automatically execute:	NetworkPrefsView		Automatically execute:
+Notify off:	PrefEvent		Notify off:
+Require double CMD+Q/W to close	PrefApp		Require double CMD+Q/W to close
+Cancel	ClientAgentInputFilter		Cancel
+Status	NetPrefsServerView		Status
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n
+Idle:	ParseENums		Idle:
+Network name:	NetworkPrefsView		Network name:
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n
+Preferences…	ClientWindow		Preferences…
+Ident:	NetworkPrefsView		Ident:
+Lookup (Google)	RunView		Lookup (Google)
+mIRC white	PrefColor		mIRC white
+Font:	PrefFont		Font:
+Filter:	ListAgent		Filter:
+Users	ListAgent		Users
+Receiving \"%file%\" from %nick%.	DCCConnect		Receiving \"%file%\" from %nick%.
+Sign-on:	ParseENums		Sign-on:
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Attempting a connection to %id%:%port%…\n
+Commands	PrefGeneral		Commands
+URLs	PrefFont		URLs
+Server messages	PrefFont		Server messages
+Default path:	PrefDCC		Default path:
+[@] Disconnected from %server%\n	ServerAgent		[@] Disconnected from %server%\n
+Move network down	ClientWindow		Move network down
+Vision	System name		Vision
+%people% is online	ParseENums		%people% is online
+*** Channel lock for %channel%: %lock%\n	ParseENums		*** Channel lock for %channel%: %lock%\n
+Western (Mac Roman)	PrefApp		Western (Mac Roman)
+Cyrillic (Windows 1251)	PrefApp		Cyrillic (Windows 1251)
+Show timestamps in IRC window	PrefLog		Show timestamps in IRC window
+Add	PrefAliases		Add
+Lookup (dictionary)	RunView		Lookup (dictionary)
+Notify list background	PrefColor		Notify list background
+Whois	PrefColor		Whois
+Smart up	ClientWindow		Smart up
+Name	PrefAliases		Name
+Min:	PrefDCC		Min:
+Setup window	SetupWindow		Setup window
+User notice:	PrefEvent		User notice:
+Networks	NetworkPrefsView		Networks
+Notify on:	PrefEvent		Notify on:
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n
+Doing listen call.	DCCConnect		Doing listen call.
+[x] Server: %server% (%info%)\n	ParseENums		[x] Server: %server% (%info%)\n
+The log path you have entered is invalid.	PrefLog		The log path you have entered is invalid.
+Remove	NotifyList		Remove
+Primary	NetPrefsServerView		Primary
+Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% wants to begin a DCC chat with you.
+*** Attempting to rejoin %channel%…\n	ChannelAgent		*** Attempting to rejoin %channel%…\n
+Established connection.	DCCConnect		Established connection.
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}
+Japanese (Shift-JIS)	PrefApp		Japanese (Shift-JIS)
+* All your pre-selected nicknames are in use.\n	ParseENums		* All your pre-selected nicknames are in use.\n
+Timestamp	PrefFont		Timestamp
+Part:	PrefEvent		Part:
+%channel% (you're banned)\n	ParseENums		%channel% (you're banned)\n
+Strip mIRC colors	PrefApp		Strip mIRC colors
+Nick:	PrefEvent		Nick:
+Max:	PrefDCC		Max:
+mIRC aqua	PrefColor		mIRC aqua
+DCC request	DCCHandler		DCC request
+Background	PrefColor		Background
+Waiting for acceptance	DCCConnect		Waiting for acceptance
+[x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% is not in %channel%.\n
+Server:	ServerEntryWindow		Server:
+Action	PrefColor		Action
+mIRC yellow	PrefColor		mIRC yellow
+*** You have been invited to %channel% by %nick%.\n	ParseEvents		*** You have been invited to %channel% by %nick%.\n
+DCC transfers	DCCFileWindow		DCC transfers
+Window list nick alert	PrefColor		Window list nick alert
+Input text	PrefColor		Input text
+Move network up	ClientWindow		Move network up
+[@] Handshaking\n	ServerAgent		[@] Handshaking\n
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?
+Colors	PrefGeneral		Colors
+Paste	ClientAgent		Paste
+Servers	NetworkWindow		Servers
+mIRC pink	PrefColor		mIRC pink
+Cyrillic (KOI8-R)	PrefApp		Cyrillic (KOI8-R)
+[@] Established\n	ServerAgent		[@] Established\n
+Baltic (ISO 8859-13)	PrefApp		Baltic (ISO 8859-13)
+Input text	PrefFont		Input text
+mIRC silver	PrefColor		mIRC silver
+Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Session start: %a %b %d %H:%M %Y\n
+Copy	ClientWindow		Copy
+Duplicate network	NetworkPrefsView		Duplicate network
+Remove	NetPrefsServerView		Remove
+Add network	NetworkPrefsView		Add network
+Copy	ClientAgent		Copy
+CTCP	NamesView		CTCP
+Channels	ListAgent		Channels
+Done	ListAgent		Done
+[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% response]: %reply%\n
+Topic:	PrefEvent		Topic:
+Add nickname	NetworkPrefsView		Add nickname
+Duplicate current…	NetworkPrefsView		Duplicate current…
+Defaults	NetworkPrefsView		Defaults
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.
+Application	PrefGeneral		Application
+Whois	NotifyList		Whois
+Window list activity	PrefColor		Window list activity
+[x] Channel key already set in %channel%.\n	ParseENums		[x] Channel key already set in %channel%.\n
+Ignore:	PrefCommand		Ignore:
+Selection	PrefColor		Selection
+%channel% (invite only)\n	ParseENums		%channel% (invite only)\n
+Window list	ClientWindowDock		Window list
+Bool has been set	ParseCmd		Bool has been set
+Connecting to sender.	DCCConnect		Connecting to sender.
+Servers for %name%	NetPrefsServerView		Servers for %name%
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Attempting to connect (attempt %ld of %ld)\n
+Channel list	PrefFont		Channel list
+Expand network	ClientWindow		Expand network
+Port	NetPrefsServerView		Port
+Automatically check for NAT IP	PrefDCC		Automatically check for NAT IP
+Network setup	NetworkWindow		Network setup
+Copy	RunView		Copy
+Open Terminal	ClientWindow		Open Terminal
+[x] your current mode is: %mode%\n	ParseENums		[x] your current mode is: %mode%\n
+Connected!\n	MessageAgent		Connected!\n
+Nickname < >	PrefColor		Nickname < >
+Add to notify	NamesView		Add to notify
+Window list event	PrefColor		Window list event
+%channel% created on %time%\n	ParseENums		%channel% created on %time%\n
+List channels…	ClientWindow		List channels…
+*** Topic set by %user% @ %time%\n	ParseENums		*** Topic set by %user% @ %time%\n
+Notify offline	PrefColor		Notify offline
+Connects to server:	NetworkPrefsView		Connects to server:
+DCC chat	NotifyList		DCC chat
+[@] Local IP: %ip%\n	ServerAgent		[@] Local IP: %ip%\n
+Unignore:	PrefCommand		Unignore:
+Trying to connect to address %adress%, port %port%\n	MessageAgent		Trying to connect to address %adress%, port %port%\n
+Log base path:	PrefLog		Log base path:
+Count:	ListAgent		Count:
+Select all	ClientAgent		Select all
+*** Now talking in %channel%\n	ChannelAgent		*** Now talking in %channel%\n
+Uptime: %time%\n	ParseCmd		Uptime: %time%\n
+mIRC teal	PrefColor		mIRC teal
+%people% is offline	ParseENums		%people% is offline
+*** Topic: %topic%\n	ParseENums		*** Topic: %topic%\n
+mIRC lime	PrefColor		mIRC lime
+Lag:	ChannelAgent		Lag:
+Remove current	NetworkPrefsView		Remove current
+Connect	SetupWindow		Connect
+*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** You have been kicked from %channel% by %kicker% (%rest%)\n
+mIRC light blue	PrefColor		mIRC light blue
+Kick:	PrefCommand		Kick:
+Remove	PrefAliases		Remove
+Yes	NetPrefsServerView		Yes
+Lag:	ServerAgent		Lag:
+Accept	DCCHandler		Accept
+Names (normal)	PrefColor		Names (normal)
+Error connecting socket.\n	MessageAgent		Error connecting socket.\n
+Central European (ISO 8859-2)	PrefApp		Central European (ISO 8859-2)
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein
+Join:	PrefEvent		Join:
+Find next	ListAgent		Find next
+DCC chat	NamesView		DCC chat
+Colors	ColorSelector		Colors
+Smart down	ClientWindow		Smart down
+[x] No topic set in %channel%\n	ParseENums		[x] No topic set in %channel%\n
+Ops:	ChannelAgent		Ops:
+Disabled	ServerEntryWindow		Disabled
+Color:	ColorSelector		Color:
+*** User mode changed: %mode%\n	ParseEvents		*** User mode changed: %mode%\n
+%s - %s said: %s	ChannelAgent		%s - %s said: %s
+Preferences…	SetupWindow		Preferences…
+Find…	ListAgent		Find…
+Aliases	PrefGeneral		Aliases
+Quit	ClientWindow		Quit
+[x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% is already in %channel%.\n
+Filter…	ListAgent		Filter…
+Disabled	ServerAgent		Disabled
+Window list normal	PrefColor		Window list normal
+Server notice:	PrefEvent		Server notice:
+Show OS information in version reply	PrefApp		Show OS information in version reply
+Primary	ServerEntryWindow		Primary
+[@] Attempting to rejoin…\n	ChannelAgent		[@] Attempting to rejoin…\n
+Nickname text	PrefColor		Nickname text
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s said: %s
+Add new…	NetworkPrefsView		Add new…
+User nickname < >	PrefColor		User nickname < >
+Port:	ServerEntryWindow		Port:
+mIRC green	PrefColor		mIRC green
+Help	ClientWindow		Help
+bps:	DCCConnect		bps:
+Revert	PrefColor		Revert
+Korean (EUC)	PrefApp		Korean (EUC)
+Spam	ClientAgentInputFilter		Spam
+- Server Message Of The Day:\n	ParseENums		- Server Message Of The Day:\n
+Notify online	PrefColor		Notify online
+Error	PrefColor		Error
+Kick:	PrefEvent		Kick:
+Text	PrefFont		Text
+CTCP reply	PrefColor		CTCP reply
+Disconnected	ServerAgent		Disconnected
+Secondary	NetPrefsServerView		Secondary
+mIRC red	PrefColor		mIRC red
