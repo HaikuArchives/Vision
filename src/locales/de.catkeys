@@ -1,16 +1,13 @@
-1	german	application/x-vnd.Ink-Vision	3154840961
+1	German	application/x-vnd.Ink-Vision	2720096392
 [@] Attempting to rejoin…\n	ChannelAgent		[@] Versuche einen Rejoin…\n
 *** Attempting to rejoin %channel%…\n	ChannelAgent		*** Versuche einen Rejoin mit %channel%…\n
 *** Now talking in %channel%\n	ChannelAgent		*** Momentan in %channel%\n
 *** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** Du wurdest von %kicker% (%rest%) aus %channel% gekickt\n
 %s - %s said: %s	ChannelAgent		%s - %s sagte: %s
-Channel options	ChannelAgent		Kanaloptionen
 Lag:	ChannelAgent		Verz.:
 Modes:	ChannelAgent		Modi:
 Ops:	ChannelAgent		Ops:
 Users:	ChannelAgent		Benutzer:
-%channel% options	ChannelOptions		Optionen für %channel%
-You are currently a channel operator. You may change any of these options.	ChannelOptions		Du bist momentan ein Operator für diesen Kanal. All diese Optionen können geändert werden.
 Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%file% wurde vollständig von %nick% empfangen  (%ack% %size% Bytes), %ld Zeichen/s\n\n
 Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%file% wurde vollständig an %nick% gesandt (%ack% %size% Bytes), %ld Zeichen/s\n\n
 Copy	ClientAgent		Kopieren
@@ -110,25 +107,23 @@ DCC send	NamesView		DCC Versand
 Query	NamesView		Gespräch (Query)
 User selection	NamesView		Benutzerauswahl
 Whois	NamesView		Whois
-- = disabled	NetPrefsServerView		- = deaktiviert
-* = primary	NetPrefsServerView		* = primär
-+ = secondary (fallback)	NetPrefsServerView		+ = sekundär (fallback)
 Add…	NetPrefsServerView		Hinzu…
 Edit…	NetPrefsServerView		Bearbeiten…
-OK	NetPrefsServerView		OK
 Port	NetPrefsServerView		Port
 Remove	NetPrefsServerView		Entfernen
-Secure?	NetPrefsServerView		Gesichert?
-Select servers for %name%:	NetPrefsServerView		Server für %name% auswählen:
 Server	NetPrefsServerView		Server
 Status	NetPrefsServerView		Status
 Yes	NetPrefsServerView		Ja
-Key:	NetPrefsServerView	like a legend of a map describing the used symbols	Legende:
+Secure	NetPrefsServerView		Gesichert
+Disabled	NetPrefsServerView		Deaktiviert
+Edit server	NetPrefsServerView		Server bearbeiten
+Primary	NetPrefsServerView		Primär
+Servers for %name%	NetPrefsServerView		Server für %name%
+Secondary	NetPrefsServerView		Sekundär
 {0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{mit Fallback auf einen weiteren.}other{mit Fallback auf # weitere.}}
 Add network	NetworkPrefsView		Netzwerk hinzufügen
 Add new…	NetworkPrefsView		Neu hinzufügen…
 Add nickname	NetworkPrefsView		Nickname hinzufügen
-Add…	NetworkPrefsView		Hinzu…
 Auto-connect to this network	NetworkPrefsView		Automatisch mit diesem Netzwerk verbinden
 Automatically execute:	NetworkPrefsView		Automatisch ausführen:
 Change servers…	NetworkPrefsView		Server ändern…
@@ -137,7 +132,6 @@ Defaults	NetworkPrefsView		Standardwerte
 Duplicate current…	NetworkPrefsView		Aktuelles duplizieren…
 Duplicate network	NetworkPrefsView		Netzwerk duplizieren
 Enable lag checking	NetworkPrefsView		Verzögerung prüfen
-falling back to 9 others.	NetworkPrefsView		mit Rückgriff auf einen anderen.
 Ident:	NetworkPrefsView		Ident:
 Network details	NetworkPrefsView		Netzwerk Details
 Network name:	NetworkPrefsView		Netzwerkname:
@@ -146,7 +140,6 @@ Nickname:	NetworkPrefsView		Nickname:
 Personal details	NetworkPrefsView		Persönliche Informationen
 Preferred nicks:	NetworkPrefsView		Bevorzugte Nicknamen:
 Real name:	NetworkPrefsView		Realer Name:
-Remove	NetworkPrefsView		Entfernen
 Remove current	NetworkPrefsView		Aktuelles entfernen
 Use defaults	NetworkPrefsView		Standardeinstellungen verwenden
 <N/A>	NetworkPrefsView	as in 'not available	<N/V>
@@ -319,7 +312,6 @@ Font:	PrefFont		Schriftart:
 Input text	PrefFont		Eingabe
 Names list	PrefFont		Namensliste
 Server messages	PrefFont		Servermeldungen
-Size:	PrefFont		Größe:
 Text	PrefFont		Text
 Timestamp	PrefFont		Zeitstempel
 URLs	PrefFont		URLs
@@ -374,10 +366,10 @@ Done	ServerEntryWindow		Fertig
 Port:	ServerEntryWindow		Port:
 Primary	ServerEntryWindow		Primär
 Secondary	ServerEntryWindow		Sekundär
-Secure port:	ServerEntryWindow		Sicherer Port:
 Server:	ServerEntryWindow		Server:
 State:	ServerEntryWindow		Status:
 Use password:	ServerEntryWindow		Passwort benutzen:
+Secure port	ServerEntryWindow		Gesicherter Port
 Choose network	SetupWindow		Netzwerk wählen
 Connect	SetupWindow		Verbinden
 Network setup…	SetupWindow		Netzwerkeinrichtung…

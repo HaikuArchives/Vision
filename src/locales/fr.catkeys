@@ -1,0 +1,384 @@
+1	French	application/x-vnd.Ink-Vision	2720096392
+[@] Attempting to rejoin…\n	ChannelAgent		[@] Tentative de reconnexion…\n
+*** Attempting to rejoin %channel%…\n	ChannelAgent		*** Tentative de reconnexion à %channel%…\n
+*** Now talking in %channel%\n	ChannelAgent		*** Prêt pour discuter dans %channel%\n
+*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** Vous avez été banni de %channel% par %kicker% (%rest%)\n
+%s - %s said: %s	ChannelAgent		%s - %s a dit: %s
+Lag:	ChannelAgent		Décalage:
+Modes:	ChannelAgent		Modes:
+Ops:	ChannelAgent		Modérateurs:
+Users:	ChannelAgent		Utilisateurs:
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Réception terminée de %file% envoyé par %nick% (%ack% %size% bytes), %ldcps\n\n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Envoi terminé de %file% à %nick% (%ack% %size% bytes), %ldcps\n\n
+Copy	ClientAgent		Copier
+Cut	ClientAgent		Couper
+Paste	ClientAgent		Coller
+Select all	ClientAgent		Tout sélectionner
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Réception annulée de %file% envoyé par %nick% (%ack% %size% bytes), %ldcps\n\n
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Envoi annulé de %file% à %nick% (%ack% %size% bytes), %ldcps\n\n
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Comme s'il en manquait, vous êtes sur le point d'ajouter %ld lignes inutiles sur internet. Que souhaitez-vous vraiment coller ?
+Cancel	ClientAgentInputFilter		Rien
+Single line	ClientAgentInputFilter		Juste une ligne
+Spam	ClientAgentInputFilter		Spam
+Spam!	ClientAgentInputFilter		Polluer !
+\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nSession démarrée : %a %b %d %H:%M %Y\n
+Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Session fermée : %a %b %d %H:%M %Y\n
+Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Session démarrée : %a %b %d %H:%M %Y\n
+About Vision	ClientWindow		A propos de Vision
+Close this sub-window	ClientWindow		Fermer cette page
+Collapse network	ClientWindow		Replier le réseau
+Connect to…	ClientWindow		Se connecter à…
+Copy	ClientWindow		Copier
+Cut	ClientWindow		Couper
+Down	ClientWindow		Bas
+Edit	ClientWindow		Édition
+Expand network	ClientWindow		Étendre le réseau
+Help	ClientWindow		Aide
+List channels…	ClientWindow		Liste des canaux…
+Move network down	ClientWindow		Déplacer le réseau vers le bas
+Move network up	ClientWindow		Déplacer le réseau vers le haut
+Network window	ClientWindow		Fenêtre des réseaux
+Open Terminal	ClientWindow		Ouvrir Terminal
+Paste	ClientWindow		Coller
+Preferences…	ClientWindow		Préférences…
+Previous window	ClientWindow		Page précédente
+Quit	ClientWindow		Quitter
+Select all	ClientWindow		Tout sélectionner
+Server	ClientWindow		Serveur
+Setup…	ClientWindow		Configurer…
+Smart down	ClientWindow		Vers le bas intelligent
+Smart up	ClientWindow		Vers le haut intelligent
+Up	ClientWindow		Vers le haut
+Window	ClientWindow		Fenêtre
+Notify list	ClientWindowDock		Liste des notifications
+Window list	ClientWindowDock		Liste des pages
+Color:	ColorSelector		Couleur :
+Colors	ColorSelector		Couleurs
+Acquiring DCC lock…	DCCConnect		Acquisition d'un verrou DCC…
+bps:	DCCConnect		Débit:
+Connecting to sender.	DCCConnect		Connexion à l'expéditeur.
+Doing listen call.	DCCConnect		Prêt à recevoir des appels.
+Error writing data.	DCCConnect		Erreur lors de l'écriture des données.
+Established connection.	DCCConnect		Connexion réussie.
+Receiving \"%file%\" from %nick%.	DCCConnect		Réception de \"%file%\" envoyé par %nick%.
+Sending \"%file%\" to %nick%.	DCCConnect		Envoi de \"%file%\" à %nick%.
+Unable to establish connection.	DCCConnect		La connexion a échoué.
+Waiting for acceptance	DCCConnect		En attente de l'acceptation
+Waiting for connection %ld.	DCCConnect		En attente de la connexion %ld.
+DCC transfers	DCCFileWindow		Échanges DCC
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% souhaite démarrer une discussion DCC chat avec vous.
+Accept	DCCHandler		Accepter
+Cancel	DCCHandler		Annuler
+DCC request	DCCHandler		Demande DCC
+Refuse	DCCHandler		Refuser
+Replace	DCCHandler		Remplacer
+Resume	DCCHandler		Reprendre
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		Le fichier \"%file%\" existe déjà dans ce répertoire. Voulez-vous poursuivre le transfert ?
+Channel	ListAgent		Canal
+Channels	ListAgent		Canaux
+Count:	ListAgent		Nombre :
+Done	ListAgent		Terminé
+Filter:	ListAgent		Filtrer :
+Filter…	ListAgent		Filtrer…
+Find	ListAgent		Rechercher
+Find next	ListAgent		Rechercher le suivant
+Find:	ListAgent		Rechercher :
+Find…	ListAgent		Rechercher…
+List filter	ListAgent		Liste des filtres
+Loading	ListAgent		Chargement
+Status:	ListAgent		Status :
+Topic	ListAgent		Sujet
+Users	ListAgent		Utilisateurs
+Accepting connection on address %s, port %ld\n	MessageAgent		Accepte les connexions à l'adresse %s, port %ld\n
+Connected!\n	MessageAgent		Connecté !\n
+DCC chat terminated.\n	MessageAgent		Discussion DCC terminée.\n
+DCC send	MessageAgent		Envoie DCC
+Error binding socket.\n	MessageAgent		Erreur "binding socket".\n
+Error connecting socket.\n	MessageAgent		Erreur "connecting socket".\n
+Error creating socket.\n	MessageAgent		Erreur "creating socket".\n
+Lag:	MessageAgent		Décalage :
+Trying to connect to address %adress%, port %port%\n	MessageAgent		Tentative de connexion à l'adresse %adress%, port %port%\n
+Whois	MessageAgent		Qui est-ce ? (Whois)
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s a dit : %s
+Add to notify	NamesView		Ajouter aux notifications
+CTCP	NamesView		CTCP
+DCC chat	NamesView		Discussion DCC
+DCC send	NamesView		Envoie DCC
+Query	NamesView		Interroger
+User selection	NamesView		Sélection des utilisateurs
+Whois	NamesView		Qui est-ce ? (Whois)
+Add…	NetPrefsServerView		Ajouter…
+Edit…	NetPrefsServerView		Modifier…
+Port	NetPrefsServerView		Port
+Remove	NetPrefsServerView		Supprimer
+Server	NetPrefsServerView		Serveur
+Status	NetPrefsServerView		Statut
+Yes	NetPrefsServerView		Oui
+Secure	NetPrefsServerView		Secure
+Disabled	NetPrefsServerView		Disabled
+Edit server	NetPrefsServerView		Edit server
+Primary	NetPrefsServerView		Primary
+Servers for %name%	NetPrefsServerView		Servers for %name%
+Secondary	NetPrefsServerView		Secondary
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{avec un secours vers un autre.}other{avec un secours vers # autres.}}
+Add network	NetworkPrefsView		Ajouter un réseau
+Add new…	NetworkPrefsView		Créer…
+Add nickname	NetworkPrefsView		Ajouter un surnom
+Auto-connect to this network	NetworkPrefsView		Se connecter automatiquement à ce réseau
+Automatically execute:	NetworkPrefsView		Lancer automatiquement :
+Change servers…	NetworkPrefsView		Modifier les serveurs…
+Connects to server:	NetworkPrefsView		Se connecter au serveur :
+Defaults	NetworkPrefsView		Configuration par défaut
+Duplicate current…	NetworkPrefsView		Dupliquer ce réseau…
+Duplicate network	NetworkPrefsView		Dupliquer le réseau
+Enable lag checking	NetworkPrefsView		Activer la vérification du décalage
+Ident:	NetworkPrefsView		Identifiant:
+Network details	NetworkPrefsView		Détails du réseau
+Network name:	NetworkPrefsView		Nom du réseau :
+Networks	NetworkPrefsView		Réseaux
+Nickname:	NetworkPrefsView		Surnom :
+Personal details	NetworkPrefsView		Informations personnelles
+Preferred nicks:	NetworkPrefsView		Surnoms préférés :
+Real name:	NetworkPrefsView		Vrai nom :
+Remove current	NetworkPrefsView		Supprimer ce réseau
+Use defaults	NetworkPrefsView		Utiliser les valeurs par défaut
+<N/A>	NetworkPrefsView	as in 'not available	Non disponible
+Network setup	NetworkWindow		Configuration des réseaux
+Servers	NetworkWindow		Serveurs
+DCC chat	NotifyList		Discussion DCC
+Query	NotifyList		Demande
+Remove	NotifyList		Supprimer
+Whois	NotifyList		Qui est-ce ? (Whois)
+*** Trying new nick %nick%.\n	ParseCmd		*** Essai du nouveau surnom %nick%.\n
+/pexec: command failed	ParseCmd		/pexec: la commande a échoué
+Bool has been set	ParseCmd		Affectation du booléen réussie
+Error setting bool	ParseCmd		Erreur lors de l'affectation du booléen
+Error: Invalid parameters	ParseCmd		Erreur : Paramètres invalides
+Resolved %lookup% to %address%	ParseCmd		Résolution de %lookup% en %address%
+Resolved %lookup% to %name%	ParseCmd		Résolution de %lookup% en %name%
+Send	ParseCmd		Envoyer
+Sending a file to %nick%	ParseCmd		Envoyer un fichier à %nick%
+Unable to resolve %lookup%	ParseCmd		Impossible de résoudre %lookup%
+Uptime: %time%\n	ParseCmd		Durée d'activité : %time%\n
+Vision has been running for %time%	ParseCmd		Vision est démarré depuis %time%
+Vision Uptime: %time%\n	ParseCmd		Temps d'activité de Vision : %time%\n
+[%nick% %command% response]: %reply%\n	ParseCTCP		[Réponse de %nick% %command%]: %reply%\n
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% réaction au PING ]: # seconde\n}other{[%nick% réaction au PING ]: # secondes\n}}
+- Server Message Of The Day:\n	ParseENums		- Message du jour du serveur :\n
+[@] Successful reconnect\n	ParseENums		[@] Reconnexion réussie\n
+[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [était] (%ident%@%address%)\n
+[x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% est déjà dans %channel%.\n
+[x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% n'est pas dans %channel%.\n
+[x] Channel key already set in %channel%.\n	ParseENums		[x] Clé du canal déjà définie dans %channel%.\n
+[x] Channels:	ParseENums		[x] Canaux:
+[x] Nickname/Channel %nick% is already in use or unavailable.\n	ParseENums		[x] Surnom/canal %nick% est déjà utilisé ou non disponible.\n
+[x] No topic set in %channel%\n	ParseENums		[x] Aucun sujet défini sur %channel%\n
+[x] Server: %server% (%info%)\n	ParseENums		[x] Serveur : %server% (%info%)\n
+[x] Unknown channel mode: '%mode%'\n	ParseENums		[x] Mode de canal inconnu: '%mode%'\n
+[x] Unknown MODE flag.\n	ParseENums		[x] Valeur MODE inconnue.\n
+[x] You're not in %channel%.\n	ParseENums		[x] Vous n'êtes pas dans %channel%.\n
+[x] your current mode is: %mode%\n	ParseENums		[x] Votre mode courant est : %mode%\n
+* All your pre-selected nicknames are in use.\n	ParseENums		* Tous vos surnoms sont déjà utilisés.\n
+* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n	ParseENums		* Surnom \"%nick%\" déjà utilisé ou non disponible... Essai de \"%nextnick%\"\n\n
+* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* Veuillez taper /NICK <NOUVEAU_SURNOM> pour en essayer un autre.\n
+*** %nick% has been invited to %channel%.\n	ParseENums		*** %nick% vous a invité dans %channel%.\n
+*** Channel lock for %channel%: %lock%\n	ParseENums		*** Verrou pour le canal %channel%: %lock%\n
+*** Channel mode for %channel%: %mode%\n	ParseENums		*** Mode du canal %channel%: %mode%\n
+*** Topic set by %user% @ %time%\n	ParseENums		*** Sujet défini par %user% @ %time%\n
+*** Topic: %topic%\n	ParseENums		*** Sujet: %topic%\n
+*** Users in %channel%: %names%\n	ParseENums		*** Utilisateurs dans %channel%: %names%\n
+%channel% (bad channel key)\n	ParseENums		%channel% (mauvaise clé de canal)\n
+%channel% (invite only)\n	ParseENums		%channel% (sur invitation)\n
+%channel% (you're banned)\n	ParseENums		%channel% (vous êtes banni)\n
+%channel% created on %time%\n	ParseENums		%channel% créé à %time%\n
+%people% are offline	ParseENums		%people% sont hors ligne
+%people% are online	ParseENums		%people% sont en ligne
+%people% is offline	ParseENums		%people% est hors ligne
+%people% is online	ParseENums		%people% est en ligne
+Idle:	ParseENums		Inactif :
+Sign-on:	ParseENums		Connexion :
+*** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Masque d'hôte ajouté à la liste SILENCE : %hostmask%.\n
+*** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Masque d'hôte retiré de la liste SILENCE : %hostmask%.\n
+*** User mode changed: %mode%\n	ParseEvents		*** Le mode de l'utilisateur a changé : %mode%\n
+*** You have been invited to %channel% by %nick%.\n	ParseEvents		*** Vous avez été invité dans %channel% par %nick%.\n
+Add	PrefAliases		Ajouter
+Alias	PrefAliases		Alias
+Name	PrefAliases		Nom
+Remove	PrefAliases		Supprimer
+Baltic (ISO 8859-13)	PrefApp		Baltique (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		Europe centrale (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		cyrillique (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		cyrillique (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		cyrillique (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		cyrillique (Windows 1251)
+Encoding:	PrefApp		Encodage :
+Greek (ISO 8859-7)	PrefApp		Grecque (ISO 8859-7)
+Japanese (EUC)	PrefApp		Japonais (EUC)
+Japanese (JIS)	PrefApp		Japonais (JIS)
+Japanese (Shift-JIS)	PrefApp		Japonais (Shift-JIS)
+Korean (EUC)	PrefApp		Coréen (EUC)
+Open new query on private message	PrefApp		Ouvrir une nouvelle demande en cas de message privé
+Require double CMD+Q/W to close	PrefApp		Double CMD+Q/W requis pour fermer
+Show OS information in version reply	PrefApp		Afficher les informations du système dans la réponse de la version
+Strip mIRC colors	PrefApp		Ignorer les couleurs mIRC
+Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
+Warn when multiline pasting	PrefApp		Avertir en cas de collage multi-lignes
+Western (ISO 8859-1)	PrefApp		Latin (ISO 8859-1)
+Western (Mac Roman)	PrefApp		Latin (Mac Roman)
+Western (Windows)	PrefApp		Latin (Windows)
+Action	PrefColor		Action
+Background	PrefColor		Arrière-plan
+CTCP reply	PrefColor		Réponse CTCP
+CTCP request	PrefColor		Demande CTCP
+Error	PrefColor		Erreur
+Ignore	PrefColor		Ignorer
+Input background	PrefColor		Arrière-plan des saisies
+Input text	PrefColor		Texte des saisies
+Join	PrefColor		Joindre
+Kick	PrefColor		Bannir
+mIRC aqua	PrefColor		Cyan mIRC
+mIRC black	PrefColor		Noir mIRC
+mIRC brown	PrefColor		Marron mIRC
+mIRC dark blue	PrefColor		Bleu foncé mIRC
+mIRC green	PrefColor		Vert mIRC
+mIRC grey	PrefColor		Gris mIRC
+mIRC light blue	PrefColor		Bleu clair mIRC
+mIRC lime	PrefColor		Vert clair mIRC
+mIRC orange	PrefColor		Orange mIRC
+mIRC pink	PrefColor		Rose mIRC
+mIRC purple	PrefColor		Violet mIRC
+mIRC red	PrefColor		Rouge mIRC
+mIRC silver	PrefColor		Argent mIRC
+mIRC teal	PrefColor		Bleu canard mIRC
+mIRC white	PrefColor		Blanc mIRC
+mIRC yellow	PrefColor		Jaune mIRC
+Names (helper)	PrefColor		Noms (aide)
+Names (normal)	PrefColor		Noms (normal)
+Names (OP)	PrefColor		Noms (Modérateurs)
+Names (voice)	PrefColor		Noms (voix)
+Names background	PrefColor		Arrière-plan des noms
+Names selection	PrefColor		Noms sélectionnés
+Nickname < >	PrefColor		Surnom < >
+Nickname text	PrefColor		Texte des surnoms
+Notice	PrefColor		Remarque
+Notify list background	PrefColor		Arrière-plan de la liste des notifications
+Notify list selection	PrefColor		Sélection dans la liste des notifications
+Notify offline	PrefColor		Notification hors ligne
+Notify online	PrefColor		Notification en ligne
+Quit	PrefColor		Quitter
+Revert	PrefColor		Annuler
+Selection	PrefColor		Sélection
+Server text	PrefColor		Texte du serveur
+Text	PrefColor		Texte
+Timestamp background	PrefColor		Arrière-plan de l'horodatage
+Timestamp text	PrefColor		Horodatage
+URL	PrefColor		Adresse
+User nickname < >	PrefColor		Surnom de l'utilisateur < >
+Wallops	PrefColor		Frappes
+Whois	PrefColor		Qui est-ce ? (Whois)
+Window list activity	PrefColor		Activité de la liste des pages
+Window list background	PrefColor		Arrière-plan de la liste des pages
+Window list event	PrefColor		Événements de la liste des pages
+Window list nick alert	PrefColor		Alerte surnom de la liste des pages
+Window list normal	PrefColor		Liste des pages normale
+Window list selection	PrefColor		Sélection dans la liste des pages
+Away:	PrefCommand		Parti :
+Back:	PrefCommand		Revenu :
+Ignore:	PrefCommand		Ignore :
+Kick:	PrefCommand		Banni :
+Quit:	PrefCommand		Sortie :
+Unignore:	PrefCommand		Concerné :
+Uptime:	PrefCommand		Temps d'activité :
+Automatically accept incoming sends	PrefDCC		Accepter automatiquement les appels entrants
+Automatically check for NAT IP	PrefDCC		Vérifier automatiquement les réseaux NAT IP
+DCC block size:	PrefDCC		Taille de block DCC :
+DCC port range	PrefDCC		Étendu des ports DCC
+Default path:	PrefDCC		Chemin par défaut :
+Max:	PrefDCC		Maximum :
+Min:	PrefDCC		Minimum :
+Join:	PrefEvent		Rejoint :
+Kick:	PrefEvent		Banni :
+Nick:	PrefEvent		Nommé :
+Notify off:	PrefEvent		Notification de départ :
+Notify on:	PrefEvent		Notification d'arrivée :
+Part:	PrefEvent		Quitté :
+Quit:	PrefEvent		Départ :
+Server notice:	PrefEvent		Notification du serveur :
+Topic:	PrefEvent		Sujet :
+User notice:	PrefEvent		Notification de l'utilisateur :
+Channel list	PrefFont		Liste des canaux
+Element:	PrefFont		Élément :
+Font:	PrefFont		Police :
+Input text	PrefFont		Texte en entrée
+Names list	PrefFont		Liste des noms
+Server messages	PrefFont		Messages du serveur
+Text	PrefFont		Texte
+Timestamp	PrefFont		Horodatage
+URLs	PrefFont		Adresses
+Window list	PrefFont		Liste des pages
+Aliases	PrefGeneral		Alias
+Application	PrefGeneral		Application
+Colors	PrefGeneral		Couleurs
+Commands	PrefGeneral		Commandes
+DCC	PrefGeneral		DCC
+Events	PrefGeneral		Événements
+Fonts	PrefGeneral		Polices
+Logging	PrefGeneral		Connexion
+Append timestamp to log filenames	PrefLog		Ajouter un horodatage dans les noms de fichier des journaux
+Delete Log Files	PrefLog		Supprimer les journaux
+Enable logging	PrefLog		Activer la journalisation
+Error	PrefLog		Erreur
+Log base path:	PrefLog		Chemin des journaux :
+OK	PrefLog		OK
+Show timestamps in IRC window	PrefLog		Afficher l'horodatage dans les pages IRC
+The log path you have entered is invalid.	PrefLog		Le chemin des journaux est incorrect.
+Timestamp format:	PrefLog		Format de l'horodatage :
+Preferences	PrefsWindow		Préferences
+Copy	RunView		Copier
+Lookup (acronym finder)	RunView		Recherche (acronymes)
+Lookup (dictionary)	RunView		Recherche (dictionnaire)
+Lookup (Google)	RunView		Recherche (Google)
+Select all	RunView		Tout sélectionner
+Clipping	RunView	as suffix for dropped text clippings	Césure
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Il semble que vous soyez derrière une passerelle internet. Vision va interroger le serveur IRC en cas de connexion réussie vers l'adresse de votre passerelle. Elle sera utilisée pour les communications DCC.)\n
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Tentative de connexion à %id%:%port%…\n
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Tentative de reconnexion (tentative %ld of %ld)\n
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Connexion ouverte, attente de la réponse du serveur\n
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Impossible de se connecter à l'adresse et au port. Vérifier votre connexion internet.\n
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Impossible de se connecter au serveur. Désolé.\n
+[@] Disconnected from %server%\n	ServerAgent		[@] Déconnecté de %server%\n
+[@] Error getting local IP\n	ServerAgent		[@] Erreur de récupération de l'adresse IP locale\n
+[@] Established\n	ServerAgent		[@] Connecté\n
+[@] Handshaking\n	ServerAgent		[@] Négociation\n
+[@] Local IP: %ip%\n	ServerAgent		[@] Adresse IP locale : %ip%\n
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Nombre limite de tentatives dépassé. Abandon. Tapez /reconnect pour un nouvel essai.\n
+[@] Sending password\n	ServerAgent		[@] Envoi du mot de passe\n
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Attente d'une seconde avant la prochaine tentative}other{[@] Attente de # secondes avant la prochaine tentative}}
+CONNECTION PROBLEM	ServerAgent		PROBLÈME DE CONNEXION
+Disabled	ServerAgent		Désactivé
+Disconnected	ServerAgent		Déconnecté
+Lag:	ServerAgent		Décalage :
+Add server	ServerEntryWindow		Ajouter un serveur
+Cancel	ServerEntryWindow		Annuler
+Choose status	ServerEntryWindow		Sélectionner un statut
+Disabled	ServerEntryWindow		Désactivé
+Done	ServerEntryWindow		Terminé
+Port:	ServerEntryWindow		Port :
+Primary	ServerEntryWindow		Principal
+Secondary	ServerEntryWindow		Secondaire
+Server:	ServerEntryWindow		Serveur :
+State:	ServerEntryWindow		État :
+Use password:	ServerEntryWindow		Utiliser un mot de passe :
+Secure port	ServerEntryWindow		Secure port
+Choose network	SetupWindow		Choisir un réseau
+Connect	SetupWindow		Connecté
+Network setup…	SetupWindow		Configuration du réseau...
+Network:	SetupWindow		Réseau :
+Preferences…	SetupWindow		Préférences…
+Setup window	SetupWindow		Fenêtre de configuration
+Vision	System name		Vision
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein
+A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		Un client IRC pour Haiku riche en fonctionnalités, rapide, léger et stable.
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Mis à votre disposition grâce notamment aux contributions de :\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.
+Close	WindowList		Fermer

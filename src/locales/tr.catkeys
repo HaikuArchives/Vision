@@ -1,0 +1,384 @@
+1	Turkish	application/x-vnd.Ink-Vision	2720096392
+[@] Attempting to rejoin…\n	ChannelAgent		[@] Yeniden katılmaya çalışılıyor…\n
+*** Attempting to rejoin %channel%…\n	ChannelAgent		*** %channel% kanalına yeniden katılmaya çalışılıyor…\n
+*** Now talking in %channel%\n	ChannelAgent		*** Şu anda %channel% kanalındasınız.\n
+*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** %channel% kanalından %kicker% tarafından atıldınız (%rest%).\n
+%s - %s said: %s	ChannelAgent		%s - %s dedi ki: %s
+Lag:	ChannelAgent		Gecikme:
+Modes:	ChannelAgent		Kipler:
+Ops:	ChannelAgent		Operatörler:
+Users:	ChannelAgent		Kullanıcılar:
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%nick% kullanıcısından %file% alımı tamamlandı (%ack% %size% bayt), %ldcps.\n\n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%nick% kullanıcısına %file% gönderimi tamamlandı (%ack% %size% bayt), %ldcps.\n\n
+Copy	ClientAgent		Kopyala
+Cut	ClientAgent		Kes
+Paste	ClientAgent		Yapıştır
+Select all	ClientAgent		Tümünü seç
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%nick% kullanıcısından %file% alımı iptal edildi (%ack% %size% bayt), %ldcps.\n\n
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%nick% kullanıcısına %file% gönderimi iptal edildi (%ack% %size% bayt), %ldcps.\n\n
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Sanki bu yetmezmiş gibi, internete %ld satır daha istenmeyen bilgi eklemek üzeresiniz. Ne yapmalı?
+Cancel	ClientAgentInputFilter		İptal
+Single line	ClientAgentInputFilter		Tek satır
+Spam	ClientAgentInputFilter		İstenmeyen
+Spam!	ClientAgentInputFilter		Gönder!
+\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nOturum başlangıcı: %a %b %d %H:%M %Y\n
+Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Oturum bitişi: %a %b %d %H:%M %Y\n
+Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Oturum başlangıcı: %a %b %d %H:%M %Y\n
+About Vision	ClientWindow		Vizyon hakkında
+Close this sub-window	ClientWindow		Bu alt pencereyi kapat
+Collapse network	ClientWindow		Ağı sakla
+Connect to…	ClientWindow		Bağlan…
+Copy	ClientWindow		Kopyala
+Cut	ClientWindow		Kes
+Down	ClientWindow		Aşağı
+Edit	ClientWindow		Düzenle
+Expand network	ClientWindow		Ağı genişlet
+Help	ClientWindow		Yardım
+List channels…	ClientWindow		Kanalları listele…
+Move network down	ClientWindow		Ağı aşağı taşı
+Move network up	ClientWindow		Ağı yukarı taşı
+Network window	ClientWindow		Ağ penceresi
+Open Terminal	ClientWindow		Uçbirim'i aç
+Paste	ClientWindow		Yapıştır
+Preferences…	ClientWindow		Tercihler…
+Previous window	ClientWindow		Önceki pencere
+Quit	ClientWindow		Çık
+Select all	ClientWindow		Tümünü seç
+Server	ClientWindow		Sunucu
+Setup…	ClientWindow		Ayarla…
+Smart down	ClientWindow		Akıllı aşağı
+Smart up	ClientWindow		Akıllı yukarı
+Up	ClientWindow		Yukarı
+Window	ClientWindow		Pencere
+Notify list	ClientWindowDock		Bildirme listesi
+Window list	ClientWindowDock		Pencere listesi
+Color:	ColorSelector		Renk:
+Colors	ColorSelector		Renkler
+Acquiring DCC lock…	DCCConnect		DCC kilidi alınıyor…
+bps:	DCCConnect		bps:
+Connecting to sender.	DCCConnect		Göndericiye bağlanılıyor…
+Doing listen call.	DCCConnect		Dinleme çağrısı yapılıyor…
+Error writing data.	DCCConnect		Veri yazılırken hata.
+Established connection.	DCCConnect		Bağlantı sağlandı.
+Receiving \"%file%\" from %nick%.	DCCConnect		\"%file%\", %nick% kullanıcısından alınıyor.
+Sending \"%file%\" to %nick%.	DCCConnect		\"%file%\", %nick% kullanıcısına gönderiliyor.
+Unable to establish connection.	DCCConnect		Bağlantı sağlanamıyor.
+Waiting for acceptance	DCCConnect		Kabul bekleniyor…
+Waiting for connection %ld.	DCCConnect		%ld bağlantısı bekleniyor.
+DCC transfers	DCCFileWindow		DCC aktarımları
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick%, sizinle bir DCC sohbeti başlatmak istiyor.
+Accept	DCCHandler		Kabul et
+Cancel	DCCHandler		İptal
+DCC request	DCCHandler		DCC isteği
+Refuse	DCCHandler		Reddet
+Replace	DCCHandler		Değiştir
+Resume	DCCHandler		Sürdür
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		\"%file%\" dosyası belirtilen klasörde halihazırda mevcut. Aktarımı sürdürmek istiyor musunuz?
+Channel	ListAgent		Kanal
+Channels	ListAgent		Kanallar:
+Count:	ListAgent		Sayı:
+Done	ListAgent		Tamam
+Filter:	ListAgent		Süzgeç:
+Filter…	ListAgent		Süz…
+Find	ListAgent		Bul
+Find next	ListAgent		Sonrakini bul
+Find:	ListAgent		Bul:
+Find…	ListAgent		Bul…
+List filter	ListAgent		Liste süzgeci
+Loading	ListAgent		Yükleniyor
+Status:	ListAgent		Durum:
+Topic	ListAgent		Konu
+Users	ListAgent		Kullanıcılar
+Accepting connection on address %s, port %ld\n	MessageAgent		%s adresi %ld numaralı kapıda bağlantı kabul ediliyor\n
+Connected!\n	MessageAgent		Bağlandı!\n
+DCC chat terminated.\n	MessageAgent		DCC sohbeti sonlandırıldı.\n
+DCC send	MessageAgent		DCC gönderimi
+Error binding socket.\n	MessageAgent		Soket bağlama hatası.\n
+Error connecting socket.\n	MessageAgent		Soket bağlanırken hata.\n
+Error creating socket.\n	MessageAgent		Soket oluşturulurken hata.\n
+Lag:	MessageAgent		Gecikme:
+Trying to connect to address %adress%, port %port%\n	MessageAgent		%adress% adresindeki %port% kapısına bağlanmaya çalışılıyor\n
+Whois	MessageAgent		Kimo
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s dedi ki: %s
+Add to notify	NamesView		Bildiriye ekle
+CTCP	NamesView		CTCP
+DCC chat	NamesView		DCC sohbeti
+DCC send	NamesView		DCC gönderimi
+Query	NamesView		Sorgu
+User selection	NamesView		Kullanıcı seçimi
+Whois	NamesView		Kimo
+Add…	NetPrefsServerView		Ekle…
+Edit…	NetPrefsServerView		Düzenle…
+Port	NetPrefsServerView		Kapı
+Remove	NetPrefsServerView		Kaldır
+Server	NetPrefsServerView		Sunucu
+Status	NetPrefsServerView		Durum
+Yes	NetPrefsServerView		Evet
+Secure	NetPrefsServerView		Güvenli
+Disabled	NetPrefsServerView		Devre dışı
+Edit server	NetPrefsServerView		Sunucuyu düzenle
+Primary	NetPrefsServerView		Birincil
+Servers for %name%	NetPrefsServerView		%name% için sunucular
+Secondary	NetPrefsServerView		İkincil
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{bir yedek ile.}other{# yedek ile.}}
+Add network	NetworkPrefsView		Ağ ekle
+Add new…	NetworkPrefsView		Yeni ekle…
+Add nickname	NetworkPrefsView		Takma ad ekle
+Auto-connect to this network	NetworkPrefsView		Bu ağa kendiliğinden bağlan
+Automatically execute:	NetworkPrefsView		Kendiliğinden çalıştır:
+Change servers…	NetworkPrefsView		Sunucu değiştir…
+Connects to server:	NetworkPrefsView		Şu sunucuya bağlanır:
+Defaults	NetworkPrefsView		Öntanımlılar
+Duplicate current…	NetworkPrefsView		Geçerliyi yinele…
+Duplicate network	NetworkPrefsView		Ağı yinele
+Enable lag checking	NetworkPrefsView		Gecikme denetimini etkinleştir
+Ident:	NetworkPrefsView		Kimlik:
+Network details	NetworkPrefsView		Ağ ayrıntıları
+Network name:	NetworkPrefsView		Ağ adı:
+Networks	NetworkPrefsView		Ağlar
+Nickname:	NetworkPrefsView		Takma ad:
+Personal details	NetworkPrefsView		Kişisel bilgiler
+Preferred nicks:	NetworkPrefsView		Yeğlenen takma adlar:
+Real name:	NetworkPrefsView		Gerçek ad:
+Remove current	NetworkPrefsView		Geçerliyi kaldır
+Use defaults	NetworkPrefsView		Öntanımlıları kullan
+<N/A>	NetworkPrefsView	as in 'not available	<yok>
+Network setup	NetworkWindow		Ağ ayarları
+Servers	NetworkWindow		Sunucular
+DCC chat	NotifyList		DCC sohbeti
+Query	NotifyList		Sorgu
+Remove	NotifyList		Kaldır
+Whois	NotifyList		Kimo
+*** Trying new nick %nick%.\n	ParseCmd		*** Yeni takma ad %nick% deneniyor…\n
+/pexec: command failed	ParseCmd		/pexec: komut başarısız
+Bool has been set	ParseCmd		Bool ayarlandı
+Error setting bool	ParseCmd		Bool ayarlanırken hata
+Error: Invalid parameters	ParseCmd		Hata: Geçersiz parametre
+Resolved %lookup% to %address%	ParseCmd		%lookup%, %address% için çözüldü
+Resolved %lookup% to %name%	ParseCmd		%lookup%, %name% için çözüldü
+Send	ParseCmd		Gönder
+Sending a file to %nick%	ParseCmd		%nick% kullanıcısına dosya gönderiliyor
+Unable to resolve %lookup%	ParseCmd		%lookup% çözülemedi
+Uptime: %time%\n	ParseCmd		Çalışma süresi: %time%\n
+Vision has been running for %time%	ParseCmd		Vizyon şu zamandır çalışıyor: %time%
+Vision Uptime: %time%\n	ParseCmd		Vizyon çalışma süresi: %time%\n
+[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% response]: %reply%\n
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING yanıtı]: # saniye\n}other{[%nick% PING yanıtı]: # saniye\n}}
+- Server Message Of The Day:\n	ParseENums		- Günün sunucu iletisi:\n
+[@] Successful reconnect\n	ParseENums		[@] Yeniden bağlanma başarılı\n
+[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% (%ident%@%address%) [idi]\n
+[x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% halihazırda %channel% kanalında.\n
+[x] %nick% is not in %channel%.\n	ParseENums		[x] %nick%, %channel% kanalında değil.\n
+[x] Channel key already set in %channel%.\n	ParseENums		[x] Kanal anahtarı halihazırda %channel% içinde ayarlanmış.\n
+[x] Channels:	ParseENums		[x] Kanallar:
+[x] Nickname/Channel %nick% is already in use or unavailable.\n	ParseENums		[x] Takma ad/Kanal %nick% halihazırda kullanılıyor veya kullanılabilir değil.\n
+[x] No topic set in %channel%\n	ParseENums		[x] %channel% kanalında konu ayarlanmamış\n
+[x] Server: %server% (%info%)\n	ParseENums		[x] Sunucu: %server% (%info%)\n
+[x] Unknown channel mode: '%mode%'\n	ParseENums		[x] Bilinmeyen kanal kipi: '%mode%'\n
+[x] Unknown MODE flag.\n	ParseENums		[x] Bilinmeyen MODE bayrağı\n
+[x] You're not in %channel%.\n	ParseENums		[x] %channel% kanalında değilsiniz.\n
+[x] your current mode is: %mode%\n	ParseENums		[x] Geçerli kipiniz: %mode%\n
+* All your pre-selected nicknames are in use.\n	ParseENums		* Tüm ön seçili takma adlarınız kullanımda.\n
+* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n	ParseENums		* \"%nick%\" takma adı kullanımda veya kullanılabilir değil... \"%nextnick%\" deneniyor\n\n
+* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* Başka bir tane denemek için lütfen /NICK <NEWNICK> yazın.\n
+*** %nick% has been invited to %channel%.\n	ParseENums		*** %nick%, %channel% kanalına davet edildi.\n
+*** Channel lock for %channel%: %lock%\n	ParseENums		*** %channel% için kanal kilidi: %lock%\n
+*** Channel mode for %channel%: %mode%\n	ParseENums		*** %channel% için kanal kipi: %mode%\n
+*** Topic set by %user% @ %time%\n	ParseENums		*** Konu %user% tarafından ayarlandı: %time%\n
+*** Topic: %topic%\n	ParseENums		*** Konu: %topic%\n
+*** Users in %channel%: %names%\n	ParseENums		*** %channel% kanalındaki kullanıcılar: %names%\n
+%channel% (bad channel key)\n	ParseENums		%channel% (hatalı kanal anahtarı)\n
+%channel% (invite only)\n	ParseENums		%channel% (davete özel)\n
+%channel% (you're banned)\n	ParseENums		%channel% (yasaklısınız)\n
+%channel% created on %time%\n	ParseENums		%channel% oluşturuldu: %time%\n
+%people% are offline	ParseENums		%people% çevrimdışı
+%people% are online	ParseENums		%people% çevrimiçi
+%people% is offline	ParseENums		%people% çevrimdışı
+%people% is online	ParseENums		%people% çevrimiçi
+Idle:	ParseENums		Boşta:
+Sign-on:	ParseENums		Giriş yap:
+*** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Makine maskesi SILENCE listesine eklendi: %hostmask%.\n
+*** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Makine maskesi SILENCE listesinden kaldırıldı: %hostmask%.\n
+*** User mode changed: %mode%\n	ParseEvents		*** Kullanıcı kipi değişti: %mode%\n
+*** You have been invited to %channel% by %nick%.\n	ParseEvents		*** %channel% kanalına %nick% tarafından davet edildiniz.\n
+Add	PrefAliases		Ekle
+Alias	PrefAliases		Arma
+Name	PrefAliases		Ad
+Remove	PrefAliases		Kaldır
+Baltic (ISO 8859-13)	PrefApp		Baltık (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		Orta Avrupa (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		Kiril (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		Kiril (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		Kiril (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		Kiril (Windows 1251)
+Encoding:	PrefApp		Kodlama:
+Greek (ISO 8859-7)	PrefApp		Yunanca (ISO 8859-7)
+Japanese (EUC)	PrefApp		Japonca (EUC)
+Japanese (JIS)	PrefApp		Japonca (JIS)
+Japanese (Shift-JIS)	PrefApp		Japonca (Shift-JIS)
+Korean (EUC)	PrefApp		Korece (EUC)
+Open new query on private message	PrefApp		Kişisel iletide yeni sorgu aç
+Require double CMD+Q/W to close	PrefApp		Kapatmak için iki kere CMD+Q/W gereksin
+Show OS information in version reply	PrefApp		Sürüm yanıtında işletim sistemi bilgisini göster
+Strip mIRC colors	PrefApp		mIRC renklerini çıkar
+Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
+Warn when multiline pasting	PrefApp		Birden çok satır yapıştırılırken uyar
+Western (ISO 8859-1)	PrefApp		Batı (ISO 8859-1)
+Western (Mac Roman)	PrefApp		Batı (Mac Roman)
+Western (Windows)	PrefApp		Batı (Windows)
+Action	PrefColor		Eylem
+Background	PrefColor		Arka plan
+CTCP reply	PrefColor		CTCP yanıtı
+CTCP request	PrefColor		CTCP isteği
+Error	PrefColor		Hata
+Ignore	PrefColor		Yok say
+Input background	PrefColor		Girdi arka planı
+Input text	PrefColor		Girdi metni
+Join	PrefColor		Katıl
+Kick	PrefColor		At
+mIRC aqua	PrefColor		mIRC turkuaz
+mIRC black	PrefColor		mIRC siyah
+mIRC brown	PrefColor		mIRC kahverengi
+mIRC dark blue	PrefColor		mIRC lacivert
+mIRC green	PrefColor		mIRC yeşil
+mIRC grey	PrefColor		mIRC gri
+mIRC light blue	PrefColor		mIRC açık mavi
+mIRC lime	PrefColor		mIRC açık yeşil
+mIRC orange	PrefColor		mIRC turuncu
+mIRC pink	PrefColor		mIRC pembe
+mIRC purple	PrefColor		mIRC mor
+mIRC red	PrefColor		mIRC kırmızı
+mIRC silver	PrefColor		mIRC gümüş
+mIRC teal	PrefColor		mIRC camgöbeği
+mIRC white	PrefColor		mIRC beyaz
+mIRC yellow	PrefColor		mIRC sarı
+Names (helper)	PrefColor		Adlar (yardımcı)
+Names (normal)	PrefColor		Adlar (normal)
+Names (OP)	PrefColor		Adlar (OP)
+Names (voice)	PrefColor		Adlar (voice)
+Names background	PrefColor		Adlar arka planı
+Names selection	PrefColor		Adlar seçimi
+Nickname < >	PrefColor		Takma ad < >
+Nickname text	PrefColor		Takma ad metni
+Notice	PrefColor		Bildiri
+Notify list background	PrefColor		Bildirme listesi arka planı
+Notify list selection	PrefColor		Bildirme listesi seçimi
+Notify offline	PrefColor		Çevrimdışı bildir
+Notify online	PrefColor		Çevrimiçi bildir
+Quit	PrefColor		Çık
+Revert	PrefColor		Eski haline döndür
+Selection	PrefColor		Seçim
+Server text	PrefColor		Sunucu metni
+Text	PrefColor		Metin
+Timestamp background	PrefColor		Zaman damgası arka planı
+Timestamp text	PrefColor		Zaman damgası metni
+URL	PrefColor		URL
+User nickname < >	PrefColor		Kullanıcı takma adı < >
+Wallops	PrefColor		Darbeler
+Whois	PrefColor		Kimo
+Window list activity	PrefColor		Pencere liste etkinliği
+Window list background	PrefColor		Pencere liste arka planı
+Window list event	PrefColor		Pencere liste olayı
+Window list nick alert	PrefColor		Pencere liste takma ad bildirimi
+Window list normal	PrefColor		Pencere liste normal
+Window list selection	PrefColor		Pencere liste seçim
+Away:	PrefCommand		Uzakta:
+Back:	PrefCommand		Döndü:
+Ignore:	PrefCommand		Yok say:
+Kick:	PrefCommand		At:
+Quit:	PrefCommand		Çık:
+Unignore:	PrefCommand		Yok sayma:
+Uptime:	PrefCommand		Çalışma süresi:
+Automatically accept incoming sends	PrefDCC		Gelen gönderimleri kendiliğinden kabul et
+Automatically check for NAT IP	PrefDCC		NAT IP'si için kendiliğinden denetle
+DCC block size:	PrefDCC		DCC blok boyutu:
+DCC port range	PrefDCC		DCC kapı erimi
+Default path:	PrefDCC		Öntanımlı yol:
+Max:	PrefDCC		En çok:
+Min:	PrefDCC		En az:
+Join:	PrefEvent		Katıl:
+Kick:	PrefEvent		At:
+Nick:	PrefEvent		Takma ad:
+Notify off:	PrefEvent		Bildirme kapalı:
+Notify on:	PrefEvent		Bildirme açık:
+Part:	PrefEvent		Kısım:
+Quit:	PrefEvent		Çık:
+Server notice:	PrefEvent		Sunucu bildirisi:
+Topic:	PrefEvent		Konu:
+User notice:	PrefEvent		Kullanıcı bildirisi:
+Channel list	PrefFont		Kanal listesi
+Element:	PrefFont		Öge:
+Font:	PrefFont		Yazıtipi:
+Input text	PrefFont		Girdi metni
+Names list	PrefFont		Adlar listesi
+Server messages	PrefFont		Sunucu iletileri
+Text	PrefFont		Metin
+Timestamp	PrefFont		Zaman damgası
+URLs	PrefFont		URL'ler
+Window list	PrefFont		Pencere listesi
+Aliases	PrefGeneral		Armalar
+Application	PrefGeneral		Uygulama
+Colors	PrefGeneral		Renkler
+Commands	PrefGeneral		Komutlar
+DCC	PrefGeneral		DCC
+Events	PrefGeneral		Olaylar
+Fonts	PrefGeneral		Yazıtipleri
+Logging	PrefGeneral		Günlükleme
+Append timestamp to log filenames	PrefLog		Günlük dosyalarına zaman damgası iliştir
+Delete Log Files	PrefLog		Günlük dosyalarını sil
+Enable logging	PrefLog		Günlüklemeyi etkinleştir
+Error	PrefLog		Hata
+Log base path:	PrefLog		Günlük temel yolu:
+OK	PrefLog		Tamam
+Show timestamps in IRC window	PrefLog		IRC penceresinde zaman damgalarını göster
+The log path you have entered is invalid.	PrefLog		Girdiğiniz günlük yolu geçersiz.
+Timestamp format:	PrefLog		Zaman damgası biçimi:
+Preferences	PrefsWindow		Tercihler
+Copy	RunView		Kopyala
+Lookup (acronym finder)	RunView		Ara (eşanlamlı bulucu)
+Lookup (dictionary)	RunView		Ara (sözlük)
+Lookup (Google)	RunView		Ara (Google)
+Select all	RunView		Tümünü seç
+Clipping	RunView	as suffix for dropped text clippings	Kırpılıyor
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Bir internet geçidinin arkasındasınız gibi görünüyor. Vizyon başarılı bir bağlantının ardından ağ geçidinizin internet adresi için IRC sunucusuna bir sorgu yapacaktır. Bu DCC iletişimi için kullanılacak.)\n
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Şuraya bağlantı yapmaya çalışılıyor: %id%:%port%…\n
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Bağlanmaya çalışılıyor (deneme %ld/%ld)\n
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Bağlantı açık, sunucudan yanıt bekleniyor\n
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Adrese ve kapıya bağlantı oluşturulamadı. İnternet bağlantınızın çalışır durumda olduğundan emin olun.\n
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Sunucuya bağlanılamadı. Üzgünüm.\n
+[@] Disconnected from %server%\n	ServerAgent		[@] %server% bağlantısı kesildi\n
+[@] Error getting local IP\n	ServerAgent		[@] Yerel IP alınırken hata\n
+[@] Established\n	ServerAgent		[@] Bağlanıldı\n
+[@] Handshaking\n	ServerAgent		[@] El sıkışılıyor\n
+[@] Local IP: %ip%\n	ServerAgent		[@] Yerel IP: %ip%\n
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Yeniden deneme limitine erişildi; vazgeçiliyor. Bir kez daha denemek isterseniz /reconnect yazın.\n
+[@] Sending password\n	ServerAgent		[@] Parola gönderiliyor\n
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Bir sonraki denemeden önce bir saniye bekleniyor}other{[@] Bir sonraki denemeden önce # saniye bekleniyor}}
+CONNECTION PROBLEM	ServerAgent		BAĞLANTI SORUNU
+Disabled	ServerAgent		Devre dışı
+Disconnected	ServerAgent		Bağlantı kesildi
+Lag:	ServerAgent		Gecikme:
+Add server	ServerEntryWindow		Sunucu ekle
+Cancel	ServerEntryWindow		İptal
+Choose status	ServerEntryWindow		Durum seç
+Disabled	ServerEntryWindow		Devre dışı
+Done	ServerEntryWindow		Tamam
+Port:	ServerEntryWindow		Kapı:
+Primary	ServerEntryWindow		Birincil
+Secondary	ServerEntryWindow		İkincil
+Server:	ServerEntryWindow		Sunucu:
+State:	ServerEntryWindow		Durum:
+Use password:	ServerEntryWindow		Parola kullan:
+Secure port	ServerEntryWindow		Güvenli kapı
+Choose network	SetupWindow		Ağ seç
+Connect	SetupWindow		Bağlan
+Network setup…	SetupWindow		Ağ ayarları…
+Network:	SetupWindow		Ağ:
+Preferences…	SetupWindow		Tercihler…
+Setup window	SetupWindow		Ayar penceresi
+Vision	System name		Vizyon
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"Bir insan bir bebek bezini değiştirebilmeli, bir fetih planlayabilmeli, bir yaban domuzunu doğrayabilmeli, bir geminin dümenini tutabilmeli, bir bina tasarlayabilmeli, bir sone yazabilmeli, bir hesabı tutabilmeli, bir duvar örebilmeli, bir çıkığı düzeltebilmeli, bir ölüm döşeğindekini sakinleştirebilmeli, bir emir alabilmeli, bir emir verebilmeli, başkalarıyla çalışabilmeli, yalnız başına kalabilmeli, denklemleri çözebilmeli, yeni bir sorunu çözümleyebilmeli, gübre atabilmeli, bilgisayar programlayabilmeli, lezzetli bir yemek hazırlayabilmeli, cesurca dövüşebilmeli ve kahramanca ölebilmelidir. Yalnızca bir işe yönelmek böcekler içindir.\" -- Robert A. Heinlein
+A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		Haiku için yazılmış çok özellikli, hızlı, hafif ve kararlı bir IRC istemcisi.
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Aşağıdaki kişilerin emekleriyle yazılmıştır:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Yardımcı ekip:\nWade Majors yardımcısı: Patches\nMüzik süpervizörü: Baron Arnold\nBaron Arnold yardımcısı: Ficus Kirkpatrick\nDublör koordinatörü: Gilligan\nDanışmanlar: regurg ve helix\n\n\nBu IRC istemcisi yapılırken hiçbir hayvana zarar verilmemiştir.\nFilm müziği Catastrophe Records tarafından sağlanmaktadır.
+Close	WindowList		Kapat

@@ -1,0 +1,384 @@
+1	Romanian	application/x-vnd.Ink-Vision	2720096392
+[@] Attempting to rejoin…\n	ChannelAgent		[@] Se încearcă alăturarea din nou…\n
+*** Attempting to rejoin %channel%…\n	ChannelAgent		*** Se încearcă alăturarea din nou la %channel%…\n
+*** Now talking in %channel%\n	ChannelAgent		*** Se vorbește acum în %channel%\n
+*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** Ați fost dat afară din %channel% de %kicker% (%rest%)\n
+%s - %s said: %s	ChannelAgent		%s - %s a spus: %s
+Lag:	ChannelAgent		Întârziere:
+Modes:	ChannelAgent		Moduri:
+Ops:	ChannelAgent		Ops:
+Users:	ChannelAgent		Utilizatori:
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S-a completat primirea %file% de la %nick% (%ack% %size% octeți), %ldcps\n\n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S-a completat trimiterea %file% la %nick% (%ack% %size% octeți), %ldcps\n\n
+Copy	ClientAgent		Copiază
+Cut	ClientAgent		Taie
+Paste	ClientAgent		Lipește
+Select all	ClientAgent		Selectează tot
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S-a terminat primirea %file% de la %nick% (%ack% %size% octeți), %ldcps\n\n
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S-a terminat trimiterea %file% la %nick% (%ack% %size% octeți), %ldcps\n\n
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Ca și când n-ar fi de-ajuns, urmează să adaugi încă %ld linii de spam la internet. Cum vrei să-o faci?
+Cancel	ClientAgentInputFilter		Anulează
+Single line	ClientAgentInputFilter		O singură linie
+Spam	ClientAgentInputFilter		Spam
+Spam!	ClientAgentInputFilter		Spam!
+\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nStart sesiune: %a %b %d %H:%M %Y\n
+Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Stop sesiune: %a %b %d %H:%M %Y\n
+Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Start sesiune: %a %b %d %H:%M %Y\n
+About Vision	ClientWindow		Despre Vision
+Close this sub-window	ClientWindow		Închide această sub-fereastră
+Collapse network	ClientWindow		Restrânge rețeaua
+Connect to…	ClientWindow		Conectare la…
+Copy	ClientWindow		Copiază
+Cut	ClientWindow		Taie
+Down	ClientWindow		Jos
+Edit	ClientWindow		Editează
+Expand network	ClientWindow		Extinde rețeaua
+Help	ClientWindow		Ajutor
+List channels…	ClientWindow		Listează canalele…
+Move network down	ClientWindow		Mută rețeaua jos
+Move network up	ClientWindow		Mută rețeaua sus
+Network window	ClientWindow		Fereastră rețea
+Open Terminal	ClientWindow		Deschide Terminal
+Paste	ClientWindow		Lipește
+Preferences…	ClientWindow		Preferințe…
+Previous window	ClientWindow		Fereastra anterioară
+Quit	ClientWindow		Ieșire
+Select all	ClientWindow		Selectează tot
+Server	ClientWindow		Server
+Setup…	ClientWindow		Configurare…
+Smart down	ClientWindow		Smart jos
+Smart up	ClientWindow		Smart sus
+Up	ClientWindow		Sus
+Window	ClientWindow		Fereastră
+Notify list	ClientWindowDock		Listă de notificări
+Window list	ClientWindowDock		Listă de ferestre
+Color:	ColorSelector		Culoare:
+Colors	ColorSelector		Culori
+Acquiring DCC lock…	DCCConnect		Se obține blocarea DCC…
+bps:	DCCConnect		bps:
+Connecting to sender.	DCCConnect		Se conectează la emițător.
+Doing listen call.	DCCConnect		Se efectuează un apel de ascultare.
+Error writing data.	DCCConnect		Eroare la scrierea datelor.
+Established connection.	DCCConnect		Conexiune stabilită.
+Receiving \"%file%\" from %nick%.	DCCConnect		Se primește \"%file%\" de la %nick%.
+Sending \"%file%\" to %nick%.	DCCConnect		Se trimite \"%file%\" la %nick%.
+Unable to establish connection.	DCCConnect		Nu s-a putut stabili conexiunea.
+Waiting for acceptance	DCCConnect		Se așteaptă după aprobare
+Waiting for connection %ld.	DCCConnect		Se așteaptă după conexiunea %ld.
+DCC transfers	DCCFileWindow		Transferuri DCC
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% vrea să înceapă un chat DCC.
+Accept	DCCHandler		Acceptă
+Cancel	DCCHandler		Anulează
+DCC request	DCCHandler		Cerere DCC
+Refuse	DCCHandler		Refuză
+Replace	DCCHandler		Înlocuiește
+Resume	DCCHandler		Reia
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		Fișierul \„%file%\” există deja în dosarul specificat. Doriți să continuați transferul?
+Channel	ListAgent		Canal
+Channels	ListAgent		Canale
+Count:	ListAgent		Total:
+Done	ListAgent		Terminat
+Filter:	ListAgent		Filtru:
+Filter…	ListAgent		Filtru…
+Find	ListAgent		Caută
+Find next	ListAgent		Caută următorul
+Find:	ListAgent		Caută:
+Find…	ListAgent		Caută…
+List filter	ListAgent		Filtru de listă
+Loading	ListAgent		Se încarcă
+Status:	ListAgent		Stare:
+Topic	ListAgent		Subiect
+Users	ListAgent		Utilizatori
+Accepting connection on address %s, port %ld\n	MessageAgent		Se acceptă conexiunea la adresa %s, portul %ld\n
+Connected!\n	MessageAgent		Conectat!\n
+DCC chat terminated.\n	MessageAgent		Chat DCC terminat.\n
+DCC send	MessageAgent		Trimitere DCC
+Error binding socket.\n	MessageAgent		Eroare la legarea soclului.\n
+Error connecting socket.\n	MessageAgent		Eroare la conectarea soclului.\n
+Error creating socket.\n	MessageAgent		Eroare la crearea soclului.\n
+Lag:	MessageAgent		Întârziere:
+Trying to connect to address %adress%, port %port%\n	MessageAgent		Se încearcă conectarea la adresa %adress%, portul %port%\n
+Whois	MessageAgent		Whois
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s a spus: %s
+Add to notify	NamesView		Adaugă la notificare
+CTCP	NamesView		CTCP
+DCC chat	NamesView		Chat DCC
+DCC send	NamesView		Trimitere DCC
+Query	NamesView		Interogare
+User selection	NamesView		Selecție utilizator
+Whois	NamesView		Whois
+Add…	NetPrefsServerView		Adaugă…
+Edit…	NetPrefsServerView		Editează…
+Port	NetPrefsServerView		Port
+Remove	NetPrefsServerView		Elimină
+Server	NetPrefsServerView		Server
+Status	NetPrefsServerView		Stare
+Yes	NetPrefsServerView		Da
+Secure	NetPrefsServerView		Sigur
+Disabled	NetPrefsServerView		Dezactivat
+Edit server	NetPrefsServerView		Editează serverul
+Primary	NetPrefsServerView		Primar
+Servers for %name%	NetPrefsServerView		Servere pentru %name%
+Secondary	NetPrefsServerView		Secundar
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{cu o rezervă la o alta.}other{cu o rezervă la altele #.}}
+Add network	NetworkPrefsView		Adaugă rețea
+Add new…	NetworkPrefsView		Adaugă nou…
+Add nickname	NetworkPrefsView		Adaugă pseudonim
+Auto-connect to this network	NetworkPrefsView		Conectează automat la această rețea
+Automatically execute:	NetworkPrefsView		Execută automat:
+Change servers…	NetworkPrefsView		Schimbă serverele…
+Connects to server:	NetworkPrefsView		Se conectează la serverul:
+Defaults	NetworkPrefsView		Implicite
+Duplicate current…	NetworkPrefsView		Duplică curentul…
+Duplicate network	NetworkPrefsView		Rețea duplicată
+Enable lag checking	NetworkPrefsView		Activează verificarea de întârziere
+Ident:	NetworkPrefsView		Ident:
+Network details	NetworkPrefsView		Detalii rețea
+Network name:	NetworkPrefsView		Nume de rețea:
+Networks	NetworkPrefsView		Rețele
+Nickname:	NetworkPrefsView		Pseudonim:
+Personal details	NetworkPrefsView		Detalii personale
+Preferred nicks:	NetworkPrefsView		Pseudonime preferate:
+Real name:	NetworkPrefsView		Nume real:
+Remove current	NetworkPrefsView		Elimină curentul
+Use defaults	NetworkPrefsView		Utilizează implicite
+<N/A>	NetworkPrefsView	as in 'not available	Nedisponibil
+Network setup	NetworkWindow		Configurare rețea
+Servers	NetworkWindow		Servere
+DCC chat	NotifyList		Chat DCC
+Query	NotifyList		Interogare
+Remove	NotifyList		Elimină
+Whois	NotifyList		Whois
+*** Trying new nick %nick%.\n	ParseCmd		*** Se încearcă noul pseudonim %nick%.\n
+/pexec: command failed	ParseCmd		/pexec: comanda a eșuat
+Bool has been set	ParseCmd		Valoarea logică a fost stabilită
+Error setting bool	ParseCmd		Eroare la stabilirea valorii logice
+Error: Invalid parameters	ParseCmd		Eroare: parametri nevalizi
+Resolved %lookup% to %address%	ParseCmd		S-a rezolvat %lookup% la %address%
+Resolved %lookup% to %name%	ParseCmd		S-a rezolvat %lookup% la %name%
+Send	ParseCmd		Trimite
+Sending a file to %nick%	ParseCmd		Se trimite un fișier la %nick%
+Unable to resolve %lookup%	ParseCmd		Nu s-a putut rezolva %lookup%
+Uptime: %time%\n	ParseCmd		Timp de la pornire: %time%\n
+Vision has been running for %time%	ParseCmd		Vision rulează de %time%
+Vision Uptime: %time%\n	ParseCmd		Timp de la pornirea Vision: %time%\n
+[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% răspuns]: %reply%\n
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% răspuns PING]: # secundă\n}other{[%nick% răspuns PING]: # secunde\n}}
+- Server Message Of The Day:\n	ParseENums		- Mesajul zilei de la server:\n
+[@] Successful reconnect\n	ParseENums		[@] Reconectare cu succes\n
+[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [a fost] (%ident%@%address%)\n
+[x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% este deja în %channel%.\n
+[x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% nu este în %channel%.\n
+[x] Channel key already set in %channel%.\n	ParseENums		[x] Cheia canalului este stabilită deja în %channel%.\n
+[x] Channels:	ParseENums		[x] Canale:
+[x] Nickname/Channel %nick% is already in use or unavailable.\n	ParseENums		[x] Pseudonimul/Canalul %nick% este deja în uz sau nu este disponibil.\n
+[x] No topic set in %channel%\n	ParseENums		[x] Nu este stabilit niciun subiect în %channel%\n
+[x] Server: %server% (%info%)\n	ParseENums		[x] Server: %server% (%info%)\n
+[x] Unknown channel mode: '%mode%'\n	ParseENums		[x] Mod de canal necunoscut: '%mode%'\n
+[x] Unknown MODE flag.\n	ParseENums		[x] Fanion de MODE necunoscut.\n
+[x] You're not in %channel%.\n	ParseENums		[x] Nu sunteți în %channel%.\n
+[x] your current mode is: %mode%\n	ParseENums		[x] modul curent este: %mode%\n
+* All your pre-selected nicknames are in use.\n	ParseENums		* Toate pseudonimele pre-selectate sunt în uz.\n
+* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n	ParseENums		* Pseudonimul \"%nick%\" este în uz sau nu este disponibil... se încearcă \"%nextnick%\"\n\n
+* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* Tastați /NICK <PSEDUONOU> pentru a încerca altul.\n
+*** %nick% has been invited to %channel%.\n	ParseENums		*** %nick% a fost invitat la %channel%.\n
+*** Channel lock for %channel%: %lock%\n	ParseENums		*** Blocarea de canal pentru %channel%: %lock%\n
+*** Channel mode for %channel%: %mode%\n	ParseENums		*** Modul de canal pentru %channel%: %mode%\n
+*** Topic set by %user% @ %time%\n	ParseENums		*** Subiect stabilit de %user% @ %time%\n
+*** Topic: %topic%\n	ParseENums		*** Subiect: %topic%\n
+*** Users in %channel%: %names%\n	ParseENums		*** Utilizatorii din %channel%: %names%\n
+%channel% (bad channel key)\n	ParseENums		%channel% (cheie de canal nepotrivită)\n
+%channel% (invite only)\n	ParseENums		%channel% (doar cu invitație)\n
+%channel% (you're banned)\n	ParseENums		%channel% (sunteți blocat)\n
+%channel% created on %time%\n	ParseENums		%channel% creat la %time%\n
+%people% are offline	ParseENums		%people% sunt deconectați
+%people% are online	ParseENums		%people% sunt conectați
+%people% is offline	ParseENums		%people% este deconectat
+%people% is online	ParseENums		%people% este conectat
+Idle:	ParseENums		În așteptare:
+Sign-on:	ParseENums		Înregistrare la:
+*** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Hostmask adăugat la lista SILENCE: %hostmask%.\n
+*** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Hostmask înlăturat din lista SILENCE: %hostmask%.\n
+*** User mode changed: %mode%\n	ParseEvents		*** Mod de utilizator modificat: %mode%\n
+*** You have been invited to %channel% by %nick%.\n	ParseEvents		*** Ați fost invitat la %channel% de %nick%.\n
+Add	PrefAliases		Adaugă
+Alias	PrefAliases		Alias
+Name	PrefAliases		Nume
+Remove	PrefAliases		Elimină
+Baltic (ISO 8859-13)	PrefApp		Baltic (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		Central european (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		Chirilic (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		Chirilic (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		Chirilic (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		Chirilic (Windows 1251)
+Encoding:	PrefApp		Codare:
+Greek (ISO 8859-7)	PrefApp		Greacă (ISO 8859-7)
+Japanese (EUC)	PrefApp		Japoneză (EUC)
+Japanese (JIS)	PrefApp		Japoneză (JIS)
+Japanese (Shift-JIS)	PrefApp		Japoneză (Shift-JIS)
+Korean (EUC)	PrefApp		Coreeană (EUC)
+Open new query on private message	PrefApp		Deschide interogarea nouă într-un mesaj privat
+Require double CMD+Q/W to close	PrefApp		Necesită dublu CMD+Q/W pentru a închide
+Show OS information in version reply	PrefApp		Arată informațiile de OS în răspunsul de versiune
+Strip mIRC colors	PrefApp		Elimină culorile mIRC
+Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
+Warn when multiline pasting	PrefApp		Avertizează la lipirea mai multor linii
+Western (ISO 8859-1)	PrefApp		Vestic (ISO 8859-1)
+Western (Mac Roman)	PrefApp		Vestic (Roman Mac)
+Western (Windows)	PrefApp		Vestic (Windows)
+Action	PrefColor		Acțiune
+Background	PrefColor		Fundal
+CTCP reply	PrefColor		Răspuns CTCP
+CTCP request	PrefColor		Cerere CTCP
+Error	PrefColor		Eroare
+Ignore	PrefColor		Ignoră
+Input background	PrefColor		Fundal de intrare
+Input text	PrefColor		Text de intrare
+Join	PrefColor		Alăturare
+Kick	PrefColor		Dă afară
+mIRC aqua	PrefColor		aqua mIRC
+mIRC black	PrefColor		negru mIRC
+mIRC brown	PrefColor		maro mIRC
+mIRC dark blue	PrefColor		albastru închis mIRC
+mIRC green	PrefColor		verde mIRC
+mIRC grey	PrefColor		gri mIRC
+mIRC light blue	PrefColor		albastru deschis mIRC
+mIRC lime	PrefColor		var mIRC
+mIRC orange	PrefColor		portocaliu mIRC
+mIRC pink	PrefColor		roz mIRC
+mIRC purple	PrefColor		mov mIRC
+mIRC red	PrefColor		roșu mIRC
+mIRC silver	PrefColor		argintiu mIRC
+mIRC teal	PrefColor		turcoaz mIRC
+mIRC white	PrefColor		alb mIRC
+mIRC yellow	PrefColor		galben mIRC
+Names (helper)	PrefColor		Nume (asistent)
+Names (normal)	PrefColor		Nume (normal)
+Names (OP)	PrefColor		Nume (OP)
+Names (voice)	PrefColor		Nume (voce)
+Names background	PrefColor		Fundal de nume
+Names selection	PrefColor		Selecție de nume
+Nickname < >	PrefColor		Pseudonim < >
+Nickname text	PrefColor		Text pseudonim
+Notice	PrefColor		Notificare
+Notify list background	PrefColor		Fundal listă de notificare
+Notify list selection	PrefColor		Selecție listă de notificare
+Notify offline	PrefColor		Notificare deconectat
+Notify online	PrefColor		Notificare conectat
+Quit	PrefColor		Ieșire
+Revert	PrefColor		Revenire
+Selection	PrefColor		Selecție
+Server text	PrefColor		Text server
+Text	PrefColor		Text
+Timestamp background	PrefColor		Fundal datare
+Timestamp text	PrefColor		Text datare
+URL	PrefColor		URL
+User nickname < >	PrefColor		Pseudonim utilizator < >
+Wallops	PrefColor		Wallops
+Whois	PrefColor		Whois
+Window list activity	PrefColor		Activitate listă de ferestre
+Window list background	PrefColor		Fundal de listă de ferestre
+Window list event	PrefColor		Eveniment listă de ferestre
+Window list nick alert	PrefColor		Alertă de pseudonim listă de ferestre
+Window list normal	PrefColor		Normal listă de ferestre
+Window list selection	PrefColor		Selecție listă de ferestre
+Away:	PrefCommand		Plecat:
+Back:	PrefCommand		Retur:
+Ignore:	PrefCommand		Ignoră:
+Kick:	PrefCommand		Dă afară:
+Quit:	PrefCommand		Ieșire:
+Unignore:	PrefCommand		Anulează ignorarea:
+Uptime:	PrefCommand		Timp de la pornire:
+Automatically accept incoming sends	PrefDCC		Acceptă automat trimiterile care sosesc
+Automatically check for NAT IP	PrefDCC		Verifică automat după IP NAT
+DCC block size:	PrefDCC		Dimensiune bloc DCC:
+DCC port range	PrefDCC		Intervalul portului DCC
+Default path:	PrefDCC		Cale implicită:
+Max:	PrefDCC		Max:
+Min:	PrefDCC		Min:
+Join:	PrefEvent		Alăturare:
+Kick:	PrefEvent		Dă afară:
+Nick:	PrefEvent		Pseudonim:
+Notify off:	PrefEvent		Notificare dezactivată:
+Notify on:	PrefEvent		Notificare activată:
+Part:	PrefEvent		Deconectare:
+Quit:	PrefEvent		Ieșire:
+Server notice:	PrefEvent		Notificare server:
+Topic:	PrefEvent		Subiect:
+User notice:	PrefEvent		Notificare utilizator:
+Channel list	PrefFont		Listă de canale
+Element:	PrefFont		Element:
+Font:	PrefFont		Font:
+Input text	PrefFont		Text de intrare
+Names list	PrefFont		Listă de nume
+Server messages	PrefFont		Mesaje de server
+Text	PrefFont		Text
+Timestamp	PrefFont		Datare
+URLs	PrefFont		URL-uri
+Window list	PrefFont		Listă de ferestre
+Aliases	PrefGeneral		Aliasuri
+Application	PrefGeneral		Aplicație
+Colors	PrefGeneral		Culori
+Commands	PrefGeneral		Comenzi
+DCC	PrefGeneral		DCC
+Events	PrefGeneral		Evenimente
+Fonts	PrefGeneral		Fonturi
+Logging	PrefGeneral		Jurnalizare
+Append timestamp to log filenames	PrefLog		Adaugă datarea la numele de fișier de jurnalizare
+Delete Log Files	PrefLog		Șterge fișierele de jurnalizare
+Enable logging	PrefLog		Activează jurnalizarea
+Error	PrefLog		Eroare
+Log base path:	PrefLog		Calea de bază a jurnalizării:
+OK	PrefLog		OK
+Show timestamps in IRC window	PrefLog		Arată datările în fereastra de IRC
+The log path you have entered is invalid.	PrefLog		Calea de jurnalizare introdusă nu este validă.
+Timestamp format:	PrefLog		Format de datare:
+Preferences	PrefsWindow		Preferințe
+Copy	RunView		Copiază
+Lookup (acronym finder)	RunView		Căutare (căutător de acronime)
+Lookup (dictionary)	RunView		Căutare (dicționar)
+Lookup (Google)	RunView		Căutare (Google)
+Select all	RunView		Selectează tot
+Clipping	RunView	as suffix for dropped text clippings	Tăieturi
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Se pare că ești în spatele unui internet gateway. După ce se va conecta cu succes Vision va interoga serverul IRC pentru adresa de internet a gateway-ului. Aceasta va fi folosită pentru comunicarea DCC.)\n
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Se încearcă o conexiune la %id%:%port%…\n
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Se încearcă conectarea (încercarea %ld din %ld)\n
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Conexiune deschisă, se așteaptă un răspuns de la server\n
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Nu s-a putut crea conexiunea la adresă și port. Asigurați-vă că conexiunea la internet este operațională.\n
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Nu s-a putut stabili o conexiune la server. Ne pare rău.\n
+[@] Disconnected from %server%\n	ServerAgent		[@] Deconectat de la %server%\n
+[@] Error getting local IP\n	ServerAgent		[@] Eroare la obținerea IP-ului local\n
+[@] Established\n	ServerAgent		[@] Stabilit\n
+[@] Handshaking\n	ServerAgent		[@] Stabilire conexiune\n
+[@] Local IP: %ip%\n	ServerAgent		[@] IP local: %ip%\n
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Limita de încercări atinsă; se renunță. Tastați /reconnect dacă doriți să mai încercați o dată.\n
+[@] Sending password\n	ServerAgent		[@] Se trimite parola\n
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Se așteaptă o secundă înainte de următoarea încercare}other{[@] Se așteaptă # secunde înainte de următoarea încercare}}
+CONNECTION PROBLEM	ServerAgent		PROBLEMĂ DE CONEXIUNE
+Disabled	ServerAgent		Dezactivat
+Disconnected	ServerAgent		Deconectat
+Lag:	ServerAgent		Întârziere:
+Add server	ServerEntryWindow		Adaugă server
+Cancel	ServerEntryWindow		Anulează
+Choose status	ServerEntryWindow		Alege starea
+Disabled	ServerEntryWindow		Dezactivat
+Done	ServerEntryWindow		Terminat
+Port:	ServerEntryWindow		Port:
+Primary	ServerEntryWindow		Primar
+Secondary	ServerEntryWindow		Secundar
+Server:	ServerEntryWindow		Server:
+State:	ServerEntryWindow		Stare:
+Use password:	ServerEntryWindow		Utilizează parola:
+Secure port	ServerEntryWindow		Port sigur
+Choose network	SetupWindow		Alege rețeaua
+Connect	SetupWindow		Conectare
+Network setup…	SetupWindow		Configurare rețea…
+Network:	SetupWindow		Rețea:
+Preferences…	SetupWindow		Preferințe…
+Setup window	SetupWindow		Fereastră de configurare
+Vision	System name		Vision
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\„O persoană ar trebui să fie capabilă să schimbe un scutec, să plănuiască o invazie, să măcelărească un porc, să conducă o navă, să proiecteze o clădire, să scrie un sonet, să balanseze conturile de sold, să construiască un zid, să stabilească un os, să mângâie pe cei pe moarte, să ia ordine, să dea ordine, să coopereze, să lucreze singur, să rezolve ecuații, să analizeze o problemă nouă, să arunce gunoi de grajd, să programeze un calculator, să gătească o masă delicioasă, să se lupte eficient, să moară galant. Specializarea este pentru insecte.”\ -- Robert A. Heinlein
+A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		Un client de IRC nativ Haiku care deține caracteristici complete, este rapid, de categorie ușoară și stabil.
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Adus în parte de contribuții de la:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Echipaj de sprijin: Asistent la Wade Majors: Patches\nSupraveghetor de muzică: Baron Arnold\nAssistent la Baron Arnold: Ficus Kirkpatrick\nCoordonator tur de forță: Gilligan\nConsilieri: regurg și helix\n\n\nNiciun animal n-a fost rănit în timpul producerii acestui client IRC.\nColoana sonoră disponibilă la Catastrophe Records.
+Close	WindowList		Închide

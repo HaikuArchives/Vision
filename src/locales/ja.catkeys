@@ -1,0 +1,384 @@
+1	Japanese	application/x-vnd.Ink-Vision	2720096392
+[@] Attempting to rejoin…\n	ChannelAgent		[@] 再接続しようとしています…\n
+*** Attempting to rejoin %channel%…\n	ChannelAgent		*** %channel% に再接続しようとしています…\n
+*** Now talking in %channel%\n	ChannelAgent		*** 現在 %channel% で会話しています\n
+*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** %kicker% (%rest%) によって %channel% から接続を切られています\n
+%s - %s said: %s	ChannelAgent		%s - %s said: %s
+Lag:	ChannelAgent		ラグ:
+Modes:	ChannelAgent		モード:
+Ops:	ChannelAgent		Ops:
+Users:	ChannelAgent		ユーザー:
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%nick% からの %file% の受信が完了しました (%ack% %size% バイト), %ldcps\n\n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%nick% への %file% の送信が完了しました (%ack% %size% バイト), %ldcps\n\n
+Copy	ClientAgent		コピー
+Cut	ClientAgent		切り取り
+Paste	ClientAgent		貼り付け
+Select all	ClientAgent		すべて選択
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%nick% からの %file% の受信が終了しました (%ack% %size% バイト), %ldcps\n\n
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		%nick% への %file% の送信が終了しました (%ack% %size% バイト), %ldcps\n\n
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		さらに、%ld 行以上のスパムをインターネットへ追加しようとしています。どのように取り組みますか?
+Cancel	ClientAgentInputFilter		キャンセル
+Single line	ClientAgentInputFilter		一行
+Spam	ClientAgentInputFilter		スパム
+Spam!	ClientAgentInputFilter		スパム!
+\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nセッション開始: %a %b %d %H:%M %Y\n
+Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		セッション終了: %a %b %d %H:%M %Y\n
+Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		セッション開始: %a %b %d %H:%M %Y\n
+About Vision	ClientWindow		Vision について
+Close this sub-window	ClientWindow		このサブウィンドウを閉じる
+Collapse network	ClientWindow		ネットワークを折り畳む
+Connect to…	ClientWindow		接続…
+Copy	ClientWindow		コピー
+Cut	ClientWindow		切り取り
+Down	ClientWindow		下へ
+Edit	ClientWindow		編集
+Expand network	ClientWindow		ネットワークを展開
+Help	ClientWindow		ヘルプ
+List channels…	ClientWindow		チャンネルの一覧…
+Move network down	ClientWindow		ネットワークを下へ
+Move network up	ClientWindow		ネットワークを上へ
+Network window	ClientWindow		ネットワークウィンドウへ
+Open Terminal	ClientWindow		ターミナルを開く
+Paste	ClientWindow		貼り付け
+Preferences…	ClientWindow		設定…
+Previous window	ClientWindow		前のウィンドウへ
+Quit	ClientWindow		終了
+Select all	ClientWindow		すべて選択
+Server	ClientWindow		サーバー
+Setup…	ClientWindow		設定…
+Smart down	ClientWindow		スマートダウン
+Smart up	ClientWindow		スマートアップ
+Up	ClientWindow		上へ
+Window	ClientWindow		ウィンドウ
+Notify list	ClientWindowDock		通知一覧
+Window list	ClientWindowDock		ウィンドウ一覧
+Color:	ColorSelector		色:
+Colors	ColorSelector		色
+Acquiring DCC lock…	DCCConnect		DCC ロックを取得中…
+bps:	DCCConnect		bps:
+Connecting to sender.	DCCConnect		送信者へ接続中。
+Doing listen call.	DCCConnect		Listen call を行う。
+Error writing data.	DCCConnect		データの書き込みエラー
+Established connection.	DCCConnect		確立した接続
+Receiving \"%file%\" from %nick%.	DCCConnect		%nick% から \"%file%\" を受信中。
+Sending \"%file%\" to %nick%.	DCCConnect		%nick% へ \"%file%\" を送信中。
+Unable to establish connection.	DCCConnect		接続を確立できませんでした。
+Waiting for acceptance	DCCConnect		承認を待っています
+Waiting for connection %ld.	DCCConnect		接続 %ld を待っています。
+DCC transfers	DCCFileWindow		DCC 転送
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% が DCC チャットを望んでいます。
+Accept	DCCHandler		許可
+Cancel	DCCHandler		キャンセル
+DCC request	DCCHandler		DCC リクエスト
+Refuse	DCCHandler		拒否
+Replace	DCCHandler		置き換える
+Resume	DCCHandler		再開
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		ファイル \"%file%\" はすでに指定のフォルダー内にあります。転送を続けますか?
+Channel	ListAgent		チャンネル
+Channels	ListAgent		チャンネル
+Count:	ListAgent		合計:
+Done	ListAgent		終了
+Filter:	ListAgent		フィルター:
+Filter…	ListAgent		フィルター…
+Find	ListAgent		検索
+Find next	ListAgent		次を検索
+Find:	ListAgent		検索:
+Find…	ListAgent		検索…
+List filter	ListAgent		フィルターを一覧表示
+Loading	ListAgent		読み込み中
+Status:	ListAgent		状況:
+Topic	ListAgent		トピック
+Users	ListAgent		ユーザー
+Accepting connection on address %s, port %ld\n	MessageAgent		アドレス %s, ポート %ld の接続を承認中です\n
+Connected!\n	MessageAgent		接続しました!\n
+DCC chat terminated.\n	MessageAgent		DCC チャットが終了しました。\n
+DCC send	MessageAgent		DCC 送信
+Error binding socket.\n	MessageAgent		ソケットの結合時にエラーが発生しました。\n
+Error connecting socket.\n	MessageAgent		ソケットの接続時にエラーが発生しました。\n
+Error creating socket.\n	MessageAgent		ソケットの作成時にエラーが発生しました。\n
+Lag:	MessageAgent		ラグ:
+Trying to connect to address %adress%, port %port%\n	MessageAgent		アドレス %adress%, ポート %port% に接続しようとしています\n
+Whois	MessageAgent		Whois
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s said: %s
+Add to notify	NamesView		通知に追加
+CTCP	NamesView		CTCP
+DCC chat	NamesView		DCC チャット
+DCC send	NamesView		DCC 送信
+Query	NamesView		クエリ
+User selection	NamesView		ユーザー選択
+Whois	NamesView		Whois
+Add…	NetPrefsServerView		追加…
+Edit…	NetPrefsServerView		編集…
+Port	NetPrefsServerView		ポート
+Remove	NetPrefsServerView		削除
+Server	NetPrefsServerView		サーバー
+Status	NetPrefsServerView		状況
+Yes	NetPrefsServerView		はい
+Secure	NetPrefsServerView		セキュア
+Disabled	NetPrefsServerView		無効
+Edit server	NetPrefsServerView		サーバーを編集
+Primary	NetPrefsServerView		プライマリー
+Servers for %name%	NetPrefsServerView		%name% 用サーバー
+Secondary	NetPrefsServerView		セカンダリー
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{1 人にフォールバック。}other{# 人にフォールバック。}}
+Add network	NetworkPrefsView		ネットワークを追加
+Add new…	NetworkPrefsView		新規ネットワークを追加…
+Add nickname	NetworkPrefsView		ニックネームを追加
+Auto-connect to this network	NetworkPrefsView		このネットワークに自動接続する
+Automatically execute:	NetworkPrefsView		自動的に実行:
+Change servers…	NetworkPrefsView		サーバーを変更…
+Connects to server:	NetworkPrefsView		サーバーに接続:
+Defaults	NetworkPrefsView		デフォルト
+Duplicate current…	NetworkPrefsView		現在のネットワークを複製…
+Duplicate network	NetworkPrefsView		ネットワークを複製
+Enable lag checking	NetworkPrefsView		ラグのチェックを有効にする
+Ident:	NetworkPrefsView		Ident:
+Network details	NetworkPrefsView		ネットワークの詳細
+Network name:	NetworkPrefsView		ネットワーク名:
+Networks	NetworkPrefsView		ネットワーク
+Nickname:	NetworkPrefsView		ニックネーム:
+Personal details	NetworkPrefsView		ユーザー情報
+Preferred nicks:	NetworkPrefsView		ニックネームの優先度:
+Real name:	NetworkPrefsView		本名:
+Remove current	NetworkPrefsView		現在のネットワークを削除
+Use defaults	NetworkPrefsView		デフォルト値を使う
+<N/A>	NetworkPrefsView	as in 'not available	<利用できません>
+Network setup	NetworkWindow		ネットワークの設定
+Servers	NetworkWindow		サーバー
+DCC chat	NotifyList		DCC チャット
+Query	NotifyList		クエリ
+Remove	NotifyList		削除
+Whois	NotifyList		Whois
+*** Trying new nick %nick%.\n	ParseCmd		*** 新しいニックネーム %nick% を試しています。\n
+/pexec: command failed	ParseCmd		/pexec: コマンドが失敗しました
+Bool has been set	ParseCmd		Bool 値が設定されました
+Error setting bool	ParseCmd		Bool 値の設定時にエラーが発生しました
+Error: Invalid parameters	ParseCmd		エラー: 不正なパラメーターです
+Resolved %lookup% to %address%	ParseCmd		%lookup% を %address% に解決しました
+Resolved %lookup% to %name%	ParseCmd		%lookup% を %name% に解決しました
+Send	ParseCmd		送信
+Sending a file to %nick%	ParseCmd		%nick% にファイルを送信中
+Unable to resolve %lookup%	ParseCmd		%lookup% を解決できません
+Uptime: %time%\n	ParseCmd		稼働時間: %time%\n
+Vision has been running for %time%	ParseCmd		Vision は %time% 稼働しています
+Vision Uptime: %time%\n	ParseCmd		Vision の稼働時間: %time%\n
+[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% レスポンス]: %reply%\n
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING レスポンス]: # 秒\n}other{[%nick% PING レスポンス]: # 秒\n}}
+- Server Message Of The Day:\n	ParseENums		- 本日のサーバーメッセージ:\n
+[@] Successful reconnect\n	ParseENums		[@] 再接続成功\n
+[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [was] (%ident%@%address%)\n
+[x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% は、既に %channel% にいます。\n
+[x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% は、%channel% にいません。\n
+[x] Channel key already set in %channel%.\n	ParseENums		[x] チャンネルキーはすでに %channel% では設定されています。\n
+[x] Channels:	ParseENums		[x] チャンネル:
+[x] Nickname/Channel %nick% is already in use or unavailable.\n	ParseENums		[x] Nickname/Channel %nick% はすでに使われているか利用できません。\n
+[x] No topic set in %channel%\n	ParseENums		[x] %channel%にはチャンネルが設定されていません\n
+[x] Server: %server% (%info%)\n	ParseENums		[x] サーバー: %server% (%info%)\n
+[x] Unknown channel mode: '%mode%'\n	ParseENums		[x] 不明なチャンネルモード: '%mode%'\n
+[x] Unknown MODE flag.\n	ParseENums		[x] 不明な MODE フラグ。\n
+[x] You're not in %channel%.\n	ParseENums		[x] あなたは %channel% にいません。\n
+[x] your current mode is: %mode%\n	ParseENums		[x] 現在のモード: %mode%\n
+* All your pre-selected nicknames are in use.\n	ParseENums		* 先に選択したネックネームは使われています。\n
+* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n	ParseENums		* Nickname \"%nick%\" は使われているか使用できません... "%nextnick%\" を試しています\n\n
+* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* /NICK <NEWNICK> を入力して、ほかのニックネームを試してください。\n
+*** %nick% has been invited to %channel%.\n	ParseENums		*** %nick% が、%channel% に招待されています。\n
+*** Channel lock for %channel%: %lock%\n	ParseENums		*** %channel% のチャンネルロック: %lock%\n
+*** Channel mode for %channel%: %mode%\n	ParseENums		*** %channel% のチャンネルモード: %mode%\n
+*** Topic set by %user% @ %time%\n	ParseENums		*** トピックが次のユーザーによって設定されました %user% @ %time%\n
+*** Topic: %topic%\n	ParseENums		*** トピック: %topic%\n
+*** Users in %channel%: %names%\n	ParseENums		*** ユーザーが次にいます %channel%: %names%\n
+%channel% (bad channel key)\n	ParseENums		%channel% (チャンネルキー不良)\n
+%channel% (invite only)\n	ParseENums		%channel% (招待のみ)\n
+%channel% (you're banned)\n	ParseENums		%channel% (Ban されています)\n
+%channel% created on %time%\n	ParseENums		%time% に %channel% が作成されました\n
+%people% are offline	ParseENums		%people% はオフラインです
+%people% are online	ParseENums		%people% はオンラインです
+%people% is offline	ParseENums		%people% はオフラインです
+%people% is online	ParseENums		%people% はオンラインです
+Idle:	ParseENums		Idle:
+Sign-on:	ParseENums		サインオン:
+*** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** ホストマスクが SILENCE list: %hostmask% に追加されました。\n
+*** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** ホストマスクが SILENCE list: %hostmask% から削除されました。\n
+*** User mode changed: %mode%\n	ParseEvents		*** ユーザーモードが以下に変更されました: %mode%\n
+*** You have been invited to %channel% by %nick%.\n	ParseEvents		*** あなたは %nick% に %channel% へ招待されています。\n
+Add	PrefAliases		追加
+Alias	PrefAliases		エイリアス
+Name	PrefAliases		名前
+Remove	PrefAliases		削除
+Baltic (ISO 8859-13)	PrefApp		バルト語 (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		中央ヨーロッパ (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		キリル文字 (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		キリル文字 (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		キリル文字 (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		キリル文字 (Windows 1251)
+Encoding:	PrefApp		文字コード:
+Greek (ISO 8859-7)	PrefApp		ギリシャ語 (ISO 8859-7)
+Japanese (EUC)	PrefApp		日本語 (EUC)
+Japanese (JIS)	PrefApp		日本語 (JIS)
+Japanese (Shift-JIS)	PrefApp		日本語 (Shift-JIS)
+Korean (EUC)	PrefApp		韓国語 (EUC)
+Open new query on private message	PrefApp		プライベートメッセージに関して新しいクエリを開く
+Require double CMD+Q/W to close	PrefApp		終了に CMD+Q/W を2 回要求する
+Show OS information in version reply	PrefApp		バージョン応答に OS 情報を表示する
+Strip mIRC colors	PrefApp		mIRC カラーを削除する
+Unicode (UTF-8)	PrefApp		ユニコード (UTF-8)
+Warn when multiline pasting	PrefApp		複数行が貼り付けられた時警告する
+Western (ISO 8859-1)	PrefApp		ラテン文字 (ISO 8859-1)
+Western (Mac Roman)	PrefApp		ラテン文字 (Mac Roman)
+Western (Windows)	PrefApp		ラテン文字 (Windows)
+Action	PrefColor		アクション
+Background	PrefColor		背景
+CTCP reply	PrefColor		CTCP リプライ
+CTCP request	PrefColor		CTCP リクエスト
+Error	PrefColor		エラー
+Ignore	PrefColor		無視
+Input background	PrefColor		入力テキストの背景
+Input text	PrefColor		入力テキスト
+Join	PrefColor		Join
+Kick	PrefColor		Kick
+mIRC aqua	PrefColor		mIRC 水色
+mIRC black	PrefColor		mIRC 黒
+mIRC brown	PrefColor		mIRC 茶
+mIRC dark blue	PrefColor		mIRC ダークブルー
+mIRC green	PrefColor		mIRC 緑
+mIRC grey	PrefColor		mIRC 灰
+mIRC light blue	PrefColor		mIRC ライトブルー
+mIRC lime	PrefColor		mIRC ライム
+mIRC orange	PrefColor		mIRC オレンジ
+mIRC pink	PrefColor		mIRC ピンク
+mIRC purple	PrefColor		mIRC 紫
+mIRC red	PrefColor		mIRC 赤
+mIRC silver	PrefColor		mIRC 銀
+mIRC teal	PrefColor		mIRC 青緑
+mIRC white	PrefColor		mIRC 白
+mIRC yellow	PrefColor		mIRC 黄
+Names (helper)	PrefColor		名前 (helper)
+Names (normal)	PrefColor		名前 (normal)
+Names (OP)	PrefColor		名前 (OP)
+Names (voice)	PrefColor		名前 (voice)
+Names background	PrefColor		名前の背景
+Names selection	PrefColor		名前の選択
+Nickname < >	PrefColor		ニックネーム < >
+Nickname text	PrefColor		ニックネームのテキスト
+Notice	PrefColor		Notice
+Notify list background	PrefColor		通知一覧の背景
+Notify list selection	PrefColor		通知一覧の選択部
+Notify offline	PrefColor		オフライン通知
+Notify online	PrefColor		オンライン通知
+Quit	PrefColor		終了
+Revert	PrefColor		元に戻す
+Selection	PrefColor		選択部
+Server text	PrefColor		サーバーテキスト
+Text	PrefColor		テキスト
+Timestamp background	PrefColor		タイムスタンプの背景
+Timestamp text	PrefColor		タイムスタンプのテキスト
+URL	PrefColor		URL
+User nickname < >	PrefColor		ユーザーのニックネーム < >
+Wallops	PrefColor		Wallops
+Whois	PrefColor		Whois
+Window list activity	PrefColor		ウィンドウ一覧 (アクティビティ)
+Window list background	PrefColor		ウィンドウ一覧の背景
+Window list event	PrefColor		ウィンドウ一覧 (イベント)
+Window list nick alert	PrefColor		ウィンドウ一覧 (nick アラート)
+Window list normal	PrefColor		ウィンドウ一覧 (標準)
+Window list selection	PrefColor		ウィンドウ一覧の選択部
+Away:	PrefCommand		Away:
+Back:	PrefCommand		Back:
+Ignore:	PrefCommand		Ignore:
+Kick:	PrefCommand		Kick:
+Quit:	PrefCommand		Quit:
+Unignore:	PrefCommand		Unignore:
+Uptime:	PrefCommand		Uptime:
+Automatically accept incoming sends	PrefDCC		自動的に incoming sends を許可する
+Automatically check for NAT IP	PrefDCC		自動的に NAT IP をチェックする
+DCC block size:	PrefDCC		DCC ブロックサイズ:
+DCC port range	PrefDCC		DCC ポート範囲
+Default path:	PrefDCC		デフォルトパス:
+Max:	PrefDCC		最大:
+Min:	PrefDCC		最小:
+Join:	PrefEvent		Join:
+Kick:	PrefEvent		Kick:
+Nick:	PrefEvent		Nick:
+Notify off:	PrefEvent		Notify off:
+Notify on:	PrefEvent		Notify on:
+Part:	PrefEvent		Part:
+Quit:	PrefEvent		Quit:
+Server notice:	PrefEvent		Server notice:
+Topic:	PrefEvent		Topic:
+User notice:	PrefEvent		User notice:
+Channel list	PrefFont		チャンネル一覧
+Element:	PrefFont		テキスト:
+Font:	PrefFont		フォント:
+Input text	PrefFont		入力テキスト
+Names list	PrefFont		名前一覧
+Server messages	PrefFont		サーバーメッセージ
+Text	PrefFont		通常のテキスト
+Timestamp	PrefFont		タイムスタンプ
+URLs	PrefFont		URL
+Window list	PrefFont		ウィンドウ一覧
+Aliases	PrefGeneral		エイリアス
+Application	PrefGeneral		アプリケーション
+Colors	PrefGeneral		色
+Commands	PrefGeneral		コマンド
+DCC	PrefGeneral		DCC
+Events	PrefGeneral		イベント
+Fonts	PrefGeneral		フォント
+Logging	PrefGeneral		ログ
+Append timestamp to log filenames	PrefLog		ログファイル名にタイムスタンプを追加する
+Delete Log Files	PrefLog		ログファイルを削除する
+Enable logging	PrefLog		ログを有効にする
+Error	PrefLog		エラー
+Log base path:	PrefLog		ログのベースパス:
+OK	PrefLog		OK
+Show timestamps in IRC window	PrefLog		IRC ウィンドウ中にタイムスタンプを表示
+The log path you have entered is invalid.	PrefLog		入力したログのパスが不正です。
+Timestamp format:	PrefLog		タイムスタンプのフォーマット:
+Preferences	PrefsWindow		設定
+Copy	RunView		コピー
+Lookup (acronym finder)	RunView		Acronym Finder で検索
+Lookup (dictionary)	RunView		Merriam Webster で検索
+Lookup (Google)	RunView		Google で検索
+Select all	RunView		すべてを選択
+Clipping	RunView	as suffix for dropped text clippings	Clipping
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (あなたはインターネットゲートウェイの後ろにいるようです。Vision はゲートウェイのインターネットアクセスの成功した接続上で IRC サーバーに問い合わせします。これは、DCC 通信に使用されます。)\n
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] %id%:%port% への接続試行中…\n
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] 接続試行中 (試行 %ld / %ld)\n
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] 接続が開きました、サーバーからの応答を待っています\n
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] アドレスとポートへの接続を作成できませんでした。インターネット接続が使用できることを確認してください。\n
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] サーバーへの接続を確立できませんでした。すみません。\n
+[@] Disconnected from %server%\n	ServerAgent		[@] %server% から切断されました\n
+[@] Error getting local IP\n	ServerAgent		[@] ローカル IP の取得時にエラーが発生しました\n
+[@] Established\n	ServerAgent		[@] 接続が確立しました\n
+[@] Handshaking\n	ServerAgent		[@] ハンドシェイク中です\n
+[@] Local IP: %ip%\n	ServerAgent		[@] ローカル IP: %ip%\n
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] 再試行回数の限度に達しました; 断念します。もう一度行うなら /reconnect と入力してください。\n
+[@] Sending password\n	ServerAgent		[@] パスワードを送信しています\n
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] 次の試行まで 1 秒待ちます}other{[@] 次の試行まで # 秒待ちます}}
+CONNECTION PROBLEM	ServerAgent		接続問題
+Disabled	ServerAgent		無効
+Disconnected	ServerAgent		切断されました
+Lag:	ServerAgent		ラグ:
+Add server	ServerEntryWindow		サーバーを追加
+Cancel	ServerEntryWindow		キャンセル
+Choose status	ServerEntryWindow		状態を選択
+Disabled	ServerEntryWindow		無効
+Done	ServerEntryWindow		終了
+Port:	ServerEntryWindow		ポート:
+Primary	ServerEntryWindow		プライマリ
+Secondary	ServerEntryWindow		セカンダリ
+Server:	ServerEntryWindow		サーバー:
+State:	ServerEntryWindow		状態:
+Use password:	ServerEntryWindow		パスワードを使用する:
+Secure port	ServerEntryWindow		セキュアポート
+Choose network	SetupWindow		ネットワークを選択
+Connect	SetupWindow		接続
+Network setup…	SetupWindow		ネットワーク設定…
+Network:	SetupWindow		ネットワーク:
+Preferences…	SetupWindow		設定…
+Setup window	SetupWindow		設定ウィンドウ
+Vision	System name		Vision
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein
+A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		A native Haiku IRC client that is feature filled, fast, lightweight, and stable.
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.
+Close	WindowList		閉じる

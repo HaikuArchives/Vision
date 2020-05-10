@@ -1,16 +1,13 @@
-1	ukrainian	application/x-vnd.Ink-Vision	3154840961
+1	Ukrainian	application/x-vnd.Ink-Vision	2720096392
 [@] Attempting to rejoin…\n	ChannelAgent		[@] Спроба перезайти…\n
 *** Attempting to rejoin %channel%…\n	ChannelAgent		*** Спроба перезайти на %channel%…\n
 *** Now talking in %channel%\n	ChannelAgent		*** Зараз розмовляє в %channel%\n
 *** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** %kicker% (%rest%) викинув вас стусаном з %channel%\n
 %s - %s said: %s	ChannelAgent		%s - %s сказав: %s
-Channel options	ChannelAgent		Параметри каналу
 Lag:	ChannelAgent		Затр:
 Modes:	ChannelAgent		Режими:
 Ops:	ChannelAgent		Оп/с:
 Users:	ChannelAgent		Користувачі:
-%channel% options	ChannelOptions		Параметри %channel%
-You are currently a channel operator. You may change any of these options.	ChannelOptions		Ви зараз оператор каналу. Можете змінити будь-який з цих параметрів.
 Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Завершено отримання %file% від %nick% (%ack% %size% байтів), %ldcps\n\n
 Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Завершено надсилання %file% до %nick% (%ack% %size% байтів), %ldcps\n\n
 Copy	ClientAgent		Копіювати
@@ -110,25 +107,23 @@ DCC send	NamesView		Надсилання DCC
 Query	NamesView		Запит
 User selection	NamesView		Вибір користувача
 Whois	NamesView		Інфо
-- = disabled	NetPrefsServerView		- = вимкнено
-* = primary	NetPrefsServerView		* = первинний
-+ = secondary (fallback)	NetPrefsServerView		+ = вторинний (fallback)
 Add…	NetPrefsServerView		Додати…
 Edit…	NetPrefsServerView		Редагувати…
-OK	NetPrefsServerView		OK
 Port	NetPrefsServerView		Порт
 Remove	NetPrefsServerView		Видалити
-Secure?	NetPrefsServerView		Безпечно?
-Select servers for %name%:	NetPrefsServerView		Виберіть сервери для %name%:
 Server	NetPrefsServerView		Сервер
 Status	NetPrefsServerView		Статус
 Yes	NetPrefsServerView		Так
-Key:	NetPrefsServerView	like a legend of a map describing the used symbols	Ключ:
+Secure	NetPrefsServerView		Secure
+Disabled	NetPrefsServerView		Disabled
+Edit server	NetPrefsServerView		Edit server
+Primary	NetPrefsServerView		Primary
+Servers for %name%	NetPrefsServerView		Servers for %name%
+Secondary	NetPrefsServerView		Secondary
 {0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{з Fallback на інший.}other{з Fallback на # інші.}}
 Add network	NetworkPrefsView		Додати мережу
 Add new…	NetworkPrefsView		Додати нову…
 Add nickname	NetworkPrefsView		Додати нік
-Add…	NetworkPrefsView		Додати…
 Auto-connect to this network	NetworkPrefsView		Автоматичне з’єднання з цією мережею
 Automatically execute:	NetworkPrefsView		Автоматично виконати:
 Change servers…	NetworkPrefsView		Змінити сервери…
@@ -137,7 +132,6 @@ Defaults	NetworkPrefsView		Умовчання
 Duplicate current…	NetworkPrefsView		Дублювати поточну…
 Duplicate network	NetworkPrefsView		Дублювати мережу
 Enable lag checking	NetworkPrefsView		Увімкнути перевірку затримки
-falling back to 9 others.	NetworkPrefsView		звернення до 9 інших.
 Ident:	NetworkPrefsView		Ідент:
 Network details	NetworkPrefsView		Інформація про мережу
 Network name:	NetworkPrefsView		Ім’я мережі:
@@ -146,7 +140,6 @@ Nickname:	NetworkPrefsView		Нік:
 Personal details	NetworkPrefsView		Особиста інформація
 Preferred nicks:	NetworkPrefsView		Пріоритетні ніки:
 Real name:	NetworkPrefsView		Справжнє ім’я:
-Remove	NetworkPrefsView		Видалити
 Remove current	NetworkPrefsView		Видалити поточну
 Use defaults	NetworkPrefsView		Умовчання
 <N/A>	NetworkPrefsView	as in 'not available	<Н/Д>
@@ -319,7 +312,6 @@ Font:	PrefFont		Шрифт:
 Input text	PrefFont		Введення тексту
 Names list	PrefFont		Список імен
 Server messages	PrefFont		Повідомлення сервера
-Size:	PrefFont		Розмір:
 Text	PrefFont		Текст
 Timestamp	PrefFont		Дата/час
 URLs	PrefFont		URL-адреси
@@ -374,10 +366,10 @@ Done	ServerEntryWindow		Готово
 Port:	ServerEntryWindow		Порт:
 Primary	ServerEntryWindow		Первинний
 Secondary	ServerEntryWindow		Вторинний
-Secure port:	ServerEntryWindow		Безпечний порт:
 Server:	ServerEntryWindow		Сервер:
 State:	ServerEntryWindow		Стан:
 Use password:	ServerEntryWindow		Надати пароль:
+Secure port	ServerEntryWindow		Secure port
 Choose network	SetupWindow		Виберіть мережу
 Connect	SetupWindow		З’єднатися
 Network setup…	SetupWindow		Параметри мережі…
