@@ -5,7 +5,7 @@ resource app_flags B_EXCLUSIVE_LAUNCH;
 resource app_version {
 	major  = 0,
 	middle = 10,
-	minor  = 4,
+	minor  = 5,
 
 	// B_APPV_DEVELOPMENT
 	// B_APPV_ALPHA
