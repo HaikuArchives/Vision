@@ -1,169 +1,4 @@
 1	Catalan	application/x-vnd.Ink-Vision	2720096392
-[@] Attempting to rejoin…\n	ChannelAgent		[@] S'intenta tornar a afegir-se…\n
-*** Attempting to rejoin %channel%…\n	ChannelAgent		*** S'intenta tornar a afegir-se a %channel%…\n
-*** Now talking in %channel%\n	ChannelAgent		*** Ara es parla al canal %channel%\n
-*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** Heu estat expulsats del canal %channel% per %kicker% (%rest%).\n
-%s - %s said: %s	ChannelAgent		%s - %s ha dit: %s
-Lag:	ChannelAgent		Retard:
-Modes:	ChannelAgent		Modes:
-Ops:	ChannelAgent		Opcions:
-Users:	ChannelAgent		Usuaris:
-Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S'ha acabat la recepció de %file% de %nick% (%ack% %size% bytes), %ldcps\n\n
-Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S'ha acabat l'enviament de %file% a %nick% (%ack% %size% bytes), %ldcps\n\n
-Copy	ClientAgent		Copia
-Cut	ClientAgent		Retalla
-Paste	ClientAgent		Enganxa
-Select all	ClientAgent		Selecciona-ho tot
-Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S'ha acabat la recepció de %file% de %nick% (%ack% %size% bytes), %ldcps\n\n
-Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S'ha acabat l'enviament de %file% a %nick% (%ack% %size% bytes), %ldcps\n\n
-As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Per si no n'hi ha prou, esteu a punt d'afegir %d línies més de correu brossa a Internet. Com us agradaria fer-ho?
-Cancel	ClientAgentInputFilter		Cancel·la
-Single line	ClientAgentInputFilter		Línia única
-Spam	ClientAgentInputFilter		Brossa
-Spam!	ClientAgentInputFilter		Brossa!
-\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nInici de la sessió: %a %b %d %H.%M %Y\n
-Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Tancament de la sessió: %a %b %d %H.%M %Y\n
-Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Inici de la sessió: %a %b %d %H.%M %Y\n
-About Vision	ClientWindow		Quant al Vision
-Close this sub-window	ClientWindow		Tanca aquesta subfinestra
-Collapse network	ClientWindow		Replega de xarxa
-Connect to…	ClientWindow		Connectat a...
-Copy	ClientWindow		Copia
-Cut	ClientWindow		Retalla
-Down	ClientWindow		Avall
-Edit	ClientWindow		Edita
-Expand network	ClientWindow		Expandeix la xarxa
-Help	ClientWindow		Ajuda
-List channels…	ClientWindow		Llista de canals...
-Move network down	ClientWindow		Mou la xarxa avall
-Move network up	ClientWindow		Mou la xarxa amunt
-Network window	ClientWindow		Finestra de xarxa
-Open Terminal	ClientWindow		Obre el Terminal
-Paste	ClientWindow		Engaxa
-Preferences…	ClientWindow		Preferències…
-Previous window	ClientWindow		Finestra anterior
-Quit	ClientWindow		Surt
-Select all	ClientWindow		Selecciona-ho tot
-Server	ClientWindow		Servidor
-Setup…	ClientWindow		Configuració...
-Smart down	ClientWindow		Avall intel·ligentment
-Smart up	ClientWindow		Amunt intel·ligentment
-Up	ClientWindow		Amunt
-Window	ClientWindow		Finestra
-Notify list	ClientWindowDock		Llista de notificacions
-Window list	ClientWindowDock		Llista de finestres
-Color:	ColorSelector		Color:
-Colors	ColorSelector		Colors
-Acquiring DCC lock…	DCCConnect		S'adquireix el bloqueig de DCC ...
-bps:	DCCConnect		bps:
-Connecting to sender.	DCCConnect		Connexió amb el remitent.
-Doing listen call.	DCCConnect		Trucada d'escolta.
-Error writing data.	DCCConnect		Error en escriure dades.
-Established connection.	DCCConnect		Connexió establerta.
-Receiving \"%file%\" from %nick%.	DCCConnect		Es rep \"%file%\" de %nick%.
-Sending \"%file%\" to %nick%.	DCCConnect		S'envia \"%file%\" a %nick%.
-Unable to establish connection.	DCCConnect		No es pot establir connexió.
-Waiting for acceptance	DCCConnect		S'espera l'acceptació
-Waiting for connection %ld.	DCCConnect		S'espera la connexió %ld.
-DCC transfers	DCCFileWindow		Transferències de DCC
-%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% vol iniciar un xat de DCC amb tu.
-Accept	DCCHandler		Accepta
-Cancel	DCCHandler		Cancel·la
-DCC request	DCCHandler		Sol·licitud de DCC
-Refuse	DCCHandler		Refusa
-Replace	DCCHandler		Reemplaça
-Resume	DCCHandler		Reprèn
-The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		El fitxer \"%file%\" ja existeix a la carpeta especificada. Voleu continuar la transferència?
-Channel	ListAgent		Canal
-Channels	ListAgent		Canals
-Count:	ListAgent		Compte:
-Done	ListAgent		Fet
-Filter:	ListAgent		Filtre:
-Filter…	ListAgent		Filtre...
-Find	ListAgent		Troba
-Find next	ListAgent		Troba'n el següent
-Find:	ListAgent		Troba:
-Find…	ListAgent		Troba...
-List filter	ListAgent		Filtre de llista
-Loading	ListAgent		Es carrega
-Status:	ListAgent		Estat:
-Topic	ListAgent		Assumpte
-Users	ListAgent		Usuaris
-Accepting connection on address %s, port %ld\n	MessageAgent		S'accepta la connexió a l'adreça %s, port %ld\n
-Connected!\n	MessageAgent		Connectat!\n
-DCC chat terminated.\n	MessageAgent		S'ha acabat el xat de DCC.\n
-DCC send	MessageAgent		Enviament de DCC
-Error binding socket.\n	MessageAgent		Error en enllaçar el sòcol.\n
-Error connecting socket.\n	MessageAgent		Error en connectar el sòcol.\n
-Error creating socket.\n	MessageAgent		Error en crear el sòcol.\n
-Lag:	MessageAgent		Retard:
-Trying to connect to address %adress%, port %port%\n	MessageAgent		S'intenta connectar a l'adreça %adress%, port %port%\n
-Whois	MessageAgent		Qui és
-%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s ha dit: %s
-Add to notify	NamesView		Afegeix per notificar
-CTCP	NamesView		CTCP
-DCC chat	NamesView		Xat de DCC
-DCC send	NamesView		Enviament de DCC
-Query	NamesView		Consulta
-User selection	NamesView		Selecció d'usuaris
-Whois	NamesView		Qui és
-Add…	NetPrefsServerView		Afegeix...
-Edit…	NetPrefsServerView		Edita…
-Port	NetPrefsServerView		Port
-Remove	NetPrefsServerView		Suprimeix
-Server	NetPrefsServerView		Servidor
-Status	NetPrefsServerView		Estat
-Yes	NetPrefsServerView		Sí
-Secure	NetPrefsServerView		Segur
-Disabled	NetPrefsServerView		Inhabilitat
-Edit server	NetPrefsServerView		Edita el servidor
-Primary	NetPrefsServerView		Primari
-Servers for %name%	NetPrefsServerView		Servidors per a %name%
-Secondary	NetPrefsServerView		Secundari
-{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{amb un retrocés a un altre.}other{amb un retrocés a # altres.}}
-Add network	NetworkPrefsView		Afegeix una xarxa
-Add new…	NetworkPrefsView		Afegeix-ne...
-Add nickname	NetworkPrefsView		Afegeix el sobrenom
-Auto-connect to this network	NetworkPrefsView		Connecta automàticament a aquesta xarxa
-Automatically execute:	NetworkPrefsView		Executa automàticament:
-Change servers…	NetworkPrefsView		Canvia els servidors...
-Connects to server:	NetworkPrefsView		Es connecta al servidor:
-Defaults	NetworkPrefsView		Per defecte
-Duplicate current…	NetworkPrefsView		Duplica l'actual...
-Duplicate network	NetworkPrefsView		Duplica la xarxa
-Enable lag checking	NetworkPrefsView		Habilita la comprovació de retard
-Ident:	NetworkPrefsView		Sagnat:
-Network details	NetworkPrefsView		Detalls de la xarxa
-Network name:	NetworkPrefsView		Nom de la xarxa:
-Networks	NetworkPrefsView		Xarxes
-Nickname:	NetworkPrefsView		Sobrenom:
-Personal details	NetworkPrefsView		Detalls personals
-Preferred nicks:	NetworkPrefsView		Sobrenoms preferits:
-Real name:	NetworkPrefsView		Nom real:
-Remove current	NetworkPrefsView		Suprimeix l'actual
-Use defaults	NetworkPrefsView		Usa els valors per defecte
-<N/A>	NetworkPrefsView	as in 'not available	<N/A>
-Network setup	NetworkWindow		Configuració de la xarxa
-Servers	NetworkWindow		Servidors
-DCC chat	NotifyList		Xat de DCC
-Query	NotifyList		Consulta
-Remove	NotifyList		Suprimeix
-Whois	NotifyList		Qui és
-*** Trying new nick %nick%.\n	ParseCmd		*** Es prova el sobrenom nou %nick%.\n
-/pexec: command failed	ParseCmd		/pexec: ha fallat l'ordre
-Bool has been set	ParseCmd		S'ha establert bool
-Error setting bool	ParseCmd		Error enviant bool
-Error: Invalid parameters	ParseCmd		Error: paràmetres no vàlids
-Resolved %lookup% to %address%	ParseCmd		S'ha resolt %lookup% a %address%
-Resolved %lookup% to %name%	ParseCmd		S'ha resolt %lookup% a %name%
-Send	ParseCmd		Envia
-Sending a file to %nick%	ParseCmd		S'envia un fitxer a %nick%
-Unable to resolve %lookup%	ParseCmd		No es pot resoldre %lookup%
-Uptime: %time%\n	ParseCmd		Temps d'activitat: %time%\n
-Vision has been running for %time%	ParseCmd		El Vision ha estat actiu %time%
-Vision Uptime: %time%\n	ParseCmd		Temps d'activitat del Vision: %time%\n
-[%nick% %command% response]: %reply%\n	ParseCTCP		[resposta de %nick% %command%]: %reply%\n
-{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[resposta PING de %nick%]: # segon\n}other{[resposta de PING de %nick% ]: # segons\n}}
 - Server Message Of The Day:\n	ParseENums		- Missatge del dia del servidor:\n
 [@] Successful reconnect\n	ParseENums		[@] s'ha reconnectat correctament\n
 [x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [era] (%ident%@%address%)\n
@@ -197,35 +32,138 @@ Vision Uptime: %time%\n	ParseCmd		Temps d'activitat del Vision: %time%\n
 %people% is online	ParseENums		%people% està en línia
 Idle:	ParseENums		Inactiu:
 Sign-on:	ParseENums		Entreu-hi:
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Sembla que us trobeu darrere d’una passarel·la d’internet. El Vision farà una consulta al servidor IRC quan es produeixi una connexió correcta per a l'adreça d'internet de la vostra passarel·la. Això s’usarà per a la comunicació de DCC.)\n
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] S'intenta una connexió a %id%:%port%…\n
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] S'intenta connectar (intent %ld de %ld)\n
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Connexió oberta, s'espera una resposta del servidor.\n
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] No s'ha pogut crear la connexió a l'adreça i al port. Assegureu-vos que la connexió a Internet estigui operativa.\n
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] No s'ha pogut establir una connexió amb el servidor. Disculpeu.\n
+[@] Disconnected from %server%\n	ServerAgent		[@] Desconnectat de %server%\n
+[@] Error getting local IP\n	ServerAgent		[@] Error en obtenir la IP local.\n
+[@] Established\n	ServerAgent		[@] Establerta\n
+[@] Handshaking\n	ServerAgent		[@] Conformitat de connexió\n
+[@] Local IP: %ip%\n	ServerAgent		[@] IP local: %ip%\n
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] S'ha assolit el límit d'intents. Escriviu /reconnect si voleu tornar-hi.\n
+[@] Sending password\n	ServerAgent		[@] S'envia la contrasenya\n
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] S'espera un segon abans de tornar-hi.}other{[@] S'esperen # segons abans de tornar-hi.}}
+CONNECTION PROBLEM	ServerAgent		PROBLEMA DE CONNEXIÓ
+Disabled	ServerAgent		Inhabilitat
+Disconnected	ServerAgent		Desconnectat
+Lag:	ServerAgent		Retard:
+[@] Attempting to rejoin…\n	ChannelAgent		[@] S'intenta tornar a afegir-se…\n
+*** Attempting to rejoin %channel%…\n	ChannelAgent		*** S'intenta tornar a afegir-se a %channel%…\n
+*** Now talking in %channel%\n	ChannelAgent		*** Ara es parla al canal %channel%\n
+*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** Heu estat expulsats del canal %channel% per %kicker% (%rest%).\n
+%s - %s said: %s	ChannelAgent		%s - %s ha dit: %s
+Lag:	ChannelAgent		Retard:
+Modes:	ChannelAgent		Modes:
+Ops:	ChannelAgent		Opcions:
+Users:	ChannelAgent		Usuaris:
+[%nick% %command% response]: %reply%\n	ParseCTCP		[resposta de %nick% %command%]: %reply%\n
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[resposta PING de %nick%]: # segon\n}other{[resposta de PING de %nick% ]: # segons\n}}
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{amb un retrocés a un altre.}other{amb un retrocés a # altres.}}
+<N/A>	NetworkPrefsView	as in 'not available	<N/A>
+Add network	NetworkPrefsView		Afegeix una xarxa
+Add new…	NetworkPrefsView		Afegeix-ne...
+Add nickname	NetworkPrefsView		Afegeix el sobrenom
+Auto-connect to this network	NetworkPrefsView		Connecta automàticament a aquesta xarxa
+Automatically execute:	NetworkPrefsView		Executa automàticament:
+Change servers…	NetworkPrefsView		Canvia els servidors...
+Connects to server:	NetworkPrefsView		Es connecta al servidor:
+Defaults	NetworkPrefsView		Per defecte
+Duplicate current…	NetworkPrefsView		Duplica l'actual...
+Duplicate network	NetworkPrefsView		Duplica la xarxa
+Enable lag checking	NetworkPrefsView		Habilita la comprovació de retard
+Ident:	NetworkPrefsView		Sagnat:
+Network details	NetworkPrefsView		Detalls de la xarxa
+Network name:	NetworkPrefsView		Nom de la xarxa:
+Networks	NetworkPrefsView		Xarxes
+Nickname:	NetworkPrefsView		Sobrenom:
+Personal details	NetworkPrefsView		Detalls personals
+Preferred nicks:	NetworkPrefsView		Sobrenoms preferits:
+Real name:	NetworkPrefsView		Nom real:
+Remove current	NetworkPrefsView		Suprimeix l'actual
+Use defaults	NetworkPrefsView		Usa els valors per defecte
 *** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Màscara d'amfitrió afegida a la llista de SILENCI: %hostmask%.\n
 *** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Màscara d'amfitrió suprimida de la llista de SILENCI: %hostmask%.\n
 *** User mode changed: %mode%\n	ParseEvents		*** Ha canviat el mode d'usuari: %mode%\n
 *** You have been invited to %channel% by %nick%.\n	ParseEvents		*** Heu estat convidat/da al canal  %channel% per %nick%.\n
-Add	PrefAliases		Afegeix
-Alias	PrefAliases		Sobrenom
-Name	PrefAliases		Nom
-Remove	PrefAliases		Suprimeix
-Baltic (ISO 8859-13)	PrefApp		Bàltic (ISO 8859-13)
-Central European (ISO 8859-2)	PrefApp		Europa Central (ISO 8859-2)
-Cyrillic (ISO 8859-5)	PrefApp		Ciríl·lic (ISO 8859-5)
-Cyrillic (KOI8-R)	PrefApp		Ciríl·lic (KOI8-R)
-Cyrillic (MS-DOS 866)	PrefApp		Ciríl·lic (MS-DOS 866)
-Cyrillic (Windows 1251)	PrefApp		Cirílic (Windows 1251)
-Encoding:	PrefApp		Codificació:
-Greek (ISO 8859-7)	PrefApp		Grec (ISO 8859-7)
-Japanese (EUC)	PrefApp		Japonès (EUC)
-Japanese (JIS)	PrefApp		Japonès (JIS)
-Japanese (Shift-JIS)	PrefApp		Japonès (Shift-JIS)
-Korean (EUC)	PrefApp		Coreà (EUC)
-Open new query on private message	PrefApp		Obre una consulta nova al missatge privat
-Require double CMD+Q/W to close	PrefApp		Requereix doble CMD + Q / W per tancar
-Show OS information in version reply	PrefApp		Mostra la informació del sistema operatiu a la resposta de la versió
-Strip mIRC colors	PrefApp		Tira de colors mIRC
-Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
-Warn when multiline pasting	PrefApp		Avisa quan s'enganxi més d'una línia
-Western (ISO 8859-1)	PrefApp		Occidental (ISO 8859-1)
-Western (Mac Roman)	PrefApp		Occidental (Mac Roman)
-Western (Windows)	PrefApp		Occidental (Windows)
+*** Trying new nick %nick%.\n	ParseCmd		*** Es prova el sobrenom nou %nick%.\n
+/pexec: command failed	ParseCmd		/pexec: ha fallat l'ordre
+Bool has been set	ParseCmd		S'ha establert bool
+Error setting bool	ParseCmd		Error enviant bool
+Error: Invalid parameters	ParseCmd		Error: paràmetres no vàlids
+Resolved %lookup% to %address%	ParseCmd		S'ha resolt %lookup% a %address%
+Resolved %lookup% to %name%	ParseCmd		S'ha resolt %lookup% a %name%
+Send	ParseCmd		Envia
+Sending a file to %nick%	ParseCmd		S'envia un fitxer a %nick%
+Unable to resolve %lookup%	ParseCmd		No es pot resoldre %lookup%
+Uptime: %time%\n	ParseCmd		Temps d'activitat: %time%\n
+Vision has been running for %time%	ParseCmd		El Vision ha estat actiu %time%
+Vision Uptime: %time%\n	ParseCmd		Temps d'activitat del Vision: %time%\n
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"Un ésser humà hauria de ser capaç de canviar un bolquer, planificar una invasió, esquarterar un porc, fer navegar un vaixell, dissenyar un edifici, escriure un sonet, gestionar comptes, construir un mur, col·locar un os, reconfortar el moribund, rebre ordres, donar ordres, cooperar, actuar sol, resoldre equacions, analitzar un problema nou, escampar fems, programar un ordinador, cuinar un menjar saborós, lluitar de manera eficient, morir galantment. L’especialització és per als insectes.\ "- Robert A. Heinlein
+A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		Un client natiu d'IRC del Haiku que es caracteritza per ser ràpid, lleuger i estable.
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Qui us l'ha fet arribar en part a partir de contribucions:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Equip d'assistència:\nAssistent per a Wade Majors: Patches\nSupervisor musical: Baron Arnold\nAssistent per a Baron Arnold: Ficus Kirkpatrick\nCoordinador de dobles de risc: Gilligan\nConsellers: regurg i helix\n\n\nDurant la producció d’aquest client d’IRC no s'ha fet mal a cap animal.\nBanda sonora disponible a Catastrophe Records.
+\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nInici de la sessió: %a %b %d %H.%M %Y\n
+Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Tancament de la sessió: %a %b %d %H.%M %Y\n
+Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Inici de la sessió: %a %b %d %H.%M %Y\n
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% vol iniciar un xat de DCC amb tu.
+Accept	DCCHandler		Accepta
+Cancel	DCCHandler		Cancel·la
+DCC request	DCCHandler		Sol·licitud de DCC
+Refuse	DCCHandler		Refusa
+Replace	DCCHandler		Reemplaça
+Resume	DCCHandler		Reprèn
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		El fitxer \"%file%\" ja existeix a la carpeta especificada. Voleu continuar la transferència?
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s ha dit: %s
+Accepting connection on address %s, port %ld\n	MessageAgent		S'accepta la connexió a l'adreça %s, port %ld\n
+Connected!\n	MessageAgent		Connectat!\n
+DCC chat terminated.\n	MessageAgent		S'ha acabat el xat de DCC.\n
+DCC send	MessageAgent		Enviament de DCC
+Error binding socket.\n	MessageAgent		Error en enllaçar el sòcol.\n
+Error connecting socket.\n	MessageAgent		Error en connectar el sòcol.\n
+Error creating socket.\n	MessageAgent		Error en crear el sòcol.\n
+Lag:	MessageAgent		Retard:
+Trying to connect to address %adress%, port %port%\n	MessageAgent		S'intenta connectar a l'adreça %adress%, port %port%\n
+Whois	MessageAgent		Qui és
+About Vision	ClientWindow		Quant al Vision
+Close this sub-window	ClientWindow		Tanca aquesta subfinestra
+Collapse network	ClientWindow		Replega de xarxa
+Connect to…	ClientWindow		Connectat a...
+Copy	ClientWindow		Copia
+Cut	ClientWindow		Retalla
+Down	ClientWindow		Avall
+Edit	ClientWindow		Edita
+Expand network	ClientWindow		Expandeix la xarxa
+Help	ClientWindow		Ajuda
+List channels…	ClientWindow		Llista de canals...
+Move network down	ClientWindow		Mou la xarxa avall
+Move network up	ClientWindow		Mou la xarxa amunt
+Network window	ClientWindow		Finestra de xarxa
+Open Terminal	ClientWindow		Obre el Terminal
+Paste	ClientWindow		Engaxa
+Preferences…	ClientWindow		Preferències…
+Previous window	ClientWindow		Finestra anterior
+Quit	ClientWindow		Surt
+Select all	ClientWindow		Selecciona-ho tot
+Server	ClientWindow		Servidor
+Setup…	ClientWindow		Configuració...
+Smart down	ClientWindow		Avall intel·ligentment
+Smart up	ClientWindow		Amunt intel·ligentment
+Up	ClientWindow		Amunt
+Window	ClientWindow		Finestra
+Acquiring DCC lock…	DCCConnect		S'adquireix el bloqueig de DCC ...
+bps:	DCCConnect		bps:
+Connecting to sender.	DCCConnect		Connexió amb el remitent.
+Doing listen call.	DCCConnect		Trucada d'escolta.
+Error writing data.	DCCConnect		Error en escriure dades.
+Established connection.	DCCConnect		Connexió establerta.
+Receiving \"%file%\" from %nick%.	DCCConnect		Es rep \"%file%\" de %nick%.
+Sending \"%file%\" to %nick%.	DCCConnect		S'envia \"%file%\" a %nick%.
+Unable to establish connection.	DCCConnect		No es pot establir connexió.
+Waiting for acceptance	DCCConnect		S'espera l'acceptació
+Waiting for connection %ld.	DCCConnect		S'espera la connexió %ld.
 Action	PrefColor		Acció
 Background	PrefColor		Fons
 CTCP reply	PrefColor		Resposta CTCP
@@ -282,40 +220,42 @@ Window list event	PrefColor		Esdeveniment de la llista
 Window list nick alert	PrefColor		Alerta de la llista
 Window list normal	PrefColor		Llista normal
 Window list selection	PrefColor		Selecció de la llista
-Away:	PrefCommand		Fora:
-Back:	PrefCommand		Torna:
-Ignore:	PrefCommand		Ignora:
-Kick:	PrefCommand		Expulsa:
-Quit:	PrefCommand		Surt:
-Unignore:	PrefCommand		No ignoris:
-Uptime:	PrefCommand		Temps d'activitat:
-Automatically accept incoming sends	PrefDCC		Accepta automàticament els enviaments entrants
-Automatically check for NAT IP	PrefDCC		Comprova automàticament la IP NAT
-DCC block size:	PrefDCC		Mida del bloc de DCC:
-DCC port range	PrefDCC		Gamma del port de DCC
-Default path:	PrefDCC		Camí per defecte:
-Max:	PrefDCC		Màx.:
-Min:	PrefDCC		Min.:
-Join:	PrefEvent		Entra:
-Kick:	PrefEvent		Expulsa:
-Nick:	PrefEvent		Sobrenom:
-Notify off:	PrefEvent		Notificació de desconnexió:
-Notify on:	PrefEvent		Notificació de connexió:
-Part:	PrefEvent		Anar-se'n:
-Quit:	PrefEvent		Surt:
-Server notice:	PrefEvent		Avís del servidor:
-Topic:	PrefEvent		Assumpte:
-User notice:	PrefEvent		Avís de l'usuari:
-Channel list	PrefFont		Llista de canals:
-Element:	PrefFont		Element:
-Font:	PrefFont		Lletra:
-Input text	PrefFont		Text d'entrada
-Names list	PrefFont		Llista de noms
-Server messages	PrefFont		Missatges del servidor
-Text	PrefFont		Text
-Timestamp	PrefFont		Segell de l'hora
-URLs	PrefFont		URLs
-Window list	PrefFont		Llista de finestres
+Add	PrefAliases		Afegeix
+Alias	PrefAliases		Sobrenom
+Name	PrefAliases		Nom
+Remove	PrefAliases		Suprimeix
+Add server	ServerEntryWindow		Afegeix un servidor
+Cancel	ServerEntryWindow		Cancel·la
+Choose status	ServerEntryWindow		Trieu-ne l'estat
+Disabled	ServerEntryWindow		Inhabilitat
+Done	ServerEntryWindow		Done
+Port:	ServerEntryWindow		Port:
+Primary	ServerEntryWindow		Primari
+Secondary	ServerEntryWindow		Secundari
+Secure port	ServerEntryWindow		Port segur:
+Server:	ServerEntryWindow		Servidor:
+State:	ServerEntryWindow		Estat:
+Use password:	ServerEntryWindow		Usa la contrasenya:
+Add to notify	NamesView		Afegeix per notificar
+CTCP	NamesView		CTCP
+DCC chat	NamesView		Xat de DCC
+DCC send	NamesView		Enviament de DCC
+Query	NamesView		Consulta
+User selection	NamesView		Selecció d'usuaris
+Whois	NamesView		Qui és
+Add…	NetPrefsServerView		Afegeix...
+Disabled	NetPrefsServerView		Inhabilitat
+Edit server	NetPrefsServerView		Edita el servidor
+Edit…	NetPrefsServerView		Edita…
+Port	NetPrefsServerView		Port
+Primary	NetPrefsServerView		Primari
+Remove	NetPrefsServerView		Suprimeix
+Secondary	NetPrefsServerView		Secundari
+Secure	NetPrefsServerView		Segur
+Server	NetPrefsServerView		Servidor
+Servers for %name%	NetPrefsServerView		Servidors per a %name%
+Status	NetPrefsServerView		Estat
+Yes	NetPrefsServerView		Sí
 Aliases	PrefGeneral		Sobrenoms
 Application	PrefGeneral		Aplicació
 Colors	PrefGeneral		Colors
@@ -333,52 +273,112 @@ OK	PrefLog		D'acord
 Show timestamps in IRC window	PrefLog		Mostra els segells de l'hora a la finestra d'IRC
 The log path you have entered is invalid.	PrefLog		El camí de registre que heu introduït no és vàlida.
 Timestamp format:	PrefLog		Format del segell de l'hora:
-Preferences	PrefsWindow		Preferències
-Copy	RunView		Copia
-Lookup (acronym finder)	RunView		Cerca (cercador d’acrònims)
-Lookup (dictionary)	RunView		Cerca (diccionari)
-Lookup (Google)	RunView		Cerca (Google)
-Select all	RunView		Selecciona-ho tot
-Clipping	RunView	as suffix for dropped text clippings	Retalls
-[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Sembla que us trobeu darrere d’una passarel·la d’internet. El Vision farà una consulta al servidor IRC quan es produeixi una connexió correcta per a l'adreça d'internet de la vostra passarel·la. Això s’usarà per a la comunicació de DCC.)\n
-[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] S'intenta una connexió a %id%:%port%…\n
-[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] S'intenta connectar (intent %ld de %ld)\n
-[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Connexió oberta, s'espera una resposta del servidor.\n
-[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] No s'ha pogut crear la connexió a l'adreça i al port. Assegureu-vos que la connexió a Internet estigui operativa.\n
-[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] No s'ha pogut establir una connexió amb el servidor. Disculpeu.\n
-[@] Disconnected from %server%\n	ServerAgent		[@] Desconnectat de %server%\n
-[@] Error getting local IP\n	ServerAgent		[@] Error en obtenir la IP local.\n
-[@] Established\n	ServerAgent		[@] Establerta\n
-[@] Handshaking\n	ServerAgent		[@] Conformitat de connexió\n
-[@] Local IP: %ip%\n	ServerAgent		[@] IP local: %ip%\n
-[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] S'ha assolit el límit d'intents. Escriviu /reconnect si voleu tornar-hi.\n
-[@] Sending password\n	ServerAgent		[@] S'envia la contrasenya\n
-{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] S'espera un segon abans de tornar-hi.}other{[@] S'esperen # segons abans de tornar-hi.}}
-CONNECTION PROBLEM	ServerAgent		PROBLEMA DE CONNEXIÓ
-Disabled	ServerAgent		Inhabilitat
-Disconnected	ServerAgent		Desconnectat
-Lag:	ServerAgent		Retard:
-Add server	ServerEntryWindow		Afegeix un servidor
-Cancel	ServerEntryWindow		Cancel·la
-Choose status	ServerEntryWindow		Trieu-ne l'estat
-Disabled	ServerEntryWindow		Inhabilitat
-Done	ServerEntryWindow		Done
-Port:	ServerEntryWindow		Port:
-Primary	ServerEntryWindow		Primari
-Secondary	ServerEntryWindow		Secundari
-Server:	ServerEntryWindow		Servidor:
-State:	ServerEntryWindow		Estat:
-Use password:	ServerEntryWindow		Usa la contrasenya:
-Secure port	ServerEntryWindow		Port segur:
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Per si no n'hi ha prou, esteu a punt d'afegir %d línies més de correu brossa a Internet. Com us agradaria fer-ho?
+Cancel	ClientAgentInputFilter		Cancel·la
+Single line	ClientAgentInputFilter		Línia única
+Spam	ClientAgentInputFilter		Brossa
+Spam!	ClientAgentInputFilter		Brossa!
+Automatically accept incoming sends	PrefDCC		Accepta automàticament els enviaments entrants
+Automatically check for NAT IP	PrefDCC		Comprova automàticament la IP NAT
+DCC block size:	PrefDCC		Mida del bloc de DCC:
+DCC port range	PrefDCC		Gamma del port de DCC
+Default path:	PrefDCC		Camí per defecte:
+Max:	PrefDCC		Màx.:
+Min:	PrefDCC		Min.:
+Away:	PrefCommand		Fora:
+Back:	PrefCommand		Torna:
+Ignore:	PrefCommand		Ignora:
+Kick:	PrefCommand		Expulsa:
+Quit:	PrefCommand		Surt:
+Unignore:	PrefCommand		No ignoris:
+Uptime:	PrefCommand		Temps d'activitat:
+Baltic (ISO 8859-13)	PrefApp		Bàltic (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		Europa Central (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		Ciríl·lic (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		Ciríl·lic (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		Ciríl·lic (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		Cirílic (Windows 1251)
+Encoding:	PrefApp		Codificació:
+Greek (ISO 8859-7)	PrefApp		Grec (ISO 8859-7)
+Japanese (EUC)	PrefApp		Japonès (EUC)
+Japanese (JIS)	PrefApp		Japonès (JIS)
+Japanese (Shift-JIS)	PrefApp		Japonès (Shift-JIS)
+Korean (EUC)	PrefApp		Coreà (EUC)
+Open new query on private message	PrefApp		Obre una consulta nova al missatge privat
+Require double CMD+Q/W to close	PrefApp		Requereix doble CMD + Q / W per tancar
+Show OS information in version reply	PrefApp		Mostra la informació del sistema operatiu a la resposta de la versió
+Strip mIRC colors	PrefApp		Tira de colors mIRC
+Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
+Warn when multiline pasting	PrefApp		Avisa quan s'enganxi més d'una línia
+Western (ISO 8859-1)	PrefApp		Occidental (ISO 8859-1)
+Western (Mac Roman)	PrefApp		Occidental (Mac Roman)
+Western (Windows)	PrefApp		Occidental (Windows)
+Channel	ListAgent		Canal
+Channels	ListAgent		Canals
+Count:	ListAgent		Compte:
+Done	ListAgent		Fet
+Filter:	ListAgent		Filtre:
+Filter…	ListAgent		Filtre...
+Find	ListAgent		Troba
+Find next	ListAgent		Troba'n el següent
+Find:	ListAgent		Troba:
+Find…	ListAgent		Troba...
+List filter	ListAgent		Filtre de llista
+Loading	ListAgent		Es carrega
+Status:	ListAgent		Estat:
+Topic	ListAgent		Assumpte
+Users	ListAgent		Usuaris
+Channel list	PrefFont		Llista de canals:
+Element:	PrefFont		Element:
+Font:	PrefFont		Lletra:
+Input text	PrefFont		Text d'entrada
+Names list	PrefFont		Llista de noms
+Server messages	PrefFont		Missatges del servidor
+Text	PrefFont		Text
+Timestamp	PrefFont		Segell de l'hora
+URLs	PrefFont		URLs
+Window list	PrefFont		Llista de finestres
 Choose network	SetupWindow		Trieu la xarxa
 Connect	SetupWindow		Connecta
 Network setup…	SetupWindow		Configuració de la xarxa...
 Network:	SetupWindow		Xarxa:
 Preferences…	SetupWindow		Preferències...
 Setup window	SetupWindow		Finestra de configuració
-Vision	System name		Vision
-\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"Un ésser humà hauria de ser capaç de canviar un bolquer, planificar una invasió, esquarterar un porc, fer navegar un vaixell, dissenyar un edifici, escriure un sonet, gestionar comptes, construir un mur, col·locar un os, reconfortar el moribund, rebre ordres, donar ordres, cooperar, actuar sol, resoldre equacions, analitzar un problema nou, escampar fems, programar un ordinador, cuinar un menjar saborós, lluitar de manera eficient, morir galantment. L’especialització és per als insectes.\ "- Robert A. Heinlein
-A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		Un client natiu d'IRC del Haiku que es caracteritza per ser ràpid, lleuger i estable.
-Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Qui us l'ha fet arribar en part a partir de contribucions:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
-Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Equip d'assistència:\nAssistent per a Wade Majors: Patches\nSupervisor musical: Baron Arnold\nAssistent per a Baron Arnold: Ficus Kirkpatrick\nCoordinador de dobles de risc: Gilligan\nConsellers: regurg i helix\n\n\nDurant la producció d’aquest client d’IRC no s'ha fet mal a cap animal.\nBanda sonora disponible a Catastrophe Records.
+Clipping	RunView	as suffix for dropped text clippings	Retalls
+Copy	RunView		Copia
+Lookup (acronym finder)	RunView		Cerca (cercador d’acrònims)
+Lookup (dictionary)	RunView		Cerca (diccionari)
+Lookup (Google)	RunView		Cerca (Google)
+Select all	RunView		Selecciona-ho tot
 Close	WindowList		Tanca
+Color:	ColorSelector		Color:
+Colors	ColorSelector		Colors
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S'ha acabat la recepció de %file% de %nick% (%ack% %size% bytes), %ldcps\n\n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S'ha acabat l'enviament de %file% a %nick% (%ack% %size% bytes), %ldcps\n\n
+Copy	ClientAgent		Copia
+Cut	ClientAgent		Retalla
+Paste	ClientAgent		Enganxa
+Select all	ClientAgent		Selecciona-ho tot
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S'ha acabat la recepció de %file% de %nick% (%ack% %size% bytes), %ldcps\n\n
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		S'ha acabat l'enviament de %file% a %nick% (%ack% %size% bytes), %ldcps\n\n
+DCC chat	NotifyList		Xat de DCC
+Query	NotifyList		Consulta
+Remove	NotifyList		Suprimeix
+Whois	NotifyList		Qui és
+DCC transfers	DCCFileWindow		Transferències de DCC
+Join:	PrefEvent		Entra:
+Kick:	PrefEvent		Expulsa:
+Nick:	PrefEvent		Sobrenom:
+Notify off:	PrefEvent		Notificació de desconnexió:
+Notify on:	PrefEvent		Notificació de connexió:
+Part:	PrefEvent		Anar-se'n:
+Quit:	PrefEvent		Surt:
+Server notice:	PrefEvent		Avís del servidor:
+Topic:	PrefEvent		Assumpte:
+User notice:	PrefEvent		Avís de l'usuari:
+Network setup	NetworkWindow		Configuració de la xarxa
+Servers	NetworkWindow		Servidors
+Notify list	ClientWindowDock		Llista de notificacions
+Window list	ClientWindowDock		Llista de finestres
+Preferences	PrefsWindow		Preferències
+Vision	System name		Vision

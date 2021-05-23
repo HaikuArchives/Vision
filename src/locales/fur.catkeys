@@ -1,169 +1,4 @@
 1	Friulian	application/x-vnd.Ink-Vision	2720096392
-[@] Attempting to rejoin…\n	ChannelAgent		[@] Si cîr di tornâ a jentrâ…\n
-*** Attempting to rejoin %channel%…\n	ChannelAgent		*** Si cîr di tornâ a jentrâ tal canâl %channel%…\n
-*** Now talking in %channel%\n	ChannelAgent		*** Si sta cumò cjacarant tal canâl %channel%\n
-*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** Tu sês stât parât fûr di %channel% di %kicker% (%rest%)\n
-%s - %s said: %s	ChannelAgent		%s - %s al à dite: %s
-Lag:	ChannelAgent		Ritart:
-Modes:	ChannelAgent		Mûts:
-Ops:	ChannelAgent		Operadôrs:
-Users:	ChannelAgent		Utents:
-Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Ricezion completade di %file% di %nick% (%ack% %size% byte), %ldcps\n\n
-Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Trasmission completade di %file% a %nick% (%ack% %size% byte), %ldcps\n\n
-Copy	ClientAgent		Copie
-Cut	ClientAgent		Taie
-Paste	ClientAgent		Tache
-Select all	ClientAgent		Selezione dut
-Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Ricezion terminade di %file% di %nick% (%ack% %size% byte), %ldcps\n\n
-Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Trasmission terminade di %file% a %nick% (%ack% %size% byte), %ldcps\n\n
-As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Come se no 'ndi fos avonde, tu stâs par zontâ %ld riis in plui di span a internet.  Ce mût vûstu compuartâti in merit?
-Cancel	ClientAgentInputFilter		Anule
-Single line	ClientAgentInputFilter		Rie singule
-Spam	ClientAgentInputFilter		Spam
-Spam!	ClientAgentInputFilter		Spam!
-\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nInizi session: %a %d di %b dal %Y aes %H:%M\n
-Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Sieradure session: %a %d di %b dal %Y aes %H:%M\n
-Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Inizi session: %a %d di %b dal %Y aes %H:%M\n
-About Vision	ClientWindow		Informazions su Vision
-Close this sub-window	ClientWindow		Siere chest sot-barcon
-Collapse network	ClientWindow		Compate visuâl rêt
-Connect to…	ClientWindow		Conet a…
-Copy	ClientWindow		Copie
-Cut	ClientWindow		Taie
-Down	ClientWindow		Jù
-Edit	ClientWindow		Modifiche
-Expand network	ClientWindow		Pant visuâl rêt
-Help	ClientWindow		Jutori
-List channels…	ClientWindow		Liste i canâi…
-Move network down	ClientWindow		Sposte rêt in jù
-Move network up	ClientWindow		Sposte rêt in sù
-Network window	ClientWindow		Barcon rêt
-Open Terminal	ClientWindow		Vierç Terminâl
-Paste	ClientWindow		Tache
-Preferences…	ClientWindow		Preferencis…
-Previous window	ClientWindow		Barcon precedent
-Quit	ClientWindow		Jes
-Select all	ClientWindow		Selezione dut
-Server	ClientWindow		Servidôr
-Setup…	ClientWindow		Impostazions…
-Smart down	ClientWindow		Jù inteligjent
-Smart up	ClientWindow		Sù inteligjent
-Up	ClientWindow		Sù
-Window	ClientWindow		Barcon
-Notify list	ClientWindowDock		Liste des notifichis
-Window list	ClientWindowDock		Liste dai barcons
-Color:	ColorSelector		Colôr:
-Colors	ColorSelector		Colôrs
-Acquiring DCC lock…	DCCConnect		Acuisizion dal DCC lock…
-bps:	DCCConnect		bps:
-Connecting to sender.	DCCConnect		Daûr a conetisi al mitent.
-Doing listen call.	DCCConnect		Daûr a realizâ la clamade di scolte.
-Error writing data.	DCCConnect		Erôr tal scrivi i dâts.
-Established connection.	DCCConnect		Conession stabilide.
-Receiving \"%file%\" from %nick%.	DCCConnect		Daûr a ricevi \"%file%\" di %nick%.
-Sending \"%file%\" to %nick%.	DCCConnect		Daûr a inviâ \"%file%\" a %nick%.
-Unable to establish connection.	DCCConnect		Impussibil stabilî une conession.
-Waiting for acceptance	DCCConnect		In spiete che il destinatari al aceti
-Waiting for connection %ld.	DCCConnect		In spiete de conession %ld.
-DCC transfers	DCCFileWindow		Trasferiments DCC
-%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% al desidere scomençâ une chat DCC cun te.
-Accept	DCCHandler		Acete
-Cancel	DCCHandler		Anule
-DCC request	DCCHandler		Richieste DCC
-Refuse	DCCHandler		Refude
-Replace	DCCHandler		Sostituìs
-Resume	DCCHandler		Ripie
-The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		Il file \"%file%\" al esist za inte cartele specificade. Continuâ il trasferiment?
-Channel	ListAgent		Canâl
-Channels	ListAgent		Canâi
-Count:	ListAgent		Conte:
-Done	ListAgent		Fat
-Filter:	ListAgent		Filtri:
-Filter…	ListAgent		Filtri…
-Find	ListAgent		Cjate
-Find next	ListAgent		Cjate prossim
-Find:	ListAgent		Cjate:
-Find…	ListAgent		Cjate…
-List filter	ListAgent		Liste filtri
-Loading	ListAgent		Daûr a cjariâ
-Status:	ListAgent		Stât:
-Topic	ListAgent		Argoment
-Users	ListAgent		Utents
-Accepting connection on address %s, port %ld\n	MessageAgent		Daûr a acetâ la conession te direzion %s, puarte %ld\n
-Connected!\n	MessageAgent		Conetût!\n
-DCC chat terminated.\n	MessageAgent		Chat DCC terminade.\n
-DCC send	MessageAgent		Spedizion DCC
-Error binding socket.\n	MessageAgent		Erôr tal vincolâ il socket.\n
-Error connecting socket.\n	MessageAgent		Erôr tal conetisi al socket.\n
-Error creating socket.\n	MessageAgent		Erôr tal creâ il socket.\n
-Lag:	MessageAgent		Ritart:
-Trying to connect to address %adress%, port %port%\n	MessageAgent		Si cîr di conetisi ae direzion %adress%, puarte %port%\n
-Whois	MessageAgent		Whois
-%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s al/e à dit: %s
-Add to notify	NamesView		Zonte aes notifichis
-CTCP	NamesView		CTCP
-DCC chat	NamesView		Chat DCC
-DCC send	NamesView		Spedizion DCC
-Query	NamesView		Interogazion
-User selection	NamesView		Selezion utent
-Whois	NamesView		Whois
-Add…	NetPrefsServerView		Zonte…
-Edit…	NetPrefsServerView		Modifiche…
-Port	NetPrefsServerView		Puarte
-Remove	NetPrefsServerView		Gjave
-Server	NetPrefsServerView		Servidôr
-Status	NetPrefsServerView		Stât
-Yes	NetPrefsServerView		Sì
-Secure	NetPrefsServerView		Sigûr
-Disabled	NetPrefsServerView		Disabilitât
-Edit server	NetPrefsServerView		Modifiche servidôr
-Primary	NetPrefsServerView		Primari
-Servers for %name%	NetPrefsServerView		Servidôrs par %name%
-Secondary	NetPrefsServerView		Secondari
-{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{cuntun repeç a un altri.}other{cuntun repeç a # altris.}}
-Add network	NetworkPrefsView		Zonte rêt
-Add new…	NetworkPrefsView		Zonte gnove…
-Add nickname	NetworkPrefsView		Zonte sorenon
-Auto-connect to this network	NetworkPrefsView		Auto-conet a cheste rêt
-Automatically execute:	NetworkPrefsView		Eseguìs in automatic:
-Change servers…	NetworkPrefsView		Cambie servidôrs…
-Connects to server:	NetworkPrefsView		Al conet al servidôr:
-Defaults	NetworkPrefsView		Predefinîts
-Duplicate current…	NetworkPrefsView		Doplee atuâl…
-Duplicate network	NetworkPrefsView		Doplee rêt
-Enable lag checking	NetworkPrefsView		Abilite control dal ritart
-Ident:	NetworkPrefsView		Identitât:
-Network details	NetworkPrefsView		Detais rêt
-Network name:	NetworkPrefsView		Non rêt:
-Networks	NetworkPrefsView		Rêts
-Nickname:	NetworkPrefsView		Sorenon:
-Personal details	NetworkPrefsView		Detais personâi
-Preferred nicks:	NetworkPrefsView		Sorenons preferîts:
-Real name:	NetworkPrefsView		Non vêr:
-Remove current	NetworkPrefsView		Gjave atuâl
-Use defaults	NetworkPrefsView		Dopre predefinîts
-<N/A>	NetworkPrefsView	as in 'not available	<N/D>
-Network setup	NetworkWindow		Impostazions rêt
-Servers	NetworkWindow		Servidôrs
-DCC chat	NotifyList		Chat DCC
-Query	NotifyList		Interogazion
-Remove	NotifyList		Gjave
-Whois	NotifyList		Whois
-*** Trying new nick %nick%.\n	ParseCmd		*** Si tente il gnûf sorenon %nick%.\n
-/pexec: command failed	ParseCmd		/pexec: comant falît
-Bool has been set	ParseCmd		Bool al è stât stabilît
-Error setting bool	ParseCmd		Erôr tal stabilî bool
-Error: Invalid parameters	ParseCmd		Erôr: parametris no valits
-Resolved %lookup% to %address%	ParseCmd		Risolt %lookup% a %address%
-Resolved %lookup% to %name%	ParseCmd		Risolt %lookup% a %name%
-Send	ParseCmd		Invie
-Sending a file to %nick%	ParseCmd		Spedizion di un file a %nick%
-Unable to resolve %lookup%	ParseCmd		Impussibil risolvi %lookup%
-Uptime: %time%\n	ParseCmd		Timp in vore: %time%\n
-Vision has been running for %time%	ParseCmd		Vision al è in esecuzion di %time%
-Vision Uptime: %time%\n	ParseCmd		Timp in vore di Vision: %time%\n
-[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% rispueste]: %reply%\n
-{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING rispueste]: # secont\n}other{[%nick% PING rispueste]: # seconts\n}}
 - Server Message Of The Day:\n	ParseENums		- Messaç zornalîr dal servidôr:\n
 [@] Successful reconnect\n	ParseENums		[@] Riconession riessude\n
 [x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [al/e jere] (%ident%@%address%)\n
@@ -197,35 +32,138 @@ Vision Uptime: %time%\n	ParseCmd		Timp in vore di Vision: %time%\n
 %people% is online	ParseENums		%people% al è/e je online
 Idle:	ParseENums		Inatîf:
 Sign-on:	ParseENums		Regjistrazion:
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Al semee che tu sedis daûr di un gateway internet. Vision al interogarà il servidôr IRC in câs che si rivarà a stabilî la conession pe to direzion internet dal to gateway. Cheste e vignarà doprade pes comunicazions DCC.)\n
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Si tente une conession a %id%:%port%…\n
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Si tente di conetisi (tentatîf %ld di %ld)\n
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Conession vierte, in spiete di une rispueste dal servidôr\n
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Impussibil creâ la conession ae direzion e ae puarte. Siguraisi che la conession internet e funzionedi.\n
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Impussibil stabilî une conession al servidôr. Nus displâs.\n
+[@] Disconnected from %server%\n	ServerAgent		[@] Disconetût dal %server%\n
+[@] Error getting local IP\n	ServerAgent		[@] Erôr tal otignî l'IP locâl\n
+[@] Established\n	ServerAgent		[@] Stabilît\n
+[@] Handshaking\n	ServerAgent		[@] Daûr a stabilî la comunicazion\n
+[@] Local IP: %ip%\n	ServerAgent		[@] IP locâl: %ip%\n
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Si è rivâts al limit des provis; Si rindìn. Scrîf /reconnect se tu desideris fâ un altri zîr di provis.\n
+[@] Sending password\n	ServerAgent		[@] Daûr a inviâ la password\n
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Si spiete un secont prime dal prossim tentatîf}other{[@] Si spiete # seconts prime dal prossim tentatîf}}
+CONNECTION PROBLEM	ServerAgent		PROBLEME DI CONESSION
+Disabled	ServerAgent		Disabilitât
+Disconnected	ServerAgent		Disconetût
+Lag:	ServerAgent		Ritart:
+[@] Attempting to rejoin…\n	ChannelAgent		[@] Si cîr di tornâ a jentrâ…\n
+*** Attempting to rejoin %channel%…\n	ChannelAgent		*** Si cîr di tornâ a jentrâ tal canâl %channel%…\n
+*** Now talking in %channel%\n	ChannelAgent		*** Si sta cumò cjacarant tal canâl %channel%\n
+*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** Tu sês stât parât fûr di %channel% di %kicker% (%rest%)\n
+%s - %s said: %s	ChannelAgent		%s - %s al à dite: %s
+Lag:	ChannelAgent		Ritart:
+Modes:	ChannelAgent		Mûts:
+Ops:	ChannelAgent		Operadôrs:
+Users:	ChannelAgent		Utents:
+[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% rispueste]: %reply%\n
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING rispueste]: # secont\n}other{[%nick% PING rispueste]: # seconts\n}}
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{cuntun repeç a un altri.}other{cuntun repeç a # altris.}}
+<N/A>	NetworkPrefsView	as in 'not available	<N/D>
+Add network	NetworkPrefsView		Zonte rêt
+Add new…	NetworkPrefsView		Zonte gnove…
+Add nickname	NetworkPrefsView		Zonte sorenon
+Auto-connect to this network	NetworkPrefsView		Auto-conet a cheste rêt
+Automatically execute:	NetworkPrefsView		Eseguìs in automatic:
+Change servers…	NetworkPrefsView		Cambie servidôrs…
+Connects to server:	NetworkPrefsView		Al conet al servidôr:
+Defaults	NetworkPrefsView		Predefinîts
+Duplicate current…	NetworkPrefsView		Doplee atuâl…
+Duplicate network	NetworkPrefsView		Doplee rêt
+Enable lag checking	NetworkPrefsView		Abilite control dal ritart
+Ident:	NetworkPrefsView		Identitât:
+Network details	NetworkPrefsView		Detais rêt
+Network name:	NetworkPrefsView		Non rêt:
+Networks	NetworkPrefsView		Rêts
+Nickname:	NetworkPrefsView		Sorenon:
+Personal details	NetworkPrefsView		Detais personâi
+Preferred nicks:	NetworkPrefsView		Sorenons preferîts:
+Real name:	NetworkPrefsView		Non vêr:
+Remove current	NetworkPrefsView		Gjave atuâl
+Use defaults	NetworkPrefsView		Dopre predefinîts
 *** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Mascare di rêt dal host zontade te liste CIDINADIS: %hostmask%.\n
 *** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Mascare di rêt dal host gjavade de liste CIDINADIS: %hostmask%.\n
 *** User mode changed: %mode%\n	ParseEvents		*** Modalitât utent cambiade: %mode%\n
 *** You have been invited to %channel% by %nick%.\n	ParseEvents		*** Tu sês stât invidât su %channel% di %nick%.\n
-Add	PrefAliases		Zonte
-Alias	PrefAliases		Alias
-Name	PrefAliases		Non
-Remove	PrefAliases		Gjave
-Baltic (ISO 8859-13)	PrefApp		Baltic (ISO 8859-13)
-Central European (ISO 8859-2)	PrefApp		European centrâl (ISO 8859-2)
-Cyrillic (ISO 8859-5)	PrefApp		Cirilic (ISO 8859-5)
-Cyrillic (KOI8-R)	PrefApp		Cirilic (KOI8-R)
-Cyrillic (MS-DOS 866)	PrefApp		Cirilic (MS-DOS 866)
-Cyrillic (Windows 1251)	PrefApp		Cirilic (Windows 1251)
-Encoding:	PrefApp		Codifiche:
-Greek (ISO 8859-7)	PrefApp		Grêc (ISO 8859-7)
-Japanese (EUC)	PrefApp		Gjaponês (EUC)
-Japanese (JIS)	PrefApp		Gjaponês (JIS)
-Japanese (Shift-JIS)	PrefApp		Gjaponês (Shift-JIS)
-Korean (EUC)	PrefApp		Corean (EUC)
-Open new query on private message	PrefApp		Vierç gnove interogazion su messaç privât
-Require double CMD+Q/W to close	PrefApp		Domande dopli CMD+Q/W par sierâ
-Show OS information in version reply	PrefApp		Mostre informazions SO in rispueste a version
-Strip mIRC colors	PrefApp		Gjave vie i colôrs di mIRC
-Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
-Warn when multiline pasting	PrefApp		Vise cuant che si cîr di tacâ plui riis
-Western (ISO 8859-1)	PrefApp		Ocidentâl (ISO 8859-1)
-Western (Mac Roman)	PrefApp		Ocidentâl (Mac Roman)
-Western (Windows)	PrefApp		Ocidentâl (Windows)
+*** Trying new nick %nick%.\n	ParseCmd		*** Si tente il gnûf sorenon %nick%.\n
+/pexec: command failed	ParseCmd		/pexec: comant falît
+Bool has been set	ParseCmd		Bool al è stât stabilît
+Error setting bool	ParseCmd		Erôr tal stabilî bool
+Error: Invalid parameters	ParseCmd		Erôr: parametris no valits
+Resolved %lookup% to %address%	ParseCmd		Risolt %lookup% a %address%
+Resolved %lookup% to %name%	ParseCmd		Risolt %lookup% a %name%
+Send	ParseCmd		Invie
+Sending a file to %nick%	ParseCmd		Spedizion di un file a %nick%
+Unable to resolve %lookup%	ParseCmd		Impussibil risolvi %lookup%
+Uptime: %time%\n	ParseCmd		Timp in vore: %time%\n
+Vision has been running for %time%	ParseCmd		Vision al è in esecuzion di %time%
+Vision Uptime: %time%\n	ParseCmd		Timp in vore di Vision: %time%\n
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"Un om al à di rivâ a cambiâ un panzit, planificâ une invasion, macelâ un purcit, menâ une nâf, progjetâ un edifici, scrivi un sonet, belançâ i conts, tirâ sù un mûr, meti in sest un vues, confuartâ chei che a murin, cjapâ ordins, dâ ordins, cooperâ, agjî di bessôl, risolvi ecuazions, analizâ un gnûf probleme, tirâ ledan, programâ un computer, cusinâ un bon past, combati in mût eficient, murî in mût galant. Specializâsi al è pai insets.\" -- Robert A. Heinlein
+A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		A client IRC, natîf par Haiku, che al è plen di funzionalitâts, veloç, lizêr e stabil.
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Puartât a vô in part dai contribûts di:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Personâl di supuart:\nAssistent a Wade Majors: Blecs\nSupervisôr de musiche: Baron Arnold\nAssistent a Baron Arnold: Ficus Kirkpatrick\nCoordenadôr acrobaziis: Gilligan\nConseîrs: regurg e helix\n\n\nNissun animâl si è fat mâl te produzion di chest client IRC.\nLa colone sonore e je disponibile su Catastrophe Records.
+\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nInizi session: %a %d di %b dal %Y aes %H:%M\n
+Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Sieradure session: %a %d di %b dal %Y aes %H:%M\n
+Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Inizi session: %a %d di %b dal %Y aes %H:%M\n
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% al desidere scomençâ une chat DCC cun te.
+Accept	DCCHandler		Acete
+Cancel	DCCHandler		Anule
+DCC request	DCCHandler		Richieste DCC
+Refuse	DCCHandler		Refude
+Replace	DCCHandler		Sostituìs
+Resume	DCCHandler		Ripie
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		Il file \"%file%\" al esist za inte cartele specificade. Continuâ il trasferiment?
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s al/e à dit: %s
+Accepting connection on address %s, port %ld\n	MessageAgent		Daûr a acetâ la conession te direzion %s, puarte %ld\n
+Connected!\n	MessageAgent		Conetût!\n
+DCC chat terminated.\n	MessageAgent		Chat DCC terminade.\n
+DCC send	MessageAgent		Spedizion DCC
+Error binding socket.\n	MessageAgent		Erôr tal vincolâ il socket.\n
+Error connecting socket.\n	MessageAgent		Erôr tal conetisi al socket.\n
+Error creating socket.\n	MessageAgent		Erôr tal creâ il socket.\n
+Lag:	MessageAgent		Ritart:
+Trying to connect to address %adress%, port %port%\n	MessageAgent		Si cîr di conetisi ae direzion %adress%, puarte %port%\n
+Whois	MessageAgent		Whois
+About Vision	ClientWindow		Informazions su Vision
+Close this sub-window	ClientWindow		Siere chest sot-barcon
+Collapse network	ClientWindow		Compate visuâl rêt
+Connect to…	ClientWindow		Conet a…
+Copy	ClientWindow		Copie
+Cut	ClientWindow		Taie
+Down	ClientWindow		Jù
+Edit	ClientWindow		Modifiche
+Expand network	ClientWindow		Pant visuâl rêt
+Help	ClientWindow		Jutori
+List channels…	ClientWindow		Liste i canâi…
+Move network down	ClientWindow		Sposte rêt in jù
+Move network up	ClientWindow		Sposte rêt in sù
+Network window	ClientWindow		Barcon rêt
+Open Terminal	ClientWindow		Vierç Terminâl
+Paste	ClientWindow		Tache
+Preferences…	ClientWindow		Preferencis…
+Previous window	ClientWindow		Barcon precedent
+Quit	ClientWindow		Jes
+Select all	ClientWindow		Selezione dut
+Server	ClientWindow		Servidôr
+Setup…	ClientWindow		Impostazions…
+Smart down	ClientWindow		Jù inteligjent
+Smart up	ClientWindow		Sù inteligjent
+Up	ClientWindow		Sù
+Window	ClientWindow		Barcon
+Acquiring DCC lock…	DCCConnect		Acuisizion dal DCC lock…
+bps:	DCCConnect		bps:
+Connecting to sender.	DCCConnect		Daûr a conetisi al mitent.
+Doing listen call.	DCCConnect		Daûr a realizâ la clamade di scolte.
+Error writing data.	DCCConnect		Erôr tal scrivi i dâts.
+Established connection.	DCCConnect		Conession stabilide.
+Receiving \"%file%\" from %nick%.	DCCConnect		Daûr a ricevi \"%file%\" di %nick%.
+Sending \"%file%\" to %nick%.	DCCConnect		Daûr a inviâ \"%file%\" a %nick%.
+Unable to establish connection.	DCCConnect		Impussibil stabilî une conession.
+Waiting for acceptance	DCCConnect		In spiete che il destinatari al aceti
+Waiting for connection %ld.	DCCConnect		In spiete de conession %ld.
 Action	PrefColor		Azion
 Background	PrefColor		Fonts
 CTCP reply	PrefColor		Rispueste CTCP
@@ -282,40 +220,42 @@ Window list event	PrefColor		Event de liste dai barcons
 Window list nick alert	PrefColor		Avîs sorenon de liste dai barcons
 Window list normal	PrefColor		Liste dai barcons normâl
 Window list selection	PrefColor		Selezion de liste dai barcons
-Away:	PrefCommand		Assent:
-Back:	PrefCommand		Tornât:
-Ignore:	PrefCommand		Ignorâ:
-Kick:	PrefCommand		Pidât vie:
-Quit:	PrefCommand		Jessî:
-Unignore:	PrefCommand		Smet di ignorâ:
-Uptime:	PrefCommand		Timp in vore:
-Automatically accept incoming sends	PrefDCC		Acete in automatic lis spedizions in jentrade
-Automatically check for NAT IP	PrefDCC		Controle in automatic IP NAT
-DCC block size:	PrefDCC		Dimension bloc DCC:
-DCC port range	PrefDCC		Interval puartis DCC
-Default path:	PrefDCC		Percors predefinît:
-Max:	PrefDCC		Massim:
-Min:	PrefDCC		Minim:
-Join:	PrefEvent		Unîsi:
-Kick:	PrefEvent		Pidât fûr:
-Nick:	PrefEvent		Sorenon:
-Notify off:	PrefEvent		Notifiche disconession:
-Notify on:	PrefEvent		Notifiche conession:
-Part:	PrefEvent		Lâ vie dal canâl:
-Quit:	PrefEvent		Jessude:
-Server notice:	PrefEvent		Avîs dal servidôr:
-Topic:	PrefEvent		Argoment:
-User notice:	PrefEvent		Avîs dal utent:
-Channel list	PrefFont		Liste canâi
-Element:	PrefFont		Element:
-Font:	PrefFont		Caratar:
-Input text	PrefFont		Test di imission
-Names list	PrefFont		Liste dai nons
-Server messages	PrefFont		Messaçs dal servidôr
-Text	PrefFont		Test
-Timestamp	PrefFont		Date/ore
-URLs	PrefFont		URL
-Window list	PrefFont		Liste barcons
+Add	PrefAliases		Zonte
+Alias	PrefAliases		Alias
+Name	PrefAliases		Non
+Remove	PrefAliases		Gjave
+Add server	ServerEntryWindow		Zonte servidôr
+Cancel	ServerEntryWindow		Anule
+Choose status	ServerEntryWindow		Sielç stât
+Disabled	ServerEntryWindow		Disabilitât
+Done	ServerEntryWindow		Fat
+Port:	ServerEntryWindow		Puarte:
+Primary	ServerEntryWindow		Primari
+Secondary	ServerEntryWindow		Secondari
+Secure port	ServerEntryWindow		Puarte sigure
+Server:	ServerEntryWindow		Servidôr:
+State:	ServerEntryWindow		Stât:
+Use password:	ServerEntryWindow		Dopre password:
+Add to notify	NamesView		Zonte aes notifichis
+CTCP	NamesView		CTCP
+DCC chat	NamesView		Chat DCC
+DCC send	NamesView		Spedizion DCC
+Query	NamesView		Interogazion
+User selection	NamesView		Selezion utent
+Whois	NamesView		Whois
+Add…	NetPrefsServerView		Zonte…
+Disabled	NetPrefsServerView		Disabilitât
+Edit server	NetPrefsServerView		Modifiche servidôr
+Edit…	NetPrefsServerView		Modifiche…
+Port	NetPrefsServerView		Puarte
+Primary	NetPrefsServerView		Primari
+Remove	NetPrefsServerView		Gjave
+Secondary	NetPrefsServerView		Secondari
+Secure	NetPrefsServerView		Sigûr
+Server	NetPrefsServerView		Servidôr
+Servers for %name%	NetPrefsServerView		Servidôrs par %name%
+Status	NetPrefsServerView		Stât
+Yes	NetPrefsServerView		Sì
 Aliases	PrefGeneral		Alias
 Application	PrefGeneral		Aplicazion
 Colors	PrefGeneral		Colôrs
@@ -333,52 +273,112 @@ OK	PrefLog		Va ben
 Show timestamps in IRC window	PrefLog		Mostre date/ore tal barcon IRC
 The log path you have entered is invalid.	PrefLog		Il percors dal regjistri inserît nol è valit.
 Timestamp format:	PrefLog		Formât date/ore:
-Preferences	PrefsWindow		Preferencis
-Copy	RunView		Copie
-Lookup (acronym finder)	RunView		Cîr (ciridôr di acronims)
-Lookup (dictionary)	RunView		Cîr (dizionari)
-Lookup (Google)	RunView		Cîr (Google)
-Select all	RunView		Selezione dut
-Clipping	RunView	as suffix for dropped text clippings	Ritai
-[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Al semee che tu sedis daûr di un gateway internet. Vision al interogarà il servidôr IRC in câs che si rivarà a stabilî la conession pe to direzion internet dal to gateway. Cheste e vignarà doprade pes comunicazions DCC.)\n
-[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Si tente une conession a %id%:%port%…\n
-[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Si tente di conetisi (tentatîf %ld di %ld)\n
-[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Conession vierte, in spiete di une rispueste dal servidôr\n
-[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Impussibil creâ la conession ae direzion e ae puarte. Siguraisi che la conession internet e funzionedi.\n
-[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Impussibil stabilî une conession al servidôr. Nus displâs.\n
-[@] Disconnected from %server%\n	ServerAgent		[@] Disconetût dal %server%\n
-[@] Error getting local IP\n	ServerAgent		[@] Erôr tal otignî l'IP locâl\n
-[@] Established\n	ServerAgent		[@] Stabilît\n
-[@] Handshaking\n	ServerAgent		[@] Daûr a stabilî la comunicazion\n
-[@] Local IP: %ip%\n	ServerAgent		[@] IP locâl: %ip%\n
-[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Si è rivâts al limit des provis; Si rindìn. Scrîf /reconnect se tu desideris fâ un altri zîr di provis.\n
-[@] Sending password\n	ServerAgent		[@] Daûr a inviâ la password\n
-{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Si spiete un secont prime dal prossim tentatîf}other{[@] Si spiete # seconts prime dal prossim tentatîf}}
-CONNECTION PROBLEM	ServerAgent		PROBLEME DI CONESSION
-Disabled	ServerAgent		Disabilitât
-Disconnected	ServerAgent		Disconetût
-Lag:	ServerAgent		Ritart:
-Add server	ServerEntryWindow		Zonte servidôr
-Cancel	ServerEntryWindow		Anule
-Choose status	ServerEntryWindow		Sielç stât
-Disabled	ServerEntryWindow		Disabilitât
-Done	ServerEntryWindow		Fat
-Port:	ServerEntryWindow		Puarte:
-Primary	ServerEntryWindow		Primari
-Secondary	ServerEntryWindow		Secondari
-Server:	ServerEntryWindow		Servidôr:
-State:	ServerEntryWindow		Stât:
-Use password:	ServerEntryWindow		Dopre password:
-Secure port	ServerEntryWindow		Puarte sigure
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Come se no 'ndi fos avonde, tu stâs par zontâ %ld riis in plui di span a internet.  Ce mût vûstu compuartâti in merit?
+Cancel	ClientAgentInputFilter		Anule
+Single line	ClientAgentInputFilter		Rie singule
+Spam	ClientAgentInputFilter		Spam
+Spam!	ClientAgentInputFilter		Spam!
+Automatically accept incoming sends	PrefDCC		Acete in automatic lis spedizions in jentrade
+Automatically check for NAT IP	PrefDCC		Controle in automatic IP NAT
+DCC block size:	PrefDCC		Dimension bloc DCC:
+DCC port range	PrefDCC		Interval puartis DCC
+Default path:	PrefDCC		Percors predefinît:
+Max:	PrefDCC		Massim:
+Min:	PrefDCC		Minim:
+Away:	PrefCommand		Assent:
+Back:	PrefCommand		Tornât:
+Ignore:	PrefCommand		Ignorâ:
+Kick:	PrefCommand		Pidât vie:
+Quit:	PrefCommand		Jessî:
+Unignore:	PrefCommand		Smet di ignorâ:
+Uptime:	PrefCommand		Timp in vore:
+Baltic (ISO 8859-13)	PrefApp		Baltic (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		European centrâl (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		Cirilic (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		Cirilic (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		Cirilic (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		Cirilic (Windows 1251)
+Encoding:	PrefApp		Codifiche:
+Greek (ISO 8859-7)	PrefApp		Grêc (ISO 8859-7)
+Japanese (EUC)	PrefApp		Gjaponês (EUC)
+Japanese (JIS)	PrefApp		Gjaponês (JIS)
+Japanese (Shift-JIS)	PrefApp		Gjaponês (Shift-JIS)
+Korean (EUC)	PrefApp		Corean (EUC)
+Open new query on private message	PrefApp		Vierç gnove interogazion su messaç privât
+Require double CMD+Q/W to close	PrefApp		Domande dopli CMD+Q/W par sierâ
+Show OS information in version reply	PrefApp		Mostre informazions SO in rispueste a version
+Strip mIRC colors	PrefApp		Gjave vie i colôrs di mIRC
+Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
+Warn when multiline pasting	PrefApp		Vise cuant che si cîr di tacâ plui riis
+Western (ISO 8859-1)	PrefApp		Ocidentâl (ISO 8859-1)
+Western (Mac Roman)	PrefApp		Ocidentâl (Mac Roman)
+Western (Windows)	PrefApp		Ocidentâl (Windows)
+Channel	ListAgent		Canâl
+Channels	ListAgent		Canâi
+Count:	ListAgent		Conte:
+Done	ListAgent		Fat
+Filter:	ListAgent		Filtri:
+Filter…	ListAgent		Filtri…
+Find	ListAgent		Cjate
+Find next	ListAgent		Cjate prossim
+Find:	ListAgent		Cjate:
+Find…	ListAgent		Cjate…
+List filter	ListAgent		Liste filtri
+Loading	ListAgent		Daûr a cjariâ
+Status:	ListAgent		Stât:
+Topic	ListAgent		Argoment
+Users	ListAgent		Utents
+Channel list	PrefFont		Liste canâi
+Element:	PrefFont		Element:
+Font:	PrefFont		Caratar:
+Input text	PrefFont		Test di imission
+Names list	PrefFont		Liste dai nons
+Server messages	PrefFont		Messaçs dal servidôr
+Text	PrefFont		Test
+Timestamp	PrefFont		Date/ore
+URLs	PrefFont		URL
+Window list	PrefFont		Liste barcons
 Choose network	SetupWindow		Sielç rêt
 Connect	SetupWindow		Conet
 Network setup…	SetupWindow		Impostazions rêt…
 Network:	SetupWindow		Rêt:
 Preferences…	SetupWindow		Preferencis…
 Setup window	SetupWindow		Barcon des impostazions
-Vision	System name		Vision
-\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"Un om al à di rivâ a cambiâ un panzit, planificâ une invasion, macelâ un purcit, menâ une nâf, progjetâ un edifici, scrivi un sonet, belançâ i conts, tirâ sù un mûr, meti in sest un vues, confuartâ chei che a murin, cjapâ ordins, dâ ordins, cooperâ, agjî di bessôl, risolvi ecuazions, analizâ un gnûf probleme, tirâ ledan, programâ un computer, cusinâ un bon past, combati in mût eficient, murî in mût galant. Specializâsi al è pai insets.\" -- Robert A. Heinlein
-A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		A client IRC, natîf par Haiku, che al è plen di funzionalitâts, veloç, lizêr e stabil.
-Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Puartât a vô in part dai contribûts di:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
-Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Personâl di supuart:\nAssistent a Wade Majors: Blecs\nSupervisôr de musiche: Baron Arnold\nAssistent a Baron Arnold: Ficus Kirkpatrick\nCoordenadôr acrobaziis: Gilligan\nConseîrs: regurg e helix\n\n\nNissun animâl si è fat mâl te produzion di chest client IRC.\nLa colone sonore e je disponibile su Catastrophe Records.
+Clipping	RunView	as suffix for dropped text clippings	Ritai
+Copy	RunView		Copie
+Lookup (acronym finder)	RunView		Cîr (ciridôr di acronims)
+Lookup (dictionary)	RunView		Cîr (dizionari)
+Lookup (Google)	RunView		Cîr (Google)
+Select all	RunView		Selezione dut
 Close	WindowList		Siere
+Color:	ColorSelector		Colôr:
+Colors	ColorSelector		Colôrs
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Ricezion completade di %file% di %nick% (%ack% %size% byte), %ldcps\n\n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Trasmission completade di %file% a %nick% (%ack% %size% byte), %ldcps\n\n
+Copy	ClientAgent		Copie
+Cut	ClientAgent		Taie
+Paste	ClientAgent		Tache
+Select all	ClientAgent		Selezione dut
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Ricezion terminade di %file% di %nick% (%ack% %size% byte), %ldcps\n\n
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Trasmission terminade di %file% a %nick% (%ack% %size% byte), %ldcps\n\n
+DCC chat	NotifyList		Chat DCC
+Query	NotifyList		Interogazion
+Remove	NotifyList		Gjave
+Whois	NotifyList		Whois
+DCC transfers	DCCFileWindow		Trasferiments DCC
+Join:	PrefEvent		Unîsi:
+Kick:	PrefEvent		Pidât fûr:
+Nick:	PrefEvent		Sorenon:
+Notify off:	PrefEvent		Notifiche disconession:
+Notify on:	PrefEvent		Notifiche conession:
+Part:	PrefEvent		Lâ vie dal canâl:
+Quit:	PrefEvent		Jessude:
+Server notice:	PrefEvent		Avîs dal servidôr:
+Topic:	PrefEvent		Argoment:
+User notice:	PrefEvent		Avîs dal utent:
+Network setup	NetworkWindow		Impostazions rêt
+Servers	NetworkWindow		Servidôrs
+Notify list	ClientWindowDock		Liste des notifichis
+Window list	ClientWindowDock		Liste dai barcons
+Preferences	PrefsWindow		Preferencis
+Vision	System name		Vision
