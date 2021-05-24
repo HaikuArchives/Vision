@@ -56,37 +56,35 @@ int32 URLCrunch::Crunch(BString* url)
 {
 	if (current_pos >= buffer.Length()) return B_ERROR;
 
-	int32 marker(buffer.Length());
+	int32 bufferLength(buffer.Length());
 	int32 pos(current_pos);
 	int32 url_length(0);
-	int32 marker_pos(B_ERROR);
 	int32 i(0);
 
 	BAutolock _(fLocker);
 	const char** tags = fTags;
 	if (!tags) return B_ERROR;
 
-	int32 start_pos = marker;
 	int32 found_pos = B_ERROR;
 
-	for (int j = 0; tags[j]; ++j) {
-		if (missingTags[j])
-			continue;
-		found_pos = buffer.IFindFirst(tags[j], pos);
-		if (found_pos != B_ERROR) {
-			if (found_pos < start_pos)
-			{
-				start_pos = found_pos;
-				i = j;
-			}
-		} else
-			missingTags[j] = true;
-	}
-	marker_pos = start_pos;
+	while (true) {
+		int32 marker_pos = bufferLength;
 
-//	for (i = 0; tags[i]; ++i) {
-//		marker_pos = buffer.IFindFirst(tags[i], pos);
-		if (marker_pos != B_ERROR) {
+		for (int j = 0; tags[j]; ++j) {
+			if (missingTags[j])
+				continue;
+			found_pos = buffer.IFindFirst(tags[j], pos);
+			if (found_pos != B_ERROR) {
+				if (found_pos < marker_pos)
+				{
+					marker_pos = found_pos;
+					i = j;
+				}
+			} else
+				missingTags[j] = true;
+		}
+
+		if (marker_pos < bufferLength) {
 			url_length = marker_pos + strlen(tags[i]);
 			url_length += strcspn(buffer.String() + url_length, " \t\n|\\<>\")(][}{;'*^");
 			int len(strlen(tags[i]));
@@ -94,20 +92,20 @@ int32 URLCrunch::Crunch(BString* url)
 			if (url_length - marker_pos > len &&
 				(isdigit(buffer[marker_pos + len]) || isalpha(buffer[marker_pos + len]) ||
 				 buffer[marker_pos + len] == '/')) {
-				marker = marker_pos;
 				pos = url_length + 1;
-				url_length -= marker;
+				url_length -= marker_pos;
 				url->Truncate(0);
-				buffer.CopyInto(*url, marker, url_length);
-			} else
-				pos = marker_pos + 1;
+				buffer.CopyInto(*url, marker_pos, url_length);
+				current_pos = pos;
+				return marker_pos;
+			}
+			pos = marker_pos + 1;
 
-			current_pos = pos;
-			//if (current_pos > (marker_pos + 1)) break;
-//		}
+		} else {
+			current_pos = bufferLength;
+			return B_ERROR;
+		}
 	}
-
-	return marker < buffer.Length() ? marker : B_ERROR;
 }
 
 status_t URLCrunch::UpdateTagList()
