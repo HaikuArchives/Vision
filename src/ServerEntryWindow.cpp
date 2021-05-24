@@ -172,6 +172,11 @@ ServerEntryWindow::ServerEntryWindow(BHandler* handler, BMessage* invoked,
 	port->MakeFocus(true);
 	serverName->MakeFocus(false);
 	serverName->MakeFocus(true);
+	if (invocation->FindBool("password")) {
+		usePassword->SetValue(B_CONTROL_ON);
+		passwordField->SetEnabled(true);
+		passwordField->MakeFocus(true);
+	}
 
 }
 
