@@ -1,169 +1,4 @@
 1	Ukrainian	application/x-vnd.Ink-Vision	2720096392
-[@] Attempting to rejoin…\n	ChannelAgent		[@] Спроба перезайти…\n
-*** Attempting to rejoin %channel%…\n	ChannelAgent		*** Спроба перезайти на %channel%…\n
-*** Now talking in %channel%\n	ChannelAgent		*** Зараз розмовляє в %channel%\n
-*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** %kicker% (%rest%) викинув вас стусаном з %channel%\n
-%s - %s said: %s	ChannelAgent		%s - %s сказав: %s
-Lag:	ChannelAgent		Затр:
-Modes:	ChannelAgent		Режими:
-Ops:	ChannelAgent		Оп/с:
-Users:	ChannelAgent		Користувачі:
-Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Завершено отримання %file% від %nick% (%ack% %size% байтів), %ldcps\n\n
-Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Завершено надсилання %file% до %nick% (%ack% %size% байтів), %ldcps\n\n
-Copy	ClientAgent		Копіювати
-Cut	ClientAgent		Вирізати
-Paste	ClientAgent		Вставити
-Select all	ClientAgent		Виділити все
-Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Скасовано отримання %file% від %nick% (%ack% %size% байтів), %ldcps\n\n
-Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Скасовано надсилання %file% до %nick% (%ack% %size% байтів), %ldcps\n\n
-As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Ви збираєтеся додати %ld рядків спаму в Інтернет, хоча його там і так неміряно. Невже потрібно продовжити?
-Cancel	ClientAgentInputFilter		Скасувати
-Single line	ClientAgentInputFilter		Один рядок
-Spam	ClientAgentInputFilter		Спам
-Spam!	ClientAgentInputFilter		Спам!
-\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nПочаток сеансу: %a %b %d %H:%M %Y\n
-Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Кінець сеансу: %a %b %d %H:%M %Y\n
-Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Початок сеансу: %a %b %d %H:%M %Y\n
-About Vision	ClientWindow		Про Vision
-Close this sub-window	ClientWindow		Закрити це підвікно
-Collapse network	ClientWindow		Згорнути мережу
-Connect to…	ClientWindow		З’єднатися з…
-Copy	ClientWindow		Копіювати
-Cut	ClientWindow		Вирізати
-Down	ClientWindow		Нижче
-Edit	ClientWindow		Редагувати
-Expand network	ClientWindow		Розгорнути мережу
-Help	ClientWindow		Довідка
-List channels…	ClientWindow		Список каналів…
-Move network down	ClientWindow		Перемістити мережу нижче
-Move network up	ClientWindow		Перемістити мережу вище
-Network window	ClientWindow		Вікно мережі
-Open Terminal	ClientWindow		Відкрити Термінал
-Paste	ClientWindow		Вставити
-Preferences…	ClientWindow		Налаштування…
-Previous window	ClientWindow		Попереднє вікно
-Quit	ClientWindow		Вихід
-Select all	ClientWindow		Виділити все
-Server	ClientWindow		Сервер
-Setup…	ClientWindow		Параметри…
-Smart down	ClientWindow		Розумно нижче
-Smart up	ClientWindow		Розумно вище
-Up	ClientWindow		Вище
-Window	ClientWindow		Вікно
-Notify list	ClientWindowDock		Список попереджень
-Window list	ClientWindowDock		Список вікон
-Color:	ColorSelector		Колір:
-Colors	ColorSelector		Кольори
-Acquiring DCC lock…	DCCConnect		Блокування DCC…
-bps:	DCCConnect		б/с:
-Connecting to sender.	DCCConnect		З’єднання з відправником.
-Doing listen call.	DCCConnect		Виконання виклику.
-Error writing data.	DCCConnect		Помилка запису даних.
-Established connection.	DCCConnect		Встановлене з’єднання.
-Receiving \"%file%\" from %nick%.	DCCConnect		Отримання \"%file%\" від %nick%.
-Sending \"%file%\" to %nick%.	DCCConnect		Надсилання \"%file%\" до %nick%.
-Unable to establish connection.	DCCConnect		Неможливо встановити з’єднання.
-Waiting for acceptance	DCCConnect		Очікування прийняття
-Waiting for connection %ld.	DCCConnect		Очікування з’єднання %ld.
-DCC transfers	DCCFileWindow		Передачі DCC
-%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% бажає розпочати з вами чат DCC.
-Accept	DCCHandler		Прийняти
-Cancel	DCCHandler		Скасувати
-DCC request	DCCHandler		Запит DCC
-Refuse	DCCHandler		Відмовити
-Replace	DCCHandler		Замінити
-Resume	DCCHandler		Поновити
-The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		Файл \"%file%\" вже існує у вказаній папці. Бажаєте продовжити передачу?
-Channel	ListAgent		Канал
-Channels	ListAgent		Канали
-Count:	ListAgent		Номер:
-Done	ListAgent		Готово
-Filter:	ListAgent		Фільтр:
-Filter…	ListAgent		Фільтр…
-Find	ListAgent		Знайти
-Find next	ListAgent		Шукати далі
-Find:	ListAgent		Знайти:
-Find…	ListAgent		Знайти…
-List filter	ListAgent		Список фільтрів
-Loading	ListAgent		Завантаження
-Status:	ListAgent		Статус:
-Topic	ListAgent		Тема
-Users	ListAgent		Користувачі
-Accepting connection on address %s, port %ld\n	MessageAgent		Прийом з'єднання за адресою %s, порт %ld\n
-Connected!\n	MessageAgent		З’єднано!\n
-DCC chat terminated.\n	MessageAgent		Чат DCC припинено.\n
-DCC send	MessageAgent		Надсилання DCC
-Error binding socket.\n	MessageAgent		Помилка інтеграції сокета.\n
-Error connecting socket.\n	MessageAgent		Помилка з’єднання сокета.\n
-Error creating socket.\n	MessageAgent		Помилка створення сокета.\n
-Lag:	MessageAgent		Затр.:
-Trying to connect to address %adress%, port %port%\n	MessageAgent		Спроба з’єднання з адресою %adress%, порт %port%\n
-Whois	MessageAgent		Інфо
-%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s сказав: %s
-Add to notify	NamesView		Додати до повідомлення
-CTCP	NamesView		CTCP
-DCC chat	NamesView		Чат DCC
-DCC send	NamesView		Надсилання DCC
-Query	NamesView		Запит
-User selection	NamesView		Вибір користувача
-Whois	NamesView		Інфо
-Add…	NetPrefsServerView		Додати…
-Edit…	NetPrefsServerView		Редагувати…
-Port	NetPrefsServerView		Порт
-Remove	NetPrefsServerView		Видалити
-Server	NetPrefsServerView		Сервер
-Status	NetPrefsServerView		Статус
-Yes	NetPrefsServerView		Так
-Secure	NetPrefsServerView		Secure
-Disabled	NetPrefsServerView		Disabled
-Edit server	NetPrefsServerView		Edit server
-Primary	NetPrefsServerView		Primary
-Servers for %name%	NetPrefsServerView		Servers for %name%
-Secondary	NetPrefsServerView		Secondary
-{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{з Fallback на інший.}other{з Fallback на # інші.}}
-Add network	NetworkPrefsView		Додати мережу
-Add new…	NetworkPrefsView		Додати нову…
-Add nickname	NetworkPrefsView		Додати нік
-Auto-connect to this network	NetworkPrefsView		Автоматичне з’єднання з цією мережею
-Automatically execute:	NetworkPrefsView		Автоматично виконати:
-Change servers…	NetworkPrefsView		Змінити сервери…
-Connects to server:	NetworkPrefsView		Підключення до сервера:
-Defaults	NetworkPrefsView		Умовчання
-Duplicate current…	NetworkPrefsView		Дублювати поточну…
-Duplicate network	NetworkPrefsView		Дублювати мережу
-Enable lag checking	NetworkPrefsView		Увімкнути перевірку затримки
-Ident:	NetworkPrefsView		Ідент:
-Network details	NetworkPrefsView		Інформація про мережу
-Network name:	NetworkPrefsView		Ім’я мережі:
-Networks	NetworkPrefsView		Мережі
-Nickname:	NetworkPrefsView		Нік:
-Personal details	NetworkPrefsView		Особиста інформація
-Preferred nicks:	NetworkPrefsView		Пріоритетні ніки:
-Real name:	NetworkPrefsView		Справжнє ім’я:
-Remove current	NetworkPrefsView		Видалити поточну
-Use defaults	NetworkPrefsView		Умовчання
-<N/A>	NetworkPrefsView	as in 'not available	<Н/Д>
-Network setup	NetworkWindow		Параметри мережі
-Servers	NetworkWindow		Сервери
-DCC chat	NotifyList		Чат DCC
-Query	NotifyList		Запит
-Remove	NotifyList		Видалити
-Whois	NotifyList		Інфо
-*** Trying new nick %nick%.\n	ParseCmd		*** Спроба нового ніку %nick%.\n
-/pexec: command failed	ParseCmd		/pexec: команду не виконано
-Bool has been set	ParseCmd		Встановлено bool
-Error setting bool	ParseCmd		Помилка параметрів bool
-Error: Invalid parameters	ParseCmd		Помилка: недійсні параметри
-Resolved %lookup% to %address%	ParseCmd		Вирішено %lookup% до %address%
-Resolved %lookup% to %name%	ParseCmd		Вирішено %lookup% до %name%
-Send	ParseCmd		Надіслати
-Sending a file to %nick%	ParseCmd		Надсилання файлу до %nick%
-Unable to resolve %lookup%	ParseCmd		Неможливо вирішити %lookup%
-Uptime: %time%\n	ParseCmd		Час роботи: %time%\n
-Vision has been running for %time%	ParseCmd		Vision працює протягом %time%
-Vision Uptime: %time%\n	ParseCmd		Час роботи Vision: %time%\n
-[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% відповідь]: %reply%\n
-{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING відповідь]: # секунда\n}other{[%nick% PING відповідь]: # секунд\n}}
 - Server Message Of The Day:\n	ParseENums		- Повідомлення дня від сервера:\n
 [@] Successful reconnect\n	ParseENums		[@] Успішне перепідключення\n
 [x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [був] (%ident%@%address%)\n
@@ -197,35 +32,138 @@ Vision Uptime: %time%\n	ParseCmd		Час роботи Vision: %time%\n
 %people% is online	ParseENums		%people% в мережі
 Idle:	ParseENums		Неактивний:
 Sign-on:	ParseENums		Вхід:
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Схоже, що ви поза інтернет-шлюзом. Vision запитуватиме сервер IRC після успішного підключення до інтернет-адреси шлюзу. Це буде використовуватися для з'єднання DCC.)\n
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Спроба з'єднання з %id%:%port%…\n
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Спроба з'єднання (спроба %ld з %ld)\n
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] З’єднання відкрите, очікування відповіді від сервера\n
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Неможливо з’єднатися з адресою і портом. Переконайтеся, що ваше інтернет-підключення працює належним чином.\n
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Неможливо підключитися до сервера. Вибачте.\n
+[@] Disconnected from %server%\n	ServerAgent		[@] Від’єднано від %server%\n
+[@] Error getting local IP\n	ServerAgent		[@] Помилка отримання локального IP\n
+[@] Established\n	ServerAgent		[@] Встановлено\n
+[@] Handshaking\n	ServerAgent		[@] Підтвердження зв'язку\n
+[@] Local IP: %ip%\n	ServerAgent		[@] Локальний IP: %ip%\n
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Вичерпано ліміт повторень. Введіть /reconnect якщо хочете спробувати ще раз.\n
+[@] Sending password\n	ServerAgent		[@] Надсилання пароля\n
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Зачекайте одну секунду до наступної спроби}other{[@] Зачекайте # секунд до наступної спроби}}
+CONNECTION PROBLEM	ServerAgent		ПРОБЛЕМА ПІДКЛЮЧЕННЯ
+Disabled	ServerAgent		Вимкнено
+Disconnected	ServerAgent		Роз’єднано
+Lag:	ServerAgent		Затр:
+[@] Attempting to rejoin…\n	ChannelAgent		[@] Спроба перезайти…\n
+*** Attempting to rejoin %channel%…\n	ChannelAgent		*** Спроба перезайти на %channel%…\n
+*** Now talking in %channel%\n	ChannelAgent		*** Зараз розмовляє в %channel%\n
+*** You have been kicked from %channel% by %kicker% (%rest%)\n	ChannelAgent		*** %kicker% (%rest%) викинув вас стусаном з %channel%\n
+%s - %s said: %s	ChannelAgent		%s - %s сказав: %s
+Lag:	ChannelAgent		Затр:
+Modes:	ChannelAgent		Режими:
+Ops:	ChannelAgent		Оп/с:
+Users:	ChannelAgent		Користувачі:
+[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% відповідь]: %reply%\n
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING відповідь]: # секунда\n}other{[%nick% PING відповідь]: # секунд\n}}
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{з Fallback на інший.}other{з Fallback на # інші.}}
+<N/A>	NetworkPrefsView	as in 'not available	<Н/Д>
+Add network	NetworkPrefsView		Додати мережу
+Add new…	NetworkPrefsView		Додати нову…
+Add nickname	NetworkPrefsView		Додати нік
+Auto-connect to this network	NetworkPrefsView		Автоматичне з’єднання з цією мережею
+Automatically execute:	NetworkPrefsView		Автоматично виконати:
+Change servers…	NetworkPrefsView		Змінити сервери…
+Connects to server:	NetworkPrefsView		Підключення до сервера:
+Defaults	NetworkPrefsView		Умовчання
+Duplicate current…	NetworkPrefsView		Дублювати поточну…
+Duplicate network	NetworkPrefsView		Дублювати мережу
+Enable lag checking	NetworkPrefsView		Увімкнути перевірку затримки
+Ident:	NetworkPrefsView		Ідент:
+Network details	NetworkPrefsView		Інформація про мережу
+Network name:	NetworkPrefsView		Ім’я мережі:
+Networks	NetworkPrefsView		Мережі
+Nickname:	NetworkPrefsView		Нік:
+Personal details	NetworkPrefsView		Особиста інформація
+Preferred nicks:	NetworkPrefsView		Пріоритетні ніки:
+Real name:	NetworkPrefsView		Справжнє ім’я:
+Remove current	NetworkPrefsView		Видалити поточну
+Use defaults	NetworkPrefsView		Умовчання
 *** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Маску додано до списку SILENCE: %hostmask%.\n
 *** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Маску видалено зі списку SILENCE: %hostmask%.\n
 *** User mode changed: %mode%\n	ParseEvents		*** Режим користувача змінено: %mode%\n
 *** You have been invited to %channel% by %nick%.\n	ParseEvents		*** %nick% запросив вас до %channel%.\n
-Add	PrefAliases		Додати
-Alias	PrefAliases		Псевдонім
-Name	PrefAliases		Ім’я
-Remove	PrefAliases		Видалити
-Baltic (ISO 8859-13)	PrefApp		Балтійське (ISO 8859-13)
-Central European (ISO 8859-2)	PrefApp		Центральноєвропейське (ISO 8859-2)
-Cyrillic (ISO 8859-5)	PrefApp		Кирилиця (ISO 8859-5)
-Cyrillic (KOI8-R)	PrefApp		Кирилиця (KOI8-R)
-Cyrillic (MS-DOS 866)	PrefApp		Кирилиця (MS-DOS 866)
-Cyrillic (Windows 1251)	PrefApp		Кирилиця (Windows 1251)
-Encoding:	PrefApp		Кодування:
-Greek (ISO 8859-7)	PrefApp		Грецьке (ISO 8859-7)
-Japanese (EUC)	PrefApp		Японське (EUC)
-Japanese (JIS)	PrefApp		Японське (JIS)
-Japanese (Shift-JIS)	PrefApp		Японське (Shift-JIS)
-Korean (EUC)	PrefApp		Корейське (EUC)
-Open new query on private message	PrefApp		Відкривати новий запит на приватне повідомлення
-Require double CMD+Q/W to close	PrefApp		Подвійне CMD+Q/W для закриття 
-Show OS information in version reply	PrefApp		Показувати у відповіді інформацію про ОС
-Strip mIRC colors	PrefApp		Смуга кольорів mIRC
-Unicode (UTF-8)	PrefApp		Юнікод (UTF-8)
-Warn when multiline pasting	PrefApp		Попереджати при вставці кількох рядків
-Western (ISO 8859-1)	PrefApp		Західне (ISO 8859-1)
-Western (Mac Roman)	PrefApp		Західне (Mac Roman)
-Western (Windows)	PrefApp		Західне (Windows)
+*** Trying new nick %nick%.\n	ParseCmd		*** Спроба нового ніку %nick%.\n
+/pexec: command failed	ParseCmd		/pexec: команду не виконано
+Bool has been set	ParseCmd		Встановлено bool
+Error setting bool	ParseCmd		Помилка параметрів bool
+Error: Invalid parameters	ParseCmd		Помилка: недійсні параметри
+Resolved %lookup% to %address%	ParseCmd		Вирішено %lookup% до %address%
+Resolved %lookup% to %name%	ParseCmd		Вирішено %lookup% до %name%
+Send	ParseCmd		Надіслати
+Sending a file to %nick%	ParseCmd		Надсилання файлу до %nick%
+Unable to resolve %lookup%	ParseCmd		Неможливо вирішити %lookup%
+Uptime: %time%\n	ParseCmd		Час роботи: %time%\n
+Vision has been running for %time%	ParseCmd		Vision працює протягом %time%
+Vision Uptime: %time%\n	ParseCmd		Час роботи Vision: %time%\n
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"Людина повинна вміти міняти пелюшки, планувати вторгнення, зарізати свиню, вести корабель, спроектувати будинок, написати сонет, підвести баланс, збудувати стіну, вправити кістку, втішити вмираючого, віддавати і виконувати накази, співпрацювати і діяти самостійно, розв’язувати рівняння, аналізувати нову проблему, розкидувати гній, запрограмувати комп’ютер, приготувати смачну страву, ефективно боротися і хоробро померти. Спеціалізація для комах.\" -- Роберт A. Хайнлайн
+A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		Рідний Haiku IRC-клієнт, функціональний, швидкий, легкий і стабільний.
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Представлений частинами від:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Команда підтримки:\nАсистент у Wade Majors: Patches\nМузичний керівник: Baron Arnold\nАсистент у Baron Arnold: Ficus Kirkpatrick\nКоординатор трюків: Gilligan\nОголені сцени: Natalie Portman, Chris Hemsworth\nРадники: regurg та helix\n\n\nЖодна тварина не постраждала під час виготовлення цього IRC клієнта.\nСаундтрек доступний на Catastrophe Records.
+\n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nПочаток сеансу: %a %b %d %H:%M %Y\n
+Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Кінець сеансу: %a %b %d %H:%M %Y\n
+Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Початок сеансу: %a %b %d %H:%M %Y\n
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% бажає розпочати з вами чат DCC.
+Accept	DCCHandler		Прийняти
+Cancel	DCCHandler		Скасувати
+DCC request	DCCHandler		Запит DCC
+Refuse	DCCHandler		Відмовити
+Replace	DCCHandler		Замінити
+Resume	DCCHandler		Поновити
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		Файл \"%file%\" вже існує у вказаній папці. Бажаєте продовжити передачу?
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s сказав: %s
+Accepting connection on address %s, port %ld\n	MessageAgent		Прийом з'єднання за адресою %s, порт %ld\n
+Connected!\n	MessageAgent		З’єднано!\n
+DCC chat terminated.\n	MessageAgent		Чат DCC припинено.\n
+DCC send	MessageAgent		Надсилання DCC
+Error binding socket.\n	MessageAgent		Помилка інтеграції сокета.\n
+Error connecting socket.\n	MessageAgent		Помилка з’єднання сокета.\n
+Error creating socket.\n	MessageAgent		Помилка створення сокета.\n
+Lag:	MessageAgent		Затр.:
+Trying to connect to address %adress%, port %port%\n	MessageAgent		Спроба з’єднання з адресою %adress%, порт %port%\n
+Whois	MessageAgent		Інфо
+About Vision	ClientWindow		Про Vision
+Close this sub-window	ClientWindow		Закрити це підвікно
+Collapse network	ClientWindow		Згорнути мережу
+Connect to…	ClientWindow		З’єднатися з…
+Copy	ClientWindow		Копіювати
+Cut	ClientWindow		Вирізати
+Down	ClientWindow		Нижче
+Edit	ClientWindow		Редагувати
+Expand network	ClientWindow		Розгорнути мережу
+Help	ClientWindow		Довідка
+List channels…	ClientWindow		Список каналів…
+Move network down	ClientWindow		Перемістити мережу нижче
+Move network up	ClientWindow		Перемістити мережу вище
+Network window	ClientWindow		Вікно мережі
+Open Terminal	ClientWindow		Відкрити Термінал
+Paste	ClientWindow		Вставити
+Preferences…	ClientWindow		Налаштування…
+Previous window	ClientWindow		Попереднє вікно
+Quit	ClientWindow		Вихід
+Select all	ClientWindow		Виділити все
+Server	ClientWindow		Сервер
+Setup…	ClientWindow		Параметри…
+Smart down	ClientWindow		Розумно нижче
+Smart up	ClientWindow		Розумно вище
+Up	ClientWindow		Вище
+Window	ClientWindow		Вікно
+Acquiring DCC lock…	DCCConnect		Блокування DCC…
+bps:	DCCConnect		б/с:
+Connecting to sender.	DCCConnect		З’єднання з відправником.
+Doing listen call.	DCCConnect		Виконання виклику.
+Error writing data.	DCCConnect		Помилка запису даних.
+Established connection.	DCCConnect		Встановлене з’єднання.
+Receiving \"%file%\" from %nick%.	DCCConnect		Отримання \"%file%\" від %nick%.
+Sending \"%file%\" to %nick%.	DCCConnect		Надсилання \"%file%\" до %nick%.
+Unable to establish connection.	DCCConnect		Неможливо встановити з’єднання.
+Waiting for acceptance	DCCConnect		Очікування прийняття
+Waiting for connection %ld.	DCCConnect		Очікування з’єднання %ld.
 Action	PrefColor		Дія
 Background	PrefColor		Фон
 CTCP reply	PrefColor		Відповідь CTCP
@@ -282,40 +220,42 @@ Window list event	PrefColor		Список вікон подія
 Window list nick alert	PrefColor		Список вікон попередження ніка
 Window list normal	PrefColor		Список вікон звичайний
 Window list selection	PrefColor		Список вікон виділення
-Away:	PrefCommand		Відійшов:
-Back:	PrefCommand		Повернувся:
-Ignore:	PrefCommand		Ігнорувати:
-Kick:	PrefCommand		Стусан:
-Quit:	PrefCommand		Вийти:
-Unignore:	PrefCommand		Не ігнорувати:
-Uptime:	PrefCommand		Час роботи:
-Automatically accept incoming sends	PrefDCC		Автоматично приймати вхідні надсилання
-Automatically check for NAT IP	PrefDCC		Автоматично перевіряти на NAT IP
-DCC block size:	PrefDCC		Розмір блоку DCC:
-DCC port range	PrefDCC		Діапазон портів DCC
-Default path:	PrefDCC		Типовий шлях:
-Max:	PrefDCC		Макс:
-Min:	PrefDCC		Мін:
-Join:	PrefEvent		Зайти:
-Kick:	PrefEvent		Стусан:
-Nick:	PrefEvent		Нік:
-Notify off:	PrefEvent		Сповіщення вимк:
-Notify on:	PrefEvent		Сповіщення увімк:
-Part:	PrefEvent		Частина:
-Quit:	PrefEvent		Вихід:
-Server notice:	PrefEvent		Попередження сервера:
-Topic:	PrefEvent		Тема:
-User notice:	PrefEvent		Попередження користувача:
-Channel list	PrefFont		Список каналів
-Element:	PrefFont		Елемент:
-Font:	PrefFont		Шрифт:
-Input text	PrefFont		Введення тексту
-Names list	PrefFont		Список імен
-Server messages	PrefFont		Повідомлення сервера
-Text	PrefFont		Текст
-Timestamp	PrefFont		Дата/час
-URLs	PrefFont		URL-адреси
-Window list	PrefFont		Список вікон
+Add	PrefAliases		Додати
+Alias	PrefAliases		Псевдонім
+Name	PrefAliases		Ім’я
+Remove	PrefAliases		Видалити
+Add server	ServerEntryWindow		Додати сервер
+Cancel	ServerEntryWindow		Скасувати
+Choose status	ServerEntryWindow		Виберіть статус
+Disabled	ServerEntryWindow		Вимкнено
+Done	ServerEntryWindow		Готово
+Port:	ServerEntryWindow		Порт:
+Primary	ServerEntryWindow		Первинний
+Secondary	ServerEntryWindow		Вторинний
+Secure port	ServerEntryWindow		Secure port
+Server:	ServerEntryWindow		Сервер:
+State:	ServerEntryWindow		Стан:
+Use password:	ServerEntryWindow		Надати пароль:
+Add to notify	NamesView		Додати до повідомлення
+CTCP	NamesView		CTCP
+DCC chat	NamesView		Чат DCC
+DCC send	NamesView		Надсилання DCC
+Query	NamesView		Запит
+User selection	NamesView		Вибір користувача
+Whois	NamesView		Інфо
+Add…	NetPrefsServerView		Додати…
+Disabled	NetPrefsServerView		Disabled
+Edit server	NetPrefsServerView		Edit server
+Edit…	NetPrefsServerView		Редагувати…
+Port	NetPrefsServerView		Порт
+Primary	NetPrefsServerView		Primary
+Remove	NetPrefsServerView		Видалити
+Secondary	NetPrefsServerView		Secondary
+Secure	NetPrefsServerView		Secure
+Server	NetPrefsServerView		Сервер
+Servers for %name%	NetPrefsServerView		Servers for %name%
+Status	NetPrefsServerView		Статус
+Yes	NetPrefsServerView		Так
 Aliases	PrefGeneral		Псевдоніми
 Application	PrefGeneral		Програма
 Colors	PrefGeneral		Кольори
@@ -333,52 +273,112 @@ OK	PrefLog		OK
 Show timestamps in IRC window	PrefLog		Відображати дату/час у вікні IRC
 The log path you have entered is invalid.	PrefLog		Ви ввели неправильний шлях до журналу.
 Timestamp format:	PrefLog		Формат дати/часу:
-Preferences	PrefsWindow		Налаштування
-Copy	RunView		Копіювати
-Lookup (acronym finder)	RunView		Пошук (acronym finder)
-Lookup (dictionary)	RunView		Пошук (словник)
-Lookup (Google)	RunView		Пошук (Google)
-Select all	RunView		Виділити все
-Clipping	RunView	as suffix for dropped text clippings	Скорочення слів
-[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Схоже, що ви поза інтернет-шлюзом. Vision запитуватиме сервер IRC після успішного підключення до інтернет-адреси шлюзу. Це буде використовуватися для з'єднання DCC.)\n
-[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Спроба з'єднання з %id%:%port%…\n
-[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Спроба з'єднання (спроба %ld з %ld)\n
-[@] Connection open, waiting for reply from server\n	ServerAgent		[@] З’єднання відкрите, очікування відповіді від сервера\n
-[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Неможливо з’єднатися з адресою і портом. Переконайтеся, що ваше інтернет-підключення працює належним чином.\n
-[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Неможливо підключитися до сервера. Вибачте.\n
-[@] Disconnected from %server%\n	ServerAgent		[@] Від’єднано від %server%\n
-[@] Error getting local IP\n	ServerAgent		[@] Помилка отримання локального IP\n
-[@] Established\n	ServerAgent		[@] Встановлено\n
-[@] Handshaking\n	ServerAgent		[@] Підтвердження зв'язку\n
-[@] Local IP: %ip%\n	ServerAgent		[@] Локальний IP: %ip%\n
-[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Вичерпано ліміт повторень. Введіть /reconnect якщо хочете спробувати ще раз.\n
-[@] Sending password\n	ServerAgent		[@] Надсилання пароля\n
-{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Зачекайте одну секунду до наступної спроби}other{[@] Зачекайте # секунд до наступної спроби}}
-CONNECTION PROBLEM	ServerAgent		ПРОБЛЕМА ПІДКЛЮЧЕННЯ
-Disabled	ServerAgent		Вимкнено
-Disconnected	ServerAgent		Роз’єднано
-Lag:	ServerAgent		Затр:
-Add server	ServerEntryWindow		Додати сервер
-Cancel	ServerEntryWindow		Скасувати
-Choose status	ServerEntryWindow		Виберіть статус
-Disabled	ServerEntryWindow		Вимкнено
-Done	ServerEntryWindow		Готово
-Port:	ServerEntryWindow		Порт:
-Primary	ServerEntryWindow		Первинний
-Secondary	ServerEntryWindow		Вторинний
-Server:	ServerEntryWindow		Сервер:
-State:	ServerEntryWindow		Стан:
-Use password:	ServerEntryWindow		Надати пароль:
-Secure port	ServerEntryWindow		Secure port
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Ви збираєтеся додати %ld рядків спаму в Інтернет, хоча його там і так неміряно. Невже потрібно продовжити?
+Cancel	ClientAgentInputFilter		Скасувати
+Single line	ClientAgentInputFilter		Один рядок
+Spam	ClientAgentInputFilter		Спам
+Spam!	ClientAgentInputFilter		Спам!
+Automatically accept incoming sends	PrefDCC		Автоматично приймати вхідні надсилання
+Automatically check for NAT IP	PrefDCC		Автоматично перевіряти на NAT IP
+DCC block size:	PrefDCC		Розмір блоку DCC:
+DCC port range	PrefDCC		Діапазон портів DCC
+Default path:	PrefDCC		Типовий шлях:
+Max:	PrefDCC		Макс:
+Min:	PrefDCC		Мін:
+Away:	PrefCommand		Відійшов:
+Back:	PrefCommand		Повернувся:
+Ignore:	PrefCommand		Ігнорувати:
+Kick:	PrefCommand		Стусан:
+Quit:	PrefCommand		Вийти:
+Unignore:	PrefCommand		Не ігнорувати:
+Uptime:	PrefCommand		Час роботи:
+Baltic (ISO 8859-13)	PrefApp		Балтійське (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		Центральноєвропейське (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		Кирилиця (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		Кирилиця (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		Кирилиця (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		Кирилиця (Windows 1251)
+Encoding:	PrefApp		Кодування:
+Greek (ISO 8859-7)	PrefApp		Грецьке (ISO 8859-7)
+Japanese (EUC)	PrefApp		Японське (EUC)
+Japanese (JIS)	PrefApp		Японське (JIS)
+Japanese (Shift-JIS)	PrefApp		Японське (Shift-JIS)
+Korean (EUC)	PrefApp		Корейське (EUC)
+Open new query on private message	PrefApp		Відкривати новий запит на приватне повідомлення
+Require double CMD+Q/W to close	PrefApp		Подвійне CMD+Q/W для закриття 
+Show OS information in version reply	PrefApp		Показувати у відповіді інформацію про ОС
+Strip mIRC colors	PrefApp		Смуга кольорів mIRC
+Unicode (UTF-8)	PrefApp		Юнікод (UTF-8)
+Warn when multiline pasting	PrefApp		Попереджати при вставці кількох рядків
+Western (ISO 8859-1)	PrefApp		Західне (ISO 8859-1)
+Western (Mac Roman)	PrefApp		Західне (Mac Roman)
+Western (Windows)	PrefApp		Західне (Windows)
+Channel	ListAgent		Канал
+Channels	ListAgent		Канали
+Count:	ListAgent		Номер:
+Done	ListAgent		Готово
+Filter:	ListAgent		Фільтр:
+Filter…	ListAgent		Фільтр…
+Find	ListAgent		Знайти
+Find next	ListAgent		Шукати далі
+Find:	ListAgent		Знайти:
+Find…	ListAgent		Знайти…
+List filter	ListAgent		Список фільтрів
+Loading	ListAgent		Завантаження
+Status:	ListAgent		Статус:
+Topic	ListAgent		Тема
+Users	ListAgent		Користувачі
+Channel list	PrefFont		Список каналів
+Element:	PrefFont		Елемент:
+Font:	PrefFont		Шрифт:
+Input text	PrefFont		Введення тексту
+Names list	PrefFont		Список імен
+Server messages	PrefFont		Повідомлення сервера
+Text	PrefFont		Текст
+Timestamp	PrefFont		Дата/час
+URLs	PrefFont		URL-адреси
+Window list	PrefFont		Список вікон
 Choose network	SetupWindow		Виберіть мережу
 Connect	SetupWindow		З’єднатися
 Network setup…	SetupWindow		Параметри мережі…
 Network:	SetupWindow		Мережа:
 Preferences…	SetupWindow		Налаштування…
 Setup window	SetupWindow		Вікно параметрів
-Vision	System name		Vision
-\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"Людина повинна вміти міняти пелюшки, планувати вторгнення, зарізати свиню, вести корабель, спроектувати будинок, написати сонет, підвести баланс, збудувати стіну, вправити кістку, втішити вмираючого, віддавати і виконувати накази, співпрацювати і діяти самостійно, розв’язувати рівняння, аналізувати нову проблему, розкидувати гній, запрограмувати комп’ютер, приготувати смачну страву, ефективно боротися і хоробро померти. Спеціалізація для комах.\" -- Роберт A. Хайнлайн
-A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		Рідний Haiku IRC-клієнт, функціональний, швидкий, легкий і стабільний.
-Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Представлений частинами від:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
-Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Команда підтримки:\nАсистент у Wade Majors: Patches\nМузичний керівник: Baron Arnold\nАсистент у Baron Arnold: Ficus Kirkpatrick\nКоординатор трюків: Gilligan\nОголені сцени: Natalie Portman, Chris Hemsworth\nРадники: regurg та helix\n\n\nЖодна тварина не постраждала під час виготовлення цього IRC клієнта.\nСаундтрек доступний на Catastrophe Records.
+Clipping	RunView	as suffix for dropped text clippings	Скорочення слів
+Copy	RunView		Копіювати
+Lookup (acronym finder)	RunView		Пошук (acronym finder)
+Lookup (dictionary)	RunView		Пошук (словник)
+Lookup (Google)	RunView		Пошук (Google)
+Select all	RunView		Виділити все
 Close	WindowList		Закрити
+Color:	ColorSelector		Колір:
+Colors	ColorSelector		Кольори
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Завершено отримання %file% від %nick% (%ack% %size% байтів), %ldcps\n\n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Завершено надсилання %file% до %nick% (%ack% %size% байтів), %ldcps\n\n
+Copy	ClientAgent		Копіювати
+Cut	ClientAgent		Вирізати
+Paste	ClientAgent		Вставити
+Select all	ClientAgent		Виділити все
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Скасовано отримання %file% від %nick% (%ack% %size% байтів), %ldcps\n\n
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Скасовано надсилання %file% до %nick% (%ack% %size% байтів), %ldcps\n\n
+DCC chat	NotifyList		Чат DCC
+Query	NotifyList		Запит
+Remove	NotifyList		Видалити
+Whois	NotifyList		Інфо
+DCC transfers	DCCFileWindow		Передачі DCC
+Join:	PrefEvent		Зайти:
+Kick:	PrefEvent		Стусан:
+Nick:	PrefEvent		Нік:
+Notify off:	PrefEvent		Сповіщення вимк:
+Notify on:	PrefEvent		Сповіщення увімк:
+Part:	PrefEvent		Частина:
+Quit:	PrefEvent		Вихід:
+Server notice:	PrefEvent		Попередження сервера:
+Topic:	PrefEvent		Тема:
+User notice:	PrefEvent		Попередження користувача:
+Network setup	NetworkWindow		Параметри мережі
+Servers	NetworkWindow		Сервери
+Notify list	ClientWindowDock		Список попереджень
+Window list	ClientWindowDock		Список вікон
+Preferences	PrefsWindow		Налаштування
+Vision	System name		Vision

@@ -1,4 +1,55 @@
 1	Swedish	application/x-vnd.Ink-Vision	2720096392
+- Server Message Of The Day:\n	ParseENums		- Dagens servermeddelande:\n
+[@] Successful reconnect\n	ParseENums		[@] Återanslutningen lyckades\n
+[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [var] (%ident%@%address%)\n
+[x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% finns redan i %channel%.\n
+[x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% finns inte i %channel%.\n
+[x] Channel key already set in %channel%.\n	ParseENums		[x] Kanalnyckel redan inställd i %channel%.\n
+[x] Channels:	ParseENums		[x] Kanaler:
+[x] Nickname/Channel %nick% is already in use or unavailable.\n	ParseENums		[x] Smeknamn/kanal %nick% används redan eller är inte tillgänglig.\n
+[x] No topic set in %channel%\n	ParseENums		[x] Inget ämne inställt i %channel%\n
+[x] Server: %server% (%info%)\n	ParseENums		[x] Server: %server% (%info%)\n
+[x] Unknown channel mode: '%mode%'\n	ParseENums		[x] Okänt kanalläge: '%mode%'\n
+[x] Unknown MODE flag.\n	ParseENums		[x] Okänd MODE-flagga.\n
+[x] You're not in %channel%.\n	ParseENums		[x] Du är inte i %channel%.\n
+[x] your current mode is: %mode%\n	ParseENums		[x] ditt nuvarande läge är: %mode%\n
+* All your pre-selected nicknames are in use.\n	ParseENums		* Alla dina förvalda smeknamn används.\n
+* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n	ParseENums		* Smeknamn \"%nick%\" används eller inte tillgängligt... försöker \"%nextnick%\"\n\n
+* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* Skriv /NICK <NEWNICK> för att prova en annan.\n
+*** %nick% has been invited to %channel%.\n	ParseENums		*** %nick% har blivit inbjuden till %channel%.\n
+*** Channel lock for %channel%: %lock%\n	ParseENums		*** Kanallås för %channel%: %lock%\n
+*** Channel mode for %channel%: %mode%\n	ParseENums		*** Kanalläge för %channel%: %mode%\n
+*** Topic set by %user% @ %time%\n	ParseENums		*** Ämne satt av %user% @ %time%\n
+*** Topic: %topic%\n	ParseENums		*** Ämne: %topic%\n
+*** Users in %channel%: %names%\n	ParseENums		*** Användare i %channel%: %names%\n
+%channel% (bad channel key)\n	ParseENums		%channel% (dålig kanalnyckel)\n
+%channel% (invite only)\n	ParseENums		%channel% (endast inbjudan)\n
+%channel% (you're banned)\n	ParseENums		%channel% (du är avstängd)\n
+%channel% created on %time%\n	ParseENums		%channel% skapades den %time%\n
+%people% are offline	ParseENums		%people% är offline
+%people% are online	ParseENums		%people% är online
+%people% is offline	ParseENums		%people% är offline
+%people% is online	ParseENums		%people% är online
+Idle:	ParseENums		På tomgång:
+Sign-on:	ParseENums		Skriva på:
+[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (Det ser ut som att du befinner dig bakom en internetgateway. Vision kommer att fråga IRC-servern efter en lyckad anslutning efter din gateways internetadress. Detta kommer att användas för DCC-kommunikation.)\n
+[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Försöker ansluta till %id%:%port%…\n
+[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Försöker ansluta (försök %ld av %ld)\n
+[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Anslutningen är öppen, väntar på svar från servern\n
+[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Kunde inte skapa anslutning till adress och port. Se till att din internetanslutning fungerar.\n
+[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Ursäkta men vi kunde inte upprätta en anslutning till servern.\n
+[@] Disconnected from %server%\n	ServerAgent		[@] Frånkopplad från %server%\n
+[@] Error getting local IP\n	ServerAgent		[@] Det gick inte att hämta lokal IP\n
+[@] Established\n	ServerAgent		[@] Etablerad\n
+[@] Handshaking\n	ServerAgent		[@] Handskakning\n
+[@] Local IP: %ip%\n	ServerAgent		[@] Lokal IP: %ip%\n
+[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Försöksgräns nådd; ger upp. Skriv /reconnect om du vill ge det en gång till.\n
+[@] Sending password\n	ServerAgent		[@] Skickar lösenord\n
+{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Väntar en sekund innan nästa försök}other{[@] Väntar # sekunder innan nästa försök}}
+CONNECTION PROBLEM	ServerAgent		ANSLUTNINGSPROBLEM
+Disabled	ServerAgent		Inaktiverad
+Disconnected	ServerAgent		Utan förbindelse
+Lag:	ServerAgent		Lag:
 [@] Attempting to rejoin…\n	ChannelAgent		[@] Försöker återansluta... \n
 *** Attempting to rejoin %channel%…\n	ChannelAgent		*** Försöker återansluta %channel%…\n
 *** Now talking in %channel%\n	ChannelAgent		*** Snackar nu i %channel%\n
@@ -8,22 +59,74 @@ Lag:	ChannelAgent		Eftersläpning:
 Modes:	ChannelAgent		Moder:
 Ops:	ChannelAgent		Ops:
 Users:	ChannelAgent		Användare:
-Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Avslutad mottagning av %file% från %nick% (%ack% %size% byte), %ldcps\n\n
-Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Avslutad sändning av %file% till %nick% (%ack% %size% byte), %ldcps\n\n
-Copy	ClientAgent		Kopiera
-Cut	ClientAgent		Klipp ut
-Paste	ClientAgent		Klistra in
-Select all	ClientAgent		Markera allt
-Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Avbröt mottagning av %file% från %nick% (%ack% %size% byte), %ldcps\n\n
-Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Avbröt sändning av %file% till %nick% (%ack% %size% byte), %ldcps\n\n
-As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Som om det inte räcker kommer du att lägga till %ld fler rader med skräppost på internet. Hur skulle du vilja göra det här?
-Cancel	ClientAgentInputFilter		Avbryt
-Single line	ClientAgentInputFilter		Enkel rad
-Spam	ClientAgentInputFilter		Spam
-Spam!	ClientAgentInputFilter		Spam!
+[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% svar]: %reply%\n
+{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING-svar]: # sekund\n}other{[%nick% PING-svar]: # sekunder\n}}
+{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{med en fallback till en annan}other{med en fallback till # andra.}}
+<N/A>	NetworkPrefsView	as in 'not available	<N/A>
+Add network	NetworkPrefsView		Lägg till nätverk
+Add new…	NetworkPrefsView		Lägg till ny…
+Add nickname	NetworkPrefsView		Lägg till smeknamn
+Auto-connect to this network	NetworkPrefsView		Anslut automatiskt till det här nätverket
+Automatically execute:	NetworkPrefsView		Kör automatiskt:
+Change servers…	NetworkPrefsView		Byt servrar...
+Connects to server:	NetworkPrefsView		Ansluter till servern:
+Defaults	NetworkPrefsView		Defaults
+Duplicate current…	NetworkPrefsView		Duplicera aktuell...
+Duplicate network	NetworkPrefsView		Duplicera nätverket
+Enable lag checking	NetworkPrefsView		Aktivera fördröjningskontroll
+Ident:	NetworkPrefsView		ID:
+Network details	NetworkPrefsView		Nätverksinformation
+Network name:	NetworkPrefsView		Nätverksnamn:
+Networks	NetworkPrefsView		Networks
+Nickname:	NetworkPrefsView		Smeknamn:
+Personal details	NetworkPrefsView		Personliga detaljer
+Preferred nicks:	NetworkPrefsView		Föredragna nicks:
+Real name:	NetworkPrefsView		Riktiga namn:
+Remove current	NetworkPrefsView		Ta bort nuvarande
+Use defaults	NetworkPrefsView		Använd standardvärden
+*** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Värdmask tillagd till SILENCE-listan: %hostmask%.\n
+*** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Värdmask borttagen från SILENCE-listan: %hostmask%.\n
+*** User mode changed: %mode%\n	ParseEvents		*** Användarläge ändrat: %mode%\n
+*** You have been invited to %channel% by %nick%.\n	ParseEvents		*** Du har blivit inbjuden till %channel% av %nick%.\n
+*** Trying new nick %nick%.\n	ParseCmd		*** Försöker nytt nick %nick%.\n
+/pexec: command failed	ParseCmd		/pexec: kommandot misslyckades
+Bool has been set	ParseCmd		Bool har ställts in
+Error setting bool	ParseCmd		Fel vid inställning av bool
+Error: Invalid parameters	ParseCmd		Fel: Ogiltiga parametrar
+Resolved %lookup% to %address%	ParseCmd		Löste %lookup% till %address%
+Resolved %lookup% to %name%	ParseCmd		Löste %lookup% till %name%
+Send	ParseCmd		Skicka
+Sending a file to %nick%	ParseCmd		Skickar en fil till %nick%
+Unable to resolve %lookup%	ParseCmd		Det gick inte att lösa %lookup%
+Uptime: %time%\n	ParseCmd		Drifttid: %time%\n
+Vision has been running for %time%	ParseCmd		Vision har körts i %time%
+Vision Uptime: %time%\n	ParseCmd		Vision Upptid: %time%\n
+\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"En människa ska kunna byta blöja, planera en invasion, slakta ett svin, koppla ihop ett skepp, designa en byggnad, skriva en sonett, balansera konton, bygga en mur, sätta ett ben, trösta döende, ta order , ge order, samarbeta, agera ensam, lösa ekvationer, analysera ett nytt problem, gödsla, programmera en dator, laga en god måltid, slåss effektivt, dö galant. Specialisering är för insekter.\" -- Robert A. Heinlein
+A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		En inbyggd Haiku IRC-klient som är funktionsfylld, snabb, lätt och stabil.
+Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Delvis bidrag från:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger \nlooncraz
+Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Supportteam:\nAssistent till Wade Majors: Patches\nMusikövervakare: Baron Arnold\nAssistent till Baron Arnold: Ficus Kirkpatrick\nStuntkoordinator: Gilligan\nRådgivare: regurg och helix\n\n\nInga djur skadades under produktionen av denna IRC klient.\nLjudspår tillgängligt på Catastrophe Records.
 \n\nSession start: %a %b %d %H:%M %Y\n	ClientAgentLogger		\n\nSessionsstart: %a %b %d %H:%M %Y\n
 Session close: %a %b %d %H:%M %Y\n	ClientAgentLogger		Sessionsavslut: %a %b %d %H:%M %Y\n
 Session start: %a %b %d %H:%M %Y\n	ClientAgentLogger		Sessionsstart: %a %b %d %H:%M %Y\n
+%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% vill börja en DCC-chatt med dig.
+Accept	DCCHandler		Acceptera
+Cancel	DCCHandler		Avbryt
+DCC request	DCCHandler		DCC-förfrågan
+Refuse	DCCHandler		Vägra
+Replace	DCCHandler		Ersätt
+Resume	DCCHandler		Återuppta
+The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		Filen \"%file%\" finns redan i den angivna mappen. Vill du fortsätta överföringen?
+%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s sa: %s
+Accepting connection on address %s, port %ld\n	MessageAgent		Accepterar anslutning på adress %s, port %ld\n
+Connected!\n	MessageAgent		Ansluten!\n
+DCC chat terminated.\n	MessageAgent		DCC-chatt avslutad.\n
+DCC send	MessageAgent		DCC skicka
+Error binding socket.\n	MessageAgent		Fel vid bindning av uttaget.\n
+Error connecting socket.\n	MessageAgent		Fel vid anslutning av uttag.\n
+Error creating socket.\n	MessageAgent		Fel vid skapande av uttag.\n
+Lag:	MessageAgent		Lag:
+Trying to connect to address %adress%, port %port%\n	MessageAgent		Försöker ansluta till adress %adress%, port %port%\n
+Whois	MessageAgent		Whois
 About Vision	ClientWindow		Om Vision
 Close this sub-window	ClientWindow		Stäng detta underfönster
 Collapse network	ClientWindow		Kollaps nätverk
@@ -50,10 +153,6 @@ Smart down	ClientWindow		Smart ner
 Smart up	ClientWindow		Smart upp
 Up	ClientWindow		Upp
 Window	ClientWindow		Fönster
-Notify list	ClientWindowDock		Aviseringslista
-Window list	ClientWindowDock		Fönsterlista
-Color:	ColorSelector		Färg:
-Colors	ColorSelector		Färger
 Acquiring DCC lock…	DCCConnect		Erhåller DCC-lås…
 bps:	DCCConnect		bps:
 Connecting to sender.	DCCConnect		Ansluter till avsändare.
@@ -65,15 +164,155 @@ Sending \"%file%\" to %nick%.	DCCConnect		Skickar \"%file%\" till %nick%.
 Unable to establish connection.	DCCConnect		Det gick inte att upprätta anslutning.
 Waiting for acceptance	DCCConnect		Väntar på godkännande
 Waiting for connection %ld.	DCCConnect		Väntar på anslutning %ld.
-DCC transfers	DCCFileWindow		DCC-överföringar
-%nick% wants to begin a DCC chat with you.	DCCHandler		%nick% vill börja en DCC-chatt med dig.
-Accept	DCCHandler		Acceptera
-Cancel	DCCHandler		Avbryt
-DCC request	DCCHandler		DCC-förfrågan
-Refuse	DCCHandler		Vägra
-Replace	DCCHandler		Ersätt
-Resume	DCCHandler		Återuppta
-The file \"%file%\" already exists in the specified folder. Do you want to continue the transfer?	DCCHandler		Filen \"%file%\" finns redan i den angivna mappen. Vill du fortsätta överföringen?
+Action	PrefColor		Handling
+Background	PrefColor		Bakgrund
+CTCP reply	PrefColor		CTCP svar
+CTCP request	PrefColor		CTCP-begäran
+Error	PrefColor		Fel
+Ignore	PrefColor		ignorera
+Input background	PrefColor		Ingångsbakgrund
+Input text	PrefColor		Mata in text
+Join	PrefColor		Ansluta sig
+Kick	PrefColor		Kicka
+mIRC aqua	PrefColor		mIRC vatten
+mIRC black	PrefColor		mIRC svart
+mIRC brown	PrefColor		mIRC brun
+mIRC dark blue	PrefColor		mIRC mörkblå
+mIRC green	PrefColor		mIRC grön
+mIRC grey	PrefColor		mIRC grå
+mIRC light blue	PrefColor		mIRC ljusblå
+mIRC lime	PrefColor		mIRC limegrön
+mIRC orange	PrefColor		mIRC orange
+mIRC pink	PrefColor		mIRC rosa
+mIRC purple	PrefColor		mIRC lila
+mIRC red	PrefColor		mIRC röd
+mIRC silver	PrefColor		mIRC silver
+mIRC teal	PrefColor		mIRC teal
+mIRC white	PrefColor		mIRC vit
+mIRC yellow	PrefColor		mIRC gul
+Names (helper)	PrefColor		Namn (hjälpare)
+Names (normal)	PrefColor		Namn (normalt)
+Names (OP)	PrefColor		Namn (OP)
+Names (voice)	PrefColor		Namn (röst)
+Names background	PrefColor		Namn bakgrund
+Names selection	PrefColor		Val av namn
+Nickname < >	PrefColor		Smeknamn < >
+Nickname text	PrefColor		Smeknamnstext
+Notice	PrefColor		Notis
+Notify list background	PrefColor		Meddela listans bakgrund
+Notify list selection	PrefColor		Meddela listval
+Notify offline	PrefColor		Meddela offline
+Notify online	PrefColor		Meddela online
+Quit	PrefColor		Avsluta
+Revert	PrefColor		Ångra
+Selection	PrefColor		Välj
+Server text	PrefColor		Servertext
+Text	PrefColor		Text
+Timestamp background	PrefColor		Tidsstämpel bakgrund
+Timestamp text	PrefColor		Tidsstämpel text
+URL	PrefColor		URL
+User nickname < >	PrefColor		Användarens smeknamn < >
+Wallops	PrefColor		Wallops
+Whois	PrefColor		Vem är
+Window list activity	PrefColor		Fönsterlista aktivitet
+Window list background	PrefColor		Fönsterlista bakgrund
+Window list event	PrefColor		Fönsterlista händelse
+Window list nick alert	PrefColor		Fönsterlista nick alert
+Window list normal	PrefColor		Fönsterlista normal
+Window list selection	PrefColor		Val av fönsterlista
+Add	PrefAliases		Lägg till
+Alias	PrefAliases		Alias
+Name	PrefAliases		Namn
+Remove	PrefAliases		Ta bort
+Add server	ServerEntryWindow		Lägg till server
+Cancel	ServerEntryWindow		Avbryt
+Choose status	ServerEntryWindow		Välj status
+Disabled	ServerEntryWindow		Inaktiverad
+Done	ServerEntryWindow		Gjort
+Port:	ServerEntryWindow		Port:
+Primary	ServerEntryWindow		Primär
+Secondary	ServerEntryWindow		Sekundär
+Secure port	ServerEntryWindow		Säker port
+Server:	ServerEntryWindow		Server:
+State:	ServerEntryWindow		Stat:
+Use password:	ServerEntryWindow		Använd lösenord:
+Add to notify	NamesView		Lägg till avisering
+CTCP	NamesView		CTCP
+DCC chat	NamesView		DCC chatt
+DCC send	NamesView		DCC skicka
+Query	NamesView		Fråga
+User selection	NamesView		Användarval
+Whois	NamesView		Vem är
+Add…	NetPrefsServerView		Lägg till…
+Disabled	NetPrefsServerView		Inaktiverad
+Edit server	NetPrefsServerView		Redigera servern
+Edit…	NetPrefsServerView		Redigera…
+Port	NetPrefsServerView		Port
+Primary	NetPrefsServerView		Primär
+Remove	NetPrefsServerView		Avlägsna
+Secondary	NetPrefsServerView		Sekundär
+Secure	NetPrefsServerView		Säker
+Server	NetPrefsServerView		Server
+Servers for %name%	NetPrefsServerView		Servers för %name%
+Status	NetPrefsServerView		Status
+Yes	NetPrefsServerView		Ja
+Aliases	PrefGeneral		Alias
+Application	PrefGeneral		Ansökan
+Colors	PrefGeneral		Färger
+Commands	PrefGeneral		Kommandon
+DCC	PrefGeneral		DCC
+Events	PrefGeneral		Evenemang
+Fonts	PrefGeneral		Teckensnitt
+Logging	PrefGeneral		Loggning
+Append timestamp to log filenames	PrefLog		Lägg till tidsstämpel för loggfilnamn
+Delete Log Files	PrefLog		Ta bort loggfiler
+Enable logging	PrefLog		Aktivera loggning
+Error	PrefLog		Error
+Log base path:	PrefLog		Loggbasväg:
+OK	PrefLog		OK
+Show timestamps in IRC window	PrefLog		Visa tidsstämplar i IRC-fönstret
+The log path you have entered is invalid.	PrefLog		Loggvägen du har angett är ogiltig.
+Timestamp format:	PrefLog		Tidsstämpelformat:
+As if there isn't enough, you are about to add %ld more lines of spam to the internet.  How would you like to go about this?	ClientAgentInputFilter		Som om det inte räcker kommer du att lägga till %ld fler rader med skräppost på internet. Hur skulle du vilja göra det här?
+Cancel	ClientAgentInputFilter		Avbryt
+Single line	ClientAgentInputFilter		Enkel rad
+Spam	ClientAgentInputFilter		Spam
+Spam!	ClientAgentInputFilter		Spam!
+Automatically accept incoming sends	PrefDCC		Acceptera automatiskt inkommande sändningar
+Automatically check for NAT IP	PrefDCC		Kontrollera automatiskt för NAT IP
+DCC block size:	PrefDCC		DCC-blockstorlek:
+DCC port range	PrefDCC		DCC-portintervall
+Default path:	PrefDCC		Standardsökväg:
+Max:	PrefDCC		Max:
+Min:	PrefDCC		Min:
+Away:	PrefCommand		Bort:
+Back:	PrefCommand		Tillbaka:
+Ignore:	PrefCommand		Strunta i:
+Kick:	PrefCommand		Sparka:
+Quit:	PrefCommand		Sluta med:
+Unignore:	PrefCommand		Ignorera:
+Uptime:	PrefCommand		Drifttid:
+Baltic (ISO 8859-13)	PrefApp		Baltic (ISO 8859-13)
+Central European (ISO 8859-2)	PrefApp		Central European (ISO 8859-2)
+Cyrillic (ISO 8859-5)	PrefApp		Cyrillic (ISO 8859-5)
+Cyrillic (KOI8-R)	PrefApp		Cyrillic (KOI8-R)
+Cyrillic (MS-DOS 866)	PrefApp		Cyrillic (MS-DOS 866)
+Cyrillic (Windows 1251)	PrefApp		Cyrillic (Windows 1251)
+Encoding:	PrefApp		Kodning:
+Greek (ISO 8859-7)	PrefApp		Greek (ISO 8859-7)
+Japanese (EUC)	PrefApp		Japanese (EUC)
+Japanese (JIS)	PrefApp		Japanese (JIS)
+Japanese (Shift-JIS)	PrefApp		Japanese (Shift-JIS)
+Korean (EUC)	PrefApp		Korean (EUC)
+Open new query on private message	PrefApp		Öppna ny fråga i privat meddelande
+Require double CMD+Q/W to close	PrefApp		Kräv dubbel CMD+Q/W för att stänga
+Show OS information in version reply	PrefApp		Visa OS-information i versionssvar
+Strip mIRC colors	PrefApp		Strip mIRC-färger
+Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
+Warn when multiline pasting	PrefApp		Varna vid flerradsklistring
+Western (ISO 8859-1)	PrefApp		Western (ISO 8859-1)
+Western (Mac Roman)	PrefApp		Western (Mac Roman)
+Western (Windows)	PrefApp		Western (Windows)
 Channel	ListAgent		Kanal
 Channels	ListAgent		Kanaler
 Count:	ListAgent		Räkna:
@@ -89,296 +328,57 @@ Loading	ListAgent		Laddar
 Status:	ListAgent		Status:
 Topic	ListAgent		Ämne
 Users	ListAgent		Användare
-Accepting connection on address %s, port %ld\n	MessageAgent		Accepterar anslutning på adress %s, port %ld\n
-Connected!\n	MessageAgent		Ansluten!\n
-DCC chat terminated.\n	MessageAgent		DCC-chatt avslutad.\n
-DCC send	MessageAgent		DCC skicka
-Error binding socket.\n	MessageAgent		Fel vid bindning av uttaget.\n
-Error connecting socket.\n	MessageAgent		Fel vid anslutning av uttag.\n
-Error creating socket.\n	MessageAgent		Fel vid skapande av uttag.\n
-Lag:	MessageAgent		Lag:
-Trying to connect to address %adress%, port %port%\n	MessageAgent		Försöker ansluta till adress %adress%, port %port%\n
-Whois	MessageAgent		Whois
-%s said: %s	MessageAgent	as in 'nickname' said: 'bla bla bla'	%s sa: %s
-Add to notify	NamesView		Lägg till avisering
-CTCP	NamesView		CTCP
-DCC chat	NamesView		DCC chatt
-DCC send	NamesView		DCC skicka
-Query	NamesView		Fråga
-User selection	NamesView		Användarval
-Whois	NamesView		Vem är
-Add…	NetPrefsServerView		Lägg till…
-Edit…	NetPrefsServerView		Redigera…
-Port	NetPrefsServerView		Port
-Remove	NetPrefsServerView		Avlägsna
-Server	NetPrefsServerView		Server
-Status	NetPrefsServerView		Status
-Yes	NetPrefsServerView		Ja
-Secure	NetPrefsServerView		Säker
-Disabled	NetPrefsServerView		Inaktiverad
-Edit server	NetPrefsServerView		Redigera servern
-Primary	NetPrefsServerView		Primär
-Servers for %name%	NetPrefsServerView		Servers för %name%
-Secondary	NetPrefsServerView		Sekundär
-{0, plural,one{with a fallback to one other.}other{with a fallback to # others.}}	NetworkPrefsView		{0, plural,one{med en fallback till en annan}other{med en fallback till # andra.}}
-Add network	NetworkPrefsView		Lägg till nätverk
-Add new…	NetworkPrefsView		Lägg till ny…
-Add nickname	NetworkPrefsView		Lägg till smeknamn
-Auto-connect to this network	NetworkPrefsView		Anslut automatiskt till det här nätverket
-Automatically execute:	NetworkPrefsView		Kör automatiskt:
-Change servers…	NetworkPrefsView		Byt servrar...
-Connects to server:	NetworkPrefsView		Ansluter till servern:
-Defaults	NetworkPrefsView		Defaults
-Duplicate current…	NetworkPrefsView		Duplicera aktuell...
-Duplicate network	NetworkPrefsView		Duplicera nätverket
-Enable lag checking	NetworkPrefsView		Aktivera fördröjningskontroll
-Ident:	NetworkPrefsView		ID:
-Network details	NetworkPrefsView		Nätverksinformation
-Network name:	NetworkPrefsView		Nätverksnamn:
-Networks	NetworkPrefsView		Networks
-Nickname:	NetworkPrefsView		Smeknamn:
-Personal details	NetworkPrefsView		Personliga detaljer
-Preferred nicks:	NetworkPrefsView		Föredragna nicks:
-Real name:	NetworkPrefsView		Riktiga namn:
-Remove current	NetworkPrefsView		Ta bort nuvarande
-Use defaults	NetworkPrefsView		Använd standardvärden
-<N/A>	NetworkPrefsView	as in 'not available	<N/A>
-Network setup	NetworkWindow		Nätverksinställningar
-Servers	NetworkWindow		Servers
-DCC chat	NotifyList		DCC chat
-Query	NotifyList		Query
-Remove	NotifyList		Remove
-Whois	NotifyList		Whois
-*** Trying new nick %nick%.\n	ParseCmd		*** Trying new nick %nick%.\n
-/pexec: command failed	ParseCmd		/pexec: command failed
-Bool has been set	ParseCmd		Bool has been set
-Error setting bool	ParseCmd		Error setting bool
-Error: Invalid parameters	ParseCmd		Error: Invalid parameters
-Resolved %lookup% to %address%	ParseCmd		Resolved %lookup% to %address%
-Resolved %lookup% to %name%	ParseCmd		Resolved %lookup% to %name%
-Send	ParseCmd		Send
-Sending a file to %nick%	ParseCmd		Sending a file to %nick%
-Unable to resolve %lookup%	ParseCmd		Unable to resolve %lookup%
-Uptime: %time%\n	ParseCmd		Uptime: %time%\n
-Vision has been running for %time%	ParseCmd		Vision has been running for %time%
-Vision Uptime: %time%\n	ParseCmd		Vision Uptime: %time%\n
-[%nick% %command% response]: %reply%\n	ParseCTCP		[%nick% %command% response]: %reply%\n
-{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}	ParseCTCP		{0, plural,one{[%nick% PING response]: # second\n}other{[%nick% PING response]: # seconds\n}}
-- Server Message Of The Day:\n	ParseENums		- Server Message Of The Day:\n
-[@] Successful reconnect\n	ParseENums		[@] Successful reconnect\n
-[x] %nick% [was] (%ident%@%address%)\n	ParseENums		[x] %nick% [was] (%ident%@%address%)\n
-[x] %nick% is already in %channel%.\n	ParseENums		[x] %nick% is already in %channel%.\n
-[x] %nick% is not in %channel%.\n	ParseENums		[x] %nick% is not in %channel%.\n
-[x] Channel key already set in %channel%.\n	ParseENums		[x] Channel key already set in %channel%.\n
-[x] Channels:	ParseENums		[x] Channels:
-[x] Nickname/Channel %nick% is already in use or unavailable.\n	ParseENums		[x] Nickname/Channel %nick% is already in use or unavailable.\n
-[x] No topic set in %channel%\n	ParseENums		[x] No topic set in %channel%\n
-[x] Server: %server% (%info%)\n	ParseENums		[x] Server: %server% (%info%)\n
-[x] Unknown channel mode: '%mode%'\n	ParseENums		[x] Unknown channel mode: '%mode%'\n
-[x] Unknown MODE flag.\n	ParseENums		[x] Unknown MODE flag.\n
-[x] You're not in %channel%.\n	ParseENums		[x] You're not in %channel%.\n
-[x] your current mode is: %mode%\n	ParseENums		[x] your current mode is: %mode%\n
-* All your pre-selected nicknames are in use.\n	ParseENums		* All your pre-selected nicknames are in use.\n
-* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n	ParseENums		* Nickname \"%nick%\" in use or unavailable... trying \"%nextnick%\"\n\n
-* Please type /NICK <NEWNICK> to try another.\n	ParseENums		* Please type /NICK <NEWNICK> to try another.\n
-*** %nick% has been invited to %channel%.\n	ParseENums		*** %nick% has been invited to %channel%.\n
-*** Channel lock for %channel%: %lock%\n	ParseENums		*** Channel lock for %channel%: %lock%\n
-*** Channel mode for %channel%: %mode%\n	ParseENums		*** Channel mode for %channel%: %mode%\n
-*** Topic set by %user% @ %time%\n	ParseENums		*** Topic set by %user% @ %time%\n
-*** Topic: %topic%\n	ParseENums		*** Topic: %topic%\n
-*** Users in %channel%: %names%\n	ParseENums		*** Users in %channel%: %names%\n
-%channel% (bad channel key)\n	ParseENums		%channel% (bad channel key)\n
-%channel% (invite only)\n	ParseENums		%channel% (invite only)\n
-%channel% (you're banned)\n	ParseENums		%channel% (you're banned)\n
-%channel% created on %time%\n	ParseENums		%channel% created on %time%\n
-%people% are offline	ParseENums		%people% are offline
-%people% are online	ParseENums		%people% are online
-%people% is offline	ParseENums		%people% is offline
-%people% is online	ParseENums		%people% is online
-Idle:	ParseENums		Idle:
-Sign-on:	ParseENums		Sign-on:
-*** Hostmask added to SILENCE list: %hostmask%.\n	ParseEvents		*** Hostmask added to SILENCE list: %hostmask%.\n
-*** Hostmask removed from SILENCE list: %hostmask%.\n	ParseEvents		*** Hostmask removed from SILENCE list: %hostmask%.\n
-*** User mode changed: %mode%\n	ParseEvents		*** User mode changed: %mode%\n
-*** You have been invited to %channel% by %nick%.\n	ParseEvents		*** You have been invited to %channel% by %nick%.\n
-Add	PrefAliases		Add
-Alias	PrefAliases		Alias
-Name	PrefAliases		Name
-Remove	PrefAliases		Remove
-Baltic (ISO 8859-13)	PrefApp		Baltic (ISO 8859-13)
-Central European (ISO 8859-2)	PrefApp		Central European (ISO 8859-2)
-Cyrillic (ISO 8859-5)	PrefApp		Cyrillic (ISO 8859-5)
-Cyrillic (KOI8-R)	PrefApp		Cyrillic (KOI8-R)
-Cyrillic (MS-DOS 866)	PrefApp		Cyrillic (MS-DOS 866)
-Cyrillic (Windows 1251)	PrefApp		Cyrillic (Windows 1251)
-Encoding:	PrefApp		Encoding:
-Greek (ISO 8859-7)	PrefApp		Greek (ISO 8859-7)
-Japanese (EUC)	PrefApp		Japanese (EUC)
-Japanese (JIS)	PrefApp		Japanese (JIS)
-Japanese (Shift-JIS)	PrefApp		Japanese (Shift-JIS)
-Korean (EUC)	PrefApp		Korean (EUC)
-Open new query on private message	PrefApp		Open new query on private message
-Require double CMD+Q/W to close	PrefApp		Require double CMD+Q/W to close
-Show OS information in version reply	PrefApp		Show OS information in version reply
-Strip mIRC colors	PrefApp		Strip mIRC colors
-Unicode (UTF-8)	PrefApp		Unicode (UTF-8)
-Warn when multiline pasting	PrefApp		Warn when multiline pasting
-Western (ISO 8859-1)	PrefApp		Western (ISO 8859-1)
-Western (Mac Roman)	PrefApp		Western (Mac Roman)
-Western (Windows)	PrefApp		Western (Windows)
-Action	PrefColor		Action
-Background	PrefColor		Background
-CTCP reply	PrefColor		CTCP reply
-CTCP request	PrefColor		CTCP request
-Error	PrefColor		Error
-Ignore	PrefColor		Ignore
-Input background	PrefColor		Input background
-Input text	PrefColor		Input text
-Join	PrefColor		Join
-Kick	PrefColor		Kick
-mIRC aqua	PrefColor		mIRC aqua
-mIRC black	PrefColor		mIRC black
-mIRC brown	PrefColor		mIRC brown
-mIRC dark blue	PrefColor		mIRC dark blue
-mIRC green	PrefColor		mIRC green
-mIRC grey	PrefColor		mIRC grey
-mIRC light blue	PrefColor		mIRC light blue
-mIRC lime	PrefColor		mIRC lime
-mIRC orange	PrefColor		mIRC orange
-mIRC pink	PrefColor		mIRC pink
-mIRC purple	PrefColor		mIRC purple
-mIRC red	PrefColor		mIRC red
-mIRC silver	PrefColor		mIRC silver
-mIRC teal	PrefColor		mIRC teal
-mIRC white	PrefColor		mIRC white
-mIRC yellow	PrefColor		mIRC yellow
-Names (helper)	PrefColor		Names (helper)
-Names (normal)	PrefColor		Names (normal)
-Names (OP)	PrefColor		Names (OP)
-Names (voice)	PrefColor		Names (voice)
-Names background	PrefColor		Names background
-Names selection	PrefColor		Names selection
-Nickname < >	PrefColor		Nickname < >
-Nickname text	PrefColor		Nickname text
-Notice	PrefColor		Notice
-Notify list background	PrefColor		Notify list background
-Notify list selection	PrefColor		Notify list selection
-Notify offline	PrefColor		Notify offline
-Notify online	PrefColor		Notify online
-Quit	PrefColor		Quit
-Revert	PrefColor		Revert
-Selection	PrefColor		Selection
-Server text	PrefColor		Server text
-Text	PrefColor		Text
-Timestamp background	PrefColor		Timestamp background
-Timestamp text	PrefColor		Timestamp text
-URL	PrefColor		URL
-User nickname < >	PrefColor		User nickname < >
-Wallops	PrefColor		Wallops
-Whois	PrefColor		Whois
-Window list activity	PrefColor		Window list activity
-Window list background	PrefColor		Window list background
-Window list event	PrefColor		Window list event
-Window list nick alert	PrefColor		Window list nick alert
-Window list normal	PrefColor		Window list normal
-Window list selection	PrefColor		Window list selection
-Away:	PrefCommand		Away:
-Back:	PrefCommand		Back:
-Ignore:	PrefCommand		Ignore:
-Kick:	PrefCommand		Kick:
-Quit:	PrefCommand		Quit:
-Unignore:	PrefCommand		Unignore:
-Uptime:	PrefCommand		Uptime:
-Automatically accept incoming sends	PrefDCC		Automatically accept incoming sends
-Automatically check for NAT IP	PrefDCC		Automatically check for NAT IP
-DCC block size:	PrefDCC		DCC block size:
-DCC port range	PrefDCC		DCC port range
-Default path:	PrefDCC		Default path:
-Max:	PrefDCC		Max:
-Min:	PrefDCC		Min:
-Join:	PrefEvent		Join:
-Kick:	PrefEvent		Kick:
-Nick:	PrefEvent		Nick:
-Notify off:	PrefEvent		Notify off:
-Notify on:	PrefEvent		Notify on:
-Part:	PrefEvent		Part:
-Quit:	PrefEvent		Quit:
-Server notice:	PrefEvent		Server notice:
-Topic:	PrefEvent		Topic:
-User notice:	PrefEvent		User notice:
-Channel list	PrefFont		Channel list
+Channel list	PrefFont		Kanallista
 Element:	PrefFont		Element:
 Font:	PrefFont		Font:
-Input text	PrefFont		Input text
-Names list	PrefFont		Names list
-Server messages	PrefFont		Server messages
+Input text	PrefFont		Mata in text
+Names list	PrefFont		Namnlista
+Server messages	PrefFont		Servermeddelanden
 Text	PrefFont		Text
-Timestamp	PrefFont		Timestamp
+Timestamp	PrefFont		Tidsstämpel
 URLs	PrefFont		URLs
-Window list	PrefFont		Window list
-Aliases	PrefGeneral		Aliases
-Application	PrefGeneral		Application
-Colors	PrefGeneral		Colors
-Commands	PrefGeneral		Commands
-DCC	PrefGeneral		DCC
-Events	PrefGeneral		Events
-Fonts	PrefGeneral		Fonts
-Logging	PrefGeneral		Logging
-Append timestamp to log filenames	PrefLog		Append timestamp to log filenames
-Delete Log Files	PrefLog		Delete Log Files
-Enable logging	PrefLog		Enable logging
-Error	PrefLog		Error
-Log base path:	PrefLog		Log base path:
-OK	PrefLog		OK
-Show timestamps in IRC window	PrefLog		Show timestamps in IRC window
-The log path you have entered is invalid.	PrefLog		The log path you have entered is invalid.
-Timestamp format:	PrefLog		Timestamp format:
-Preferences	PrefsWindow		Preferences
-Copy	RunView		Copy
-Lookup (acronym finder)	RunView		Lookup (acronym finder)
-Lookup (dictionary)	RunView		Lookup (dictionary)
-Lookup (Google)	RunView		Lookup (Google)
-Select all	RunView		Select all
-Clipping	RunView	as suffix for dropped text clippings	Clipping
-[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n	ServerAgent		[@] (It looks like you are behind an internet gateway. Vision will query the IRC server upon successful connection for your gateway's internet address. This will be used for DCC communication.)\n
-[@] Attempting a connection to %id%:%port%…\n	ServerAgent		[@] Attempting a connection to %id%:%port%…\n
-[@] Attempting to connect (attempt %ld of %ld)\n	ServerAgent		[@] Attempting to connect (attempt %ld of %ld)\n
-[@] Connection open, waiting for reply from server\n	ServerAgent		[@] Connection open, waiting for reply from server\n
-[@] Could not create connection to address and port. Make sure your internet connection is operational.\n	ServerAgent		[@] Could not create connection to address and port. Make sure your internet connection is operational.\n
-[@] Could not establish a connection to the server. Sorry.\n	ServerAgent		[@] Could not establish a connection to the server. Sorry.\n
-[@] Disconnected from %server%\n	ServerAgent		[@] Disconnected from %server%\n
-[@] Error getting local IP\n	ServerAgent		[@] Error getting local IP\n
-[@] Established\n	ServerAgent		[@] Established\n
-[@] Handshaking\n	ServerAgent		[@] Handshaking\n
-[@] Local IP: %ip%\n	ServerAgent		[@] Local IP: %ip%\n
-[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n	ServerAgent		[@] Retry limit reached; giving up. Type /reconnect if you want to give it another go.\n
-[@] Sending password\n	ServerAgent		[@] Sending password\n
-{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}	ServerAgent		{0, plural,one{[@] Waiting one second before next attempt}other{[@] Waiting # seconds before next attempt}}
-CONNECTION PROBLEM	ServerAgent		CONNECTION PROBLEM
-Disabled	ServerAgent		Disabled
-Disconnected	ServerAgent		Disconnected
-Lag:	ServerAgent		Lag:
-Add server	ServerEntryWindow		Add server
-Cancel	ServerEntryWindow		Cancel
-Choose status	ServerEntryWindow		Choose status
-Disabled	ServerEntryWindow		Disabled
-Done	ServerEntryWindow		Done
-Port:	ServerEntryWindow		Port:
-Primary	ServerEntryWindow		Primary
-Secondary	ServerEntryWindow		Secondary
-Server:	ServerEntryWindow		Server:
-State:	ServerEntryWindow		State:
-Use password:	ServerEntryWindow		Use password:
-Secure port	ServerEntryWindow		Secure port
-Choose network	SetupWindow		Choose network
-Connect	SetupWindow		Connect
-Network setup…	SetupWindow		Network setup…
-Network:	SetupWindow		Network:
-Preferences…	SetupWindow		Preferences…
-Setup window	SetupWindow		Setup window
+Window list	PrefFont		Fönsterlista
+Choose network	SetupWindow		Välj nätverk
+Connect	SetupWindow		Ansluta
+Network setup…	SetupWindow		Nätverksinställningar…
+Network:	SetupWindow		Nätverk:
+Preferences…	SetupWindow		Inställningar...
+Setup window	SetupWindow		Installationsfönster
+Clipping	RunView	as suffix for dropped text clippings	Klippning
+Copy	RunView		Kopiera
+Lookup (acronym finder)	RunView		Slå upp (akronymsökare)
+Lookup (dictionary)	RunView		Slå upp (ordbok)
+Lookup (Google)	RunView		Slå upp (Google)
+Select all	RunView		Välj alla
+Close	WindowList		Stäng
+Color:	ColorSelector		Färg:
+Colors	ColorSelector		Färger
+Completed receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Avslutad mottagning av %file% från %nick% (%ack% %size% byte), %ldcps\n\n
+Completed send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Avslutad sändning av %file% till %nick% (%ack% %size% byte), %ldcps\n\n
+Copy	ClientAgent		Kopiera
+Cut	ClientAgent		Klipp ut
+Paste	ClientAgent		Klistra in
+Select all	ClientAgent		Markera allt
+Terminated receive of %file% from %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Avbröt mottagning av %file% från %nick% (%ack% %size% byte), %ldcps\n\n
+Terminated send of %file% to %nick% (%ack% %size% bytes), %ldcps\n\n	ClientAgent		Avbröt sändning av %file% till %nick% (%ack% %size% byte), %ldcps\n\n
+DCC chat	NotifyList		DCC chatt
+Query	NotifyList		Fråga
+Remove	NotifyList		Ta bort
+Whois	NotifyList		Vem är
+DCC transfers	DCCFileWindow		DCC-överföringar
+Join:	PrefEvent		Ansluta sig:
+Kick:	PrefEvent		Sparka:
+Nick:	PrefEvent		Nick:
+Notify off:	PrefEvent		Meddela av:
+Notify on:	PrefEvent		Meddela på:
+Part:	PrefEvent		Del:
+Quit:	PrefEvent		Sluta med:
+Server notice:	PrefEvent		Servermeddelande:
+Topic:	PrefEvent		Ämne:
+User notice:	PrefEvent		Användarmeddelande:
+Network setup	NetworkWindow		Nätverksinställningar
+Servers	NetworkWindow		Servers
+Notify list	ClientWindowDock		Aviseringslista
+Window list	ClientWindowDock		Fönsterlista
+Preferences	PrefsWindow		Inställningar
 Vision	System name		Vision
-\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein	Vision		\"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.\" -- Robert A. Heinlein
-A native Haiku IRC client that is feature filled, fast, lightweight, and stable.	Vision		A native Haiku IRC client that is feature filled, fast, lightweight, and stable.
-Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz	Vision		Brought to you in part by contributions from:\nSeth Flaxman (Flax)\nJoshua Jensen\nGord McLeod (G_McLeod)\nJohn Robinson ([geo])\nBjorn Oksholen (GuinnessM)\nJean-Baptiste M. Quéru (jbq)\nHumdinger\nlooncraz
-Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.	Vision		Support crew:\nAssistant to Wade Majors: Patches\nMusic Supervisor: Baron Arnold\nAssistant to Baron Arnold: Ficus Kirkpatrick\nStunt Coordinator: Gilligan\nCounselors: regurg and helix\n\n\nNo animals were injured during the production of this IRC client.\nSoundtrack available on Catastrophe Records.
-Close	WindowList		Close
