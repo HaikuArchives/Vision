@@ -971,6 +971,10 @@ void VisionApp::MessageReceived(BMessage* msg)
 			for (int32 i = 0; (nick = netDefaults.FindString("nick", i)) != NULL; i++)
 				netData.AddString("nick", nick);
 		}
+
+		// If the setup window is open (user is hitting "Connect" from that window presumably), close it.
+		if (fSetupWin) BMessenger(fSetupWin).SendMessage(B_QUIT_REQUESTED);
+
 		if (fClientWin == NULL) {
 			fClientWin = new ClientWindow(clientWinRect);
 			fWinThread = fClientWin->Thread();
