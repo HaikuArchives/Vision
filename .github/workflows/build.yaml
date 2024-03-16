@@ -26,4 +26,4 @@ jobs:
           architecture: ${{ matrix.config.architecture }}
           run: |
             ssh user@localhost "pkgman update -y haiku_devel cmd:gcc makefile_engine" &&
-            make && make bindcatalogs
+            cd src && make && make bindcatalogs
