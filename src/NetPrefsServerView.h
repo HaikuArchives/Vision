@@ -24,6 +24,7 @@ public:
 	virtual void MessageReceived(BMessage*);
 	virtual void AttachedToWindow();
 	void SetNetworkData(BMessage*);
+	void ClearNetworkData();
 
 private:
 	void AddServer(const ServerData*);

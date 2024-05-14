@@ -38,6 +38,7 @@ class BTextControl;
 class BStringView;
 class PromptWindow;
 class NetPrefServerWindow;
+class NetPrefsServerView;
 class BColumnListView;
 struct ServerData;
 
@@ -81,7 +82,9 @@ private:
 	PromptWindow* fDupePrompt;
 	BMenuItem* fRemoveItem;
 	BMenuItem* fDupeItem;
-	NetPrefServerWindow* fServerPrefs;
+	BButton* fSetPassword;
+//	NetPrefServerWindow* fServerPrefs;
+	NetPrefsServerView* fServerPrefs;
 };
 
 #endif

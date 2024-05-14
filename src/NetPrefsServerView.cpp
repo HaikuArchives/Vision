@@ -59,7 +59,7 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 		 new BMessage(M_SERVER_EDIT_ITEM));
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
-		.SetInsets(B_USE_WINDOW_SPACING)
+		.SetInsets(0)
 		.Add(fServerList)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
 			.AddGlue()
@@ -83,6 +83,7 @@ void NetPrefsServerView::AttachedToWindow()
 	fEditButton->SetTarget(this);
 	fRemoveButton->SetTarget(this);
 	fServerList->SetTarget(this);
+	fAddButton->SetEnabled(false);
 	fEditButton->SetEnabled(false);
 	fRemoveButton->SetEnabled(false);
 }
@@ -178,11 +179,9 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 	BAutolock lock(Looper());
 	if (!lock.IsLocked()) return;
 	// clear previous servers (if any)
-	while (fServerList->CountRows() > 0) {
-		BRow* row(fServerList->RowAt(0));
-		fServerList->RemoveRow(row);
-		delete row;
-	}
+
+	fAddButton->SetEnabled(true);
+	fServerList->Clear();
 
 	BString netString(B_TRANSLATE("Servers for %name%"));
 	netString.ReplaceFirst("%name%", msg->FindString("name"));
@@ -197,8 +196,35 @@ void NetPrefsServerView::SetNetworkData(BMessage* msg)
 	}
 	fActiveNetwork = msg;
 	fServerList->ResizeAllColumnsToPreferred();
-	Window()->SetTitle(netString.String());
+//	Window()->SetTitle(netString.String());
 }
+
+
+void NetPrefsServerView::ClearNetworkData()
+{
+	fServerList->Clear();
+	fAddButton->SetEnabled(false);
+	fRemoveButton->SetEnabled(false);
+	fEditButton->SetEnabled(false);
+
+/*	BString netString(B_TRANSLATE("Servers for %name%"));
+	netString.ReplaceFirst("%name%", msg->FindString("name"));
+	type_code type;
+	int32 count;
+	ssize_t size;
+	const ServerData* data;
+	msg->GetInfo("server", &type, &count);
+	for (int32 i = 0; i < count; i++) {
+		msg->FindData("server", B_ANY_TYPE, i, reinterpret_cast<const void**>(&data), &size);
+		AddServer(data);
+	}
+	fActiveNetwork = msg;
+
+	fServerList->ResizeAllColumnsToPreferred();
+	Window()->SetTitle(netString.String());
+*/
+}
+
 
 void NetPrefsServerView::MessageReceived(BMessage* msg)
 {
@@ -244,6 +270,33 @@ void NetPrefsServerView::MessageReceived(BMessage* msg)
 			}
 			BMessage* invoke(new BMessage(M_SERVER_RECV_DATA));
 			invoke->AddBool("edit", true);
+			fEntryWin = new ServerEntryWindow(this, invoke, compData, size);
+			fEntryWin->SetTitle(B_TRANSLATE("Edit server"));
+			fEntryWin->Show();
+		}
+	} break;
+
+	case 'setp': {
+		BMessenger msgr(fEntryWin);
+		if (msgr.IsValid())
+			fEntryWin->Activate();
+		else {
+		    BRow* row(fServerList->RowAt(0));
+			if (!row) break;
+			int32 count(0);
+			ssize_t size(0);
+			type_code type;
+			fActiveNetwork->GetInfo("server", &type, &count);
+			const ServerData* compData;
+			for (int32 i = 0; i < count; i++) {
+				fActiveNetwork->FindData("server", B_RAW_TYPE, i,
+										 reinterpret_cast<const void**>(&compData), &size);
+				if (!strcmp(compData->serverName, ((BStringField*)row->GetField(1))->String()))
+					break;
+			}
+			BMessage* invoke(new BMessage(M_SERVER_RECV_DATA));
+			invoke->AddBool("edit", true);
+			invoke->AddBool("password", true);
 			fEntryWin = new ServerEntryWindow(this, invoke, compData, size);
 			fEntryWin->SetTitle(B_TRANSLATE("Edit server"));
 			fEntryWin->Show();
