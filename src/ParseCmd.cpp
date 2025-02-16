@@ -26,9 +26,9 @@
 
 #include <File.h>
 #include <FilePanel.h>
+#include <FindDirectory.h>
 #include <Path.h>
 #include <Roster.h>
-#include <FindDirectory.h>
 
 #include <arpa/inet.h>
 #include <ctype.h>
@@ -39,22 +39,23 @@
 
 #include <map>
 
-#include "Vision.h"
-#include "VisionBase.h"
-#include "ServerAgent.h"
 #include "ChannelAgent.h"
-#include "MessageAgent.h"
-#include "Names.h"
-#include "Utilities.h"
 #include "ClientAgent.h"
 #include "ClientWindow.h"
+#include "MessageAgent.h"
+#include "Names.h"
 #include "RunView.h"
+#include "ServerAgent.h"
+#include "Utilities.h"
+#include "Vision.h"
+#include "VisionBase.h"
 #include "WindowList.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ParseCmd"
 
-bool ClientAgent::ParseCmd(const char* data)
+bool
+ClientAgent::ParseCmd(const char* data)
 {
 	BString firstWord(GetWord(data, 1).ToUpper());
 	BMessage sendMsg(M_SERVER_SEND);
@@ -73,8 +74,8 @@ bool ClientAgent::ParseCmd(const char* data)
 		return true;
 	}
 
-	if (firstWord == "/WALLOPS"  // we need to insert a ':' before parm2
-		|| firstWord == "/SQUIT" // for the user
+	if (firstWord == "/WALLOPS"	  // we need to insert a ':' before parm2
+		|| firstWord == "/SQUIT"  // for the user
 		|| firstWord == "/PRIVMSG") {
 		BString theCmd(firstWord.RemoveAll("/")), theRest(RestOfString(data, 2));
 
@@ -92,8 +93,8 @@ bool ClientAgent::ParseCmd(const char* data)
 		return true;
 	}
 
-	if (firstWord == "/KILL") // we need to insert a ':' before parm3
-	{						  // for the user
+	if (firstWord == "/KILL")  // we need to insert a ':' before parm3
+	{						   // for the user
 		BString theCmd(firstWord.RemoveAll("/")), theTarget(GetWord(data, 2)),
 			theRest(RestOfString(data, 3));
 
@@ -116,7 +117,8 @@ bool ClientAgent::ParseCmd(const char* data)
 		be_app->GetAppInfo(&ai);
 
 		BEntry entry(&ai.ref);
-		if (entry.InitCheck() != B_OK) return true;
+		if (entry.InitCheck() != B_OK)
+			return true;
 		BPath path;
 		entry.GetPath(&path);
 		path.GetParent(&path);
@@ -147,7 +149,8 @@ bool ClientAgent::ParseCmd(const char* data)
 	if (firstWord == "/GAWAY") {
 		BString theReason(RestOfString(data, 2)), tempString;
 
-		if (theReason == "-9z99") theReason = "BRB"; // Todo: make a default away msg option
+		if (theReason == "-9z99")
+			theReason = "BRB";	// Todo: make a default away msg option
 
 		BString theCmd("/AWAY ");
 		theCmd += theReason;
@@ -163,7 +166,8 @@ bool ClientAgent::ParseCmd(const char* data)
 	if (firstWord == "/AWAY") {
 		BString theReason(RestOfString(data, 2)), tempString;
 
-		if (theReason == "-9z99") theReason = "BRB"; // Todo: make a default away msg option
+		if (theReason == "-9z99")
+			theReason = "BRB";	// Todo: make a default away msg option
 
 		const char* expansions[1];
 		expansions[0] = theReason.String();
@@ -176,7 +180,8 @@ bool ClientAgent::ParseCmd(const char* data)
 		AddSend(&sendMsg, theReason.String());
 		AddSend(&sendMsg, endl);
 
-		if (fId != fServerName) ActionMessage(tempString.String(), fMyNick.String());
+		if (fId != fServerName)
+			ActionMessage(tempString.String(), fMyNick.String());
 		return true;
 	}
 
@@ -327,11 +332,13 @@ bool ClientAgent::ParseCmd(const char* data)
 		}
 
 		if (secondWord.ICompare("CHAT") == 0 && theNick != "-9z99") {
-			if (theNick.ICompare(fMyNick) == 0) return false;
+			if (theNick.ICompare(fMyNick) == 0)
+				return false;
 			BString thePort(GetWord(data, 4));
 			BMessage msg(M_CHAT_ACTION);
 			msg.AddString("nick", theNick.String());
-			if (thePort != "-9z99") msg.AddString("port", thePort.String());
+			if (thePort != "-9z99")
+				msg.AddString("port", thePort.String());
 			fSMsgr.SendMessage(&msg);
 		}
 		return true;
@@ -402,7 +409,7 @@ bool ClientAgent::ParseCmd(const char* data)
 			for (int32 i = 0; i < count; ++i) {
 				NameItem* item((NameItem*)(namesList->ItemAt(i)));
 
-				if (!item->Name().ICompare(parms.String(), strlen(parms.String()))) // nick
+				if (!item->Name().ICompare(parms.String(), strlen(parms.String())))	 // nick
 				{
 					AddSend(&sendMsg, "USERHOST ");
 					AddSend(&sendMsg, item->Name().String());
@@ -426,8 +433,8 @@ bool ClientAgent::ParseCmd(const char* data)
 			lookupmsg->AddString("lookup", parms.String());
 			lookupmsg->AddPointer("agent", this);
 
-			thread_id lookupThread =
-				spawn_thread(DNSLookup, "dns_lookup", B_LOW_PRIORITY, lookupmsg);
+			thread_id lookupThread
+				= spawn_thread(DNSLookup, "dns_lookup", B_LOW_PRIORITY, lookupmsg);
 
 			resume_thread(lookupThread);
 		} else {
@@ -439,7 +446,7 @@ bool ClientAgent::ParseCmd(const char* data)
 		return true;
 	}
 
-	if (firstWord == "/PEXEC" || firstWord == "/RRUN") // piped exec
+	if (firstWord == "/PEXEC" || firstWord == "/RRUN")	// piped exec
 	{
 		BString* theCmd(new BString(RestOfString(data, 2)));
 
@@ -489,7 +496,8 @@ bool ClientAgent::ParseCmd(const char* data)
 
 		// strip trailing spaces
 		int32 count(rest.Length() - 1);
-		while (rest[count--] == ' ') rest.RemoveLast(" ");
+		while (rest[count--] == ' ')
+			rest.RemoveLast(" ");
 
 		if (rest != "-9z99") {
 			BMessage msg(M_IGNORE_ADD);
@@ -505,7 +513,8 @@ bool ClientAgent::ParseCmd(const char* data)
 		if (theUser != "-9z99") {
 			BString theChan(GetWord(data, 3));
 
-			if (theChan == "-9z99") theChan = fId;
+			if (theChan == "-9z99")
+				theChan = fId;
 
 			AddSend(&sendMsg, "INVITE ");
 			AddSend(&sendMsg, theUser << " " << theChan);
@@ -728,7 +737,8 @@ bool ClientAgent::ParseCmd(const char* data)
 
 		// strip trailing spaces
 		int32 count(rest.Length() - 1);
-		while (rest[count--] == ' ') rest.RemoveLast(" ");
+		while (rest[count--] == ' ')
+			rest.RemoveLast(" ");
 
 		if (rest != "-9z99") {
 			BMessage msg(M_NOTIFYLIST_ADD);
@@ -829,7 +839,8 @@ bool ClientAgent::ParseCmd(const char* data)
 
 		BMessage msg(M_CLIENT_QUIT);
 		msg.AddString("vision:quit", buffer.String());
-		if (fSMsgr.IsValid()) fSMsgr.SendMessage(&msg);
+		if (fSMsgr.IsValid())
+			fSMsgr.SendMessage(&msg);
 		return true;
 	}
 
@@ -903,7 +914,7 @@ bool ClientAgent::ParseCmd(const char* data)
 			// but I can't think of a better way with our current
 			// commands implementation
 			int32 sleeptime = atoi(rest.String());
-			snooze(sleeptime * 1000 * 100); // deciseconds? 10 = one second
+			snooze(sleeptime * 1000 * 100);	 // deciseconds? 10 = one second
 		}
 		return true;
 	}
@@ -939,7 +950,8 @@ bool ClientAgent::ParseCmd(const char* data)
 
 		// strip trailing spaces
 		int32 count(rest.Length() - 1);
-		while (rest[count--] == ' ') rest.RemoveLast(" ");
+		while (rest[count--] == ' ')
+			rest.RemoveLast(" ");
 
 		if (rest != "-9z99") {
 			BMessage msg(M_IGNORE_REMOVE);
@@ -955,7 +967,8 @@ bool ClientAgent::ParseCmd(const char* data)
 
 			// strip trailing spaces
 			int32 count(rest.Length() - 1);
-			while (rest[count--] == ' ') rest.RemoveLast(" ");
+			while (rest[count--] == ' ')
+				rest.RemoveLast(" ");
 
 			if (rest != "-9z99") {
 				BMessage msg(M_NOTIFYLIST_REMOVE);
@@ -969,7 +982,7 @@ bool ClientAgent::ParseCmd(const char* data)
 	if (firstWord == "/VUPTIME") {
 		BString parms(GetWord(data, 2)), clientUptime(DurationString(vision_app->VisionUptime())),
 			expandedString(B_TRANSLATE("Vision has been running for %time%"));
-			expandedString.ReplaceFirst("%time%", clientUptime.String());
+		expandedString.ReplaceFirst("%time%", clientUptime.String());
 
 		if ((fId != fServerName) && (parms == "-9z99")) {
 			AddSend(&sendMsg, "PRIVMSG ");
@@ -979,7 +992,7 @@ bool ClientAgent::ParseCmd(const char* data)
 			AddSend(&sendMsg, endl);
 
 			ChannelMessage(expandedString.String(), fMyNick.String());
-		} else if ((parms == "-l") || (fId == fServerName)) // echo locally
+		} else if ((parms == "-l") || (fId == fServerName))	 // echo locally
 		{
 			BString tempString(B_TRANSLATE("Vision Uptime: %time%\n"));
 			tempString.ReplaceFirst("%time%", clientUptime.String());
@@ -1005,7 +1018,7 @@ bool ClientAgent::ParseCmd(const char* data)
 			AddSend(&sendMsg, endl);
 
 			ChannelMessage(expandedString.String(), fMyNick.String());
-		} else if ((parms == "-l") || (fId == fServerName)) // echo locally
+		} else if ((parms == "-l") || (fId == fServerName))	 // echo locally
 		{
 			BString tempString(B_TRANSLATE("Uptime: %time%\n"));
 			tempString.ReplaceFirst("%time%", expandedString.String());
@@ -1069,7 +1082,8 @@ bool ClientAgent::ParseCmd(const char* data)
 	{
 		BString theCmd(firstWord.RemoveAll("/")), theRest(RestOfString(data, 2));
 
-		if (theCmd == "W") theCmd = "WHOIS";
+		if (theCmd == "W")
+			theCmd = "WHOIS";
 
 		AddSend(&sendMsg, theCmd);
 
@@ -1082,17 +1096,18 @@ bool ClientAgent::ParseCmd(const char* data)
 		return true;
 	}
 
-	return false; // we couldn't handle this message
+	return false;  // we couldn't handle this message
 }
 
-int32 ClientAgent::ExecPipe(void* arg)
+int32
+ClientAgent::ExecPipe(void* arg)
 {
 	BMessage* msg(reinterpret_cast<BMessage*>(arg));
 	BString* exec;
 	ClientAgent* agent;
 
-	if ((msg->FindPointer("exec", reinterpret_cast<void**>(&exec)) != B_OK) ||
-		(msg->FindPointer("agent", reinterpret_cast<void**>(&agent)) != B_OK)) {
+	if ((msg->FindPointer("exec", reinterpret_cast<void**>(&exec)) != B_OK)
+		|| (msg->FindPointer("agent", reinterpret_cast<void**>(&agent)) != B_OK)) {
 		printf(":ERROR: couldn't find valid data in BMsg to ExecPipe() -- bailing\n");
 		return B_ERROR;
 	}
@@ -1115,11 +1130,11 @@ int32 ClientAgent::ExecPipe(void* arg)
 		PackDisplay(msg, buffer.String(), C_ERROR);
 		self_destruct_in_15_seconds.SendMessage(msg);
 	} else {
-		char data[768]; // should be long enough for any line...
+		char data[768];	 // should be long enough for any line...
 
 		// read one less just in case we need to offset by a char (prepended '/')
 		while (fgets(data, 767, fp)) {
-			data[strlen(data) - 1] = '\0'; // strip termination
+			data[strlen(data) - 1] = '\0';	// strip termination
 			if (data[0] == '/') {
 				memmove(data + 1, data, strlen(data));
 				data[0] = ' ';
@@ -1139,15 +1154,15 @@ int32 ClientAgent::ExecPipe(void* arg)
 	return B_OK;
 }
 
-int32 ClientAgent::DNSLookup(void* arg)
+int32
+ClientAgent::DNSLookup(void* arg)
 {
-
 	BMessage* msg(reinterpret_cast<BMessage*>(arg));
 	const char* lookup;
 	ClientAgent* agent;
 
-	if ((msg->FindString("lookup", &lookup) != B_OK) ||
-		(msg->FindPointer("agent", reinterpret_cast<void**>(&agent)) != B_OK)) {
+	if ((msg->FindString("lookup", &lookup) != B_OK)
+		|| (msg->FindPointer("agent", reinterpret_cast<void**>(&agent)) != B_OK)) {
 		printf(":ERROR: couldn't find valid data in BMsg to DNSLookup() -- bailing\n");
 		return B_ERROR;
 	}

@@ -24,15 +24,16 @@
 #include <stdio.h>
 #include <time.h>
 
-#include <Roster.h>
 #include <Entry.h>
 #include <Path.h>
+#include <Roster.h>
 
 #include "Vision.h"
 
 const float doubleClickThresh = 6;
 
-BString GetWord(const char* cData, int32 wordNeeded)
+BString
+GetWord(const char* cData, int32 wordNeeded)
 {
 	/*
 	 * Function purpose: Get word number {wordNeeded} from {cData}
@@ -45,13 +46,15 @@ BString GetWord(const char* cData, int32 wordNeeded)
 
 	while (wordAt != wordNeeded && place != B_ERROR) {
 		if ((place = data.FindFirst('\x20', place)) != B_ERROR)
-			if (++place < data.Length() && data[place] != '\x20') ++wordAt;
+			if (++place < data.Length() && data[place] != '\x20')
+				++wordAt;
 	}
 
 	if (wordAt == wordNeeded && place != B_ERROR && place < data.Length()) {
 		int32 end(data.FindFirst('\x20', place));
 
-		if (end == B_ERROR) end = data.Length();
+		if (end == B_ERROR)
+			end = data.Length();
 
 		data.CopyInto(buffer, place, end - place);
 	}
@@ -59,7 +62,8 @@ BString GetWord(const char* cData, int32 wordNeeded)
 	return buffer;
 }
 
-BString GetWordColon(const char* cData, int32 wordNeeded)
+BString
+GetWordColon(const char* cData, int32 wordNeeded)
 {
 	/*
 	 * Function purpose: Get word number {wordNeeded} from {cData}
@@ -72,13 +76,15 @@ BString GetWordColon(const char* cData, int32 wordNeeded)
 
 	while (wordAt != wordNeeded && place != B_ERROR) {
 		if ((place = data.FindFirst(':', place)) != B_ERROR)
-			if (++place < data.Length() && data[place] != ':') ++wordAt;
+			if (++place < data.Length() && data[place] != ':')
+				++wordAt;
 	}
 
 	if (wordAt == wordNeeded && place != B_ERROR && place < data.Length()) {
 		int32 end(data.FindFirst(':', place));
 
-		if (end == B_ERROR) end = data.Length();
+		if (end == B_ERROR)
+			end = data.Length();
 
 		data.CopyInto(buffer, place, end - place);
 	}
@@ -86,7 +92,8 @@ BString GetWordColon(const char* cData, int32 wordNeeded)
 	return buffer;
 }
 
-BString RestOfString(const char* cData, int32 wordStart)
+BString
+RestOfString(const char* cData, int32 wordStart)
 {
 	/*
 	 * Function purpose: Get word number {wordStart} from {cData}
@@ -100,7 +107,8 @@ BString RestOfString(const char* cData, int32 wordStart)
 
 	while (wordAt != wordStart && place != B_ERROR) {
 		if ((place = data.FindFirst('\x20', place)) != B_ERROR)
-			if (++place < data.Length() && data[place] != '\x20') ++wordAt;
+			if (++place < data.Length() && data[place] != '\x20')
+				++wordAt;
 	}
 
 	if (wordAt == wordStart && place != B_ERROR && place < data.Length())
@@ -109,7 +117,8 @@ BString RestOfString(const char* cData, int32 wordStart)
 	return buffer;
 }
 
-BString GetNick(const char* cData)
+BString
+GetNick(const char* cData)
 {
 	/*
 	 * Function purpose: Get nickname from {cData}
@@ -126,7 +135,8 @@ BString GetNick(const char* cData)
 	return theNick;
 }
 
-BString GetIdent(const char* cData)
+BString
+GetIdent(const char* cData)
 {
 	/*
 	 * Function purpose: Get identname/username from {cData}
@@ -138,8 +148,8 @@ BString GetIdent(const char* cData)
 	BString theIdent;
 	int32 place[2];
 
-	if ((place[0] = data.FindFirst('!')) != B_ERROR &&
-		(place[1] = data.FindFirst('@')) != B_ERROR) {
+	if ((place[0] = data.FindFirst('!')) != B_ERROR
+		&& (place[1] = data.FindFirst('@')) != B_ERROR) {
 		++(place[0]);
 		data.CopyInto(theIdent, place[0], place[1] - place[0]);
 	}
@@ -147,7 +157,8 @@ BString GetIdent(const char* cData)
 	return theIdent;
 }
 
-BString GetAddress(const char* cData)
+BString
+GetAddress(const char* cData)
 {
 	/*
 	 * Function purpose: Get address/hostname from {cData}
@@ -162,7 +173,8 @@ BString GetAddress(const char* cData)
 	if ((place = data.FindFirst('@')) != B_ERROR) {
 		int32 length(data.FindFirst('\x20', place));
 
-		if (length == B_ERROR) length = data.Length();
+		if (length == B_ERROR)
+			length = data.Length();
 
 		++place;
 		data.CopyInto(address, place, length - place);
@@ -171,14 +183,16 @@ BString GetAddress(const char* cData)
 	return address;
 }
 
-BString TimeStamp()
+BString
+TimeStamp()
 {
 	/*
 	 * Function purpose: Return the timestamp string
 	 *
 	 */
 
-	if (!vision_app->GetBool("timestamp")) return "";
+	if (!vision_app->GetBool("timestamp"))
+		return "";
 
 	const char* ts_format(vision_app->GetString("timestamp_format"));
 
@@ -192,7 +206,8 @@ BString TimeStamp()
 	return BString(tempTime).Append('\x20', 1);
 }
 
-BString ExpandKeyed(const char* incoming, const char* keys, const char** expansions)
+BString
+ExpandKeyed(const char* incoming, const char* keys, const char** expansions)
 {
 	BString buffer;
 
@@ -217,7 +232,8 @@ BString ExpandKeyed(const char* incoming, const char* keys, const char** expansi
 	return buffer;
 }
 
-BString StringToURI(const char* string)
+BString
+StringToURI(const char* string)
 {
 	/*
 	 * Function purpose: Converts {string} to a URI safe format
@@ -226,7 +242,7 @@ BString StringToURI(const char* string)
 
 	BString buffer(string);
 	buffer.ToLower();
-	buffer.ReplaceAll("%", "%25"); // do this first!
+	buffer.ReplaceAll("%", "%25");	// do this first!
 	buffer.ReplaceAll("\n", "%20");
 	buffer.ReplaceAll(" ", "%20");
 	buffer.ReplaceAll("\"", "%22");
@@ -247,7 +263,8 @@ BString StringToURI(const char* string)
 	return buffer;
 }
 
-BString DurationString(int64 value)
+BString
+DurationString(int64 value)
 {
 	/*
 	 * Function purpose: Return a duration string based on {value}
@@ -263,22 +280,27 @@ BString DurationString(int64 value)
 	bigtime_t days = hours / 24;
 
 	char message[512] = "";
-	if (days) sprintf(message, "%" B_PRIdBIGTIME " day%s ", days, days != 1 ? "s" : "");
+	if (days)
+		sprintf(message, "%" B_PRIdBIGTIME " day%s ", days, days != 1 ? "s" : "");
 
 	if (hours % 24)
-		sprintf(message, "%s%" B_PRIdBIGTIME " hr%s ", message, hours % 24, (hours % 24) != 1 ? "s" : "");
+		sprintf(message, "%s%" B_PRIdBIGTIME " hr%s ", message, hours % 24,
+			(hours % 24) != 1 ? "s" : "");
 
-	if (min % 60) sprintf(message, "%s%" B_PRIdBIGTIME " min%s ", message, min % 60, (min % 60) != 1 ? "s" : "");
+	if (min % 60)
+		sprintf(
+			message, "%s%" B_PRIdBIGTIME " min%s ", message, min % 60, (min % 60) != 1 ? "s" : "");
 
-	sprintf(message, "%s%" B_PRIdBIGTIME ".%" B_PRIdBIGTIME " sec%s", message, sec % 60, (milli % 1000),
-			(sec % 60) != 1 ? "s" : "");
+	sprintf(message, "%s%" B_PRIdBIGTIME ".%" B_PRIdBIGTIME " sec%s", message, sec % 60,
+		(milli % 1000), (sec % 60) != 1 ? "s" : "");
 
 	duration += message;
 
 	return duration;
 }
 
-const char* RelToAbsPath(const char* append_)
+const char*
+RelToAbsPath(const char* append_)
 {
 	app_info ai;
 	be_app->GetAppInfo(&ai);
@@ -292,7 +314,8 @@ const char* RelToAbsPath(const char* append_)
 	return path.Path();
 }
 
-int32 Get440Len(const char* cData)
+int32
+Get440Len(const char* cData)
 {
 	BString data(cData);
 
@@ -300,13 +323,15 @@ int32 Get440Len(const char* cData)
 		return data.Length();
 	else {
 		int32 place(data.FindLast('\x20', 440));
-		if (place == B_ERROR) return 440;
+		if (place == B_ERROR)
+			return 440;
 		return place;
 	}
 }
 
-uint16 CheckClickCount(BPoint point, BPoint& lastClick, bigtime_t sysTime, bigtime_t& lastClickTime,
-					   int16& clickCount)
+uint16
+CheckClickCount(
+	BPoint point, BPoint& lastClick, bigtime_t sysTime, bigtime_t& lastClickTime, int16& clickCount)
 {
 	// check time and proximity
 	BPoint delta = point - lastClick;
@@ -318,8 +343,8 @@ uint16 CheckClickCount(BPoint point, BPoint& lastClick, bigtime_t sysTime, bigti
 
 	lastClickTime = sysTime;
 
-	if (timeDelta < doubleClickSpeed && fabs(delta.x) < doubleClickThresh &&
-		fabs(delta.y) < doubleClickThresh)
+	if (timeDelta < doubleClickSpeed && fabs(delta.x) < doubleClickThresh
+		&& fabs(delta.y) < doubleClickThresh)
 		return (++clickCount);
 
 	lastClick = point;
@@ -327,7 +352,8 @@ uint16 CheckClickCount(BPoint point, BPoint& lastClick, bigtime_t sysTime, bigti
 	return clickCount;
 }
 
-bool IsValidUTF8(const char* string, int32 length)
+bool
+IsValidUTF8(const char* string, int32 length)
 {
 	int sequence = 0;
 	int i;
@@ -348,24 +374,27 @@ bool IsValidUTF8(const char* string, int32 length)
 			seq++;
 		}
 		switch (seq) {
-		case 0:
-			// single byte char, should be ok unless we expect a multibyte continuation
-			if (sequence) return false;
-			break;
-		case 1:
-			// if we aren't inside a multibyte char then something is wrong!
-			if (sequence == 0) return false;
-			// one less continuation byte
-			sequence--;
-			break;
-		default:
-			// start of a multibyte sequence of seq bytes (including this one)
-			// there are seq - 1 left to go.
-			sequence = seq - 1;
-			break;
+			case 0:
+				// single byte char, should be ok unless we expect a multibyte continuation
+				if (sequence)
+					return false;
+				break;
+			case 1:
+				// if we aren't inside a multibyte char then something is wrong!
+				if (sequence == 0)
+					return false;
+				// one less continuation byte
+				sequence--;
+				break;
+			default:
+				// start of a multibyte sequence of seq bytes (including this one)
+				// there are seq - 1 left to go.
+				sequence = seq - 1;
+				break;
 		}
 	}
 	// end of string in middle of multibyte sequence
-	if (sequence != 0) return false;
+	if (sequence != 0)
+		return false;
 	return true;
 }

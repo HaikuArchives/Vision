@@ -56,16 +56,19 @@ ClientAgentLogger::~ClientAgentLogger()
 	// if the whole app's shutting down, wait for the logger to finish its work to
 	// prevent possible race/crash conditions, otherwise terminate immediately and let
 	// fLogThread finish up in the background
-	if (fIsQuitting) wait_for_thread(fLogThread, &result);
+	if (fIsQuitting)
+		wait_for_thread(fLogThread, &result);
 
 	for (filemap::iterator it = fLogFiles.begin(); it != fLogFiles.end(); ++it)
 		CloseSession(it->second);
 }
 
-void ClientAgentLogger::StartLogging()
+void
+ClientAgentLogger::StartLogging()
 {
 	// someone tried to call StartLogging while a logger was already active, do nothing.
-	if (fLogThread != -1) return;
+	if (fLogThread != -1)
+		return;
 
 	// the file, BList and Locker are taken over by fLogThread as soon as SetupLogging
 	// is done. From there it will take care of cleaning them up on destruct.
@@ -80,17 +83,20 @@ void ClientAgentLogger::StartLogging()
 	vision_app->GetThreadName(THREAD_L, name);
 
 	fLogThread = spawn_thread(AsyncLogger, name.String(), B_LOW_PRIORITY, this);
-	if (fLogThread >= B_OK) resume_thread(fLogThread);
+	if (fLogThread >= B_OK)
+		resume_thread(fLogThread);
 }
 
-void ClientAgentLogger::StopLogging()
+void
+ClientAgentLogger::StopLogging()
 {
 	fIsLogging = false;
 	delete_sem(fLogSyncherLock);
 	fLogThread = -1;
 }
 
-void ClientAgentLogger::RegisterLogger(const char* logName)
+void
+ClientAgentLogger::RegisterLogger(const char* logName)
 {
 	// if it doesn't already exist
 	// initialize the file, otherwise just open the existing one
@@ -100,7 +106,7 @@ void ClientAgentLogger::RegisterLogger(const char* logName)
 	struct tm ptr;
 	localtime_r(&myTime, &ptr);
 
-	BString wName(logName); // do some cleaning up
+	BString wName(logName);	 // do some cleaning up
 	wName.ReplaceAll("/", "_");
 	wName.ReplaceAll("*", "_");
 	wName.ReplaceAll("?", "_");
@@ -118,19 +124,18 @@ void ClientAgentLogger::RegisterLogger(const char* logName)
 	BPath filePath(fLogPath);
 	filePath.Append(wName.String());
 
-	if (filePath.InitCheck() != B_OK) return;
+	if (filePath.InitCheck() != B_OK)
+		return;
 
 	BFile logFile(filePath.Path(), B_READ_WRITE | B_CREATE_FILE | B_OPEN_AT_END);
 
 	if (logFile.InitCheck() == B_OK) {
 		char tempTime[96];
-		if (logFile.Position() == 0) // new file
+		if (logFile.Position() == 0)  // new file
 		{
-			strftime(tempTime, 96,
-				B_TRANSLATE("Session start: %a %b %d %H:%M %Y\n"), &ptr);
+			strftime(tempTime, 96, B_TRANSLATE("Session start: %a %b %d %H:%M %Y\n"), &ptr);
 		} else {
-			strftime(tempTime, 96,
-				B_TRANSLATE("\n\nSession start: %a %b %d %H:%M %Y\n"), &ptr);
+			strftime(tempTime, 96, B_TRANSLATE("\n\nSession start: %a %b %d %H:%M %Y\n"), &ptr);
 		}
 
 		BString timeString(tempTime);
@@ -142,7 +147,8 @@ void ClientAgentLogger::RegisterLogger(const char* logName)
 		logFile.Unset();
 }
 
-void ClientAgentLogger::UnregisterLogger(const char* name)
+void
+ClientAgentLogger::UnregisterLogger(const char* name)
 {
 	BFile& logFile(fLogFiles[name]);
 	if (logFile.InitCheck() == B_OK) {
@@ -154,8 +160,8 @@ void ClientAgentLogger::UnregisterLogger(const char* name)
 				// read through buffer and find all strings that belonged to this file,
 				// then write and remove them
 
-				if (((currentLog = fLogBuffer->ItemAt(i)) != NULL) &&
-					(currentLog->ICompare(name) == 0)) {
+				if (((currentLog = fLogBuffer->ItemAt(i)) != NULL)
+					&& (currentLog->ICompare(name) == 0)) {
 					delete fLogBuffer->RemoveItemAt(i);
 					currentLog = fLogBuffer->RemoveItemAt(i);
 					logFile.Write(currentLog->String(), currentLog->Length());
@@ -172,7 +178,8 @@ void ClientAgentLogger::UnregisterLogger(const char* name)
 	}
 }
 
-void ClientAgentLogger::CloseSession(BFile& logFile)
+void
+ClientAgentLogger::CloseSession(BFile& logFile)
 {
 	// write Session Close and close/clean up
 	if (logFile.InitCheck() != B_NO_INIT) {
@@ -187,11 +194,14 @@ void ClientAgentLogger::CloseSession(BFile& logFile)
 	}
 }
 
-void ClientAgentLogger::SetupLogging()
+void
+ClientAgentLogger::SetupLogging()
 {
-	if (fLogSetupDone) return;
+	if (fLogSetupDone)
+		return;
 
-	if (!vision_app->GetBool("log_enabled")) return;
+	if (!vision_app->GetBool("log_enabled"))
+		return;
 
 	// create the dirs if they don't already exist
 	BString visLogPath(vision_app->GetString("logBaseDir"));
@@ -207,7 +217,8 @@ void ClientAgentLogger::SetupLogging()
 		fLogPath.Append(visLogPath.String());
 	}
 
-	if (create_directory(fLogPath.Path(), 0777) != B_OK) return;
+	if (create_directory(fLogPath.Path(), 0777) != B_OK)
+		return;
 
 	BDirectory dir(fLogPath.Path());
 	if (dir.InitCheck() == B_OK) {
@@ -219,11 +230,14 @@ void ClientAgentLogger::SetupLogging()
 	}
 }
 
-void ClientAgentLogger::Log(const char* loggername, const char* data)
+void
+ClientAgentLogger::Log(const char* loggername, const char* data)
 {
-	if (!fIsLogging) return;
+	if (!fIsLogging)
+		return;
 
-	if ((loggername == NULL) || (data == NULL)) return;
+	if ((loggername == NULL) || (data == NULL))
+		return;
 
 	// depending on log state at the time the logger was initialized,
 	// the file may not yet exist. Attempt to create it if so.
@@ -236,7 +250,8 @@ void ClientAgentLogger::Log(const char* loggername, const char* data)
 	BString* pathString(new BString(loggername));
 	BString* logString(new BString(data));
 
-	if (fNewLine) logString->Prepend(TimeStamp().String());
+	if (fNewLine)
+		logString->Prepend(TimeStamp().String());
 
 	fNewLine = (logString->IFindFirst("\n") == B_ERROR) ? false : true;
 
@@ -247,7 +262,8 @@ void ClientAgentLogger::Log(const char* loggername, const char* data)
 	release_sem(fLogSyncherLock);
 }
 
-int32 ClientAgentLogger::AsyncLogger(void* arg)
+int32
+ClientAgentLogger::AsyncLogger(void* arg)
 {
 	ClientAgentLogger* logger((ClientAgentLogger*)arg);
 
@@ -262,7 +278,8 @@ int32 ClientAgentLogger::AsyncLogger(void* arg)
 	while (acquire_sem(logger->fLogSyncherLock) == B_NO_ERROR) {
 		myLogBufferLock->Lock();
 		if (!myLogBuffer->IsEmpty()) {
-			if (!logger->fLogSetupDone) logger->SetupLogging();
+			if (!logger->fLogSetupDone)
+				logger->SetupLogging();
 			// grab next string from list and write to file
 			currentLogger = myLogBuffer->RemoveItemAt(0L);
 			currentString = myLogBuffer->RemoveItemAt(0L);

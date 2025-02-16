@@ -25,8 +25,8 @@
 #include <View.h>
 
 #include "ClientWindow.h"
-#include "NetworkPrefsView.h"
 #include "NetPrefsServerView.h"
+#include "NetworkPrefsView.h"
 #include "NetworkWindow.h"
 #include "Vision.h"
 
@@ -37,15 +37,12 @@
 
 NetworkWindow::NetworkWindow()
 	: BWindow(BRect(50, 50, 550, 430), B_TRANSLATE("Network setup"), B_TITLED_WINDOW,
-		B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE */ | B_NOT_ZOOMABLE)
+		  B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE */ | B_NOT_ZOOMABLE)
 {
 	NetworkPrefsView* netView = new NetworkPrefsView("network");
 	ResizeTo(netView->Bounds().Width(), netView->Bounds().Height());
 
-	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
-		.SetInsets(0)
-			.Add(netView)
-		.End();
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0).SetInsets(0).Add(netView).End();
 
 	BRect netFrame = vision_app->GetRect("NetPrefWinRect");
 
@@ -63,7 +60,8 @@ NetworkWindow::~NetworkWindow()
 }
 
 
-bool NetworkWindow::QuitRequested()
+bool
+NetworkWindow::QuitRequested()
 {
 	vision_app->SetRect("NetPrefWinRect", Frame());
 	be_app_messenger.SendMessage(M_NETWORK_CLOSE);
@@ -73,10 +71,9 @@ bool NetworkWindow::QuitRequested()
 
 NetPrefServerWindow::NetPrefServerWindow(BHandler* target)
 	: BWindow(BRect(50, 50, 400, 250), B_TRANSLATE("Servers"), B_TITLED_WINDOW,
-			  B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE */ | B_NOT_ZOOMABLE)
+		  B_ASYNCHRONOUS_CONTROLS /* | B_NOT_RESIZABLE */ | B_NOT_ZOOMABLE)
 {
-	serverView = new NetPrefsServerView(Bounds(), "server settings",
-		BMessenger(target));
+	serverView = new NetPrefsServerView(Bounds(), "server settings", BMessenger(target));
 	ResizeTo(serverView->Bounds().Width(), serverView->Bounds().Height());
 	AddChild(serverView);
 }
@@ -88,13 +85,15 @@ NetPrefServerWindow::~NetPrefServerWindow()
 }
 
 
-bool NetPrefServerWindow::QuitRequested()
+bool
+NetPrefServerWindow::QuitRequested()
 {
 	return true;
 }
 
 
-void NetPrefServerWindow::SetNetworkData(BMessage* msg)
+void
+NetPrefServerWindow::SetNetworkData(BMessage* msg)
 {
 	serverView->SetNetworkData(msg);
 }

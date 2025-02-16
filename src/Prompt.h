@@ -24,24 +24,22 @@
 #ifndef PROMPTWINDOW_H_
 #define PROMPTWINDOW_H_
 
-#include <Window.h>
 #include <MessageFilter.h>
 #include <String.h>
+#include <Window.h>
 
 #include <regex.h>
 class BTextControl;
 class BButton;
 
-class PromptValidate
-{
+class PromptValidate {
 public:
 	PromptValidate();
 	virtual ~PromptValidate();
 	virtual bool Validate(const char*) = 0;
 };
 
-class RegExValidate : public PromptValidate
-{
+class RegExValidate : public PromptValidate {
 	regex_t re;
 	bool compiled;
 	BString title;
@@ -52,26 +50,24 @@ public:
 	virtual bool Validate(const char*);
 };
 
-class PromptWindow : public BWindow
-{
+class PromptWindow : public BWindow {
 	BHandler* handler;
 	BMessage* invoked;
 
 	BTextControl* field;
-	BButton* done, *cancel;
+	BButton *done, *cancel;
 	PromptValidate* validate;
 	bool blanks;
 
 public:
 	PromptWindow(BPoint, const char*, const char*, const char*, BHandler*, BMessage*,
-				 PromptValidate* = 0, bool = false);
+		PromptValidate* = 0, bool = false);
 
 	virtual ~PromptWindow();
 	virtual void MessageReceived(BMessage*);
 };
 
-class EscapeFilter : public BMessageFilter
-{
+class EscapeFilter : public BMessageFilter {
 	BWindow* window;
 
 public:

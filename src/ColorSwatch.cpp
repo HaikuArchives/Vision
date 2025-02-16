@@ -22,8 +22,8 @@
 
 #define SHIFT_COMPONENT(x, y) (y >= 1 ? ((uchar)(x * (2 - y))) : ((uchar)(255 - y * (255 - x))))
 
-#include <Window.h>
 #include "ColorSwatch.h"
+#include <Window.h>
 
 struct general_ui_info {
 	rgb_color background_color;
@@ -39,15 +39,15 @@ ColorSwatch::ColorSwatch(
 
 	const char* name, rgb_color color_, uint32 flags)
 
-	: BView(name, flags), fColor(color_)
+	: BView(name, flags),
+	  fColor(color_)
 {
 }
 
-ColorSwatch::~ColorSwatch()
-{
-}
+ColorSwatch::~ColorSwatch() {}
 
-void ColorSwatch::AttachedToWindow()
+void
+ColorSwatch::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 
@@ -61,7 +61,8 @@ void ColorSwatch::AttachedToWindow()
 	}
 }
 
-void ColorSwatch::Draw(BRect)
+void
+ColorSwatch::Draw(BRect)
 {
 	PushState();
 
@@ -116,30 +117,35 @@ void ColorSwatch::Draw(BRect)
 	PopState();
 }
 
-rgb_color ColorSwatch::ValueAsColor() const
+rgb_color
+ColorSwatch::ValueAsColor() const
 {
 	return fColor;
 }
 
-void ColorSwatch::SetColor(rgb_color c)
+void
+ColorSwatch::SetColor(rgb_color c)
 {
-	if (fColor.red == c.red && fColor.green == c.green && fColor.blue == c.blue &&
-		fColor.alpha == c.alpha)
+	if (fColor.red == c.red && fColor.green == c.green && fColor.blue == c.blue
+		&& fColor.alpha == c.alpha)
 		return;
 
 	fColor = c;
-	if (Parent()) Invalidate(Bounds());
+	if (Parent())
+		Invalidate(Bounds());
 }
 
-rgb_color ColorSwatch::ShiftColor(rgb_color c, float percent) const
+rgb_color
+ColorSwatch::ShiftColor(rgb_color c, float percent) const
 {
-	rgb_color result = {SHIFT_COMPONENT(c.red, percent), SHIFT_COMPONENT(c.green, percent),
-						SHIFT_COMPONENT(c.blue, percent), SHIFT_COMPONENT(c.alpha, 255)};
+	rgb_color result = { SHIFT_COMPONENT(c.red, percent), SHIFT_COMPONENT(c.green, percent),
+		SHIFT_COMPONENT(c.blue, percent), SHIFT_COMPONENT(c.alpha, 255) };
 
 	return result;
 }
 
-rgb_color ColorSwatch::Inverted() const
+rgb_color
+ColorSwatch::Inverted() const
 {
 	rgb_color baseColor, value = ValueAsColor();
 

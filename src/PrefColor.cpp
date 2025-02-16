@@ -23,16 +23,16 @@
 // TODO: Color Schemes/Themes
 
 #include "PrefColor.h"
-#include "ColorSelector.h"
-#include "Vision.h"
 #include <Box.h>
 #include <Button.h>
 #include <LayoutBuilder.h>
-#include <MenuField.h>
 #include <Menu.h>
+#include <MenuField.h>
 #include <MenuItem.h>
 #include <Point.h>
 #include <StringView.h>
+#include "ColorSelector.h"
+#include "Vision.h"
 
 #include <stdio.h>
 
@@ -47,33 +47,34 @@ struct FontStat {
 	font_style* styles;
 };
 
-static const char* ColorLabels[] = {
-	B_TRANSLATE("Text"),		  B_TRANSLATE("Background"), B_TRANSLATE("URL"),
-	B_TRANSLATE("Server text"),   B_TRANSLATE("Notice"),	 B_TRANSLATE("Action"),
-	B_TRANSLATE("Quit"),		  B_TRANSLATE("Error"),	  B_TRANSLATE("Nickname < >"),
-	B_TRANSLATE("User nickname < >"),  B_TRANSLATE("Nickname text"),  B_TRANSLATE("Join"),
-	B_TRANSLATE("Kick"),		  B_TRANSLATE("Whois"),	  B_TRANSLATE("Names (normal)"),
-	B_TRANSLATE("Names (OP)"),	 B_TRANSLATE("Names (helper)"), B_TRANSLATE("Names (voice)"),
-	B_TRANSLATE("Names selection"),	B_TRANSLATE("Names background"),   B_TRANSLATE("CTCP request"),
-	B_TRANSLATE("CTCP reply"),	 B_TRANSLATE("Ignore"),	 B_TRANSLATE("Input text"),
-	B_TRANSLATE("Input background"),	 B_TRANSLATE("Window list normal"), B_TRANSLATE("Window list activity"),
-	B_TRANSLATE("Window list nick alert"),   B_TRANSLATE("Window list selection"),  B_TRANSLATE("Window list event"),
-	B_TRANSLATE("Window list background"),	 B_TRANSLATE("Wallops"),	B_TRANSLATE("Timestamp text"),
-	B_TRANSLATE("Timestamp background"), B_TRANSLATE("Selection"),  B_TRANSLATE("mIRC white"),
-	B_TRANSLATE("mIRC black"),	B_TRANSLATE("mIRC dark blue"),  B_TRANSLATE("mIRC green"),
-	B_TRANSLATE("mIRC red"),	  B_TRANSLATE("mIRC brown"),  B_TRANSLATE("mIRC purple"),
-	B_TRANSLATE("mIRC orange"),   B_TRANSLATE("mIRC yellow"), B_TRANSLATE("mIRC lime"),
-	B_TRANSLATE("mIRC teal"),	 B_TRANSLATE("mIRC aqua"),   B_TRANSLATE("mIRC light blue"),
-	B_TRANSLATE("mIRC pink"),	 B_TRANSLATE("mIRC grey"),   B_TRANSLATE("mIRC silver"),
-	B_TRANSLATE("Notify online"),	B_TRANSLATE("Notify offline"), B_TRANSLATE("Notify list background"),
-	B_TRANSLATE("Notify list selection")};
+static const char* ColorLabels[] = { B_TRANSLATE("Text"), B_TRANSLATE("Background"),
+	B_TRANSLATE("URL"), B_TRANSLATE("Server text"), B_TRANSLATE("Notice"), B_TRANSLATE("Action"),
+	B_TRANSLATE("Quit"), B_TRANSLATE("Error"), B_TRANSLATE("Nickname < >"),
+	B_TRANSLATE("User nickname < >"), B_TRANSLATE("Nickname text"), B_TRANSLATE("Join"),
+	B_TRANSLATE("Kick"), B_TRANSLATE("Whois"), B_TRANSLATE("Names (normal)"),
+	B_TRANSLATE("Names (OP)"), B_TRANSLATE("Names (helper)"), B_TRANSLATE("Names (voice)"),
+	B_TRANSLATE("Names selection"), B_TRANSLATE("Names background"), B_TRANSLATE("CTCP request"),
+	B_TRANSLATE("CTCP reply"), B_TRANSLATE("Ignore"), B_TRANSLATE("Input text"),
+	B_TRANSLATE("Input background"), B_TRANSLATE("Window list normal"),
+	B_TRANSLATE("Window list activity"), B_TRANSLATE("Window list nick alert"),
+	B_TRANSLATE("Window list selection"), B_TRANSLATE("Window list event"),
+	B_TRANSLATE("Window list background"), B_TRANSLATE("Wallops"), B_TRANSLATE("Timestamp text"),
+	B_TRANSLATE("Timestamp background"), B_TRANSLATE("Selection"), B_TRANSLATE("mIRC white"),
+	B_TRANSLATE("mIRC black"), B_TRANSLATE("mIRC dark blue"), B_TRANSLATE("mIRC green"),
+	B_TRANSLATE("mIRC red"), B_TRANSLATE("mIRC brown"), B_TRANSLATE("mIRC purple"),
+	B_TRANSLATE("mIRC orange"), B_TRANSLATE("mIRC yellow"), B_TRANSLATE("mIRC lime"),
+	B_TRANSLATE("mIRC teal"), B_TRANSLATE("mIRC aqua"), B_TRANSLATE("mIRC light blue"),
+	B_TRANSLATE("mIRC pink"), B_TRANSLATE("mIRC grey"), B_TRANSLATE("mIRC silver"),
+	B_TRANSLATE("Notify online"), B_TRANSLATE("Notify offline"),
+	B_TRANSLATE("Notify list background"), B_TRANSLATE("Notify list selection") };
 
 ColorPrefsView::ColorPrefsView()
 	: BView("Color Prefs", 0)
 {
 	int32 i(0);
 	AdoptSystemColors();
-	for (i = 0; i < MAX_COLORS; i++) fColors[i] = vision_app->GetColor(i);
+	for (i = 0; i < MAX_COLORS; i++)
+		fColors[i] = vision_app->GetColor(i);
 
 	BMessage mycolors, labels;
 
@@ -82,29 +83,31 @@ ColorPrefsView::ColorPrefsView()
 		labels.AddString("color", ColorLabels[i]);
 	}
 
-	fSelector = new ColorSelector(BRect(0,0,0,0),"fSelector", NULL, mycolors, labels, new BMessage('vtst'));
+	fSelector = new ColorSelector(
+		BRect(0, 0, 0, 0), "fSelector", NULL, mycolors, labels, new BMessage('vtst'));
 	fSelector->AdoptSystemColors();
 
-	fRevert = new BButton("fRevert", B_TRANSLATE("Revert"), new BMessage(M_REVERT_COLOR_SELECTIONS));
+	fRevert
+		= new BButton("fRevert", B_TRANSLATE("Revert"), new BMessage(M_REVERT_COLOR_SELECTIONS));
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(fSelector)
-			.Add(fRevert)
-			.AddGlue()
+		.Add(fSelector)
+		.Add(fRevert)
+		.AddGlue()
 		.End();
 }
 
-ColorPrefsView::~ColorPrefsView()
-{
-}
+ColorPrefsView::~ColorPrefsView() {}
 
-void ColorPrefsView::AttachedToWindow()
+void
+ColorPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 }
 
-void ColorPrefsView::AllAttached()
+void
+ColorPrefsView::AllAttached()
 {
 	BView::AllAttached();
 	fSelector->ResizeToPreferred();
@@ -113,12 +116,13 @@ void ColorPrefsView::AllAttached()
 	fRevert->SetTarget(this);
 }
 
-void ColorPrefsView::MessageReceived(BMessage* msg)
+void
+ColorPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_REVERT_COLOR_SELECTIONS:
-		fSelector->Revert();
-		break;
+		case M_REVERT_COLOR_SELECTIONS:
+			fSelector->Revert();
+			break;
 	}
 	BView::MessageReceived(msg);
 }

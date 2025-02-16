@@ -22,10 +22,10 @@
 
 #define NUMBER_THEME_READERS 1000
 
+#include <Font.h>
 #include <Message.h>
 #include <Messenger.h>
 #include <View.h>
-#include <Font.h>
 
 #include "Theme.h"
 #include "VisionBase.h"
@@ -58,18 +58,20 @@ Theme::Theme(const char* n, int16 foreCount, int16 backCount, int16 fontCount)
 
 	sid = create_sem(NUMBER_THEME_READERS, name);
 
-	rgb_color def_timestamp_fore = {200, 150, 150, 255};
-	rgb_color def_timestamp_back = {255, 255, 255, 255};
-	rgb_color def_fore = {0, 0, 0, 255};
-	rgb_color def_back = {255, 255, 255, 255};
+	rgb_color def_timestamp_fore = { 200, 150, 150, 255 };
+	rgb_color def_timestamp_back = { 255, 255, 255, 255 };
+	rgb_color def_fore = { 0, 0, 0, 255 };
+	rgb_color def_back = { 255, 255, 255, 255 };
 
 	fores[0] = def_timestamp_fore;
 
 	int16 i;
-	for (i = 1; i < fore_count; ++i) fores[i] = def_fore;
+	for (i = 1; i < fore_count; ++i)
+		fores[i] = def_fore;
 
 	backs[0] = def_timestamp_back;
-	for (i = 1; i < back_count; ++i) backs[i] = def_back;
+	for (i = 1; i < back_count; ++i)
+		backs[i] = def_back;
 }
 
 Theme::~Theme()
@@ -82,69 +84,84 @@ Theme::~Theme()
 	delete[] name;
 }
 
-int16 Theme::CountForegrounds() const
+int16
+Theme::CountForegrounds() const
 {
 	return fore_count;
 }
 
-int16 Theme::CountBackgrounds() const
+int16
+Theme::CountBackgrounds() const
 {
 	return back_count;
 }
 
-int16 Theme::CountFonts() const
+int16
+Theme::CountFonts() const
 {
 	return font_count;
 }
 
-void Theme::ReadLock()
+void
+Theme::ReadLock()
 {
 	acquire_sem(sid);
 }
 
-void Theme::ReadUnlock()
+void
+Theme::ReadUnlock()
 {
 	release_sem(sid);
 }
 
-void Theme::WriteLock()
+void
+Theme::WriteLock()
 {
 	acquire_sem_etc(sid, NUMBER_THEME_READERS, 0, 0);
 }
 
-void Theme::WriteUnlock()
+void
+Theme::WriteUnlock()
 {
 	release_sem_etc(sid, NUMBER_THEME_READERS, 0);
 }
 
-const rgb_color Theme::ForegroundAt(int16 which) const
+const rgb_color
+Theme::ForegroundAt(int16 which) const
 {
-	rgb_color color = {0, 0, 0, 255};
+	rgb_color color = { 0, 0, 0, 255 };
 
-	if (which >= fore_count || which < 0) return color;
+	if (which >= fore_count || which < 0)
+		return color;
 
 	return fores[which];
 }
 
-const rgb_color Theme::BackgroundAt(int16 which) const
+const rgb_color
+Theme::BackgroundAt(int16 which) const
 {
-	rgb_color color = {255, 255, 255, 255};
+	rgb_color color = { 255, 255, 255, 255 };
 
-	if (which >= back_count || which < 0) return color;
+	if (which >= back_count || which < 0)
+		return color;
 
 	return backs[which];
 }
 
-const BFont& Theme::FontAt(int16 which) const
+const BFont&
+Theme::FontAt(int16 which) const
 {
-	if (which >= font_count || which < 0) return *be_plain_font;
+	if (which >= font_count || which < 0)
+		return *be_plain_font;
 
 	return fonts[which];
 }
 
-bool Theme::SetForeground(int16 which, const rgb_color color)
+bool
+Theme::SetForeground(int16 which, const rgb_color color)
 {
-	if (which >= fore_count || which < 0) return false;
+	if (which >= fore_count || which < 0)
+		return false;
 
 	int32 count(list.CountItems());
 	fores[which] = color;
@@ -162,9 +179,11 @@ bool Theme::SetForeground(int16 which, const rgb_color color)
 	return true;
 }
 
-bool Theme::SetBackground(int16 which, const rgb_color color)
+bool
+Theme::SetBackground(int16 which, const rgb_color color)
 {
-	if (which >= back_count || which < 0) return false;
+	if (which >= back_count || which < 0)
+		return false;
 
 	int32 count(list.CountItems());
 	backs[which] = color;
@@ -182,9 +201,11 @@ bool Theme::SetBackground(int16 which, const rgb_color color)
 	return true;
 }
 
-bool Theme::SetFont(int16 which, const BFont& font)
+bool
+Theme::SetFont(int16 which, const BFont& font)
 {
-	if (which >= font_count || which < 0) return false;
+	if (which >= font_count || which < 0)
+		return false;
 
 	int32 count(list.CountItems());
 	fonts[which] = font;
@@ -202,12 +223,14 @@ bool Theme::SetFont(int16 which, const BFont& font)
 	return true;
 }
 
-void Theme::AddView(BView* view)
+void
+Theme::AddView(BView* view)
 {
 	list.AddItem(view);
 }
 
-void Theme::RemoveView(BView* view)
+void
+Theme::RemoveView(BView* view)
 {
 	list.RemoveItem(view);
 }

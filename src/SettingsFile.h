@@ -23,19 +23,18 @@
 #ifndef _SETTINGSFILE_H_
 #define _SETTINGSFILE_H_
 
-#include <Message.h>
 #include <FindDirectory.h>
+#include <Message.h>
 #include <Path.h>
 
 class BFile;
 
 struct attr_info;
 
-class SettingsFile : public BMessage
-{
+class SettingsFile : public BMessage {
 public:
 	SettingsFile(char const* leafname = NULL, char const* basename = NULL,
-				 directory_which dir = B_USER_SETTINGS_DIRECTORY);
+		directory_which dir = B_USER_SETTINGS_DIRECTORY);
 
 	status_t InitCheck() const;
 
@@ -44,8 +43,8 @@ public:
 
 private:
 	static status_t _StoreAttributes(BMessage const* m, BFile* f, const char* basename = "");
-	static status_t _ExtractAttribute(BMessage* m, BFile* f, const char* full_name,
-									  char* partial_name, attr_info* ai);
+	static status_t _ExtractAttribute(
+		BMessage* m, BFile* f, const char* full_name, char* partial_name, attr_info* ai);
 
 	status_t check;
 	BPath path;

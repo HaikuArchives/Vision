@@ -26,12 +26,11 @@
 
 #include <Bitmap.h>
 #include <Cursor.h>
-#include <TranslationUtils.h>
 #include <String.h>
+#include <TranslationUtils.h>
 #include <View.h>
 
-class ClickView : public BView
-{
+class ClickView : public BView {
 public:
 	BString fLaunchUrl;
 	BBitmap* fLogo;

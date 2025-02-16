@@ -26,19 +26,21 @@
 #include "Vision.h"
 
 NetworkMenu::NetworkMenu(const char* title, uint32 what, BMessenger msgTarget)
-	: BMenu(title), fMsgConst(what), fTarget(msgTarget)
+	: BMenu(title),
+	  fMsgConst(what),
+	  fTarget(msgTarget)
 {
 }
 
-NetworkMenu::~NetworkMenu()
-{
-}
+NetworkMenu::~NetworkMenu() {}
 
-void NetworkMenu::AttachedToWindow()
+void
+NetworkMenu::AttachedToWindow()
 {
 	if (CountItems()) {
 		BMenuItem* item(NULL);
-		while ((item = RemoveItem((int32)0)) != NULL) delete item;
+		while ((item = RemoveItem((int32)0)) != NULL)
+			delete item;
 	}
 
 	BMessage msg;
@@ -49,7 +51,8 @@ void NetworkMenu::AttachedToWindow()
 		invoke->AddString("network", name);
 		BMenuItem* item(new BMenuItem(name, invoke));
 		AddItem(item);
-		if (!vision_app->CheckNetworkValid(name)) item->SetEnabled(false);
+		if (!vision_app->CheckNetworkValid(name))
+			item->SetEnabled(false);
 	}
 	SetTargetForItems(fTarget.Target(NULL));
 	BMenu::AttachedToWindow();

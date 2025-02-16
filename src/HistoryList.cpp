@@ -26,18 +26,21 @@
 #include <String.h>
 #include <TextControl.h>
 
-#include "VisionBase.h"
 #include "HistoryList.h"
+#include "VisionBase.h"
 
-HistoryList::HistoryList() : bufferFree(0), bufferPos(0)
+HistoryList::HistoryList()
+	: bufferFree(0),
+	  bufferPos(0)
 {
 }
 
-void HistoryList::PreviousBuffer(BTextControl* input)
+void
+HistoryList::PreviousBuffer(BTextControl* input)
 {
 	if (bufferPos) {
-		if (input->TextView()->TextLength() > 0 && bufferFree < BACK_BUFFER_SIZE &&
-			bufferPos == bufferFree)
+		if (input->TextView()->TextLength() > 0 && bufferFree < BACK_BUFFER_SIZE
+			&& bufferPos == bufferFree)
 			backBuffer[bufferFree++] = input->Text();
 
 		--bufferPos;
@@ -47,7 +50,8 @@ void HistoryList::PreviousBuffer(BTextControl* input)
 	}
 }
 
-void HistoryList::NextBuffer(BTextControl* input)
+void
+HistoryList::NextBuffer(BTextControl* input)
 {
 	BString buffer;
 
@@ -65,12 +69,14 @@ void HistoryList::NextBuffer(BTextControl* input)
 	input->TextView()->Select(input->TextView()->TextLength(), input->TextView()->TextLength());
 }
 
-BString HistoryList::Submit(const char* buffer)
+BString
+HistoryList::Submit(const char* buffer)
 {
 	int32 i(0);
 	// All filled up
 	if (bufferFree == BACK_BUFFER_SIZE) {
-		for (i = 0; i < BACK_BUFFER_SIZE - 1; ++i) backBuffer[i] = backBuffer[i + 1];
+		for (i = 0; i < BACK_BUFFER_SIZE - 1; ++i)
+			backBuffer[i] = backBuffer[i + 1];
 
 		bufferFree = BACK_BUFFER_SIZE - 1;
 	}
@@ -91,7 +97,8 @@ BString HistoryList::Submit(const char* buffer)
 	return cmd;
 }
 
-bool HistoryList::HasHistory() const
+bool
+HistoryList::HasHistory() const
 {
 	return bufferFree != 0;
 }

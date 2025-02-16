@@ -59,26 +59,31 @@ StatusView::~StatusView()
 	}
 }
 
-void StatusView::AddItem(StatusItem* item, bool erase)
+void
+StatusView::AddItem(StatusItem* item, bool erase)
 {
 	StatusItem* last((StatusItem*)items.LastItem());
 	float width(3.0);
 
-	if (last) width = last->frame.right + 8.0;
+	if (last)
+		width = last->frame.right + 8.0;
 
-	if (item->label.Length()) width += StringWidth(item->label.String()) + 3;
+	if (item->label.Length())
+		width += StringWidth(item->label.String()) + 3;
 
 	item->frame.top = 2.0;
 	item->frame.bottom = Bounds().Height();
 	item->frame.left = width;
 	item->frame.right = width + StringWidth(item->value.String());
 
-	if (erase) item->value = "";
+	if (erase)
+		item->value = "";
 
 	items.AddItem(item);
 }
 
-void StatusView::MouseDown(BPoint point)
+void
+StatusView::MouseDown(BPoint point)
 {
 	StatusItem* item(NULL);
 	for (int32 i = 0; i < items.CountItems(); i++) {
@@ -93,7 +98,8 @@ void StatusView::MouseDown(BPoint point)
 	BView::MouseDown(point);
 }
 
-void StatusView::Clear()
+void
+StatusView::Clear()
 {
 	int32 i, all(items.CountItems());
 
@@ -105,12 +111,14 @@ void StatusView::Clear()
 	Invalidate();
 }
 
-StatusItem* StatusView::ItemAt(int32 which) const
+StatusItem*
+StatusView::ItemAt(int32 which) const
 {
 	return (StatusItem*)items.ItemAt(which);
 }
 
-void StatusView::SetItemValue(int32 which, const char* value, bool redraw)
+void
+StatusView::SetItemValue(int32 which, const char* value, bool redraw)
 {
 	StatusItem* item(ItemAt(which));
 	StatusItem* nextitem;
@@ -118,7 +126,8 @@ void StatusView::SetItemValue(int32 which, const char* value, bool redraw)
 
 	if (item) {
 		item->value = value;
-		if (item->frame.left + StringWidth(value) != item->frame.right) completeInvalidate = true;
+		if (item->frame.left + StringWidth(value) != item->frame.right)
+			completeInvalidate = true;
 
 		item->frame.right = item->frame.left + StringWidth(value);
 		for (int32 i = which + 1; (nextitem = ItemAt(i)) != NULL; i++) {
@@ -128,13 +137,13 @@ void StatusView::SetItemValue(int32 which, const char* value, bool redraw)
 		}
 		if (redraw) {
 			Invalidate(BRect(ItemAt(which)->frame.left, item->frame.top,
-							 (completeInvalidate) ? Bounds().right : item->frame.right,
-							 item->frame.bottom));
+				(completeInvalidate) ? Bounds().right : item->frame.right, item->frame.bottom));
 		}
 	}
 }
 
-void StatusView::Draw(BRect update)
+void
+StatusView::Draw(BRect update)
 {
 	SetDrawingMode(B_OP_COPY);
 	SetHighUIColor(LowUIColor(), B_DARKEN_2_TINT);
@@ -174,7 +183,8 @@ void StatusView::Draw(BRect update)
 	}
 }
 
-void StatusView::DrawSplit(float x)
+void
+StatusView::DrawSplit(float x)
 {
 	BRect bounds(Bounds());
 
@@ -197,11 +207,10 @@ StatusItem::StatusItem(const char* label_, const char* value_, int32 alignment_)
 	alignment = alignment_;
 }
 
-StatusItem::~StatusItem()
-{
-}
+StatusItem::~StatusItem() {}
 
-void StatusItem::GeneratePopUp(BPoint point, BRect openrect)
+void
+StatusItem::GeneratePopUp(BPoint point, BRect openrect)
 {
 	BString str(value);
 	str.Append(" ");

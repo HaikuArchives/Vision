@@ -25,8 +25,7 @@
 
 #include <Button.h>
 
-class StopButton : public BButton
-{
+class StopButton : public BButton {
 public:
 	StopButton(BPoint, BMessage*);
 	virtual ~StopButton();

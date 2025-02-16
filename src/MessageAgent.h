@@ -31,11 +31,10 @@
 
 #include "ClientAgent.h"
 
-class MessageAgent : public ClientAgent
-{
+class MessageAgent : public ClientAgent {
 public:
 	MessageAgent(const char*, const char*, const BMessenger&, const char*, const char*,
-				 bool = false, bool = false, const char* = "", const char* = "");
+		bool = false, bool = false, const char* = "", const char* = "");
 
 	virtual ~MessageAgent();
 	virtual void AllAttached();

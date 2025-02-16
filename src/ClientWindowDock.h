@@ -23,16 +23,15 @@
 #ifndef _CLIENTWINDOWDOCK_H_
 #define _CLIENTWINDOWDOCK_H_
 
-#include <View.h>
 #include <StringView.h>
+#include <View.h>
 
 class NotifyList;
 class WindowList;
 class BScrollView;
 class BSplitView;
 
-class AgentDockHeaderString : public BStringView
-{
+class AgentDockHeaderString : public BStringView {
 public:
 	AgentDockHeaderString(const char*);
 	virtual ~AgentDockHeaderString();
@@ -42,8 +41,7 @@ public:
 	virtual void MouseUp(BPoint);
 };
 
-class AgentDockHeader : public BView
-{
+class AgentDockHeader : public BView {
 public:
 	AgentDockHeader(const char*);
 	virtual ~AgentDockHeader();
@@ -52,8 +50,7 @@ private:
 	AgentDockHeaderString* fHeaderView;
 };
 
-class AgentDockWinList : public BView
-{
+class AgentDockWinList : public BView {
 public:
 	AgentDockWinList();
 	virtual ~AgentDockWinList();
@@ -67,8 +64,7 @@ private:
 	AgentDockHeader* fAHeader;
 };
 
-class AgentDockNotifyList : public BView
-{
+class AgentDockNotifyList : public BView {
 public:
 	AgentDockNotifyList();
 	virtual ~AgentDockNotifyList();
@@ -81,8 +77,7 @@ private:
 	BScrollView* fNotifyScroll;
 };
 
-class ClientWindowDock : public BView
-{
+class ClientWindowDock : public BView {
 public:
 	ClientWindowDock();
 	virtual ~ClientWindowDock();
@@ -95,7 +90,6 @@ public:
 	void SaveSettings();
 
 private:
-
 	AgentDockWinList* fWinListAgent;
 	AgentDockNotifyList* fNotifyAgent;
 	bool fNotifyExpanded;

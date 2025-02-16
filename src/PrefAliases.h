@@ -27,8 +27,7 @@
 class BButton;
 class BColumnListView;
 
-class AliasesPrefsView : public BView
-{
+class AliasesPrefsView : public BView {
 public:
 	AliasesPrefsView();
 	virtual ~AliasesPrefsView();
@@ -44,4 +43,4 @@ private:
 	BButton* fRemoveButton;
 };
 
-#endif // _PREFALIASES_H_
+#endif	// _PREFALIASES_H_

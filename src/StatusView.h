@@ -29,14 +29,13 @@
 #define STATUS_ALIGN_RIGHT 0
 #define STATUS_ALIGN_LEFT 1
 
-#include <View.h>
 #include <List.h>
 #include <String.h>
+#include <View.h>
 
 class StatusItem;
 
-class StatusView : public BView
-{
+class StatusView : public BView {
 	BList items;
 
 public:
@@ -55,8 +54,7 @@ protected:
 	void DrawSplit(float);
 };
 
-class StatusItem
-{
+class StatusItem {
 public:
 	StatusItem(const char*, const char*, int32 = STATUS_ALIGN_RIGHT);
 

@@ -26,8 +26,8 @@
 #ifndef _CLIENTWINDOW_H_
 #define _CLIENTWINDOW_H_
 
-#include <Window.h>
 #include <String.h>
+#include <Window.h>
 
 #define STATUS_SERVER 0
 #define STATUS_LAG 1
@@ -54,12 +54,10 @@ class TIconMenu;
 class WindowList;
 class WindowListItem;
 
-class ClientWindow : public BWindow
-{
-
+class ClientWindow : public BWindow {
 protected:
 	BMenuBar* fMenuBar;
-	BMenu* fServer, *fEdit, *fWindow;
+	BMenu *fServer, *fEdit, *fWindow;
 	TIconMenu* fApp;
 
 public:
@@ -88,9 +86,10 @@ public:
 	NotifyList* pNotifyList() const;
 	ClientWindowDock* pCwDock() const;
 	StatusView* pStatusView() const;
-	BString joinStrings; // used to keep track of channel
-						 // keys on u2 ircds
+	BString joinStrings;  // used to keep track of channel
+						  // keys on u2 ircds
 	void SaveSettings();
+
 private:
 	void Init();
 

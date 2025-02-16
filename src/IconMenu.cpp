@@ -34,10 +34,10 @@
 //------------------------------------------------------------------------------
 // I N C L U D E S
 //------------------------------------------------------------------------------
-#include <storage/AppFileInfo.h>
-#include <interface/Bitmap.h>
 #include <app/Application.h>
 #include <app/Roster.h>
+#include <interface/Bitmap.h>
+#include <storage/AppFileInfo.h>
 
 #include "IconMenu.h"
 
@@ -47,7 +47,10 @@
 
 const color_space kIconColorSpace = B_RGBA32;
 
-TIconMenu::TIconMenu(BBitmap* icon, BMenu* menu) : BMenuItem(menu), bounds(), iconLabel(NULL)
+TIconMenu::TIconMenu(BBitmap* icon, BMenu* menu)
+	: BMenuItem(menu),
+	  bounds(),
+	  iconLabel(NULL)
 {
 	if (icon) {
 		bounds = icon->Bounds();
@@ -56,7 +59,10 @@ TIconMenu::TIconMenu(BBitmap* icon, BMenu* menu) : BMenuItem(menu), bounds(), ic
 	}
 }
 
-TIconMenu::TIconMenu(BMenu* menu) : BMenuItem(menu), bounds(0.0, 0.0, 15.0, 15.0), iconLabel(NULL)
+TIconMenu::TIconMenu(BMenu* menu)
+	: BMenuItem(menu),
+	  bounds(0.0, 0.0, 15.0, 15.0),
+	  iconLabel(NULL)
 {
 	app_info info;
 	if (be_app->GetAppInfo(&info) == B_NO_ERROR) {
@@ -78,7 +84,8 @@ TIconMenu::~TIconMenu()
 	iconLabel = NULL;
 }
 
-void TIconMenu::GetContentSize(float* width, float* height)
+void
+TIconMenu::GetContentSize(float* width, float* height)
 {
 	if (iconLabel) {
 		*width = bounds.Width();
@@ -87,7 +94,8 @@ void TIconMenu::GetContentSize(float* width, float* height)
 		BMenuItem::GetContentSize(width, height);
 }
 
-void TIconMenu::DrawContent()
+void
+TIconMenu::DrawContent()
 {
 	if (iconLabel) {
 		Menu()->SetDrawingMode(B_OP_OVER);

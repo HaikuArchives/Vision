@@ -28,8 +28,8 @@
 #include "VisionMessages.h"
 
 /// base includes and defines ///
-#include <GraphicsDefs.h>
 #include <Catalog.h>
+#include <GraphicsDefs.h>
 
 #include <Debug.h>
 #include <String.h>
@@ -157,14 +157,14 @@
 /// an effort to properly support conflicting numeric meanings
 
 const int IRCD_STANDARD = 1;
-const int IRCD_HYBRID = 2;		   // "hybrid"
-const int IRCD_ULTIMATE = 3;	   // "UltimateIRCd"
-const int IRCD_COMSTUD = 4;		   // "comstud"
-const int IRCD_UNDERNET = 5;	   // "u2."
-const int IRCD_BAHAMUT = 6;		   // "bahamut"
-const int IRCD_PTLINK = 7;		   // "PTlink"
-const int IRCD_CONFERENCEROOM = 8; // "CR"
-const int IRCD_NEWNET = 9;		   // "nn-"
+const int IRCD_HYBRID = 2;			// "hybrid"
+const int IRCD_ULTIMATE = 3;		// "UltimateIRCd"
+const int IRCD_COMSTUD = 4;			// "comstud"
+const int IRCD_UNDERNET = 5;		// "u2."
+const int IRCD_BAHAMUT = 6;			// "bahamut"
+const int IRCD_PTLINK = 7;			// "PTlink"
+const int IRCD_CONFERENCEROOM = 8;	// "CR"
+const int IRCD_NEWNET = 9;			// "nn-"
 
 const int32 ID_SERVER = -47;
 const int32 ID_NOTCHILD = -1;
@@ -176,7 +176,10 @@ const uint32 SERVER_DISABLED = 2;
 const int32 BIG_ENOUGH_FOR_A_REALLY_FAST_ETHERNET = 1024 * 16;
 
 // Sound event identifiers
-enum SoundEvent { seNickMentioned = 0, seSoundEventsNumber };
+enum SoundEvent {
+	seNickMentioned = 0,
+	seSoundEventsNumber
+};
 
 extern const char* kSoundEventNames[];
 

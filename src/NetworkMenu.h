@@ -26,8 +26,7 @@
 
 class BMessenger;
 
-class NetworkMenu : public BMenu
-{
+class NetworkMenu : public BMenu {
 public:
 	NetworkMenu(const char*, uint32, BMessenger);
 	virtual ~NetworkMenu();
@@ -38,4 +37,4 @@ private:
 	BMessenger fTarget;
 };
 
-#endif // _NETWORK_MENU_H
+#endif	// _NETWORK_MENU_H

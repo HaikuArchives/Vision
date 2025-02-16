@@ -22,15 +22,14 @@
 #ifndef _PREFCOLOR_H
 #define _PREFCOLOR_H
 
-#include <View.h>
 #include <Messenger.h>
+#include <View.h>
 #include "VisionBase.h"
 
 class ColorSelector;
 class BButton;
 
-class ColorPrefsView : public BView
-{
+class ColorPrefsView : public BView {
 public:
 	ColorPrefsView();
 	virtual ~ColorPrefsView();
@@ -44,4 +43,4 @@ private:
 	BButton* fRevert;
 };
 
-#endif // _PREFCOLOR_H
+#endif	// _PREFCOLOR_H

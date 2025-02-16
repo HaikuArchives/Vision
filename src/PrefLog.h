@@ -31,8 +31,7 @@ class BBox;
 class BButton;
 class BEntry;
 
-class LogPrefsView : public BView
-{
+class LogPrefsView : public BView {
 public:
 	LogPrefsView();
 	virtual ~LogPrefsView();
@@ -42,9 +41,9 @@ public:
 	virtual void FrameResized(float, float);
 
 private:
-	BTextControl* fLogBaseDir, *fLogStampFormat;
+	BTextControl *fLogBaseDir, *fLogStampFormat;
 
-	BCheckBox* fLogEnabled, *fLogFileTimestamp, *fTimeStamp;
+	BCheckBox *fLogEnabled, *fLogFileTimestamp, *fTimeStamp;
 	BButton* fClearLogs;
 
 private:
@@ -52,4 +51,4 @@ private:
 	bool _CheckIfEmpty();
 };
 
-#endif // _PREFLOG_H
+#endif	// _PREFLOG_H

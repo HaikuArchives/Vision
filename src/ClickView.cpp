@@ -21,10 +21,11 @@
  *                 Todd Lair
  */
 
-#include "Vision.h"
 #include "ClickView.h"
+#include "Vision.h"
 
-void ClickView::Draw(BRect rect)
+void
+ClickView::Draw(BRect rect)
 {
 	rgb_color bgColor = ui_color(B_PANEL_BACKGROUND_COLOR);
 	SetHighColor(bgColor);
@@ -38,7 +39,8 @@ void ClickView::Draw(BRect rect)
 		DrawBitmap(fLogo, B_ORIGIN);
 }
 
-void ClickView::MouseDown(BPoint)
+void
+ClickView::MouseDown(BPoint)
 {
 	vision_app->LoadURL(fLaunchUrl.String());
 }

@@ -29,8 +29,7 @@
 class DCCConnect;
 class WindowSettings;
 
-class DCCFileWindow : public BWindow
-{
+class DCCFileWindow : public BWindow {
 public:
 	DCCFileWindow(DCCConnect*);
 	virtual ~DCCFileWindow();

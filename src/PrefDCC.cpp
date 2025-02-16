@@ -20,8 +20,8 @@
  *                 Todd Lair
  */
 
-#include "NumericFilter.h"
 #include "PrefDCC.h"
+#include "NumericFilter.h"
 #include "Vision.h"
 
 #include <Box.h>
@@ -51,18 +51,18 @@ DCCPrefsView::DCCPrefsView()
 	menu->AddItem(new BMenuItem("8192", new BMessage(M_BLOCK_SIZE_CHANGED)));
 	fBlockSize = new BMenuField(NULL, text.String(), menu);
 	fAutoAccept = new BCheckBox(NULL, B_TRANSLATE("Automatically accept incoming sends"),
-								new BMessage(M_AUTO_ACCEPT_CHANGED));
-	fPrivateCheck = new BCheckBox(NULL, B_TRANSLATE("Automatically check for NAT IP"),
-								  new BMessage(M_DCC_PRIVATE_CHANGED));
-	fDefDir = new BTextControl(NULL, B_TRANSLATE("Default path:"), "",
-							   new BMessage(M_DEFAULT_PATH_CHANGED));
+		new BMessage(M_AUTO_ACCEPT_CHANGED));
+	fPrivateCheck = new BCheckBox(
+		NULL, B_TRANSLATE("Automatically check for NAT IP"), new BMessage(M_DCC_PRIVATE_CHANGED));
+	fDefDir = new BTextControl(
+		NULL, B_TRANSLATE("Default path:"), "", new BMessage(M_DEFAULT_PATH_CHANGED));
 
-	fDccPortMin = new BTextControl(NULL, B_TRANSLATE("Min:"), "",
-								   new BMessage(M_DCC_MIN_PORT_CHANGED));
+	fDccPortMin
+		= new BTextControl(NULL, B_TRANSLATE("Min:"), "", new BMessage(M_DCC_MIN_PORT_CHANGED));
 	fDccPortMin->TextView()->AddFilter(new NumericFilter());
 
-	fDccPortMax = new BTextControl(NULL, B_TRANSLATE("Max:"), "",
-								   new BMessage(M_DCC_MAX_PORT_CHANGED));
+	fDccPortMax
+		= new BTextControl(NULL, B_TRANSLATE("Max:"), "", new BMessage(M_DCC_MAX_PORT_CHANGED));
 	fDccPortMax->TextView()->AddFilter(new NumericFilter());
 
 	fBox = new BBox("box");
@@ -72,28 +72,27 @@ DCCPrefsView::DCCPrefsView()
 
 	BLayoutBuilder::Grid<>(fContainerBox, 0.0, 0.0)
 		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(fDccPortMin->CreateLabelLayoutItem(), 0, 0)
-			.Add(fDccPortMin->CreateTextViewLayoutItem(), 1, 0)
-			.Add(fDccPortMax->CreateLabelLayoutItem(), 0, 1)
-			.Add(fDccPortMax->CreateTextViewLayoutItem(), 1, 1)
+		.Add(fDccPortMin->CreateLabelLayoutItem(), 0, 0)
+		.Add(fDccPortMin->CreateTextViewLayoutItem(), 1, 0)
+		.Add(fDccPortMax->CreateLabelLayoutItem(), 0, 1)
+		.Add(fDccPortMax->CreateTextViewLayoutItem(), 1, 1)
 		.End();
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(fDefDir)
-			.Add(fPrivateCheck)
-			.Add(fAutoAccept)
-			.Add(fBlockSize)
-			.Add(fBox)
-			.AddGlue()
+		.Add(fDefDir)
+		.Add(fPrivateCheck)
+		.Add(fAutoAccept)
+		.Add(fBlockSize)
+		.Add(fBox)
+		.AddGlue()
 		.End();
 }
 
-DCCPrefsView::~DCCPrefsView()
-{
-}
+DCCPrefsView::~DCCPrefsView() {}
 
-void DCCPrefsView::AttachedToWindow()
+void
+DCCPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	fBlockSize->Menu()->SetTargetForItems(this);
@@ -110,7 +109,8 @@ void DCCPrefsView::AttachedToWindow()
 	else
 		fDefDir->SetEnabled(false);
 
-	if (vision_app->GetBool("dccPrivateCheck")) fPrivateCheck->SetValue(B_CONTROL_ON);
+	if (vision_app->GetBool("dccPrivateCheck"))
+		fPrivateCheck->SetValue(B_CONTROL_ON);
 
 	fDccPortMin->SetTarget(this);
 	fDccPortMax->SetTarget(this);
@@ -120,55 +120,69 @@ void DCCPrefsView::AttachedToWindow()
 	const char* dccBlock(vision_app->GetString("dccBlockSize"));
 
 	BMenuItem* item(fBlockSize->Menu()->FindItem(dccBlock));
-	if (item) dynamic_cast<BInvoker*>(item)->Invoke();
+	if (item)
+		dynamic_cast<BInvoker*>(item)->Invoke();
 }
 
-void DCCPrefsView::AllAttached()
+void
+DCCPrefsView::AllAttached()
 {
 	BView::AllAttached();
 }
 
-void DCCPrefsView::FrameResized(float width, float height)
+void
+DCCPrefsView::FrameResized(float width, float height)
 {
 	BView::FrameResized(width, height);
 }
 
-void DCCPrefsView::MessageReceived(BMessage* msg)
+void
+DCCPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_BLOCK_SIZE_CHANGED: {
-		BMenuItem* it(NULL);
-		msg->FindPointer("source", reinterpret_cast<void**>(&it));
-		if (it) vision_app->SetString("dccBlockSize", 0, it->Label());
-	} break;
+		case M_BLOCK_SIZE_CHANGED:
+		{
+			BMenuItem* it(NULL);
+			msg->FindPointer("source", reinterpret_cast<void**>(&it));
+			if (it)
+				vision_app->SetString("dccBlockSize", 0, it->Label());
+		} break;
 
-	case M_DEFAULT_PATH_CHANGED: {
-		const char* path(fDefDir->Text());
-		BPath testPath(path, NULL, true);
-		if (testPath.InitCheck() == B_OK) vision_app->SetString("dccDefPath", 0, path);
-	} break;
+		case M_DEFAULT_PATH_CHANGED:
+		{
+			const char* path(fDefDir->Text());
+			BPath testPath(path, NULL, true);
+			if (testPath.InitCheck() == B_OK)
+				vision_app->SetString("dccDefPath", 0, path);
+		} break;
 
-	case M_AUTO_ACCEPT_CHANGED: {
-		int32 val(fAutoAccept->Value());
-		fDefDir->SetEnabled(val == B_CONTROL_ON);
-		vision_app->SetBool("dccAutoAccept", val);
-	} break;
+		case M_AUTO_ACCEPT_CHANGED:
+		{
+			int32 val(fAutoAccept->Value());
+			fDefDir->SetEnabled(val == B_CONTROL_ON);
+			vision_app->SetBool("dccAutoAccept", val);
+		} break;
 
-	case M_DCC_MIN_PORT_CHANGED: {
-		const char* portMin(fDccPortMin->Text());
-		if (portMin != NULL) vision_app->SetString("dccMinPort", 0, portMin);
-	} break;
-	case M_DCC_MAX_PORT_CHANGED: {
-		const char* portMax(fDccPortMax->Text());
-		if (portMax != NULL) vision_app->SetString("dccMaxPort", 0, portMax);
-	} break;
+		case M_DCC_MIN_PORT_CHANGED:
+		{
+			const char* portMin(fDccPortMin->Text());
+			if (portMin != NULL)
+				vision_app->SetString("dccMinPort", 0, portMin);
+		} break;
+		case M_DCC_MAX_PORT_CHANGED:
+		{
+			const char* portMax(fDccPortMax->Text());
+			if (portMax != NULL)
+				vision_app->SetString("dccMaxPort", 0, portMax);
+		} break;
 
-	case M_DCC_PRIVATE_CHANGED: {
-		vision_app->SetBool("dccPrivateCheck", fPrivateCheck->Value() == B_CONTROL_ON);
-	} break;
+		case M_DCC_PRIVATE_CHANGED:
+		{
+			vision_app->SetBool("dccPrivateCheck", fPrivateCheck->Value() == B_CONTROL_ON);
+		} break;
 
-	default:
-		BView::MessageReceived(msg);
-		break;
+		default:
+			BView::MessageReceived(msg);
+			break;
 	}
 }

@@ -28,13 +28,13 @@
 #include <LayoutBuilder.h>
 #include <ListItem.h>
 #include <ListView.h>
-#include <MenuField.h>
 #include <Menu.h>
+#include <MenuField.h>
 #include <MenuItem.h>
-#include <StringFormat.h>
-#include <SeparatorView.h>
-#include <StringView.h>
 #include <ScrollView.h>
+#include <SeparatorView.h>
+#include <StringFormat.h>
+#include <StringView.h>
 #include <SupportDefs.h>
 #include <TextControl.h>
 #include <TextView.h>
@@ -51,8 +51,7 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "NetworkPrefsView"
 
-class InvokingTextView : public BTextView, public BInvoker
-{
+class InvokingTextView : public BTextView, public BInvoker {
 public:
 	InvokingTextView(const char*, BMessage*, BHandler*);
 	virtual ~InvokingTextView();
@@ -66,11 +65,10 @@ InvokingTextView::InvokingTextView(const char* name, BMessage* msg, BHandler* ta
 {
 }
 
-InvokingTextView::~InvokingTextView()
-{
-}
+InvokingTextView::~InvokingTextView() {}
 
-void InvokingTextView::KeyDown(const char* bytes, int32 numBytes)
+void
+InvokingTextView::KeyDown(const char* bytes, int32 numBytes)
 {
 	BTextView::KeyDown(bytes, numBytes);
 	Invoke();
@@ -79,12 +77,10 @@ void InvokingTextView::KeyDown(const char* bytes, int32 numBytes)
 // remove when fixed #14303 in Haiku
 
 class SeparatorView : public BSeparatorView {
-public:				SeparatorView(orientation orientation,
-					border_style border = B_PLAIN_BORDER):
-				BSeparatorView(orientation, border) {};
-	virtual void AttachedToWindow()
-					{AdoptSystemColors();};
-
+public:
+	SeparatorView(orientation orientation, border_style border = B_PLAIN_BORDER)
+		: BSeparatorView(orientation, border) {};
+	virtual void AttachedToWindow() { AdoptSystemColors(); };
 };
 
 NetworkPrefsView::NetworkPrefsView(const char* name)
@@ -101,13 +97,14 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 	menu->AddSeparatorItem();
 	menu->AddItem(
 		new BMenuItem(B_TRANSLATE("Add new" B_UTF8_ELLIPSIS), new BMessage(M_ADD_NEW_NETWORK)));
-	menu->AddItem(fRemoveItem =
-					  new BMenuItem(B_TRANSLATE("Remove current"), new BMessage(M_REMOVE_CURRENT_NETWORK)));
+	menu->AddItem(fRemoveItem = new BMenuItem(
+					  B_TRANSLATE("Remove current"), new BMessage(M_REMOVE_CURRENT_NETWORK)));
 	menu->AddItem(fDupeItem = new BMenuItem(B_TRANSLATE("Duplicate current" B_UTF8_ELLIPSIS),
-											new BMessage(M_DUPE_CURRENT_NETWORK)));
+					  new BMessage(M_DUPE_CURRENT_NETWORK)));
 	fNetworkMenu = new BMenuField("NetList", NULL, menu);
 	const float width = StringWidth(B_TRANSLATE("Defaults"));
-	fNetworkMenu->SetExplicitSize(BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 32, B_SIZE_UNSET));
+	fNetworkMenu->SetExplicitSize(
+		BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 32, B_SIZE_UNSET));
 
 	// Create the Views
 	BSeparatorView* fTitleView = new SeparatorView(B_HORIZONTAL, B_FANCY_BORDER);
@@ -130,33 +127,31 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 	fPersonalBox->AddChild(fPersonalContainerBox);
 	fPersonalBox->SetLabel(B_TRANSLATE("Personal details"));
 
-	BStringView* stringView1(new BStringView(NULL,
-		B_TRANSLATE("Connects to server:")));
+	BStringView* stringView1(new BStringView(NULL, B_TRANSLATE("Connects to server:")));
 
 	fConnectServer = new BStringView(NULL, B_EMPTY_STRING);
 
 	fAlternates = new BStringView(NULL, B_EMPTY_STRING);
 
-	fServerButton = new BButton(NULL, B_TRANSLATE("Change servers" B_UTF8_ELLIPSIS),
-								new BMessage(M_SERVER_DIALOG));
+	fServerButton = new BButton(
+		NULL, B_TRANSLATE("Change servers" B_UTF8_ELLIPSIS), new BMessage(M_SERVER_DIALOG));
 
 	BStringView* stringView4(new BStringView(NULL, B_TRANSLATE("Automatically execute:")));
 
 
 	fTextView = new InvokingTextView(NULL, new BMessage(M_NETPREFS_TEXT_INVOKE), this);
-	fExecScroller =
-		new BScrollView(NULL, fTextView, 0, false, true);
+	fExecScroller = new BScrollView(NULL, fTextView, 0, false, true);
 	fTextView->MakeEditable(true);
 	fTextView->SetStylable(false);
 
-	fLagCheckBox = new BCheckBox(NULL, B_TRANSLATE("Enable lag checking"),
-		new BMessage(M_NET_CHECK_LAG));
+	fLagCheckBox
+		= new BCheckBox(NULL, B_TRANSLATE("Enable lag checking"), new BMessage(M_NET_CHECK_LAG));
 
-	fStartupBox = new BCheckBox(NULL, B_TRANSLATE("Auto-connect to this network"),
-			new BMessage(M_CONNECT_ON_STARTUP));
+	fStartupBox = new BCheckBox(
+		NULL, B_TRANSLATE("Auto-connect to this network"), new BMessage(M_CONNECT_ON_STARTUP));
 
-	fNickDefaultsBox =
-		new BCheckBox(NULL, B_TRANSLATE("Use defaults"), new BMessage(M_USE_NICK_DEFAULTS));
+	fNickDefaultsBox
+		= new BCheckBox(NULL, B_TRANSLATE("Use defaults"), new BMessage(M_USE_NICK_DEFAULTS));
 
 	// Preferred nicks:
 	BStringView* stringView5(new BStringView(NULL, B_TRANSLATE("Preferred nicks:")));
@@ -171,7 +166,7 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 	font_height fontHeight;
 	GetFontHeight(&fontHeight);
 	const int16 buttonHeight = int16(fontHeight.ascent + fontHeight.descent + 12);
-		// button size determined by font size
+	// button size determined by font size
 	BSize btnSize(buttonHeight, buttonHeight);
 
 	fNickAddButton = new BButton("plus", "+", new BMessage(M_ADD_NICK));
@@ -181,8 +176,7 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 
 	BString text(B_TRANSLATE("Real name:"));
 	text.Append(" ");
-	fRealName = new BTextControl(NULL,
-		text.String(), NULL, NULL);
+	fRealName = new BTextControl(NULL, text.String(), NULL, NULL);
 
 	text = B_TRANSLATE("Ident:");
 	text.Append(" ");
@@ -190,19 +184,19 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 	fIdent = new BTextControl(NULL, text.String(), NULL, NULL);
 
 	BLayoutBuilder::Group<>(fNetDetailsContainerBox, B_VERTICAL)
-				.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
-					.Add(stringView1)
-					.Add(fConnectServer)
-					.Add(fAlternates)
-				.End()
-				.Add(fServerButton)
-				.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
-					.Add(stringView4)
-					.Add(fExecScroller)
-				.End()
-				.Add(fLagCheckBox)
+		.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+		.Add(stringView1)
+		.Add(fConnectServer)
+		.Add(fAlternates)
+		.End()
+		.Add(fServerButton)
+		.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+		.Add(stringView4)
+		.Add(fExecScroller)
+		.End()
+		.Add(fLagCheckBox)
 		.SetInsets(B_USE_WINDOW_SPACING)
-	.End();
+		.End();
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.AddGroup(B_HORIZONTAL, 0)
@@ -210,49 +204,49 @@ NetworkPrefsView::NetworkPrefsView(const char* name)
 		.Add(fTitleView)
 		.End()
 		.SetInsets(0, B_USE_WINDOW_SPACING, 0, B_USE_WINDOW_SPACING)
-			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING)
-				.SetInsets(B_USE_SMALL_SPACING, 0, B_USE_SMALL_SPACING, 0)
-				.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-					.Add(fNetDetailsBox)
-					.Add(fPersonalBox)
-				.End()
-				.Add(fStartupBox)
-			.End()
-	.End();
+		.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING)
+		.SetInsets(B_USE_SMALL_SPACING, 0, B_USE_SMALL_SPACING, 0)
+		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+		.Add(fNetDetailsBox)
+		.Add(fPersonalBox)
+		.End()
+		.Add(fStartupBox)
+		.End()
+		.End();
 	const int16 buttonSpacing = 1;
 	BLayoutBuilder::Group<>(fPersonalContainerBox, B_VERTICAL, 0)
 		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(fNickDefaultsBox)
-			.AddStrut(B_USE_DEFAULT_SPACING)
-			.AddGrid(0.0, 0.0)
-				.AddTextControl(fIdent, 0, 0)
-				.AddTextControl(fRealName, 0, 1)
-			.End()
-			.AddStrut(B_USE_DEFAULT_SPACING)
-			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
-				.Add(stringView5)
-				.Add(fNickScroller)
-			.End()
-			.AddGroup(B_HORIZONTAL, 0, 0.0)
-				// Add and Remove buttons
-				.AddGroup(B_VERTICAL, 0, 0.0)
-					.AddGroup(B_HORIZONTAL, 0, 0.0)
-						.Add(new BSeparatorView(B_VERTICAL))
-						.AddGroup(B_VERTICAL, 0, 0.0)
-							.AddGroup(B_HORIZONTAL, buttonSpacing, 0.0)
-								.SetInsets(buttonSpacing)
-								.Add(fNickAddButton)
-								.Add(fNickRemoveButton)
-							.End()
-							.Add(new BSeparatorView(B_HORIZONTAL))
-						.End()
-						.Add(new BSeparatorView(B_VERTICAL))
-					.End()
-					.End()
-					.AddGlue()
-				.End()
+		.Add(fNickDefaultsBox)
+		.AddStrut(B_USE_DEFAULT_SPACING)
+		.AddGrid(0.0, 0.0)
+		.AddTextControl(fIdent, 0, 0)
+		.AddTextControl(fRealName, 0, 1)
+		.End()
+		.AddStrut(B_USE_DEFAULT_SPACING)
+		.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+		.Add(stringView5)
+		.Add(fNickScroller)
+		.End()
+		.AddGroup(B_HORIZONTAL, 0, 0.0)
+		// Add and Remove buttons
+		.AddGroup(B_VERTICAL, 0, 0.0)
+		.AddGroup(B_HORIZONTAL, 0, 0.0)
+		.Add(new BSeparatorView(B_VERTICAL))
+		.AddGroup(B_VERTICAL, 0, 0.0)
+		.AddGroup(B_HORIZONTAL, buttonSpacing, 0.0)
+		.SetInsets(buttonSpacing)
+		.Add(fNickAddButton)
+		.Add(fNickRemoveButton)
+		.End()
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.End()
+		.Add(new BSeparatorView(B_VERTICAL))
+		.End()
+		.End()
+		.AddGlue()
+		.End()
 
-	.End();
+		.End();
 }
 
 NetworkPrefsView::~NetworkPrefsView()
@@ -263,7 +257,8 @@ NetworkPrefsView::~NetworkPrefsView()
 	BMessenger(fServerPrefs).SendMessage(B_QUIT_REQUESTED);
 }
 
-void NetworkPrefsView::AttachedToWindow()
+void
+NetworkPrefsView::AttachedToWindow()
 {
 	fNetworkMenu->Menu()->SetTargetForItems(this);
 	fServerButton->SetTarget(this);
@@ -283,7 +278,8 @@ void NetworkPrefsView::AttachedToWindow()
 	BuildNetworkList();
 }
 
-void NetworkPrefsView::DetachedFromWindow()
+void
+NetworkPrefsView::DetachedFromWindow()
 {
 	// save changes to active network
 	// get autoexec commands
@@ -291,9 +287,11 @@ void NetworkPrefsView::DetachedFromWindow()
 	SaveCurrentNetwork();
 }
 
-void NetworkPrefsView::BuildNetworkList()
+void
+NetworkPrefsView::BuildNetworkList()
 {
-	if (fNetworkMenu == NULL) return;
+	if (fNetworkMenu == NULL)
+		return;
 
 	BMessage msg;
 
@@ -306,20 +304,22 @@ void NetworkPrefsView::BuildNetworkList()
 	}
 }
 
-void NetworkPrefsView::SetConnectServer(const char* serverName)
+void
+NetworkPrefsView::SetConnectServer(const char* serverName)
 {
 	fConnectServer->SetText(serverName);
 	fConnectServer->ResizeToPreferred();
 }
 
-void NetworkPrefsView::SetAlternateCount(uint32 altCount)
+void
+NetworkPrefsView::SetAlternateCount(uint32 altCount)
 {
 	if (altCount > 0) {
-
-	BString text;
-	static BStringFormat format(B_TRANSLATE("{0, plural,"
-		"one{with a fallback to one other.}"
-		"other{with a fallback to # others.}}"));
+		BString text;
+		static BStringFormat format(
+			B_TRANSLATE("{0, plural,"
+						"one{with a fallback to one other.}"
+						"other{with a fallback to # others.}}"));
 		format.Format(text, altCount);
 
 		fAlternates->SetText(text.String());
@@ -328,7 +328,8 @@ void NetworkPrefsView::SetAlternateCount(uint32 altCount)
 		fAlternates->SetText("");
 }
 
-void NetworkPrefsView::UpdateNetworkData(BMessage& msg)
+void
+NetworkPrefsView::UpdateNetworkData(BMessage& msg)
 {
 	// enable network controls
 	fStartupBox->SetEnabled(true);
@@ -356,9 +357,9 @@ void NetworkPrefsView::UpdateNetworkData(BMessage& msg)
 	uint32 altCount(0);
 	ssize_t size;
 	const ServerData* data(NULL);
-	for (int32 i = 0; msg.FindData("server", B_ANY_TYPE, i,
-		reinterpret_cast<const void**>(&data), &size) == B_OK;
-		 i++) {
+	for (int32 i = 0;
+		msg.FindData("server", B_ANY_TYPE, i, reinterpret_cast<const void**>(&data), &size) == B_OK;
+		i++) {
 		if (size < sizeof(ServerData)) {
 			printf("WARNING! Old ServerData format loaded.\n");
 			// FIXME: We really need to get rid of ServerData
@@ -372,13 +373,15 @@ void NetworkPrefsView::UpdateNetworkData(BMessage& msg)
 	SetAlternateCount(altCount);
 }
 
-void NetworkPrefsView::UpdatePersonalData(BMessage& msg)
+void
+NetworkPrefsView::UpdatePersonalData(BMessage& msg)
 {
 	BString curIdent("");
 	BString curRname("");
 	BString curNick("");
 	int32 count(fListView->CountItems()), i(0);
-	for (i = 0; i < count; i++) delete (fListView->RemoveItem((int32)0));
+	for (i = 0; i < count; i++)
+		delete (fListView->RemoveItem((int32)0));
 
 	if ((msg.HasBool("useDefaults") && msg.FindBool("useDefaults"))) {
 		BMessage defaults(vision_app->GetNetwork("defaults"));
@@ -402,7 +405,8 @@ void NetworkPrefsView::UpdatePersonalData(BMessage& msg)
 		fNickDefaultsBox->SetValue(B_CONTROL_OFF);
 	}
 
-	if (fActiveNetwork.what != VIS_NETWORK_DEFAULTS) fNickDefaultsBox->SetEnabled(true);
+	if (fActiveNetwork.what != VIS_NETWORK_DEFAULTS)
+		fNickDefaultsBox->SetEnabled(true);
 
 	if (curIdent.Length())
 		fIdent->SetText(curIdent.String());
@@ -413,10 +417,12 @@ void NetworkPrefsView::UpdatePersonalData(BMessage& msg)
 	else
 		fRealName->SetText("");
 
-	if (fListView->CountItems() == 0) fNickRemoveButton->SetEnabled(false);
+	if (fListView->CountItems() == 0)
+		fNickRemoveButton->SetEnabled(false);
 }
 
-void NetworkPrefsView::SetupDefaults(BMessage& msg)
+void
+NetworkPrefsView::SetupDefaults(BMessage& msg)
 {
 	// disable appropriate controls
 	fTextView->MakeEditable(false);
@@ -431,9 +437,11 @@ void NetworkPrefsView::SetupDefaults(BMessage& msg)
 	UpdatePersonalData(msg);
 }
 
-void NetworkPrefsView::SaveCurrentNetwork()
+void
+NetworkPrefsView::SaveCurrentNetwork()
 {
-	if (fActiveNetwork.FindString("name") == NULL) return;
+	if (fActiveNetwork.FindString("name") == NULL)
+		return;
 
 	// check real name and fIdent, update if needed
 	if (fNickDefaultsBox->Value() == 0) {
@@ -470,233 +478,252 @@ void NetworkPrefsView::SaveCurrentNetwork()
 }
 
 
-void NetworkPrefsView::MessageReceived(BMessage* msg)
+void
+NetworkPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_NETWORK_DEFAULTS:
-	{
-		if (fActiveNetwork.HasString("name"))
-			vision_app->SetNetwork(fActiveNetwork.FindString("name"), &fActiveNetwork);
-		fActiveNetwork = vision_app->GetNetwork("defaults");
-		float width = StringWidth(B_TRANSLATE("Defaults"));
-		fNetworkMenu->SetExplicitSize(BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 28, B_SIZE_UNSET));
-		fNetworkMenu->MenuItem()->SetLabel(B_TRANSLATE("Defaults"));
-		SetupDefaults(fActiveNetwork);
-		fDupeItem->SetEnabled(false);
-		fRemoveItem->SetEnabled(false);
-		break;
-	}
+		case M_NETWORK_DEFAULTS:
+		{
+			if (fActiveNetwork.HasString("name"))
+				vision_app->SetNetwork(fActiveNetwork.FindString("name"), &fActiveNetwork);
+			fActiveNetwork = vision_app->GetNetwork("defaults");
+			float width = StringWidth(B_TRANSLATE("Defaults"));
+			fNetworkMenu->SetExplicitSize(
+				BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 28, B_SIZE_UNSET));
+			fNetworkMenu->MenuItem()->SetLabel(B_TRANSLATE("Defaults"));
+			SetupDefaults(fActiveNetwork);
+			fDupeItem->SetEnabled(false);
+			fRemoveItem->SetEnabled(false);
+			break;
+		}
 
-	case M_CHOOSE_NETWORK: {
-		BMenuItem* item(NULL);
-		msg->FindPointer("source", reinterpret_cast<void**>(&item));
-		SaveCurrentNetwork();
-		fActiveNetwork = vision_app->GetNetwork(item->Label());
-		float width = StringWidth(item->Label());
-		fNetworkMenu->SetExplicitSize(BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 28, B_SIZE_UNSET));
-		fNetworkMenu->MenuItem()->SetLabel(item->Label());
-		UpdatePersonalData(fActiveNetwork);
-		UpdateNetworkData(fActiveNetwork);
-		if (BMessenger(fServerPrefs).IsValid()) fServerPrefs->SetNetworkData(&fActiveNetwork);
-		fDupeItem->SetEnabled(true);
-		fRemoveItem->SetEnabled(true);
-	} break;
+		case M_CHOOSE_NETWORK:
+		{
+			BMenuItem* item(NULL);
+			msg->FindPointer("source", reinterpret_cast<void**>(&item));
+			SaveCurrentNetwork();
+			fActiveNetwork = vision_app->GetNetwork(item->Label());
+			float width = StringWidth(item->Label());
+			fNetworkMenu->SetExplicitSize(
+				BSize(width + be_control_look->DefaultLabelSpacing() * 2 + 28, B_SIZE_UNSET));
+			fNetworkMenu->MenuItem()->SetLabel(item->Label());
+			UpdatePersonalData(fActiveNetwork);
+			UpdateNetworkData(fActiveNetwork);
+			if (BMessenger(fServerPrefs).IsValid())
+				fServerPrefs->SetNetworkData(&fActiveNetwork);
+			fDupeItem->SetEnabled(true);
+			fRemoveItem->SetEnabled(true);
+		} break;
 
-	case M_ADD_NEW_NETWORK: {
-		if (msg->HasString("text")) {
-			fNetPrompt = NULL;
-			BString network(msg->FindString("text"));
-			network.RemoveAll(" ");
-			BMenu* menu(fNetworkMenu->Menu());
-			for (int32 i = 0; i < menu->CountItems(); i++) {
-				BMenuItem* item(menu->ItemAt(i));
-				if (item && network == item->Label()) {
-					dynamic_cast<BInvoker*>(item)->Invoke();
-					return;
+		case M_ADD_NEW_NETWORK:
+		{
+			if (msg->HasString("text")) {
+				fNetPrompt = NULL;
+				BString network(msg->FindString("text"));
+				network.RemoveAll(" ");
+				BMenu* menu(fNetworkMenu->Menu());
+				for (int32 i = 0; i < menu->CountItems(); i++) {
+					BMenuItem* item(menu->ItemAt(i));
+					if (item && network == item->Label()) {
+						dynamic_cast<BInvoker*>(item)->Invoke();
+						return;
+					}
 				}
-			}
-			BMessage newNet(VIS_NETWORK_DATA);
-			newNet.AddString("name", network.String());
-			vision_app->SetNetwork(network.String(), &newNet);
-			BMenuItem* item(new BMenuItem(network.String(), new BMessage(M_CHOOSE_NETWORK)));
-			menu->AddItem(item, 0);
-			item->SetTarget(this);
-			dynamic_cast<BInvoker*>(item)->Invoke();
-		} else {
-			BString text(B_TRANSLATE("Network name:"));
-			text.Append(" ");
-			fNetPrompt =
-				new PromptWindow(BPoint(Window()->Frame().left + Window()->Frame().Width() / 2,
-										Window()->Frame().top + Window()->Frame().Height() / 2),
-								 text.String(), B_TRANSLATE("Add network"), NULL, this,
-								 new BMessage(M_ADD_NEW_NETWORK), NULL, false);
-			fNetPrompt->Show();
-		}
-	} break;
-
-	case M_REMOVE_CURRENT_NETWORK: {
-		const char* name(fActiveNetwork.FindString("name"));
-		vision_app->RemoveNetwork(name);
-		BMenu* menu(fNetworkMenu->Menu());
-		for (int32 i = 0; i < menu->CountItems(); i++) {
-			BMenuItem* item(menu->ItemAt(i));
-			if (!strcmp(item->Label(), name)) {
-				delete menu->RemoveItem(i);
-				fActiveNetwork.MakeEmpty();
-				dynamic_cast<BInvoker*>(menu->ItemAt(0))->Invoke();
-				break;
-			}
-		}
-	} break;
-
-	case M_DUPE_CURRENT_NETWORK: {
-		if (msg->HasString("text")) {
-			fDupePrompt = NULL;
-			BString network(msg->FindString("text"));
-			network.RemoveAll(" ");
-			BMenu* menu(fNetworkMenu->Menu());
-			for (int32 i = 0; i < menu->CountItems(); i++) {
-				BMenuItem* item(menu->ItemAt(i));
-				if (item && network == item->Label()) {
+				BMessage newNet(VIS_NETWORK_DATA);
+				newNet.AddString("name", network.String());
+				vision_app->SetNetwork(network.String(), &newNet);
+				BMenuItem* item(new BMenuItem(network.String(), new BMessage(M_CHOOSE_NETWORK)));
+				menu->AddItem(item, 0);
+				item->SetTarget(this);
 				dynamic_cast<BInvoker*>(item)->Invoke();
-					return;
+			} else {
+				BString text(B_TRANSLATE("Network name:"));
+				text.Append(" ");
+				fNetPrompt = new PromptWindow(
+					BPoint(Window()->Frame().left + Window()->Frame().Width() / 2,
+						Window()->Frame().top + Window()->Frame().Height() / 2),
+					text.String(), B_TRANSLATE("Add network"), NULL, this,
+					new BMessage(M_ADD_NEW_NETWORK), NULL, false);
+				fNetPrompt->Show();
+			}
+		} break;
+
+		case M_REMOVE_CURRENT_NETWORK:
+		{
+			const char* name(fActiveNetwork.FindString("name"));
+			vision_app->RemoveNetwork(name);
+			BMenu* menu(fNetworkMenu->Menu());
+			for (int32 i = 0; i < menu->CountItems(); i++) {
+				BMenuItem* item(menu->ItemAt(i));
+				if (!strcmp(item->Label(), name)) {
+					delete menu->RemoveItem(i);
+					fActiveNetwork.MakeEmpty();
+					dynamic_cast<BInvoker*>(menu->ItemAt(0))->Invoke();
+					break;
 				}
 			}
-			BMessage newNet = fActiveNetwork;
-			newNet.ReplaceString("name", network.String());
-			vision_app->SetNetwork(network.String(), &newNet);
-			BMenuItem* item(new BMenuItem(network.String(), new BMessage(M_CHOOSE_NETWORK)));
-			menu->AddItem(item, 0);
-			item->SetTarget(this);
-			dynamic_cast<BInvoker*>(item)->Invoke();
-		} else {
-			BString text(B_TRANSLATE("Network name:"));
-			text.Append(" ");
-			fDupePrompt =
-				new PromptWindow(BPoint(Window()->Frame().left + Window()->Frame().Width() / 2,
-										Window()->Frame().top + Window()->Frame().Height() / 2),
-								 text.String(), B_TRANSLATE("Duplicate network"), NULL, this,
-								 new BMessage(M_DUPE_CURRENT_NETWORK), NULL, false);
-			fDupePrompt->Show();
-		}
-	} break;
+		} break;
 
-	case M_SERVER_DATA_CHANGED: {
-		UpdateNetworkData(fActiveNetwork);
-	} break;
-
-	case M_SERVER_DIALOG: {
-		BMessenger msgr(fServerPrefs);
-		if (msgr.IsValid())
-			fServerPrefs->Activate();
-		else {
-			fServerPrefs = new NetPrefServerWindow(this);
-			fServerPrefs->SetNetworkData(&fActiveNetwork);
-			fServerPrefs->Show();
-		}
-	} break;
-
-	case M_NET_CHECK_LAG: {
-		bool value = msg->FindInt32("be:value");
-		if (fActiveNetwork.HasBool("lagCheck"))
-			fActiveNetwork.ReplaceBool("lagCheck", value);
-		else
-			fActiveNetwork.AddBool("lagCheck", value);
-	} break;
-
-	case M_CONNECT_ON_STARTUP: {
-		bool value = msg->FindInt32("be:value");
-		if (fActiveNetwork.HasBool("connectOnStartup"))
-			fActiveNetwork.ReplaceBool("connectOnStartup", value);
-		else
-			fActiveNetwork.AddBool("connectOnStartup", value);
-	} break;
-
-	case M_USE_NICK_DEFAULTS: {
-		bool value = msg->FindInt32("be:value");
-		if (fActiveNetwork.HasBool("useDefaults"))
-			fActiveNetwork.ReplaceBool("useDefaults", value);
-		else
-			fActiveNetwork.AddBool("useDefaults", value);
-		UpdatePersonalData(fActiveNetwork);
-	} break;
-
-	case M_NETPREFS_TEXT_INVOKE: {
-		if (fActiveNetwork.HasString("autoexec"))
-			fActiveNetwork.ReplaceString("autoexec", fTextView->Text());
-		else
-			fActiveNetwork.AddString("autoexec", fTextView->Text());
-	} break;
-
-	case M_ADD_NICK:
-		if (msg->HasString("text")) {
-			fNickPrompt = NULL;
-			BString nick(msg->FindString("text"));
-			nick.RemoveAll(" ");
-			for (int32 i = 0; i < fListView->CountItems(); i++) {
-				BStringItem* item((BStringItem*)fListView->ItemAt(i));
-				if (item && nick == item->Text()) return;
+		case M_DUPE_CURRENT_NETWORK:
+		{
+			if (msg->HasString("text")) {
+				fDupePrompt = NULL;
+				BString network(msg->FindString("text"));
+				network.RemoveAll(" ");
+				BMenu* menu(fNetworkMenu->Menu());
+				for (int32 i = 0; i < menu->CountItems(); i++) {
+					BMenuItem* item(menu->ItemAt(i));
+					if (item && network == item->Label()) {
+						dynamic_cast<BInvoker*>(item)->Invoke();
+						return;
+					}
+				}
+				BMessage newNet = fActiveNetwork;
+				newNet.ReplaceString("name", network.String());
+				vision_app->SetNetwork(network.String(), &newNet);
+				BMenuItem* item(new BMenuItem(network.String(), new BMessage(M_CHOOSE_NETWORK)));
+				menu->AddItem(item, 0);
+				item->SetTarget(this);
+				dynamic_cast<BInvoker*>(item)->Invoke();
+			} else {
+				BString text(B_TRANSLATE("Network name:"));
+				text.Append(" ");
+				fDupePrompt = new PromptWindow(
+					BPoint(Window()->Frame().left + Window()->Frame().Width() / 2,
+						Window()->Frame().top + Window()->Frame().Height() / 2),
+					text.String(), B_TRANSLATE("Duplicate network"), NULL, this,
+					new BMessage(M_DUPE_CURRENT_NETWORK), NULL, false);
+				fDupePrompt->Show();
 			}
-			fActiveNetwork.AddString("nick", nick.String());
-			fListView->AddItem(new BStringItem(nick.String()));
-		} else {
-			BString text(B_TRANSLATE("Nickname:"));
-			text.Append(" ");
-			fNickPrompt =
-				new PromptWindow(BPoint(Window()->Frame().left + Window()->Frame().Width() / 2,
-										Window()->Frame().top + Window()->Frame().Height() / 2),
-								 text.String(), B_TRANSLATE("Add nickname"), NULL, this,
-								 new BMessage(M_ADD_NICK), NULL, false);
-			fNickPrompt->Show();
-		}
-		break;
+		} break;
 
-	case M_REMOVE_NICK: {
-		int32 current(fListView->CurrentSelection());
-		if (current >= 0) {
-			delete fListView->RemoveItem(current);
-			fActiveNetwork.RemoveData("nick", current);
-		}
-	} break;
+		case M_SERVER_DATA_CHANGED:
+		{
+			UpdateNetworkData(fActiveNetwork);
+		} break;
 
-	case M_NICK_UP: {
-		int32 current(fListView->CurrentSelection());
-		BString nick1, nick2;
-		nick1 = fActiveNetwork.FindString("nick", current);
-		nick2 = fActiveNetwork.FindString("nick", current - 1);
-		fListView->SwapItems(current, current - 1);
-		fActiveNetwork.ReplaceString("nick", current - 1, nick1.String());
-		fActiveNetwork.ReplaceString("nick", current, nick2.String());
-		current = fListView->CurrentSelection();
-		Window()->DisableUpdates();
-		fListView->DeselectAll();
-		fListView->Select(current);
-		Window()->EnableUpdates();
-	} break;
+		case M_SERVER_DIALOG:
+		{
+			BMessenger msgr(fServerPrefs);
+			if (msgr.IsValid())
+				fServerPrefs->Activate();
+			else {
+				fServerPrefs = new NetPrefServerWindow(this);
+				fServerPrefs->SetNetworkData(&fActiveNetwork);
+				fServerPrefs->Show();
+			}
+		} break;
 
-	case M_NICK_DOWN: {
-		int32 current(fListView->CurrentSelection());
-		BString nick1, nick2;
-		nick1 = fActiveNetwork.FindString("nick", current);
-		nick2 = fActiveNetwork.FindString("nick", current + 1);
-		fListView->SwapItems(current, current + 1);
-		fActiveNetwork.ReplaceString("nick", current + 1, nick1.String());
-		fActiveNetwork.ReplaceString("nick", current, nick2.String());
-		current = fListView->CurrentSelection();
-		Window()->DisableUpdates();
-		fListView->DeselectAll();
-		fListView->Select(current);
-		Window()->EnableUpdates();
-	} break;
+		case M_NET_CHECK_LAG:
+		{
+			bool value = msg->FindInt32("be:value");
+			if (fActiveNetwork.HasBool("lagCheck"))
+				fActiveNetwork.ReplaceBool("lagCheck", value);
+			else
+				fActiveNetwork.AddBool("lagCheck", value);
+		} break;
 
-	case M_NICK_SELECTED: {
-		int32 index(msg->FindInt32("index"));
-		bool enabled = (index >= 0) && fNickAddButton->IsEnabled();
-		fNickRemoveButton->SetEnabled(enabled);
-	} break;
+		case M_CONNECT_ON_STARTUP:
+		{
+			bool value = msg->FindInt32("be:value");
+			if (fActiveNetwork.HasBool("connectOnStartup"))
+				fActiveNetwork.ReplaceBool("connectOnStartup", value);
+			else
+				fActiveNetwork.AddBool("connectOnStartup", value);
+		} break;
 
-	default:
-		BView::MessageReceived(msg);
-		break;
+		case M_USE_NICK_DEFAULTS:
+		{
+			bool value = msg->FindInt32("be:value");
+			if (fActiveNetwork.HasBool("useDefaults"))
+				fActiveNetwork.ReplaceBool("useDefaults", value);
+			else
+				fActiveNetwork.AddBool("useDefaults", value);
+			UpdatePersonalData(fActiveNetwork);
+		} break;
+
+		case M_NETPREFS_TEXT_INVOKE:
+		{
+			if (fActiveNetwork.HasString("autoexec"))
+				fActiveNetwork.ReplaceString("autoexec", fTextView->Text());
+			else
+				fActiveNetwork.AddString("autoexec", fTextView->Text());
+		} break;
+
+		case M_ADD_NICK:
+			if (msg->HasString("text")) {
+				fNickPrompt = NULL;
+				BString nick(msg->FindString("text"));
+				nick.RemoveAll(" ");
+				for (int32 i = 0; i < fListView->CountItems(); i++) {
+					BStringItem* item((BStringItem*)fListView->ItemAt(i));
+					if (item && nick == item->Text())
+						return;
+				}
+				fActiveNetwork.AddString("nick", nick.String());
+				fListView->AddItem(new BStringItem(nick.String()));
+			} else {
+				BString text(B_TRANSLATE("Nickname:"));
+				text.Append(" ");
+				fNickPrompt = new PromptWindow(
+					BPoint(Window()->Frame().left + Window()->Frame().Width() / 2,
+						Window()->Frame().top + Window()->Frame().Height() / 2),
+					text.String(), B_TRANSLATE("Add nickname"), NULL, this,
+					new BMessage(M_ADD_NICK), NULL, false);
+				fNickPrompt->Show();
+			}
+			break;
+
+		case M_REMOVE_NICK:
+		{
+			int32 current(fListView->CurrentSelection());
+			if (current >= 0) {
+				delete fListView->RemoveItem(current);
+				fActiveNetwork.RemoveData("nick", current);
+			}
+		} break;
+
+		case M_NICK_UP:
+		{
+			int32 current(fListView->CurrentSelection());
+			BString nick1, nick2;
+			nick1 = fActiveNetwork.FindString("nick", current);
+			nick2 = fActiveNetwork.FindString("nick", current - 1);
+			fListView->SwapItems(current, current - 1);
+			fActiveNetwork.ReplaceString("nick", current - 1, nick1.String());
+			fActiveNetwork.ReplaceString("nick", current, nick2.String());
+			current = fListView->CurrentSelection();
+			Window()->DisableUpdates();
+			fListView->DeselectAll();
+			fListView->Select(current);
+			Window()->EnableUpdates();
+		} break;
+
+		case M_NICK_DOWN:
+		{
+			int32 current(fListView->CurrentSelection());
+			BString nick1, nick2;
+			nick1 = fActiveNetwork.FindString("nick", current);
+			nick2 = fActiveNetwork.FindString("nick", current + 1);
+			fListView->SwapItems(current, current + 1);
+			fActiveNetwork.ReplaceString("nick", current + 1, nick1.String());
+			fActiveNetwork.ReplaceString("nick", current, nick2.String());
+			current = fListView->CurrentSelection();
+			Window()->DisableUpdates();
+			fListView->DeselectAll();
+			fListView->Select(current);
+			Window()->EnableUpdates();
+		} break;
+
+		case M_NICK_SELECTED:
+		{
+			int32 index(msg->FindInt32("index"));
+			bool enabled = (index >= 0) && fNickAddButton->IsEnabled();
+			fNickRemoveButton->SetEnabled(enabled);
+		} break;
+
+		default:
+			BView::MessageReceived(msg);
+			break;
 	}
 }

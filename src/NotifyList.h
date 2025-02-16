@@ -31,8 +31,7 @@ class BPopUpMenu;
 class NotifyListItem;
 class Theme;
 
-class NotifyList : public BListView
-{
+class NotifyList : public BListView {
 public:
 	NotifyList();
 	virtual ~NotifyList();
@@ -55,8 +54,7 @@ private:
 	BPopUpMenu* fMyPopUp;
 };
 
-class NotifyListItem : public BStringItem
-{
+class NotifyListItem : public BStringItem {
 public:
 	NotifyListItem(const char*, bool);
 	NotifyListItem(const NotifyListItem&);
@@ -70,4 +68,4 @@ private:
 	bool fNotifyState;
 };
 
-#endif // _NOTIFYLIST_H_
+#endif	// _NOTIFYLIST_H_

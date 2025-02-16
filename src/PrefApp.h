@@ -29,8 +29,7 @@ class BMenuField;
 class BMenu;
 class BMenuItem;
 
-class AppWindowPrefsView : public BView
-{
+class AppWindowPrefsView : public BView {
 public:
 	AppWindowPrefsView();
 	virtual ~AppWindowPrefsView();
@@ -42,8 +41,8 @@ private:
 	BMenu* CreateEncodingMenu();
 	void SetEncodingItem(int32);
 	BMenuField* fEncodings;
-	BCheckBox* fVersionParanoid, *fCatchAltW, *fTimeStamp, *fLogEnabled, *fLogFileTimestamp,
+	BCheckBox *fVersionParanoid, *fCatchAltW, *fTimeStamp, *fLogEnabled, *fLogFileTimestamp,
 		*fStripColors, *fSpamMode, *fQueryMsg;
 };
 
-#endif // _PREFAPP_H
+#endif	// _PREFAPP_H

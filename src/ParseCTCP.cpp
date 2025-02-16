@@ -25,17 +25,18 @@
 
 #include <AppFileInfo.h>
 #include <StringFormat.h>
-#include <sys/utsname.h>
 #include <stdlib.h>
+#include <sys/utsname.h>
 
-#include "Vision.h"
-#include "Utilities.h"
 #include "ServerAgent.h"
+#include "Utilities.h"
+#include "Vision.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ParseCTCP"
 
-void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
+void
+ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 {
 	BString theCTCP(GetWord(theMsg.String(), 1).ToUpper()),
 		theRest(RestOfString(theMsg.String(), 2));
@@ -43,7 +44,8 @@ void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 	theCTCP.RemoveLast("\1");
 
 	if (theCTCP == "PING") {
-		if (theMsg == "-9z99") return;
+		if (theMsg == "-9z99")
+			return;
 		BString tempString("NOTICE ");
 		tempString += theNick;
 		tempString += " :";
@@ -157,7 +159,7 @@ void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 				thePort = GetWord(theMsg.String(), 5);
 				theSize = GetWord(theMsg.String(), 6);
 			}
-			theSize.RemoveLast("\1"); // strip CTCP char
+			theSize.RemoveLast("\1");  // strip CTCP char
 			DCCGetDialog(theNick, theFile, theSize, theIP, thePort);
 		}
 		if (theType == "CHAT") {
@@ -171,7 +173,8 @@ void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 
 			off_t pos(0LL);
 			int32 i(0);
-			for (i = 0; i < poss.Length(); ++i) pos = pos * 10 + poss[i] - '0';
+			for (i = 0; i < poss.Length(); ++i)
+				pos = pos * 10 + poss[i] - '0';
 
 			for (i = 0; i < fResumes.CountItems(); ++i) {
 				ResumeData* data((ResumeData*)fResumes.ItemAt(i));
@@ -202,7 +205,8 @@ void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 			poss.RemoveLast("\1");
 			off_t pos(0LL);
 
-			for (int32 i = 0; i < poss.Length(); ++i) pos = pos * 10 + poss[i] - '0';
+			for (int32 i = 0; i < poss.Length(); ++i)
+				pos = pos * 10 + poss[i] - '0';
 
 			// Have to tell the sender we can resume
 			BString tempString("PRIVMSG ");
@@ -263,7 +267,8 @@ void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 		buffer += "]\n";
 	else {
 		int32 theChars = theRest.Length();
-		if (theRest[theChars - 1] == '\1') theRest.Truncate(theChars - 1);
+		if (theRest[theChars - 1] == '\1')
+			theRest.Truncate(theChars - 1);
 
 		buffer += "] ";
 		buffer += theRest;
@@ -274,12 +279,15 @@ void ServerAgent::ParseCTCP(BString theNick, BString theTarget, BString theMsg)
 	PostActive(&display);
 }
 
-void ServerAgent::ParseCTCPResponse(BString theNick, BString theMsg)
+void
+ServerAgent::ParseCTCPResponse(BString theNick, BString theMsg)
 {
 	BString theResponse(theMsg);
-	if (theResponse[0] == '\1') theResponse.Remove(0, 1);
+	if (theResponse[0] == '\1')
+		theResponse.Remove(0, 1);
 	int32 theChars = theResponse.Length();
-	if (theResponse[theChars - 1] == '\1') theResponse.Truncate(theChars - 1);
+	if (theResponse[theChars - 1] == '\1')
+		theResponse.Truncate(theChars - 1);
 
 	BString firstWord = GetWord(theResponse.String(), 1).ToUpper();
 	BString tempString;
@@ -288,7 +296,7 @@ void ServerAgent::ParseCTCPResponse(BString theNick, BString theMsg)
 		long curTime = time(NULL);
 		long theSeconds = curTime - atoi(GetWord(theMsg.String(), 2).String());
 
-		if (theSeconds > 10000) // catch possible conversion error(s)
+		if (theSeconds > 10000)	 // catch possible conversion error(s)
 		{
 			theSeconds = curTime - atoi(GetWord(theMsg.String(), 2).String());
 			if (theSeconds > 10000) {
@@ -299,11 +307,12 @@ void ServerAgent::ParseCTCPResponse(BString theNick, BString theMsg)
 			}
 		}
 
-//		BString text;
-		static BStringFormat format(B_TRANSLATE("{0, plural,"
-			"one{[%nick% PING response]: # second\n}"
-			"other{[%nick% PING response]: # seconds\n}}"));
-			format.Format(tempString, theSeconds);
+		//		BString text;
+		static BStringFormat format(
+			B_TRANSLATE("{0, plural,"
+						"one{[%nick% PING response]: # second\n}"
+						"other{[%nick% PING response]: # seconds\n}}"));
+		format.Format(tempString, theSeconds);
 		tempString.ReplaceFirst("%nick%", theNick.String());
 
 	} else {

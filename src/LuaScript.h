@@ -26,9 +26,9 @@
 #define _LUASCRIPT_H_
 
 extern "C" {
+#include "lua/include/lauxlib.h"
 #include "lua/include/lua.h"
 #include "lua/include/luadebug.h"
-#include "lua/include/lauxlib.h"
 }
 
 /**
@@ -36,8 +36,7 @@ extern "C" {
 
 	\include ../TestScript/TestScript.cpp
 **/
-class Script
-{
+class Script {
 public:
 	typedef lua_CFunction CFunction;
 
@@ -47,13 +46,16 @@ public:
 	/**
 		Representation of a Lua script object residing on the Lua stack.
 	**/
-	class Object
-	{
+	class Object {
 	public:
 		/**
 			Copy constructor.
 		**/
-		Object(const Object& src) : m_parent(src.m_parent) { m_stackIndex = src.m_stackIndex; }
+		Object(const Object& src)
+			: m_parent(src.m_parent)
+		{
+			m_stackIndex = src.m_stackIndex;
+		}
 
 		/**
 			Assignment operator.
@@ -98,11 +100,11 @@ public:
 		{
 			int val;
 			val = m_parent.GetTop();
-			lua_newtable(GetState()); // T
+			lua_newtable(GetState());  // T
 			val = m_parent.GetTop();
-			lua_pushstring(GetState(), name); // T name
+			lua_pushstring(GetState(), name);  // T name
 			val = m_parent.GetTop();
-			lua_pushvalue(GetState(), lua_gettop(GetState()) - 1); // T name T
+			lua_pushvalue(GetState(), lua_gettop(GetState()) - 1);	// T name T
 			val = m_parent.GetTop();
 			lua_settable(GetState(), m_stackIndex);
 			val = m_parent.GetTop();
@@ -183,37 +185,54 @@ public:
 	protected:
 		friend class Script;
 
-		Object(Script& parent, int index) : m_parent(parent), m_stackIndex(index) {}
-		Script& m_parent; //!< The parent script of this object.
-		int m_stackIndex; //!< The stack index representing this object.
+		Object(Script& parent, int index)
+			: m_parent(parent),
+			  m_stackIndex(index)
+		{
+		}
+		Script& m_parent;  //!< The parent script of this object.
+		int m_stackIndex;  //!< The stack index representing this object.
 	};
 
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	/**
-	**/
-	class AutoBlock
-	{
+	 **/
+	class AutoBlock {
 	public:
-		AutoBlock(Script& script) : m_script(script) { m_stackTop = m_script.GetTop(); }
+		AutoBlock(Script& script)
+			: m_script(script)
+		{
+			m_stackTop = m_script.GetTop();
+		}
 
-		AutoBlock(Object& object) : m_script(object.GetParent()) { m_stackTop = m_script.GetTop(); }
+		AutoBlock(Object& object)
+			: m_script(object.GetParent())
+		{
+			m_stackTop = m_script.GetTop();
+		}
 
 		~AutoBlock() { m_script.SetTop(m_stackTop); }
 
 	private:
-		AutoBlock(const AutoBlock& src);				  // Not implemented
-		const AutoBlock& operator=(const AutoBlock& src); // Not implemented
+		AutoBlock(const AutoBlock& src);				   // Not implemented
+		const AutoBlock& operator=(const AutoBlock& src);  // Not implemented
 
 		Script& m_script;
 		int m_stackTop;
 	};
 
 	///////////////////////////////////////////////////////////////////////////
-	enum { NOREF = LUA_NOREF };
-	enum { REFNIL = LUA_REFNIL };
-	enum { ANYTAG = LUA_ANYTAG };
+	enum {
+		NOREF = LUA_NOREF
+	};
+	enum {
+		REFNIL = LUA_REFNIL
+	};
+	enum {
+		ANYTAG = LUA_ANYTAG
+	};
 
 	Script(bool initStandardLibrary = true);
 	Script(lua_State* state);
@@ -330,8 +349,8 @@ public:
 
 	int ConfigGetInteger(const char* section, const char* entry, int defaultValue = 0);
 	float ConfigGetReal(const char* section, const char* entry, double defaultValue = 0.0);
-	const char* ConfigGetString(const char* section, const char* entry,
-								const char* defaultValue = "");
+	const char* ConfigGetString(
+		const char* section, const char* entry, const char* defaultValue = "");
 	void ConfigSetInteger(const char* section, const char* entry, int value);
 	void ConfigSetReal(const char* section, const char* entry, double value);
 	void ConfigSetString(const char* section, const char* entry, const char* value);
@@ -349,7 +368,7 @@ public:
 };
 
 /**
-**/
+ **/
 inline Script::Script(lua_State* state)
 {
 	m_state = state;
@@ -357,11 +376,12 @@ inline Script::Script(lua_State* state)
 }
 
 /**
-**/
+ **/
 inline Script::~Script()
 {
 	// Only close the Lua state if we own it.
-	if (m_ownState) lua_close(m_state);
+	if (m_ownState)
+		lua_close(m_state);
 }
 
 #endif

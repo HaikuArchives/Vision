@@ -35,8 +35,7 @@ class BMenu;
 class Theme;
 class ChannelAgent;
 
-class NameItem : public BListItem
-{
+class NameItem : public BListItem {
 public:
 	NameItem(const char*, int32);
 	BString Name() const;
@@ -54,8 +53,7 @@ private:
 	int32 myStatus;
 };
 
-class NamesView : public BListView
-{
+class NamesView : public BListView {
 public:
 	NamesView(ChannelAgent*);
 	virtual ~NamesView();
@@ -68,8 +66,9 @@ public:
 	virtual void MessageReceived(BMessage*);
 
 	void ClearList();
+
 private:
-	ChannelAgent*  fChannelAgent;
+	ChannelAgent* fChannelAgent;
 	BPopUpMenu* fMyPopUp;
 	BMenu* fCTCPPopUp;
 	int32 fLastSelected, fLastButton, fCurrentindex;

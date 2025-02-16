@@ -23,8 +23,8 @@
 #ifndef _NETWORKPREFSVIEW_H
 #define _NETWORKPREFSVIEW_H
 
-#include <View.h>
 #include <Message.h>
+#include <View.h>
 
 class BBox;
 class BMenuItem;
@@ -41,8 +41,7 @@ class NetPrefServerWindow;
 class BColumnListView;
 struct ServerData;
 
-class NetworkPrefsView : public BView
-{
+class NetworkPrefsView : public BView {
 public:
 	NetworkPrefsView(const char*);
 	virtual ~NetworkPrefsView();
@@ -59,21 +58,21 @@ private:
 	void BuildNetworkList();
 	void SaveCurrentNetwork();
 	BMenuField* fNetworkMenu;
-	BScrollView* fExecScroller, *fNickScroller;
+	BScrollView *fExecScroller, *fNickScroller;
 
 	BBox *fNetDetailsBox, *fPersonalBox;
-	BView* fMainNetContainerBox, *fNetDetailsContainerBox, *fPersonalContainerBox;
+	BView *fMainNetContainerBox, *fNetDetailsContainerBox, *fPersonalContainerBox;
 
-	BButton* fServerButton, *fNickAddButton, *fNickRemoveButton;
+	BButton *fServerButton, *fNickAddButton, *fNickRemoveButton;
 
-	BCheckBox* fNickDefaultsBox, *fLagCheckBox, *fStartupBox;
+	BCheckBox *fNickDefaultsBox, *fLagCheckBox, *fStartupBox;
 
 	BTextView* fTextView;
 	BListView* fListView;
 
-	BTextControl* fIdent, *fRealName;
+	BTextControl *fIdent, *fRealName;
 
-	BStringView* fConnectServer, *fAlternates;
+	BStringView *fConnectServer, *fAlternates;
 
 	BMessage fActiveNetwork;
 	PromptWindow* fNickPrompt;

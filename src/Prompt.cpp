@@ -23,30 +23,25 @@
 #include <Alert.h>
 #include <Application.h>
 #include <Button.h>
-#include <LayoutBuilder.h>
 #include <Handler.h>
+#include <LayoutBuilder.h>
 #include <TextControl.h>
 
 #include "Prompt.h"
 #include "VisionBase.h"
 
-PromptValidate::PromptValidate()
-{
-}
+PromptValidate::PromptValidate() {}
 
-PromptValidate::~PromptValidate()
-{
-}
+PromptValidate::~PromptValidate() {}
 
 PromptWindow::PromptWindow(BPoint point, const char* label, const char* title, const char* text,
-						   BHandler* handler_, BMessage* msg, PromptValidate* validate_,
-						   bool blanks_)
+	BHandler* handler_, BMessage* msg, PromptValidate* validate_, bool blanks_)
 
 	: BWindow(BRect(point.x, point.y,
-					point.x + 10, // To be resized
-					point.y + 10),
-			  title, B_FLOATING_WINDOW, B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS
-			  | B_AUTO_UPDATE_SIZE_LIMITS),
+				  point.x + 10,	 // To be resized
+				  point.y + 10),
+		  title, B_FLOATING_WINDOW,
+		  B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS | B_AUTO_UPDATE_SIZE_LIMITS),
 
 	  handler(handler_),
 	  invoked(msg),
@@ -60,14 +55,14 @@ PromptWindow::PromptWindow(BPoint point, const char* label, const char* title, c
 
 	cancel = new BButton("Cancel", "Cancel", new BMessage(M_PROMPT_CANCEL));
 
-//	ResizeTo(width + 145, cancel->Frame().bottom + 10);
+	//	ResizeTo(width + 145, cancel->Frame().bottom + 10);
 	BLayoutBuilder::Grid<>(this)
 		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(field->CreateLabelLayoutItem(), 0, 0)
-			.Add(field->CreateTextViewLayoutItem(), 1, 0, 2)
-			.Add(cancel, 1, 1)
-			.Add(done, 2, 1)
-			.End();
+		.Add(field->CreateLabelLayoutItem(), 0, 0)
+		.Add(field->CreateTextViewLayoutItem(), 1, 0, 2)
+		.Add(cancel, 1, 1)
+		.Add(done, 2, 1)
+		.End();
 
 	done->MakeDefault(true);
 	field->MakeFocus(true);
@@ -77,44 +72,46 @@ PromptWindow::~PromptWindow()
 {
 	delete invoked;
 
-	if (validate) delete validate;
+	if (validate)
+		delete validate;
 }
 
-void PromptWindow::MessageReceived(BMessage* msg)
+void
+PromptWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_PROMPT_DONE:
+		case M_PROMPT_DONE:
 
-		if (field->TextView()->TextLength() || blanks) {
-			if (!validate || validate->Validate(field->TextView()->Text())) {
-				BMessenger msgr(handler);
+			if (field->TextView()->TextLength() || blanks) {
+				if (!validate || validate->Validate(field->TextView()->Text())) {
+					BMessenger msgr(handler);
 
-				invoked->AddString("text", field->TextView()->Text());
-				msgr.SendMessage(invoked);
-			} else
-				break;
-		}
+					invoked->AddString("text", field->TextView()->Text());
+					msgr.SendMessage(invoked);
+				} else
+					break;
+			}
 
-	case M_PROMPT_CANCEL:
+		case M_PROMPT_CANCEL:
 
-		PostMessage(B_QUIT_REQUESTED);
-		break;
+			PostMessage(B_QUIT_REQUESTED);
+			break;
 
-	default:
-		BWindow::MessageReceived(msg);
+		default:
+			BWindow::MessageReceived(msg);
 	}
 }
 
 EscapeFilter::EscapeFilter(BWindow* window_)
-	: BMessageFilter(B_PROGRAMMED_DELIVERY, B_LOCAL_SOURCE, B_KEY_DOWN), window(window_)
+	: BMessageFilter(B_PROGRAMMED_DELIVERY, B_LOCAL_SOURCE, B_KEY_DOWN),
+	  window(window_)
 {
 }
 
-EscapeFilter::~EscapeFilter()
-{
-}
+EscapeFilter::~EscapeFilter() {}
 
-filter_result EscapeFilter::Filter(BMessage* msg, BHandler**)
+filter_result
+EscapeFilter::Filter(BMessage* msg, BHandler**)
 {
 	const char* bytes;
 	uint32 keyModifiers;
@@ -122,9 +119,9 @@ filter_result EscapeFilter::Filter(BMessage* msg, BHandler**)
 	msg->FindString("bytes", &bytes);
 	msg->FindInt32("modifiers", (int32*)&keyModifiers);
 
-	if (bytes[0] == B_ESCAPE && (keyModifiers & B_SHIFT_KEY) == 0 &&
-		(keyModifiers & B_CONTROL_KEY) == 0 && (keyModifiers & B_OPTION_KEY) == 0 &&
-		(keyModifiers & B_COMMAND_KEY) == 0) {
+	if (bytes[0] == B_ESCAPE && (keyModifiers & B_SHIFT_KEY) == 0
+		&& (keyModifiers & B_CONTROL_KEY) == 0 && (keyModifiers & B_OPTION_KEY) == 0
+		&& (keyModifiers & B_COMMAND_KEY) == 0) {
 		window->PostMessage(B_QUIT_REQUESTED);
 		return B_SKIP_MESSAGE;
 	}
@@ -132,7 +129,9 @@ filter_result EscapeFilter::Filter(BMessage* msg, BHandler**)
 	return B_DISPATCH_MESSAGE;
 }
 
-RegExValidate::RegExValidate(const char* title_) : compiled(false), title(title_)
+RegExValidate::RegExValidate(const char* title_)
+	: compiled(false),
+	  title(title_)
 {
 	memset(&re, 0, sizeof(re));
 }
@@ -143,7 +142,8 @@ RegExValidate::~RegExValidate()
 		regfree(&re);
 }
 
-bool RegExValidate::Validate(const char* text)
+bool
+RegExValidate::Validate(const char* text)
 {
 	if (compiled) {
 		regfree(&re);
@@ -168,8 +168,9 @@ bool RegExValidate::Validate(const char* text)
 		aText << buffer;
 		delete[] buffer;
 
-		(new BAlert("Cannot compile", aText.String(), "Whoops", 0, 0, B_WIDTH_AS_USUAL,
-					B_STOP_ALERT))->Go();
+		(new BAlert(
+			 "Cannot compile", aText.String(), "Whoops", 0, 0, B_WIDTH_AS_USUAL, B_STOP_ALERT))
+			->Go();
 
 		return false;
 	}

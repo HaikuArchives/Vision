@@ -24,10 +24,10 @@
 #include "PrefAliases.h"
 #include "PrefApp.h"
 #include "PrefColor.h"
-#include "PrefDCC.h"
-#include "PrefFont.h"
 #include "PrefCommand.h"
+#include "PrefDCC.h"
 #include "PrefEvent.h"
+#include "PrefFont.h"
 #include "PrefLog.h"
 
 #include <stdio.h>
@@ -42,7 +42,8 @@
 #define B_TRANSLATION_CONTEXT "PrefGeneral"
 
 GeneralPrefsView::GeneralPrefsView(const char* title)
-	: BView(title, 0), fPreviousSelection(0)
+	: BView(title, 0),
+	  fPreviousSelection(0)
 {
 	AdoptSystemColors();
 
@@ -62,30 +63,32 @@ GeneralPrefsView::GeneralPrefsView(const char* title)
 
 
 	for (int32 i = 0; i < piEND; i++)
-		((BCardLayout*) fPrefsContainerBox->GetLayout())->AddView(fPrefsItems[i]);
+		((BCardLayout*)fPrefsContainerBox->GetLayout())->AddView(fPrefsItems[i]);
 
 	fPrefsListView = new BListView("PrefsList", B_SINGLE_SELECTION_LIST);
 	fPrefsListView->SetSelectionMessage(new BMessage(M_GENERALPREFS_SELECTION_CHANGED));
 
-	BScrollView* scrollView = new BScrollView("list scrollView", fPrefsListView,
-		B_FRAME_EVENTS | B_WILL_DRAW, false, true);
+	BScrollView* scrollView = new BScrollView(
+		"list scrollView", fPrefsListView, B_FRAME_EVENTS | B_WILL_DRAW, false, true);
 
 	BLayoutBuilder::Group<>(this)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-			.Add(scrollView)
-			.Add(fPrefsBox)
-			.End()
+		.Add(scrollView)
+		.Add(fPrefsBox)
+		.End()
 		.SetInsets(B_USE_WINDOW_SPACING)
-	.End();
+		.End();
 	fPrefsBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 }
 
 GeneralPrefsView::~GeneralPrefsView()
 {
-	while (fPrefsListView->CountItems() != 0) delete fPrefsListView->RemoveItem((int32)0);
+	while (fPrefsListView->CountItems() != 0)
+		delete fPrefsListView->RemoveItem((int32)0);
 }
 
-void GeneralPrefsView::AttachedToWindow()
+void
+GeneralPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Aliases")));
@@ -96,53 +99,53 @@ void GeneralPrefsView::AttachedToWindow()
 	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Events")));
 	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("DCC")));
 	AddOptionsToListView(fPrefsListView, new BStringItem(B_TRANSLATE("Logging")));
-
-
 }
 
-void GeneralPrefsView::AllAttached()
+void
+GeneralPrefsView::AllAttached()
 {
 	BView::AllAttached();
 	fPrefsListView->SetTarget(this);
 	fPrefsListView->Select(0);
 	fPrefsListView->MakeFocus();
-	//fPrefsListView->Select (0L, false);
+	// fPrefsListView->Select (0L, false);
 }
 
-void GeneralPrefsView::Show()
+void
+GeneralPrefsView::Show()
 {
 	BView::Show();
 }
 
-void GeneralPrefsView::MessageReceived(BMessage* msg)
+void
+GeneralPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_GENERALPREFS_SELECTION_CHANGED: {
-		//int32 selectedItem(msg->FindInt32("index"));
-		int32 selectedItem = fPrefsListView->CurrentSelection();
-
-		if (selectedItem >= 0L && selectedItem < piEND)
+		case M_GENERALPREFS_SELECTION_CHANGED:
 		{
-			BStringItem* item((BStringItem*)fPrefsListView->ItemAt(selectedItem));
-			fPrefsBox->SetLabel(item->Text());
-			((BCardLayout*) fPrefsContainerBox->GetLayout())->SetVisibleItem(selectedItem);
-			fPreviousSelection = selectedItem;
-		}
-		else
-		{
-			/* Find previously selected item (stored in currentView) and make that the selected view
-				This happens when user tries to deselect an item in the list */
-			fPrefsListView->Select (fPreviousSelection);
-		}
-	} break;
+			// int32 selectedItem(msg->FindInt32("index"));
+			int32 selectedItem = fPrefsListView->CurrentSelection();
 
-	default:
-		BView::MessageReceived(msg);
+			if (selectedItem >= 0L && selectedItem < piEND) {
+				BStringItem* item((BStringItem*)fPrefsListView->ItemAt(selectedItem));
+				fPrefsBox->SetLabel(item->Text());
+				((BCardLayout*)fPrefsContainerBox->GetLayout())->SetVisibleItem(selectedItem);
+				fPreviousSelection = selectedItem;
+			} else {
+				/* Find previously selected item (stored in currentView) and make that the selected
+				   view This happens when user tries to deselect an item in the list */
+				fPrefsListView->Select(fPreviousSelection);
+			}
+		} break;
+
+		default:
+			BView::MessageReceived(msg);
 	}
 }
 
 
-void GeneralPrefsView::AddOptionsToListView(BListView* listView, BStringItem* item)
+void
+GeneralPrefsView::AddOptionsToListView(BListView* listView, BStringItem* item)
 {
 	listView->AddItem(item);
 	// constraint the listview width so that the longest item fits
@@ -151,5 +154,4 @@ void GeneralPrefsView::AddOptionsToListView(BListView* listView, BStringItem* it
 	width += B_V_SCROLL_BAR_WIDTH;
 	listView->SetExplicitMinSize(BSize(width, 0));
 	listView->SetExplicitMaxSize(BSize(width, B_SIZE_UNLIMITED));
-
 }

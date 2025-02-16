@@ -25,13 +25,13 @@
  *                 Alan Ellis <alan@cgsoftware.org>
  */
 
-#include "Vision.h"
-#include "Utilities.h"
-#include "StatusView.h"
-#include "ServerAgent.h"
 #include "ChannelAgent.h"
-#include "MessageAgent.h"
 #include "ClientWindow.h"
+#include "MessageAgent.h"
+#include "ServerAgent.h"
+#include "StatusView.h"
+#include "Utilities.h"
+#include "Vision.h"
 #include "WindowList.h"
 
 #include <stdio.h>
@@ -47,7 +47,8 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ParseEvents"
 
-bool ServerAgent::ParseEvents(const char* data)
+bool
+ServerAgent::ParseEvents(const char* data)
 {
 	BString firstWord = GetWord(data, 1).ToUpper();
 	BString secondWord = GetWord(data, 2).ToUpper();
@@ -66,7 +67,8 @@ bool ServerAgent::ParseEvents(const char* data)
 
 		theMsg.RemoveFirst(":");
 
-		if (theMsg.Length() == 0) return true;
+		if (theMsg.Length() == 0)
+			return true;
 
 		if (theMsg[0] == '\1' && GetWord(theMsg.String(), 1) != "\1ACTION") {
 			// CTCP Request
@@ -74,17 +76,17 @@ bool ServerAgent::ParseEvents(const char* data)
 			return true;
 		}
 
-		if (theTarget[0] == '#' || theTarget[0] == '!' || theTarget[0] == '&' ||
-			theTarget[0] == '+')
+		if (theTarget[0] == '#' || theTarget[0] == '!' || theTarget[0] == '&'
+			|| theTarget[0] == '+')
 			client = Client(theTarget.String());
 		else if (!(client = Client(theNick.String()))) {
 			BString msgident(GetIdent(data)), msgaddress(GetAddress(data));
 
-			client = new MessageAgent(theNick.String(),
-									  fId.String(), fSMsgr, fMyNick.String(), addy.String()),
+			client = new MessageAgent(
+				theNick.String(), fId.String(), fSMsgr, fMyNick.String(), addy.String()),
 
-			vision_app->pClientWin()->pWindowList()->AddAgent(client, theNick.String(),
-															  WIN_MESSAGE_TYPE, false);
+			vision_app->pClientWin()->pWindowList()->AddAgent(
+				client, theNick.String(), WIN_MESSAGE_TYPE, false);
 
 			fClients.AddItem(client);
 		}
@@ -92,8 +94,8 @@ bool ServerAgent::ParseEvents(const char* data)
 		if (client) {
 			BString msgident(GetIdent(data)), msgaddress(GetAddress(data));
 
-			client->ChannelMessage(theMsg.String(), theNick.String(), msgident.String(),
-								   msgaddress.String());
+			client->ChannelMessage(
+				theMsg.String(), theNick.String(), msgident.String(), msgaddress.String());
 		}
 
 		return true;
@@ -171,11 +173,11 @@ bool ServerAgent::ParseEvents(const char* data)
 					}
 			}
 			if (!client) {
-				ChannelAgent* newAgent(new ChannelAgent(channel.String(), fId.String(), fIrcdtype,
-														fMyNick.String(), fSMsgr));
+				ChannelAgent* newAgent(new ChannelAgent(
+					channel.String(), fId.String(), fIrcdtype, fMyNick.String(), fSMsgr));
 
-				vision_app->pClientWin()->pWindowList()->AddAgent(newAgent, channel.String(),
-																  WIN_CHANNEL_TYPE, activateChan);
+				vision_app->pClientWin()->pWindowList()->AddAgent(
+					newAgent, channel.String(), WIN_CHANNEL_TYPE, activateChan);
 
 				fClients.AddItem(newAgent);
 			}
@@ -280,10 +282,11 @@ bool ServerAgent::ParseEvents(const char* data)
 		// Gotta change the server as well!
 		if (fMyNick.ICompare(oldNick) == 0) {
 			fMyNick = newNick;
-			if (!fReacquiredNick && (fMyNick == fReconNick)) fReacquiredNick = true;
+			if (!fReacquiredNick && (fMyNick == fReconNick))
+				fReacquiredNick = true;
 			if (!IsHidden())
-				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK,
-																	  newNick.String());
+				vision_app->pClientWin()->pStatusView()->SetItemValue(
+					STATUS_NICK, newNick.String());
 		}
 
 		return true;
@@ -451,7 +454,7 @@ bool ServerAgent::ParseEvents(const char* data)
 		return true;
 	}
 
-	if (firstWord == "ERROR") // server error (on connect?)
+	if (firstWord == "ERROR")  // server error (on connect?)
 	{
 		BString theError(RestOfString(data, 2));
 
@@ -503,7 +506,7 @@ bool ServerAgent::ParseEvents(const char* data)
 	}
 
 	if (secondWord == "SILENCE") {
-		BString tempString, theHostmask(GetWord(data, 3)); // Could be a hostmask, a nick, whatever
+		BString tempString, theHostmask(GetWord(data, 3));	// Could be a hostmask, a nick, whatever
 		const char* hostmask = theHostmask.String();
 
 		if (hostmask[0] == '+') {

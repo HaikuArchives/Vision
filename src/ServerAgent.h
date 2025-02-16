@@ -28,10 +28,10 @@
 
 #include <map>
 
-#include <Rect.h>
-#include <String.h>
 #include <List.h>
 #include <Locker.h>
+#include <Rect.h>
+#include <String.h>
 
 #include "ClientAgent.h"
 #include "ObjectList.h"
@@ -50,11 +50,10 @@ struct ResumeData {
 	BString nick, file, size, ip, port, path;
 };
 
-class ServerAgent : public ClientAgent
-{
+class ServerAgent : public ClientAgent {
 public:
-	ServerAgent(const char*, // id_
-				BMessage&); // frame
+	ServerAgent(const char*,  // id_
+		BMessage&);			  // frame
 	virtual ~ServerAgent();
 
 	virtual void MessageReceived(BMessage*);
@@ -98,15 +97,15 @@ private:
 	void ParseAutoexecChans(const BString&);
 	void CreateSocketThread();
 
-	BLocker* fEndPointLock, *fSendLock;
+	BLocker *fEndPointLock, *fSendLock;
 
 	static int32 fServerSeed;
 
 	BMessageRunner* fLagRunner;
 
-	BString fLocalip, // our local ip
+	BString fLocalip,  // our local ip
 		fMyNick,
-		fReconNick, // used when reconnecting
+		fReconNick,	 // used when reconnecting
 		fQuitMsg, fMyLag;
 
 	const BString fLname, fLident;
@@ -117,32 +116,32 @@ private:
 
 	BList fResumes;
 
-	bool fLocalip_private, // if localip is private
-						   // (set by PrivateIPCheck)
+	bool fLocalip_private,	// if localip is private
+							// (set by PrivateIPCheck)
 		fGetLocalIP,
-		fIsConnected,	  // were done connecting
-		fIsConnecting,	 // in process
-		fReconnecting,	 // we're reconnecting
-		fHasWarned,		   // warn about quitting
-		fIsQuitting,	   // look out, going down
-		fCheckingLag,	  // waiting for a lag_check reply
-		fReacquiredNick,   // disconnected nick has been reacquired
-		fEstablishHasLock; // establish has taken ownership of
-						   // the endPointLock pointer
+		fIsConnected,		// were done connecting
+		fIsConnecting,		// in process
+		fReconnecting,		// we're reconnecting
+		fHasWarned,			// warn about quitting
+		fIsQuitting,		// look out, going down
+		fCheckingLag,		// waiting for a lag_check reply
+		fReacquiredNick,	// disconnected nick has been reacquired
+		fEstablishHasLock;	// establish has taken ownership of
+							// the endPointLock pointer
 
-	int32 fRetry,	// what retry # we're on
-		fRetryLimit, // connect retry limit
-		fLagCheck,   // system_time()
-		fLagCount,   // passes made waiting
+	int32 fRetry,	  // what retry # we're on
+		fRetryLimit,  // connect retry limit
+		fLagCheck,	  // system_time()
+		fLagCount,	  // passes made waiting
 		fNickAttempt;
 	BSocket* fSocket;
-	char fSend_buffer[2048]; // buffer for sending
+	char fSend_buffer[2048];  // buffer for sending
 
-	char fParse_buffer[2048]; // buffer for parsing
+	char fParse_buffer[2048];  // buffer for parsing
 
-	volatile thread_id fSocketThread; // thread that receives
+	volatile thread_id fSocketThread;  // thread that receives
 
-	BObjectList<ClientAgent> fClients; // agents this server "owns"
+	BObjectList<ClientAgent> fClients;	// agents this server "owns"
 
 	BString* fEvents;
 	BString fServerHostName;
@@ -164,7 +163,7 @@ private:
 	int32 fServerIndex, fNickIndex;
 	ClientAgentLogger* fLogger;
 
-	sem_id fSendSyncSem; // synchronization semaphore for data sends
+	sem_id fSendSyncSem;  // synchronization semaphore for data sends
 	ServerData fCurrentServer;
 	std::map<BString, BString> fRemoteAwayMessages;
 };

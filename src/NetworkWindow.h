@@ -28,16 +28,14 @@ class BView;
 class NetPrefsServerView;
 class BHandler;
 
-class NetworkWindow : public BWindow
-{
+class NetworkWindow : public BWindow {
 public:
 	NetworkWindow();
 	virtual ~NetworkWindow();
 	virtual bool QuitRequested();
 };
 
-class NetPrefServerWindow : public BWindow
-{
+class NetPrefServerWindow : public BWindow {
 public:
 	NetPrefServerWindow(BHandler*);
 	virtual ~NetPrefServerWindow();

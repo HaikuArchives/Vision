@@ -26,8 +26,8 @@
 #ifndef _CLIENTAGENT_H_
 #define _CLIENTAGENT_H_
 
-#include <View.h>
 #include <Messenger.h>
+#include <View.h>
 
 #include "Agent.h"
 
@@ -43,18 +43,17 @@ class HistoryList;
 class AgentSettings;
 class WindowListItem;
 
-class ClientAgent : public BView, public Agent
-{
+class ClientAgent : public BView, public Agent {
 public:
 	// used by ServerAgent
-	ClientAgent(const char*,	   // id_  (window name)
-				const char*,	   // serverName_
-				const char*);	   // myNick_
+	ClientAgent(const char*,  // id_  (window name)
+		const char*,		  // serverName_
+		const char*);		  // myNick_
 
-	ClientAgent(const char*,	   // id_  (window name)
-				const char*,	   // serverName_
-				const char*,	   // myNick_
-				const BMessenger&);// sMsgr pointer
+	ClientAgent(const char*,  // id_  (window name)
+		const char*,		  // serverName_
+		const char*,		  // myNick_
+		const BMessenger&);	  // sMsgr pointer
 
 	virtual ~ClientAgent();
 	// View methods
@@ -87,8 +86,8 @@ public:
 
 	virtual void ChannelMessage(const char*, const char* = 0, const char* = 0, const char* = 0);
 
-	static void PackDisplay(BMessage*, const char*, const uint32 = 0, const uint32 = 0,
-							const uint32 = 0);
+	static void PackDisplay(
+		BMessage*, const char*, const uint32 = 0, const uint32 = 0, const uint32 = 0);
 
 	virtual void ActionMessage(const char*, const char*);
 
@@ -144,6 +143,11 @@ protected:
 };
 
 // constants for multiline paste handler
-enum { PASTE_CANCEL = 0, PASTE_MULTI = 1, PASTE_SINGLE = 2, PASTE_MULTI_NODELAY = 3 };
+enum {
+	PASTE_CANCEL = 0,
+	PASTE_MULTI = 1,
+	PASTE_SINGLE = 2,
+	PASTE_MULTI_NODELAY = 3
+};
 
 #endif

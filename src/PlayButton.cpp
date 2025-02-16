@@ -29,20 +29,20 @@ StopButton::StopButton(BPoint left_top, BMessage* msg)
 {
 }
 
-StopButton::~StopButton()
-{
-}
+StopButton::~StopButton() {}
 
-void StopButton::AttachedToWindow()
+void
+StopButton::AttachedToWindow()
 {
 	BButton::AttachedToWindow();
 	ResizeTo(22, 18);
 }
 
-void StopButton::Draw(BRect frame)
+void
+StopButton::Draw(BRect frame)
 {
-	rgb_color black = {0, 0, 0, 255};
-	rgb_color white = {255, 255, 255, 255};
+	rgb_color black = { 0, 0, 0, 255 };
+	rgb_color white = { 255, 255, 255, 255 };
 
 	BButton::Draw(frame);
 

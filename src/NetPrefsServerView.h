@@ -1,9 +1,9 @@
 #ifndef _NETSERVERPREFSVIEW_H
 #define _NETSERVERPREFSVIEW_H
 
-#include <View.h>
 #include <Message.h>
 #include <Messenger.h>
+#include <View.h>
 
 class BBox;
 class BMessenger;
@@ -16,8 +16,7 @@ class ServerEntryWindow;
 
 struct ServerData;
 
-class NetPrefsServerView : public BView
-{
+class NetPrefsServerView : public BView {
 public:
 	NetPrefsServerView(BRect, const char*, BMessenger);
 	virtual ~NetPrefsServerView();
@@ -31,7 +30,7 @@ private:
 	void UpdateNetworkData(const ServerData*);
 
 	BColumnListView* fServerList;
-	BButton* fAddButton, *fEditButton, *fRemoveButton;
+	BButton *fAddButton, *fEditButton, *fRemoveButton;
 	BWindow* fEntryWin;
 	BMessage* fActiveNetwork;
 	BMessenger fNetWin;

@@ -35,8 +35,7 @@
 
 typedef std::map<BString, BFile> filemap;
 
-class ClientAgentLogger
-{
+class ClientAgentLogger {
 public:
 	ClientAgentLogger(BString);
 	virtual ~ClientAgentLogger();

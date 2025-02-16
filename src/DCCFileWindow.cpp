@@ -21,126 +21,131 @@
  *                 Todd Lair
  */
 
-#include "Vision.h"
-#include "DCCConnect.h"
 #include "DCCFileWindow.h"
+#include "DCCConnect.h"
+#include "Vision.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DCCFileWindow"
 
 DCCFileWindow::DCCFileWindow(DCCConnect* view)
 	: BWindow(BRect(50, 50, 100, 100), B_TRANSLATE("DCC transfers"), B_TITLED_WINDOW,
-			  B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_NOT_MINIMIZABLE | B_NOT_CLOSABLE |
-				  B_ASYNCHRONOUS_CONTROLS)
+		  B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_NOT_MINIMIZABLE | B_NOT_CLOSABLE
+			  | B_ASYNCHRONOUS_CONTROLS)
 {
 	AddChild(view);
 	ResizeTo(view->Bounds().Width(), view->Bounds().Height());
 }
 
-DCCFileWindow::~DCCFileWindow()
-{
-}
+DCCFileWindow::~DCCFileWindow() {}
 
-bool DCCFileWindow::QuitRequested()
+bool
+DCCFileWindow::QuitRequested()
 {
 	be_app->PostMessage(M_DCC_FILE_WIN_DONE);
 	return true;
 }
 
-void DCCFileWindow::MessageReceived(BMessage* msg)
+void
+DCCFileWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_DCC_FILE_WIN: {
-		BRect bounds(Bounds());
-		BPoint point(0.0, 0.0);
-		DCCConnect* view;
+		case M_DCC_FILE_WIN:
+		{
+			BRect bounds(Bounds());
+			BPoint point(0.0, 0.0);
+			DCCConnect* view;
 
-		if (ChildAt(0)) {
-			point.y = bounds.bottom + 1;
-		}
+			if (ChildAt(0)) {
+				point.y = bounds.bottom + 1;
+			}
 
-		msg->FindPointer("view", reinterpret_cast<void**>(&view));
-		view->MoveTo(point);
-		AddChild(view);
-		ResizeTo(bounds.Width(), view->Frame().bottom);
-		if (IsHidden()) {
-			Show();
-		}
-	} break;
+			msg->FindPointer("view", reinterpret_cast<void**>(&view));
+			view->MoveTo(point);
+			AddChild(view);
+			ResizeTo(bounds.Width(), view->Frame().bottom);
+			if (IsHidden()) {
+				Show();
+			}
+		} break;
 
-	case M_DCC_FINISH: {
-		bool success, stopped;
+		case M_DCC_FINISH:
+		{
+			bool success, stopped;
 
-		msg->FindBool("success", &success);
-		msg->FindBool("stopped", &stopped);
+			msg->FindBool("success", &success);
+			msg->FindBool("stopped", &stopped);
 
-		if (success || stopped) {
-			BView* view;
+			if (success || stopped) {
+				BView* view;
 
-			msg->FindPointer("source", reinterpret_cast<void**>(&view));
+				msg->FindPointer("source", reinterpret_cast<void**>(&view));
+
+				for (int32 i = 0; i < CountChildren(); ++i) {
+					BView* child(ChildAt(i));
+
+					if (child == view) {
+						float height(view->Frame().Height());
+						RemoveChild(view);
+						delete view;
+						for (int32 j = i; j < CountChildren(); ++j) {
+							child = ChildAt(j);
+							child->MoveBy(0.0, -(height + 1));
+						}
+
+						if (CountChildren() == 0) {
+							BMessenger(this).SendMessage(B_QUIT_REQUESTED);
+						} else {
+							ResizeBy(0.0, -(height + 1));
+						}
+						break;
+					}
+				}
+			}
+		} break;
+
+		case M_ADD_RESUME_DATA:
+		{
+			const char* nick(NULL);
+			const char* file(NULL);
+			const char* port(NULL);
+			bool hit(false);
+			off_t pos(0);
+
+			msg->FindString("vision:nick", &nick);
+			msg->FindString("vision:file", &file);
+			msg->FindString("vision:port", &port);
+			msg->FindInt64("vision:pos", &pos);
 
 			for (int32 i = 0; i < CountChildren(); ++i) {
-				BView* child(ChildAt(i));
-
-				if (child == view) {
-					float height(view->Frame().Height());
-					RemoveChild(view);
-					delete view;
-					for (int32 j = i; j < CountChildren(); ++j) {
-						child = ChildAt(j);
-						child->MoveBy(0.0, -(height + 1));
-					}
-
-					if (CountChildren() == 0) {
-						BMessenger(this).SendMessage(B_QUIT_REQUESTED);
-					} else {
-						ResizeBy(0.0, -(height + 1));
-					}
+				DCCSend* view(dynamic_cast<DCCSend*>(ChildAt(i)));
+				if (view && view->IsMatch(nick, port)) {
+					view->SetResume(pos);
+					hit = true;
 					break;
 				}
 			}
-		}
-	} break;
 
-	case M_ADD_RESUME_DATA: {
-		const char* nick(NULL);
-		const char* file(NULL);
-		const char* port(NULL);
-		bool hit(false);
-		off_t pos(0);
+			BMessage reply(B_REPLY);
+			reply.AddBool("hit", hit);
+			msg->SendReply(&reply);
+		} break;
 
-		msg->FindString("vision:nick", &nick);
-		msg->FindString("vision:file", &file);
-		msg->FindString("vision:port", &port);
-		msg->FindInt64("vision:pos", &pos);
-
-		for (int32 i = 0; i < CountChildren(); ++i) {
-			DCCSend* view(dynamic_cast<DCCSend*>(ChildAt(i)));
-			if (view && view->IsMatch(nick, port)) {
-				view->SetResume(pos);
-				hit = true;
-				break;
-			}
-		}
-
-		BMessage reply(B_REPLY);
-		reply.AddBool("hit", hit);
-		msg->SendReply(&reply);
-	} break;
-
-	default:
-		BWindow::MessageReceived(msg);
+		default:
+			BWindow::MessageReceived(msg);
 	}
 }
 
-void DCCFileWindow::Hide()
+void
+DCCFileWindow::Hide()
 {
 	// we do this to keep it out of the deskbar
 	SetFlags(Flags() | B_AVOID_FOCUS);
 	BWindow::Hide();
 }
 
-void DCCFileWindow::Show()
+void
+DCCFileWindow::Show()
 {
 	SetFlags(Flags() & ~(B_AVOID_FOCUS));
 	SetWorkspaces(B_CURRENT_WORKSPACE);

@@ -239,4 +239,4 @@ const uint32 M_PROMPT_CANCEL = 0x2401;
 const uint32 M_OFFVIEW_SELECTION = 0x2405;
 const uint32 M_LOAD_URL = 0x2406;
 
-#endif // _VISIONMESSAGES_H_
+#endif	// _VISIONMESSAGES_H_

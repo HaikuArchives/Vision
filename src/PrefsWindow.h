@@ -24,11 +24,10 @@
 
 #include <Window.h>
 
-class PrefsWindow : public BWindow
-{
+class PrefsWindow : public BWindow {
 public:
 	PrefsWindow();
 	virtual ~PrefsWindow();
 	virtual bool QuitRequested();
 };
-#endif // _PREFS_WINDOW_H
+#endif	// _PREFS_WINDOW_H

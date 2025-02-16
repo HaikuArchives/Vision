@@ -30,8 +30,7 @@
 class BTextControl;
 class BScrollView;
 
-class CommandPrefsView : public BView
-{
+class CommandPrefsView : public BView {
 public:
 	CommandPrefsView();
 	virtual ~CommandPrefsView();
@@ -47,4 +46,4 @@ private:
 	float fProportionheight;
 };
 
-#endif // _PREFCOMMAND_H
+#endif	// _PREFCOMMAND_H

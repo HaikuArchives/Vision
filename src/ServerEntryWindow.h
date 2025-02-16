@@ -34,8 +34,7 @@ class BTextControl;
 class BMenuField;
 class BCheckBox;
 
-class ServerEntryWindow : public BWindow
-{
+class ServerEntryWindow : public BWindow {
 public:
 	ServerEntryWindow(BHandler*, BMessage*, const ServerData*, int32);
 	virtual ~ServerEntryWindow();
@@ -47,10 +46,10 @@ private:
 
 	BMessage* invocation;
 	BHandler* target;
-	BTextControl* serverName, *port, *passwordField;
+	BTextControl *serverName, *port, *passwordField;
 	BMenuField* statusField;
-	BButton* okButton, *cancelButton;
-	BCheckBox* usePassword, *securePort;
+	BButton *okButton, *cancelButton;
+	BCheckBox *usePassword, *securePort;
 	ServerData currentServer;
 };
 

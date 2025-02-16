@@ -23,14 +23,13 @@
 #ifndef THEME_H_
 #define THEME_H_
 
-#include <OS.h>
 #include <GraphicsDefs.h>
 #include <List.h>
+#include <OS.h>
 
 class BView;
 
-class Theme
-{
+class Theme {
 	char* name;
 	rgb_color* fores;
 	rgb_color* backs;
@@ -76,13 +75,13 @@ public:
 	bool SetForeground(int16, const rgb_color);
 	bool SetForeground(int16 w, uchar r, uchar g, uchar b, uchar a = 255)
 	{
-		rgb_color color = {r, g, b, a};
+		rgb_color color = { r, g, b, a };
 		return SetForeground(w, color);
 	}
 	bool SetBackground(int16, const rgb_color);
 	bool SetBackground(int16 w, uchar r, uchar g, uchar b, uchar a = 255)
 	{
-		rgb_color color = {r, g, b, a};
+		rgb_color color = { r, g, b, a };
 		return SetBackground(w, color);
 	}
 	bool SetFont(int16, const BFont&);

@@ -26,8 +26,8 @@
 
 #include <String.h>
 
-template <class T> class AutoDestructor
-{
+template <class T>
+class AutoDestructor {
 public:
 	AutoDestructor(T* t) { fObject = t; }
 

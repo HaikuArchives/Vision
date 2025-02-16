@@ -31,8 +31,7 @@
 class BTextControl;
 class BString;
 
-class HistoryList
-{
+class HistoryList {
 	BString backBuffer[BACK_BUFFER_SIZE];
 	int32 bufferFree, bufferPos;
 

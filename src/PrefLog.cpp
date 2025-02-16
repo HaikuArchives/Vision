@@ -20,16 +20,16 @@
  *                 Todd Lair
  */
 
-#include "NumericFilter.h"
 #include "PrefLog.h"
+#include "NumericFilter.h"
 #include "Vision.h"
 
 #include <Alert.h>
 #include <Button.h>
 #include <CheckBox.h>
 #include <Directory.h>
-#include <FindDirectory.h>
 #include <Entry.h>
+#include <FindDirectory.h>
 #include <LayoutBuilder.h>
 #include <Path.h>
 #include <TextControl.h>
@@ -46,55 +46,52 @@ LogPrefsView::LogPrefsView()
 	AdoptSystemColors();
 
 	fLogBaseDir = new BTextControl(NULL, B_TRANSLATE("Log base path:"),
-								   vision_app->GetString("logBaseDir"),
-								   new BMessage(M_PREFLOG_LOGPATH_CHANGED));
+		vision_app->GetString("logBaseDir"), new BMessage(M_PREFLOG_LOGPATH_CHANGED));
 
 	fLogStampFormat = new BTextControl(NULL, B_TRANSLATE("Timestamp format:"),
-									   vision_app->GetString("timestamp_format"),
-									   new BMessage(M_PREFLOG_TS_FORMAT_CHANGED));
+		vision_app->GetString("timestamp_format"), new BMessage(M_PREFLOG_TS_FORMAT_CHANGED));
 
 	BMessage msg(M_PREFLOG_CHECKBOX_CHANGED);
 
-	fClearLogs = new BButton("Clear Logs", B_TRANSLATE("Delete Log Files"),
-							 new BMessage(M_PREFLOG_DELETE_LOGS));
-	if (_CheckIfEmpty()) fClearLogs->SetEnabled(false);
+	fClearLogs = new BButton(
+		"Clear Logs", B_TRANSLATE("Delete Log Files"), new BMessage(M_PREFLOG_DELETE_LOGS));
+	if (_CheckIfEmpty())
+		fClearLogs->SetEnabled(false);
 
 	msg.AddString("setting", "timestamp");
-	fTimeStamp =
-		new BCheckBox("timestamp", B_TRANSLATE("Show timestamps in IRC window"), new BMessage(msg));
+	fTimeStamp = new BCheckBox(
+		"timestamp", B_TRANSLATE("Show timestamps in IRC window"), new BMessage(msg));
 	fTimeStamp->SetValue((vision_app->GetBool("timestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	msg.ReplaceString("setting", "log_enabled");
-	fLogEnabled =
-		new BCheckBox("fLogEnabled", B_TRANSLATE("Enable logging"), new BMessage(msg));
+	fLogEnabled = new BCheckBox("fLogEnabled", B_TRANSLATE("Enable logging"), new BMessage(msg));
 	fLogEnabled->SetValue((vision_app->GetBool("log_enabled")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	msg.ReplaceString("setting", "log_filetimestamp");
-	fLogFileTimestamp = new BCheckBox("fLogFileTimestamp", B_TRANSLATE("Append timestamp to log filenames"),
-									  new BMessage(msg));
-	fLogFileTimestamp->SetValue(vision_app->GetBool(("log_filetimestamp")) ? B_CONTROL_ON :
-																			 B_CONTROL_OFF);
+	fLogFileTimestamp = new BCheckBox(
+		"fLogFileTimestamp", B_TRANSLATE("Append timestamp to log filenames"), new BMessage(msg));
+	fLogFileTimestamp->SetValue(
+		vision_app->GetBool(("log_filetimestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(fLogBaseDir)
-			.AddGroup(B_HORIZONTAL) // TODO improve this it doesn't look good
-				.Add(fLogStampFormat)
-//				.AddGlue()
-				.Add(fClearLogs)
-			.End()
-			.Add(fTimeStamp)
-			.Add(fLogEnabled)
-			.Add(fLogFileTimestamp)
-			.AddGlue()
+		.Add(fLogBaseDir)
+		.AddGroup(B_HORIZONTAL)	 // TODO improve this it doesn't look good
+		.Add(fLogStampFormat)
+		//				.AddGlue()
+		.Add(fClearLogs)
+		.End()
+		.Add(fTimeStamp)
+		.Add(fLogEnabled)
+		.Add(fLogFileTimestamp)
+		.AddGlue()
 		.End();
 }
 
-LogPrefsView::~LogPrefsView()
-{
-}
+LogPrefsView::~LogPrefsView() {}
 
-void LogPrefsView::AttachedToWindow()
+void
+LogPrefsView::AttachedToWindow()
 {
 	fLogBaseDir->SetTarget(this);
 	fLogStampFormat->SetTarget(this);
@@ -102,68 +99,78 @@ void LogPrefsView::AttachedToWindow()
 	fTimeStamp->SetTarget(this);
 	fLogEnabled->SetTarget(this);
 	fLogFileTimestamp->SetTarget(this);
-//	ResizeTo(fLogBaseDir->Frame().Width() + 15.0, fLogFileTimestamp->Frame().bottom + 15.0);
+	//	ResizeTo(fLogBaseDir->Frame().Width() + 15.0, fLogFileTimestamp->Frame().bottom + 15.0);
 }
 
-void LogPrefsView::AllAttached()
+void
+LogPrefsView::AllAttached()
 {
 	BView::AllAttached();
 }
 
-void LogPrefsView::FrameResized(float width, float height)
+void
+LogPrefsView::FrameResized(float width, float height)
 {
 	BView::FrameResized(width, height);
 }
 
-void LogPrefsView::MessageReceived(BMessage* msg)
+void
+LogPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_PREFLOG_CHECKBOX_CHANGED: {
-		BControl* source(NULL);
-		msg->FindPointer("source", reinterpret_cast<void**>(&source));
-		vision_app->SetBool(msg->FindString("setting"), source->Value() == B_CONTROL_ON);
-	} break;
+		case M_PREFLOG_CHECKBOX_CHANGED:
+		{
+			BControl* source(NULL);
+			msg->FindPointer("source", reinterpret_cast<void**>(&source));
+			vision_app->SetBool(msg->FindString("setting"), source->Value() == B_CONTROL_ON);
+		} break;
 
-	case M_PREFLOG_LOGPATH_CHANGED: {
-		BString tempPath(fLogBaseDir->Text());
-		if (tempPath.Length() == 0) {
-			BAlert* emptyPathAlert(
-				new BAlert(B_TRANSLATE("Error"), B_TRANSLATE("The log path you have entered is invalid."), B_TRANSLATE("OK")));
-			emptyPathAlert->Go();
-			break;
-		} else {
-			// remove trailing slash to avoid setting off BPath's normalization
-			if (tempPath[tempPath.Length() - 1] == '/') tempPath.ReplaceLast('/', '\0');
-
-			BPath path(tempPath.String());
-			if (path.InitCheck() != B_OK) {
-				BAlert* badPathAlert(new BAlert(B_TRANSLATE("Error"), B_TRANSLATE("The log path you have entered is invalid."),
-												B_TRANSLATE("OK")));
-				badPathAlert->Go();
+		case M_PREFLOG_LOGPATH_CHANGED:
+		{
+			BString tempPath(fLogBaseDir->Text());
+			if (tempPath.Length() == 0) {
+				BAlert* emptyPathAlert(new BAlert(B_TRANSLATE("Error"),
+					B_TRANSLATE("The log path you have entered is invalid."), B_TRANSLATE("OK")));
+				emptyPathAlert->Go();
 				break;
+			} else {
+				// remove trailing slash to avoid setting off BPath's normalization
+				if (tempPath[tempPath.Length() - 1] == '/')
+					tempPath.ReplaceLast('/', '\0');
+
+				BPath path(tempPath.String());
+				if (path.InitCheck() != B_OK) {
+					BAlert* badPathAlert(new BAlert(B_TRANSLATE("Error"),
+						B_TRANSLATE("The log path you have entered is invalid."),
+						B_TRANSLATE("OK")));
+					badPathAlert->Go();
+					break;
+				}
 			}
-		}
-		vision_app->SetString("logBaseDir", 0, tempPath.String());
-	} break;
+			vision_app->SetString("logBaseDir", 0, tempPath.String());
+		} break;
 
-	case M_PREFLOG_TS_FORMAT_CHANGED: {
-		vision_app->SetString("timestamp_format", 0, fLogStampFormat->Text());
-	} break;
+		case M_PREFLOG_TS_FORMAT_CHANGED:
+		{
+			vision_app->SetString("timestamp_format", 0, fLogStampFormat->Text());
+		} break;
 
-	case M_PREFLOG_DELETE_LOGS: {
-		BString path(vision_app->GetString("logBaseDir"));
-		BEntry entry(path.String());
-		_DeleteLogs(&entry);
-		fClearLogs->SetEnabled(false);
-	} break;
+		case M_PREFLOG_DELETE_LOGS:
+		{
+			BString path(vision_app->GetString("logBaseDir"));
+			BEntry entry(path.String());
+			_DeleteLogs(&entry);
+			fClearLogs->SetEnabled(false);
+		} break;
 
-	default:
-		BView::MessageReceived(msg);
-		break;
+		default:
+			BView::MessageReceived(msg);
+			break;
 	}
 }
 
-void LogPrefsView::_DeleteLogs(BEntry* dir_entry)
+void
+LogPrefsView::_DeleteLogs(BEntry* dir_entry)
 {
 	BEntry entry;
 	BDirectory dir(dir_entry);
@@ -176,7 +183,8 @@ void LogPrefsView::_DeleteLogs(BEntry* dir_entry)
 	}
 }
 
-bool LogPrefsView::_CheckIfEmpty()
+bool
+LogPrefsView::_CheckIfEmpty()
 {
 	BString path(vision_app->GetString("logBaseDir"));
 	BDirectory dir(path.String());
@@ -184,7 +192,8 @@ bool LogPrefsView::_CheckIfEmpty()
 	while (dir.GetNextEntry(&entry) == B_OK) {
 		if (entry.IsDirectory()) {
 			BDirectory directory(&entry);
-			if (directory.CountEntries() > 0) return false;
+			if (directory.CountEntries() > 0)
+				return false;
 		} else
 			return false;
 	}

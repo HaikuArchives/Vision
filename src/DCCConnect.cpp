@@ -21,31 +21,31 @@
  *                 Todd Lair
  */
 
+#include <Mime.h>
+#include <Path.h>
 #include <StatusBar.h>
 #include <StringView.h>
-#include <Path.h>
-#include <Mime.h>
 #include <Window.h>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <sys/time.h>
+#include <stdlib.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 
-#include "Vision.h"
-#include "ServerAgent.h"
 #include "DCCConnect.h"
 #include "PlayButton.h"
+#include "ServerAgent.h"
+#include "Vision.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DCCConnect"
 
 DCCConnect::DCCConnect(const char* n, const char* fn, const char* sz, const char* i, const char* p,
-					   const BMessenger& c)
-	: BView(BRect(0.0, 0.0, 275.0, 150.0), "dcc connect", B_FOLLOW_LEFT | B_FOLLOW_TOP,
-			B_WILL_DRAW),
+	const BMessenger& c)
+	: BView(
+		  BRect(0.0, 0.0, 275.0, 150.0), "dcc connect", B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW),
 	  fCaller(c),
 	  fNick(n),
 	  fFileName(fn),
@@ -64,32 +64,32 @@ DCCConnect::DCCConnect(const char* n, const char* fn, const char* sz, const char
 
 	BString text(B_TRANSLATE("bps:"));
 	text.Append(" ");
-	fBar = new BStatusBar(BRect(10, 10, Bounds().right - 30, Bounds().bottom - 10), "progress",
-						  text.String(), trail);
+	fBar = new BStatusBar(
+		BRect(10, 10, Bounds().right - 30, Bounds().bottom - 10), "progress", text.String(), trail);
 	fBar->SetMaxValue(atol(fSize.String()));
 	fBar->SetBarHeight(8.0);
 	AddChild(fBar);
 
 	fLabel = new BStringView(BRect(10, 10, Bounds().right - 10, Bounds().bottom - 10), "label", "",
-							 B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
+		B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
 	AddChild(fLabel);
 
 	fStop = new StopButton(BPoint(fBar->Frame().right + 15, fBar->Frame().bottom - 18),
-						   new BMessage(M_DCC_STOP_BUTTON));
+		new BMessage(M_DCC_STOP_BUTTON));
 
 	AddChild(fStop);
 }
 
-DCCConnect::~DCCConnect()
-{
-}
+DCCConnect::~DCCConnect() {}
 
-void DCCConnect::AttachedToWindow()
+void
+DCCConnect::AttachedToWindow()
 {
 	fStop->SetTarget(this);
 }
 
-void DCCConnect::AllAttached()
+void
+DCCConnect::AllAttached()
 {
 	fStop->MoveTo(fBar->Frame().right + 15, fBar->Frame().bottom - 18);
 	fLabel->MoveTo(fLabel->Frame().left, fBar->Frame().bottom + 1);
@@ -100,11 +100,13 @@ void DCCConnect::AllAttached()
 	ResizeTo(fStop->Frame().right + 5, fLabel->Frame().bottom + 5.0);
 }
 
-void DCCConnect::DetachedFromWindow()
+void
+DCCConnect::DetachedFromWindow()
 {
 }
 
-void DCCConnect::Draw(BRect)
+void
+DCCConnect::Draw(BRect)
 {
 	BView* top(Window()->ChildAt(0));
 
@@ -113,57 +115,68 @@ void DCCConnect::Draw(BRect)
 		AddLine(Bounds().LeftTop(), Bounds().RightTop(), tint_color(ViewColor(), B_DARKEN_2_TINT));
 
 		AddLine(Bounds().LeftTop() + BPoint(0.0, 1.0), Bounds().RightTop() + BPoint(0.0, 1.0),
-				tint_color(ViewColor(), B_LIGHTEN_MAX_TINT));
+			tint_color(ViewColor(), B_LIGHTEN_MAX_TINT));
 		EndLineArray();
 	}
 }
 
-void DCCConnect::MessageReceived(BMessage* msg)
+void
+DCCConnect::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_DCC_STOP_BUTTON: {
-		Stopped();
-	} break;
+		case M_DCC_STOP_BUTTON:
+		{
+			Stopped();
+		} break;
 
-	case M_DCC_UPDATE_STATUS: {
-		fLabel->SetText(msg->FindString("text"));
-	} break;
+		case M_DCC_UPDATE_STATUS:
+		{
+			fLabel->SetText(msg->FindString("text"));
+		} break;
 
-	case M_DCC_GET_CONNECT_DATA: {
-		BMessage reply;
-		reply.AddString("port", fPort.String());
-		reply.AddString("ip", fIp.String());
-		reply.AddString("name", fFileName.String());
-		reply.AddString("nick", fNick.String());
-		reply.AddString("size", fSize.String());
-		DCCReceive* recview(dynamic_cast<DCCReceive*>(this));
-		if (recview != NULL) reply.AddBool("resume", recview->fResume);
-		DCCSend* sendview(dynamic_cast<DCCSend*>(this));
-		if (sendview != NULL) reply.AddMessenger("caller", sendview->fCaller);
-		msg->SendReply(&reply);
-	} break;
+		case M_DCC_GET_CONNECT_DATA:
+		{
+			BMessage reply;
+			reply.AddString("port", fPort.String());
+			reply.AddString("ip", fIp.String());
+			reply.AddString("name", fFileName.String());
+			reply.AddString("nick", fNick.String());
+			reply.AddString("size", fSize.String());
+			DCCReceive* recview(dynamic_cast<DCCReceive*>(this));
+			if (recview != NULL)
+				reply.AddBool("resume", recview->fResume);
+			DCCSend* sendview(dynamic_cast<DCCSend*>(this));
+			if (sendview != NULL)
+				reply.AddMessenger("caller", sendview->fCaller);
+			msg->SendReply(&reply);
+		} break;
 
-	case M_DCC_GET_RESUME_POS: {
-		BMessage reply;
-		DCCSend* sendview(dynamic_cast<DCCSend*>(this));
-		if (sendview != NULL) reply.AddInt32("pos", sendview->fPos);
-		msg->SendReply(&reply);
-	} break;
+		case M_DCC_GET_RESUME_POS:
+		{
+			BMessage reply;
+			DCCSend* sendview(dynamic_cast<DCCSend*>(this));
+			if (sendview != NULL)
+				reply.AddInt32("pos", sendview->fPos);
+			msg->SendReply(&reply);
+		} break;
 
-	case M_DCC_UPDATE_TRANSFERRED: {
-		fTotalTransferred = msg->FindInt32("transferred");
-	} break;
+		case M_DCC_UPDATE_TRANSFERRED:
+		{
+			fTotalTransferred = msg->FindInt32("transferred");
+		} break;
 
-	case M_DCC_UPDATE_AVERAGE: {
-		fFinalRateAverage = msg->FindInt32("average");
-	} break;
+		case M_DCC_UPDATE_AVERAGE:
+		{
+			fFinalRateAverage = msg->FindInt32("average");
+		} break;
 
-	default:
-		BView::MessageReceived(msg);
+		default:
+			BView::MessageReceived(msg);
 	}
 }
 
-void DCCConnect::Stopped()
+void
+DCCConnect::Stopped()
 {
 	if (fTotalTransferred > 0) {
 		BMessage xfermsg(M_DCC_COMPLETE);
@@ -189,15 +202,18 @@ void DCCConnect::Stopped()
 	Window()->PostMessage(&msg);
 }
 
-void DCCConnect::Lock()
+void
+DCCConnect::Lock()
 {
 }
 
-void DCCConnect::Unlock()
+void
+DCCConnect::Unlock()
 {
 }
 
-void DCCConnect::UpdateBar(const BMessenger& msgr, int readSize, int cps, uint32 size, bool update)
+void
+DCCConnect::UpdateBar(const BMessenger& msgr, int readSize, int cps, uint32 size, bool update)
 {
 	BMessage msg(B_UPDATE_STATUS_BAR);
 
@@ -214,10 +230,12 @@ void DCCConnect::UpdateBar(const BMessenger& msgr, int readSize, int cps, uint32
 	msg.AddFloat("delta", readSize);
 	BLooper* looper(NULL);
 	DCCConnect* transferView((DCCConnect*)msgr.Target(&looper));
-	if ((looper != NULL) && (transferView != NULL)) looper->PostMessage(&msg, transferView->fBar);
+	if ((looper != NULL) && (transferView != NULL))
+		looper->PostMessage(&msg, transferView->fBar);
 }
 
-void DCCConnect::UpdateStatus(const BMessenger& msgr, const char* text)
+void
+DCCConnect::UpdateStatus(const BMessenger& msgr, const char* text)
 {
 	BMessage msg(M_DCC_UPDATE_STATUS);
 
@@ -226,16 +244,16 @@ void DCCConnect::UpdateStatus(const BMessenger& msgr, const char* text)
 }
 
 DCCReceive::DCCReceive(const char* n, const char* fn, const char* sz, const char* i, const char* p,
-					   const BMessenger& c, bool cont)
-	: DCCConnect(n, fn, sz, i, p, c), fResume(cont)
+	const BMessenger& c, bool cont)
+	: DCCConnect(n, fn, sz, i, p, c),
+	  fResume(cont)
 {
 }
 
-DCCReceive::~DCCReceive()
-{
-}
+DCCReceive::~DCCReceive() {}
 
-void DCCReceive::AttachedToWindow()
+void
+DCCReceive::AttachedToWindow()
 {
 	DCCConnect::AttachedToWindow();
 
@@ -243,7 +261,8 @@ void DCCReceive::AttachedToWindow()
 	resume_thread(fTid);
 }
 
-int32 DCCReceive::Transfer(void* arg)
+int32
+DCCReceive::Transfer(void* arg)
 {
 	BMessenger msgr(reinterpret_cast<DCCReceive*>(arg));
 	struct sockaddr_in address;
@@ -258,7 +277,8 @@ int32 DCCReceive::Transfer(void* arg)
 
 	BMessage reply;
 
-	if (msgr.SendMessage(M_DCC_GET_CONNECT_DATA, &reply) == B_ERROR) return B_ERROR;
+	if (msgr.SendMessage(M_DCC_GET_CONNECT_DATA, &reply) == B_ERROR)
+		return B_ERROR;
 
 	memset(&address, 0, sizeof(sockaddr_in));
 	address.sin_family = AF_INET;
@@ -275,8 +295,8 @@ int32 DCCReceive::Transfer(void* arg)
 	BPath path(reply.FindString("name"));
 	off_t file_size(0);
 	BString buffer(B_TRANSLATE("Receiving \"%file%\" from %nick%."));
-	buffer.ReplaceFirst("%file%",  path.Leaf());
-	buffer.ReplaceFirst("%nick%",  reply.FindString("nick"));
+	buffer.ReplaceFirst("%file%", path.Leaf());
+	buffer.ReplaceFirst("%nick%", reply.FindString("nick"));
 
 	UpdateStatus(msgr, buffer.String());
 
@@ -284,8 +304,8 @@ int32 DCCReceive::Transfer(void* arg)
 
 	if (msgr.IsValid()) {
 		if (reply.FindBool("resume")) {
-			if (file.SetTo(reply.FindString("name"), B_WRITE_ONLY | B_OPEN_AT_END) == B_NO_ERROR &&
-				file.GetSize(&file_size) == B_NO_ERROR && file_size > 0LL)
+			if (file.SetTo(reply.FindString("name"), B_WRITE_ONLY | B_OPEN_AT_END) == B_NO_ERROR
+				&& file.GetSize(&file_size) == B_NO_ERROR && file_size > 0LL)
 				UpdateBar(msgr, file_size, 0, 0, true);
 			else
 				file_size = 0LL;
@@ -305,7 +325,8 @@ int32 DCCReceive::Transfer(void* arg)
 
 		while ((msgr.Target(&looper) != NULL) && bytes_received < size) {
 			int readSize;
-			if ((readSize = recv(dccSock, inBuffer, 8196, 0)) < 0) break;
+			if ((readSize = recv(dccSock, inBuffer, 8196, 0)) < 0)
+				break;
 
 			file.Write(inBuffer, readSize);
 			bytes_received += readSize;
@@ -349,20 +370,21 @@ int32 DCCReceive::Transfer(void* arg)
 }
 
 DCCSend::DCCSend(const char* n, const char* fn, const char* sz, const BMessenger& c)
-	: DCCConnect(n, fn, sz, "", "", c), fPos(0LL)
+	: DCCConnect(n, fn, sz, "", "", c),
+	  fPos(0LL)
 {
 	int32 dccPort(atoi(vision_app->GetString("dccMinPort")));
 	int32 diff(atoi(vision_app->GetString("dccMaxPort")) - dccPort);
-	if (diff > 0) dccPort += rand() % diff;
+	if (diff > 0)
+		dccPort += rand() % diff;
 
 	fPort << dccPort;
 }
 
-DCCSend::~DCCSend()
-{
-}
+DCCSend::~DCCSend() {}
 
-void DCCSend::AttachedToWindow()
+void
+DCCSend::AttachedToWindow()
 {
 	DCCConnect::AttachedToWindow();
 
@@ -370,13 +392,15 @@ void DCCSend::AttachedToWindow()
 	resume_thread(fTid);
 }
 
-int32 DCCSend::Transfer(void* arg)
+int32
+DCCSend::Transfer(void* arg)
 {
 	BMessenger msgr(reinterpret_cast<DCCSend*>(arg));
 	BMessage reply, ipdata;
 	BLooper* looper(NULL);
 
-	if (msgr.IsValid()) msgr.SendMessage(M_DCC_GET_CONNECT_DATA, &reply);
+	if (msgr.IsValid())
+		msgr.SendMessage(M_DCC_GET_CONNECT_DATA, &reply);
 
 	BMessenger callmsgr;
 	reply.FindMessenger("caller", &callmsgr);
@@ -430,7 +454,8 @@ int32 DCCSend::Transfer(void* arg)
 
 		BMessage msg(M_SERVER_SEND);
 		msg.AddString("data", status.String());
-		if (callmsgr.IsValid()) callmsgr.SendMessage(&msg);
+		if (callmsgr.IsValid())
+			callmsgr.SendMessage(&msg);
 
 		UpdateStatus(msgr, B_TRANSLATE("Doing listen call."));
 		if (listen(sd, 1) < 0) {
@@ -507,8 +532,8 @@ int32 DCCSend::Transfer(void* arg)
 		ssize_t count(0);
 		bigtime_t start = system_time();
 
-		while ((msgr.Target(&looper) != NULL) &&
-			   (count = file.Read(buffer, DCC_BLOCK_SIZE - 1)) > 0) {
+		while (
+			(msgr.Target(&looper) != NULL) && (count = file.Read(buffer, DCC_BLOCK_SIZE - 1)) > 0) {
 			int sent;
 
 			if ((sent = send(dccSock, buffer, count, 0)) < count) {
@@ -559,17 +584,20 @@ int32 DCCSend::Transfer(void* arg)
 		close(dccSock);
 	}
 
-	if (file.InitCheck() == B_OK) file.Unset();
+	if (file.InitCheck() == B_OK)
+		file.Unset();
 
 	return 0;
 }
 
-bool DCCSend::IsMatch(const char* n, const char* p) const
+bool
+DCCSend::IsMatch(const char* n, const char* p) const
 {
 	return fNick == n && fPort == p;
 }
 
-void DCCSend::SetResume(off_t p)
+void
+DCCSend::SetResume(off_t p)
 {
 	fPos = p;
 }

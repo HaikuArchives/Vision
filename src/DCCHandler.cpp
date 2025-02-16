@@ -23,14 +23,14 @@
  *                 Jamie Wilkinson
  */
 
-#include <AppFileInfo.h>
 #include <Alert.h>
+#include <AppFileInfo.h>
 #include <Button.h>
 #include <Directory.h>
 #include <FilePanel.h>
 #include <Invoker.h>
-#include <Path.h>
 #include <MessageFilter.h>
+#include <Path.h>
 #include <TextControl.h>
 #include <stdlib.h>
 
@@ -42,8 +42,7 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DCCHandler"
 
-class DCCFileFilter : public BMessageFilter
-{
+class DCCFileFilter : public BMessageFilter {
 	BFilePanel* panel;
 	BMessage send_msg;
 
@@ -56,12 +55,13 @@ public:
 	filter_result HandleAlert(BMessage*);
 };
 
-void ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
+void
+ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
 {
 	BString theText(B_TRANSLATE("%nick% wants to begin a DCC chat with you."));
 	theText.ReplaceFirst("%nick%", theNick);
-	BAlert* myAlert = new BAlert(B_TRANSLATE("DCC request"), theText.String(),
-		B_TRANSLATE("Accept"), B_TRANSLATE("Refuse"));
+	BAlert* myAlert = new BAlert(
+		B_TRANSLATE("DCC request"), theText.String(), B_TRANSLATE("Accept"), B_TRANSLATE("Refuse"));
 	myAlert->SetFeel(B_FLOATING_APP_WINDOW_FEEL);
 	BMessage* myMessage = new BMessage(M_CHAT_ACCEPT);
 	myMessage->AddString("nick", theNick.String());
@@ -74,7 +74,8 @@ void ServerAgent::DCCChatDialog(BString theNick, BString theIP, BString thePort)
 const uint32 M_FILE_PANEL_BUTTON = 'Tact';
 const uint32 M_FILE_PANEL_ALERT = 'alrt';
 
-void ServerAgent::DCCGetDialog(BString nick, BString file, BString size, BString ip, BString port)
+void
+ServerAgent::DCCGetDialog(BString nick, BString file, BString size, BString ip, BString port)
 {
 	BMessage msg(M_DCC_ACCEPT), reply;
 
@@ -102,12 +103,14 @@ void ServerAgent::DCCGetDialog(BString nick, BString file, BString size, BString
 		panelWindow->AddFilter(new DCCFileFilter(panel, msg));
 		if (vision_app->GetBool("dccAutoAccept")) {
 			BDirectory path(vision_app->GetString("dccDefPath"));
-			if (path.InitCheck() == B_OK) panel->SetPanelDirectory(&path);
+			if (path.InitCheck() == B_OK)
+				panel->SetPanelDirectory(&path);
 		}
 		if (vision_app->GetBool("dccAutoAccept")) {
 			panelWindow->Hide();
 			BButton* button(dynamic_cast<BButton*>(panel->Window()->FindView("default button")));
-			if (button) button->Invoke();
+			if (button)
+				button->Invoke();
 		}
 		panelWindow->Unlock();
 		panel->Show();
@@ -120,39 +123,44 @@ void ServerAgent::DCCGetDialog(BString nick, BString file, BString size, BString
 }
 
 DCCFileFilter::DCCFileFilter(BFilePanel* p, const BMessage& msg)
-	: BMessageFilter(B_ANY_DELIVERY, B_ANY_SOURCE), panel(p), send_msg(msg)
+	: BMessageFilter(B_ANY_DELIVERY, B_ANY_SOURCE),
+	  panel(p),
+	  send_msg(msg)
 {
 }
 
-DCCFileFilter::~DCCFileFilter()
-{
-}
+DCCFileFilter::~DCCFileFilter() {}
 
-filter_result DCCFileFilter::Filter(BMessage* msg, BHandler**)
+filter_result
+DCCFileFilter::Filter(BMessage* msg, BHandler**)
 {
 	filter_result result(B_DISPATCH_MESSAGE);
 
 	switch (msg->what) {
-	case M_FILE_PANEL_BUTTON: {
-		result = HandleButton(msg);
-		break;
-	}
+		case M_FILE_PANEL_BUTTON:
+		{
+			result = HandleButton(msg);
+			break;
+		}
 
-	case M_FILE_PANEL_ALERT: {
-		result = HandleAlert(msg);
-		break;
-	}
+		case M_FILE_PANEL_ALERT:
+		{
+			result = HandleAlert(msg);
+			break;
+		}
 
-	case B_QUIT_REQUESTED: {
-		// printf ("Panel Quit Requested\n");
-		break;
-	}
+		case B_QUIT_REQUESTED:
+		{
+			// printf ("Panel Quit Requested\n");
+			break;
+		}
 	}
 
 	return result;
 }
 
-filter_result DCCFileFilter::HandleButton(BMessage*)
+filter_result
+DCCFileFilter::HandleButton(BMessage*)
 {
 	filter_result result(B_DISPATCH_MESSAGE);
 	BTextControl* paneltext(dynamic_cast<BTextControl*>(panel->Window()->FindView("text view")));
@@ -167,8 +175,8 @@ filter_result DCCFileFilter::HandleButton(BMessage*)
 
 		dir.SetTo(&ref);
 
-		if (entry.SetTo(&dir, paneltext->Text()) == B_NO_ERROR && entry.GetStat(&s) == B_NO_ERROR &&
-			S_ISREG(s.st_mode)) {
+		if (entry.SetTo(&dir, paneltext->Text()) == B_NO_ERROR && entry.GetStat(&s) == B_NO_ERROR
+			&& S_ISREG(s.st_mode)) {
 			if (vision_app->GetBool("dccAutoAccept")) {
 				BMessage msg(M_FILE_PANEL_ALERT);
 				msg.AddInt32("which", 2);
@@ -176,14 +184,14 @@ filter_result DCCFileFilter::HandleButton(BMessage*)
 				result = B_SKIP_MESSAGE;
 			} else {
 				BAlert* alert;
-				BString buffer(B_TRANSLATE("The file \"%file%\" already exists "
-					"in the specified folder. Do you want to continue the "
-					"transfer?"));
+				BString buffer(
+					B_TRANSLATE("The file \"%file%\" already exists "
+								"in the specified folder. Do you want to continue the "
+								"transfer?"));
 				buffer.ReplaceFirst("%file%", paneltext->Text());
 
 				alert = new BAlert(B_TRANSLATE("DCC request"), buffer.String(),
-					B_TRANSLATE("Cancel"), B_TRANSLATE("Replace"),
-					B_TRANSLATE("Resume"),
+					B_TRANSLATE("Cancel"), B_TRANSLATE("Replace"), B_TRANSLATE("Resume"),
 					B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
 
 				alert->Go(new BInvoker(new BMessage(M_FILE_PANEL_ALERT), panel->Window()));
@@ -195,7 +203,8 @@ filter_result DCCFileFilter::HandleButton(BMessage*)
 	return result;
 }
 
-filter_result DCCFileFilter::HandleAlert(BMessage* msg)
+filter_result
+DCCFileFilter::HandleAlert(BMessage* msg)
 {
 	BTextControl* text(dynamic_cast<BTextControl*>(panel->Window()->FindView("text view")));
 	int32 which;

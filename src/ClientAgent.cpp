@@ -38,15 +38,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ClientWindow.h"
 #include "ClientAgent.h"
 #include "ClientAgentInputFilter.h"
 #include "ClientAgentLogger.h"
+#include "ClientWindow.h"
 #include "HistoryList.h"
 #include "RunView.h"
 #include "StatusView.h"
-#include "Utilities.h"
 #include "Theme.h"
+#include "Utilities.h"
 #include "Vision.h"
 #include "WindowList.h"
 
@@ -68,8 +68,8 @@ ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* m
 	Init();
 }
 
-ClientAgent::ClientAgent(const char* id_, const char* serverName_, const char* myNick_,
-						 const BMessenger& sMsgr_)
+ClientAgent::ClientAgent(
+	const char* id_, const char* serverName_, const char* myNick_, const BMessenger& sMsgr_)
 
 	: BView(id_, B_WILL_DRAW),
 	  fSMsgr(sMsgr_),
@@ -91,7 +91,8 @@ ClientAgent::~ClientAgent()
 	delete fHistory;
 }
 
-void ClientAgent::AttachedToWindow()
+void
+ClientAgent::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 	fActiveTheme->WriteLock();
@@ -99,7 +100,8 @@ void ClientAgent::AttachedToWindow()
 	fActiveTheme->WriteUnlock();
 }
 
-void ClientAgent::DetachedFromWindow()
+void
+ClientAgent::DetachedFromWindow()
 {
 	BView::DetachedFromWindow();
 	fActiveTheme->WriteLock();
@@ -107,7 +109,8 @@ void ClientAgent::DetachedFromWindow()
 	fActiveTheme->WriteUnlock();
 }
 
-void ClientAgent::AllAttached()
+void
+ClientAgent::AllAttached()
 {
 	fMsgr = BMessenger(this);
 
@@ -127,7 +130,8 @@ void ClientAgent::AllAttached()
 	}
 }
 
-void ClientAgent::Show()
+void
+ClientAgent::Show()
 {
 	Window()->PostMessage(M_STATUS_CLEAR);
 	this->fMsgr.SendMessage(M_STATUS_ADDITEMS);
@@ -146,16 +150,18 @@ void ClientAgent::Show()
 	BView::Show();
 }
 
-BView* ClientAgent::View()
+BView*
+ClientAgent::View()
 {
 	return this;
 }
 
-void ClientAgent::Init()
+void
+ClientAgent::Init()
 {
 	AdoptSystemColors();
 
-	fInput = new BTextControl( "Input", 0, 0, 0);
+	fInput = new BTextControl("Input", 0, 0, 0);
 	fInput->TextView()->AddFilter(new ClientAgentInputFilter(this));
 	fInput->Invalidate();
 
@@ -168,41 +174,45 @@ void ClientAgent::Init()
 	if (vision_app->GetBool("timestamp"))
 		fText->SetTimeStampFormat(vision_app->GetString("timestamp_format"));
 
-	fTextScroll =
-		new BScrollView("textscroll", fText, 0, false, true, B_PLAIN_BORDER);
+	fTextScroll = new BScrollView("textscroll", fText, 0, false, true, B_PLAIN_BORDER);
 
 	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 5)
 		.SetInsets(0, 0, 0, 0)
 		.AddGroup(B_VERTICAL, 0)
-			.Add(fTextScroll)
-			.AddStrut(5)
-			.Add(fInput)
-			.AddStrut(5)
+		.Add(fTextScroll)
+		.AddStrut(5)
+		.Add(fInput)
+		.AddStrut(5)
 		.End()
-	.End();
+		.End();
 }
 
-void ClientAgent::ScrollRange(float* scrollMin, float* scrollMax) const
+void
+ClientAgent::ScrollRange(float* scrollMin, float* scrollMax) const
 {
 	fTextScroll->ScrollBar(B_VERTICAL)->GetRange(scrollMin, scrollMax);
 }
 
-float ClientAgent::ScrollPos() const
+float
+ClientAgent::ScrollPos() const
 {
 	return fTextScroll->ScrollBar(B_VERTICAL)->Value();
 }
 
-void ClientAgent::SetScrollPos(float value)
+void
+ClientAgent::SetScrollPos(float value)
 {
 	fTextScroll->ScrollBar(B_VERTICAL)->SetValue(value);
 }
 
-void ClientAgent::SetServerName(const char* name)
+void
+ClientAgent::SetServerName(const char* name)
 {
 	fServerName = name;
 }
 
-void ClientAgent::SetEditStates(BMenu* menu, bool targetonly)
+void
+ClientAgent::SetEditStates(BMenu* menu, bool targetonly)
 {
 	if (menu != NULL) {
 		if (targetonly) {
@@ -255,7 +265,8 @@ void ClientAgent::SetEditStates(BMenu* menu, bool targetonly)
 	}
 }
 
-BString ClientAgent::FilterCrap(const char* data, bool force)
+BString
+ClientAgent::FilterCrap(const char* data, bool force)
 {
 	BString outData("", 440);
 	int32 theChars(strlen(data));
@@ -267,24 +278,28 @@ BString ClientAgent::FilterCrap(const char* data, bool force)
 			outData << data[i];
 		else if (data[i] > 1 && data[i] < 32) {
 			if (data[i] == 3) {
-				if (ViewCodes) outData << "[0x03]{";
+				if (ViewCodes)
+					outData << "[0x03]{";
 
 				++i;
 
 				// filter foreground
 				for (j = 0; j < 2; j++)
 					if (data[i] >= '0' && data[i] <= '9') {
-						if (ViewCodes) outData << data[i];
+						if (ViewCodes)
+							outData << data[i];
 						++i;
 					} else
 						break;
 
 				if (data[i] == ',') {
-					if (ViewCodes) outData << data[i];
+					if (ViewCodes)
+						outData << data[i];
 					++i;
 					for (j = 0; j < 2; j++)
 						if (data[i] >= '0' && data[i] <= '9') {
-							if (ViewCodes) outData << data[i];
+							if (ViewCodes)
+								outData << data[i];
 							++i;
 						} else
 							break;
@@ -292,7 +307,8 @@ BString ClientAgent::FilterCrap(const char* data, bool force)
 
 				--i;
 
-				if (ViewCodes) outData << "}";
+				if (ViewCodes)
+					outData << "}";
 			} else if (ViewCodes) {
 				char buffer[16];
 				sprintf(buffer, "[0x%02x]", data[i]);
@@ -305,7 +321,8 @@ BString ClientAgent::FilterCrap(const char* data, bool force)
 	return outData;
 }
 
-void ClientAgent::Submit(const char* buffer, bool clear, bool fHistoryAdd)
+void
+ClientAgent::Submit(const char* buffer, bool clear, bool fHistoryAdd)
 {
 	BString cmd;
 
@@ -314,7 +331,8 @@ void ClientAgent::Submit(const char* buffer, bool clear, bool fHistoryAdd)
 	else
 		cmd = buffer;
 
-	if (clear) fInput->SetText("");
+	if (clear)
+		fInput->SetText("");
 
 	if (cmd.Length() && !SlashParser(cmd.String()) && cmd[0] != '/') {
 		BString tmp;
@@ -327,7 +345,8 @@ void ClientAgent::Submit(const char* buffer, bool clear, bool fHistoryAdd)
 	}
 }
 
-int32 ClientAgent::TimedSubmit(void* arg)
+int32
+ClientAgent::TimedSubmit(void* arg)
 {
 	BMessage* msg(reinterpret_cast<BMessage*>(arg));
 	ClientAgent* agent;
@@ -348,22 +367,24 @@ int32 ClientAgent::TimedSubmit(void* arg)
 
 	bool delay(!msg->HasBool("delay"));
 	bool autoexec(msg->FindBool("autoexec"));
-	if (autoexec) addtofHistory = false;
+	if (autoexec)
+		addtofHistory = false;
 
 	BMessenger agentMsgr(agent);
 	BMessage submitMsg(M_SUBMIT);
 	submitMsg.AddBool("history", addtofHistory);
 	submitMsg.AddBool("clear", false);
 
-	for (i = 0; (msg->HasString("data", i)) && (agentMsgr.IsValid()) &&
-					(false == agent->CancelMultilineTextPaste());
-		 ++i) {
+	for (i = 0; (msg->HasString("data", i)) && (agentMsgr.IsValid())
+				&& (false == agent->CancelMultilineTextPaste());
+		++i) {
 		BString data;
 
 		msg->FindString("data", i, &data);
 
 		// add a space so /'s don't get triggered as commands
-		if (!autoexec) data.Prepend(" ");
+		if (!autoexec)
+			data.Prepend(" ");
 
 		if (!submitMsg.HasString("input"))
 			submitMsg.AddString("input", data);
@@ -375,7 +396,8 @@ int32 ClientAgent::TimedSubmit(void* arg)
 
 			// A small attempt to appease the
 			// kicker gods
-			if (delay) snooze(600000);
+			if (delay)
+				snooze(600000);
 		}
 	}
 
@@ -383,8 +405,8 @@ int32 ClientAgent::TimedSubmit(void* arg)
 	return 0;
 }
 
-void ClientAgent::PackDisplay(BMessage* msg, const char* buffer, uint32 fore, uint32 back,
-							  uint32 font)
+void
+ClientAgent::PackDisplay(BMessage* msg, const char* buffer, uint32 fore, uint32 back, uint32 font)
 {
 	BMessage packed;
 
@@ -400,7 +422,8 @@ void ClientAgent::PackDisplay(BMessage* msg, const char* buffer, uint32 fore, ui
 		msg->AddMessage("packed", &packed);
 }
 
-void ClientAgent::Display(const char* buffer, uint32 fore, uint32 back, uint32 font)
+void
+ClientAgent::Display(const char* buffer, uint32 fore, uint32 back, uint32 font)
 {
 	// displays normal text if no color codes are present
 	// (i.e. if the text has already been filtered by ServerAgent::FilterCrap
@@ -421,7 +444,8 @@ void ClientAgent::Display(const char* buffer, uint32 fore, uint32 back, uint32 f
 	}
 }
 
-void ClientAgent::ParsemIRCColors(const char* buffer, uint32 fore, uint32 back, uint32 font)
+void
+ClientAgent::ParsemIRCColors(const char* buffer, uint32 fore, uint32 back, uint32 font)
 {
 	int mircFore(fore), mircBack(back), mircFont(font), i(0);
 	const char* start(NULL);
@@ -433,7 +457,8 @@ void ClientAgent::ParsemIRCColors(const char* buffer, uint32 fore, uint32 back, 
 				++buffer;
 				continue;
 			}
-			if (*buffer == 3 && start != buffer) break;
+			if (*buffer == 3 && start != buffer)
+				break;
 			++buffer;
 			if (!isdigit(*buffer)) {
 				// reset
@@ -445,7 +470,8 @@ void ClientAgent::ParsemIRCColors(const char* buffer, uint32 fore, uint32 back, 
 				// parse colors
 				mircFore = 0;
 				for (i = 0; i < 2; i++) {
-					if (!isdigit(*buffer)) break;
+					if (!isdigit(*buffer))
+						break;
 					mircFore = mircFore * 10 + *buffer++ - '0';
 				}
 				mircFore = (mircFore % 16) + C_MIRC_WHITE;
@@ -454,7 +480,8 @@ void ClientAgent::ParsemIRCColors(const char* buffer, uint32 fore, uint32 back, 
 					++buffer;
 					mircBack = 0;
 					for (i = 0; i < 2; i++) {
-						if (!isdigit(*buffer)) break;
+						if (!isdigit(*buffer))
+							break;
 						mircBack = mircBack * 10 + *buffer++ - '0';
 					}
 					mircBack = (mircFore % 16) + C_MIRC_WHITE;
@@ -463,388 +490,434 @@ void ClientAgent::ParsemIRCColors(const char* buffer, uint32 fore, uint32 back, 
 			// set start to text portion (we have recorded the mirc stuff)
 			start = buffer;
 		}
-		if (buffer > start) fText->Append(start, buffer - start, mircFore, mircBack, mircFont);
+		if (buffer > start)
+			fText->Append(start, buffer - start, mircFore, mircBack, mircFont);
 	}
 }
 
-void ClientAgent::Parser(const char*)
+void
+ClientAgent::Parser(const char*)
 {
 	// do nothing
 }
 
-void ClientAgent::TabExpansion()
+void
+ClientAgent::TabExpansion()
 {
 	// do nothing
 }
 
-void ClientAgent::DroppedFile(BMessage*)
+void
+ClientAgent::DroppedFile(BMessage*)
 {
 	// do nothing
 }
 
-bool ClientAgent::SlashParser(const char* data)
+bool
+ClientAgent::SlashParser(const char* data)
 {
 	BString first(GetWord(data, 1).ToUpper());
 
-	if (ParseCmd(data)) return true;
+	if (ParseCmd(data))
+		return true;
 
 	return false;
 }
 
-void ClientAgent::UpdateStatus(int32 status)
+void
+ClientAgent::UpdateStatus(int32 status)
 {
 	BMessage statusMsg(M_CW_UPDATE_STATUS);
 	statusMsg.AddPointer("item", fAgentWinItem);
 	statusMsg.AddInt32("status", status);
 	Window()->PostMessage(&statusMsg);
-	if (status == WIN_NICK_BIT) system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+	if (status == WIN_NICK_BIT)
+		system_beep(kSoundEventNames[(uint32)seNickMentioned]);
 }
 
-void ClientAgent::MessageReceived(BMessage* msg)
+void
+ClientAgent::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	// 22/8/99: this will now look for "text" to add to the
-	// fInput view. -jamie
-	case M_INPUT_FOCUS: {
-		if (msg->HasString("text")) {
-			BString newtext;
-			newtext = fInput->Text();
-			newtext.Append(msg->FindString("text"));
-			fInput->SetText(newtext.String());
-		}
-		fInput->MakeFocus(true);
-		// We don't like your silly selecting-on-focus.
-		fInput->TextView()->Select(fInput->TextView()->TextLength(),
-								   fInput->TextView()->TextLength());
-	} break;
-
-	case M_CLIENT_QUIT: {
-		if (fIsLogging && !(msg->HasBool("vision:shutdown") && msg->FindBool("vision:shutdown"))) {
-			BMessage logMessage(M_UNREGISTER_LOGGER);
-			logMessage.AddString("name", fId.String());
-			fSMsgr.SendMessage(&logMessage);
-		}
-
-		BMessage deathchant(M_CLIENT_SHUTDOWN);
-		deathchant.AddPointer("agent", this);
-		fSMsgr.SendMessage(&deathchant);
-
-	} break;
-
-	case M_THEME_FOREGROUND_CHANGE: {
-		int16 which(msg->FindInt16("which"));
-		if (which == C_INPUT || which == C_INPUT_BACKGROUND) {
-			fActiveTheme->ReadLock();
-			rgb_color fInputColor(fActiveTheme->ForegroundAt(C_INPUT));
-			fInput->TextView()->SetFontAndColor(&fActiveTheme->FontAt(F_INPUT), B_FONT_ALL,
-												&fInputColor);
-			fInput->TextView()->SetViewColor(fActiveTheme->ForegroundAt(C_INPUT_BACKGROUND));
-			fActiveTheme->ReadUnlock();
-			fInput->TextView()->Invalidate();
-		}
-	} break;
-
-	case M_THEME_FONT_CHANGE: {
-		int16 which(msg->FindInt16("which"));
-		if (which == F_INPUT) {
-			fActiveTheme->ReadLock();
-			rgb_color fInputColor(fActiveTheme->ForegroundAt(C_INPUT));
-			fInput->TextView()->SetFontAndColor(&fActiveTheme->FontAt(F_INPUT), B_FONT_ALL,
-												&fInputColor);
-			fActiveTheme->ReadUnlock();
-			Invalidate();
-		}
-	} break;
-
-	case M_STATE_CHANGE: {
-		if (msg->HasBool("bool")) {
-			bool shouldStamp(vision_app->GetBool("timestamp"));
-			if (fTimeStampState != shouldStamp) {
-				if ((fTimeStampState = shouldStamp))
-					fText->SetTimeStampFormat(vision_app->GetString("timestamp_format"));
-				else
-					fText->SetTimeStampFormat(NULL);
+		// 22/8/99: this will now look for "text" to add to the
+		// fInput view. -jamie
+		case M_INPUT_FOCUS:
+		{
+			if (msg->HasString("text")) {
+				BString newtext;
+				newtext = fInput->Text();
+				newtext.Append(msg->FindString("text"));
+				fInput->SetText(newtext.String());
 			}
-
-			bool shouldLog = vision_app->GetBool("log_enabled");
-
-			if (fIsLogging != shouldLog) {
-				if ((fIsLogging = shouldLog)) {
-					BMessage logMessage(M_REGISTER_LOGGER);
-					logMessage.AddString("name", fId.String());
-					fSMsgr.SendMessage(&logMessage);
-				} else {
-					BMessage logMessage(M_UNREGISTER_LOGGER);
-					logMessage.AddString("name", fId.String());
-					fSMsgr.SendMessage(&logMessage);
-				}
-			}
-		} else if (msg->HasBool("string")) {
-			BString which(msg->FindString("which"));
-			if (which == "timestamp_format")
-				fText->SetTimeStampFormat(vision_app->GetString("timestamp_format"));
-		}
-	} break;
-
-	case M_SUBMIT_INPUT: {
-		fCancelMLPaste = false;
-		int32 which(0);
-
-		msg->FindInt32("which", &which);
-
-		if (msg->HasPointer("invoker")) {
-			BInvoker* invoker(NULL);
-			msg->FindPointer("invoker", reinterpret_cast<void**>(&invoker));
-			delete invoker;
-		}
-
-		switch (which) {
-		case PASTE_CANCEL:
-			break;
-
-		case PASTE_MULTI:
-		case PASTE_MULTI_NODELAY: {
-			BMessage* buffer(new BMessage(*msg));
-			thread_id tid;
-
-			// if there is some text in the input control already, submit it before
-			// starting the timed paste
-			if (fInput->TextView()->TextLength() != 0) {
-				BString inputData(fInput->TextView()->Text());
-				Submit(inputData.String(), true, true);
-			}
-
-			buffer->AddPointer("agent", this);
-			buffer->AddPointer("window", Window());
-			if (which == PASTE_MULTI_NODELAY) buffer->AddBool("delay", false);
-			tid = spawn_thread(TimedSubmit, "Timed Submit", B_LOW_PRIORITY, buffer);
-			resume_thread(tid);
+			fInput->MakeFocus(true);
+			// We don't like your silly selecting-on-focus.
+			fInput->TextView()->Select(
+				fInput->TextView()->TextLength(), fInput->TextView()->TextLength());
 		} break;
 
-		case PASTE_SINGLE: {
-			BString buffer;
-			for (int32 i = 0; msg->HasString("data", i); ++i) {
-				const char* data;
-				msg->FindString("data", i, &data);
-				buffer += (i ? " " : "");
-				buffer += data;
+		case M_CLIENT_QUIT:
+		{
+			if (fIsLogging
+				&& !(msg->HasBool("vision:shutdown") && msg->FindBool("vision:shutdown"))) {
+				BMessage logMessage(M_UNREGISTER_LOGGER);
+				logMessage.AddString("name", fId.String());
+				fSMsgr.SendMessage(&logMessage);
 			}
 
-			int32 start, finish;
+			BMessage deathchant(M_CLIENT_SHUTDOWN);
+			deathchant.AddPointer("agent", this);
+			fSMsgr.SendMessage(&deathchant);
 
-			if (msg->FindInt32("selstart", &start) == B_OK) {
-				msg->FindInt32("selend", &finish);
-				if (start != finish) fInput->TextView()->Delete(start, finish);
+		} break;
 
-				if ((start == 0) && (finish == 0)) {
-					fInput->TextView()->Insert(fInput->TextView()->TextLength(), buffer.String(),
-											   buffer.Length());
-					fInput->TextView()->Select(fInput->TextView()->TextLength(),
-											   fInput->TextView()->TextLength());
-				} else {
-					fInput->TextView()->Insert(start, buffer.String(), buffer.Length());
-					fInput->TextView()->Select(start + buffer.Length(), start + buffer.Length());
+		case M_THEME_FOREGROUND_CHANGE:
+		{
+			int16 which(msg->FindInt16("which"));
+			if (which == C_INPUT || which == C_INPUT_BACKGROUND) {
+				fActiveTheme->ReadLock();
+				rgb_color fInputColor(fActiveTheme->ForegroundAt(C_INPUT));
+				fInput->TextView()->SetFontAndColor(
+					&fActiveTheme->FontAt(F_INPUT), B_FONT_ALL, &fInputColor);
+				fInput->TextView()->SetViewColor(fActiveTheme->ForegroundAt(C_INPUT_BACKGROUND));
+				fActiveTheme->ReadUnlock();
+				fInput->TextView()->Invalidate();
+			}
+		} break;
+
+		case M_THEME_FONT_CHANGE:
+		{
+			int16 which(msg->FindInt16("which"));
+			if (which == F_INPUT) {
+				fActiveTheme->ReadLock();
+				rgb_color fInputColor(fActiveTheme->ForegroundAt(C_INPUT));
+				fInput->TextView()->SetFontAndColor(
+					&fActiveTheme->FontAt(F_INPUT), B_FONT_ALL, &fInputColor);
+				fActiveTheme->ReadUnlock();
+				Invalidate();
+			}
+		} break;
+
+		case M_STATE_CHANGE:
+		{
+			if (msg->HasBool("bool")) {
+				bool shouldStamp(vision_app->GetBool("timestamp"));
+				if (fTimeStampState != shouldStamp) {
+					if ((fTimeStampState = shouldStamp))
+						fText->SetTimeStampFormat(vision_app->GetString("timestamp_format"));
+					else
+						fText->SetTimeStampFormat(NULL);
 				}
-			} else {
-				fInput->TextView()->Insert(buffer.String());
-				fInput->TextView()->Select(fInput->TextView()->TextLength(),
-										   fInput->TextView()->TextLength());
+
+				bool shouldLog = vision_app->GetBool("log_enabled");
+
+				if (fIsLogging != shouldLog) {
+					if ((fIsLogging = shouldLog)) {
+						BMessage logMessage(M_REGISTER_LOGGER);
+						logMessage.AddString("name", fId.String());
+						fSMsgr.SendMessage(&logMessage);
+					} else {
+						BMessage logMessage(M_UNREGISTER_LOGGER);
+						logMessage.AddString("name", fId.String());
+						fSMsgr.SendMessage(&logMessage);
+					}
+				}
+			} else if (msg->HasBool("string")) {
+				BString which(msg->FindString("which"));
+				if (which == "timestamp_format")
+					fText->SetTimeStampFormat(vision_app->GetString("timestamp_format"));
 			}
-			fInput->TextView()->ScrollToSelection();
+		} break;
+
+		case M_SUBMIT_INPUT:
+		{
+			fCancelMLPaste = false;
+			int32 which(0);
+
+			msg->FindInt32("which", &which);
+
+			if (msg->HasPointer("invoker")) {
+				BInvoker* invoker(NULL);
+				msg->FindPointer("invoker", reinterpret_cast<void**>(&invoker));
+				delete invoker;
+			}
+
+			switch (which) {
+				case PASTE_CANCEL:
+					break;
+
+				case PASTE_MULTI:
+				case PASTE_MULTI_NODELAY:
+				{
+					BMessage* buffer(new BMessage(*msg));
+					thread_id tid;
+
+					// if there is some text in the input control already, submit it before
+					// starting the timed paste
+					if (fInput->TextView()->TextLength() != 0) {
+						BString inputData(fInput->TextView()->Text());
+						Submit(inputData.String(), true, true);
+					}
+
+					buffer->AddPointer("agent", this);
+					buffer->AddPointer("window", Window());
+					if (which == PASTE_MULTI_NODELAY)
+						buffer->AddBool("delay", false);
+					tid = spawn_thread(TimedSubmit, "Timed Submit", B_LOW_PRIORITY, buffer);
+					resume_thread(tid);
+				} break;
+
+				case PASTE_SINGLE:
+				{
+					BString buffer;
+					for (int32 i = 0; msg->HasString("data", i); ++i) {
+						const char* data;
+						msg->FindString("data", i, &data);
+						buffer += (i ? " " : "");
+						buffer += data;
+					}
+
+					int32 start, finish;
+
+					if (msg->FindInt32("selstart", &start) == B_OK) {
+						msg->FindInt32("selend", &finish);
+						if (start != finish)
+							fInput->TextView()->Delete(start, finish);
+
+						if ((start == 0) && (finish == 0)) {
+							fInput->TextView()->Insert(
+								fInput->TextView()->TextLength(), buffer.String(), buffer.Length());
+							fInput->TextView()->Select(
+								fInput->TextView()->TextLength(), fInput->TextView()->TextLength());
+						} else {
+							fInput->TextView()->Insert(start, buffer.String(), buffer.Length());
+							fInput->TextView()->Select(
+								start + buffer.Length(), start + buffer.Length());
+						}
+					} else {
+						fInput->TextView()->Insert(buffer.String());
+						fInput->TextView()->Select(
+							fInput->TextView()->TextLength(), fInput->TextView()->TextLength());
+					}
+					fInput->TextView()->ScrollToSelection();
+				} break;
+
+				default:
+					break;
+			}
+		} break;
+
+		case M_PREVIOUS_INPUT:
+		{
+			fHistory->PreviousBuffer(fInput);
+		} break;
+
+		case M_NEXT_INPUT:
+		{
+			fHistory->NextBuffer(fInput);
+		} break;
+
+		case M_SUBMIT:
+		{
+			const char* buffer(NULL);
+			bool clear(true), add2history(true);
+
+			msg->FindString("input", &buffer);
+
+			if (msg->HasBool("clear"))
+				msg->FindBool("clear", &clear);
+
+			if (msg->HasBool("history"))
+				msg->FindBool("history", &add2history);
+
+			Submit(buffer, clear, add2history);
+		} break;
+
+		case M_LAG_CHANGED:
+		{
+			msg->FindString("lag", &fMyLag);
+
+			if (GetLayout()->IsVisible())
+				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_LAG, fMyLag.String());
+		} break;
+
+		case M_DISPLAY:
+		{
+			const char* buffer;
+
+			for (int32 i = 0; msg->HasMessage("packed", i); ++i) {
+				BMessage packed;
+
+				msg->FindMessage("packed", i, &packed);
+				packed.FindString("msgz", &buffer);
+				Display(buffer, packed.FindInt32("fore"), packed.FindInt32("back"),
+					packed.FindInt32("font"));
+			}
+		} break;
+
+		case M_CHANNEL_MSG:
+		{
+			BString theNick;
+			const char* theMessage(NULL);
+			bool hasNick(false);
+			bool isAction(false);
+			BString knownAs;
+
+			msg->FindString("nick", &theNick);
+			msg->FindString("msgz", &theMessage);
+
+			BString tempString;
+			BString nickString;
+
+			if (theMessage[0] == '\1') {
+				BString aMessage(theMessage);
+				aMessage.RemoveFirst("\1ACTION ");
+				aMessage.RemoveLast("\1");
+
+				tempString = " ";
+				tempString += aMessage;
+				tempString += "\n";
+
+				nickString = "* ";
+				nickString += theNick;
+				isAction = true;
+			} else {
+				Display("<", theNick == fMyNick ? C_MYNICK : C_NICK);
+				Display(theNick.String(), C_NICKDISPLAY);
+				Display(">", theNick == fMyNick ? C_MYNICK : C_NICK);
+				tempString += " ";
+				tempString += theMessage;
+				tempString += '\n';
+			}
+
+			// scan for presence of nickname, highlight if present
+			if (theNick != fMyNick)
+				FirstKnownAs(tempString, knownAs, &hasNick);
+
+			tempString.Prepend(nickString);
+
+			int32 dispColor = C_TEXT;
+			if (hasNick) {
+				BWindow* window(NULL);
+				dispColor = C_MYNICK;
+				if ((window = Window()) != NULL && !window->IsActive())
+					system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+			} else if (isAction)
+				dispColor = C_ACTION;
+
+			Display(tempString.String(), dispColor);
+		} break;
+
+		case M_CHANGE_NICK:
+		{
+			const char* oldNick(NULL);
+
+			msg->FindString("oldnick", &oldNick);
+
+			if (fMyNick.ICompare(oldNick) == 0)
+				fMyNick = msg->FindString("newnick");
+
+			BMessage display;
+			if (msg->FindMessage("display", &display) == B_NO_ERROR)
+				ClientAgent::MessageReceived(&display);
+		} break;
+
+		case M_LOOKUP_WEBSTER:
+		{
+			BString lookup;
+			msg->FindString("string", &lookup);
+			lookup = StringToURI(lookup.String());
+			lookup.Prepend("https://www.merriam-webster.com/dictionary/");
+			vision_app->LoadURL(lookup.String());
+		} break;
+
+		case M_LOOKUP_GOOGLE:
+		{
+			BString lookup;
+			msg->FindString("string", &lookup);
+			lookup = StringToURI(lookup.String());
+			lookup.Prepend("https://www.google.com/search?q=");
+			vision_app->LoadURL(lookup.String());
+		} break;
+
+		case M_LOOKUP_ACRONYM:
+		{
+			BString lookup;
+			msg->FindString("string", &lookup);
+			lookup = StringToURI(lookup.String());
+			lookup.Prepend("https://www.acronymfinder.com/af-query.asp?String=exact&Acronym=");
+			lookup.Append("&Find=Find");
+			vision_app->LoadURL(lookup.String());
+		} break;
+
+		case B_ESCAPE:
+			fCancelMLPaste = true;
+			break;
+
+		case M_DCC_COMPLETE:
+		{
+			/// set up ///
+			BString nick, file, size, type, completionMsg("[@] "), fAck;
+			int32 rate, xfersize;
+			bool completed(true);
+
+			msg->FindString("nick", &nick);
+			msg->FindString("file", &file);
+			msg->FindString("size", &size);
+			msg->FindString("type", &type);
+			msg->FindInt32("transferred", &xfersize);
+			msg->FindInt32("transferRate", &rate);
+
+			BPath pFile(file.String());
+
+			fAck << xfersize;
+
+			if (size.ICompare(fAck))
+				completed = false;
+
+			/// send mesage ///
+			if (completed && (type == "SEND"))
+				completionMsg = +B_TRANSLATE(
+					"Completed send of %file% to %nick% (%ack% %size% bytes), %" B_PRId32
+					"cps\n\n");
+			if (!completed && (type == "SEND"))
+				completionMsg = +B_TRANSLATE(
+					"Terminated send of %file% to %nick% (%ack% %size% bytes), %" B_PRId32
+					"cps\n\n");
+			if (completed && (type != "SEND"))
+				completionMsg = +B_TRANSLATE(
+					"Completed receive of %file% from %nick% (%ack% %size% bytes), %" B_PRId32
+					"cps\n\n");
+			if (!completed && (type != "SEND"))
+				completionMsg = +B_TRANSLATE(
+					"Terminated receive of %file% from %nick% (%ack% %size% bytes), %" B_PRId32
+					"cps\n\n");
+
+			completionMsg.ReplaceFirst("%file%", pFile.Leaf());
+			completionMsg.ReplaceFirst("%nick%", nick);
+
+			if (!completed)
+				completionMsg.ReplaceFirst("%ack%", fAck << "/");
+
+			completionMsg.ReplaceFirst("%size%", size);
+			BString compMsg;
+			compMsg.SetToFormat(completionMsg, rate);
+
+			Display(compMsg.String(), C_CTCP_RPY);
 		} break;
 
 		default:
-			break;
-		}
-	} break;
-
-	case M_PREVIOUS_INPUT: {
-		fHistory->PreviousBuffer(fInput);
-	} break;
-
-	case M_NEXT_INPUT: {
-		fHistory->NextBuffer(fInput);
-	} break;
-
-	case M_SUBMIT: {
-		const char* buffer(NULL);
-		bool clear(true), add2history(true);
-
-		msg->FindString("input", &buffer);
-
-		if (msg->HasBool("clear")) msg->FindBool("clear", &clear);
-
-		if (msg->HasBool("history")) msg->FindBool("history", &add2history);
-
-		Submit(buffer, clear, add2history);
-	} break;
-
-	case M_LAG_CHANGED: {
-		msg->FindString("lag", &fMyLag);
-
-		if (GetLayout()->IsVisible())
-			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_LAG, fMyLag.String());
-	} break;
-
-	case M_DISPLAY: {
-		const char* buffer;
-
-		for (int32 i = 0; msg->HasMessage("packed", i); ++i) {
-			BMessage packed;
-
-			msg->FindMessage("packed", i, &packed);
-			packed.FindString("msgz", &buffer);
-			Display(buffer, packed.FindInt32("fore"), packed.FindInt32("back"),
-					packed.FindInt32("font"));
-		}
-	} break;
-
-	case M_CHANNEL_MSG: {
-		BString theNick;
-		const char* theMessage(NULL);
-		bool hasNick(false);
-		bool isAction(false);
-		BString knownAs;
-
-		msg->FindString("nick", &theNick);
-		msg->FindString("msgz", &theMessage);
-
-		BString tempString;
-		BString nickString;
-
-		if (theMessage[0] == '\1') {
-			BString aMessage(theMessage);
-			aMessage.RemoveFirst("\1ACTION ");
-			aMessage.RemoveLast("\1");
-
-			tempString = " ";
-			tempString += aMessage;
-			tempString += "\n";
-
-			nickString = "* ";
-			nickString += theNick;
-			isAction = true;
-		} else {
-			Display("<", theNick == fMyNick ? C_MYNICK : C_NICK);
-			Display(theNick.String(), C_NICKDISPLAY);
-			Display(">", theNick == fMyNick ? C_MYNICK : C_NICK);
-			tempString += " ";
-			tempString += theMessage;
-			tempString += '\n';
-		}
-
-		// scan for presence of nickname, highlight if present
-		if (theNick != fMyNick) FirstKnownAs(tempString, knownAs, &hasNick);
-
-		tempString.Prepend(nickString);
-
-		int32 dispColor = C_TEXT;
-		if (hasNick) {
-			BWindow* window(NULL);
-			dispColor = C_MYNICK;
-			if ((window = Window()) != NULL && !window->IsActive())
-				system_beep(kSoundEventNames[(uint32)seNickMentioned]);
-		} else if (isAction)
-			dispColor = C_ACTION;
-
-		Display(tempString.String(), dispColor);
-	} break;
-
-	case M_CHANGE_NICK: {
-		const char* oldNick(NULL);
-
-		msg->FindString("oldnick", &oldNick);
-
-		if (fMyNick.ICompare(oldNick) == 0) fMyNick = msg->FindString("newnick");
-
-		BMessage display;
-		if (msg->FindMessage("display", &display) == B_NO_ERROR)
-			ClientAgent::MessageReceived(&display);
-	} break;
-
-	case M_LOOKUP_WEBSTER: {
-		BString lookup;
-		msg->FindString("string", &lookup);
-		lookup = StringToURI(lookup.String());
-		lookup.Prepend("https://www.merriam-webster.com/dictionary/");
-		vision_app->LoadURL(lookup.String());
-	} break;
-
-	case M_LOOKUP_GOOGLE: {
-		BString lookup;
-		msg->FindString("string", &lookup);
-		lookup = StringToURI(lookup.String());
-		lookup.Prepend("https://www.google.com/search?q=");
-		vision_app->LoadURL(lookup.String());
-	} break;
-
-	case M_LOOKUP_ACRONYM: {
-		BString lookup;
-		msg->FindString("string", &lookup);
-		lookup = StringToURI(lookup.String());
-		lookup.Prepend("https://www.acronymfinder.com/af-query.asp?String=exact&Acronym=");
-		lookup.Append("&Find=Find");
-		vision_app->LoadURL(lookup.String());
-	} break;
-
-	case B_ESCAPE:
-		fCancelMLPaste = true;
-		break;
-
-	case M_DCC_COMPLETE: {
-		/// set up ///
-		BString nick, file, size, type, completionMsg("[@] "), fAck;
-		int32 rate, xfersize;
-		bool completed(true);
-
-		msg->FindString("nick", &nick);
-		msg->FindString("file", &file);
-		msg->FindString("size", &size);
-		msg->FindString("type", &type);
-		msg->FindInt32("transferred", &xfersize);
-		msg->FindInt32("transferRate", &rate);
-
-		BPath pFile(file.String());
-
-		fAck << xfersize;
-
-		if (size.ICompare(fAck))
-			completed = false;
-
-		/// send mesage ///
-		if (completed && (type == "SEND"))
-			completionMsg =+ B_TRANSLATE("Completed send of %file% to %nick% (%ack% %size% bytes), %" B_PRId32 "cps\n\n");
-		if (!completed && (type == "SEND"))
-			completionMsg =+ B_TRANSLATE("Terminated send of %file% to %nick% (%ack% %size% bytes), %" B_PRId32 "cps\n\n");
-		if (completed && (type != "SEND"))
-			completionMsg =+ B_TRANSLATE("Completed receive of %file% from %nick% (%ack% %size% bytes), %" B_PRId32 "cps\n\n");
-		if (!completed && (type != "SEND"))
-			completionMsg =+ B_TRANSLATE("Terminated receive of %file% from %nick% (%ack% %size% bytes), %" B_PRId32 "cps\n\n");
-
-		completionMsg.ReplaceFirst("%file%", pFile.Leaf());
-		completionMsg.ReplaceFirst("%nick%", nick);
-
-		if (!completed)
-			completionMsg.ReplaceFirst("%ack%", fAck << "/");
-
-		completionMsg.ReplaceFirst("%size%", size);
-		BString compMsg;
-		compMsg.SetToFormat(completionMsg, rate);
-
-		Display(compMsg.String(), C_CTCP_RPY);
-	} break;
-
-	default:
-		BView::MessageReceived(msg);
+			BView::MessageReceived(msg);
 	}
 }
 
-const BString& ClientAgent::Id() const
+const BString&
+ClientAgent::Id() const
 {
 	return fId;
 }
 
-int32 ClientAgent::FirstKnownAs(const BString& data, BString& result, bool* me) const
+int32
+ClientAgent::FirstKnownAs(const BString& data, BString& result, bool* me) const
 {
 	BString myAKA(vision_app->GetString("alsoKnownAs"));
 
@@ -868,36 +941,41 @@ int32 ClientAgent::FirstKnownAs(const BString& data, BString& result, bool* me) 
 	return hit < data.Length() ? hit : B_ERROR;
 }
 
-int32 ClientAgent::FirstSingleKnownAs(const BString& data, const BString& target) const
+int32
+ClientAgent::FirstSingleKnownAs(const BString& data, const BString& target) const
 {
 	int32 place;
 
-	if ((place = data.IFindFirst(target)) != B_ERROR &&
-		(place == 0 || isspace(data[place - 1]) || ispunct(data[place - 1])) &&
-		(place + target.Length() == data.Length() || isspace(data[place + target.Length()]) ||
-		 ispunct(data[place + target.Length()]) ||
-		 (int)data[place + target.Length()] <= 0xa)) // null or newline
+	if ((place = data.IFindFirst(target)) != B_ERROR
+		&& (place == 0 || isspace(data[place - 1]) || ispunct(data[place - 1]))
+		&& (place + target.Length() == data.Length() || isspace(data[place + target.Length()])
+			|| ispunct(data[place + target.Length()])
+			|| (int)data[place + target.Length()] <= 0xa))	// null or newline
 		return place;
 
 	return B_ERROR;
 }
 
-void ClientAgent::AddSend(BMessage* msg, const char* buffer) const
+void
+ClientAgent::AddSend(BMessage* msg, const char* buffer) const
 {
 	if (strcmp(buffer, endl) == 0) {
-		if (fSMsgr.IsValid()) fSMsgr.SendMessage(msg);
+		if (fSMsgr.IsValid())
+			fSMsgr.SendMessage(msg);
 
 		msg->MakeEmpty();
 	} else
 		msg->AddString("data", buffer);
 }
 
-void ClientAgent::AddSend(BMessage* msg, const BString& buffer) const
+void
+ClientAgent::AddSend(BMessage* msg, const BString& buffer) const
 {
 	AddSend(msg, buffer.String());
 }
 
-void ClientAgent::AddSend(BMessage* msg, int32 value) const
+void
+ClientAgent::AddSend(BMessage* msg, int32 value) const
 {
 	BString buffer;
 
@@ -905,23 +983,28 @@ void ClientAgent::AddSend(BMessage* msg, int32 value) const
 	AddSend(msg, buffer.String());
 }
 
-void ClientAgent::ChannelMessage(const char* msgz, const char* nick, const char* ident,
-								 const char* address)
+void
+ClientAgent::ChannelMessage(
+	const char* msgz, const char* nick, const char* ident, const char* address)
 {
 	BMessage msg(M_CHANNEL_MSG);
 
 	msg.AddString("msgz", msgz);
 
-	if (nick) msg.AddString("nick", nick);
+	if (nick)
+		msg.AddString("nick", nick);
 
-	if (ident) msg.AddString("ident", ident);
+	if (ident)
+		msg.AddString("ident", ident);
 
-	if (address) msg.AddString("address", address);
+	if (address)
+		msg.AddString("address", address);
 
 	fMsgr.SendMessage(&msg);
 }
 
-void ClientAgent::ActionMessage(const char* msgz, const char* nick)
+void
+ClientAgent::ActionMessage(const char* msgz, const char* nick)
 {
 	BMessage actionSend(M_SERVER_SEND);
 
@@ -939,7 +1022,8 @@ void ClientAgent::ActionMessage(const char* msgz, const char* nick)
 	ChannelMessage(theAction.String(), nick);
 }
 
-void ClientAgent::CTCPAction(BString theTarget, BString theMsg)
+void
+ClientAgent::CTCPAction(BString theTarget, BString theMsg)
 {
 	BString theCTCP(GetWord(theMsg.String(), 1).ToUpper()),
 		theRest(RestOfString(theMsg.String(), 2)), tempString("[CTCP->");

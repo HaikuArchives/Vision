@@ -29,8 +29,8 @@
 
 #include <Application.h>
 #include <Entry.h>
-#include <String.h>
 #include <Locker.h>
+#include <String.h>
 
 #include "VisionBase.h"
 
@@ -49,8 +49,7 @@ extern class VisionApp* vision_app;
 
 using std::map;
 
-class VisionApp : public BApplication
-{
+class VisionApp : public BApplication {
 public:
 	VisionApp();
 	virtual ~VisionApp();
@@ -203,8 +202,8 @@ const int SET_DCC = 8;
 const int VERSION_VERSION = 1;
 const int VERSION_DATE = 2;
 
-const int THREAD_S = 1; // socket
-const int THREAD_L = 2; // thread
+const int THREAD_S = 1;	 // socket
+const int THREAD_L = 2;	 // thread
 
 const int32 kItemSpacing = 15;
 

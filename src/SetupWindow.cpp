@@ -22,16 +22,16 @@
  */
 
 #include <Button.h>
-#include <View.h>
+#include <LayoutBuilder.h>
 #include <MenuField.h>
 #include <MenuItem.h>
-#include <LayoutBuilder.h>
+#include <View.h>
 
+#include "ClickView.h"
 #include "ClientWindow.h"
+#include "NetworkMenu.h"
 #include "SetupWindow.h"
 #include "Vision.h"
-#include "NetworkMenu.h"
-#include "ClickView.h"
 
 #include <stdio.h>
 
@@ -39,36 +39,31 @@
 #define B_TRANSLATION_CONTEXT "SetupWindow"
 
 SetupWindow::SetupWindow()
-	:
-	BWindow(BRect(108, 88, 500, 320), B_TRANSLATE("Setup window"),
-		B_TITLED_WINDOW,
-		B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE |
-		B_AUTO_UPDATE_SIZE_LIMITS)
+	: BWindow(BRect(108, 88, 500, 320), B_TRANSLATE("Setup window"), B_TITLED_WINDOW,
+		  B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS)
 {
 	AddShortcut('/', B_SHIFT_KEY, new BMessage(M_PREFS_SHOW));
 
-	ClickView* logo = new ClickView("image", B_WILL_DRAW,
-		"https://github.com/HaikuArchives/Vision");
+	ClickView* logo
+		= new ClickView("image", B_WILL_DRAW, "https://github.com/HaikuArchives/Vision");
 
-	BMenu* netMenu(new NetworkMenu(B_TRANSLATE("Choose network"),
-		M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
+	BMenu* netMenu(
+		new NetworkMenu(B_TRANSLATE("Choose network"), M_SETUP_CHOOSE_NETWORK, BMessenger(this)));
 	netMenu->SetLabelFromMarked(true);
 
 	BString text(B_TRANSLATE("Network:"));
 	text.Append(" ");
 	netList = new BMenuField("Network List", text.String(), netMenu);
-	//netList->SetDivider(be_plain_font->StringWidth(text.String()) + 5);
+	// netList->SetDivider(be_plain_font->StringWidth(text.String()) + 5);
 
-	connectButton = new BButton("connect", B_TRANSLATE("Connect"),
-		new BMessage(M_CONNECT_NETWORK));
+	connectButton = new BButton("connect", B_TRANSLATE("Connect"), new BMessage(M_CONNECT_NETWORK));
 
-	netPrefsButton = new BButton("netprefs",
-		B_TRANSLATE("Network setup" B_UTF8_ELLIPSIS),
-		new BMessage(M_NETWORK_SHOW));
+	netPrefsButton = new BButton(
+		"netprefs", B_TRANSLATE("Network setup" B_UTF8_ELLIPSIS), new BMessage(M_NETWORK_SHOW));
 	netPrefsButton->SetTarget(vision_app);
 
-	prefsButton = new BButton("prefs",
-		B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS), new BMessage(M_PREFS_SHOW));
+	prefsButton = new BButton(
+		"prefs", B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS), new BMessage(M_PREFS_SHOW));
 	prefsButton->SetTarget(vision_app);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
@@ -76,11 +71,11 @@ SetupWindow::SetupWindow()
 		.Add(logo)
 		.Add(netList)
 		.AddGroup(B_HORIZONTAL)
-			.Add(connectButton)
-			.Add(netPrefsButton)
-			.Add(prefsButton)
+		.Add(connectButton)
+		.Add(netPrefsButton)
+		.Add(prefsButton)
 		.End()
-	.End();
+		.End();
 
 	connectButton->SetEnabled(false);
 
@@ -90,11 +85,10 @@ SetupWindow::SetupWindow()
 	ResizeTo(0, 0);
 }
 
-SetupWindow::~SetupWindow()
-{
-}
+SetupWindow::~SetupWindow() {}
 
-bool SetupWindow::QuitRequested()
+bool
+SetupWindow::QuitRequested()
 {
 	vision_app->SetRect("SetupWinRect", Frame());
 	be_app_messenger.SendMessage(M_SETUP_CLOSE);
@@ -102,30 +96,34 @@ bool SetupWindow::QuitRequested()
 }
 
 
-void SetupWindow::MessageReceived(BMessage* msg)
+void
+SetupWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_SETUP_CHOOSE_NETWORK: {
-		BMenuItem* item(NULL);
-		msg->FindPointer("source", reinterpret_cast<void**>(&item));
-		if (item && vision_app->CheckNetworkValid(item->Label()))
-			connectButton->SetEnabled(true);
-		else
-			connectButton->SetEnabled(false);
-	} break;
+		case M_SETUP_CHOOSE_NETWORK:
+		{
+			BMenuItem* item(NULL);
+			msg->FindPointer("source", reinterpret_cast<void**>(&item));
+			if (item && vision_app->CheckNetworkValid(item->Label()))
+				connectButton->SetEnabled(true);
+			else
+				connectButton->SetEnabled(false);
+		} break;
 
-	case M_CONNECT_NETWORK: {
-		BMessage connMsg(M_CONNECT_NETWORK);
-		connMsg.AddString("network", netList->MenuItem()->Label());
-		be_app_messenger.SendMessage(&connMsg);
-	} break;
+		case M_CONNECT_NETWORK:
+		{
+			BMessage connMsg(M_CONNECT_NETWORK);
+			connMsg.AddString("network", netList->MenuItem()->Label());
+			be_app_messenger.SendMessage(&connMsg);
+		} break;
 
-	case M_PREFS_SHOW: {
-		// forwarding Cmd+Shift+/ message
-		be_app_messenger.SendMessage(msg);
-	} break;
+		case M_PREFS_SHOW:
+		{
+			// forwarding Cmd+Shift+/ message
+			be_app_messenger.SendMessage(msg);
+		} break;
 
-	default:
-		BWindow::MessageReceived(msg);
+		default:
+			BWindow::MessageReceived(msg);
 	}
 }

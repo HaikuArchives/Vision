@@ -12,33 +12,35 @@
 
 #include <ColorControl.h>
 #include <LayoutBuilder.h>
+#include <MenuBar.h>
 #include <MenuField.h>
 #include <MenuItem.h>
-#include <MenuBar.h>
 #include <PopUpMenu.h>
 #include <Screen.h>
 #include <StringView.h>
 #include <Window.h>
 
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ColorSelector"
 
-namespace ColorControlPrivate
-{
+namespace ColorControlPrivate {
 
-static inline bool CompareColors(rgb_color left, rgb_color right)
+static inline bool
+CompareColors(rgb_color left, rgb_color right)
 {
 	return !memcmp(&left, &right, sizeof(rgb_color));
 }
 
-enum { CMD_CHOOSE_UI_COLOR = 'cuic', CMD_SET_UI_COLOR = 'suic' };
+enum {
+	CMD_CHOOSE_UI_COLOR = 'cuic',
+	CMD_SET_UI_COLOR = 'suic'
+};
 
-class ColorMenuItem : public BMenuItem
-{
+class ColorMenuItem : public BMenuItem {
 public:
 	ColorMenuItem(const char* label, BMessage* msg, rgb_color color, rgb_color initial_color)
 		: BMenuItem(label, msg)
@@ -53,7 +55,8 @@ public:
 			fColor = col;
 			fInitialColor = initial;
 			BMenu* parent = Menu();
-			if (parent) parent->Invalidate(Frame());
+			if (parent)
+				parent->Invalidate(Frame());
 		}
 	}
 
@@ -62,7 +65,8 @@ public:
 		if (!CompareColors(fColor, col)) {
 			fColor = col;
 			BMenu* parent = Menu();
-			if (parent) parent->Invalidate(Frame());
+			if (parent)
+				parent->Invalidate(Frame());
 		}
 	}
 
@@ -148,11 +152,11 @@ public:
 private:
 	rgb_color fColor, fInitialColor;
 };
-}
+}  // namespace ColorControlPrivate
 using namespace ColorControlPrivate;
 
-static void populate_colors(BMenu* dest, const BMessage& src, const BMessage& names,
-							const BMessage* initial)
+static void
+populate_colors(BMenu* dest, const BMessage& src, const BMessage& names, const BMessage* initial)
 {
 	type_code type;
 	int32 n;
@@ -170,16 +174,18 @@ static void populate_colors(BMenu* dest, const BMessage& src, const BMessage& na
 			for (i = 0; i < k; i++) {
 				BMenuItem* it = dest->ItemAt(i);
 				const char* field;
-				if (it && it->Message() && it->Message()->FindString("field", &field) == B_OK &&
-					strcmp(field, name) == 0) {
+				if (it && it->Message() && it->Message()->FindString("field", &field) == B_OK
+					&& strcmp(field, name) == 0) {
 					ColorMenuItem* ci = dynamic_cast<ColorMenuItem*>(it);
-					if (ci) ci->SetColor(*col);
+					if (ci)
+						ci->SetColor(*col);
 					found = true;
 					break;
 				}
 			}
 
-			if (found) continue;
+			if (found)
+				continue;
 
 			// This color doesn't currently exist; add it in.
 			BMessage* msg = new BMessage(CMD_CHOOSE_UI_COLOR);
@@ -190,12 +196,13 @@ static void populate_colors(BMenu* dest, const BMessage& src, const BMessage& na
 			// Alphabetical order.
 			for (i = 0; i < n; i++) {
 				BMenuItem* it = dest->ItemAt(i);
-				if (it && strcmp(it->Label(), label) > 0) break;
+				if (it && strcmp(it->Label(), label) > 0)
+					break;
 			}
 			rgb_color* init_col;
-			if (!initial ||
-				initial->FindData("color", B_RGB_COLOR_TYPE, j, (const void**)&init_col, &size) !=
-					B_OK)
+			if (!initial
+				|| initial->FindData("color", B_RGB_COLOR_TYPE, j, (const void**)&init_col, &size)
+					   != B_OK)
 				*init_col = *col;
 
 			ColorMenuItem* ci = new ColorMenuItem(label, msg, *col, *init_col);
@@ -203,11 +210,13 @@ static void populate_colors(BMenu* dest, const BMessage& src, const BMessage& na
 		}
 	}
 }
-enum { FRAME = 5, SPACE = 5 };
+enum {
+	FRAME = 5,
+	SPACE = 5
+};
 
 ColorSelector::ColorSelector(BRect frame, const char* name, const char* label,
-							 const BMessage& colors, const BMessage& names, BMessage* model,
-							 uint32 resizeMask, uint32 flags)
+	const BMessage& colors, const BMessage& names, BMessage* model, uint32 resizeMask, uint32 flags)
 	: BControl(name, label, model, flags),
 	  fNames(names),
 	  fInitColors(colors),
@@ -217,49 +226,46 @@ ColorSelector::ColorSelector(BRect frame, const char* name, const char* label,
 	fColorMenu = new BPopUpMenu(B_TRANSLATE("Colors"));
 	populate_colors(fColorMenu, fColors, fNames, &fInitColors);
 
-	fColorField =
-		new BMenuField("Color", B_TRANSLATE("Color:"), fColorMenu,
-			B_WILL_DRAW | B_FRAME_EVENTS | B_NAVIGABLE);
+	fColorField = new BMenuField(
+		"Color", B_TRANSLATE("Color:"), fColorMenu, B_WILL_DRAW | B_FRAME_EVENTS | B_NAVIGABLE);
 
 	fColorField->SetFont(be_bold_font);
 
-	fColorPalette = new BColorControl(BPoint(0,0), B_CELLS_32x8, 8, "Palette",
-									  new BMessage(CMD_SET_UI_COLOR), true);
+	fColorPalette = new BColorControl(
+		BPoint(0, 0), B_CELLS_32x8, 8, "Palette", new BMessage(CMD_SET_UI_COLOR), true);
 	rgb_color* color(NULL);
 	ssize_t size(0);
 	fColors.FindData("color", B_RGB_COLOR_TYPE, 0, (const void**)(&color), &size);
 	swatch = new ColorSwatch("swatch", *color);
 
-// Original
-/*
-	BLayoutBuilder::Group<>(this, B_VERTICAL)
-		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(fColorField)
-			.AddGroup(B_HORIZONTAL)
-				.Add(fColorPalette)
-				.AddGroup(B_VERTICAL)
-					.Add(swatch)
-					.AddGlue()
+	// Original
+	/*
+		BLayoutBuilder::Group<>(this, B_VERTICAL)
+			.SetInsets(B_USE_WINDOW_SPACING)
+				.Add(fColorField)
+				.AddGroup(B_HORIZONTAL)
+					.Add(fColorPalette)
+					.AddGroup(B_VERTICAL)
+						.Add(swatch)
+						.AddGlue()
+					.End()
 				.End()
-			.End()
-		.End();
-*/
+			.End();
+	*/
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(fColorField)
-			.Add(swatch)
-			.Add(fColorPalette)
-			.AddGlue()
+		.Add(fColorField)
+		.Add(swatch)
+		.Add(fColorPalette)
+		.AddGlue()
 		.End();
-
 }
 
-ColorSelector::~ColorSelector()
-{
-}
+ColorSelector::~ColorSelector() {}
 
-void ColorSelector::ExtractColors(BMessage* dest, const BMessage& src)
+void
+ColorSelector::ExtractColors(BMessage* dest, const BMessage& src)
 {
 	type_code type;
 	int32 n;
@@ -268,13 +274,14 @@ void ColorSelector::ExtractColors(BMessage* dest, const BMessage& src)
 	for (int32 i = 0; i < n; i++) {
 		const void* data;
 		ssize_t size;
-		if (src.FindData("color", B_RGB_COLOR_TYPE, i, &data, &size) == B_OK &&
-			size == sizeof(rgb_color))
+		if (src.FindData("color", B_RGB_COLOR_TYPE, i, &data, &size) == B_OK
+			&& size == sizeof(rgb_color))
 			dest->AddData("color", B_RGB_COLOR_TYPE, data, size, true, i == 0 ? n : 1);
 	}
 }
 
-void ColorSelector::AttachedToWindow()
+void
+ColorSelector::AttachedToWindow()
 {
 	BControl::AttachedToWindow();
 
@@ -288,37 +295,40 @@ void ColorSelector::AttachedToWindow()
 	}
 }
 
-void ColorSelector::AllAttached()
+void
+ColorSelector::AllAttached()
 {
 	BControl::AllAttached();
 	LayoutViews(true);
 }
 
-void ColorSelector::LayoutViews(bool really)
+void
+ColorSelector::LayoutViews(bool really)
 {
-/*	float mw, mh, cw, ch;
-	fColorField->SetDivider(fColorField->StringWidth(fColorField->Label()) + 5);
-	fColorField->GetPreferredSize(&mw, &mh);
-	fColorPalette->GetPreferredSize(&cw, &ch);
+	/*	float mw, mh, cw, ch;
+		fColorField->SetDivider(fColorField->StringWidth(fColorField->Label()) + 5);
+		fColorField->GetPreferredSize(&mw, &mh);
+		fColorPalette->GetPreferredSize(&cw, &ch);
 
-	if (really) {
-		BRect b(Bounds());
-		if (Window()) Window()->BeginViewTransaction();
-		fColorField->MoveTo(b.left, b.top);
-		fColorField->ResizeTo(b.Width() + 1, mh);
-		fColorPalette->MoveTo(b.left, b.top + mh + SPACE);
-		fColorPalette->ResizeTo(cw, ch);
-		swatch->MoveTo(fColorPalette->Bounds().Width() + 5, b.top + mh + SPACE);
-		swatch->ResizeTo(ch, ch);
-		if (Window()) Window()->EndViewTransaction();
-	}
+		if (really) {
+			BRect b(Bounds());
+			if (Window()) Window()->BeginViewTransaction();
+			fColorField->MoveTo(b.left, b.top);
+			fColorField->ResizeTo(b.Width() + 1, mh);
+			fColorPalette->MoveTo(b.left, b.top + mh + SPACE);
+			fColorPalette->ResizeTo(cw, ch);
+			swatch->MoveTo(fColorPalette->Bounds().Width() + 5, b.top + mh + SPACE);
+			swatch->ResizeTo(ch, ch);
+			if (Window()) Window()->EndViewTransaction();
+		}
 
-	fPrefWidth = (mw > cw ? mw : cw) + 5 + swatch->Bounds().Width();
-	fPrefHeight = mh + SPACE + ch;
-	fSizeValid = true; */
+		fPrefWidth = (mw > cw ? mw : cw) + 5 + swatch->Bounds().Width();
+		fPrefHeight = mh + SPACE + ch;
+		fSizeValid = true; */
 }
 
-void ColorSelector::MessageReceived(BMessage* msg)
+void
+ColorSelector::MessageReceived(BMessage* msg)
 {
 	if (msg->WasDropped()) {
 		rgb_color* color;
@@ -336,66 +346,72 @@ void ColorSelector::MessageReceived(BMessage* msg)
 	}
 
 	switch (msg->what) {
-	case CMD_CHOOSE_UI_COLOR: {
-		const char* field;
-		int32 index(0);
-		ssize_t size;
-		if (msg->FindString("field", &field) == B_OK) {
-			msg->FindInt32("index", &index);
-			fCurrentField = field;
-			rgb_color* color;
-			if (fColors.FindData("color", B_RGB_COLOR_TYPE, index, (const void**)(&color), &size) ==
-				B_OK) {
-				fColorPalette->SetValue(*color);
-				swatch->SetColor(*color);
+		case CMD_CHOOSE_UI_COLOR:
+		{
+			const char* field;
+			int32 index(0);
+			ssize_t size;
+			if (msg->FindString("field", &field) == B_OK) {
+				msg->FindInt32("index", &index);
+				fCurrentField = field;
+				rgb_color* color;
+				if (fColors.FindData(
+						"color", B_RGB_COLOR_TYPE, index, (const void**)(&color), &size)
+					== B_OK) {
+					fColorPalette->SetValue(*color);
+					swatch->SetColor(*color);
+				}
 			}
-		}
-	} break;
+		} break;
 
-	case CMD_SET_UI_COLOR: {
-		if (Message()) {
-			BMessage upd(*Message());
-			BMessage colors;
-			int32 index;
-			rgb_color c = fColorPalette->ValueAsColor();
-			swatch->SetColor(c);
-			ColorMenuItem* item((ColorMenuItem*)(fColorMenu->FindItem(fCurrentField.String())));
-			if (item) {
-				BMessage* curMsg(item->Message());
-				curMsg->FindInt32("index", &index);
+		case CMD_SET_UI_COLOR:
+		{
+			if (Message()) {
+				BMessage upd(*Message());
+				BMessage colors;
+				int32 index;
+				rgb_color c = fColorPalette->ValueAsColor();
+				swatch->SetColor(c);
+				ColorMenuItem* item((ColorMenuItem*)(fColorMenu->FindItem(fCurrentField.String())));
+				if (item) {
+					BMessage* curMsg(item->Message());
+					curMsg->FindInt32("index", &index);
+				}
+				c.alpha = 255;
+				colors.AddData("color", B_RGB_COLOR_TYPE, &c, sizeof(rgb_color));
+				colors.AddInt32("index", index);
+				vision_app->SetColor(index, c);
+				Update(colors);
+				Invoke(&upd);
 			}
-			c.alpha = 255;
-			colors.AddData("color", B_RGB_COLOR_TYPE, &c, sizeof(rgb_color));
-			colors.AddInt32("index", index);
-			vision_app->SetColor(index, c);
-			Update(colors);
-			Invoke(&upd);
-		}
-	} break;
+		} break;
 
-	default:
-		BControl::MessageReceived(msg);
-		break;
+		default:
+			BControl::MessageReceived(msg);
+			break;
 	}
 }
 
-void ColorSelector::FrameResized(float w, float h)
+void
+ColorSelector::FrameResized(float w, float h)
 {
-	//LayoutViews(true);
+	// LayoutViews(true);
 	BView::FrameResized(w, h);
 }
 
-void ColorSelector::GetPreferredSize(float* width, float* height)
+void
+ColorSelector::GetPreferredSize(float* width, float* height)
 {
 	BView::GetPreferredSize(width, height);
-//	if (!fSizeValid) LayoutViews(false);
-//	*width = fPrefWidth;
-//	*height = fPrefHeight;
+	//	if (!fSizeValid) LayoutViews(false);
+	//	*width = fPrefWidth;
+	//	*height = fPrefHeight;
 }
 
 /*------------------------------------------------------------*/
 
-bool ColorSelector::IsDirty() const
+bool
+ColorSelector::IsDirty() const
 {
 	bool dirty = false;
 	type_code type;
@@ -406,9 +422,9 @@ bool ColorSelector::IsDirty() const
 		const void* data2;
 		ssize_t size1;
 		ssize_t size2;
-		if (fInitColors.FindData("color", B_RGB_COLOR_TYPE, i, &data1, &size1) == B_OK &&
-			(fColors.FindData("color", B_RGB_COLOR_TYPE, i, &data2, &size2) != B_OK ||
-			 size1 != size2 || memcmp(data1, data2, size1) != 0)) {
+		if (fInitColors.FindData("color", B_RGB_COLOR_TYPE, i, &data1, &size1) == B_OK
+			&& (fColors.FindData("color", B_RGB_COLOR_TYPE, i, &data2, &size2) != B_OK
+				|| size1 != size2 || memcmp(data1, data2, size1) != 0)) {
 			dirty = true;
 			break;
 		}
@@ -417,7 +433,8 @@ bool ColorSelector::IsDirty() const
 	return dirty;
 }
 
-void ColorSelector::SetTo(const BMessage& colors)
+void
+ColorSelector::SetTo(const BMessage& colors)
 {
 	fInitColors.MakeEmpty();
 	ExtractColors(&fInitColors, colors);
@@ -426,10 +443,12 @@ void ColorSelector::SetTo(const BMessage& colors)
 	fColorMenu->RemoveItems(0, fColorMenu->CountItems(), true);
 	populate_colors(fColorMenu, fColors, fNames, &fInitColors);
 
-	if (Window()) ColorSelector::AttachedToWindow();
+	if (Window())
+		ColorSelector::AttachedToWindow();
 }
 
-void ColorSelector::Update(const BMessage& changes)
+void
+ColorSelector::Update(const BMessage& changes)
 {
 	int32 index(0);
 	ssize_t size(0);
@@ -450,7 +469,8 @@ void ColorSelector::Update(const BMessage& changes)
 	}
 }
 
-void ColorSelector::Revert()
+void
+ColorSelector::Revert()
 {
 	// duplicate the message since SetTo destroys fInitColors
 	BMessage OriginalColors = fInitColors;
@@ -459,17 +479,20 @@ void ColorSelector::Revert()
 	ssize_t size(0);
 
 	for (int32 i = 0; i < MAX_COLORS; i++)
-		if (fInitColors.FindData("color", B_RGB_COLOR_TYPE, i, (const void**)(&color), &size) ==
-			B_OK)
-			if (!CompareColors(*color, vision_app->GetColor(i))) vision_app->SetColor(i, *color);
+		if (fInitColors.FindData("color", B_RGB_COLOR_TYPE, i, (const void**)(&color), &size)
+			== B_OK)
+			if (!CompareColors(*color, vision_app->GetColor(i)))
+				vision_app->SetColor(i, *color);
 }
 
-const BMessage& ColorSelector::CurrentColors() const
+const BMessage&
+ColorSelector::CurrentColors() const
 {
 	return fColors;
 }
 
-const BMessage& ColorSelector::InitialColors() const
+const BMessage&
+ColorSelector::InitialColors() const
 {
 	return fInitColors;
 }

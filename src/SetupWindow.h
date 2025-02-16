@@ -32,8 +32,7 @@ class BMenuField;
 class BMenu;
 class BMessage;
 
-class SetupWindow : public BWindow
-{
+class SetupWindow : public BWindow {
 public:
 	SetupWindow();
 	virtual ~SetupWindow();
@@ -43,7 +42,7 @@ public:
 private:
 	void InitServerStartup();
 	void BuildNetworkMenu();
-	BButton* connectButton, *netPrefsButton, *prefsButton;
+	BButton *connectButton, *netPrefsButton, *prefsButton;
 	BMenuField* netList;
 };
 

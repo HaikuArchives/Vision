@@ -30,8 +30,7 @@ class BScrollView;
 class BMenuField;
 class BTextControl;
 
-class FontPrefsView : public BView
-{
+class FontPrefsView : public BView {
 public:
 	FontPrefsView();
 	virtual ~FontPrefsView();
@@ -47,4 +46,4 @@ private:
 	int32 fActiveFont;
 };
 
-#endif // _PREFFONT_H
+#endif	// _PREFFONT_H

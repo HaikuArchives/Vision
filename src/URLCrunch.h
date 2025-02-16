@@ -31,8 +31,7 @@
 #define B_URL_MIME_PREFIX "application/x-vnd.Be.URL."
 #endif
 
-class URLCrunch
-{
+class URLCrunch {
 	BString buffer;
 	int32 current_pos;
 
@@ -44,7 +43,7 @@ public:
 	static status_t UpdateTagList();
 
 private:
-	static BLocker fLocker; // protects members below
+	static BLocker fLocker;	 // protects members below
 	static const char** fTags;
 	bool* missingTags;
 	int32 fCountTags;

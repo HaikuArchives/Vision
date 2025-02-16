@@ -19,8 +19,8 @@
  * Contributor(s): Wade Majors <wade@ezri.org>
  *                 Rene Gollent
  */
-#include <LayoutBuilder.h>
 #include <GroupLayout.h>
+#include <LayoutBuilder.h>
 #include <ScrollView.h>
 #include <StringView.h>
 
@@ -48,11 +48,11 @@ ClientWindowDock::ClientWindowDock()
 	AdoptSystemColors();
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
-		.SetInsets(0,0, 0, -1.0)
+		.SetInsets(0, 0, 0, -1.0)
 		.AddSplit(B_VERTICAL, 0)
 		.GetSplitView(&fSplitView)
-			.Add(fWinListAgent = new AgentDockWinList())
-			.Add(fNotifyAgent = new AgentDockNotifyList())
+		.Add(fWinListAgent = new AgentDockWinList())
+		.Add(fNotifyAgent = new AgentDockNotifyList())
 		.End();
 
 	fSplitView->SetItemWeight(0, vision_app->GetFloat("weight_WindowList"), false);
@@ -61,11 +61,10 @@ ClientWindowDock::ClientWindowDock()
 	fSplitView->SetItemCollapsed(1, vision_app->GetBool("collapsed_NotifyList"));
 }
 
-ClientWindowDock::~ClientWindowDock()
-{
-}
+ClientWindowDock::~ClientWindowDock() {}
 
-void ClientWindowDock::SaveSettings()
+void
+ClientWindowDock::SaveSettings()
 {
 	vision_app->SetFloat("weight_WindowList", fSplitView->ItemWeight((int32)0));
 	vision_app->SetFloat("weight_NotifyList", fSplitView->ItemWeight((int32)1));
@@ -74,22 +73,25 @@ void ClientWindowDock::SaveSettings()
 }
 
 
-WindowList* ClientWindowDock::pWindowList() const
+WindowList*
+ClientWindowDock::pWindowList() const
 {
 	return fWinListAgent->pWindowList();
 }
 
-NotifyList* ClientWindowDock::pNotifyList() const
+NotifyList*
+ClientWindowDock::pNotifyList() const
 {
 	return fNotifyAgent->pNotifyList();
 }
 
-void ClientWindowDock::AllAttached()
+void
+ClientWindowDock::AllAttached()
 {
-
 }
 
-void ClientWindowDock::MessageReceived(BMessage* msg)
+void
+ClientWindowDock::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) { /*
 	case M_NOTIFYLIST_RESIZE: {
@@ -109,9 +111,9 @@ void ClientWindowDock::MessageReceived(BMessage* msg)
 		break;
 	}
 */
-	default:
-		BView::MessageReceived(msg);
-		break;
+		default:
+			BView::MessageReceived(msg);
+			break;
 	}
 }
 
@@ -132,8 +134,7 @@ AgentDockWinList::AgentDockWinList()
 	fAHeader = new AgentDockHeader(B_TRANSLATE("Window list"));
 	AddChild(fAHeader);
 	fWinList = new WindowList();
-	fWinListScroll =
-		new BScrollView("fWinListScroll", fWinList, 0, false, true, B_PLAIN_BORDER);
+	fWinListScroll = new BScrollView("fWinListScroll", fWinList, 0, false, true, B_PLAIN_BORDER);
 	AddChild(fWinListScroll);
 }
 
@@ -142,7 +143,8 @@ AgentDockWinList::~AgentDockWinList()
 	//
 }
 
-WindowList* AgentDockWinList::pWindowList() const
+WindowList*
+AgentDockWinList::pWindowList() const
 {
 	return fWinList;
 }
@@ -156,15 +158,15 @@ WindowList* AgentDockWinList::pWindowList() const
 //////////////////////////////////////////////////////////////////////////////
 
 AgentDockNotifyList::AgentDockNotifyList()
-	: BView("agentDockNotifyList",  B_WILL_DRAW)
+	: BView("agentDockNotifyList", B_WILL_DRAW)
 {
 	SetLayout(new BGroupLayout(B_VERTICAL, 0));
 	SetViewColor(vision_app->GetColor(B_PANEL_BACKGROUND_COLOR));
 
-	fAHeader =	new AgentDockHeader(B_TRANSLATE("Notify list"));
+	fAHeader = new AgentDockHeader(B_TRANSLATE("Notify list"));
 	fNotifyList = new NotifyList();
-	fNotifyScroll = new BScrollView("fNotifyListScroll", fNotifyList, 0, false, true,
-									B_PLAIN_BORDER);
+	fNotifyScroll
+		= new BScrollView("fNotifyListScroll", fNotifyList, 0, false, true, B_PLAIN_BORDER);
 	AddChild(fAHeader);
 	AddChild(fNotifyScroll);
 }
@@ -174,7 +176,8 @@ AgentDockNotifyList::~AgentDockNotifyList()
 	//
 }
 
-NotifyList* AgentDockNotifyList::pNotifyList() const
+NotifyList*
+AgentDockNotifyList::pNotifyList() const
 {
 	return fNotifyList;
 }
@@ -196,23 +199,24 @@ AgentDockHeaderString::AgentDockHeaderString(const char* name)
 {
 }
 
-AgentDockHeaderString::~AgentDockHeaderString()
-{
-}
+AgentDockHeaderString::~AgentDockHeaderString() {}
 
-void AgentDockHeaderString::MouseMoved(BPoint where, uint32 transitcode, const BMessage* mmMsg)
+void
+AgentDockHeaderString::MouseMoved(BPoint where, uint32 transitcode, const BMessage* mmMsg)
 {
 	BStringView::MouseMoved(where, transitcode, mmMsg);
 }
 
-void AgentDockHeaderString::MouseDown(BPoint where)
+void
+AgentDockHeaderString::MouseDown(BPoint where)
 {
-/*	SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_2_TINT);
-	Parent()->SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_2_TINT);*/
+	/*	SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_2_TINT);
+		Parent()->SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_2_TINT);*/
 	BStringView::MouseDown(where);
 }
 
-void AgentDockHeaderString::MouseUp(BPoint where)
+void
+AgentDockHeaderString::MouseUp(BPoint where)
 { /*
 	SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_1_TINT);
 	Parent()->SetViewUIColor(B_MENU_BACKGROUND_COLOR, B_DARKEN_1_TINT);

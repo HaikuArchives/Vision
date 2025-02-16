@@ -42,25 +42,29 @@ AppWindowPrefsView::AppWindowPrefsView()
 	BMessage msg(M_APPWINDOWPREFS_SETTING_CHANGED);
 
 	msg.AddString("setting", "versionParanoid");
-	fVersionParanoid = new BCheckBox("version Paranoid", B_TRANSLATE("Show OS information in version reply"),
-									 new BMessage(msg));
-	fVersionParanoid->SetValue((!vision_app->GetBool("versionParanoid")) ? B_CONTROL_ON :
-																		   B_CONTROL_OFF);
+	fVersionParanoid = new BCheckBox(
+		"version Paranoid", B_TRANSLATE("Show OS information in version reply"), new BMessage(msg));
+	fVersionParanoid->SetValue(
+		(!vision_app->GetBool("versionParanoid")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	msg.ReplaceString("setting", "catchAltW");
-	fCatchAltW = new BCheckBox("catch AltW", B_TRANSLATE("Require double CMD+Q/W to close"), new BMessage(msg));
+	fCatchAltW = new BCheckBox(
+		"catch AltW", B_TRANSLATE("Require double CMD+Q/W to close"), new BMessage(msg));
 	fCatchAltW->SetValue((vision_app->GetBool("catchAltW")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	msg.ReplaceString("setting", "stripcolors");
-	fStripColors = new BCheckBox("stripcolors", B_TRANSLATE("Strip mIRC colors"), new BMessage(msg));
+	fStripColors
+		= new BCheckBox("stripcolors", B_TRANSLATE("Strip mIRC colors"), new BMessage(msg));
 	fStripColors->SetValue((vision_app->GetBool("stripcolors")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	msg.ReplaceString("setting", "Newbie spam mode");
-	fSpamMode =	new BCheckBox("newbiespammode", B_TRANSLATE("Warn when multiline pasting"), new BMessage(msg));
+	fSpamMode = new BCheckBox(
+		"newbiespammode", B_TRANSLATE("Warn when multiline pasting"), new BMessage(msg));
 	fSpamMode->SetValue((vision_app->GetBool("Newbie Spam Mode")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	msg.ReplaceString("setting", "queryOnMsg");
-	fQueryMsg = new BCheckBox("queryOnMsg", B_TRANSLATE("Open new query on private message"), new BMessage(msg));
+	fQueryMsg = new BCheckBox(
+		"queryOnMsg", B_TRANSLATE("Open new query on private message"), new BMessage(msg));
 	fQueryMsg->SetValue((vision_app->GetBool("queryOnMsg")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
 	BMenu* encMenu(CreateEncodingMenu());
@@ -73,26 +77,26 @@ AppWindowPrefsView::AppWindowPrefsView()
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
-			.Add(fVersionParanoid)
-			.Add(fCatchAltW)
-			.Add(fStripColors)
-			.Add(fSpamMode)
-			.Add(fQueryMsg)
-			.Add(fEncodings)
-			.AddGlue()
+		.Add(fVersionParanoid)
+		.Add(fCatchAltW)
+		.Add(fStripColors)
+		.Add(fSpamMode)
+		.Add(fQueryMsg)
+		.Add(fEncodings)
+		.AddGlue()
 		.End();
 }
 
-AppWindowPrefsView::~AppWindowPrefsView()
-{
-}
+AppWindowPrefsView::~AppWindowPrefsView() {}
 
-void AppWindowPrefsView::AttachedToWindow()
+void
+AppWindowPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 }
 
-void AppWindowPrefsView::AllAttached()
+void
+AppWindowPrefsView::AllAttached()
 {
 	fVersionParanoid->SetTarget(this);
 	fCatchAltW->SetTarget(this);
@@ -104,7 +108,8 @@ void AppWindowPrefsView::AllAttached()
 	BView::AllAttached();
 }
 
-void AppWindowPrefsView::SetEncodingItem(int32 encoding)
+void
+AppWindowPrefsView::SetEncodingItem(int32 encoding)
 {
 	BMenuItem* item(NULL);
 	for (int32 i = 0; i < fEncodings->Menu()->CountItems(); i++) {
@@ -116,14 +121,16 @@ void AppWindowPrefsView::SetEncodingItem(int32 encoding)
 	}
 }
 
-BMenu* AppWindowPrefsView::CreateEncodingMenu()
+BMenu*
+AppWindowPrefsView::CreateEncodingMenu()
 {
 	BMessage msg(M_APPWINDOWPREFS_ENCODING_CHANGED);
 	BMenu* encMenu(new BMenu("Encodings"));
 	msg.AddInt32("encoding", B_ISO1_CONVERSION);
 	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Western (ISO 8859-1)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_ISO2_CONVERSION);
-	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Central European (ISO 8859-2)"), new BMessage(msg)));
+	encMenu->AddItem(
+		new BMenuItem(B_TRANSLATE("Central European (ISO 8859-2)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_ISO5_CONVERSION);
 	encMenu->AddItem(new BMenuItem(B_TRANSLATE("Cyrillic (ISO 8859-5)"), new BMessage(msg)));
 	msg.ReplaceInt32("encoding", B_KOI8R_CONVERSION);
@@ -153,28 +160,32 @@ BMenu* AppWindowPrefsView::CreateEncodingMenu()
 	return encMenu;
 }
 
-void AppWindowPrefsView::MessageReceived(BMessage* msg)
+void
+AppWindowPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_APPWINDOWPREFS_ENCODING_CHANGED: {
-		BMenuItem* source(NULL);
-		msg->FindPointer("source", reinterpret_cast<void**>(&source));
-		source->SetMarked(true);
-		int32 encoding(msg->FindInt32("encoding"));
-		vision_app->SetInt32("encoding", encoding);
-	} break;
+		case M_APPWINDOWPREFS_ENCODING_CHANGED:
+		{
+			BMenuItem* source(NULL);
+			msg->FindPointer("source", reinterpret_cast<void**>(&source));
+			source->SetMarked(true);
+			int32 encoding(msg->FindInt32("encoding"));
+			vision_app->SetInt32("encoding", encoding);
+		} break;
 
-	case M_APPWINDOWPREFS_SETTING_CHANGED: {
-		BControl* source(NULL);
-		msg->FindPointer("source", reinterpret_cast<void**>(&source));
-		BString setting;
-		msg->FindString("setting", &setting);
-		int32 value(source->Value() == B_CONTROL_ON);
-		if ((setting.ICompare("versionParanoid") == 0)) value = !value;
-		vision_app->SetBool(setting.String(), value);
-	} break;
-	default:
-		BView::MessageReceived(msg);
-		break;
+		case M_APPWINDOWPREFS_SETTING_CHANGED:
+		{
+			BControl* source(NULL);
+			msg->FindPointer("source", reinterpret_cast<void**>(&source));
+			BString setting;
+			msg->FindString("setting", &setting);
+			int32 value(source->Value() == B_CONTROL_ON);
+			if ((setting.ICompare("versionParanoid") == 0))
+				value = !value;
+			vision_app->SetBool(setting.String(), value);
+		} break;
+		default:
+			BView::MessageReceived(msg);
+			break;
 	}
 }

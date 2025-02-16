@@ -47,8 +47,7 @@
 
 class BBitmap;
 
-class TIconMenu : public BMenuItem
-{
+class TIconMenu : public BMenuItem {
 public:
 	// Constructor
 	// Description:	Creates a menu item with the provided icon as its

@@ -25,11 +25,9 @@
 
 #include <View.h>
 
-class ColorSwatch : public BView
-{
+class ColorSwatch : public BView {
 public:
-	ColorSwatch(const char*, rgb_color,
-				uint32 = B_WILL_DRAW | B_NAVIGABLE);
+	ColorSwatch(const char*, rgb_color, uint32 = B_WILL_DRAW | B_NAVIGABLE);
 
 	virtual ~ColorSwatch();
 

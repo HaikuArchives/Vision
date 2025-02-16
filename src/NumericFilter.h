@@ -26,8 +26,7 @@
 
 #include <MessageFilter.h>
 
-class NumericFilter : public BMessageFilter
-{
+class NumericFilter : public BMessageFilter {
 public:
 	NumericFilter();
 	virtual ~NumericFilter();

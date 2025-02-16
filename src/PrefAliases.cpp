@@ -19,9 +19,9 @@
  * Contributor(s): Rene Gollent
  */
 
-#include "ColumnTypes.h"
-#include "ColumnListView.h"
 #include "PrefAliases.h"
+#include "ColumnListView.h"
+#include "ColumnTypes.h"
 #include "Vision.h"
 
 #include <Button.h>
@@ -43,72 +43,74 @@ AliasesPrefsView::AliasesPrefsView()
 	AdoptSystemColors();
 }
 
-AliasesPrefsView::~AliasesPrefsView()
-{
-}
+AliasesPrefsView::~AliasesPrefsView() {}
 
-void AliasesPrefsView::MessageReceived(BMessage* msg)
+void
+AliasesPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_ALIAS_SELECTION_CHANGED: {
-		if (msg->FindInt32("index") >= 0) {
-			fRemoveButton->SetEnabled(true);
-		} else {
-			fRemoveButton->SetEnabled(false);
-		}
-	} break;
+		case M_ALIAS_SELECTION_CHANGED:
+		{
+			if (msg->FindInt32("index") >= 0) {
+				fRemoveButton->SetEnabled(true);
+			} else {
+				fRemoveButton->SetEnabled(false);
+			}
+		} break;
 
-	case M_ALIAS_REMOVE: {
-		BRow* row(fAliasView->CurrentSelection());
-		if (row != NULL) {
-			fAliasView->RemoveRow(row);
-			vision_app->RemoveAlias(dynamic_cast<BStringField*>(row->GetField(0))->String());
-			fRemoveButton->SetEnabled(false);
-			delete row;
-		}
-	} break;
+		case M_ALIAS_REMOVE:
+		{
+			BRow* row(fAliasView->CurrentSelection());
+			if (row != NULL) {
+				fAliasView->RemoveRow(row);
+				vision_app->RemoveAlias(dynamic_cast<BStringField*>(row->GetField(0))->String());
+				fRemoveButton->SetEnabled(false);
+				delete row;
+			}
+		} break;
 
-	default: {
-		BView::MessageReceived(msg);
-	} break;
+		default:
+		{
+			BView::MessageReceived(msg);
+		} break;
 	}
 }
 
-void AliasesPrefsView::AttachedToWindow()
+void
+AliasesPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
 
 	fAliasView = new BColumnListView("clv", B_WILL_DRAW, B_FANCY_BORDER);
 
 	fAliasView->SetSelectionMessage(new BMessage(M_ALIAS_SELECTION_CHANGED));
-	fAliasView->AddColumn(new BStringColumn(B_TRANSLATE("Name"),
-											StringWidth(B_TRANSLATE("Name")) * 2.0, 0,
-											300, 0),
-						  0);
-	fAliasView->AddColumn(new BStringColumn(B_TRANSLATE("Alias"),
-											StringWidth(B_TRANSLATE("Alias")) * 6.0, 0,
-											300, 0),
-						  1);
+	fAliasView->AddColumn(
+		new BStringColumn(B_TRANSLATE("Name"), StringWidth(B_TRANSLATE("Name")) * 2.0, 0, 300, 0),
+		0);
+	fAliasView->AddColumn(
+		new BStringColumn(B_TRANSLATE("Alias"), StringWidth(B_TRANSLATE("Alias")) * 6.0, 0, 300, 0),
+		1);
 
 	fAddButton = new BButton("alAdd", B_TRANSLATE("Add"), new BMessage(M_ALIAS_ADD));
-	fRemoveButton = new BButton("alRemove", B_TRANSLATE("Remove"),	new BMessage(M_ALIAS_REMOVE));
+	fRemoveButton = new BButton("alRemove", B_TRANSLATE("Remove"), new BMessage(M_ALIAS_REMOVE));
 
 	fRemoveButton->SetEnabled(false);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.Add(fAliasView)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-			.AddGlue()
-			.Add(fAddButton)
-			.Add(fRemoveButton)
-			.End()
+		.AddGlue()
+		.Add(fAddButton)
+		.Add(fRemoveButton)
+		.End()
 		.SetInsets(B_USE_WINDOW_SPACING)
-	.End();
+		.End();
 
 	BuildAliasList();
 }
 
-void AliasesPrefsView::AllAttached()
+void
+AliasesPrefsView::AllAttached()
 {
 	BView::AllAttached();
 	fAliasView->SetTarget(this);
@@ -116,7 +118,8 @@ void AliasesPrefsView::AllAttached()
 	fRemoveButton->SetTarget(this);
 }
 
-void AliasesPrefsView::BuildAliasList()
+void
+AliasesPrefsView::BuildAliasList()
 {
 	void* cookie(NULL);
 	BString name, value;

@@ -30,8 +30,7 @@
 
 class ClientWindow;
 
-class ClientAgentInputFilter : public BMessageFilter
-{
+class ClientAgentInputFilter : public BMessageFilter {
 	ClientAgent* fWindow;
 	bool fHandledDrop;
 

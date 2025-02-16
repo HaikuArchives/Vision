@@ -32,7 +32,6 @@
 #include <String.h>
 
 
-
 class BMessageRunner;
 class BPopUpMenu;
 class BMenu;
@@ -45,8 +44,7 @@ class BScrollView;
 class Theme;
 
 
-class WindowListItem : public BListItem
-{
+class WindowListItem : public BListItem {
 public:
 	WindowListItem(const char*, int32, int32, Agent*);
 	virtual ~WindowListItem();
@@ -71,16 +69,15 @@ private:
 	BString fMyName;
 	int32 fMyStatus;
 	int32 fMyType;
-	int32 fSubStatus; // servers only -- status of collapsed children
-	BView* fMyAgent; // remove this
+	int32 fSubStatus;  // servers only -- status of collapsed children
+	BView* fMyAgent;   // remove this
 	Agent* fAgent;
 	int32 fBlinkState;
 	int32 fBlinkStateCount;
 	BMessageRunner* fBlinker;
 };
 
-class WindowList : public BOutlineListView
-{
+class WindowList : public BOutlineListView {
 public:
 	WindowList();
 	virtual ~WindowList();
@@ -115,20 +112,18 @@ public:
 	void RemoveAgent(WindowListItem*);
 	void Expand(BListItem*);
 	void Collapse(BListItem*);
-/*
-	void SaveSplitSettings(AgentCard* agentCard);
-	void ApplySplitSettings(AgentCard* agentCard);
-*/
+	/*
+		void SaveSplitSettings(AgentCard* agentCard);
+		void ApplySplitSettings(AgentCard* agentCard);
+	*/
 protected:
-	virtual void				DrawLatch(BRect itemRect, int32 level,
-									bool collapsed, bool highlighted,
-									bool misTracked);
-	virtual	void				DrawItem(BListItem* item, BRect itemRect,
-									bool complete = false);
+	virtual void DrawLatch(
+		BRect itemRect, int32 level, bool collapsed, bool highlighted, bool misTracked);
+	virtual void DrawItem(BListItem* item, BRect itemRect, bool complete = false);
 
 private:
-	BPopUpMenu*		fMyPopUp;
-	Agent*			fActiveAgent;
+	BPopUpMenu* fMyPopUp;
+	Agent* fActiveAgent;
 	WindowListItem* fLastSelected;
 
 	Theme* fActiveTheme;

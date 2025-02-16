@@ -31,25 +31,25 @@
 #include <Notification.h>
 #include <PopUpMenu.h>
 #include <Roster.h>
-#include <SplitView.h>
 #include <ScrollView.h>
+#include <SplitView.h>
 #include <TextControl.h>
 
 #include <stdio.h>
 
-#include "Names.h"
-#include "Theme.h"
 #include "ChannelAgent.h"
-#include "Vision.h"
-#include "StatusView.h"
 #include "ClientWindow.h"
+#include "Names.h"
+#include "StatusView.h"
+#include "Theme.h"
 #include "Utilities.h"
+#include "Vision.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "ChannelAgent"
 
-ChannelAgent::ChannelAgent(const char* id_, const char* serverName_, int ircdtype_,
-						   const char* nick, BMessenger& sMsgr_)
+ChannelAgent::ChannelAgent(
+	const char* id_, const char* serverName_, int ircdtype_, const char* nick, BMessenger& sMsgr_)
 
 	: ClientAgent(id_, serverName_, nick, sMsgr_),
 
@@ -70,7 +70,8 @@ ChannelAgent::ChannelAgent(const char* id_, const char* serverName_, int ircdtyp
 	fNamesList = new NamesView(this);
 	fSplitView = new SplitView(B_HORIZONTAL, 0);
 	fSplitView->AddChild(this, 8);
-	BScrollView* scrollView = new BScrollView("scroll_names", fNamesList, 0, false, true, B_PLAIN_BORDER);
+	BScrollView* scrollView
+		= new BScrollView("scroll_names", fNamesList, 0, false, true, B_PLAIN_BORDER);
 	fSplitView->AddChild(scrollView, 2);
 	fSplitView->LoadSplitSettings();
 }
@@ -84,14 +85,17 @@ ChannelAgent::~ChannelAgent()
 	fNamesList->ClearList();
 
 	// empty recent nick list
-	while (fRecentNicks.CountItems() > 0) delete fRecentNicks.RemoveItemAt(0L);
+	while (fRecentNicks.CountItems() > 0)
+		delete fRecentNicks.RemoveItemAt(0L);
 
 	// empty nick completion list
-	while (fCompletionNicks.CountItems() > 0) delete fCompletionNicks.RemoveItemAt(0L);
+	while (fCompletionNicks.CountItems() > 0)
+		delete fCompletionNicks.RemoveItemAt(0L);
 	delete fSplitView;
 }
 
-void ChannelAgent::AttachedToWindow()
+void
+ChannelAgent::AttachedToWindow()
 {
 	/*
 	 * Function purpose: Once the BView has been successfully attached,
@@ -102,19 +106,22 @@ void ChannelAgent::AttachedToWindow()
 	ClientAgent::AttachedToWindow();
 }
 
-BView* ChannelAgent::View()
+BView*
+ChannelAgent::View()
 {
 	return fSplitView;
 }
 
-void ChannelAgent::Init()
+void
+ChannelAgent::Init()
 {
 	BString text(B_TRANSLATE("*** Now talking in %channel%\n"));
 	text.ReplaceFirst("%channel%", fId.String());
 	Display(text.String(), C_JOIN);
 }
 
-int ChannelAgent::FindPosition(const char* data) const
+int
+ChannelAgent::FindPosition(const char* data) const
 {
 	ASSERT(data != NULL);
 	/*
@@ -122,34 +129,40 @@ int ChannelAgent::FindPosition(const char* data) const
 	 *                   ChannelAgent's NamesView
 	 */
 
-	if (fNamesList == NULL) return -1;
+	if (fNamesList == NULL)
+		return -1;
 
 	int32 count(fNamesList->CountItems());
 
 	for (int32 i = 0; i < count; ++i) {
 		NameItem* item(static_cast<NameItem*>(fNamesList->ItemAt(i)));
 
-		if (item == NULL) continue;
+		if (item == NULL)
+			continue;
 
 		BString nick(item->Name());
 
 		if ((nick[0] == '@' || nick[0] == '+' || nick[0] == '%') && *data != nick[0])
 			nick.Remove(0, 1);
 
-		if ((*data == '@' || *data == '+' || *data == '%') && nick[0] != *data) ++data;
+		if ((*data == '@' || *data == '+' || *data == '%') && nick[0] != *data)
+			++data;
 
-		if (!nick.ICompare(data)) return i;
+		if (!nick.ICompare(data))
+			return i;
 	}
 
 	return -1;
 }
 
-const NamesView* ChannelAgent::pNamesList() const
+const NamesView*
+ChannelAgent::pNamesList() const
 {
 	return fNamesList;
 }
 
-void ChannelAgent::RemoveNickFromList(BObjectList<BString>& list, const char* data)
+void
+ChannelAgent::RemoveNickFromList(BObjectList<BString>& list, const char* data)
 {
 	int32 count(list.CountItems());
 	for (int32 i = 0; i < count; i++) {
@@ -160,7 +173,8 @@ void ChannelAgent::RemoveNickFromList(BObjectList<BString>& list, const char* da
 	}
 }
 
-void ChannelAgent::AddUser(const char* nick, const int32 status)
+void
+ChannelAgent::AddUser(const char* nick, const int32 status)
 {
 	NameItem* compareItem(NULL);
 
@@ -170,7 +184,8 @@ void ChannelAgent::AddUser(const char* nick, const int32 status)
 	int32 i;
 	for (i = 0; i < fNamesList->CountItems(); i++) {
 		compareItem = static_cast<NameItem*>(fNamesList->ItemAt(i));
-		if (compareItem && compareItem->Name().ICompare(nick) == 0) return;
+		if (compareItem && compareItem->Name().ICompare(nick) == 0)
+			return;
 	}
 
 	fNamesList->AddItem(new NameItem(nick, status));
@@ -183,8 +198,8 @@ void ChannelAgent::AddUser(const char* nick, const int32 status)
 
 	// check if new nickname matches against tab completion sequence and update nick list
 	// if so
-	if (fLastExpansion.Length() > 0 &&
-		fLastExpansion.ICompare(nick, fLastExpansion.Length()) == 0) {
+	if (fLastExpansion.Length() > 0
+		&& fLastExpansion.ICompare(nick, fLastExpansion.Length()) == 0) {
 		int32 count(fCompletionNicks.CountItems());
 		for (i = count - 1; i >= 0; i--) {
 			comparator = fCompletionNicks.ItemAt(i);
@@ -200,7 +215,8 @@ void ChannelAgent::AddUser(const char* nick, const int32 status)
 		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_USERS, buffer.String());
 }
 
-bool ChannelAgent::RemoveUser(const char* data)
+bool
+ChannelAgent::RemoveUser(const char* data)
 {
 	ASSERT(data != NULL);
 	/*
@@ -208,7 +224,8 @@ bool ChannelAgent::RemoveUser(const char* data)
 	 *                   NamesView and update the status counts
 	 */
 
-	if (fNamesList == NULL) return false;
+	if (fNamesList == NULL)
+		return false;
 
 	// if nickname is present in tab completion lists, remove
 	RemoveNickFromList(fRecentNicks, data);
@@ -228,8 +245,8 @@ bool ChannelAgent::RemoveUser(const char* data)
 				buffer << fOpsCount;
 
 				if (GetLayout()->IsVisible())
-					vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS,
-																		  buffer.String());
+					vision_app->pClientWin()->pStatusView()->SetItemValue(
+						STATUS_OPS, buffer.String());
 
 				buffer = "";
 			}
@@ -237,8 +254,8 @@ bool ChannelAgent::RemoveUser(const char* data)
 			--fUserCount;
 			buffer << fUserCount;
 			if (GetLayout()->IsVisible())
-				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_USERS,
-																	  buffer.String());
+				vision_app->pClientWin()->pStatusView()->SetItemValue(
+					STATUS_USERS, buffer.String());
 
 			delete item;
 			return true;
@@ -248,8 +265,9 @@ bool ChannelAgent::RemoveUser(const char* data)
 	return false;
 }
 
-void ChannelAgent::ChannelMessage(const char* msgz, const char* nick, const char* ident,
-								  const char* address)
+void
+ChannelAgent::ChannelMessage(
+	const char* msgz, const char* nick, const char* ident, const char* address)
 {
 	if (nick) {
 		int32 count(fRecentNicks.CountItems());
@@ -264,7 +282,8 @@ void ChannelAgent::ChannelMessage(const char* msgz, const char* nick, const char
 	ClientAgent::ChannelMessage(msgz, nick, ident, address);
 }
 
-int ChannelAgent::AlphaSortNames(const BString* name1, const BString* name2)
+int
+ChannelAgent::AlphaSortNames(const BString* name1, const BString* name2)
 {
 	/*
 	 * Function purpose: Help Tab Completion sort nicknames
@@ -278,12 +297,14 @@ int ChannelAgent::AlphaSortNames(const BString* name1, const BString* name2)
 	// are assuming that if one is NULL
 	// we return them as equal.  What if one
 	// is NULL, and the other isn't?
-	if (!name1 || !name2) return 0;
+	if (!name1 || !name2)
+		return 0;
 
 	return name1->ICompare(*name2);
 }
 
-int ChannelAgent::SortNames(const void* name1, const void* name2)
+int
+ChannelAgent::SortNames(const void* name1, const void* name2)
 {
 	/*
 	 * Function purpose: Help NamesView::SortItems() sort nicknames
@@ -297,14 +318,15 @@ int ChannelAgent::SortNames(const void* name1, const void* name2)
 
 	// clunky way to get around C++ warnings re casting from const void * to NameItem *
 
-	const NameItem* firstPtr(*((NameItem * const*)name1));
-	const NameItem* secondPtr(*((NameItem * const*)name2));
+	const NameItem* firstPtr(*((NameItem* const*)name1));
+	const NameItem* secondPtr(*((NameItem* const*)name2));
 
 	// Not sure if this can happen, and we
 	// are assuming that if one is NULL
 	// we return them as equal.  What if one
 	// is NULL, and the other isn't?
-	if (!firstPtr || !secondPtr) return 0;
+	if (!firstPtr || !secondPtr)
+		return 0;
 
 	BString first, second;
 
@@ -318,7 +340,8 @@ int ChannelAgent::SortNames(const void* name1, const void* name2)
 	return first.ICompare(second);
 }
 
-void ChannelAgent::TabExpansion()
+void
+ChannelAgent::TabExpansion()
 {
 	/*
 	 * Function purpose: Get the characters before the caret's current position,
@@ -331,23 +354,25 @@ void ChannelAgent::TabExpansion()
 	static BString lastNick;
 	fInput->TextView()->GetSelection(&start, &finish);
 
-	if (fInput->TextView()->TextLength() && start == finish &&
-		start == fInput->TextView()->TextLength()) {
+	if (fInput->TextView()->TextLength() && start == finish
+		&& start == fInput->TextView()->TextLength()) {
 		const char* fInputText(fInput->TextView()->Text() + fInput->TextView()->TextLength());
 		const char* place(fInputText);
 
 		while (place > fInput->TextView()->Text()) {
-			if (*(place - 1) == '\x20') break;
+			if (*(place - 1) == '\x20')
+				break;
 
 			--place;
 		}
 
-		if (fLastExpansion.Length() == 0 ||
-			fLastExpansion.ICompare(place, fLastExpansion.Length()) != 0 || lastNick != place) {
+		if (fLastExpansion.Length() == 0
+			|| fLastExpansion.ICompare(place, fLastExpansion.Length()) != 0 || lastNick != place) {
 			lastindex = 0;
 			fLastExpansion = place;
 
-			while (!fCompletionNicks.IsEmpty()) delete fCompletionNicks.RemoveItemAt(0L);
+			while (!fCompletionNicks.IsEmpty())
+				delete fCompletionNicks.RemoveItemAt(0L);
 
 			int32 count(fNamesList->CountItems()), i(0);
 
@@ -366,8 +391,8 @@ void ChannelAgent::TabExpansion()
 			// list in the correct order
 			for (i = 0; i < count; i++) {
 				BString* name(new BString(*fRecentNicks.ItemAt(i)));
-				if (!(name->ICompare(fLastExpansion.String(), strlen(fLastExpansion.String()))) &&
-					FindPosition(name->String()) > 0) {
+				if (!(name->ICompare(fLastExpansion.String(), strlen(fLastExpansion.String())))
+					&& FindPosition(name->String()) > 0) {
 					// parse through list and nuke duplicate if present
 					for (int32 j = fCompletionNicks.CountItems() - 1; j >= 0; j--) {
 						if (!(name->ICompare(*fCompletionNicks.ItemAt(j)))) {
@@ -392,7 +417,8 @@ void ChannelAgent::TabExpansion()
 			if (count > 0) {
 				insertion = *(fCompletionNicks.ItemAt(lastindex++));
 
-				if (lastindex == count) lastindex = 0;
+				if (lastindex == count)
+					lastindex = 0;
 				lastNick = insertion;
 			}
 		}
@@ -412,614 +438,653 @@ void ChannelAgent::TabExpansion()
       if (place2 == fInput->TextView()->Text())
 	insertion += ": ";
 #endif
-			fInput->TextView()->Delete(place - fInput->TextView()->Text(),
-									   fInput->TextView()->TextLength());
+			fInput->TextView()->Delete(
+				place - fInput->TextView()->Text(), fInput->TextView()->TextLength());
 
 			fInput->TextView()->Insert(insertion.String());
-			fInput->TextView()->Select(fInput->TextView()->TextLength(),
-									   fInput->TextView()->TextLength());
+			fInput->TextView()->Select(
+				fInput->TextView()->TextLength(), fInput->TextView()->TextLength());
 		}
 	}
 }
 
-void ChannelAgent::AddMenuItems(BPopUpMenu* pMenu)
+void
+ChannelAgent::AddMenuItems(BPopUpMenu* pMenu)
 {
 }
 
-void ChannelAgent::MessageReceived(BMessage* msg)
+void
+ChannelAgent::MessageReceived(BMessage* msg)
 {
 	int32 i(0);
 
 	switch (msg->what) {
-	case M_USER_QUIT: {
-		const char* nick(NULL);
+		case M_USER_QUIT:
+		{
+			const char* nick(NULL);
 
-		msg->FindString("nick", &nick);
+			msg->FindString("nick", &nick);
 
-		if (RemoveUser(nick)) {
+			if (RemoveUser(nick)) {
+				BMessage display;
+
+				if (msg->FindMessage("display", &display) == B_NO_ERROR)
+					ClientAgent::MessageReceived(&display);
+			}
+		} break;
+
+		case M_USER_ADD:
+		{
+			const char* nick(NULL);
+			bool ignore(false);
+
+			int32 iStatus(STATUS_NORMAL_BIT);
+
+			msg->FindString("nick", &nick);
+			msg->FindBool("ignore", &ignore);
+			if (nick == NULL) {
+				printf("ERROR: attempted to AddUser an empty nick in ChannelAgent, channel: %s\n",
+					fId.String());
+				break;
+			}
+
+			if (ignore)
+				iStatus |= STATUS_IGNORE_BIT;
+
+			AddUser(nick, iStatus);
+
+			BMessage display;
+			if (msg->FindMessage("display", &display) == B_NO_ERROR)
+				ClientAgent::MessageReceived(&display);
+		} break;
+
+		case M_CHANGE_NICK:
+		{
+			const char *oldNick(NULL), *newNick(NULL);
+			NameItem* item(NULL);
+			int32 thePos(-1);
+
+			if ((msg->FindString("oldnick", &oldNick) != B_OK)
+				|| (msg->FindString("newnick", &newNick) != B_OK)) {
+				printf("Error: invalid pointer, ChannelAgent::MessageReceived, M_CHANGE_NICK");
+				break;
+			}
+
+			if (fMyNick.ICompare(oldNick) == 0 && GetLayout()->IsVisible())
+				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, newNick);
+
+			if (((thePos = FindPosition(oldNick)) >= 0)
+				&& ((item = (static_cast<NameItem*>(fNamesList->ItemAt(thePos)))) != 0)) {
+				item->SetName(newNick);
+				fNamesList->SortItems(SortNames);
+				if (fLastExpansion.ICompare(oldNick, fLastExpansion.Length()) == 0) {
+					int32 count(fRecentNicks.CountItems());
+					BString* name(NULL);
+
+					for (i = 0; i < count; i++)
+						if ((name = fRecentNicks.ItemAt(i))->ICompare(oldNick) == 0) {
+							if (fLastExpansion.ICompare(newNick, fLastExpansion.Length()) == 0)
+								name->SetTo(newNick);
+							else
+								delete fRecentNicks.RemoveItemAt(i);
+							break;
+						}
+					count = fCompletionNicks.CountItems();
+					for (i = 0; i < count; i++)
+						if ((name = fCompletionNicks.ItemAt(i))->ICompare(oldNick) == 0) {
+							if (fLastExpansion.ICompare(newNick, fLastExpansion.Length()) == 0)
+								name->SetTo(newNick);
+							else
+								delete fCompletionNicks.RemoveItemAt(i);
+							break;
+						}
+				}
+			} else
+				break;
+
+			ClientAgent::MessageReceived(msg);
+		} break;
+
+		case M_CHANNEL_NAMES:
+		{
+			for (i = 0; msg->HasString("nick", i); ++i) {
+				const char* nick(NULL);
+				bool founder(false), protect(false), op(false), voice(false), helper(false),
+					ignored(false);
+
+				msg->FindString("nick", i, &nick);
+				msg->FindBool("founder", i, &founder);
+				msg->FindBool("protect", i, &protect);
+				msg->FindBool("op", i, &op);
+				msg->FindBool("voice", i, &voice);
+				msg->FindBool("helper", i, &helper);
+				msg->FindBool("ignored", i, &ignored);
+
+				if (FindPosition(nick) < 0) {
+					int32 iStatus(ignored ? STATUS_IGNORE_BIT : 0);
+
+					if (founder) {
+						++nick;
+						++fOpsCount;
+						iStatus |= STATUS_FOUNDER_BIT;
+					} else if (protect) {
+						++nick;
+						++fOpsCount;
+						iStatus |= STATUS_PROTECTED_BIT;
+					} else if (op) {
+						++nick;
+						++fOpsCount;
+						iStatus |= STATUS_OP_BIT;
+					} else if (voice) {
+						++nick;
+						iStatus |= STATUS_VOICE_BIT;
+					} else if (helper) {
+						++nick;
+						iStatus |= STATUS_HELPER_BIT;
+					} else
+						iStatus |= STATUS_NORMAL_BIT;
+
+					fUserCount++;
+
+					fNamesList->AddItem(new NameItem(nick, iStatus));
+				}
+			}
+
+			fNamesList->SortItems(SortNames);
+
+			if (GetLayout()->IsVisible()) {
+				BString buffer;
+				buffer << fOpsCount;
+				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS, buffer.String());
+
+				buffer = "";
+				buffer << fUserCount;
+				vision_app->pClientWin()->pStatusView()->SetItemValue(
+					STATUS_USERS, buffer.String());
+			}
+		} break;
+
+		case M_SERVER_DISCONNECT:
+		{
+			// clear names list on disconnect
+			fNamesList->ClearList();
+			fOpsCount = 0;
+			fUserCount = 0;
+
+			// clear heuristics completion list - this ensures that no stale nicks are left
+			// over in it after reconnect -- list will quickly be rebuilt anyhow if there
+			// is any conversation whatsoever going on
+			while (fRecentNicks.CountItems() > 0)
+				delete fRecentNicks.RemoveItemAt(0L);
+
+		} break;
+
+		case M_REJOIN:
+		{
+			const char* newNick(NULL);
+
+			if (msg->FindString("nickname", &newNick) != B_OK) {
+				printf("Error: ChannelAgent::MessageReceived, M_REJOIN: invalid pointer\n");
+				break;
+			}
+
+			fMyNick = newNick;	// update nickname (might have changed on reconnect)
+
+			if (GetLayout()->IsVisible())
+				vision_app->pClientWin()->pStatusView()->SetItemValue(
+					STATUS_NICK, fMyNick.String());
+
+			Display(B_TRANSLATE("[@] Attempting to rejoin" B_UTF8_ELLIPSIS "\n"), C_ERROR,
+				C_BACKGROUND, F_SERVER);
+
+			// send join cmd
+			BMessage send(M_SERVER_SEND);
+			AddSend(&send, "JOIN ");
+			AddSend(&send, fId);
+			if (fChanKey != "") {
+				AddSend(&send, " ");
+				AddSend(&send, fChanKey);
+			}
+			AddSend(&send, endl);
+		} break;
+
+		case M_CHANNEL_TOPIC:
+		{
+			const char* theTopic(NULL);
+			BString buffer;
+
+			if (msg->FindString("topic", &theTopic) != B_OK) {
+				printf("ChannelAgent::MessageReceived, M_CHANNEL_TOPIC: invalid pointer\n");
+				break;
+			}
+			fTopic = theTopic;
+
+			if (GetLayout()->IsVisible())
+				vision_app->pClientWin()->pStatusView()->SetItemValue(
+					STATUS_META, FilterCrap(theTopic, true).String());
+
 			BMessage display;
 
 			if (msg->FindMessage("display", &display) == B_NO_ERROR)
 				ClientAgent::MessageReceived(&display);
-		}
-	} break;
+		} break;
 
-	case M_USER_ADD: {
-		const char* nick(NULL);
-		bool ignore(false);
+		case M_OPEN_MSGAGENT:
+		{
+			const char* theNick(NULL);
+			msg->FindString("nick", &theNick);
 
-		int32 iStatus(STATUS_NORMAL_BIT);
-
-		msg->FindString("nick", &nick);
-		msg->FindBool("ignore", &ignore);
-		if (nick == NULL) {
-			printf("ERROR: attempted to AddUser an empty nick in ChannelAgent, channel: %s\n",
-				   fId.String());
-			break;
-		}
-
-		if (ignore) iStatus |= STATUS_IGNORE_BIT;
-
-		AddUser(nick, iStatus);
-
-		BMessage display;
-		if (msg->FindMessage("display", &display) == B_NO_ERROR)
-			ClientAgent::MessageReceived(&display);
-	} break;
-
-	case M_CHANGE_NICK: {
-		const char* oldNick(NULL), *newNick(NULL);
-		NameItem* item(NULL);
-		int32 thePos(-1);
-
-		if ((msg->FindString("oldnick", &oldNick) != B_OK) ||
-			(msg->FindString("newnick", &newNick) != B_OK)) {
-			printf("Error: invalid pointer, ChannelAgent::MessageReceived, M_CHANGE_NICK");
-			break;
-		}
-
-		if (fMyNick.ICompare(oldNick) == 0 && GetLayout()->IsVisible())
-			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, newNick);
-
-		if (((thePos = FindPosition(oldNick)) >= 0) &&
-			((item = (static_cast<NameItem*>(fNamesList->ItemAt(thePos)))) != 0)) {
-			item->SetName(newNick);
-			fNamesList->SortItems(SortNames);
-			if (fLastExpansion.ICompare(oldNick, fLastExpansion.Length()) == 0) {
-				int32 count(fRecentNicks.CountItems());
-				BString* name(NULL);
-
-				for (i = 0; i < count; i++)
-					if ((name = fRecentNicks.ItemAt(i))->ICompare(oldNick) == 0) {
-						if (fLastExpansion.ICompare(newNick, fLastExpansion.Length()) == 0)
-							name->SetTo(newNick);
-						else
-							delete fRecentNicks.RemoveItemAt(i);
-						break;
-					}
-				count = fCompletionNicks.CountItems();
-				for (i = 0; i < count; i++)
-					if ((name = fCompletionNicks.ItemAt(i))->ICompare(oldNick) == 0) {
-						if (fLastExpansion.ICompare(newNick, fLastExpansion.Length()) == 0)
-							name->SetTo(newNick);
-						else
-							delete fCompletionNicks.RemoveItemAt(i);
-						break;
-					}
-			}
-		} else
-			break;
-
-		ClientAgent::MessageReceived(msg);
-	} break;
-
-	case M_CHANNEL_NAMES: {
-		for (i = 0; msg->HasString("nick", i); ++i) {
-			const char* nick(NULL);
-			bool founder(false), protect(false), op(false), voice(false), helper(false),
-				ignored(false);
-
-			msg->FindString("nick", i, &nick);
-			msg->FindBool("founder", i, &founder);
-			msg->FindBool("protect", i, &protect);
-			msg->FindBool("op", i, &op);
-			msg->FindBool("voice", i, &voice);
-			msg->FindBool("helper", i, &helper);
-			msg->FindBool("ignored", i, &ignored);
-
-			if (FindPosition(nick) < 0) {
-				int32 iStatus(ignored ? STATUS_IGNORE_BIT : 0);
-
-				if (founder) {
-					++nick;
-					++fOpsCount;
-					iStatus |= STATUS_FOUNDER_BIT;
-				} else if (protect) {
-					++nick;
-					++fOpsCount;
-					iStatus |= STATUS_PROTECTED_BIT;
-				} else if (op) {
-					++nick;
-					++fOpsCount;
-					iStatus |= STATUS_OP_BIT;
-				} else if (voice) {
-					++nick;
-					iStatus |= STATUS_VOICE_BIT;
-				} else if (helper) {
-					++nick;
-					iStatus |= STATUS_HELPER_BIT;
-				} else
-					iStatus |= STATUS_NORMAL_BIT;
-
-				fUserCount++;
-
-				fNamesList->AddItem(new NameItem(nick, iStatus));
-			}
-		}
-
-		fNamesList->SortItems(SortNames);
-
-		if (GetLayout()->IsVisible()) {
-			BString buffer;
-			buffer << fOpsCount;
-			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS, buffer.String());
-
-			buffer = "";
-			buffer << fUserCount;
-			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_USERS, buffer.String());
-		}
-	} break;
-
-	case M_SERVER_DISCONNECT: {
-		// clear names list on disconnect
-		fNamesList->ClearList();
-		fOpsCount = 0;
-		fUserCount = 0;
-
-		// clear heuristics completion list - this ensures that no stale nicks are left
-		// over in it after reconnect -- list will quickly be rebuilt anyhow if there
-		// is any conversation whatsoever going on
-		while (fRecentNicks.CountItems() > 0) delete fRecentNicks.RemoveItemAt(0L);
-
-	} break;
-
-	case M_REJOIN: {
-		const char* newNick(NULL);
-
-		if (msg->FindString("nickname", &newNick) != B_OK) {
-			printf("Error: ChannelAgent::MessageReceived, M_REJOIN: invalid pointer\n");
-			break;
-		}
-
-		fMyNick = newNick; // update nickname (might have changed on reconnect)
-
-		if (GetLayout()->IsVisible())
-			vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, fMyNick.String());
-
-		Display(B_TRANSLATE("[@] Attempting to rejoin" B_UTF8_ELLIPSIS "\n"),
-			C_ERROR, C_BACKGROUND, F_SERVER);
-
-		// send join cmd
-		BMessage send(M_SERVER_SEND);
-		AddSend(&send, "JOIN ");
-		AddSend(&send, fId);
-		if (fChanKey != "") {
-			AddSend(&send, " ");
-			AddSend(&send, fChanKey);
-		}
-		AddSend(&send, endl);
-	} break;
-
-	case M_CHANNEL_TOPIC: {
-		const char* theTopic(NULL);
-		BString buffer;
-
-		if (msg->FindString("topic", &theTopic) != B_OK) {
-			printf("ChannelAgent::MessageReceived, M_CHANNEL_TOPIC: invalid pointer\n");
-			break;
-		}
-		fTopic = theTopic;
-
-		if (GetLayout()->IsVisible())
-			vision_app->pClientWin()->pStatusView()->SetItemValue(
-				STATUS_META, FilterCrap(theTopic, true).String());
-
-		BMessage display;
-
-		if (msg->FindMessage("display", &display) == B_NO_ERROR)
-			ClientAgent::MessageReceived(&display);
-	} break;
-
-	case M_OPEN_MSGAGENT: {
-		const char* theNick(NULL);
-		msg->FindString("nick", &theNick);
-
-		if (theNick == NULL) {
-			NameItem* myUser;
-			int32 pos = fNamesList->CurrentSelection();
-			if (pos >= 0) {
-				myUser = static_cast<NameItem*>(fNamesList->ItemAt(pos));
-				BString targetNick = myUser->Name();
-				msg->AddString("nick", targetNick.String());
-			}
-		}
-
-		fSMsgr.SendMessage(msg);
-	} break;
-
-	case M_CHANNEL_GOT_KICKED: {
-		const char* theChannel(NULL), *kicker(NULL), *rest(NULL);
-
-		if ((msg->FindString("channel", &theChannel) != B_OK) ||
-			(msg->FindString("kicker", &kicker) != B_OK) ||
-			(msg->FindString("rest", &rest) != B_OK)) {
-			printf("Error: ClientAgent::MessageReceived, M_CHANNEL_GOT_KICKED, invalid pointer\n");
-			break;
-		}
-
-		BMessage wegotkicked(M_DISPLAY); // "you were kicked"
-		BString buffer;
-		buffer = B_TRANSLATE("*** You have been kicked from %channel% by %kicker% (%rest%)\n");
-		buffer.ReplaceFirst("%channel%", theChannel);
-		buffer.ReplaceFirst("%kicker%", kicker);
-		buffer.ReplaceFirst("%rest%", rest);
-		PackDisplay(&wegotkicked, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
-
-		// clean up
-		fNamesList->ClearList();
-		fOpsCount = 0;
-		fUserCount = 0;
-
-		fMsgr.SendMessage(&wegotkicked);
-
-		BMessage attemptrejoin(M_DISPLAY); // "you were kicked"
-		buffer = B_TRANSLATE("*** Attempting to rejoin %channel%" B_UTF8_ELLIPSIS "\n");
-		buffer.ReplaceFirst("%channel%", theChannel);
-		PackDisplay(&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
-		fMsgr.SendMessage(&attemptrejoin);
-
-		BMessage send(M_SERVER_SEND);
-		AddSend(&send, "JOIN ");
-		AddSend(&send, theChannel);
-		if (fChanKey != "") {
-			AddSend(&send, " ");
-			AddSend(&send, fChanKey);
-		}
-		AddSend(&send, endl);
-	} break;
-
-	case M_CHANNEL_MODE: {
-		ModeEvent(msg);
-	} break;
-
-	case M_CHANNEL_MSG: {
-		bool hasNick(false);
-		BString tempString, theNick, knownAs;
-		msg->FindString("msgz", &tempString);
-		msg->FindString("nick", &theNick);
-		if (theNick != fMyNick) FirstKnownAs(tempString, knownAs, &hasNick);
-
-		if (IsHidden()) {
-			UpdateStatus((hasNick) ? WIN_NICK_BIT : WIN_NEWS_BIT);
-
-			if (hasNick) {
-				if (tempString[0] == '\1') {
-					tempString.RemoveFirst("\1ACTION ");
-					tempString.RemoveLast("\1");
+			if (theNick == NULL) {
+				NameItem* myUser;
+				int32 pos = fNamesList->CurrentSelection();
+				if (pos >= 0) {
+					myUser = static_cast<NameItem*>(fNamesList->ItemAt(pos));
+					BString targetNick = myUser->Name();
+					msg->AddString("nick", targetNick.String());
 				}
-
-				BNotification notification(B_INFORMATION_NOTIFICATION);
-				notification.SetGroup(BString(B_TRANSLATE_SYSTEM_NAME("Vision")));
-				entry_ref ref = vision_app->AppRef();
-				notification.SetOnClickFile(&ref);
-				notification.SetTitle(fServerName.String());
-				BString content;
-				content.SetToFormat(B_TRANSLATE("%s - %s said: %s"),
-					fId.String(), theNick.String(), tempString.String());
-				notification.SetContent(content);
-				notification.Send();
 			}
-		} else if (hasNick)
-			system_beep(kSoundEventNames[(uint32)seNickMentioned]);
 
-		ClientAgent::MessageReceived(msg);
-	} break;
+			fSMsgr.SendMessage(msg);
+		} break;
 
-	case M_CHANNEL_MODES: {
-		const char* mode(NULL), *chan(NULL), *msgz(NULL);
+		case M_CHANNEL_GOT_KICKED:
+		{
+			const char *theChannel(NULL), *kicker(NULL), *rest(NULL);
 
-		if ((msg->FindString("mode", &mode) != B_OK) || (msg->FindString("chan", &chan) != B_OK) ||
-			(msg->FindString("msgz", &msgz) != B_OK)) {
-			printf("Error: ChannelAgent::MessageReceived, M_CHANNEL_MODES: invalid pointer\n");
-			break;
-		}
-
-		if (fId.ICompare(chan) == 0) {
-			BString realMode(GetWord(mode, 1));
-			int32 place(2);
-
-			if (realMode.FindFirst("l") >= 0) fChanLimit = GetWord(mode, place++);
-
-			if (realMode.FindFirst("k") >= 0) {
-				fChanKey = GetWord(mode, place++);
-
-				// u2 may not send the channel key, thats why we stored the /join cmd
-				// in a string in ParseCmd
-				if (fChanKey == "*" && fIrcdtype == IRCD_UNDERNET) {
-					BString tempId(fId);
-					tempId.Remove(0, 1); // remove any #, &, !, blah.
-
-					if (vision_app->pClientWin()->joinStrings.FindFirst(tempId) < 1) {
-						// can't find the join cmd for this channel in joinStrings!
-					} else {
-						BString joinStringsL(vision_app->pClientWin()->joinStrings);
-
-						// FindLast to make sure we get the last attempt (user might have
-						// tried several keys)
-						int32 idPos(joinStringsL.FindLast(tempId));
-						BString tempKeyString;
-						joinStringsL.MoveInto(tempKeyString, idPos, joinStringsL.Length());
-
-						fChanKey = GetWord(tempKeyString.String(), 2);
-					}
-				} // end u2-kludge stuff
+			if ((msg->FindString("channel", &theChannel) != B_OK)
+				|| (msg->FindString("kicker", &kicker) != B_OK)
+				|| (msg->FindString("rest", &rest) != B_OK)) {
+				printf(
+					"Error: ClientAgent::MessageReceived, M_CHANNEL_GOT_KICKED, invalid pointer\n");
+				break;
 			}
-			fChanMode = mode;
-			if (GetLayout()->IsVisible())
-				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_MODES,
-																	  fChanMode.String());
-		}
 
-		BMessage dispMsg(M_DISPLAY);
-		PackDisplay(&dispMsg, msgz, C_OP, C_BACKGROUND, F_TEXT);
-		BMessenger display(this);
-		display.SendMessage(&dispMsg);
-	} break;
+			BMessage wegotkicked(M_DISPLAY);  // "you were kicked"
+			BString buffer;
+			buffer = B_TRANSLATE("*** You have been kicked from %channel% by %kicker% (%rest%)\n");
+			buffer.ReplaceFirst("%channel%", theChannel);
+			buffer.ReplaceFirst("%kicker%", kicker);
+			buffer.ReplaceFirst("%rest%", rest);
+			PackDisplay(&wegotkicked, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
 
-	case M_NAMES_POPUP_MODE: {
-		const char* inaction(NULL);
+			// clean up
+			fNamesList->ClearList();
+			fOpsCount = 0;
+			fUserCount = 0;
 
-		msg->FindString("action", &inaction);
+			fMsgr.SendMessage(&wegotkicked);
 
-		int32 count(0), index(0);
+			BMessage attemptrejoin(M_DISPLAY);	// "you were kicked"
+			buffer = B_TRANSLATE("*** Attempting to rejoin %channel%" B_UTF8_ELLIPSIS "\n");
+			buffer.ReplaceFirst("%channel%", theChannel);
+			PackDisplay(&attemptrejoin, buffer.String(), C_QUIT, C_BACKGROUND, F_TEXT);
+			fMsgr.SendMessage(&attemptrejoin);
 
-		BString victims, targetNick, action(inaction), modechar, polarity;
-
-		NameItem* myUser(NULL);
-
-		/// action ///
-		if (action.FindFirst("voice") >= 0)
-			modechar = "v";
-		else if (action.FindFirst("op") >= 0)
-			modechar = "o";
-		else
-			break;
-
-		/// polarity ///
-		if (action.FindFirst("de") >= 0)
-			polarity += " -";
-		else
-			polarity += " +";
-
-		/// iterate ///
-		while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
-			myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
-			targetNick = myUser->Name();
-
-			victims += " ";
-			victims += targetNick;
-			count++;
-		}
-
-		BString command("/mode ");
-		command += fId;
-		command += polarity;
-
-		for (i = 0; i < count; i++) command += modechar;
-
-		command += victims;
-
-		ParseCmd(command.String());
-	} break;
-
-	case M_NAMES_POPUP_CTCP: {
-		const char* inaction(NULL);
-
-		msg->FindString("action", &inaction);
-
-		int32 index(0);
-		BString victims, targetNick, action(inaction);
-		NameItem* myUser(NULL);
-		action.ToUpper();
-
-		/// iterate ///
-		while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
-			myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
-			targetNick = myUser->Name();
-
-			victims += targetNick;
-			victims += ",";
-		}
-
-		victims.RemoveLast(",");
-
-		BString command("/ctcp ");
-		command += victims;
-		command += " ";
-		command += action;
-
-		ParseCmd(command.String());
-	} break;
-
-	case M_NAMES_POPUP_WHOIS: {
-		int32 index(0);
-		BString victims, targetNick;
-		NameItem* myUser(NULL);
-
-		/// iterate ///
-		while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
-			myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
-			targetNick = myUser->Name();
-
-			victims += targetNick;
-			victims += ",";
-		}
-
-		victims.RemoveLast(",");
-
-		BString command("/whois ");
-		command += victims;
-
-		ParseCmd(command.String());
-	} break;
-
-	case M_NAMES_POPUP_NOTIFY: {
-		int32 index(0);
-		BString victims, targetNick;
-		NameItem* myUser(NULL);
-
-		/// iterate ///
-		while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
-			myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
-			targetNick = myUser->Name();
-
-			victims += targetNick;
-			victims += " ";
-		}
-
-		victims.RemoveLast(",");
-
-		BString command("/notify ");
-		command += victims;
-
-		ParseCmd(command.String());
-
-	} break;
-
-	case M_NAMES_POPUP_DCCCHAT: {
-		int32 index(0);
-		BString targetNick;
-		NameItem* myUser(NULL);
-
-		/// iterate ///
-		while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
-			myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
-			targetNick = myUser->Name();
-
-			BString command("/dcc chat ");
-			command += targetNick;
-
-			ParseCmd(command.String());
-		}
-	} break;
-
-	case M_NAMES_POPUP_DCCSEND: {
-		int32 index(0);
-		BString targetNick;
-		NameItem* myUser(NULL);
-
-		/// iterate ///
-		while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
-			myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
-			targetNick = myUser->Name();
-
-			BString command("/dcc send ");
-			command += targetNick;
-
-			ParseCmd(command.String());
-		}
-	} break;
-
-	case M_NAMES_POPUP_KICK: {
-		int32 index(0);
-		BString targetNick, kickMsg(vision_app->GetCommand(CMD_KICK));
-		NameItem* myUser(NULL);
-
-		/// iterate ///
-		while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
-			myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
-			targetNick = myUser->Name();
-
-			BString command("/kick ");
-			command += targetNick;
-			command += " ";
-			command += kickMsg;
-
-			ParseCmd(command.String());
-		}
-	} break;
-
-	case M_STATUS_ADDITEMS: {
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, ""), true);
-
-		BString text(B_TRANSLATE("Lag:"));
-		text.Append(" ");
-		vision_app->pClientWin()->pStatusView()->AddItem(
-			new StatusItem(text.String(), "", STATUS_ALIGN_LEFT), true);
-
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, "", STATUS_ALIGN_LEFT),
-														 true);
-		text = B_TRANSLATE("Users:");
-		text.Append(" ");
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(text.String(), ""), true);
-
-		text = B_TRANSLATE("Ops:");
-		text.Append(" ");
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(text.String(), ""), true);
-
-		text = B_TRANSLATE("Modes:");
-		text.Append(" ");
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(text.String(), ""), true);
-
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem("", "", STATUS_ALIGN_LEFT),
-														 true);
-
-		// The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
-		// We send true on the last SetItemValue().
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_SERVER, fServerName.String(),
-															  false);
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_LAG, fMyLag.String(), false);
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, fMyNick.String(), false);
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_MODES, fChanMode.String(),
-															  false);
-		vision_app->pClientWin()->pStatusView()->SetItemValue(
-			STATUS_META, FilterCrap(fTopic.String(), true).String());
-
-		BString buffer;
-		buffer << fUserCount;
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_USERS, buffer.String(), false);
-		buffer = "";
-		buffer << fOpsCount;
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS, buffer.String(), true);
-	} break;
-
-	case M_CLIENT_QUIT: {
-		if ((msg->HasBool("vision:part") && msg->FindBool("vision:part")) ||
-			(msg->HasBool("vision:winlist") && msg->FindBool("vision:winlist"))) {
 			BMessage send(M_SERVER_SEND);
-			AddSend(&send, "PART ");
-			AddSend(&send, fId);
-			if (msg->HasString("vision:partmsg")) {
-				AddSend(&send, " :");
-				AddSend(&send, msg->FindString("vision:partmsg"));
+			AddSend(&send, "JOIN ");
+			AddSend(&send, theChannel);
+			if (fChanKey != "") {
+				AddSend(&send, " ");
+				AddSend(&send, fChanKey);
 			}
 			AddSend(&send, endl);
-		}
-		ClientAgent::MessageReceived(msg);
-	} break;
+		} break;
 
-	default:
-		ClientAgent::MessageReceived(msg);
+		case M_CHANNEL_MODE:
+		{
+			ModeEvent(msg);
+		} break;
+
+		case M_CHANNEL_MSG:
+		{
+			bool hasNick(false);
+			BString tempString, theNick, knownAs;
+			msg->FindString("msgz", &tempString);
+			msg->FindString("nick", &theNick);
+			if (theNick != fMyNick)
+				FirstKnownAs(tempString, knownAs, &hasNick);
+
+			if (IsHidden()) {
+				UpdateStatus((hasNick) ? WIN_NICK_BIT : WIN_NEWS_BIT);
+
+				if (hasNick) {
+					if (tempString[0] == '\1') {
+						tempString.RemoveFirst("\1ACTION ");
+						tempString.RemoveLast("\1");
+					}
+
+					BNotification notification(B_INFORMATION_NOTIFICATION);
+					notification.SetGroup(BString(B_TRANSLATE_SYSTEM_NAME("Vision")));
+					entry_ref ref = vision_app->AppRef();
+					notification.SetOnClickFile(&ref);
+					notification.SetTitle(fServerName.String());
+					BString content;
+					content.SetToFormat(B_TRANSLATE("%s - %s said: %s"), fId.String(),
+						theNick.String(), tempString.String());
+					notification.SetContent(content);
+					notification.Send();
+				}
+			} else if (hasNick)
+				system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+
+			ClientAgent::MessageReceived(msg);
+		} break;
+
+		case M_CHANNEL_MODES:
+		{
+			const char *mode(NULL), *chan(NULL), *msgz(NULL);
+
+			if ((msg->FindString("mode", &mode) != B_OK) || (msg->FindString("chan", &chan) != B_OK)
+				|| (msg->FindString("msgz", &msgz) != B_OK)) {
+				printf("Error: ChannelAgent::MessageReceived, M_CHANNEL_MODES: invalid pointer\n");
+				break;
+			}
+
+			if (fId.ICompare(chan) == 0) {
+				BString realMode(GetWord(mode, 1));
+				int32 place(2);
+
+				if (realMode.FindFirst("l") >= 0)
+					fChanLimit = GetWord(mode, place++);
+
+				if (realMode.FindFirst("k") >= 0) {
+					fChanKey = GetWord(mode, place++);
+
+					// u2 may not send the channel key, thats why we stored the /join cmd
+					// in a string in ParseCmd
+					if (fChanKey == "*" && fIrcdtype == IRCD_UNDERNET) {
+						BString tempId(fId);
+						tempId.Remove(0, 1);  // remove any #, &, !, blah.
+
+						if (vision_app->pClientWin()->joinStrings.FindFirst(tempId) < 1) {
+							// can't find the join cmd for this channel in joinStrings!
+						} else {
+							BString joinStringsL(vision_app->pClientWin()->joinStrings);
+
+							// FindLast to make sure we get the last attempt (user might have
+							// tried several keys)
+							int32 idPos(joinStringsL.FindLast(tempId));
+							BString tempKeyString;
+							joinStringsL.MoveInto(tempKeyString, idPos, joinStringsL.Length());
+
+							fChanKey = GetWord(tempKeyString.String(), 2);
+						}
+					}  // end u2-kludge stuff
+				}
+				fChanMode = mode;
+				if (GetLayout()->IsVisible())
+					vision_app->pClientWin()->pStatusView()->SetItemValue(
+						STATUS_MODES, fChanMode.String());
+			}
+
+			BMessage dispMsg(M_DISPLAY);
+			PackDisplay(&dispMsg, msgz, C_OP, C_BACKGROUND, F_TEXT);
+			BMessenger display(this);
+			display.SendMessage(&dispMsg);
+		} break;
+
+		case M_NAMES_POPUP_MODE:
+		{
+			const char* inaction(NULL);
+
+			msg->FindString("action", &inaction);
+
+			int32 count(0), index(0);
+
+			BString victims, targetNick, action(inaction), modechar, polarity;
+
+			NameItem* myUser(NULL);
+
+			/// action ///
+			if (action.FindFirst("voice") >= 0)
+				modechar = "v";
+			else if (action.FindFirst("op") >= 0)
+				modechar = "o";
+			else
+				break;
+
+			/// polarity ///
+			if (action.FindFirst("de") >= 0)
+				polarity += " -";
+			else
+				polarity += " +";
+
+			/// iterate ///
+			while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
+				myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
+				targetNick = myUser->Name();
+
+				victims += " ";
+				victims += targetNick;
+				count++;
+			}
+
+			BString command("/mode ");
+			command += fId;
+			command += polarity;
+
+			for (i = 0; i < count; i++)
+				command += modechar;
+
+			command += victims;
+
+			ParseCmd(command.String());
+		} break;
+
+		case M_NAMES_POPUP_CTCP:
+		{
+			const char* inaction(NULL);
+
+			msg->FindString("action", &inaction);
+
+			int32 index(0);
+			BString victims, targetNick, action(inaction);
+			NameItem* myUser(NULL);
+			action.ToUpper();
+
+			/// iterate ///
+			while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
+				myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
+				targetNick = myUser->Name();
+
+				victims += targetNick;
+				victims += ",";
+			}
+
+			victims.RemoveLast(",");
+
+			BString command("/ctcp ");
+			command += victims;
+			command += " ";
+			command += action;
+
+			ParseCmd(command.String());
+		} break;
+
+		case M_NAMES_POPUP_WHOIS:
+		{
+			int32 index(0);
+			BString victims, targetNick;
+			NameItem* myUser(NULL);
+
+			/// iterate ///
+			while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
+				myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
+				targetNick = myUser->Name();
+
+				victims += targetNick;
+				victims += ",";
+			}
+
+			victims.RemoveLast(",");
+
+			BString command("/whois ");
+			command += victims;
+
+			ParseCmd(command.String());
+		} break;
+
+		case M_NAMES_POPUP_NOTIFY:
+		{
+			int32 index(0);
+			BString victims, targetNick;
+			NameItem* myUser(NULL);
+
+			/// iterate ///
+			while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
+				myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
+				targetNick = myUser->Name();
+
+				victims += targetNick;
+				victims += " ";
+			}
+
+			victims.RemoveLast(",");
+
+			BString command("/notify ");
+			command += victims;
+
+			ParseCmd(command.String());
+
+		} break;
+
+		case M_NAMES_POPUP_DCCCHAT:
+		{
+			int32 index(0);
+			BString targetNick;
+			NameItem* myUser(NULL);
+
+			/// iterate ///
+			while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
+				myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
+				targetNick = myUser->Name();
+
+				BString command("/dcc chat ");
+				command += targetNick;
+
+				ParseCmd(command.String());
+			}
+		} break;
+
+		case M_NAMES_POPUP_DCCSEND:
+		{
+			int32 index(0);
+			BString targetNick;
+			NameItem* myUser(NULL);
+
+			/// iterate ///
+			while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
+				myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
+				targetNick = myUser->Name();
+
+				BString command("/dcc send ");
+				command += targetNick;
+
+				ParseCmd(command.String());
+			}
+		} break;
+
+		case M_NAMES_POPUP_KICK:
+		{
+			int32 index(0);
+			BString targetNick, kickMsg(vision_app->GetCommand(CMD_KICK));
+			NameItem* myUser(NULL);
+
+			/// iterate ///
+			while ((i = fNamesList->CurrentSelection(index++)) >= 0) {
+				myUser = static_cast<NameItem*>(fNamesList->ItemAt(i));
+				targetNick = myUser->Name();
+
+				BString command("/kick ");
+				command += targetNick;
+				command += " ";
+				command += kickMsg;
+
+				ParseCmd(command.String());
+			}
+		} break;
+
+		case M_STATUS_ADDITEMS:
+		{
+			vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, ""), true);
+
+			BString text(B_TRANSLATE("Lag:"));
+			text.Append(" ");
+			vision_app->pClientWin()->pStatusView()->AddItem(
+				new StatusItem(text.String(), "", STATUS_ALIGN_LEFT), true);
+
+			vision_app->pClientWin()->pStatusView()->AddItem(
+				new StatusItem(0, "", STATUS_ALIGN_LEFT), true);
+			text = B_TRANSLATE("Users:");
+			text.Append(" ");
+			vision_app->pClientWin()->pStatusView()->AddItem(
+				new StatusItem(text.String(), ""), true);
+
+			text = B_TRANSLATE("Ops:");
+			text.Append(" ");
+			vision_app->pClientWin()->pStatusView()->AddItem(
+				new StatusItem(text.String(), ""), true);
+
+			text = B_TRANSLATE("Modes:");
+			text.Append(" ");
+			vision_app->pClientWin()->pStatusView()->AddItem(
+				new StatusItem(text.String(), ""), true);
+
+			vision_app->pClientWin()->pStatusView()->AddItem(
+				new StatusItem("", "", STATUS_ALIGN_LEFT), true);
+
+			// The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
+			// We send true on the last SetItemValue().
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_SERVER, fServerName.String(), false);
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_LAG, fMyLag.String(), false);
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_NICK, fMyNick.String(), false);
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_MODES, fChanMode.String(), false);
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_META, FilterCrap(fTopic.String(), true).String());
+
+			BString buffer;
+			buffer << fUserCount;
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_USERS, buffer.String(), false);
+			buffer = "";
+			buffer << fOpsCount;
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_OPS, buffer.String(), true);
+		} break;
+
+		case M_CLIENT_QUIT:
+		{
+			if ((msg->HasBool("vision:part") && msg->FindBool("vision:part"))
+				|| (msg->HasBool("vision:winlist") && msg->FindBool("vision:winlist"))) {
+				BMessage send(M_SERVER_SEND);
+				AddSend(&send, "PART ");
+				AddSend(&send, fId);
+				if (msg->HasString("vision:partmsg")) {
+					AddSend(&send, " :");
+					AddSend(&send, msg->FindString("vision:partmsg"));
+				}
+				AddSend(&send, endl);
+			}
+			ClientAgent::MessageReceived(msg);
+		} break;
+
+		default:
+			ClientAgent::MessageReceived(msg);
 	}
 }
 
-void ChannelAgent::Parser(const char* buffer)
+void
+ChannelAgent::Parser(const char* buffer)
 {
 	/*
 	 * Function purpose: Send the text in {buffer} to the server
 	 */
 
-	fLastExpansion = ""; // used by ChannelAgent::TabExpansion()
+	fLastExpansion = "";  // used by ChannelAgent::TabExpansion()
 
 	BMessage send(M_SERVER_SEND);
 
@@ -1040,34 +1105,37 @@ void ChannelAgent::Parser(const char* buffer)
 	Display("\n");
 }
 
-void ChannelAgent::UpdateMode(char theSign, char theMode)
+void
+ChannelAgent::UpdateMode(char theSign, char theMode)
 {
-	char modeString[2]; // necessary C-style string
+	char modeString[2];	 // necessary C-style string
 	memset(modeString, 0, sizeof(modeString));
 	sprintf(modeString, "%c", theMode);
 	BString myTemp;
 
 	if (theSign == '-') {
 		switch (theMode) {
-		case 'l': {
-			myTemp = fChanLimit;
-			myTemp.Append(" ");
-			fChanMode.RemoveLast(myTemp);
-			myTemp = fChanLimit;
-			myTemp.Prepend(" ");
-			fChanMode.RemoveLast(myTemp);
-			fChanMode.RemoveLast(fChanLimit);
-		} break;
+			case 'l':
+			{
+				myTemp = fChanLimit;
+				myTemp.Append(" ");
+				fChanMode.RemoveLast(myTemp);
+				myTemp = fChanLimit;
+				myTemp.Prepend(" ");
+				fChanMode.RemoveLast(myTemp);
+				fChanMode.RemoveLast(fChanLimit);
+			} break;
 
-		case 'k': {
-			myTemp = fChanKey;
-			myTemp.Append(" ");
-			fChanMode.RemoveLast(myTemp);
-			myTemp = fChanKey;
-			myTemp.Prepend(" ");
-			fChanMode.RemoveLast(myTemp);
-			fChanMode.RemoveLast(fChanKey);
-		} break;
+			case 'k':
+			{
+				myTemp = fChanKey;
+				myTemp.Append(" ");
+				fChanMode.RemoveLast(myTemp);
+				myTemp = fChanKey;
+				myTemp.Prepend(" ");
+				fChanMode.RemoveLast(myTemp);
+				fChanMode.RemoveLast(fChanKey);
+			} break;
 		}
 
 		fChanMode.RemoveFirst(modeString);
@@ -1111,10 +1179,11 @@ void ChannelAgent::UpdateMode(char theSign, char theMode)
 		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_MODES, fChanMode.String());
 }
 
-void ChannelAgent::ModeEvent(BMessage* msg)
+void
+ChannelAgent::ModeEvent(BMessage* msg)
 {
 	int32 modPos(0), targetPos(1);
-	const char* mode(0), *target(0), *theNick(0);
+	const char *mode(0), *target(0), *theNick(0);
 	char theOperator(0);
 	bool hit(false);
 
@@ -1141,7 +1210,8 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 	display.SendMessage(&modeMsg);
 
 	// at least one
-	if (mode && *mode && *(mode + 1)) theOperator = mode[modPos++];
+	if (mode && *mode && *(mode + 1))
+		theOperator = mode[modPos++];
 
 	while (theOperator && mode[modPos]) {
 		char theModifier(mode[modPos]);
@@ -1151,8 +1221,8 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 			NameItem* item;
 			int32 pos;
 
-			if ((pos = FindPosition(myTarget.String())) < 0 ||
-				(item = static_cast<NameItem*>(fNamesList->ItemAt(pos))) == 0) {
+			if ((pos = FindPosition(myTarget.String())) < 0
+				|| (item = static_cast<NameItem*>(fNamesList->ItemAt(pos))) == 0) {
 				printf("[ERROR] Couldn't find %s in NamesView\n", myTarget.String());
 				return;
 			}
@@ -1169,8 +1239,8 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 					buffer = "";
 					buffer << fOpsCount;
 					if (GetLayout()->IsVisible())
-						vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS,
-																			  buffer.String());
+						vision_app->pClientWin()->pStatusView()->SetItemValue(
+							STATUS_OPS, buffer.String());
 				}
 			}
 
@@ -1179,7 +1249,8 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 
 				if ((iStatus & STATUS_OP_BIT) != 0) {
 					iStatus &= ~STATUS_OP_BIT;
-					if ((iStatus & STATUS_VOICE_BIT) == 0) iStatus |= STATUS_NORMAL_BIT;
+					if ((iStatus & STATUS_VOICE_BIT) == 0)
+						iStatus |= STATUS_NORMAL_BIT;
 					item->SetStatus(iStatus);
 					--fOpsCount;
 
@@ -1187,8 +1258,8 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 					buffer << fOpsCount;
 
 					if (GetLayout()->IsVisible())
-						vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_OPS,
-																			  buffer.String());
+						vision_app->pClientWin()->pStatusView()->SetItemValue(
+							STATUS_OPS, buffer.String());
 				}
 			}
 
@@ -1200,7 +1271,8 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 				hit = true;
 
 				iStatus &= ~STATUS_VOICE_BIT;
-				if ((iStatus & STATUS_OP_BIT) == 0) iStatus |= STATUS_NORMAL_BIT;
+				if ((iStatus & STATUS_OP_BIT) == 0)
+					iStatus |= STATUS_NORMAL_BIT;
 				item->SetStatus(iStatus);
 			}
 
@@ -1212,7 +1284,8 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 				hit = true;
 
 				iStatus &= ~STATUS_HELPER_BIT;
-				if ((iStatus & STATUS_HELPER_BIT) == 0) iStatus |= STATUS_NORMAL_BIT;
+				if ((iStatus & STATUS_HELPER_BIT) == 0)
+					iStatus |= STATUS_NORMAL_BIT;
 				item->SetStatus(iStatus);
 			}
 		} else if (theModifier == 'l' && theOperator == '-') {
@@ -1239,7 +1312,8 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 		}
 
 		++modPos;
-		if (mode[modPos] == '+' || mode[modPos] == '-') theOperator = mode[modPos++];
+		if (mode[modPos] == '+' || mode[modPos] == '-')
+			theOperator = mode[modPos++];
 	}
 
 	if (hit) {
@@ -1247,4 +1321,3 @@ void ChannelAgent::ModeEvent(BMessage* msg)
 		fNamesList->Invalidate();
 	}
 }
-

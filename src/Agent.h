@@ -3,17 +3,15 @@
 
 #include "WindowList.h"
 
-class Agent
-{
+class Agent {
 public:
 	Agent();
 	virtual ~Agent();
-	virtual BView *View();
+	virtual BView* View();
 
 	WindowListItem* fAgentWinItem;
 
 private:
-
 };
 
 #endif

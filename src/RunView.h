@@ -35,15 +35,22 @@ class BCursor;
 class BMessageRunner;
 class BPopUpMenu;
 
-class SelectPos
-{
+class SelectPos {
 public:
 	int16 fLine;
 	int16 fOffset;
 
-	SelectPos(int16 selLine = 0, int16 selOffset = 0) : fLine(selLine), fOffset(selOffset) {}
+	SelectPos(int16 selLine = 0, int16 selOffset = 0)
+		: fLine(selLine),
+		  fOffset(selOffset)
+	{
+	}
 
-	SelectPos(const SelectPos& pos) : fLine(pos.fLine), fOffset(pos.fOffset) {}
+	SelectPos(const SelectPos& pos)
+		: fLine(pos.fLine),
+		  fOffset(pos.fOffset)
+	{
+	}
 
 	~SelectPos() {}
 
@@ -63,8 +70,7 @@ public:
 	inline int operator!=(const SelectPos& rhs) const { return (!(*this == rhs)); }
 };
 
-class RunView : public BView
-{
+class RunView : public BView {
 	BScrollView* fScroller;
 	BCursor* fURLCursor;
 	Theme* fTheme;
@@ -114,7 +120,7 @@ public:
 	virtual void SetViewColor(rgb_color);
 	void SetViewColor(uchar red, uchar green, uchar blue, uchar alpha = 255)
 	{
-		rgb_color color = {red, green, blue, alpha};
+		rgb_color color = { red, green, blue, alpha };
 		SetViewColor(color);
 	}
 

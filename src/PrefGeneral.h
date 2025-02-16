@@ -28,8 +28,7 @@ class BListView;
 class BBox;
 class BStringItem;
 
-class GeneralPrefsView : public BView
-{
+class GeneralPrefsView : public BView {
 	enum PrefsItems {
 		piAlias = 0,
 		piWindow,
@@ -59,4 +58,4 @@ private:
 	int32 fPreviousSelection;
 };
 
-#endif // _PREFGENERAL_H
+#endif	// _PREFGENERAL_H

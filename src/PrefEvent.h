@@ -29,8 +29,7 @@
 class BTextControl;
 class BScrollView;
 
-class EventPrefsView : public BView
-{
+class EventPrefsView : public BView {
 public:
 	EventPrefsView();
 	virtual ~EventPrefsView();
@@ -45,4 +44,4 @@ private:
 	float fMaxheight, fProportionheight;
 };
 
-#endif // _PREFEVENT_H
+#endif	// _PREFEVENT_H

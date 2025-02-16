@@ -2,13 +2,12 @@
 #ifndef _TESTSCRIPT_H_
 #define _TESTSCRIPT_H_
 
-#include <stdio.h>
 #include <stddef.h>
+#include <stdio.h>
 
 class lua_State;
 
-class TestScript
-{
+class TestScript {
 public:
 	TestScript();
 	static int Script_PrintNumber(lua_State*);

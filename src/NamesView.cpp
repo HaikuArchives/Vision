@@ -27,23 +27,24 @@
 
 #include <Directory.h>
 #include <Entry.h>
-#include <PopUpMenu.h>
 #include <MenuItem.h>
+#include <PopUpMenu.h>
 #include <Window.h>
 
 #include "ChannelAgent.h"
-#include "Vision.h"
 #include "Names.h"
 #include "Theme.h"
+#include "Vision.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "NamesView"
 
-NamesView::NamesView(ChannelAgent *channelAgent)
+NamesView::NamesView(ChannelAgent* channelAgent)
 	: BListView("namesList", B_MULTIPLE_SELECTION_LIST),
 	  fChannelAgent(channelAgent),
 	  fActiveTheme(vision_app->ActiveTheme()),
-	  fTracking(false), fMouseDownHandled(false)
+	  fTracking(false),
+	  fMouseDownHandled(false)
 {
 	fActiveTheme->ReadLock();
 	SetFont(&fActiveTheme->FontAt(F_NAMES));
@@ -56,10 +57,12 @@ NamesView::NamesView(ChannelAgent *channelAgent)
 
 NamesView::~NamesView()
 {
-	if (fMyPopUp) delete fMyPopUp;
+	if (fMyPopUp)
+		delete fMyPopUp;
 }
 
-void NamesView::KeyDown(const char* bytes, int32 numBytes)
+void
+NamesView::KeyDown(const char* bytes, int32 numBytes)
 {
 	BMessage inputMsg(M_INPUT_FOCUS);
 	BString buffer;
@@ -70,7 +73,8 @@ void NamesView::KeyDown(const char* bytes, int32 numBytes)
 	fChannelAgent->fMsgr.SendMessage(&inputMsg);
 }
 
-void NamesView::AttachedToWindow()
+void
+NamesView::AttachedToWindow()
 {
 	fMyPopUp = new BPopUpMenu(B_TRANSLATE("User selection"), false, false);
 
@@ -153,7 +157,8 @@ void NamesView::AttachedToWindow()
 	fActiveTheme->WriteUnlock();
 }
 
-void NamesView::DetachedFromWindow()
+void
+NamesView::DetachedFromWindow()
 {
 	BView::DetachedFromWindow();
 	fActiveTheme->WriteLock();
@@ -161,7 +166,8 @@ void NamesView::DetachedFromWindow()
 	fActiveTheme->WriteUnlock();
 }
 
-void NamesView::MouseDown(BPoint myPoint)
+void
+NamesView::MouseDown(BPoint myPoint)
 {
 	int32 selected(IndexOf(myPoint));
 	fTracking = false;
@@ -179,9 +185,9 @@ void NamesView::MouseDown(BPoint myPoint)
 	inputMsg->FindInt32("modifiers", &keymodifiers);
 	inputMsg->FindInt32("clicks", &mouseclicks);
 
-	if (mouseclicks > 1 && CurrentSelection(1) <= 0 && mousebuttons == B_PRIMARY_MOUSE_BUTTON &&
-		(keymodifiers & B_SHIFT_KEY) == 0 && (keymodifiers & B_OPTION_KEY) == 0 &&
-		(keymodifiers & B_COMMAND_KEY) == 0 && (keymodifiers & B_CONTROL_KEY) == 0) {
+	if (mouseclicks > 1 && CurrentSelection(1) <= 0 && mousebuttons == B_PRIMARY_MOUSE_BUTTON
+		&& (keymodifiers & B_SHIFT_KEY) == 0 && (keymodifiers & B_OPTION_KEY) == 0
+		&& (keymodifiers & B_COMMAND_KEY) == 0 && (keymodifiers & B_CONTROL_KEY) == 0) {
 		// user double clicked
 
 		BListItem* item(ItemAt(IndexOf(myPoint)));
@@ -203,54 +209,62 @@ void NamesView::MouseDown(BPoint myPoint)
 		fMouseDownHandled = true;
 	}
 
-	if (mouseclicks == 1 && CurrentSelection(1) <= 0 && mousebuttons == B_PRIMARY_MOUSE_BUTTON &&
-		(keymodifiers & B_SHIFT_KEY) == 0 && (keymodifiers & B_OPTION_KEY) == 0 &&
-		(keymodifiers & B_COMMAND_KEY) == 0 && (keymodifiers & B_CONTROL_KEY) == 0) {
+	if (mouseclicks == 1 && CurrentSelection(1) <= 0 && mousebuttons == B_PRIMARY_MOUSE_BUTTON
+		&& (keymodifiers & B_SHIFT_KEY) == 0 && (keymodifiers & B_OPTION_KEY) == 0
+		&& (keymodifiers & B_COMMAND_KEY) == 0 && (keymodifiers & B_CONTROL_KEY) == 0) {
 		// user single clicks
 		BListItem* item(ItemAt(IndexOf(myPoint)));
-		if (item && !item->IsSelected()) Select(IndexOf(myPoint), false);
+		if (item && !item->IsSelected())
+			Select(IndexOf(myPoint), false);
 
 		fTracking = true;
 		fCurrentindex = IndexOf(myPoint);
 		fMouseDownHandled = true;
 	}
 
-	if (mouseclicks >= 1 && CurrentSelection(1) >= 0 && mousebuttons == B_PRIMARY_MOUSE_BUTTON &&
-		(keymodifiers & B_SHIFT_KEY) == 0 && (keymodifiers & B_OPTION_KEY) == 0 &&
-		(keymodifiers & B_COMMAND_KEY) == 0 && (keymodifiers & B_CONTROL_KEY) == 0) {
+	if (mouseclicks >= 1 && CurrentSelection(1) >= 0 && mousebuttons == B_PRIMARY_MOUSE_BUTTON
+		&& (keymodifiers & B_SHIFT_KEY) == 0 && (keymodifiers & B_OPTION_KEY) == 0
+		&& (keymodifiers & B_COMMAND_KEY) == 0 && (keymodifiers & B_CONTROL_KEY) == 0) {
 		// user clicks on something in the middle of a sweep selection
 		BListItem* item(ItemAt(IndexOf(myPoint)));
-		if (item) Select(IndexOf(myPoint), false);
+		if (item)
+			Select(IndexOf(myPoint), false);
 
 		fTracking = true;
 		fCurrentindex = IndexOf(myPoint);
 		fMouseDownHandled = true;
 	}
 
-	if (mousebuttons == B_SECONDARY_MOUSE_BUTTON && (keymodifiers & B_SHIFT_KEY) == 0 &&
-		(keymodifiers & B_OPTION_KEY) == 0 && (keymodifiers & B_COMMAND_KEY) == 0 &&
-		(keymodifiers & B_CONTROL_KEY) == 0) {
+	if (mousebuttons == B_SECONDARY_MOUSE_BUTTON && (keymodifiers & B_SHIFT_KEY) == 0
+		&& (keymodifiers & B_OPTION_KEY) == 0 && (keymodifiers & B_COMMAND_KEY) == 0
+		&& (keymodifiers & B_CONTROL_KEY) == 0) {
 		// user right clicks - display popup menu
 		BListItem* item(ItemAt(IndexOf(myPoint)));
-		if (item && !item->IsSelected()) Select(IndexOf(myPoint), false);
+		if (item && !item->IsSelected())
+			Select(IndexOf(myPoint), false);
 
 		fMyPopUp->Go(ConvertToScreen(myPoint), true, false, ConvertToScreen(ItemFrame(selected)));
 		fMouseDownHandled = true;
 	}
-	if (mousebuttons == B_TERTIARY_MOUSE_BUTTON) BListView::MouseDown(myPoint);
+	if (mousebuttons == B_TERTIARY_MOUSE_BUTTON)
+		BListView::MouseDown(myPoint);
 
 	fLastSelected = selected;
-	if (!fMouseDownHandled) BListView::MouseDown(myPoint);
+	if (!fMouseDownHandled)
+		BListView::MouseDown(myPoint);
 }
 
-void NamesView::MouseUp(BPoint myPoint)
+void
+NamesView::MouseUp(BPoint myPoint)
 {
-	if (!fMouseDownHandled) BListView::MouseUp(myPoint);
+	if (!fMouseDownHandled)
+		BListView::MouseUp(myPoint);
 	fMouseDownHandled = false;
 	fTracking = false;
 }
 
-void NamesView::MouseMoved(BPoint myPoint, uint32 transitcode, const BMessage* dragMessage)
+void
+NamesView::MouseMoved(BPoint myPoint, uint32 transitcode, const BMessage* dragMessage)
 {
 	if ((dragMessage != NULL) && (dragMessage->HasRef("refs"))) {
 		// make sure the ref isn't a dir
@@ -259,7 +273,8 @@ void NamesView::MouseMoved(BPoint myPoint, uint32 transitcode, const BMessage* d
 		BDirectory dir(&ref);
 		if (dir.InitCheck() != B_OK) {
 			int32 nameIndex(IndexOf(myPoint));
-			if (nameIndex >= 0) Select(nameIndex);
+			if (nameIndex >= 0)
+				Select(nameIndex);
 		}
 	} else if (fTracking) {
 		if (transitcode == B_INSIDE_VIEW) {
@@ -269,7 +284,8 @@ void NamesView::MouseMoved(BPoint myPoint, uint32 transitcode, const BMessage* d
 				int32 first(CurrentSelection(0));
 				int32 last(first);
 				int32 i(1);
-				while ((last = CurrentSelection(i++)) != -1) lastitem = ItemAt(last);
+				while ((last = CurrentSelection(i++)) != -1)
+					lastitem = ItemAt(last);
 				if (lastitem)
 					last = IndexOf(lastitem);
 				else
@@ -298,75 +314,86 @@ void NamesView::MouseMoved(BPoint myPoint, uint32 transitcode, const BMessage* d
 		BListView::MouseMoved(myPoint, transitcode, dragMessage);
 }
 
-void NamesView::ClearList()
+void
+NamesView::ClearList()
 {
-	while (CountItems() > 0) delete RemoveItem((int32)0);
+	while (CountItems() > 0)
+		delete RemoveItem((int32)0);
 }
 
-void NamesView::MessageReceived(BMessage* msg)
+void
+NamesView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case B_COLORS_UPDATED:
-		break;
-	case M_THEME_FOREGROUND_CHANGE: {
-		int16 which(msg->FindInt16("which"));
-		bool refresh(false);
-		switch (which) {
-		case C_NAMES_BACKGROUND:
-			fActiveTheme->ReadLock();
-			SetViewColor(fActiveTheme->ForegroundAt(C_NAMES_BACKGROUND));
-			refresh = true;
-			fActiveTheme->ReadUnlock();
+		case B_COLORS_UPDATED:
 			break;
+		case M_THEME_FOREGROUND_CHANGE:
+		{
+			int16 which(msg->FindInt16("which"));
+			bool refresh(false);
+			switch (which) {
+				case C_NAMES_BACKGROUND:
+					fActiveTheme->ReadLock();
+					SetViewColor(fActiveTheme->ForegroundAt(C_NAMES_BACKGROUND));
+					refresh = true;
+					fActiveTheme->ReadUnlock();
+					break;
 
-		case C_OP:
-		case C_VOICE:
-		case C_HELPER:
-		case C_NAMES_SELECTION:
-			refresh = true;
-			break;
+				case C_OP:
+				case C_VOICE:
+				case C_HELPER:
+				case C_NAMES_SELECTION:
+					refresh = true;
+					break;
+
+				default:
+					break;
+			}
+			if (refresh)
+				Invalidate();
+		} break;
+
+		case M_THEME_FONT_CHANGE:
+		{
+			int16 which(msg->FindInt16("which"));
+			if (which == F_NAMES) {
+				fActiveTheme->ReadLock();
+				BFont newFont(fActiveTheme->FontAt(F_NAMES));
+				fActiveTheme->ReadUnlock();
+				SetFont(&newFont);
+				for (int32 i = 0; i < CountItems(); i++)
+					ItemAt(i)->Update(this, &newFont);
+				Invalidate();
+			}
+		} break;
+
+		case B_SIMPLE_DATA:
+		{
+			if (msg->HasRef("refs")) {
+				// this only grabs the first ref for now
+				// TODO: maybe implement queueing of multiple sends next time
+				entry_ref ref;
+				msg->FindRef("refs", &ref);
+				BDirectory dir(&ref);
+				// don't try to dcc send a dir
+				if (dir.InitCheck() == B_OK)
+					break;
+				int32 idx(CurrentSelection());
+				if (idx >= 0) {
+					NameItem* item(dynamic_cast<NameItem*>(ItemAt(idx)));
+					BMessage msg(M_CHOSE_FILE);
+					msg.AddString("nick", item->Name());
+					msg.AddRef("refs", &ref);
+					ClientAgent* myParent(dynamic_cast<ClientAgent*>(fChannelAgent));
+					if (myParent)
+						myParent->fSMsgr.SendMessage(&msg);
+				}
+			}
+		} break;
 
 		default:
-			break;
-		}
-		if (refresh) Invalidate();
-	} break;
-
-	case M_THEME_FONT_CHANGE: {
-		int16 which(msg->FindInt16("which"));
-		if (which == F_NAMES) {
-			fActiveTheme->ReadLock();
-			BFont newFont(fActiveTheme->FontAt(F_NAMES));
-			fActiveTheme->ReadUnlock();
-			SetFont(&newFont);
-			for (int32 i = 0; i < CountItems(); i++) ItemAt(i)->Update(this, &newFont);
-			Invalidate();
-		}
-	} break;
-
-	case B_SIMPLE_DATA: {
-		if (msg->HasRef("refs")) {
-			// this only grabs the first ref for now
-			// TODO: maybe implement queueing of multiple sends next time
-			entry_ref ref;
-			msg->FindRef("refs", &ref);
-			BDirectory dir(&ref);
-			// don't try to dcc send a dir
-			if (dir.InitCheck() == B_OK) break;
-			int32 idx(CurrentSelection());
-			if (idx >= 0) {
-				NameItem* item(dynamic_cast<NameItem*>(ItemAt(idx)));
-				BMessage msg(M_CHOSE_FILE);
-				msg.AddString("nick", item->Name());
-				msg.AddRef("refs", &ref);
-				ClientAgent* myParent(dynamic_cast<ClientAgent*>(fChannelAgent));
-				if (myParent) myParent->fSMsgr.SendMessage(&msg);
-			}
-		}
-	} break;
-
-	default: {
-		BListView::MessageReceived(msg);
-	} break;
+		{
+			BListView::MessageReceived(msg);
+		} break;
 	}
 }

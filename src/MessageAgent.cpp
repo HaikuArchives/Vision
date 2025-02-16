@@ -32,26 +32,25 @@
 #include <TextControl.h>
 #include <UTF8.h>
 
-#include "MessageAgent.h"
-#include "WindowList.h"
 #include "ClientWindow.h"
+#include "MessageAgent.h"
 #include "StatusView.h"
 #include "Utilities.h"
 #include "Vision.h"
+#include "WindowList.h"
 
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-#include <sys/socket.h>
-#include <sys/select.h>
 #include <arpa/inet.h>
+#include <sys/select.h>
+#include <sys/socket.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "MessageAgent"
 
-MessageAgent::MessageAgent(const char* id_,
-	const char* fServerName_, const BMessenger& fSMsgr_, const char* nick,
-	const char* addyString, bool chat, bool initiate, const char* IP,
+MessageAgent::MessageAgent(const char* id_, const char* fServerName_, const BMessenger& fSMsgr_,
+	const char* nick, const char* addyString, bool chat, bool initiate, const char* IP,
 	const char* port)
 	: ClientAgent(id_, fServerName_, nick, fSMsgr_),
 	  fChatAddy(addyString ? addyString : ""),
@@ -78,16 +77,15 @@ MessageAgent::~MessageAgent()
 	}
 }
 
-void MessageAgent::AllAttached()
+void
+MessageAgent::AllAttached()
 {
 	// initialize threads here since messenger will otherwise not be valid
 	if (fDChat) {
 		if (fDInitiate) {
-			fDataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY,
-				this);
+			fDataThread = spawn_thread(DCCIn, "DCC Chat(I)", B_NORMAL_PRIORITY, this);
 		} else {
-			fDataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY,
-				this);
+			fDataThread = spawn_thread(DCCOut, "DCC Chat(O)", B_NORMAL_PRIORITY, this);
 		}
 
 		resume_thread(fDataThread);
@@ -95,12 +93,13 @@ void MessageAgent::AllAttached()
 	ClientAgent::AllAttached();
 }
 
-void MessageAgent::AddMenuItems(BPopUpMenu* pMenu)
+void
+MessageAgent::AddMenuItems(BPopUpMenu* pMenu)
 {
 	BMenuItem* item(NULL);
 	item = new BMenuItem(B_TRANSLATE("Whois"), new BMessage(M_MSG_WHOIS));
 	item->SetTarget(this);
-	if (Id().FindFirst(" [DCC]") >= 0) // dont enable for dcc sessions
+	if (Id().FindFirst(" [DCC]") >= 0)	// dont enable for dcc sessions
 		item->SetEnabled(false);
 	pMenu->AddItem(item);
 	BMessage* msg(new BMessage(M_SUBMIT));
@@ -109,22 +108,25 @@ void MessageAgent::AddMenuItems(BPopUpMenu* pMenu)
 	msg->AddString("input", command.String());
 	item = new BMenuItem(B_TRANSLATE("DCC send"), msg);
 	item->SetTarget(this);
-	if (Id().FindFirst(" [DCC]") >= 0) // dont enable for dcc sessions
+	if (Id().FindFirst(" [DCC]") >= 0)	// dont enable for dcc sessions
 		item->SetEnabled(false);
 	pMenu->AddItem(item);
 	pMenu->AddSeparatorItem();
 }
 
-void MessageAgent::Init()
+void
+MessageAgent::Init()
 {
 	// empty Init, call DCCServerSetup from input thread to avoid deadlocks
 }
 
-void MessageAgent::DCCServerSetup()
+void
+MessageAgent::DCCServerSetup()
 {
 	int32 myPort(atoi(vision_app->GetString("dccMinPort")));
 	int32 diff(atoi(vision_app->GetString("dccMaxPort")) - myPort);
-	if (diff > 0) myPort += rand() % diff;
+	if (diff > 0)
+		myPort += rand() % diff;
 
 	BString outNick(fChatee);
 	outNick.RemoveFirst(" [DCC]");
@@ -136,7 +138,8 @@ void MessageAgent::DCCServerSetup()
 	BString address;
 	reply.FindString("ip", &address);
 
-	if (fDPort != "") myPort = atoi(fDPort.String());
+	if (fDPort != "")
+		myPort = atoi(fDPort.String());
 
 	fMySocket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -187,7 +190,8 @@ void MessageAgent::DCCServerSetup()
 	return;
 }
 
-status_t MessageAgent::DCCIn(void* arg)
+status_t
+MessageAgent::DCCIn(void* arg)
 {
 	MessageAgent* agent((MessageAgent*)arg);
 	BMessenger fSMsgrE(agent->fSMsgr);
@@ -204,7 +208,8 @@ status_t MessageAgent::DCCIn(void* arg)
 
 	vision_app->ReleaseDCCLock();
 
-	if (dccAcceptSocket < 0) return B_ERROR;
+	if (dccAcceptSocket < 0)
+		return B_ERROR;
 
 	agent->fAcceptSocket = dccAcceptSocket;
 	agent->fDConnected = true;
@@ -246,14 +251,14 @@ status_t MessageAgent::DCCIn(void* arg)
 					int32 encoding = vision_app->GetInt32("encoding");
 					if (encoding != B_UNICODE_CONVERSION) {
 						convert_to_utf8(encoding, inputBuffer.String(), &length, convBuffer,
-										&destLength, &state);
+							&destLength, &state);
 					} else {
 						if (IsValidUTF8(inputBuffer.String(), length)) {
 							strlcpy(convBuffer, inputBuffer.String(), length);
 							destLength = strlen(convBuffer);
 						} else {
 							convert_to_utf8(B_ISO1_CONVERSION, inputBuffer.String(), &length,
-											convBuffer, &destLength, &state);
+								convBuffer, &destLength, &state);
 						}
 					}
 
@@ -278,7 +283,8 @@ status_t MessageAgent::DCCIn(void* arg)
 	return 0;
 }
 
-status_t MessageAgent::DCCOut(void* arg)
+status_t
+MessageAgent::DCCOut(void* arg)
 {
 	MessageAgent* agent((MessageAgent*)arg);
 
@@ -341,7 +347,7 @@ status_t MessageAgent::DCCOut(void* arg)
 	int32 recvReturn(0);
 
 	struct fd_set rset, eset;
-	struct timeval tv = {0, 0};
+	struct timeval tv = { 0, 0 };
 
 	FD_ZERO(&rset);
 	FD_ZERO(&eset);
@@ -368,7 +374,7 @@ status_t MessageAgent::DCCOut(void* arg)
 					int32 length(inputBuffer.Length()), destLength(sizeof(convBuffer)), state(0);
 
 					convert_to_utf8(vision_app->GetInt32("encoding"), inputBuffer.String(), &length,
-									convBuffer, &destLength, &state);
+						convBuffer, &destLength, &state);
 
 					BMessage dispMsg(M_CHANNEL_MSG);
 					dispMsg.AddString("msgz", inputBuffer.String());
@@ -392,151 +398,164 @@ status_t MessageAgent::DCCOut(void* arg)
 	return 0;
 }
 
-void MessageAgent::ChannelMessage(const char* msgz, const char* nick, const char* ident,
-								  const char* address)
+void
+MessageAgent::ChannelMessage(
+	const char* msgz, const char* nick, const char* ident, const char* address)
 {
 	//  fAgentWinItem->SetName (nick);
 
 	ClientAgent::ChannelMessage(msgz, nick, ident, address);
 }
 
-void MessageAgent::MessageReceived(BMessage* msg)
+void
+MessageAgent::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case B_SIMPLE_DATA: {
-		if (msg->HasRef("refs")) {
-			// TODO: get this to work properly for multiple refs
-			// and update DCC send logic to figure that out too
-			entry_ref ref;
-			msg->FindRef("refs", &ref);
+		case B_SIMPLE_DATA:
+		{
+			if (msg->HasRef("refs")) {
+				// TODO: get this to work properly for multiple refs
+				// and update DCC send logic to figure that out too
+				entry_ref ref;
+				msg->FindRef("refs", &ref);
 
-			BMessage dccmsg(M_CHOSE_FILE);
-			dccmsg.AddString("nick", fChatee.String());
-			dccmsg.AddRef("refs", &ref);
-			fSMsgr.SendMessage(&dccmsg);
-		}
-	} break;
+				BMessage dccmsg(M_CHOSE_FILE);
+				dccmsg.AddString("nick", fChatee.String());
+				dccmsg.AddRef("refs", &ref);
+				fSMsgr.SendMessage(&dccmsg);
+			}
+		} break;
 
-	case M_CHANNEL_MSG: {
-		const char* nick(NULL);
+		case M_CHANNEL_MSG:
+		{
+			const char* nick(NULL);
 
-		if (msg->HasString("nick")) {
-			msg->FindString("nick", &nick);
-			BString outNick(nick);
-			outNick.RemoveFirst(" [DCC]");
-			if (fMyNick.ICompare(outNick) != 0 && !fDChat) fAgentWinItem->SetName(outNick.String());
-			msg->ReplaceString("nick", outNick.String());
-		} else {
-			BString outNick(fChatee.String());
-			outNick.RemoveFirst(" [DCC]");
-			msg->AddString("nick", outNick.String());
-		}
-
-		BWindow* window(Window());
-
-		if (IsHidden()) UpdateStatus(WIN_NICK_BIT);
-
-		if (IsHidden() || (window && !window->IsActive())) {
-			BNotification notification(B_INFORMATION_NOTIFICATION);
-			notification.SetGroup(BString("Vision"));
-			entry_ref ref = vision_app->AppRef();
-			notification.SetOnClickFile(&ref);
-			notification.SetTitle(fServerName.String());
-			BString tempString(msg->FindString("msgz"));
-			if (tempString[0] == '\1') {
-				tempString.RemoveFirst("\1ACTION ");
-				tempString.RemoveLast("\1");
+			if (msg->HasString("nick")) {
+				msg->FindString("nick", &nick);
+				BString outNick(nick);
+				outNick.RemoveFirst(" [DCC]");
+				if (fMyNick.ICompare(outNick) != 0 && !fDChat)
+					fAgentWinItem->SetName(outNick.String());
+				msg->ReplaceString("nick", outNick.String());
+			} else {
+				BString outNick(fChatee.String());
+				outNick.RemoveFirst(" [DCC]");
+				msg->AddString("nick", outNick.String());
 			}
 
-			BString content;
-			content.SetToFormat(B_TRANSLATE_COMMENT("%s said: %s",
-				"as in 'nickname' said: 'bla bla bla'"), nick,
-				tempString.String());
-			notification.SetContent(content);
-			notification.Send();
-		}
+			BWindow* window(Window());
 
-		if (window != NULL && !window->IsActive())
-			system_beep(kSoundEventNames[(uint32)seNickMentioned]);
+			if (IsHidden())
+				UpdateStatus(WIN_NICK_BIT);
 
-		// Send the rest of processing up the chain
-		ClientAgent::MessageReceived(msg);
-	} break;
+			if (IsHidden() || (window && !window->IsActive())) {
+				BNotification notification(B_INFORMATION_NOTIFICATION);
+				notification.SetGroup(BString("Vision"));
+				entry_ref ref = vision_app->AppRef();
+				notification.SetOnClickFile(&ref);
+				notification.SetTitle(fServerName.String());
+				BString tempString(msg->FindString("msgz"));
+				if (tempString[0] == '\1') {
+					tempString.RemoveFirst("\1ACTION ");
+					tempString.RemoveLast("\1");
+				}
 
-	case M_MSG_WHOIS: {
-		BMessage dataSend(M_SERVER_SEND);
+				BString content;
+				content.SetToFormat(
+					B_TRANSLATE_COMMENT("%s said: %s", "as in 'nickname' said: 'bla bla bla'"),
+					nick, tempString.String());
+				notification.SetContent(content);
+				notification.Send();
+			}
 
-		AddSend(&dataSend, "WHOIS ");
-		AddSend(&dataSend, fChatee.String());
-		AddSend(&dataSend, " ");
-		AddSend(&dataSend, fChatee.String());
-		AddSend(&dataSend, endl);
-	}
+			if (window != NULL && !window->IsActive())
+				system_beep(kSoundEventNames[(uint32)seNickMentioned]);
 
-	case M_CHANGE_NICK: {
-		const char* oldNick, *newNick;
-
-		msg->FindString("oldnick", &oldNick);
-		msg->FindString("newnick", &newNick);
-
-		if (fChatee.ICompare(oldNick) == 0) {
-			const char* address;
-			const char* ident;
-
-			msg->FindString("address", &address);
-			msg->FindString("ident", &ident);
-
-			BString oldId(fId);
-			fChatee = fId = newNick;
-
-			if (fDChat) fId.Append(" [DCC]");
-
-			// set up new logging file for new nick
-			BMessage logMsg(M_UNREGISTER_LOGGER);
-			logMsg.AddString("name", oldId.String());
-			fSMsgr.SendMessage(&logMsg);
-			logMsg.MakeEmpty();
-			logMsg.what = M_REGISTER_LOGGER;
-			logMsg.AddString("name", fId.String());
-			fSMsgr.SendMessage(&logMsg);
-
-			fAgentWinItem->SetName(fId.String());
-
+			// Send the rest of processing up the chain
 			ClientAgent::MessageReceived(msg);
+		} break;
+
+		case M_MSG_WHOIS:
+		{
+			BMessage dataSend(M_SERVER_SEND);
+
+			AddSend(&dataSend, "WHOIS ");
+			AddSend(&dataSend, fChatee.String());
+			AddSend(&dataSend, " ");
+			AddSend(&dataSend, fChatee.String());
+			AddSend(&dataSend, endl);
 		}
 
-		else if (fMyNick.ICompare(oldNick) == 0) {
-			if (!IsHidden())
-				vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, newNick);
+		case M_CHANGE_NICK:
+		{
+			const char *oldNick, *newNick;
+
+			msg->FindString("oldnick", &oldNick);
+			msg->FindString("newnick", &newNick);
+
+			if (fChatee.ICompare(oldNick) == 0) {
+				const char* address;
+				const char* ident;
+
+				msg->FindString("address", &address);
+				msg->FindString("ident", &ident);
+
+				BString oldId(fId);
+				fChatee = fId = newNick;
+
+				if (fDChat)
+					fId.Append(" [DCC]");
+
+				// set up new logging file for new nick
+				BMessage logMsg(M_UNREGISTER_LOGGER);
+				logMsg.AddString("name", oldId.String());
+				fSMsgr.SendMessage(&logMsg);
+				logMsg.MakeEmpty();
+				logMsg.what = M_REGISTER_LOGGER;
+				logMsg.AddString("name", fId.String());
+				fSMsgr.SendMessage(&logMsg);
+
+				fAgentWinItem->SetName(fId.String());
+
+				ClientAgent::MessageReceived(msg);
+			}
+
+			else if (fMyNick.ICompare(oldNick) == 0) {
+				if (!IsHidden())
+					vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, newNick);
+				ClientAgent::MessageReceived(msg);
+			}
+		} break;
+
+		case M_STATUS_ADDITEMS:
+		{
+			vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, ""), true);
+
+			BString itemText(B_TRANSLATE("Lag:"));
+			itemText.Append(" ");
+			vision_app->pClientWin()->pStatusView()->AddItem(
+				new StatusItem(itemText.String(), "", STATUS_ALIGN_LEFT), true);
+
+			vision_app->pClientWin()->pStatusView()->AddItem(
+				new StatusItem(0, "", STATUS_ALIGN_LEFT), true);
+
+			// The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
+			// We send true on the last SetItemValue().
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_SERVER, fServerName.String(), false);
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_LAG, fMyLag.String(), false);
+			vision_app->pClientWin()->pStatusView()->SetItemValue(
+				STATUS_NICK, fMyNick.String(), true);
+		} break;
+
+		default:
 			ClientAgent::MessageReceived(msg);
-		}
-	} break;
-
-	case M_STATUS_ADDITEMS: {
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, ""), true);
-
-		BString itemText(B_TRANSLATE("Lag:"));
-		itemText.Append(" ");
-		vision_app->pClientWin()->pStatusView()->AddItem(
-			new StatusItem(itemText.String(), "", STATUS_ALIGN_LEFT), true);
-
-		vision_app->pClientWin()->pStatusView()->AddItem(new StatusItem(0, "", STATUS_ALIGN_LEFT),
-														 true);
-
-		// The false bool for SetItemValue() tells the StatusView not to Invalidate() the view.
-		// We send true on the last SetItemValue().
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_SERVER, fServerName.String(),
-															  false);
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_LAG, fMyLag.String(), false);
-		vision_app->pClientWin()->pStatusView()->SetItemValue(STATUS_NICK, fMyNick.String(), true);
-	} break;
-
-	default:
-		ClientAgent::MessageReceived(msg);
 	}
 }
 
-void MessageAgent::ActionMessage(const char* msg, const char* nick)
+void
+MessageAgent::ActionMessage(const char* msg, const char* nick)
 {
 	if (!fDChat)
 		ClientAgent::ActionMessage(msg, nick);
@@ -553,7 +572,7 @@ void MessageAgent::ActionMessage(const char* msg, const char* nick)
 		int32 length(outTemp.Length()), destLength(sizeof(convBuffer)), state(0);
 
 		convert_from_utf8(vision_app->GetInt32("encoding"), outTemp.String(), &length, convBuffer,
-						  &destLength, &state);
+			&destLength, &state);
 
 		if (send(fAcceptSocket, convBuffer, destLength, 0) < 0) {
 			fDConnected = false;
@@ -564,7 +583,8 @@ void MessageAgent::ActionMessage(const char* msg, const char* nick)
 		ChannelMessage(outTemp.String(), nick);
 	}
 }
-void MessageAgent::Parser(const char* buffer)
+void
+MessageAgent::Parser(const char* buffer)
 {
 	if (!fDChat) {
 		BMessage dataSend(M_SERVER_SEND);
@@ -585,7 +605,7 @@ void MessageAgent::Parser(const char* buffer)
 		int32 length(outTemp.Length()), destLength(sizeof(convBuffer)), state(0);
 
 		convert_from_utf8(vision_app->GetInt32("encoding"), outTemp.String(), &length, convBuffer,
-						  &destLength, &state);
+			&destLength, &state);
 
 		if (send(fAcceptSocket, convBuffer, destLength, 0) < 0) {
 			fDConnected = false;
@@ -605,24 +625,27 @@ void MessageAgent::Parser(const char* buffer)
 	Display("\n");
 }
 
-void MessageAgent::DroppedFile(BMessage*)
+void
+MessageAgent::DroppedFile(BMessage*)
 {
 	// TODO: implement this when DCC's ready
 }
 
-void MessageAgent::TabExpansion()
+void
+MessageAgent::TabExpansion()
 {
 	int32 start, finish;
 
 	fInput->TextView()->GetSelection(&start, &finish);
 
-	if (fInput->TextView()->TextLength() && start == finish &&
-		start == fInput->TextView()->TextLength()) {
+	if (fInput->TextView()->TextLength() && start == finish
+		&& start == fInput->TextView()->TextLength()) {
 		const char* fInputText(fInput->TextView()->Text() + fInput->TextView()->TextLength());
 		const char* place(fInputText);
 
 		while (place > fInput->TextView()->Text()) {
-			if (*(place - 1) == '\x20') break;
+			if (*(place - 1) == '\x20')
+				break;
 			--place;
 		}
 
@@ -635,12 +658,12 @@ void MessageAgent::TabExpansion()
 			insertion = fMyNick;
 
 		if (insertion.Length()) {
-			fInput->TextView()->Delete(place - fInput->TextView()->Text(),
-									   fInput->TextView()->TextLength());
+			fInput->TextView()->Delete(
+				place - fInput->TextView()->Text(), fInput->TextView()->TextLength());
 
 			fInput->TextView()->Insert(insertion.String());
-			fInput->TextView()->Select(fInput->TextView()->TextLength(),
-									   fInput->TextView()->TextLength());
+			fInput->TextView()->Select(
+				fInput->TextView()->TextLength(), fInput->TextView()->TextLength());
 		}
 	}
 }

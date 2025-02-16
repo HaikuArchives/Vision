@@ -1,8 +1,8 @@
 #ifndef COLOR_SELECTOR_H
 #define COLOR_SELECTOR_H
 
-#include <Message.h>
 #include <Control.h>
+#include <Message.h>
 #include <String.h>
 
 /*------------------------------------------------------------*/
@@ -13,13 +13,11 @@ class BColorControl;
 
 class ColorSwatch;
 
-class ColorSelector : public BControl
-{
+class ColorSelector : public BControl {
 public:
 	ColorSelector(BRect frame, const char* name, const char* label, const BMessage& colors,
-				  const BMessage& names, BMessage* model,
-				  uint32 resizeMask = B_FOLLOW_LEFT | B_FOLLOW_TOP,
-				  uint32 flags = B_WILL_DRAW | B_FRAME_EVENTS | B_NAVIGABLE_JUMP);
+		const BMessage& names, BMessage* model, uint32 resizeMask = B_FOLLOW_LEFT | B_FOLLOW_TOP,
+		uint32 flags = B_WILL_DRAW | B_FRAME_EVENTS | B_NAVIGABLE_JUMP);
 	~ColorSelector();
 
 	static void ExtractColors(BMessage* target, const BMessage& src);

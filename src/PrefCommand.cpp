@@ -21,17 +21,17 @@
  */
 
 #include "PrefCommand.h"
-#include "Vision.h"
 #include <LayoutBuilder.h>
 #include <ScrollView.h>
 #include <TextControl.h>
+#include "Vision.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "PrefCommand"
 
-static const char* CommandControlLabels[] = {
-	B_TRANSLATE("Quit:"), B_TRANSLATE("Kick:"), B_TRANSLATE("Ignore:"), B_TRANSLATE("Unignore:"),
-	B_TRANSLATE("Away:"), B_TRANSLATE("Back:"), B_TRANSLATE("Uptime:"), 0};
+static const char* CommandControlLabels[] = { B_TRANSLATE("Quit:"), B_TRANSLATE("Kick:"),
+	B_TRANSLATE("Ignore:"), B_TRANSLATE("Unignore:"), B_TRANSLATE("Away:"), B_TRANSLATE("Back:"),
+	B_TRANSLATE("Uptime:"), 0 };
 
 CommandPrefsView::CommandPrefsView()
 	: BView("Command prefs", 0)
@@ -40,10 +40,11 @@ CommandPrefsView::CommandPrefsView()
 
 	BView* bgView = new BView("", 0);
 	bgView->AdoptSystemColors();
-	fCommands = new BTextControl* [MAX_COMMANDS];
+	fCommands = new BTextControl*[MAX_COMMANDS];
 
 	for (int32 i = 0; i < MAX_COMMANDS; ++i) {
-		fCommands[i] = new BTextControl("commands", CommandControlLabels[i], vision_app->GetCommand(i).String(), NULL);
+		fCommands[i] = new BTextControl(
+			"commands", CommandControlLabels[i], vision_app->GetCommand(i).String(), NULL);
 		BMessage* msg(new BMessage(M_COMMAND_MODIFIED));
 		msg->AddInt32("which", i);
 		fCommands[i]->SetModificationMessage(msg);
@@ -51,20 +52,20 @@ CommandPrefsView::CommandPrefsView()
 
 	BLayoutBuilder::Group<>(bgView, B_VERTICAL, 0)
 		.AddGrid(0.0, 0.0)
-			.Add(fCommands[0]->CreateLabelLayoutItem(), 0, 0)
-			.Add(fCommands[0]->CreateTextViewLayoutItem(), 1, 0)
-			.Add(fCommands[1]->CreateLabelLayoutItem(), 0, 1)
-			.Add(fCommands[1]->CreateTextViewLayoutItem(), 1, 1)
-			.Add(fCommands[2]->CreateLabelLayoutItem(), 0, 2)
-			.Add(fCommands[2]->CreateTextViewLayoutItem(), 1, 2)
-			.Add(fCommands[3]->CreateLabelLayoutItem(), 0, 3)
-			.Add(fCommands[3]->CreateTextViewLayoutItem(), 1, 3)
-			.Add(fCommands[4]->CreateLabelLayoutItem(), 0, 4)
-			.Add(fCommands[4]->CreateTextViewLayoutItem(), 1, 4)
-			.Add(fCommands[5]->CreateLabelLayoutItem(), 0, 5)
-			.Add(fCommands[5]->CreateTextViewLayoutItem(), 1, 5)
-			.Add(fCommands[6]->CreateLabelLayoutItem(), 0, 6)
-			.Add(fCommands[6]->CreateTextViewLayoutItem(), 1, 6)
+		.Add(fCommands[0]->CreateLabelLayoutItem(), 0, 0)
+		.Add(fCommands[0]->CreateTextViewLayoutItem(), 1, 0)
+		.Add(fCommands[1]->CreateLabelLayoutItem(), 0, 1)
+		.Add(fCommands[1]->CreateTextViewLayoutItem(), 1, 1)
+		.Add(fCommands[2]->CreateLabelLayoutItem(), 0, 2)
+		.Add(fCommands[2]->CreateTextViewLayoutItem(), 1, 2)
+		.Add(fCommands[3]->CreateLabelLayoutItem(), 0, 3)
+		.Add(fCommands[3]->CreateTextViewLayoutItem(), 1, 3)
+		.Add(fCommands[4]->CreateLabelLayoutItem(), 0, 4)
+		.Add(fCommands[4]->CreateTextViewLayoutItem(), 1, 4)
+		.Add(fCommands[5]->CreateLabelLayoutItem(), 0, 5)
+		.Add(fCommands[5]->CreateTextViewLayoutItem(), 1, 5)
+		.Add(fCommands[6]->CreateLabelLayoutItem(), 0, 6)
+		.Add(fCommands[6]->CreateTextViewLayoutItem(), 1, 6)
 		.End();
 	/*
 	fScroller = new BScrollView("command scroller", bgView, 0, false, true, B_NO_BORDER);
@@ -76,9 +77,10 @@ CommandPrefsView::CommandPrefsView()
 	bar->SetProportion(fScroller->Bounds().Height() / fProportionheight);
 	*/
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
-		.SetInsets(B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING)
+		.SetInsets(B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING, B_USE_DEFAULT_SPACING,
+			B_USE_DEFAULT_SPACING)
 		.Add(bgView)
-//		.Add(fScroller)
+		//		.Add(fScroller)
 		.AddGlue();
 }
 
@@ -87,27 +89,33 @@ CommandPrefsView::~CommandPrefsView()
 	delete[] fCommands;
 }
 
-void CommandPrefsView::AttachedToWindow()
+void
+CommandPrefsView::AttachedToWindow()
 {
 	BView::AttachedToWindow();
-	for (int32 i = 0; i < MAX_COMMANDS; i++) fCommands[i]->SetTarget(this);
+	for (int32 i = 0; i < MAX_COMMANDS; i++)
+		fCommands[i]->SetTarget(this);
 }
 
-void CommandPrefsView::AllAttached()
+void
+CommandPrefsView::AllAttached()
 {
 	BView::AllAttached();
 }
 
-void CommandPrefsView::FrameResized(float width, float height)
+void
+CommandPrefsView::FrameResized(float width, float height)
 {
 	BView::FrameResized(width, height);
 	BScrollBar* bar(fScroller->ScrollBar(B_VERTICAL));
-	if (!bar) return;
+	if (!bar)
+		return;
 	float min, max, scrollheight(fScroller->Bounds().Height());
 
 	bar->GetRange(&min, &max);
 	if (scrollheight < fProportionheight) {
-		if (max != fMaxheight) bar->SetRange(0.0, fProportionheight - scrollheight);
+		if (max != fMaxheight)
+			bar->SetRange(0.0, fProportionheight - scrollheight);
 		bar->SetProportion(scrollheight / fProportionheight);
 	} else {
 		bar->SetProportion(1.0);
@@ -115,17 +123,19 @@ void CommandPrefsView::FrameResized(float width, float height)
 	}
 }
 
-void CommandPrefsView::MessageReceived(BMessage* msg)
+void
+CommandPrefsView::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_COMMAND_MODIFIED: {
-		int32 which;
+		case M_COMMAND_MODIFIED:
+		{
+			int32 which;
 
-		msg->FindInt32("which", &which);
-		vision_app->SetCommand(which, fCommands[which]->TextView()->Text());
-	} break;
+			msg->FindInt32("which", &which);
+			vision_app->SetCommand(which, fCommands[which]->TextView()->Text());
+		} break;
 
-	default:
-		BView::MessageReceived(msg);
+		default:
+			BView::MessageReceived(msg);
 	}
 }

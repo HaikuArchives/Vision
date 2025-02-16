@@ -28,8 +28,8 @@
 #include <String.h>
 #include <View.h>
 
-#include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 
 class BMessenger;
 class BStatusBar;
@@ -37,8 +37,7 @@ class BStringView;
 class StopButton;
 class PauseButton;
 
-class DCCConnect : public BView
-{
+class DCCConnect : public BView {
 public:
 	DCCConnect(const char*, const char*, const char*, const char*, const char*, const BMessenger&);
 	virtual ~DCCConnect();
@@ -71,13 +70,12 @@ protected:
 	bool fIsStopped;
 };
 
-class DCCReceive : public DCCConnect
-{
+class DCCReceive : public DCCConnect {
 	friend class DCCConnect;
 
 public:
-	DCCReceive(const char*, const char*, const char*, const char*, const char*, const BMessenger&,
-			   bool);
+	DCCReceive(
+		const char*, const char*, const char*, const char*, const char*, const BMessenger&, bool);
 
 	virtual ~DCCReceive();
 	virtual void AttachedToWindow();
@@ -87,8 +85,7 @@ protected:
 	bool fResume;
 };
 
-class DCCSend : public DCCConnect
-{
+class DCCSend : public DCCConnect {
 	friend class DCCConnect;
 
 public:

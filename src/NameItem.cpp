@@ -25,47 +25,57 @@
 
 #include <stdio.h>
 
-#include "Vision.h"
 #include "Names.h"
 #include "Theme.h"
+#include "Vision.h"
 
 NameItem::NameItem(const char* name, int32 userStatus)
 
-	: BListItem(), myName(name), myAddress(""), myStatus(userStatus)
+	: BListItem(),
+	  myName(name),
+	  myAddress(""),
+	  myStatus(userStatus)
 {
 }
 
-BString NameItem::Name() const
+BString
+NameItem::Name() const
 {
 	return myName;
 }
 
-BString NameItem::Address() const
+BString
+NameItem::Address() const
 {
 	return myAddress;
 }
 
-int32 NameItem::Status() const
+int32
+NameItem::Status() const
 {
 	return myStatus;
 }
 
-void NameItem::SetName(const char* name)
+void
+NameItem::SetName(const char* name)
 {
 	myName = name;
 }
 
-void NameItem::SetAddress(const char* address)
+void
+NameItem::SetAddress(const char* address)
 {
 	myAddress = address;
 }
 
-void NameItem::SetStatus(int32 userStatus)
+void
+NameItem::SetStatus(int32 userStatus)
 {
 	myStatus = userStatus;
 }
 
-void NameItem::DrawItem(BView* father, BRect frame, bool complete)
+void
+NameItem::DrawItem(BView* father, BRect frame, bool complete)
 {
 	Theme* activeTheme(vision_app->ActiveTheme());
 	activeTheme->ReadLock();
@@ -102,7 +112,8 @@ void NameItem::DrawItem(BView* father, BRect frame, bool complete)
 		color = activeTheme->ForegroundAt(C_VOICE);
 	}
 
-	if ((myStatus & STATUS_IGNORE_BIT) != 0) color = activeTheme->ForegroundAt(C_IGNORE);
+	if ((myStatus & STATUS_IGNORE_BIT) != 0)
+		color = activeTheme->ForegroundAt(C_IGNORE);
 
 	activeTheme->ReadUnlock();
 

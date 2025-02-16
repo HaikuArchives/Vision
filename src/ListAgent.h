@@ -26,9 +26,9 @@
 #ifndef _LISTAGENT_H_
 #define _LISTAGENT_H_
 
-#include <View.h>
-#include <String.h>
 #include <Messenger.h>
+#include <String.h>
+#include <View.h>
 #include <regex.h>
 
 #include "Agent.h"
@@ -44,8 +44,7 @@ class Theme;
 class BRow;
 class WindowList;
 
-class ListAgent : public BView, public Agent
-{
+class ListAgent : public BView, public Agent {
 public:
 	ListAgent(const char*, BMessenger*);
 	virtual ~ListAgent();
@@ -63,7 +62,7 @@ private:
 	BMessenger* fSMsgr;
 	BMenu* listMenu;
 	BColumnListView* listView;
-	BColumn* channelColumn, *usersColumn, *topicColumn;
+	BColumn *channelColumn, *usersColumn, *topicColumn;
 
 	StatusView* status;
 
@@ -74,7 +73,7 @@ private:
 
 	BObjectList<BRow> hiddenItems, fBuildList;
 
-	BMenuItem* mFilter, *mFind, *mFindAgain;
+	BMenuItem *mFilter, *mFind, *mFindAgain;
 	friend class WindowList;
 };
 

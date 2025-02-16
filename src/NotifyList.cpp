@@ -44,7 +44,7 @@ NotifyList::NotifyList()
 	  fLastClickTime(0),
 	  fMyPopUp(NULL)
 {
-	//SetLayout(new BGroupLayout(B_VERTICAL));
+	// SetLayout(new BGroupLayout(B_VERTICAL));
 	fActiveTheme->ReadLock();
 	SetFont(&fActiveTheme->FontAt(F_WINLIST));
 	SetViewColor(fActiveTheme->ForegroundAt(C_NOTIFYLIST_BACKGROUND));
@@ -53,13 +53,16 @@ NotifyList::NotifyList()
 
 NotifyList::~NotifyList()
 {
-	while (CountItems() > 0) delete RemoveItem((int32)0);
+	while (CountItems() > 0)
+		delete RemoveItem((int32)0);
 	delete fMyPopUp;
 }
 
-void NotifyList::UpdateList(BObjectList<NotifyListItem>* newList)
+void
+NotifyList::UpdateList(BObjectList<NotifyListItem>* newList)
 {
-	while (CountItems() > 0) delete RemoveItem((int32)0);
+	while (CountItems() > 0)
+		delete RemoveItem((int32)0);
 	BList updateList;
 	// make private copy of list items otherwise things go bad
 	for (int32 i = 0; i < newList->CountItems(); i++)
@@ -67,19 +70,22 @@ void NotifyList::UpdateList(BObjectList<NotifyListItem>* newList)
 	AddList(&updateList);
 }
 
-void NotifyList::AttachedToWindow()
+void
+NotifyList::AttachedToWindow()
 {
 	fActiveTheme->AddView(this);
 	BListView::AttachedToWindow();
 }
 
-void NotifyList::DetachedFromWindow()
+void
+NotifyList::DetachedFromWindow()
 {
 	fActiveTheme->RemoveView(this);
 	BListView::DetachedFromWindow();
 }
 
-void NotifyList::MouseDown(BPoint myPoint)
+void
+NotifyList::MouseDown(BPoint myPoint)
 {
 	BMessage* msg(Window()->CurrentMessage());
 	int32 selected(IndexOf(myPoint));
@@ -88,15 +94,16 @@ void NotifyList::MouseDown(BPoint myPoint)
 		int32 mousebuttons(0), keymodifiers(0);
 
 		NotifyListItem* item((NotifyListItem*)ItemAt(selected));
-		if (!item) return;
+		if (!item)
+			return;
 
 		inputMsg->FindInt32("buttons", &mousebuttons);
 		inputMsg->FindInt32("modifiers", &keymodifiers);
 
 		bigtime_t sysTime;
 		msg->FindInt64("when", &sysTime);
-		uint16 clicks =
-			CheckClickCount(myPoint, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
+		uint16 clicks
+			= CheckClickCount(myPoint, fLastClick, sysTime, fLastClickTime, fClickCount) % 3;
 
 		// slight kludge to make sure the expand/collapse triangles behave how they should
 		// -- needed since OutlineListView's Expand/Collapse-related functions are not virtual
@@ -116,22 +123,24 @@ void NotifyList::MouseDown(BPoint myPoint)
 						vision_app->pClientWin()->pWindowList()->CurrentSelection()));
 				if (winItem) {
 					BMessenger msgr(winItem->pAgent());
-					if (msgr.IsValid()) msgr.SendMessage(&submitMsg);
+					if (msgr.IsValid())
+						msgr.SendMessage(&submitMsg);
 				}
 			} else
 				Select(selected);
 		}
 
-		if ((keymodifiers & B_SHIFT_KEY) == 0 && (keymodifiers & B_OPTION_KEY) == 0 &&
-			(keymodifiers & B_COMMAND_KEY) == 0 && (keymodifiers & B_CONTROL_KEY) == 0) {
+		if ((keymodifiers & B_SHIFT_KEY) == 0 && (keymodifiers & B_OPTION_KEY) == 0
+			&& (keymodifiers & B_COMMAND_KEY) == 0 && (keymodifiers & B_CONTROL_KEY) == 0) {
 			if (mousebuttons == B_SECONDARY_MOUSE_BUTTON) {
 				if (item) {
-					if (!item->IsSelected()) Select(IndexOf(myPoint));
+					if (!item->IsSelected())
+						Select(IndexOf(myPoint));
 
 					BuildPopUp();
 
 					fMyPopUp->Go(ConvertToScreen(myPoint), true, true,
-								 ConvertToScreen(ItemFrame(selected)), true);
+						ConvertToScreen(ItemFrame(selected)), true);
 				}
 			}
 		}
@@ -140,13 +149,15 @@ void NotifyList::MouseDown(BPoint myPoint)
 	BListView::MouseDown(myPoint);
 }
 
-void NotifyList::BuildPopUp()
+void
+NotifyList::BuildPopUp()
 {
 	delete fMyPopUp;
 	fMyPopUp = new BPopUpMenu("Notify selection", false, false);
 
 	int index(CurrentSelection());
-	if (index < 0) return;
+	if (index < 0)
+		return;
 
 	NotifyListItem* item(dynamic_cast<NotifyListItem*>(ItemAt(index)));
 	if (item) {
@@ -175,7 +186,8 @@ void NotifyList::BuildPopUp()
 		WindowListItem* winItem(
 			dynamic_cast<WindowListItem*>(vision_app->pClientWin()->pWindowList()->ItemAt(
 				vision_app->pClientWin()->pWindowList()->CurrentSelection())));
-		if (winItem) fMyPopUp->SetTargetForItems(winItem->pAgent());
+		if (winItem)
+			fMyPopUp->SetTargetForItems(winItem->pAgent());
 
 		if (!item->GetState()) {
 			// user is offline, do not allow whois, query or dcc chat
@@ -187,58 +199,65 @@ void NotifyList::BuildPopUp()
 	}
 }
 
-void NotifyList::MessageReceived(BMessage* msg)
+void
+NotifyList::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
-	case M_NOTIFYLIST_RESIZE: {
-		ClientWindow* cWin(vision_app->pClientWin());
-		cWin->DispatchMessage(msg, cWin->pCwDock());
-		break;
-	}
-
-	case M_THEME_FOREGROUND_CHANGE: {
-		int16 which(msg->FindInt16("which"));
-		bool refresh(false);
-		switch (which) {
-		case C_NOTIFYLIST_BACKGROUND:
-			fActiveTheme->ReadLock();
-			SetViewColor(fActiveTheme->ForegroundAt(C_NOTIFYLIST_BACKGROUND));
-			fActiveTheme->ReadUnlock();
-			refresh = true;
-			break;
-
-		case C_NOTIFY_ON:
-		case C_NOTIFY_OFF:
-		case C_NOTIFYLIST_SELECTION:
-			refresh = true;
+		case M_NOTIFYLIST_RESIZE:
+		{
+			ClientWindow* cWin(vision_app->pClientWin());
+			cWin->DispatchMessage(msg, cWin->pCwDock());
 			break;
 		}
-		if (refresh) Invalidate();
-	} break;
 
-	case M_THEME_FONT_CHANGE: {
-		int16 which(msg->FindInt16("which"));
-		if (which == F_WINLIST) {
-			fActiveTheme->ReadLock();
-			SetFont(&fActiveTheme->FontAt(F_WINLIST));
-			fActiveTheme->ReadUnlock();
-			Invalidate();
-		}
-	} break;
+		case M_THEME_FOREGROUND_CHANGE:
+		{
+			int16 which(msg->FindInt16("which"));
+			bool refresh(false);
+			switch (which) {
+				case C_NOTIFYLIST_BACKGROUND:
+					fActiveTheme->ReadLock();
+					SetViewColor(fActiveTheme->ForegroundAt(C_NOTIFYLIST_BACKGROUND));
+					fActiveTheme->ReadUnlock();
+					refresh = true;
+					break;
 
-	default:
-		BListView::MessageReceived(msg);
+				case C_NOTIFY_ON:
+				case C_NOTIFY_OFF:
+				case C_NOTIFYLIST_SELECTION:
+					refresh = true;
+					break;
+			}
+			if (refresh)
+				Invalidate();
+		} break;
+
+		case M_THEME_FONT_CHANGE:
+		{
+			int16 which(msg->FindInt16("which"));
+			if (which == F_WINLIST) {
+				fActiveTheme->ReadLock();
+				SetFont(&fActiveTheme->FontAt(F_WINLIST));
+				fActiveTheme->ReadUnlock();
+				Invalidate();
+			}
+		} break;
+
+		default:
+			BListView::MessageReceived(msg);
 	}
 }
 
 NotifyListItem::NotifyListItem(const char* name, bool state)
-	: BStringItem(name), fNotifyState(state)
+	: BStringItem(name),
+	  fNotifyState(state)
 {
 	// empty c'tor
 }
 
 NotifyListItem::NotifyListItem(const NotifyListItem& copyItem)
-	: BStringItem(copyItem.Text()), fNotifyState(copyItem.fNotifyState)
+	: BStringItem(copyItem.Text()),
+	  fNotifyState(copyItem.fNotifyState)
 {
 	// empty copy c'tor
 }
@@ -248,17 +267,20 @@ NotifyListItem::~NotifyListItem()
 	// empty d'tor
 }
 
-void NotifyListItem::SetState(bool newState)
+void
+NotifyListItem::SetState(bool newState)
 {
 	fNotifyState = newState;
 }
 
-bool NotifyListItem::GetState() const
+bool
+NotifyListItem::GetState() const
 {
 	return fNotifyState;
 }
 
-void NotifyListItem::DrawItem(BView* father, BRect frame, bool complete)
+void
+NotifyListItem::DrawItem(BView* father, BRect frame, bool complete)
 {
 	Theme* fActiveTheme(vision_app->ActiveTheme());
 

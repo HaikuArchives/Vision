@@ -26,8 +26,8 @@
 #include <Box.h>
 #include <GroupLayout.h>
 #include <LayoutBuilder.h>
-#include <View.h>
 #include <OutlineListView.h>
+#include <View.h>
 
 #include <ScrollView.h>
 
@@ -36,23 +36,22 @@
 
 PrefsWindow::PrefsWindow()
 	: BWindow(BRect(88.0, 108.0, 0.0, 0.0), B_TRANSLATE("Preferences"), B_TITLED_WINDOW,
-			  /* B_NOT_ZOOMABLE | B_NOT_RESIZABLE  | */ B_ASYNCHRONOUS_CONTROLS | B_AUTO_UPDATE_SIZE_LIMITS)
+		  /* B_NOT_ZOOMABLE | B_NOT_RESIZABLE  | */ B_ASYNCHRONOUS_CONTROLS
+			  | B_AUTO_UPDATE_SIZE_LIMITS)
 {
-	GeneralPrefsView* generalView =
-		new GeneralPrefsView("view");
-/*
-	static const float spacing = B_USE_WINDOW_INSETS; //be_control_look->DefaultLabelSpacing();
+	GeneralPrefsView* generalView = new GeneralPrefsView("view");
+	/*
+		static const float spacing = B_USE_WINDOW_INSETS; //be_control_look->DefaultLabelSpacing();
 
-	BGroupLayout* topBox = BLayoutBuilder::Group<>(B_VERTICAL)
-		.SetInsets(B_USE_WINDOW_INSETS, spacing / 4,
-			B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
-		.Add(generalView);
+		BGroupLayout* topBox = BLayoutBuilder::Group<>(B_VERTICAL)
+			.SetInsets(B_USE_WINDOW_INSETS, spacing / 4,
+				B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
+			.Add(generalView);
 
-	BBox* box = new BBox("box");
-	box->AddChild(topBox->View()); */
+		BBox* box = new BBox("box");
+		box->AddChild(topBox->View()); */
 
-	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
-		.Add(generalView);
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0).Add(generalView);
 
 	BRect prefsRect(vision_app->GetRect("GenPrefWinRect"));
 	if (prefsRect.Width() != 0.0 && prefsRect.Height() != 0.0) {
@@ -61,11 +60,10 @@ PrefsWindow::PrefsWindow()
 	}
 }
 
-PrefsWindow::~PrefsWindow()
-{
-}
+PrefsWindow::~PrefsWindow() {}
 
-bool PrefsWindow::QuitRequested()
+bool
+PrefsWindow::QuitRequested()
 {
 	vision_app->SetRect("GenPrefWinRect", Frame());
 	be_app_messenger.SendMessage(M_PREFS_CLOSE);
