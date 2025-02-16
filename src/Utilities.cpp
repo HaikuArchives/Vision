@@ -263,14 +263,14 @@ BString DurationString(int64 value)
 	bigtime_t days = hours / 24;
 
 	char message[512] = "";
-	if (days) sprintf(message, "%Ld day%s ", days, days != 1 ? "s" : "");
+	if (days) sprintf(message, "%" B_PRIdBIGTIME " day%s ", days, days != 1 ? "s" : "");
 
 	if (hours % 24)
-		sprintf(message, "%s%Ld hr%s ", message, hours % 24, (hours % 24) != 1 ? "s" : "");
+		sprintf(message, "%s%" B_PRIdBIGTIME " hr%s ", message, hours % 24, (hours % 24) != 1 ? "s" : "");
 
-	if (min % 60) sprintf(message, "%s%Ld min%s ", message, min % 60, (min % 60) != 1 ? "s" : "");
+	if (min % 60) sprintf(message, "%s%" B_PRIdBIGTIME " min%s ", message, min % 60, (min % 60) != 1 ? "s" : "");
 
-	sprintf(message, "%s%Ld.%Ld sec%s", message, sec % 60, (milli % 1000),
+	sprintf(message, "%s%" B_PRIdBIGTIME ".%" B_PRIdBIGTIME " sec%s", message, sec % 60, (milli % 1000),
 			(sec % 60) != 1 ? "s" : "");
 
 	duration += message;

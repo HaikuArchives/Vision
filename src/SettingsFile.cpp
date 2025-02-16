@@ -372,10 +372,10 @@ status_t SettingsFile::_StoreAttributes(BMessage const* m, BFile* f, const char*
 				if (lname == NULL) {
 					return B_NO_MEMORY;
 				}
-				sprintf(lname, "%ld",
+				sprintf(lname, "%" B_PRId32,
 						countfound - 1); // find the length of the biggest number for that field
-				char format[12];
-				sprintf(format, "%%s%%s::%%0%ldld:", strlen(lname)); // create the sprintf format
+				char format[13];
+				sprintf(format, "%%s%%s::%%0%" B_PRId32 "ld:", (int32)strlen(lname)); // create the sprintf format
 				for (int32 j = 0; j < countfound; j++) {
 					sprintf(lname, format, basename, namefound,
 							j); // create the base name for the sub-message
@@ -442,9 +442,9 @@ status_t SettingsFile::_StoreAttributes(BMessage const* m, BFile* f, const char*
 				if (lname == NULL) {
 					return B_NO_MEMORY;
 				}
-				sprintf(lname, "%ld", countfound - 1);
+				sprintf(lname, "%" B_PRId32, countfound - 1);
 				char format[12];
-				sprintf(format, "%%s%%s::%%0%ldld", strlen(lname));
+				sprintf(format, "%%s%%s::%%0%" B_PRId32 "ld", (int32)strlen(lname));
 				for (int32 j = 0; j < countfound; j++) {
 					sprintf(lname, format, basename, namefound, j);
 					const void* datafound;

@@ -20,7 +20,7 @@
  */
 
 #ifndef _PREFALIASES_H_
-#define _PREFALIASES_H
+#define _PREFALIASES_H_
 
 #include <View.h>
 
@@ -44,4 +44,4 @@ private:
 	BButton* fRemoveButton;
 };
 
-#endif // _PREFALIASES_H
+#endif // _PREFALIASES_H_

@@ -1859,7 +1859,7 @@ int16 Line::CountChars(int16 pos, int16 len)
 
 	if (pos + len > fLength) len = fLength - pos;
 
-	register int16 i = pos;
+	int16 i = pos;
 	while (i < pos + len) {
 		i += UTF8_CHAR_LEN(fText[i]);
 		++ccount;

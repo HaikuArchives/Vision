@@ -1069,11 +1069,12 @@ const char* VisionApp::GetString(const char* stringName) const
 	if (stringLock.IsLocked()) {
 		if (fDebugSettings) printf(":SETTINGS: looking up String \"%s\"... ", stringName);
 
-		if ((fVisionSettings->FindString(stringName, &value)) == B_OK)
+		if ((fVisionSettings->FindString(stringName, &value)) == B_OK) {
 			if (fDebugSettings)
 				printf("found; returning %s\n", value);
 			else if (fDebugSettings)
 				printf(" not found; returning NULL\n");
+		}
 	}
 	return value;
 }
@@ -1294,12 +1295,12 @@ bool VisionApp::GetBool(const char* settingName)
 
 	bool value(false);
 
-	if (fVisionSettings->FindBool(settingName, &value) == B_OK)
+	if (fVisionSettings->FindBool(settingName, &value) == B_OK) {
 		if (fDebugSettings)
 			printf("found; returning %s\n", (value) ? "true" : "false");
 		else if (fDebugSettings)
 			printf(" not found; returning false\n");
-
+	}
 	return value;
 }
 
@@ -1539,7 +1540,7 @@ void VisionApp::BenchOut(const char* ts)
 	bench0 = fBench2 - fBench1;
 	bench0 = bench0 / 100;
 
-	printf("%s: 0.%04lds\n", ts, bench0);
+	printf("%s: 0.%04" B_PRId32 "s\n", ts, bench0);
 }
 
 void VisionApp::Broadcast(BMessage* msg)

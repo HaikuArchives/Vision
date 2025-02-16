@@ -70,7 +70,7 @@ bool ServerAgent::ParseENums(const char* data, const char* sWord)
 				int32 secs(difference / 1000000);
 				int32 milli(difference / 1000 - secs * 1000);
 				char lag[15] = "";
-				sprintf(lag, "%ld.%03ld", secs, milli);
+				sprintf(lag, "%" B_PRId32 ".%03" B_PRId32, secs, milli);
 				fMyLag = lag;
 				fLagCount = 0;
 				fCheckingLag = false;

@@ -825,7 +825,7 @@ bool ServerAgent::PrivateIPCheck(BString ip)
 			temp172s[2] = '\0';
 			int temp172n(atoi(temp172s));
 
-			if (temp172n >= 16 || temp172n <= 31) return true;
+			if (temp172n >= 16 && temp172n <= 31) return true;
 		}
 		return false;
 	}
