@@ -90,12 +90,14 @@ ColorPrefsView::ColorPrefsView()
 	fRevert
 		= new BButton("fRevert", B_TRANSLATE("Revert"), new BMessage(M_REVERT_COLOR_SELECTIONS));
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.Add(fSelector)
 		.Add(fRevert)
 		.AddGlue()
-		.End();
+	.End();
+	// clang-format on
 }
 
 ColorPrefsView::~ColorPrefsView() {}

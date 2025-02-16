@@ -42,7 +42,12 @@ NetworkWindow::NetworkWindow()
 	NetworkPrefsView* netView = new NetworkPrefsView("network");
 	ResizeTo(netView->Bounds().Width(), netView->Bounds().Height());
 
-	BLayoutBuilder::Group<>(this, B_VERTICAL, 0).SetInsets(0).Add(netView).End();
+	// clang-format off
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+		.SetInsets(0)
+		.Add(netView)
+	.End();
+	// clang-format on
 
 	BRect netFrame = vision_app->GetRect("NetPrefWinRect");
 

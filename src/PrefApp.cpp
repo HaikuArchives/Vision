@@ -75,6 +75,7 @@ AppWindowPrefsView::AppWindowPrefsView()
 
 	fEncodings->Menu()->SetLabelFromMarked(true);
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.Add(fVersionParanoid)
@@ -84,7 +85,8 @@ AppWindowPrefsView::AppWindowPrefsView()
 		.Add(fQueryMsg)
 		.Add(fEncodings)
 		.AddGlue()
-		.End();
+	.End();
+	// clang-format on
 }
 
 AppWindowPrefsView::~AppWindowPrefsView() {}

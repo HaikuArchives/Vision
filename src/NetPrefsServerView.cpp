@@ -63,16 +63,18 @@ NetPrefsServerView::NetPrefsServerView(BRect bounds, const char* name, BMessenge
 	fEditButton
 		= new BButton(NULL, B_TRANSLATE("Edit" B_UTF8_ELLIPSIS), new BMessage(M_SERVER_EDIT_ITEM));
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.Add(fServerList)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-		.AddGlue()
-		.Add(fAddButton)
-		.Add(fRemoveButton)
-		.Add(fEditButton)
+			.AddGlue()
+			.Add(fAddButton)
+			.Add(fRemoveButton)
+			.Add(fEditButton)
 		.End()
-		.End();
+	.End();
+	// clang-format on
 }
 
 NetPrefsServerView::~NetPrefsServerView()

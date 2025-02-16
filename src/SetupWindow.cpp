@@ -66,16 +66,18 @@ SetupWindow::SetupWindow()
 		"prefs", B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS), new BMessage(M_PREFS_SHOW));
 	prefsButton->SetTarget(vision_app);
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_HALF_ITEM_INSETS)
 		.Add(logo)
 		.Add(netList)
 		.AddGroup(B_HORIZONTAL)
-		.Add(connectButton)
-		.Add(netPrefsButton)
-		.Add(prefsButton)
+			.Add(connectButton)
+			.Add(netPrefsButton)
+			.Add(prefsButton)
 		.End()
-		.End();
+	.End();
+	// clang-format on
 
 	connectButton->SetEnabled(false);
 

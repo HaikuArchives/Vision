@@ -253,13 +253,15 @@ ColorSelector::ColorSelector(BRect frame, const char* name, const char* label,
 			.End();
 	*/
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
-		.Add(fColorField)
-		.Add(swatch)
-		.Add(fColorPalette)
-		.AddGlue()
+			.Add(fColorField)
+			.Add(swatch)
+			.Add(fColorPalette)
+			.AddGlue()
 		.End();
+	// clang-format on
 }
 
 ColorSelector::~ColorSelector() {}

@@ -180,19 +180,21 @@ FontPrefsView::FontPrefsView()
 	fTextControl = new BTextControl("", "Size:", "", new BMessage(M_FONT_SIZE_CHANGE));
 	fTextControl->TextView()->AddFilter(new NumericFilter());
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_HALF_ITEM_INSETS)
 		.AddGroup(B_HORIZONTAL)
-		.Add(fFontElementField)
-		.AddGlue(10.0)
+			.Add(fFontElementField)
+			.AddGlue(10.0)
 		.End()
 		.AddGroup(B_HORIZONTAL)
-		.Add(fFontMenuField)
-		.Add(fTextControl)
-		.AddGlue(10.0)
+			.Add(fFontMenuField)
+			.Add(fTextControl)
+			.AddGlue(10.0)
 		.End()
 		.AddGlue()
-		.End();
+	.End();
+	// clang-format on
 }
 
 FontPrefsView::~FontPrefsView() {}

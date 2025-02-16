@@ -71,13 +71,15 @@ GeneralPrefsView::GeneralPrefsView(const char* title)
 	BScrollView* scrollView = new BScrollView(
 		"list scrollView", fPrefsListView, B_FRAME_EVENTS | B_WILL_DRAW, false, true);
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-		.Add(scrollView)
-		.Add(fPrefsBox)
+			.Add(scrollView)
+			.Add(fPrefsBox)
 		.End()
 		.SetInsets(B_USE_WINDOW_SPACING)
-		.End();
+	.End();
+	// clang-format on
 	fPrefsBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 }
 

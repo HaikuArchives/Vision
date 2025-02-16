@@ -56,13 +56,15 @@ PromptWindow::PromptWindow(BPoint point, const char* label, const char* title, c
 	cancel = new BButton("Cancel", "Cancel", new BMessage(M_PROMPT_CANCEL));
 
 	//	ResizeTo(width + 145, cancel->Frame().bottom + 10);
+	// clang-format off
 	BLayoutBuilder::Grid<>(this)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.Add(field->CreateLabelLayoutItem(), 0, 0)
 		.Add(field->CreateTextViewLayoutItem(), 1, 0, 2)
 		.Add(cancel, 1, 1)
 		.Add(done, 2, 1)
-		.End();
+	.End();
+	// clang-format on
 
 	done->MakeDefault(true);
 	field->MakeFocus(true);

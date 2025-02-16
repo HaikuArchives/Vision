@@ -96,15 +96,17 @@ AliasesPrefsView::AttachedToWindow()
 
 	fRemoveButton->SetEnabled(false);
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.Add(fAliasView)
 		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-		.AddGlue()
-		.Add(fAddButton)
-		.Add(fRemoveButton)
+			.AddGlue()
+			.Add(fAddButton)
+			.Add(fRemoveButton)
 		.End()
 		.SetInsets(B_USE_WINDOW_SPACING)
-		.End();
+	.End();
+	// clang-format on
 
 	BuildAliasList();
 }

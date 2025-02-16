@@ -73,19 +73,21 @@ LogPrefsView::LogPrefsView()
 	fLogFileTimestamp->SetValue(
 		vision_app->GetBool(("log_filetimestamp")) ? B_CONTROL_ON : B_CONTROL_OFF);
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.Add(fLogBaseDir)
 		.AddGroup(B_HORIZONTAL)	 // TODO improve this it doesn't look good
-		.Add(fLogStampFormat)
-		//				.AddGlue()
-		.Add(fClearLogs)
+			.Add(fLogStampFormat)
+			//				.AddGlue()
+			.Add(fClearLogs)
 		.End()
 		.Add(fTimeStamp)
 		.Add(fLogEnabled)
 		.Add(fLogFileTimestamp)
 		.AddGlue()
-		.End();
+	.End();
+	// clang-format on
 }
 
 LogPrefsView::~LogPrefsView() {}

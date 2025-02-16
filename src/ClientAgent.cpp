@@ -176,15 +176,17 @@ ClientAgent::Init()
 
 	fTextScroll = new BScrollView("textscroll", fText, 0, false, true, B_PLAIN_BORDER);
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 5)
 		.SetInsets(0, 0, 0, 0)
 		.AddGroup(B_VERTICAL, 0)
-		.Add(fTextScroll)
-		.AddStrut(5)
-		.Add(fInput)
-		.AddStrut(5)
+			.Add(fTextScroll)
+			.AddStrut(5)
+			.Add(fInput)
+			.AddStrut(5)
 		.End()
-		.End();
+	.End();
+	// clang-format on
 }
 
 void

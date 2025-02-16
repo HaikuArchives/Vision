@@ -115,29 +115,32 @@ ServerEntryWindow::ServerEntryWindow(
 	passwordField
 		= new BTextControl("password", NULL, password.String(), NULL, B_WILL_DRAW | B_NAVIGABLE);
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL, B_USE_HALF_ITEM_SPACING)
 		.SetInsets(0)
 		.AddGrid()
-		.SetInsets(B_USE_WINDOW_INSETS)
-		.Add(serverName->CreateLabelLayoutItem(), 0, 0)
-		.Add(serverName->CreateTextViewLayoutItem(), 1, 0)
-		.Add(port->CreateLabelLayoutItem(), 0, 1)
-		.Add(port->CreateTextViewLayoutItem(), 1, 1)
-		.Add(securePort, 0, 2, 2)
-		.Add(usePassword, 0, 3)
-		.Add(passwordField, 1, 3)
-		.Add(statusField->CreateLabelLayoutItem(), 0, 4)
-		.Add(statusField->CreateMenuBarLayoutItem(), 1, 4)
+			.SetInsets(B_USE_WINDOW_INSETS)
+			.Add(serverName->CreateLabelLayoutItem(), 0, 0)
+			.Add(serverName->CreateTextViewLayoutItem(), 1, 0)
+			.Add(port->CreateLabelLayoutItem(), 0, 1)
+			.Add(port->CreateTextViewLayoutItem(), 1, 1)
+			.Add(securePort, 0, 2, 2)
+			.Add(usePassword, 0, 3)
+			.Add(passwordField, 1, 3)
+			.Add(statusField->CreateLabelLayoutItem(), 0, 4)
+			.Add(statusField->CreateMenuBarLayoutItem(), 1, 4)
 		.End()
 		.Add(new BSeparatorView(B_HORIZONTAL))
 		.AddGroup(B_HORIZONTAL)
-		.SetInsets(
-			B_USE_WINDOW_INSETS, B_USE_HALF_ITEM_SPACING, B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
-		.AddGlue()
-		.Add(cancelButton)
-		.Add(okButton)
+			.SetInsets(
+				B_USE_WINDOW_INSETS, B_USE_HALF_ITEM_SPACING, B_USE_WINDOW_INSETS,
+				B_USE_WINDOW_INSETS)
+			.AddGlue()
+			.Add(cancelButton)
+			.Add(okButton)
 		.End()
-		.End();
+	.End();
+	// clang-format on
 
 	serverName->SetTarget(this);
 

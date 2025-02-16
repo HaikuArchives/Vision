@@ -47,13 +47,15 @@ ClientWindowDock::ClientWindowDock()
 {
 	AdoptSystemColors();
 
+	// clang-format off
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.SetInsets(0, 0, 0, -1.0)
 		.AddSplit(B_VERTICAL, 0)
 		.GetSplitView(&fSplitView)
-		.Add(fWinListAgent = new AgentDockWinList())
-		.Add(fNotifyAgent = new AgentDockNotifyList())
+			.Add(fWinListAgent = new AgentDockWinList())
+			.Add(fNotifyAgent = new AgentDockNotifyList())
 		.End();
+	// clang-format on
 
 	fSplitView->SetItemWeight(0, vision_app->GetFloat("weight_WindowList"), false);
 	fSplitView->SetItemWeight(1, vision_app->GetFloat("weight_NotifyList"), false);

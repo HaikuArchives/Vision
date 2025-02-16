@@ -51,28 +51,29 @@ EventPrefsView::EventPrefsView()
 		fEvents[i]->SetModificationMessage(msg);
 	}
 
+	// clang-format off
 	BLayoutBuilder::Group<>(bgView, B_VERTICAL, 0)
 		.AddGrid(0.0, 0.0)
-		.Add(fEvents[0]->CreateLabelLayoutItem(), 0, 0)
-		.Add(fEvents[0]->CreateTextViewLayoutItem(), 1, 0)
-		.Add(fEvents[1]->CreateLabelLayoutItem(), 0, 1)
-		.Add(fEvents[1]->CreateTextViewLayoutItem(), 1, 1)
-		.Add(fEvents[2]->CreateLabelLayoutItem(), 0, 2)
-		.Add(fEvents[2]->CreateTextViewLayoutItem(), 1, 2)
-		.Add(fEvents[3]->CreateLabelLayoutItem(), 0, 3)
-		.Add(fEvents[3]->CreateTextViewLayoutItem(), 1, 3)
-		.Add(fEvents[4]->CreateLabelLayoutItem(), 0, 4)
-		.Add(fEvents[4]->CreateTextViewLayoutItem(), 1, 4)
-		.Add(fEvents[5]->CreateLabelLayoutItem(), 0, 5)
-		.Add(fEvents[5]->CreateTextViewLayoutItem(), 1, 5)
-		.Add(fEvents[6]->CreateLabelLayoutItem(), 0, 6)
-		.Add(fEvents[6]->CreateTextViewLayoutItem(), 1, 6)
-		.Add(fEvents[7]->CreateLabelLayoutItem(), 0, 7)
-		.Add(fEvents[7]->CreateTextViewLayoutItem(), 1, 7)
-		.Add(fEvents[8]->CreateLabelLayoutItem(), 0, 8)
-		.Add(fEvents[8]->CreateTextViewLayoutItem(), 1, 8)
-		.Add(fEvents[9]->CreateLabelLayoutItem(), 0, 9)
-		.Add(fEvents[9]->CreateTextViewLayoutItem(), 1, 9);
+			.Add(fEvents[0]->CreateLabelLayoutItem(), 0, 0)
+			.Add(fEvents[0]->CreateTextViewLayoutItem(), 1, 0)
+			.Add(fEvents[1]->CreateLabelLayoutItem(), 0, 1)
+			.Add(fEvents[1]->CreateTextViewLayoutItem(), 1, 1)
+			.Add(fEvents[2]->CreateLabelLayoutItem(), 0, 2)
+			.Add(fEvents[2]->CreateTextViewLayoutItem(), 1, 2)
+			.Add(fEvents[3]->CreateLabelLayoutItem(), 0, 3)
+			.Add(fEvents[3]->CreateTextViewLayoutItem(), 1, 3)
+			.Add(fEvents[4]->CreateLabelLayoutItem(), 0, 4)
+			.Add(fEvents[4]->CreateTextViewLayoutItem(), 1, 4)
+			.Add(fEvents[5]->CreateLabelLayoutItem(), 0, 5)
+			.Add(fEvents[5]->CreateTextViewLayoutItem(), 1, 5)
+			.Add(fEvents[6]->CreateLabelLayoutItem(), 0, 6)
+			.Add(fEvents[6]->CreateTextViewLayoutItem(), 1, 6)
+			.Add(fEvents[7]->CreateLabelLayoutItem(), 0, 7)
+			.Add(fEvents[7]->CreateTextViewLayoutItem(), 1, 7)
+			.Add(fEvents[8]->CreateLabelLayoutItem(), 0, 8)
+			.Add(fEvents[8]->CreateTextViewLayoutItem(), 1, 8)
+			.Add(fEvents[9]->CreateLabelLayoutItem(), 0, 9)
+			.Add(fEvents[9]->CreateTextViewLayoutItem(), 1, 9);
 	/*
 		fScroller = new BScrollView("command fScroller", bgView,
 						0, false, true, B_NO_BORDER);
@@ -88,6 +89,7 @@ EventPrefsView::EventPrefsView()
 			B_USE_DEFAULT_SPACING)
 		//		.Add(fScroller);
 		.Add(bgView);
+	// clang-format on
 }
 
 EventPrefsView::~EventPrefsView()

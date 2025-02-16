@@ -50,22 +50,23 @@ CommandPrefsView::CommandPrefsView()
 		fCommands[i]->SetModificationMessage(msg);
 	}
 
+	// clang-format off
 	BLayoutBuilder::Group<>(bgView, B_VERTICAL, 0)
 		.AddGrid(0.0, 0.0)
-		.Add(fCommands[0]->CreateLabelLayoutItem(), 0, 0)
-		.Add(fCommands[0]->CreateTextViewLayoutItem(), 1, 0)
-		.Add(fCommands[1]->CreateLabelLayoutItem(), 0, 1)
-		.Add(fCommands[1]->CreateTextViewLayoutItem(), 1, 1)
-		.Add(fCommands[2]->CreateLabelLayoutItem(), 0, 2)
-		.Add(fCommands[2]->CreateTextViewLayoutItem(), 1, 2)
-		.Add(fCommands[3]->CreateLabelLayoutItem(), 0, 3)
-		.Add(fCommands[3]->CreateTextViewLayoutItem(), 1, 3)
-		.Add(fCommands[4]->CreateLabelLayoutItem(), 0, 4)
-		.Add(fCommands[4]->CreateTextViewLayoutItem(), 1, 4)
-		.Add(fCommands[5]->CreateLabelLayoutItem(), 0, 5)
-		.Add(fCommands[5]->CreateTextViewLayoutItem(), 1, 5)
-		.Add(fCommands[6]->CreateLabelLayoutItem(), 0, 6)
-		.Add(fCommands[6]->CreateTextViewLayoutItem(), 1, 6)
+			.Add(fCommands[0]->CreateLabelLayoutItem(), 0, 0)
+			.Add(fCommands[0]->CreateTextViewLayoutItem(), 1, 0)
+			.Add(fCommands[1]->CreateLabelLayoutItem(), 0, 1)
+			.Add(fCommands[1]->CreateTextViewLayoutItem(), 1, 1)
+			.Add(fCommands[2]->CreateLabelLayoutItem(), 0, 2)
+			.Add(fCommands[2]->CreateTextViewLayoutItem(), 1, 2)
+			.Add(fCommands[3]->CreateLabelLayoutItem(), 0, 3)
+			.Add(fCommands[3]->CreateTextViewLayoutItem(), 1, 3)
+			.Add(fCommands[4]->CreateLabelLayoutItem(), 0, 4)
+			.Add(fCommands[4]->CreateTextViewLayoutItem(), 1, 4)
+			.Add(fCommands[5]->CreateLabelLayoutItem(), 0, 5)
+			.Add(fCommands[5]->CreateTextViewLayoutItem(), 1, 5)
+			.Add(fCommands[6]->CreateLabelLayoutItem(), 0, 6)
+			.Add(fCommands[6]->CreateTextViewLayoutItem(), 1, 6)
 		.End();
 	/*
 	fScroller = new BScrollView("command scroller", bgView, 0, false, true, B_NO_BORDER);
@@ -82,6 +83,7 @@ CommandPrefsView::CommandPrefsView()
 		.Add(bgView)
 		//		.Add(fScroller)
 		.AddGlue();
+	// clang-format on
 }
 
 CommandPrefsView::~CommandPrefsView()

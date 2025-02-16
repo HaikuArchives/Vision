@@ -70,13 +70,14 @@ DCCPrefsView::DCCPrefsView()
 	fBox->AddChild(fContainerBox);
 	fBox->SetLabel(B_TRANSLATE("DCC port range"));
 
+	// clang-format off
 	BLayoutBuilder::Grid<>(fContainerBox, 0.0, 0.0)
 		.SetInsets(B_USE_WINDOW_SPACING)
 		.Add(fDccPortMin->CreateLabelLayoutItem(), 0, 0)
 		.Add(fDccPortMin->CreateTextViewLayoutItem(), 1, 0)
 		.Add(fDccPortMax->CreateLabelLayoutItem(), 0, 1)
 		.Add(fDccPortMax->CreateTextViewLayoutItem(), 1, 1)
-		.End();
+	.End();
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
@@ -86,7 +87,8 @@ DCCPrefsView::DCCPrefsView()
 		.Add(fBlockSize)
 		.Add(fBox)
 		.AddGlue()
-		.End();
+	.End();
+	// clang-format on
 }
 
 DCCPrefsView::~DCCPrefsView() {}

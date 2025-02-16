@@ -51,7 +51,10 @@ PrefsWindow::PrefsWindow()
 		BBox* box = new BBox("box");
 		box->AddChild(topBox->View()); */
 
-	BLayoutBuilder::Group<>(this, B_VERTICAL, 0).Add(generalView);
+	// clang-format off
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+		.Add(generalView);
+	// clang-format on
 
 	BRect prefsRect(vision_app->GetRect("GenPrefWinRect"));
 	if (prefsRect.Width() != 0.0 && prefsRect.Height() != 0.0) {
