@@ -25,13 +25,13 @@
 #define DCCCONNECT_H_
 
 #include <File.h>
+#include <Messenger.h>
 #include <String.h>
 #include <View.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-class BMessenger;
 class BStatusBar;
 class BStringView;
 class StopButton;
