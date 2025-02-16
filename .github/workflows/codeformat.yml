@@ -1,0 +1,34 @@
+name: Format (clang-format)
+
+on:
+    push:
+        branches:
+            - 'master'
+    pull_request:
+        paths:
+            - '**.h'
+            - '**.cpp'
+            - '**.c'
+
+jobs:
+    clang-format:
+        runs-on: ubuntu-24.04
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.head_ref }}
+
+            - name: Set up clang-format
+              run: |
+                  wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+                  sudo add-apt-repository "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-19 main"
+                  sudo apt install clang-format-19
+
+            - name: Run clang-format
+              run: |
+                  which clang-format-19
+                  clang-format-19 -i src/*.cpp src/*.h
+
+            - uses: stefanzweifel/git-auto-commit-action@v5
+              with:
+                  commit_message: Apply clang-format changes
