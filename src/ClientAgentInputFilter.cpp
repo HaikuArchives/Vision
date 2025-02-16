@@ -223,6 +223,9 @@ filter_result ClientAgentInputFilter::HandleKeys(BMessage* msg)
 
 	if ((keymodifiers & B_OPTION_KEY) == 0 && (keymodifiers & B_COMMAND_KEY) != 0 &&
 		(keymodifiers & B_CONTROL_KEY) == 0 && (keymodifiers & B_SHIFT_KEY) != 0) {
+		///////////////////////
+		/// Shift + Command ///
+		///////////////////////
 		switch (keyStroke[0]) {
 		case '0':
 		case B_INSERT:
@@ -231,16 +234,29 @@ filter_result ClientAgentInputFilter::HandleKeys(BMessage* msg)
 			result = B_SKIP_MESSAGE;
 			break;
 
+		case B_LEFT_ARROW:  
+		case B_RIGHT_ARROW:
+		{
+			BTextView* focusedTextView = dynamic_cast<BTextView*>(vision_app->pClientWin()->CurrentFocus());
+			if (focusedTextView) // while selecting text, move to start of word or previous word, or to end of word or next word
+				result = B_DISPATCH_MESSAGE; // Let the text view handle the message
+			else { // baxter muscle memory
+				result = B_SKIP_MESSAGE;
+				if (keyStroke[0] == B_LEFT_ARROW)
+					winList->ContextSelectUp();
+				else
+					winList->ContextSelectDown();
+			}
+		} break;
+
 		case B_UP_ARROW:
-		case B_LEFT_ARROW: // baxter muscle memory
-		case ',':		   // bowser muscle memory
+		case ',': // bowser muscle memory
 			winList->ContextSelectUp();
 			result = B_SKIP_MESSAGE;
 			break;
 
-		case B_DOWN_ARROW:  //
-		case B_RIGHT_ARROW: // baxter muscle memory
-		case '.':			// bowser muscle memory
+		case B_DOWN_ARROW:
+		case '.': // bowser muscle memory
 			winList->ContextSelectDown();
 			result = B_SKIP_MESSAGE;
 			break;
@@ -283,14 +299,30 @@ filter_result ClientAgentInputFilter::HandleKeys(BMessage* msg)
 
 		case B_LEFT_ARROW: // collapse current server (if expanded)
 		{
-			winList->CollapseCurrentServer();
-			result = B_SKIP_MESSAGE;
+			BView* focusedView = vision_app->pClientWin()->CurrentFocus();
+			if (dynamic_cast<BTextView*>(focusedView) == NULL) { // The focused view is not a BTextView
+				winList->CollapseCurrentServer();
+				result = B_SKIP_MESSAGE;
+			} else
+				result = B_DISPATCH_MESSAGE; // Let the text view handle the message
 		} break;
 
 		case B_RIGHT_ARROW: // expand current server (if collapsed)
 		{
-			winList->ExpandCurrentServer();
-			result = B_SKIP_MESSAGE;
+			BTextView* focusedTextView = dynamic_cast<BTextView*>(vision_app->pClientWin()->CurrentFocus());
+			bool insertionAtEnd; // Whether the insertion point of the focused BTextView is at the end of its text
+			if (focusedTextView) {
+				int32 selectionStart, selectionEnd;
+				focusedTextView->GetSelection(&selectionStart, &selectionEnd);
+				insertionAtEnd = (selectionStart == selectionEnd) && (selectionEnd == focusedTextView->TextLength());
+			}
+			if (focusedTextView == NULL // The focused view is not a BTextView
+				|| insertionAtEnd) {
+				winList->ExpandCurrentServer();
+				result = B_SKIP_MESSAGE;
+			}
+			else
+				result = B_DISPATCH_MESSAGE; // Let the text view handle the message
 		} break;
 
 		case '/': // bowser muscle memory
