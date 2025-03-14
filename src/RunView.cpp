@@ -1620,7 +1620,7 @@ Line::Append(
 		fUrls->AddItem(new URL(buffer, save, len));
 	}
 
-	if (fText[fLength - 1] == '\n') {
+	if (fLength > 0 && fText[fLength - 1] == '\n') {
 		FigureSpaces();
 		FigureEdges(theme, width);
 	}
