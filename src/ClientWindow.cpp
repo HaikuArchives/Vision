@@ -106,6 +106,7 @@ ClientWindow::ClientWindow(BRect frame)
 	: BWindow(frame, B_TRANSLATE_SYSTEM_NAME("Vision"), B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS)
 {
 	Init();
+	MoveOnScreen(B_MOVE_IF_PARTIALLY_OFFSCREEN);
 }
 
 ClientWindow::~ClientWindow() {}
