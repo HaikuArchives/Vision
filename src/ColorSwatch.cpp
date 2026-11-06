@@ -25,8 +25,7 @@
 #include "ColorSwatch.h"
 #include <Window.h>
 
-ColorSwatch::ColorSwatch(
-	const char* name, rgb_color color_, uint32 flags)
+ColorSwatch::ColorSwatch(const char* name, rgb_color color_, uint32 flags)
 
 	: BView(name, flags),
 	  fColor(color_)
