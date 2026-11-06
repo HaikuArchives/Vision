@@ -25,18 +25,7 @@
 #include "ColorSwatch.h"
 #include <Window.h>
 
-struct general_ui_info {
-	rgb_color background_color;
-	rgb_color mark_color;
-	rgb_color ighlight_color;
-	bool color_frame;
-	rgb_color window_frame_color;
-};
-
-extern general_ui_info general_info;
-
 ColorSwatch::ColorSwatch(
-
 	const char* name, rgb_color color_, uint32 flags)
 
 	: BView(name, flags),
@@ -96,8 +85,8 @@ ColorSwatch::Draw(BRect)
 	BPoint vmore(0, 1);
 
 	if (IsFocus() && Window()->IsActive()) {
-		light = general_info.mark_color;
-		dark = general_info.mark_color;
+		light = ui_color(B_CONTROL_MARK_COLOR);
+		dark = ui_color(B_CONTROL_MARK_COLOR);
 		hless = hmore = vless = vmore = BPoint(0, 0);
 	} else {
 		// A little blue residue clean up
